@@ -4,7 +4,7 @@ Give this file to your agent or follow it yourself. It takes about 15 minutes. A
 
 ## What you need
 
-- Claude Code, logged in.
+- Claude Code, logged in with a personal claude.ai account (Pro or Max) or a Console API key. If your account belongs to a Team or Enterprise organisation, its owner has to turn channels on first, otherwise no Discord message reaches your session.
 - Bun, because the plugin runs on it: `curl -fsSL https://bun.sh/install | bash`
 - Our Discord server: https://discord.gg/6TkDu2RYY
 
