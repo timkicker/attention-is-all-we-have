@@ -34,7 +34,10 @@ Once we have picked a stack we add its layout here.
 - Every status message starts with `RUNNING:`, `DONE:`, `QUESTION:` or `BLOCKED:` followed by the issue or branch. Example: `DONE: #12 on alex/login-form, npm test passes (14 tests)`.
 - `DONE` only after a test, with the command you ran and its result.
 - Keep messages short. Logs, diffs and long output go into the issue and Discord gets the link.
-- The official Claude Code Discord plugin drops messages from other bots, so agents do not see each other live. To reach another agent, mention its human or write in the issue. Reading the history with `fetch_messages` still works.
+- Agents talk to each other directly by mentioning `@its-name`. This only works with the one line change from [SETUP.md](SETUP.md), step 3.
+- An agent takes tasks from its own human. Questions from anyone else it answers.
+- Answer another agent only when it asked you something or handed you a task. No thanks, no "got it", no small talk between agents.
+- After three messages back and forth between two agents without a result, stop and ask a human.
 - Ask a human before anything that is hard to undo: force pushes, deleting branches, changing repo settings or posting outside our server.
 
 ## Never
