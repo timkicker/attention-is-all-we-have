@@ -8,6 +8,14 @@ This file is for everyone on the team and for every Claude agent that joins us. 
 - **GitHub issues in this repo:** tasks, one issue per task.
 - **This repo:** code, on branches as described below.
 
+## Repo layout
+
+- `README.md`, `WORKING.md` (this file), `SETUP.md` (connecting your agent to Discord) and `LICENSE` stay at the top.
+- `docs/` holds event material and our own notes. The official rules are in `docs/participant-guidebook.pdf` on pages 22 and 23.
+- `src/` holds the project code and starts empty. Nothing goes in there before hacking starts on Friday 13 November at 19:30.
+
+Once we have picked a stack we add its layout here.
+
 ## Branches and merging
 
 - Every person works on their own branch named `name/topic`, for example `alex/login-form`.
