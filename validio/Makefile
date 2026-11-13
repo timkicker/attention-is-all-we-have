@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-live record guards dev ci
+.PHONY: setup data index seed test test-live record guards dev ci agent
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -37,3 +37,7 @@ dev:
 	$(UV) uvicorn validio.api.app:app --host 127.0.0.1 --port 8410 --reload
 
 ci: test
+
+SCENE ?= 2
+agent:
+	$(UV) python -W ignore ../../scripts/agent.py --scene $(SCENE)

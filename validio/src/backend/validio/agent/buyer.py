@@ -70,7 +70,7 @@ async def run(task: dict[str, Any], llm: LLM, port: McpPort, max_steps: int = 8,
         if on_event:
             on_event(e)
 
-    emit(Event("task", "task", task["text"]))
+    emit(Event("task", "task", task.get("request", task["text"])))
     history: list[dict[str, Any]] = [{"role": "user", **task}]
     for _ in range(max_steps):
         step = llm.step(history)
@@ -92,7 +92,7 @@ async def run(task: dict[str, Any], llm: LLM, port: McpPort, max_steps: int = 8,
 def task_for(n: int) -> dict[str, Any]:
     s = SCENES[n]
     text = (f"Kitchen request: {s.request}. Request lines: {s.lines}. Deliver by {DELIVER_BY}.")
-    return {"text": text, "lines": s.lines, "deliverBy": DELIVER_BY, "search": s.search,
+    return {"text": text, "request": s.request, "lines": s.lines, "deliverBy": DELIVER_BY, "search": s.search,
             "claims": list(s.claims)}
 
 
