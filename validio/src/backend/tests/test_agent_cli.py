@@ -18,7 +18,7 @@ def test_print_pass_prints_the_issued_pass(ctx, capsys):
     assert capsys.readouterr().out.strip() == issuance
 
 
-def test_local_scene4_prints_pane_and_writes_transcript(tmp_path, capsys, monkeypatch):
+def test_local_scene4_prints_pane_and_writes_transcript(catalog, tmp_path, capsys, monkeypatch):
     from validio.api.state import set_ctx
 
     monkeypatch.setattr(cli, "ARTIFACTS", tmp_path)
