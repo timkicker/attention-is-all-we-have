@@ -20,7 +20,7 @@ PLANTED = "AI agents"
 async def pane(ctx, n):
     if n == 3:
         ctx.set_stockout(True)
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     out, llm = io.StringIO(), FakeLLM(n)
     async with McpPort(server, spend_pass=h.presentation) as port:
         t = await run_scene(n, llm, port, on_event=printer(color=False, out=out))

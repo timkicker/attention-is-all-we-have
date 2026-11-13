@@ -83,7 +83,7 @@ def _project(req: dict) -> dict:
 
 
 async def _run(ctx) -> tuple[dict, dict, FakeLLM, object]:
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     llm = FakeLLM(2)
     async with McpPort(server, spend_pass=h.presentation) as port:
         t = await run_scene(2, llm, port)

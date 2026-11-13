@@ -31,12 +31,12 @@ uv run validio-agent --print-pass > pass.txt
 
 Every write needs a fresh presentation, built in four steps.
 
-1. Fetch a nonce from `GET /agent/v1/nonce` (over MCP from the resource `validio://nonce`). A nonce is good once and for five minutes.
+1. Fetch a nonce from `GET /agent/v1/nonce` (over MCP from the resource `validio://nonce`). A nonce is good once and for five minutes. The answer also carries `iat`, Validio's clock in Unix seconds. In the demo that clock stands still at Sat 14 Nov 10:00.
 2. Keep the issuer JWT and only the disclosures for `autoLimitCents`, `hardCapCents` and `diet`. Validio decides with these three, so the other fields stay hidden.
-3. Sign a key binding JWT with your key, header `{"alg": "ES256", "typ": "kb+jwt"}` and payload `iat`, `aud` (always `validio:agent-v1`), `nonce` and `sd_hash`. The hash is SHA-256 in base64url over `<issuer JWT>~<disclosure>~…~`.
+3. Sign a key binding JWT with your key, header `{"alg": "ES256", "typ": "kb+jwt"}` and payload `iat` (the one from the nonce answer), `aud` (always `validio:agent-v1`), `nonce` and `sd_hash`. The hash is SHA-256 in base64url over `<issuer JWT>~<disclosure>~…~`.
 4. Append the key binding JWT to that string. The result is the presentation.
 
-`presentation()` in `examples/agent_client.py` does all of this in ten lines. Validio checks the issuer signature, the key binding, issuer, audience, nonce and the validity window. Anything that fails one of these gets a 401.
+`presentation()` in `examples/agent_client.py` does all of this in ten lines. Validio checks the issuer signature, the key binding and its `iat` (at most ten minutes old, at most a minute ahead), issuer, audience, nonce, that every disclosure belongs to the pass, and the validity window. Anything that fails one of these gets a 401.
 
 Both writes also take an `idempotencyKey`. A retry with the same key returns the same request or order and never orders twice.
 
@@ -61,7 +61,8 @@ The nonce for step 1 of the Spend Pass:
 ```json
 {
   "nonce": "D5TolIaHmYcJNcOyXdWEhIqGGGLGbl1c",
-  "aud": "validio:agent-v1"
+  "aud": "validio:agent-v1",
+  "iat": 1794643200
 }
 ```
 

@@ -42,8 +42,8 @@ def test_python_client_shows_only_three_fields(ctx, tmp_path):
     client = _load("agent_client")
     pass_file, key_file = _pass_files(ctx, tmp_path)
     with TestClient(app) as http:
-        token = client.presentation(pass_file.read_text(), key_file.read_text(),
-                                    http.get("/agent/v1/nonce").json()["nonce"])
+        ticket = http.get("/agent/v1/nonce").json()
+        token = client.presentation(pass_file.read_text(), key_file.read_text(), ticket["nonce"], ticket["iat"])
     disclosed = [json.loads(client.b64d(d))[1] for d in token.split("~")[1:-1]]
     assert sorted(disclosed) == ["autoLimitCents", "diet", "hardCapCents"]
 

@@ -17,7 +17,7 @@ from validio.api.mcp_server import server
 
 
 async def pane(ctx):
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     out, llm = io.StringIO(), FakeLLM(4)
     async with McpPort(server, spend_pass=h.presentation) as port:
         t = await run_scene(4, llm, port, on_event=printer(color=False, out=out))
@@ -33,7 +33,7 @@ async def test_renew_needs_the_spend_pass(ctx):
 
 @pytest.mark.asyncio
 async def test_renew_unknown_order_is_404(ctx):
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     async with McpPort(server, spend_pass=h.presentation) as port:
         a = await port.call("renew_steady_order", {"orderId": "S-9"})
     assert "404" in a["error"]

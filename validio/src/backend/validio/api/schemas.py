@@ -283,6 +283,7 @@ class DemoState(Model):
 class NonceView(Model):
     nonce: str
     aud: str
+    iat: int  # Validio's clock in Unix seconds: sign the key binding JWT with this as its iat
 
 
 class Health(Model):

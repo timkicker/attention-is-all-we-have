@@ -52,7 +52,8 @@ def search_products(ctx: Ctx, text: str | None = None, category: str | None = No
 
 
 def nonce(ctx: Ctx) -> NonceView:
-    return NonceView(nonce=ctx.nonces.issue(ctx.now()), aud=AUDIENCE)
+    now = ctx.now()
+    return NonceView(nonce=ctx.nonces.issue(now), aud=AUDIENCE, iat=int(now.timestamp()))
 
 
 def _request_view(ctx: Ctx, req: dict) -> SupplyRequestView:
