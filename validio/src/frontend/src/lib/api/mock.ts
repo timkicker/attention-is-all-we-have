@@ -1,22 +1,18 @@
-// The fixture as a small stateful backend. State lives in localStorage so the
-// phone tab and the desktop tab see the same approval, the way they will once
-// both talk to the real server. Every read and write is guarded: a browser
-// that refuses storage just keeps the state in memory.
+// The web app without a backend. Every answer here is one the real backend
+// gave, recorded by scripts/snapshots.py into snapshots/states.ts; nothing is
+// invented. The demo controls only move between recorded states:
+//
+//   mozzarella request: none -> (stock-out) waiting -> placed | rejected
+//   steady order:       pending -> (renew) renewed -> accepted | mozzarella | both
+//
+// The state lives in localStorage so a reload keeps it, as the backend would.
 
-import {
-  MILK_REQUEST,
-  MILK_SENTENCE,
-  MOZZARELLA_REQUEST,
-  SPEND_PASS,
-  STEADY_ID,
-  STEADY_PENDING,
-  STEADY_RENEWED,
-} from "./fixture";
+import { answers, refused, states } from "./snapshots/states";
+import { ApiError } from "./error";
 import type {
   DemoState,
   InboxItem,
   Ledger,
-  LedgerEntry,
   Order,
   SpendPass,
   SteadyOrder,
@@ -24,396 +20,154 @@ import type {
   SupplyRequest,
 } from "./types";
 
-interface MockState {
-  stockOut: boolean;
-  approval: "none" | "approved" | "rejected";
-  renewed: boolean;
-  accepted: string[];
+type Moz = "none" | "waiting" | "placed" | "rejected";
+type Steady = "pending" | "renewed" | "accepted" | "mozzarella" | "both";
+interface State {
+  moz: Moz;
+  steady: Steady;
 }
 
-const KEY = "validio-mock-v1";
-const START: MockState = { stockOut: false, approval: "none", renewed: false, accepted: [] };
-let memory: MockState = { ...START };
+const KEY = "validio-mock-v2";
+const START: State = { moz: "none", steady: "pending" };
+const PANCAKES = "471376";
+const MOZZARELLA = "466375";
 
-function load(): MockState {
+let memory: State = { ...START };
+
+function load(): State {
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) memory = { ...START, ...JSON.parse(raw) };
+    if (raw) {
+      const s = JSON.parse(raw) as State;
+      if (states[`${s.moz}-${s.steady}`]) return s;
+    }
   } catch {
-    // storage unavailable, keep memory
+    // no storage in this browser: keep the state in memory
   }
   return memory;
 }
 
-function save(next: MockState): void {
-  memory = next;
+function save(s: State): void {
+  memory = s;
   try {
-    localStorage.setItem(KEY, JSON.stringify(next));
+    localStorage.setItem(KEY, JSON.stringify(s));
   } catch {
-    // storage unavailable, keep memory
+    // see load()
   }
 }
 
-export function resetMock(): void {
-  save({ ...START, accepted: [] });
+function pick(s: State): Record<string, number> {
+  return states[`${s.moz}-${s.steady}`];
 }
 
-const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
-
-function mozzarella(s: MockState): SupplyRequest {
-  const r = clone(MOZZARELLA_REQUEST);
-  if (s.approval === "approved") {
-    r.status = "ordered";
-    r.decision = {
-      outcome: "ask_human",
-      ruleIds: ["ask-human"],
-      sentence:
-        "Ordered 10 bags of 463383 Maestrella grated mozzarella lactose free 2.5 kg for 196.60 € after the owner approved. Valio was asked again before placing it.",
-    };
-  } else if (s.approval === "rejected") {
-    r.status = "rejected";
-    r.decision = {
-      outcome: "ask_human",
-      ruleIds: ["ask-human"],
-      sentence: "The owner rejected the swap. Nothing was ordered for this line.",
-    };
-  }
-  return r;
+function copy<T>(v: T): T {
+  return structuredClone(v);
 }
 
-function requests(s: MockState): SupplyRequest[] {
-  const list = [clone(MILK_REQUEST)];
-  if (s.stockOut) list.push(mozzarella(s));
-  return list;
+function notFound(what: string): never {
+  throw new ApiError(404, `${what} not found`);
+}
+
+/** The recorded answer at `path` for the current state, from `list`. */
+function at<T>(path: string, list: T[] | undefined): T {
+  const i = pick(load())[path];
+  if (i === undefined || !list) notFound(path);
+  return copy(list[i]);
+}
+
+/** The fixture plays a server with the approval code set: any 6 digits pass. */
+function checkCode(code: string): void {
+  if (!/^\d{6}$/.test(code)) throw new ApiError(403, "wrong or missing approval code");
 }
 
 export async function inbox(): Promise<InboxItem[]> {
-  const s = load();
-  return requests(s)
-    .map((r) => ({
-      id: r.id,
-      createdAt: r.createdAt,
-      text: r.text,
-      status: r.status,
-      sentence: r.status === "waiting" && r.question ? r.question : r.decision.sentence,
-      totalCents: r.totalCents,
-    }))
-    .reverse();
+  return at("/api/inbox", answers.inbox);
 }
 
 export async function request(id: string): Promise<SupplyRequest> {
-  const r = requests(load()).find((x) => x.id === id);
-  if (!r) throw new Error(`No request with id ${id}.`);
-  return r;
+  return at(`/api/requests/${id}`, answers.requests[id]);
 }
 
-export async function spendPass(_id: string): Promise<SpendPass> {
-  return clone(SPEND_PASS);
+export async function spendPass(id: string): Promise<SpendPass> {
+  return at(`/api/spend-passes/${id}`, answers.spendPass[id]);
 }
 
 export async function order(id: string): Promise<Order> {
+  return at(`/api/orders/${id}`, answers.orders[id]);
+}
+
+async function decide(id: string, code: string, to: "placed" | "rejected"): Promise<Order> {
   const s = load();
-  if (id === "O-1") {
-    return {
-      id,
-      requestId: "R-1",
-      state: "placed",
-      lines: [{ productId: "464306", name: "Valio Arki Eila 1 l", quantity: 1000, unit: "cartons", priceCents: 101, totalCents: 101000, deliverable: true, isSubstitute: false, onValioList: false, facts: [] }],
-      totalCents: 101000,
-      history: [{ state: "placed", at: "2026-11-14T10:00:06+02:00" }],
-      decision: (await request("R-1")).decision,
-      spendPassId: "M-1",
-      deliverBy: "2026-11-16",
-    };
-  }
-  if (id === "O-2" && s.stockOut) {
-    const history: Order["history"] = [{ state: "waiting", at: "2026-11-14T10:00:47+02:00" }];
-    if (s.approval === "approved") {
-      history.push({ state: "approved", at: "2026-11-14T10:01:05+02:00" });
-      history.push({ state: "placed", at: "2026-11-14T10:01:06+02:00" });
-    } else if (s.approval === "rejected") {
-      history.push({ state: "rejected", at: "2026-11-14T10:01:05+02:00" });
-    }
-    return {
-      id,
-      requestId: "R-2",
-      state: history[history.length - 1].state,
-      lines: [{ productId: "463383", name: "Maestrella grated mozzarella lactose free 2.5 kg", quantity: 10, unit: "bags", priceCents: 1966, totalCents: 19660, deliverable: true, isSubstitute: true, onValioList: false, facts: [] }],
-      totalCents: 19660,
-      history,
-      decision: (await request("R-2")).decision,
-      spendPassId: "M-1",
-      deliverBy: "2026-11-16",
-      ...(s.approval === "approved" ? { approvedBy: "owner" } : {}),
-    };
-  }
-  throw new Error(`No order with id ${id}.`);
+  const current = await order(id);
+  checkCode(code);
+  if (current.state !== "waiting") throw new ApiError(409, `order ${id} is ${current.state}, not waiting`);
+  // Only the mozzarella order ever waits for the owner in the demo.
+  save({ ...s, moz: to });
+  return order(id);
 }
 
-export async function approve(orderId: string): Promise<Order> {
-  const s = load();
-  if (orderId !== "O-2" || !s.stockOut) throw new Error(`No order with id ${orderId}.`);
-  if (s.approval !== "none") throw new Error("This order was already answered.");
-  save({ ...s, approval: "approved" });
-  return order(orderId);
-}
+export const approve = (id: string, code: string) => decide(id, code, "placed");
+export const reject = (id: string, code: string) => decide(id, code, "rejected");
 
-export async function reject(orderId: string): Promise<Order> {
-  const s = load();
-  if (orderId !== "O-2" || !s.stockOut) throw new Error(`No order with id ${orderId}.`);
-  if (s.approval !== "none") throw new Error("This order was already answered.");
-  save({ ...s, approval: "rejected" });
-  return order(orderId);
-}
-
-export async function demoState(): Promise<DemoState> {
-  return { stockOut466375: load().stockOut };
-}
-
-export async function stockOut(): Promise<DemoState> {
-  const s = load();
-  save({ ...s, stockOut: true });
-  return { stockOut466375: true };
-}
-
-function steady(s: MockState): SteadyOrder {
-  const lines = clone(s.renewed ? STEADY_RENEWED : STEADY_PENDING).map((l) =>
-    s.accepted.includes(l.productId)
-      ? { ...l, result: "accepted" as const, acceptLabel: undefined }
-      : l,
-  );
-  return {
-    id: STEADY_ID,
-    name: "Weekly Monday order",
-    weekday: "Monday",
-    guestsPerWeek: 400,
-    weeksLearned: 8,
-    simulatedHistory: true,
-    renewedAt: s.renewed ? "2026-11-14T10:01:15+02:00" : undefined,
-    lines,
-  };
+export async function ledger(): Promise<Ledger> {
+  return at("/api/ledger", answers.ledger);
 }
 
 export async function steadyList(): Promise<SteadyOrderSummary[]> {
-  const o = steady(load());
-  return [
-    {
-      id: o.id,
-      name: o.name,
-      weekday: o.weekday,
-      lineCount: o.lines.length,
-      flagCount: o.lines.filter((l) => l.result === "waiting" || l.result === "flagged").length,
-      renewedAt: o.renewedAt,
-    },
-  ];
+  return at("/api/steady", answers.steadyList);
 }
 
 export async function steadyOrder(id: string): Promise<SteadyOrder> {
-  if (id !== STEADY_ID) throw new Error(`No Steady Order with id ${id}.`);
-  return steady(load());
+  return at(`/api/steady/${id}`, answers.steady[id]);
 }
 
-export async function renew(id: string): Promise<SteadyOrder> {
+export async function renew(id: string, code: string): Promise<SteadyOrder> {
   const s = load();
-  save({ ...s, renewed: true });
+  await steadyOrder(id);
+  checkCode(code);
+  if (s.steady !== "pending") throw new ApiError(409, "this week's order is already renewed");
+  save({ ...s, steady: "renewed" });
   return steadyOrder(id);
 }
 
-export async function acceptLine(id: string, productId: string): Promise<SteadyOrder> {
+export async function acceptLine(id: string, productId: string, code: string): Promise<SteadyOrder> {
   const s = load();
-  if (!s.renewed) throw new Error("Renew the order first.");
-  if (!s.accepted.includes(productId)) save({ ...s, accepted: [...s.accepted, productId] });
+  await steadyOrder(id);
+  checkCode(code);
+  const both = (s.steady === "accepted" && productId === MOZZARELLA) || (s.steady === "mozzarella" && productId === PANCAKES);
+  const next: Steady | undefined = both
+    ? "both"
+    : s.steady === "renewed" && productId === PANCAKES
+      ? "accepted"
+      : s.steady === "renewed" && productId === MOZZARELLA
+        ? "mozzarella"
+        : undefined;
+  if (!next) throw new ApiError(409, `line ${productId} is not waiting`);
+  const key = `${s.moz}-${next}`;
+  if (refused[key]) throw new ApiError(409, refused[key]);
+  save({ ...s, steady: next });
   return steadyOrder(id);
 }
 
-// The ledger. Entries are built from the state, then hashed the way the
-// blueprint says: SHA-256 over the entry as JSON with sorted keys and no
-// spaces, each one carrying the hash before it.
-
-type Draft = Omit<LedgerEntry, "seq" | "prevHash" | "hash">;
-
-function drafts(s: MockState): Draft[] {
-  const d: Draft[] = [
-    {
-      at: "2026-11-14T10:00:02+02:00",
-      actor: "agent:buyer-1",
-      kind: "request",
-      sentence: "The agent asked for 1000 litres of lactose-free milk by Monday.",
-      facts: [],
-      spendPassId: "M-1",
-      disclosed: ["autoLimitCents", "hardCapCents", "diet"],
-      ruleIds: [],
-    },
-    {
-      at: "2026-11-14T10:00:05+02:00",
-      actor: "validio",
-      kind: "decision",
-      sentence: MILK_SENTENCE,
-      facts: MILK_REQUEST.lines[0].options[0].facts.slice(0, 3),
-      spendPassId: "M-1",
-      disclosed: ["autoLimitCents"],
-      ruleIds: ["auto-order"],
-      orderId: "O-1",
-    },
-    {
-      at: "2026-11-14T10:00:05+02:00",
-      actor: "validio",
-      kind: "decision",
-      sentence:
-        "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions; its product data lists lactose.",
-      facts: MILK_REQUEST.lines[0].options[5].facts,
-      spendPassId: "M-1",
-      disclosed: ["diet"],
-      ruleIds: [],
-    },
-  ];
-  if (s.stockOut) {
-    d.push(
-      {
-        at: "2026-11-14T10:00:45+02:00",
-        actor: "presenter",
-        kind: "simulation",
-        sentence: "Simulated a stock-out of 466375. Valio really has 11,603 bags.",
-        facts: [],
-        disclosed: [],
-        ruleIds: [],
-      },
-      {
-        at: "2026-11-14T10:00:47+02:00",
-        actor: "validio",
-        kind: "decision",
-        sentence:
-          "Blocked 466151, 468526 and 475908 from Valio's substitute list because they contain lactose. 473986 cannot be delivered.",
-        facts: [{ field: "Allergen", value: "lactose", grade: "attested", source: "catalog:allergens" }],
-        spendPassId: "M-1",
-        disclosed: ["diet"],
-        ruleIds: ["never-break-diet"],
-      },
-      {
-        at: "2026-11-14T10:00:47+02:00",
-        actor: "validio",
-        kind: "decision",
-        sentence: MOZZARELLA_REQUEST.decision.sentence,
-        facts: MOZZARELLA_REQUEST.lines[0].beyondList![0].facts.slice(0, 2),
-        spendPassId: "M-1",
-        disclosed: ["autoLimitCents", "hardCapCents", "diet"],
-        ruleIds: ["ask-human"],
-        orderId: "O-2",
-      },
-    );
-    if (s.approval !== "none") {
-      d.push({
-        at: "2026-11-14T10:01:05+02:00",
-        actor: "owner",
-        kind: "approval",
-        sentence:
-          s.approval === "approved"
-            ? "The owner approved 10 bags of 463383 for 196.60 € on the phone."
-            : "The owner rejected the swap to 463383 on the phone.",
-        facts: [],
-        spendPassId: "M-1",
-        disclosed: [],
-        ruleIds: [],
-        orderId: "O-2",
-      });
-    }
-    if (s.approval === "approved") {
-      d.push({
-        at: "2026-11-14T10:01:06+02:00",
-        actor: "validio",
-        kind: "order",
-        sentence: "Asked Valio again: price and stock unchanged. Placed order O-2.",
-        facts: [{ field: "Price", value: "196.60 €", grade: "attested", source: "valio:price" }],
-        spendPassId: "M-1",
-        disclosed: [],
-        ruleIds: [],
-        orderId: "O-2",
-      });
-    }
-  }
-  if (s.renewed) {
-    d.push(
-      {
-        at: "2026-11-14T10:01:15+02:00",
-        actor: "validio",
-        kind: "renewal",
-        sentence:
-          "Renewed the weekly Monday order: milk as usual, parmesan split with 40 blocks of 469648 for 18.49 € (2.5 %) more.",
-        facts: [],
-        spendPassId: "M-1",
-        disclosed: ["autoLimitCents"],
-        ruleIds: ["auto-order"],
-      },
-      {
-        at: "2026-11-14T10:01:15+02:00",
-        actor: "validio",
-        kind: "renewal",
-        sentence:
-          "Held two lines for the chef: pancakes (27 of 30, the only substitute contains wheat) and mozzarella (26 % more per guest).",
-        facts: [],
-        spendPassId: "M-1",
-        disclosed: ["diet"],
-        ruleIds: ["ask-human"],
-      },
-    );
-    for (const pid of s.accepted) {
-      d.push({
-        at: "2026-11-14T10:01:30+02:00",
-        actor: "chef",
-        kind: "approval",
-        sentence:
-          pid === "471376"
-            ? "The chef ordered 27 cartons of pancakes 471376."
-            : "The chef renewed 120 bags of mozzarella 466375 despite the flag.",
-        facts: [],
-        spendPassId: "M-1",
-        disclosed: [],
-        ruleIds: [],
-      });
-    }
-  }
-  return d;
+export async function demoState(): Promise<DemoState> {
+  return at("/api/demo", answers.demo);
 }
 
-function canonical(v: unknown): string {
-  if (Array.isArray(v)) return `[${v.map(canonical).join(",")}]`;
-  if (v && typeof v === "object") {
-    const o = v as Record<string, unknown>;
-    return `{${Object.keys(o)
-      .filter((k) => o[k] !== undefined)
-      .sort()
-      .map((k) => `${JSON.stringify(k)}:${canonical(o[k])}`)
-      .join(",")}}`;
+/**
+ * The stock-out switch. With the backend the kitchen's agent then asks again;
+ * the fixture jumps to the answer that run gave: the request waits for the owner.
+ */
+export async function stockOut(): Promise<DemoState> {
+  const s = load();
+  if (s.moz === "none") {
+    // An accepted mozzarella line cannot stay accepted once the stock is gone.
+    const steady: Steady = s.steady === "mozzarella" ? "renewed" : s.steady === "both" ? "accepted" : s.steady;
+    save({ moz: "waiting", steady });
   }
-  return JSON.stringify(v);
+  return demoState();
 }
 
-async function sha256(text: string): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-const ZERO = "0".repeat(64);
-
-export async function ledger(): Promise<Ledger> {
-  const entries: LedgerEntry[] = [];
-  let prev = ZERO;
-  for (const [i, draft] of drafts(load()).entries()) {
-    const body = { ...draft, seq: i + 1, prevHash: prev };
-    const hash = await sha256(canonical(body));
-    entries.push({ ...body, hash });
-    prev = hash;
-  }
-  // Walk the chain again from the start, the same check the server runs.
-  let expected = ZERO;
-  let brokenAt: number | undefined;
-  for (const e of entries) {
-    const { hash, ...body } = e;
-    if (e.prevHash !== expected || (await sha256(canonical(body))) !== hash) {
-      brokenAt = e.seq;
-      break;
-    }
-    expected = hash;
-  }
-  return { entries, chain: { ok: brokenAt === undefined, count: entries.length, brokenAt } };
+export async function reset(): Promise<DemoState> {
+  save({ ...START });
+  return demoState();
 }

@@ -1,216 +1,213 @@
 <script lang="ts">
-  // One-Tap Approve: the owner's phone page. One sentence, the option it is
-  // about and two buttons. Built for a 390 px screen.
+  // The owner's one decision, made on the phone: one question, the code, two
+  // buttons of the same weight. Nothing else on the page.
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Notice } from "@arlen/ui-kit/components/ui/notice";
-  import { Badge } from "@arlen/ui-kit/components/ui/badge";
-  import { api } from "$lib/api/client";
-  import type { Order, RankedOption, SupplyRequest } from "$lib/api/types";
-  import StatusBadge from "$lib/components/StatusBadge.svelte";
-  import { money, time } from "$lib/format";
+  import { Check } from "@lucide/svelte";
+  import { ApiError, api } from "$lib/api/client";
+  import type { Order } from "$lib/api/types";
+  import { bump, setChrome } from "$lib/chrome.svelte";
+  import { amount, day, money, time } from "$lib/format";
+  import { live } from "$lib/live.svelte";
+  import CodeField from "$lib/components/CodeField.svelte";
+  import Info from "$lib/components/Info.svelte";
+  import { isCode, owner } from "$lib/owner.svelte";
 
-  const rid = $derived(page.params.id ?? "");
-  let req = $state<SupplyRequest | null>(null);
-  let order = $state<Order | null>(null);
-  let error = $state("");
-  let busy = $state(false);
+  const id = $derived(page.params.id ?? "");
+  const order = live(() => api.order(id));
+  const req = live(() => (order.data?.requestId ? api.request(order.data.requestId) : Promise.resolve(undefined)));
 
-  const ORDER_STATE = { waiting: "Waiting", approved: "Approved", placed: "Placed at Valio", rejected: "Rejected" };
-
-  async function load(id: string) {
-    try {
-      req = await api.request(id);
-      order = req.orderId ? await api.order(req.orderId) : null;
-      error = "";
-    } catch (e) {
-      error = `This question could not be loaded: ${(e as Error).message}`;
-    }
-  }
   $effect(() => {
-    load(rid);
+    const rid = order.data?.requestId;
+    setChrome("Approve", rid ? { href: `/requests/${rid}`, label: `Request ${rid}` } : { href: "/", label: "Inbox" });
   });
 
-  const line = $derived(req?.lines[0]);
-  const pick = $derived<RankedOption | undefined>(
-    line?.beyondList?.find((o) => o.verdict === "chosen") ?? line?.options.find((o) => o.verdict === "chosen"),
-  );
-  const refused = $derived((line?.substitutes ?? []).filter((o) => o.verdict !== "chosen"));
+  // Ask for the code unless the owner typed it earlier in this session.
+  let ask = $state(!isCode(owner.code));
+  let typed = $state("");
+  let busy = $state(false);
+  let problem = $state("");
+  let done = $state<Order | undefined>();
 
-  async function answer(kind: "approve" | "reject") {
-    if (!req?.orderId || busy) return;
+  const shown = $derived(done ?? order.data);
+
+  function question(o: Order): string {
+    if (o.lines.length === 1) {
+      const l = o.lines[0];
+      return `Approve ${amount(l.quantity, l.unit)} of ${l.productId} for ${money(o.totalCents)}?`;
+    }
+    return `Approve order ${o.id} for ${money(o.totalCents)}?`;
+  }
+
+  async function decide(kind: "approve" | "reject") {
+    if (!shown || busy) return;
+    problem = "";
+    if (ask) {
+      if (!isCode(typed)) {
+        problem = "Enter the 6 digit approval code first.";
+        return;
+      }
+      owner.code = typed;
+    }
     busy = true;
     try {
-      order = kind === "approve" ? await api.approve(req.orderId) : await api.reject(req.orderId);
-      req = await api.request(req.id);
-      error = "";
+      done = await (kind === "approve" ? api.approve(shown.id) : api.reject(shown.id));
+      bump();
     } catch (e) {
-      error = (e as Error).message;
+      if (e instanceof ApiError && e.status === 403) {
+        owner.code = "";
+        ask = true;
+      }
+      problem =
+        e instanceof ApiError && e.status === 403
+          ? "That code is not right."
+          : e instanceof ApiError && e.status === 429
+            ? "Too many wrong codes for this order."
+            : e instanceof Error
+              ? e.message
+              : String(e);
     } finally {
       busy = false;
     }
   }
+
+  const STEP: Record<string, string> = {
+    waiting: "Waiting for you",
+    approved: "Approved",
+    placed: "Placed at Valio",
+    rejected: "Rejected",
+    blocked: "Blocked by the rules",
+  };
 </script>
 
-<div class="phone" id="approve-page">
-  {#if error}<Notice tone="error" text={error} />{/if}
-  {#if req}
-    <div class="ask">
-      <div class="who">
-        <StatusBadge status={req.status} />
-        <span class="num">{time(req.createdAt)}</span>
-      </div>
-      <p class="question" id={req.status === "waiting" ? "question" : "answered"}>{req.status === "waiting" && req.question ? req.question : req.decision.sentence}</p>
-    </div>
-
-    {#if pick}
-      <div class="pick" id="pick">
-        <div class="pick-head">
-          <span class="pick-name">{pick.name}</span>
-          <span class="pick-total num">{money(pick.totalCents)}</span>
-        </div>
-        <span class="pick-meta num">{pick.quantity} {pick.unit}, product {pick.productId}{pick.onValioList === false ? ", outside Valio's list" : ""}</span>
-        <p class="pick-why">{pick.sentence}</p>
-      </div>
-    {/if}
-
-    {#if refused.length}
-      <ul class="refused" aria-label="Listed substitutes that were refused">
-        {#each refused as o (o.productId)}
+<div class="approve">
+  {#if order.error && !shown}
+    <p class="t-quiet">Order {id}: {order.error}</p>
+  {:else if shown}
+    {#if shown.state === "waiting"}
+      <h2 id="question">{question(shown)}</h2>
+      <ul class="lines">
+        {#each shown.lines as l (l.productId)}
           <li>
-            <Badge variant={o.verdict === "blocked" ? "destructive" : "warn"}>{o.verdict === "blocked" ? "Blocked" : "Not deliverable"}</Badge>
-            <span>{o.name}</span>
+            <span class="name">{l.name}</span>
+            <span class="t-quiet">
+              {#if l.deliveryDate}Delivered {day(l.deliveryDate)}{/if}{#if l.isSubstitute && !l.onValioList}, not on Valio's list{/if}
+            </span>
           </li>
         {/each}
       </ul>
-    {/if}
-
-    {#each req.simulated ?? [] as mark (mark.what)}
-      <Notice tone="caution" text={mark.sentence} />
-    {/each}
-
-    {#if req.status === "waiting"}
-      <div class="buttons">
-        <Button id="approve" size="lg" class="w-full" disabled={busy} onclick={() => answer("approve")}>Approve</Button>
-        <Button id="reject" size="lg" variant="outline" class="w-full" disabled={busy} onclick={() => answer("reject")}>Reject</Button>
-      </div>
-      <p class="fine">Validio asks Valio again before it orders. If the price rose by more than 2 % or a line can no longer be delivered, nothing is ordered.</p>
-    {:else if order}
-      <ol class="steps" id="order-steps" aria-label="Order {order.id}">
-        {#each order.history as step (step.state)}
-          <li><span>{ORDER_STATE[step.state]}</span><span class="num">{time(step.at)}</span></li>
+      {#if req.data?.question}
+        <p class="why">
+          <span class="t-quiet">Why you are asked</span>
+          <Info label="Why you are asked" text={req.data.question} id="why-asked" />
+        </p>
+      {/if}
+      <form class="form" onsubmit={(e) => { e.preventDefault(); decide("approve"); }}>
+        {#if ask}
+          <CodeField {problem} bind:value={typed} />
+        {:else if problem}
+          <p class="problem t-bad" id="approve-problem" role="alert">{problem}</p>
+        {/if}
+        <div class="buttons">
+          <Button variant="outline" size="lg" id="reject" disabled={busy} onclick={() => decide("reject")}>Reject</Button>
+          <Button size="lg" type="submit" id="approve" disabled={busy}>Approve</Button>
+        </div>
+      </form>
+    {:else}
+      <h2 id="outcome">
+        {shown.state === "placed" ? "Ordered" : shown.state === "rejected" ? "Rejected" : STEP[shown.state] ?? shown.state}
+        <span class="t-quiet num">{money(shown.totalCents)}</span>
+      </h2>
+      <ol class="steps" id="order-steps">
+        {#each shown.history as h, i (i)}
+          <li>
+            <Check size={14} strokeWidth={2} aria-hidden="true" />
+            <span>{STEP[h.state] ?? h.state}</span>
+            <span class="t-quiet num">{time(h.at).slice(0, 5)}</span>
+          </li>
         {/each}
       </ol>
+      <Button variant="outline" href={shown.requestId ? `/requests/${shown.requestId}` : "/"}>Back to the request</Button>
     {/if}
   {/if}
 </div>
 
 <style>
-  .phone {
+  .approve {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     max-width: 26rem;
-    margin-inline: auto;
-    padding: 1.25rem 1rem 2rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem;
   }
-  .ask {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .who {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--foreground) 64%, transparent);
-  }
-  .question {
+  h2 {
     margin: 0;
     font-size: var(--text-xl);
-    line-height: 1.35;
     font-weight: 600;
-    color: var(--foreground);
-    text-wrap: pretty;
+    line-height: 1.3;
   }
-  .pick {
+  .lines {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.875rem 1rem;
-    border-radius: var(--radius-card);
-    border: 1px solid color-mix(in srgb, var(--color-success) 45%, transparent);
-    background: var(--card);
-  }
-  .pick-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-  }
-  .pick-name {
-    font-size: var(--text-base);
-    font-weight: 600;
-  }
-  .pick-total {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .pick-meta {
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--foreground) 64%, transparent);
-  }
-  .pick-why {
-    margin: 0.25rem 0 0;
-    font-size: var(--text-sm);
-    line-height: 1.45;
-  }
-  .refused {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
+    gap: 0.5rem;
     margin: 0;
-    padding: 0 0.25rem;
+    padding: 0;
     list-style: none;
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--foreground) 72%, transparent);
+    font-size: var(--text-sm);
   }
-  .refused li {
+  .lines li {
+    display: flex;
+    flex-direction: column;
+  }
+  .name {
+    font-weight: 500;
+  }
+  .why {
     display: flex;
     align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .problem {
+    margin: 0;
+    font-size: var(--text-sm);
   }
   .buttons {
     display: grid;
-    gap: 0.625rem;
-    margin-top: 0.25rem;
-  }
-  .fine {
-    margin: 0;
-    font-size: var(--text-xs);
-    line-height: 1.5;
-    color: color-mix(in srgb, var(--foreground) 64%, transparent);
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
   }
   .steps {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     margin: 0;
     padding: 0;
     list-style: none;
-    border-radius: var(--radius-card);
-    border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
-    background: var(--card);
+    font-size: var(--text-sm);
   }
   .steps li {
-    display: flex;
-    justify-content: space-between;
-    padding: var(--space-row, 0.75rem) 1rem;
-    font-size: var(--text-sm);
-    font-weight: 500;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
   }
-  .steps li + li {
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+  @media (max-width: 760px) {
+    .approve {
+      padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+      min-height: calc(100svh - 3rem);
+    }
+    .buttons {
+      margin-top: auto;
+    }
   }
 </style>

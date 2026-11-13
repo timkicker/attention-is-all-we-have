@@ -1,74 +1,266 @@
 <script lang="ts">
+  // One steady order as settings rows: each line says what this week brings
+  // and why, its state and total sit in the control column, and a line that
+  // waits carries its one button there too.
   import { page } from "$app/state";
-  import { Page } from "@arlen/ui-kit/components/ui/page";
-  import { SectionGrid } from "@arlen/ui-kit/components/ui/section-grid";
-  import { Section } from "@arlen/ui-kit/components/ui/section";
-  import { Row } from "@arlen/ui-kit/components/ui/row";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Notice } from "@arlen/ui-kit/components/ui/notice";
-  import { api } from "$lib/api/client";
-  import type { SteadyOrder } from "$lib/api/types";
-  import SteadyLineRow from "$lib/components/SteadyLineRow.svelte";
-  import { dayTime } from "$lib/format";
+  import { Page } from "@arlen/ui-kit/components/ui/page";
+  import { Row } from "@arlen/ui-kit/components/ui/row";
+  import { Section } from "@arlen/ui-kit/components/ui/section";
+  import { SectionGrid } from "@arlen/ui-kit/components/ui/section-grid";
+  import { ApiError, api } from "$lib/api/client";
+  import { owner } from "$lib/owner.svelte";
+  import CodeField from "$lib/components/CodeField.svelte";
+  import type { SteadyLine, SteadyOrder } from "$lib/api/types";
+  import { bump, setChrome } from "$lib/chrome.svelte";
+  import { LINE_RESULT, amount, dayTime, look, money } from "$lib/format";
+  import { live } from "$lib/live.svelte";
+  import Drift from "$lib/components/Drift.svelte";
+  import Facts from "$lib/components/Facts.svelte";
+  import State from "$lib/components/State.svelte";
 
-  const sid = $derived(page.params.id ?? "");
-  let order = $state<SteadyOrder | null>(null);
-  let error = $state("");
-  let busy = $state(false);
+  const id = $derived(page.params.id ?? "");
+  const steady = live(() => api.steadyOrder(id));
+  const s = $derived(steady.data);
 
-  $effect(() => {
-    api
-      .steadyOrder(sid)
-      .then((o) => (order = o))
-      .catch((e) => (error = `This Steady Order could not be loaded: ${(e as Error).message}`));
-  });
+  $effect(() => setChrome(s?.name ?? "Steady order", { href: "/steady", label: "Steady orders" }));
 
-  async function act(fn: () => Promise<SteadyOrder>) {
-    busy = true;
+  let busy = $state("");
+  let problem = $state("");
+  // A write the server refused for want of the approval code waits here
+  // until the owner types it.
+  let retry = $state<null | (() => void)>(null);
+
+  async function act(key: string, fn: () => Promise<SteadyOrder>) {
+    busy = key;
+    problem = "";
     try {
-      order = await fn();
-      error = "";
+      steady.data = await fn();
+      bump();
+      retry = null;
     } catch (e) {
-      error = (e as Error).message;
+      if (e instanceof ApiError && e.status === 403) {
+        const wrong = !!owner.code;
+        owner.code = "";
+        retry = () => act(key, fn);
+        problem = wrong ? "That code is not right." : "";
+      } else {
+        problem = e instanceof Error ? e.message : String(e);
+      }
     } finally {
-      busy = false;
+      busy = "";
     }
   }
 
-  const waiting = $derived(order?.lines.filter((l) => l.result === "waiting" || l.result === "flagged").length ?? 0);
-  const alone = $derived(order?.lines.filter((l) => l.result === "renewed" || l.result === "split_renewed").length ?? 0);
+  const pending = $derived(!!s && s.lines.every((l) => l.result === "pending"));
+  const asks = (l: SteadyLine) => l.result === "waiting" || l.result === "flagged";
+  const acceptLabel = (l: SteadyLine) =>
+    l.acceptLabel ?? (l.thisWeekQuantity !== undefined ? `Order ${l.thisWeekQuantity} now` : "Accept");
+  const weekTotal = $derived(
+    (s?.lines ?? []).filter((l) => !asks(l) && l.result !== "pending").reduce((t, l) => t + (l.totalCents ?? 0), 0),
+  );
+  const waiting = $derived((s?.lines ?? []).filter(asks).length);
 </script>
 
-<Page
-  title={order?.name ?? "Steady Order"}
-  description={order ? `Every ${order.weekday}, learned from ${order.weeksLearned} weeks with ${order.guestsPerWeek} guests a week.` : undefined}
-  back={{ href: "/steady", label: "Steady Orders" }}
->
-  <SectionGrid>
-    {#if error}<Notice tone="error" text={error} />{/if}
-    {#if order}
-      {#if order.simulatedHistory}
-        <Notice tone="caution" id="simulated-history" text="Simulated history. The 8 weeks behind this order are invented for the demo; prices and stock come from Valio." />
+{#if s}
+  <Page title={s.name} back={{ href: "/steady", label: "Steady orders" }}>
+    <SectionGrid>
+    <div class="top">
+      <Facts
+        items={[
+          { value: s.weekday, label: "every", before: true },
+          { value: String(s.guestsPerWeek), label: "guests a week" },
+          { value: String(s.weeksLearned), label: "weeks learned" },
+          ...(pending ? [] : [{ value: money(weekTotal), label: "ordered this week" }, { value: String(waiting), label: "need a look" }]),
+        ]}
+      />
+      {#if pending}
+        <Button id="renew" disabled={!!busy} onclick={() => act("renew", () => api.renew(s.id))}>Renew this week</Button>
+      {:else if s.renewedAt}
+        <span class="t-quiet renewed">Renewed {dayTime(s.renewedAt)}</span>
       {/if}
-      <Section id="renewal">
-        <Row
-          label={order.renewedAt ? `Renewed ${dayTime(order.renewedAt)}` : "Not renewed this week yet"}
-          description={order.renewedAt
-            ? `${alone} ${alone === 1 ? "line" : "lines"} renewed alone, ${waiting} ${waiting === 1 ? "waits" : "wait"} for you.`
-            : "Renewal runs every line through the same rules as a new request."}
-        >
+    </div>
+
+    {#if s.simulatedHistory}
+      <div id="simulated-history">
+        <Notice tone="neutral" text="Simulated history. The {s.weeksLearned} weeks behind this order are made up for the demo; the stock and prices are Valio's." />
+      </div>
+    {/if}
+
+    {#if retry}
+      <div class="ask"><CodeField onready={retry} {problem} action="Continue" /></div>
+    {:else if problem}
+      <p class="t-bad problem" role="alert">{problem}</p>
+    {/if}
+
+    <Section>
+      {#each s.lines as l (l.productId)}
+        {@const r = look(LINE_RESULT, l.result)}
+        <Row label={l.name} description={l.sentence} id="line-{l.productId}">
           {#snippet control()}
-            {#if !order!.renewedAt}
-              <Button id="renew" size="sm" disabled={busy} onclick={() => act(() => api.renew(order!.id))}>Renew now</Button>
-            {/if}
+            <span class="ctl">
+              <span class="qty num">
+                {#if l.thisWeekQuantity !== undefined}{amount(l.thisWeekQuantity, l.unit)}{:else}{amount(l.usualQuantity, l.unit)} usual{/if}
+              </span>
+              <span class="sum num">{money(l.totalCents)}</span>
+              <State label={r.label} tone={r.tone} />
+            </span>
+          {/snippet}
+          {#snippet below()}
+            {@render more(l)}
           {/snippet}
         </Row>
-      </Section>
-      <Section label="Lines" id="lines">
-        {#each order.lines as line (line.productId)}
-          <SteadyLineRow {line} {busy} onaccept={() => act(() => api.acceptLine(order!.id, line.productId))} />
-        {/each}
-      </Section>
-    {/if}
-  </SectionGrid>
-</Page>
+      {/each}
+    </Section>
+    </SectionGrid>
+  </Page>
+{:else if steady.error}
+  <Page title="Steady order" back={{ href: "/steady", label: "Steady orders" }}>
+    <p class="t-quiet">Cannot read {id}: {steady.error}</p>
+  </Page>
+{/if}
+
+{#snippet more(l: SteadyLine)}
+  {@const flags = l.flags.filter((f) => !l.sentence.includes(f.sentence))}
+  {@const chart = l.history && l.history.length > 1 && l.flags.some((f) => f.kind === "per_guest_up")}
+  {#if l.split || flags.length || chart || asks(l) || l.orderId}
+    <div class="below">
+      <span class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>order <a class="mono" href="/ledger">{l.orderId}</a></span>{/if}</span>
+      {#if l.split}
+        <table class="split">
+          <caption class="sr-only">How the line is split</caption>
+          <tbody>
+            {#each l.split.parts as p (p.productId)}
+              <tr>
+                <td>{p.name} <span class="mono t-quiet">{p.productId}</span>{#if p.onValioList}<span class="t-quiet">, on Valio's list</span>{/if}</td>
+                <td class="r num">{amount(p.quantity, p.unit)}</td>
+                <td class="r num">{money(p.totalCents)}</td>
+              </tr>
+            {/each}
+            <tr class="sum-row">
+              <td>Together, {money(l.split.extraCostCents)} ({l.split.extraCostPct} %) more</td>
+              <td></td>
+              <td class="r num">{money(l.split.totalCents)}</td>
+            </tr>
+          </tbody>
+        </table>
+      {/if}
+      {#each flags as f, i (i)}
+        <p class="flag">{f.sentence}</p>
+      {/each}
+      {#if chart && l.history}
+        <Drift history={l.history} usual={l.usualQuantity} unit={l.unit} id="drift-{l.productId}" />
+      {/if}
+      {#if asks(l)}
+        <div class="act">
+          <Button
+            variant="outline"
+            size="sm"
+            id="accept-{l.productId}"
+            disabled={!!busy}
+            onclick={() => act(l.productId, () => api.acceptLine(s!.id, l.productId))}
+          >
+            {acceptLabel(l)}
+          </Button>
+        </div>
+      {/if}
+    </div>
+  {/if}
+{/snippet}
+
+<style>
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+  }
+  .renewed {
+    font-size: var(--text-xs);
+  }
+  .ask {
+    padding: 1rem;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+  }
+  .problem {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+  .ctl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .qty {
+    min-width: 6rem;
+    text-align: end;
+    font-size: var(--text-xs);
+    color: var(--color-fg-secondary);
+  }
+  .sum {
+    min-width: 5.5rem;
+    text-align: end;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+  .below {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: var(--text-xs);
+  }
+  .pid {
+    display: flex;
+    gap: 1rem;
+    font-size: var(--text-2xs);
+    color: var(--color-fg-secondary);
+  }
+  .pid a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .split {
+    width: 100%;
+    max-width: 34rem;
+    border-collapse: collapse;
+    font-size: var(--text-xs);
+  }
+  .split td {
+    padding: 0.3rem 0.75rem 0.3rem 0;
+  }
+  .split tr + tr td {
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+  .sum-row td {
+    font-weight: 500;
+  }
+  .r {
+    text-align: end;
+    white-space: nowrap;
+  }
+  .flag {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--color-fg-secondary);
+  }
+  .act {
+    display: flex;
+    gap: 0.5rem;
+  }
+  @media (max-width: 760px) {
+    .ctl {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.35rem 0.6rem;
+    }
+    .qty,
+    .sum {
+      min-width: 0;
+    }
+  }
+</style>
