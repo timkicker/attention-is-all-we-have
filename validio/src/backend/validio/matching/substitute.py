@@ -12,6 +12,7 @@ from enum import StrEnum
 
 from ..catalog.model import Product
 from ..catalog.store import Catalog
+from ..text.format import and_list, display_name, money, qty_text, sentences
 from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel
 from ..valio.budget import CallBudget
@@ -64,11 +65,11 @@ class SwapResult:
         b = self.best
         if b is None:
             return "No substitute keeps every rule and can be delivered, so the line waits for a person."
-        name = f"{b.product.id} {b.product.name_en}"
+        name = display_name(b.product.name_en)
         if b.on_valio_list:
             return f"{name} is on Valio's substitute list and keeps every rule."
-        return (f"No listed substitute keeps every rule and can be delivered. {name} does, "
-                f"but it is not on Valio's list, so a person decides.")
+        return (f"No substitute on Valio's list keeps every rule and can be delivered. {name} does, "
+                f"but it is not on the list, so you decide.")
 
 
 def diet_break(p: Product, claims: set[str]) -> str | None:
@@ -78,7 +79,7 @@ def diet_break(p: Product, claims: set[str]) -> str | None:
         level, why = claim_check(p, claim)
         name = CLAIM_NAMES.get(claim, claim.lower())
         if level == TrustLevel.CONTRADICTED:
-            return f"Not {name}: {'; '.join(why)}"
+            return f"Not {name}: {and_list(why)}"
         if level == TrustLevel.MISSING:
             code = CLAIM_ALLERGEN.get(claim)
             what = name.replace(" ", "-")
@@ -134,11 +135,12 @@ def _judge(p: Product, r: Ranked, need: Need, listed: bool) -> SubOption:
     if "Valio gives no delivery date for it" in r.reasons:
         return SubOption(p, SubVerdict.UNDELIVERABLE, f"{kept}, but Valio gives no delivery date for it", listed, r)
     if not r.accepted:
-        return SubOption(p, SubVerdict.REJECTED, "; ".join(r.reasons), listed, r)
-    qty = f"{r.sales_qty} {p.sales_unit} for {r.total_cents / 100:.2f} EUR"
+        return SubOption(p, SubVerdict.REJECTED, sentences(r.reasons).rstrip("."), listed, r)
+    qty = f"{qty_text(r.sales_qty, p.sales_unit)} for {money(r.total_cents)}"
     if listed:
         return SubOption(p, SubVerdict.OK_LISTED, f"{kept}. {qty}, on Valio's substitute list", True, r)
-    return SubOption(p, SubVerdict.OUTSIDE_LIST, f"{kept}. {qty}, not on Valio's list", False, r)
+    # the section it is shown in says it is not on Valio's list, the sentence does not say it again
+    return SubOption(p, SubVerdict.OUTSIDE_LIST, f"{kept}. {qty}", False, r)
 
 
 def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, requested: date,

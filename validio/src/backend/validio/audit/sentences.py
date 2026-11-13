@@ -2,10 +2,11 @@
 
 from datetime import date
 
+from ..text.format import display_name, money, qty_text
+
 
 def eur(cents: int) -> str:
-    sign, cents = ("-" if cents < 0 else ""), abs(cents)
-    return f"{sign}{cents // 100}.{cents % 100:02d} EUR"
+    return money(cents)
 
 
 def _day(iso: str, year: bool = False) -> str:
@@ -26,8 +27,8 @@ def ordered_alone(
     auto_limit_cents: int,
 ) -> str:
     return (
-        f"Ordered {quantity} {unit} of {product_id} {product_name} for {eur(total_cents)} without a human. "
-        f"Stock quantity attested by Valio, contract price until {_day(price_valid_until, year=True)}, "
-        f"delivery {_day(delivery_date)}. "
-        f"Inside mandate {mandate_id} (auto limit disclosed: {eur(auto_limit_cents)})."
+        f"Ordered {qty_text(quantity, unit)} of {display_name(product_name)} ({product_id}) for {money(total_cents)} "
+        f"without a person. Valio attests the stock and the contract price until "
+        f"{_day(price_valid_until, year=True)}, delivery {_day(delivery_date)}. "
+        f"Inside Spend Pass {mandate_id}, whose disclosed auto limit is {money(auto_limit_cents)}."
     )

@@ -61,3 +61,19 @@ def display_name(name: str | None) -> str:
     s = _SHOUT.sub(lambda m: m.group(0).capitalize(), s)
     s = _SIZE.sub(_size, s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def and_list(items: list[str]) -> str:
+    """"a", "a and b", "a, b and c". No comma before the "and"."""
+    items = [i for i in items if i]
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1] if items else ""
+
+
+def sentences(parts: list[str]) -> str:
+    """Fragments as whole sentences: each starts with a capital and ends with a period, none is repeated."""
+    out: list[str] = []
+    for p in parts:
+        p = (p or "").strip().rstrip(".;")
+        if p and (s := p[0].upper() + p[1:] + ("" if p.endswith(("?", "!")) else ".")) not in out:
+            out.append(s)
+    return " ".join(out)

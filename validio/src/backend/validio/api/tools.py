@@ -6,6 +6,7 @@ from ..catalog.model import Product
 from ..demo.seed import STOCKOUT_ID, stockout_note
 from ..orders.supply import LineRequest
 from ..policy.mandate import AUDIENCE, MandateError
+from ..text.format import display_name
 from ..trust.claims import claim_check
 from .schemas import (
     ConfirmIn,
@@ -56,10 +57,15 @@ def nonce(ctx: Ctx) -> NonceView:
     return NonceView(nonce=ctx.nonces.issue(now), aud=AUDIENCE, iat=int(now.timestamp()))
 
 
+def _name(ctx: Ctx, pid: str) -> str:
+    p = ctx.catalog.get(pid)
+    return display_name(p.name_en) if p else pid
+
+
 def _request_view(ctx: Ctx, req: dict) -> SupplyRequestView:
     view = SupplyRequestView.model_validate(req)
     if ctx.stockout() and any(ln.need.product_id == STOCKOUT_ID for ln in view.lines):
-        view.simulated = [SimulatedMark(what=f"stock-out of {STOCKOUT_ID}", sentence=stockout_note(ctx.real_stock()))]
+        view.simulated = [SimulatedMark(what=f"stock-out of {_name(ctx, STOCKOUT_ID)}", sentence=stockout_note(ctx.real_stock()))]
     return view
 
 

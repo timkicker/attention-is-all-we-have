@@ -80,7 +80,7 @@ def test_470836_63_units_33453(scene3):
 def test_outside_list_goes_to_a_person(scene3):
     r, _ = scene3
     assert r.needs_person
-    assert "not on Valio's list" in r.sentence
+    assert "not on the list, so you decide" in r.sentence
 
 
 def test_outside_search_at_most_8_extra_ids(scene3):

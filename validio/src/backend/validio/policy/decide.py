@@ -20,6 +20,7 @@ import cedarpy
 
 from validio.audit.sentences import eur
 from validio.policy.mandate import SUBSTITUTES_LISTED, Mandate, effective_deadline
+from validio.text.format import and_list
 
 HERE = Path(__file__).resolve().parent
 POLICY_FILE = HERE / "policies.cedar"
@@ -309,14 +310,14 @@ def decide(
     allowed, rules = _ask(policy, "PlaceOrder", product_id, agent_id, c)
     if allowed:
         sentence = (
-            f"May order {product_id} alone: {eur(ctx.total_cents)} is inside the auto limit of "
+            f"May order it alone: {eur(ctx.total_cents)} is inside the auto limit of "
             f"{eur(ctx.auto_limit_cents)} and every fact it needs is attested."
         )
         return Decision(Outcome.ALLOW, rules, sentence, c)
     allowed, esc_rules = _ask(policy, "Escalate", product_id, agent_id, c)
     if allowed:
         reasons = _escalation_reasons(ctx) or ["no rule lets the agent order it alone"]
-        return Decision(Outcome.ESCALATE, esc_rules, "Needs a person: " + "; ".join(reasons) + ".", c)
+        return Decision(Outcome.ESCALATE, esc_rules, "Needs a person: " + and_list(reasons) + ".", c)
     blocked = sorted(set(rules) | set(esc_rules)) or ["no-permit"]  # no forbid fired, nothing permitted it
     parts = []
     if "never-break-diet" in blocked:
@@ -327,4 +328,4 @@ def decide(
         parts.append("Valio gives no delivery line for it")
     if not parts:
         parts.append("no rule allows it (category outside the Spend Pass or a sales block)")
-    return Decision(Outcome.DENY, blocked, "Blocked: " + "; ".join(parts) + ".", c)
+    return Decision(Outcome.DENY, blocked, "Blocked: " + and_list(parts) + ".", c)

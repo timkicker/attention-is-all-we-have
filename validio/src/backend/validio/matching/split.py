@@ -15,6 +15,7 @@ from ..catalog.model import Product
 from ..catalog.store import Catalog
 from ..policy.decide import Decision, Outcome, Policy, context_for, decide
 from ..policy.mandate import Mandate
+from ..text.format import display_name, qty_text, sentences
 from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
@@ -58,7 +59,7 @@ class SplitPlan:
 
     @property
     def breaks(self) -> list[str]:
-        return [f"{p.id} {p.name_en} would break a rule: {why}" for p, why in self.refused]
+        return [f"{display_name(p.name_en)} would break a rule. {why[0].upper()}{why[1:]}" for p, why in self.refused]
 
     @property
     def complete(self) -> bool:
@@ -73,14 +74,14 @@ class SplitPlan:
         unit = self.first.sales_unit
         if not self.complete:
             head = self.parts[0].sales_qty if self.parts else 0
-            s = f"{head} of {self.wanted} {unit} can come."
+            s = f"{head} of {qty_text(self.wanted, unit)} can come."
             if self.breaks:
                 s += " " + ". ".join(self.breaks) + ". The rest waits for you"
             else:
                 s += " No listed substitute can fill the rest. It waits for you"
             return s
         parts = " plus ".join(
-            f"{p.sales_qty} {p.product.sales_unit} of {p.product.id}" for p in self.parts)
+            f"{qty_text(p.sales_qty, p.product.sales_unit)} of {display_name(p.product.name_en)}" for p in self.parts)
         diff = self.total_cents - self.base_cents
         limit = f"{self.max_extra_bp / 100:g} %"
         if diff < 0:
@@ -126,14 +127,15 @@ def plan_split(first: Product, wanted: int, required_claims: set[str], cat: Cata
         why = [w for w in [diet_break(sub, required_claims)] if w]
         stock = _stock(sub, a)
         if stock is None:
-            why.append(f"Valio does not confirm its stock ({a.logistic_model})")
+            why.append("Valio does not confirm its stock, the goods sit at the supplier" if a.logistic_model == "Terminal"
+                       else f"Valio does not confirm its stock ({a.logistic_model})")
         if q is None or q.price_cents is None:
             why.append("Valio has no price for it")
         per = _measure(sub, q, unit) if unit else None
         if not why and (per0 is None or per is None):
             why.append("pack sizes cannot be converted by weight or volume")
         if why:
-            plan.refused.append((sub, "; ".join(why)))
+            plan.refused.append((sub, sentences(why).rstrip(".")))
             continue
         qty = min(stock, math.ceil(round(short * per0 / per, 6)))
         part = SplitPart(sub, qty, qty * q.price_cents, True, a)

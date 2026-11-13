@@ -8,6 +8,7 @@ import math
 from datetime import datetime
 
 from ..catalog.model import Product
+from ..text.format import and_list, count, qty_text
 from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel, field_trust, stock_in_sales_units
 from ..valio.models import Availability, Quote
@@ -28,11 +29,11 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
         level, why = claim_check(p, claim)
         name = CLAIM_NAMES.get(claim, claim)
         if level == TrustLevel.CONTRADICTED:
-            reasons.append(f"Not {name}: {'; '.join(why)}")
+            reasons.append(f"Not {name}: {and_list(why)}")
         elif level == TrustLevel.MISSING:
             reasons.append(f"No {name} claim in Valio's data")
         elif level == TrustLevel.UNCHECKED:
-            notes.append(f"{name.capitalize()} claim unchecked: {'; '.join(why)}")
+            notes.append(f"{name.capitalize()} claim unchecked: {and_list(why)}")
     if q is None or q.error or q.price_cents is None:
         reasons.append("Valio has no price for it")
     per, note = amount_per_sales_unit(need, p, q)
@@ -51,7 +52,8 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
         if stock is None:
             notes.append("the quantity is unknown")
         elif sales_qty is not None and stock < sales_qty:
-            reasons.append(f"Only {stock:g} {p.sales_unit} in stock, {sales_qty} needed")
+            reasons.append(f"Out of stock at Valio, {qty_text(sales_qty, p.sales_unit)} needed" if stock <= 0
+                           else f"Only {qty_text(stock, p.sales_unit)} in stock, {count(sales_qty)} needed")
         if a.lines[0].available > need.deliver_by:
             reasons.append(f"Earliest delivery {a.lines[0].available:%d %b}, after {need.deliver_by:%d %b}")
     return Ranked(p, sales_qty, total, not reasons, reasons, notes, field_trust(p, q, a))

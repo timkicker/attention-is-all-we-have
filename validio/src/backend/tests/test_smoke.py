@@ -48,7 +48,7 @@ def test_eur_formats_negative_amounts():
     from validio.matching.reasons import eur as eur_reasons
 
     for eur in (eur_ledger, eur_reasons):
-        assert eur(-150) == "-1.50 EUR"
-        assert eur(-5) == "-0.05 EUR"
-        assert eur(0) == "0.00 EUR"
-        assert eur(101000) == "1010.00 EUR"
+        assert eur(-150) == "-1.50 €"
+        assert eur(-5) == "-0.05 €"
+        assert eur(0) == "0.00 €"
+        assert eur(101000) == "1,010.00 €"

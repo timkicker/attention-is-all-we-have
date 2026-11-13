@@ -140,7 +140,7 @@ def test_sentence_scene2_exact():
         quantity=1000,
         unit="ST",
         product_id="464306",
-        product_name="Valio Arki Eila 1 l",
+        product_name="Valio Arki® Eila® 1 L",
         total_cents=101000,
         price_valid_until="2026-12-31",
         delivery_date="2026-11-16",
@@ -148,9 +148,9 @@ def test_sentence_scene2_exact():
         auto_limit_cents=120000,
     )
     assert s == (
-        "Ordered 1000 ST of 464306 Valio Arki Eila 1 l for 1010.00 EUR without a human. "
-        "Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. "
-        "Inside mandate M-1 (auto limit disclosed: 1200.00 EUR)."
+        "Ordered 1,000 packs of Valio Arki Eila 1 l (464306) for 1,010.00 € without a person. "
+        "Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. "
+        "Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €."
     )
 
 

@@ -73,7 +73,7 @@ def test_best_pick_on_synthetic_milk(syn):
     order = [r.product.id for r in rank(need, cands, q, a, NOW)]
     assert order[0] == "900001" and ranked["900001"].accepted and ranked["900001"].total_cents == 10000
     assert any("Not lactose free" in x for x in ranked["900003"].reasons)
-    assert any("Only 3 KI in stock, 9 needed" in x for x in ranked["900004"].reasons)
+    assert any("Only 3 cartons in stock, 9 needed" in x for x in ranked["900004"].reasons)
     assert any("no delivery date" in x for x in ranked["900008"].reasons)
 
 
@@ -168,23 +168,22 @@ def test_order_placed_alone_and_logged(svc):
     o = svc.submit(mandate=PASS, lines=[LineIn("900001", 100)], deliver_by=MON, idempotency_key="s1")
     assert o["state"] == "placed" and o["totalCents"] == 10000
     (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
-    assert entry.sentence.startswith("Ordered 100 ST of 900001 SYNTHETIC")
+    assert entry.sentence.startswith("Ordered 100 packs of Synthetic")
     assert svc.audit.verify().ok
 
 
 def test_placeholder_named_in_the_ledger(svc):
     o = svc.submit(mandate=PASS, lines=[LineIn("900002", 100)], deliver_by=MON, idempotency_key="s2")
     (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
-    assert entry.sentence.endswith("Valio reports 9999999999 for 900002, a placeholder, not a real count; "
-                                   "treated as in stock.")
+    assert entry.sentence.endswith("Valio gives no real count of the stock, so Validio treats it as in stock.")
 
 
 def test_short_in_boxes_never_approved(svc):
     o = svc.submit(mandate=PASS, lines=[LineIn("900004", 10)], deliver_by=MON, idempotency_key="s3",
                    required_claims=())
     assert o["state"] == "waiting"
-    assert o["lines"][0]["short"] == "Only 3 KI of 900004 in stock, 10 needed"
-    with pytest.raises(ApproveRefused, match="Only 3 KI of 900004 in stock, 10 needed"):
+    assert o["lines"][0]["short"] == "Only 3 cartons of Synthetic lactose free milk drink 1 l box in stock, 10 needed"
+    with pytest.raises(ApproveRefused, match="Only 3 cartons of Synthetic lactose free milk drink 1 l box in stock"):
         svc.approve(o["id"], "owner:synthetic")
 
 
