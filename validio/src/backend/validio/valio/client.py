@@ -118,5 +118,5 @@ class ValioClient:
             raise ReplayMiss(f"recordings disagree on {endpoint} for {bad} on {requested}, run make record")
         missing = [i for i in ids if i not in rows]
         if missing:
-            raise ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record")
+            raise ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record first")
         return {**head, "products": [rows[i] for i in ids]}
