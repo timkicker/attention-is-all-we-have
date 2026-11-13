@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from jwcrypto.jwk import JWK
+from jwcrypto.jws import JWS, InvalidJWSSignature
 from sd_jwt.common import SDObj
 from sd_jwt.holder import SDJWTHolder
 from sd_jwt.issuer import SDJWTIssuer
@@ -168,8 +169,16 @@ def verify_presentation(
     nonce = _kb_nonce(token)
     nonces.check(nonce, now)
     try:
-        if _b64json(token.split("~", 1)[0].split(".")[0]).get("alg") != ALG:
+        issuer_jwt = token.split("~", 1)[0]
+        if _b64json(issuer_jwt.split(".")[0]).get("alg") != ALG:
             raise MandateError("wrong algorithm")
+        # checked here first, so a failing signature below can only be the agent's key binding
+        jws = JWS()
+        jws.deserialize(issuer_jwt)
+        try:
+            jws.verify(kitchen_pub, alg=ALG)
+        except InvalidJWSSignature as e:
+            raise MandateError("issuer signature does not verify") from e
         verifier = SDJWTVerifier(
             token,
             lambda iss, _hdr: kitchen_pub if iss == issuer else _raise(MandateError("unknown issuer")),
@@ -179,7 +188,16 @@ def verify_presentation(
         payload = verifier.get_verified_payload()
     except MandateError:
         raise
-    except Exception as e:  # sd-jwt raises ValueError, KeyError or jwcrypto errors
+    except InvalidJWSSignature as e:
+        raise MandateError("holder key binding does not verify") from e
+    except ValueError as e:
+        msg = str(e)
+        if "Invalid audience" in msg:
+            raise MandateError("wrong audience") from e
+        if "Invalid digest" in msg:
+            raise MandateError("disclosures do not match the key binding") from e
+        raise MandateError(f"invalid Spend Pass ({type(e).__name__})") from e
+    except Exception as e:  # sd-jwt raises KeyError or other jwcrypto errors
         raise MandateError(f"invalid Spend Pass ({type(e).__name__})") from e
 
     ts = int(now.timestamp())

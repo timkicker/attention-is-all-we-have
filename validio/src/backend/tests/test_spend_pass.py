@@ -141,7 +141,7 @@ def test_stale_nonce_rejected(issuance, keys):
 def test_foreign_holder_key_rejected(issuance, keys):
     nonces = NonceStore()
     token = _present(issuance, keys, nonces, agent=JWK.generate(kty="EC", crv="P-256"))
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^holder key binding does not verify$"):
         _verify(token, keys, nonces)
 
 
@@ -149,14 +149,14 @@ def test_foreign_issuer_key_rejected(keys):
     nonces = NonceStore()
     forged = issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, JWK.generate(kty="EC", crv="P-256"), keys[1])
     token = _present(forged, keys, nonces)
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^issuer signature does not verify$"):
         _verify(token, keys, nonces)
 
 
 def test_wrong_audience_rejected(issuance, keys):
     nonces = NonceStore()
     token = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonces.issue(NOW))
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^wrong audience$"):
         _verify(token, keys, nonces)
 
 
@@ -171,20 +171,52 @@ def test_tampered_token_rejected(issuance, keys):
     body = json.loads(base64.urlsafe_b64decode(p + "=="))
     body["deliverBy"] = "2026-12-24"
     p2 = base64.urlsafe_b64encode(json.dumps(body).encode()).rstrip(b"=").decode()
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^issuer signature does not verify$"):
         _verify("~".join([f"{h}.{p2}.{s}", *rest]), keys, nonces)
 
 
 def test_garbage_rejected(keys):
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^no key binding$"):
         _verify("not-a-token", keys, NonceStore())
 
 
 def test_presentation_without_key_binding_rejected(issuance, keys):
     nonces = NonceStore()
     nonces.issue(NOW)
-    with pytest.raises(MandateError):
+    with pytest.raises(MandateError, match="^no key binding$"):
         _verify(issuance, keys, nonces)  # the bare issuance has no KB-JWT
+
+
+def _b64(x) -> str:
+    import base64
+    import json
+
+    return base64.urlsafe_b64encode(json.dumps(x).encode()).rstrip(b"=").decode()
+
+
+def test_added_disclosure_rejected(issuance, keys):
+    nonces = NonceStore()
+    parts = _present(issuance, keys, nonces).split("~")
+    token = "~".join([*parts[:-1], _b64(["salt", "approvers", ["owner:mallory"]]), parts[-1]])
+    with pytest.raises(MandateError, match="^disclosures do not match the key binding$"):
+        _verify(token, keys, nonces)
+
+
+def test_removed_disclosure_rejected(issuance, keys):
+    nonces = NonceStore()
+    parts = _present(issuance, keys, nonces).split("~")
+    with pytest.raises(MandateError, match="^disclosures do not match the key binding$"):
+        _verify("~".join([parts[0], *parts[2:]]), keys, nonces)
+
+
+def test_failed_check_keeps_the_nonce_unused(issuance, keys):
+    # a rejected presentation must not burn the nonce of a later honest one
+    nonces = NonceStore()
+    nonce = nonces.issue(NOW)
+    bad = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonce)
+    with pytest.raises(MandateError, match="^wrong audience$"):
+        _verify(bad, keys, nonces)
+    assert _verify(present(issuance, SHOWN, keys[1], AUDIENCE, nonce), keys, nonces).id == "M-1"
 
 
 def test_key_file_round_trip(tmp_path):
