@@ -436,3 +436,11 @@ def test_graded_without_amount_fails_closed(catalog, valio, mandate):
     d = graded(catalog, valio, mandate, "464306", 1000, sales_qty=None)
     assert d.context["quantityCovers"] is False
     assert d.outcome is Outcome.ESCALATE
+
+
+def test_graded_unit_mismatch_counts_sales_units(catalog, valio, mandate):
+    # 469054: 36 ST is 3 boxes of 12
+    assert graded(catalog, valio, mandate, "469054", 3, required_claims=()).context["quantityCovers"] is True
+    d = graded(catalog, valio, mandate, "469054", 4, required_claims=())
+    assert d.context["quantityCovers"] is False
+    assert d.outcome is not Outcome.ALLOW

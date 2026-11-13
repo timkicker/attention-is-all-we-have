@@ -15,14 +15,13 @@ from ..catalog.model import Product
 from ..catalog.store import Catalog
 from ..policy.decide import Decision, Outcome, Policy, context_for, decide
 from ..policy.mandate import Mandate
+from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
 from ..valio.models import Availability, Quote
 from .need import kg_per_sales_unit, litres_per_sales_unit
 from .reasons import eur
 from .substitute import diet_break
-
-UNKNOWN_AMOUNT = 999999
 
 
 @dataclass
@@ -88,11 +87,12 @@ class SplitPlan:
                 f"{eur(diff)} ({self.extra_pct} %) more, inside your {limit} split limit")
 
 
-def _stock(a: Availability | None) -> int | None:
-    """Attested stock in sales units, None when Valio does not confirm a real number."""
-    if a is None or not a.deliverable or a.logistic_model != "Stock" or a.amount in (None, UNKNOWN_AMOUNT):
+def _stock(p: Product, a: Availability | None) -> int | None:
+    """Attested stock in whole sales units, None when Valio does not confirm a real number in a known unit."""
+    if a is None or a.logistic_model != "Stock":
         return None
-    return int(a.amount)
+    stock = stock_in_sales_units(p, a)
+    return None if stock is None else math.floor(round(stock, 6))
 
 
 def _measure(p: Product, q: Quote | None, unit: str) -> float | None:
@@ -104,7 +104,7 @@ def plan_split(first: Product, wanted: int, required_claims: set[str], cat: Cata
                max_extra_bp: int = 500) -> SplitPlan | None:
     """None when the ordered product covers the line alone or cannot be priced."""
     q0, a0 = quotes.get(first.id), avail.get(first.id)
-    stock0 = _stock(a0)
+    stock0 = _stock(first, a0)
     if q0 is None or q0.price_cents is None or stock0 is None or stock0 >= wanted:
         return None
     plan = SplitPlan(first, wanted, wanted * q0.price_cents, max_extra_bp)
@@ -121,7 +121,7 @@ def plan_split(first: Product, wanted: int, required_claims: set[str], cat: Cata
             plan.skipped.append((sub, "Valio gives no delivery date for it"))
             continue
         why = [w for w in [diet_break(sub, required_claims)] if w]
-        stock = _stock(a)
+        stock = _stock(sub, a)
         if stock is None:
             why.append(f"Valio does not confirm its stock ({a.logistic_model})")
         if q is None or q.price_cents is None:

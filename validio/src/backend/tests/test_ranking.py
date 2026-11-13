@@ -102,3 +102,19 @@ def test_rejected_after_accepted_and_every_option_has_sentence(live):
         assert r.why, r.product.id
     rejected = {r.product.id: r for r in out if not r.accepted}
     assert rejected["462921"].why == rejected["462921"].reasons
+
+
+def test_unit_mismatch_counts_sales_units(catalog, valio):
+    # 469054: Valio has 36 ST, which is 3 boxes of 12. 10 boxes must not pass the stock check.
+    from validio.matching.need import Need
+    from validio.matching.rank import rank_one
+
+    p = catalog.get("469054")
+    b = CallBudget(40)
+    q, a = valio.price([p.id], MON, b)[p.id], valio.availability([p.id], MON, b)[p.id]
+    r = rank_one(Need("item", 10, "PCS", set(), set(), MON, None, product_id=p.id), p, q, a, NOW)
+    assert r.sales_qty == 10
+    assert not r.accepted
+    assert any("Only 3 KI in stock" in x for x in r.reasons)
+    ok = rank_one(Need("item", 3, "PCS", set(), set(), MON, None, product_id=p.id), p, q, a, NOW)
+    assert not any("in stock" in x for x in ok.reasons)
