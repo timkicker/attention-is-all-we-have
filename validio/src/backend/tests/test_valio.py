@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from pathlib import Path
 
 import httpx
 import pytest
@@ -146,5 +147,53 @@ def test_forbidden_host_refused():
 @pytest.mark.live
 def test_live_ping():
     s = load_settings()
-    r = httpx.get(s.valio_base_url + "/api/ping", headers={"X-API-Key": s.valio_api_key}, timeout=30)
+    from validio.valio.client import checked_base_url
+
+    r = httpx.get(checked_base_url(s.valio_base_url) + "/api/ping", headers={"X-API-Key": s.valio_api_key}, timeout=30)
     assert r.json() == {"status": "ok"}
+
+
+# The guard parses the URL: only https://junction26.valioaimo.fi, in any letter case, no userinfo (review M2).
+BAD_BASES = [
+    "https://API.valioaimo" + ".fi",
+    "https://u@api.valioaimo" + ".fi",
+    "https://TOIMITUSTUKKU.valioaimo" + ".fi",
+    "https://www.valioaimo.fi",
+    "http://junction26.valioaimo.fi",
+    "https://junction26.valioaimo.fi.evil.example",
+    "https://user:pw@junction26.valioaimo.fi",
+    "https://junction26.valioaimo.fi:8443",
+    "junction26.valioaimo.fi",
+]
+
+
+@pytest.mark.parametrize("base", BAD_BASES)
+def test_only_the_test_api_host(base):
+    from validio.valio.client import checked_base_url
+
+    with pytest.raises(ValueError, match="only https://junction26.valioaimo.fi"):
+        checked_base_url(base)
+    with pytest.raises(ValueError, match="only https://junction26.valioaimo.fi"):
+        ValioClient(base, "k", "live", None)
+
+
+def test_test_api_host_accepted():
+    from validio.valio.client import checked_base_url
+
+    assert checked_base_url("https://Junction26.ValioAimo.fi/") == "https://junction26.valioaimo.fi"
+    assert ValioClient("https://junction26.valioaimo.fi", "k", "live", None).base_url == \
+        "https://junction26.valioaimo.fi"
+
+
+def test_fetch_data_refuses_other_hosts(tmp_path, monkeypatch):
+    import importlib.util
+
+    script = Path(__file__).resolve().parents[3] / "scripts" / "fetch_data.py"
+    spec = importlib.util.spec_from_file_location("fetch_data", script)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    monkeypatch.setenv("VALIO_BASE_URL", "https://API.valioaimo" + ".fi")
+    monkeypatch.setattr(httpx, "stream", lambda *a, **k: pytest.fail("a request went out"))
+    monkeypatch.setattr("sys.argv", ["fetch_data.py", "--out", str(tmp_path)])
+    with pytest.raises(ValueError, match="only https://junction26.valioaimo.fi"):
+        mod.main()

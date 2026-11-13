@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src" / "backend"))
 from validio.config import DATA, load_settings
+from validio.valio.client import checked_base_url
 
 FILES = {
     "valio_aimo_junction26_product_data.json": (
@@ -36,6 +37,7 @@ def main() -> int:
     ap.add_argument("--from-dir", type=Path)
     ap.add_argument("--out", type=Path, default=DATA / "raw")
     args = ap.parse_args()
+    base = None if args.from_dir else checked_base_url(load_settings().valio_base_url)
     args.out.mkdir(parents=True, exist_ok=True)
     bad = 0
     for name, (route, want) in FILES.items():
@@ -46,7 +48,7 @@ def main() -> int:
             import httpx
 
             s = load_settings()
-            with httpx.stream("GET", s.valio_base_url + route, headers={"X-API-Key": s.valio_api_key},
+            with httpx.stream("GET", base + route, headers={"X-API-Key": s.valio_api_key},
                               timeout=120) as r:
                 r.raise_for_status()
                 with dst.open("wb") as f:
