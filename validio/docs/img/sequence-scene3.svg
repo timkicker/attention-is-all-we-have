@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1072 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sequence-scene3-title sequence-scene3-desc" id="sequence-scene3-root">
+<title id="sequence-scene3-title">Scene 3: owner approves a swap</title>
+<desc id="sequence-scene3-desc">With 466375 out of stock, Validio blocks three listed substitutes on diet, finds 465256 beyond Valio's list, Cedar asks a person, and the owner's approval is checked against Valio again before the order is placed.</desc>
+<defs>
+      <style>#sequence-scene3-root { font-family: 'Geist', system-ui, sans-serif; color: #2d3142; }
+      #sequence-scene3-root .scroll { overflow-x: auto; }</style>
+  <pattern id="sequence-scene3-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" fill="#2d3142" fill-opacity="0.10"/></pattern>
+  <marker id="sequence-scene3-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+  <marker id="sequence-scene3-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5d8a"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f5f5f5"/>
+<rect width="100%" height="100%" fill="url(#sequence-scene3-dots)" opacity="0.55"/>
+<line x1="112" y1="128" x2="112" y2="656" stroke="#2d3142" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.22"/>
+<line x1="336" y1="128" x2="336" y2="656" stroke="#2d3142" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.22"/>
+<line x1="560" y1="128" x2="560" y2="656" stroke="#2d3142" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.22"/>
+<line x1="768" y1="128" x2="768" y2="656" stroke="#2d3142" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.22"/>
+<line x1="960" y1="128" x2="960" y2="656" stroke="#2d3142" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.22"/>
+<rect x="332" y="164" width="8" height="348" fill="#2d3142" stroke="#4f5d75" stroke-width="0.8" fill-opacity="0.06"/>
+<rect x="332" y="540" width="8" height="92" fill="#2d3142" stroke="#4f5d75" stroke-width="0.8" fill-opacity="0.06"/>
+<rect x="764" y="420" width="8" height="48" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="0.8" fill-opacity="0.10"/>
+<line x1="112" y1="168" x2="332" y2="168" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="159.0" y="152" width="130" height="12" rx="2" fill="#f5f5f5"/>
+<text x="224" y="161" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">REQUEST_SUPPLY + PASS</text>
+<line x1="340" y1="208" x2="560" y2="208" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="386.0" y="192" width="124" height="12" rx="2" fill="#f5f5f5"/>
+<text x="448" y="201" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">PRICE + STOCK 466375</text>
+<line x1="560" y1="248" x2="340" y2="248" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="394.5" y="232" width="107" height="12" rx="2" fill="#f5f5f5"/>
+<text x="448" y="241" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">0 BAGS, SIMULATED</text>
+<path d="M 340 288 L 376 288 L 376 316 L 340 316" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="384" y="296" width="163" height="12" rx="2" fill="#f5f5f5"/>
+<text x="465.5" y="305" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">3 LISTED HAVE MILK, NO CALL</text>
+<line x1="340" y1="356" x2="560" y2="356" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="380.5" y="340" width="135" height="12" rx="2" fill="#f5f5f5"/>
+<text x="448" y="349" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">473986 + 8 BEYOND LIST</text>
+<line x1="560" y1="396" x2="340" y2="396" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="383.0" y="380" width="130" height="12" rx="2" fill="#f5f5f5"/>
+<text x="448" y="389" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">465256: 10 FOR 180.10</text>
+<line x1="340" y1="436" x2="764" y2="436" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="616.0" y="420" width="96" height="12" rx="2" fill="#f5f5f5"/>
+<text x="664" y="429" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">FACTS OF 465256</text>
+<line x1="764" y1="468" x2="340" y2="468" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="633.0" y="452" width="62" height="12" rx="2" fill="#f5f5f5"/>
+<text x="664" y="461" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ASK-HUMAN</text>
+<line x1="332" y1="504" x2="112" y2="504" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="184.5" y="488" width="79" height="12" rx="2" fill="#f5f5f5"/>
+<text x="224" y="497" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">WAITING, O-2</text>
+<line x1="960" y1="552" x2="340" y2="552" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="819.0" y="536" width="90" height="12" rx="2" fill="#f5f5f5"/>
+<text x="864" y="545" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">APPROVE + CODE</text>
+<line x1="340" y1="592" x2="560" y2="592" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<rect x="417.0" y="576" width="62" height="12" rx="2" fill="#f5f5f5"/>
+<text x="448" y="585" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">ASK AGAIN</text>
+<line x1="340" y1="624" x2="960" y2="624" stroke="#2f5d8a" stroke-width="1.4" marker-end="url(#sequence-scene3-arrow-accent)"/>
+<rect x="816.0" y="608" width="96" height="12" rx="2" fill="#f5f5f5"/>
+<text x="864" y="617" fill="#2f5d8a" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">PLACED + LEDGER</text>
+<rect x="36" y="64" width="152" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="36" y="64" width="152" height="64" rx="6" fill="#4f5d75" stroke="#5a6580" stroke-width="1" fill-opacity="0.10"/>
+<rect x="44" y="72" width="28" height="12" rx="2" fill="none" stroke="#5a6580" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="58.0" y="81" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">EXT</text>
+<text x="112.0" y="102" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Kitchen agent</text>
+<text x="112.0" y="117" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">MCP client</text>
+<rect x="260" y="64" width="152" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="260" y="64" width="152" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="268" y="72" width="28" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="282.0" y="81" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+<text x="336.0" y="102" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Validio</text>
+<text x="336.0" y="117" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">supply · orders</text>
+<rect x="484" y="64" width="152" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="484" y="64" width="152" height="64" rx="6" fill="#4f5d75" stroke="#5a6580" stroke-width="1" fill-opacity="0.10"/>
+<rect x="492" y="72" width="28" height="12" rx="2" fill="none" stroke="#5a6580" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="506.0" y="81" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">EXT</text>
+<text x="560.0" y="102" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Valio test API</text>
+<text x="560.0" y="117" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">replayed answers</text>
+<rect x="692" y="64" width="152" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="692" y="64" width="152" height="64" rx="6" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<rect x="700" y="72" width="40" height="12" rx="2" fill="none" stroke="#2f5d8a" stroke-width="0.8" stroke-opacity="0.50"/>
+<text x="720.0" y="81" fill="#2f5d8a" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CEDAR</text>
+<text x="768.0" y="102" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Hard Lines</text>
+<text x="768.0" y="117" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">policies.cedar</text>
+<rect x="884" y="64" width="152" height="64" rx="6" fill="#f5f5f5"/>
+<rect x="884" y="64" width="152" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="892" y="72" width="28" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="906.0" y="81" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">UI</text>
+<text x="960.0" y="102" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Owner</text>
+<text x="960.0" y="117" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">phone page</text>
+<line x1="36" y1="672" x2="1036" y2="672" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+<text x="36" y="688" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.18em">LEGEND</text>
+<rect x="36" y="704" width="14" height="10" rx="2" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<text x="56" y="712" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">Hard Lines</text>
+<line x1="133.0" y1="709" x2="161.0" y2="709" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow)"/>
+<text x="169.0" y="712" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">Call</text>
+<line x1="216.6" y1="709" x2="244.6" y2="709" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#sequence-scene3-arrow)"/>
+<text x="252.6" y="712" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">Answer</text>
+<line x1="310.0" y1="709" x2="338.0" y2="709" stroke="#2f5d8a" stroke-width="1.2" marker-end="url(#sequence-scene3-arrow-accent)"/>
+<text x="346.0" y="712" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">Order placed</text>
+</svg>
