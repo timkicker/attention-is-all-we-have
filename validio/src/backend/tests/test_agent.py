@@ -95,14 +95,26 @@ def test_redact_drops_every_supplier_text_field():
 @pytest.mark.asyncio
 @pytest.mark.skipif(not os.environ.get("GEMINI_API_KEY"),
                     reason="LIVE GEMINI SKIPPED: GEMINI_API_KEY is not set, only the fake twin ran")
-async def test_gemini_buyer_scene2_three_runs_same_order():
+async def test_gemini_buyer_scene2_three_runs_same_order(ctx):
+    """Live Gemini against lane B2's real MCP server in process on a seeded store (replay, no Valio call)."""
+    from validio.agent.holder import Holder
+    from validio.api import tools
+    from validio.api.mcp_server import server
+
+    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
     orders = []
     for _ in range(3):
         llm = GeminiLLM.from_env()
-        _, calls = await scene(2, llm)
-        assert agent_double.PLANTED not in json.dumps(llm.inputs)
-        orders.append([c[1]["choice"] for c in calls if c[0] == "confirm_order"])
-    assert orders[0] == orders[1] == orders[2] == [[{"productId": "464306", "salesQty": 1000}]]
+        async with McpPort(server, spend_pass=h.presentation) as port:
+            t = await run_scene(2, llm, port)
+        seen = json.dumps(llm.inputs)
+        assert "AI agents" not in seen and "untrusted" not in seen.lower()  # the planted line never reached it
+        answers = [e.data for e in t.events if e.kind == "answer" and e.name == "confirm_order"]
+        assert answers and answers[-1].get("state") == "placed"
+        orders.append([c.data["choice"] for c in t.events if c.kind == "call" and c.name == "confirm_order"])
+    assert orders[0] == orders[1] == orders[2]
+    assert [{k: v for k, v in c.items() if k in ("productId", "salesQty")} for c in orders[0][-1]] == [
+        {"productId": "464306", "salesQty": 1000}]
 
 
 def test_gemini_path_builds_offline():
