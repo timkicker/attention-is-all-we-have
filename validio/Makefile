@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke e2e-live a11y snapshots
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke e2e-live a11y snapshots video
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -93,3 +93,10 @@ e2e-live:
 a11y:
 	cd src/frontend && VITE_API=live npm run build && \
 	{ npx playwright test -c a11y/a11y.config.ts; s=$$?; node a11y/summary.mjs ../../artifacts/a11y/results; exit $$s; }
+
+# A scripted recording of the five scenes for the demo video: agent terminal left, web app right,
+# 1920x1080, headless Firefox, its own server on a free port with replayed Valio answers. Writes
+# artifacts/video/validio-demo.webm (and .mp4 with ffmpeg). Nothing is uploaded.
+video:
+	cd src/frontend && npx playwright install firefox
+	$(UV) python -W ignore ../../scripts/record_video.py
