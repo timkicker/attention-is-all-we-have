@@ -444,3 +444,10 @@ def test_graded_unit_mismatch_counts_sales_units(catalog, valio, mandate):
     d = graded(catalog, valio, mandate, "469054", 4, required_claims=())
     assert d.context["quantityCovers"] is False
     assert d.outcome is not Outcome.ALLOW
+
+
+def test_deny_without_forbid_names_a_rule(mandate):
+    # category outside the pass: no forbid fires, the ledger still gets a rule id
+    d = decide(scene2(mandate, category="20100"), "x")
+    assert d.outcome is Outcome.DENY
+    assert d.rule_ids == ["no-permit"]

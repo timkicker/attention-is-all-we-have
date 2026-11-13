@@ -49,7 +49,7 @@ class ValioClient:
         self.chunk = min(chunk, MAX_PER_CALL)
         self._api_key = api_key
         self._http = http
-        self._index: dict[tuple[str, str], tuple[dict, dict[str, dict]]] = {}
+        self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
 
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
         out: dict[str, Quote] = {}
@@ -102,13 +102,17 @@ class ValioClient:
             return json.loads(exact.read_text())["response"]
         key = (endpoint, requested.isoformat())
         if key not in self._index:
-            head, rows = {}, {}
+            head, rows, clash = {}, {}, set()
             for f in sorted(d.glob("*.json")):
                 resp = json.loads(f.read_text())["response"]
                 head = {k: v for k, v in resp.items() if k != "products"}
-                rows.update({x["productId"]: x for x in resp["products"]})
-            self._index[key] = (head, rows)
-        head, rows = self._index[key]
+                for x in resp["products"]:
+                    if rows.setdefault(x["productId"], x) != x:
+                        clash.add(x["productId"])
+            self._index[key] = (head, rows, clash)
+        head, rows, clash = self._index[key]
+        if bad := [i for i in ids if i in clash]:
+            raise ReplayMiss(f"recordings disagree on {endpoint} for {bad} on {requested}, run make record")
         missing = [i for i in ids if i not in rows]
         if missing:
             raise ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record")

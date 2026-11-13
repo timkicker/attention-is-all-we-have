@@ -53,3 +53,16 @@ def test_guards_pass_on_this_repo():
     root = SCRIPTS.parent
     assert run("check_no_secrets.sh", root).returncode == 0
     assert run("check_forbidden_hosts.sh", root).returncode == 0
+
+
+def test_secret_check_catches_nvidia_and_modal_tokens(tmp_path):
+    for i, leak in enumerate(['NVIDIA_API_KEY="nvapi-' + "Ab1_" * 8 + '"',
+                              'MODAL_TOKEN_SECRET="as-' + "Ab12" * 6 + '"',
+                              'MODAL_TOKEN_ID="ak-' + "Ab12" * 6 + '"']):
+        (tmp_path / str(i)).mkdir()
+        root = clean_tree(tmp_path / str(i))
+        assert run("check_no_secrets.sh", root).returncode == 0
+        (root / "src" / "leak.py").write_text(leak + "\n")
+        r = run("check_no_secrets.sh", root)
+        assert r.returncode == 1, leak
+        assert "Ab12Ab12" not in r.stdout and "Ab1_Ab1_" not in r.stdout

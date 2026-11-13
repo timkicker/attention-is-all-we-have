@@ -4,7 +4,8 @@ from datetime import date
 
 
 def eur(cents: int) -> str:
-    return f"{cents // 100}.{cents % 100:02d} EUR"
+    sign, cents = ("-" if cents < 0 else ""), abs(cents)
+    return f"{sign}{cents // 100}.{cents % 100:02d} EUR"
 
 
 def _day(iso: str, year: bool = False) -> str:
