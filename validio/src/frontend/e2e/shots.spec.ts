@@ -40,6 +40,15 @@ test("every page, both widths", async ({ page }) => {
   await expect(page.locator("#order-steps")).toContainText("Placed at Valio");
   await shoot(page, "approve-done");
 
+  await page.goto("/steady");
+  await shoot(page, "steady-list");
+  await page.goto("/steady/S-1");
+  await expect(page.locator("#simulated-history")).toBeVisible();
+  await shoot(page, "steady-before");
+  await page.locator("#renew").click();
+  await expect(page.locator("#line-466375")).toContainText("26 %");
+  await shoot(page, "steady-renewed");
+
   await page.goto("/ledger");
   await expect(page.locator("#chain-status")).toContainText("Chain verified");
   await page.locator("#entry-2-details").click();
