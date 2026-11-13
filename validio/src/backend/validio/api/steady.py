@@ -35,6 +35,8 @@ from ..standing.drift import unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
+from ..text.format import display_name, qty_text
+from ..text.format import unit_word as fmt_unit_word
 from ..valio.client import ValioClient
 from .schemas import ApproveIn
 
@@ -231,7 +233,7 @@ def _pending(so: StandingOrder, h) -> SteadyOrderOut:
         out.append(SteadyLineOut(
             product_id=ln.product_id, name=p.name_en if p else ln.product_id, unit=_unit(ln.product_id),
             usual_quantity=ln.sales_qty, result="pending",
-            sentence=f"Median of the last {len(amounts)} weeks." if varies else "Usual amount.",
+            sentence=f"Median of the last {len(amounts)} weeks." if varies else "",
             history=amounts if varies else None))
     return SteadyOrderOut(id=so.id, name=so.name, weekday=WEEKDAY_NAMES[so.weekday], guests_per_week=so.guests,
                           weeks_learned=so.learned_from, simulated_history=so.simulated, lines=out)
@@ -245,8 +247,13 @@ def _unit(pid: str) -> str:
     if pid not in _UNITS:
         p = runtime.catalog.get(pid)
         su = p.sales_unit if p else ""
-        _UNITS[pid] = {"BAG": "bags", "KI": "cartons", "ST": "packs"}.get(su, (su or "units").lower())
+        _UNITS[pid] = fmt_unit_word(su) or "units"
     return _UNITS[pid]
+
+
+def _qty(n: int, pid: str) -> str:
+    p = runtime.catalog.get(pid)
+    return qty_text(n, p.sales_unit if p else None)
 
 
 def _line_out(pending: SteadyLineOut, rl: RenewedLine) -> SteadyLineOut:
@@ -347,8 +354,8 @@ def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | No
                 flags = " ".join(f.sentence for f in rl.flags if f.sentence not in rl.sentence)
                 live.audit.append(
                     at=s.now, actor="validio", kind="decision",
-                    sentence=f"Steady Order {so.id}, {rl.usual_qty} {line.unit} of {rl.product_id} "
-                             f"{line.name}: {rl.sentence}" + (f" {flags}" if flags else ""),
+                    sentence=f"Steady Order {so.id}, {_qty(rl.usual_qty, rl.product_id)} of "
+                             f"{display_name(line.name)} ({rl.product_id}): {rl.sentence}" + (f" {flags}" if flags else ""),
                     facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed,
                     rule_ids=list(rl.decision.rule_ids) if rl.decision is not None else [], order_id=None)
             out.append(line)
@@ -395,8 +402,8 @@ def steady_accept(request: Request, order_id: str, product_id: str,
             elif o["state"] == "placed" and fresh:  # approve writes its own approval entry, this path needs one
                 live.audit.append(
                     at=s.now, actor=CHEF, kind="approval",
-                    sentence=f"Chef accepted {line.this_week_quantity} {line.unit} of {product_id} {line.name} "
-                             f"for Steady Order {so.id}: {line.sentence}",
+                    sentence=f"Chef accepted {_qty(line.this_week_quantity, product_id)} of "
+                             f"{display_name(line.name)} ({product_id}) for Steady Order {so.id}: {line.sentence}",
                     facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=[], order_id=o["id"])
         except ApproveRefused as e:
             # no waiting order is left behind where no page shows it: the line ends blocked with the reason

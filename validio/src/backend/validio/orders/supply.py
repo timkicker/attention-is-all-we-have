@@ -13,9 +13,11 @@ from typing import Any
 from ..catalog.model import Product
 from ..matching.need import CLAIM_NAMES, KINDS, Need, Ranked, parse_need, screen
 from ..matching.rank import rank
+from ..matching.reasons import carbon_sentence, option_sentence
 from ..matching.substitute import SubOption, SubVerdict, safe_swap
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
+from ..text.format import display_name, money, qty_text
 from ..valio.budget import CallBudget, CallBudgetExceeded
 from .service import (
     SEVERITY,
@@ -46,10 +48,9 @@ class RequestError(ValueError):
     """The request cannot be read (HTTP 422)."""
 
 
-def _sentence(r: Ranked) -> str:
-    parts = list(r.why) if r.accepted and r.why else list(r.reasons) + list(r.notes)
-    s = "; ".join(p for p in parts if p) or "Not usable"
-    return s[0].upper() + s[1:] + ("" if s.endswith(".") else ".")
+def _sentence(r: Ranked, carbon: str | None = None) -> str:
+    """`carbon` is the footprint sentence the line's note already gives for every option, left out here."""
+    return option_sentence(r.why, r.reasons, r.notes, r.accepted, carbon)
 
 
 def _kind_of(p: Product) -> str | None:
@@ -84,7 +85,8 @@ class SupplyService:
             unit = (ln.unit or p.sales_unit).upper()
             unit = unit if unit in ("L", "KG") else "PCS"
             need = Need(_kind_of(p) or "", ln.quantity, unit, set(diet), set(), deliver_by or self._default_by(mandate),
-                        None, product_id=p.id, text=ln.text or f"{ln.quantity:g} {ln.unit or p.sales_unit} of {p.id}")
+                        None, product_id=p.id,
+                        text=ln.text or f"{qty_text(ln.quantity, ln.unit or p.sales_unit)} of {display_name(p.name_en)}")
         elif ln.text:
             try:
                 need = parse_need(ln.text, self.now().date())
@@ -97,6 +99,12 @@ class SupplyService:
             raise RequestError("a line needs text or a product id")
         need.excluded_claims |= {NEAR[c] for c in need.required_claims if c in NEAR}
         return need
+
+    def _line_text(self, ln: LineRequest) -> str:
+        p = self.catalog.get(ln.product_id) if ln.product_id else None
+        if ln.text or p is None:
+            return ln.text or f"{ln.quantity:g} {ln.unit or ''} of {ln.product_id}"
+        return f"{qty_text(ln.quantity or 0, ln.unit or p.sales_unit)} of {display_name(p.name_en)}"
 
     def _default_by(self, mandate: Mandate) -> date:
         return date.fromisoformat(mandate.deliver_by) if mandate.deliver_by else self.now().date()
@@ -148,20 +156,23 @@ class SupplyService:
         avail = self.orders.adjust(self.valio.availability(ids, need.deliver_by, budget)) if ids else {}
         ranked = rank(need, cands, quotes, avail, self.now(), prefer_labels=tuple(mandate.prefer_labels or ()))
 
+        carbon = {p.carbon_kg_per_kg for p in cands if p.carbon_kg_per_kg is not None}
+        same = carbon_sentence(next(p for p in cands if p.carbon_kg_per_kg is not None)) if len(cands) > 1 and len(carbon) == 1 else None
         options, chosen = [], None
         for r in ranked:
             d = self._judge(mandate, r, avail.get(r.product.id))
             denied = d is not None and d.outcome is Outcome.DENY
             if r.accepted and not denied and chosen is None:
                 chosen = r
-                options.append(self._option(r, "chosen", _sentence(r), 1))
+                options.append(self._option(r, "chosen", _sentence(r, same), 1))
             elif r.accepted and not denied:
-                options.append(self._option(r, "ranked", _sentence(r), len([o for o in options if "rank" in o]) + 1))
+                options.append(self._option(r, "ranked", _sentence(r, same),
+                                            len([o for o in options if "rank" in o]) + 1))
             elif denied:
-                options.append(self._option(r, "blocked", f"{_sentence(r)[:-1]}. {d.sentence}"))
+                options.append(self._option(r, "blocked", f"{_sentence(r, same)} {d.sentence}"))
             else:
                 verdict = "not_deliverable" if "Valio gives no delivery date for it" in r.reasons else "rejected"
-                options.append(self._option(r, verdict, _sentence(r)))
+                options.append(self._option(r, verdict, _sentence(r, same)))
         options += [self._option(r, "rejected", _sentence(r)) for r in dropped]
 
         line: dict[str, Any] = {
@@ -190,8 +201,7 @@ class SupplyService:
                                   on_valio_list=best.on_valio_list)
         if any((o.get("supplierText") or {}).get("planted") for o in options):
             line["note"] = "A description in these options talks to AI agents. Descriptions are never used for decisions."
-        carbon = {p.carbon_kg_per_kg for p in cands if p.carbon_kg_per_kg is not None}
-        if len(cands) > 1 and len(carbon) == 1:
+        if same:
             line["note"] = (f"All these products have the same footprint in Valio's data ({carbon.pop():g} kg CO2e "
                             f"per kg, a group average), so it does not change the choice.")
         return {"line": line, "proposal": proposal, "need": need}
@@ -231,8 +241,7 @@ class SupplyService:
             budget = CallBudget(self.orders.max_ids)
             now = self.now()
             req = self.store.new_request({"createdAt": now.isoformat(), "agent": agent or mandate.holder,
-                                          "text": text or "; ".join(ln.text or f"{ln.quantity:g} {ln.unit or ''} "
-                                                                   f"of {ln.product_id}" for ln in lines),
+                                          "text": text or "; ".join(self._line_text(ln) for ln in lines),
                                           "spendPassId": mandate.id, "status": "working"})
             self._log(req, mandate, agent or mandate.holder, "request",
                       f"The agent asked for {req['text']}.", [], None)
@@ -250,7 +259,8 @@ class SupplyService:
                     for o in b["line"]["options"]:
                         if (o.get("supplierText") or {}).get("planted"):
                             self._log(req, mandate, "validio", "decision",
-                                      f"Ignored the description of {o['productId']}, which talks to AI agents. "
+                                      f"Ignored the description of {display_name(o['name'])} ({o['productId']}), "
+                                      f"which talks to AI agents. "
                                       f"Descriptions are never used for decisions. {o['sentence']}", [], None)
                 if missing and not proposals:
                     req["decision"] = {"outcome": "block", "ruleIds": [],
@@ -293,9 +303,8 @@ class SupplyService:
             return self.get_request(req["id"])
 
     def _question(self, built: list[dict], order: dict) -> str:
-        parts = [b["line"].get("swapSentence") for b in built if b["line"].get("swapSentence")]
-        what = " and ".join(f"{ln['quantity']} {ln['unit']} of {ln['productId']} {ln['name']}" for ln in order["lines"])
-        return " ".join(parts + [f"Order {what} for {order['totalCents'] / 100:.2f} EUR?"])
+        """Only the question: why it waits is the swap sentence and the decision, shown next to it."""
+        return f"Order {self.orders._parts(order, ids=False)} for {money(order['totalCents'])}?"
 
     def confirm_order(self, *, mandate: Mandate, request_id: str, choice: list[tuple[str, int]],
                       idempotency_key: str, agent: str | None = None) -> dict:

@@ -26,6 +26,7 @@ from ..policy.mandate import (
     verify_presentation,
 )
 from ..standing.model import History, PastOrder
+from ..text.format import qty_text
 from ..valio.models import Availability
 
 HERE = Path(__file__).resolve().parent
@@ -34,8 +35,8 @@ NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")  # Saturday 14 Novembe
 KITCHEN = "hotel-espoo"
 SPEND_PASS_ID = "M-1"
 STOCKOUT_ID = "466375"
-STOCKOUT_NOTE = "Simulated stock-out: Valio really has stock, the demo button sets it to zero."
-UNIT_WORDS = {"BAG": "bags", "KI": "cartons", "ST": "packs"}
+STOCKOUT_LEAD = "Stock-out simulated for the demo."
+STOCKOUT_NOTE = f"{STOCKOUT_LEAD} Valio really has stock."
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
 SCHEMA = """
@@ -174,13 +175,11 @@ def real_stock(valio, day: date | None = None) -> tuple[float, str] | None:
     return a.amount, a.lines[0].sales_unit
 
 
-def stockout_note(stock: tuple[float, str] | None, lead: str = "Simulated stock-out:") -> str:
+def stockout_note(stock: tuple[float, str] | None, lead: str = STOCKOUT_LEAD) -> str:
     if stock is None:
-        return STOCKOUT_NOTE if lead == "Simulated stock-out:" else \
-            f"{lead} Valio really has it in stock, the demo button sets it to zero."
+        return f"{lead} Valio really has stock."
     qty, unit = stock
-    n = f"{int(qty):,}" if float(qty).is_integer() else f"{qty:,}"
-    return f"{lead} Valio really has {n} {UNIT_WORDS.get(unit, unit.lower())}; the demo sets it to zero."
+    return f"{lead} Valio has {qty_text(qty, unit)}."
 
 
 def apply_stockout(avail: dict[str, Availability], on: bool) -> dict[str, Availability]:

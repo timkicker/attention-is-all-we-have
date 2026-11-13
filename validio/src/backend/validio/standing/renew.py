@@ -16,11 +16,12 @@ from ..catalog.store import Catalog
 from ..matching.split import SplitPlan, decide_split, plan_split
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
+from ..text.format import and_list, display_name, qty_text
 from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
 from ..valio.models import Availability, Quote
-from .drift import detect, next_renewals, unit_word
+from .drift import detect, next_renewals
 from .model import (
     DriftFlag,
     DriftKind,
@@ -54,12 +55,22 @@ def fetch(so: StandingOrder, cat: Catalog, valio: ValioClient, now: datetime, st
     return quotes, avail, budget
 
 
+def _why(f: DriftFlag) -> str:
+    """The flag in a few words, for the line's own sentence. The flag keeps its full sentence."""
+    if f.kind is DriftKind.PER_GUEST_UP:
+        return f"{f.pct} % more per guest than usual"
+    if f.kind is DriftKind.COST_UP:
+        return f"the line costs {f.pct} % more than usual"
+    if f.kind is DriftKind.CONTRACT_ENDS:
+        return "the contract price ends before the next renewals"
+    return "Drift Watch flagged it"
+
+
 def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[str, Quote],
           avail: dict[str, Availability], mandate: Mandate, now: datetime, split_fill: SplitFill,
           delivery: date | None = None) -> RenewedLine:
     pid, usual = ln.product_id, ln.sales_qty
     p, q, a = cat.get(pid), quotes.get(pid), avail.get(pid)
-    unit = unit_word(a, p.sales_unit if p else None)
     price = None if q is None or q.error else q.price_cents
     base = RenewedLine(pid, usual, None, None, LineResult.WAITING, "", flags)
     if p is None or price is None:
@@ -75,7 +86,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
             return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.BLOCKED,
                            sentence=d.sentence, decision=d)
         return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.FLAGGED,
-                       sentence="Waits for you because of the flag below.", decision=d,
+                       sentence=f"Waits for you: {and_list([_why(f) for f in drift])}.", decision=d,
                        accept_label="Renew anyway")
 
     if short:
@@ -88,20 +99,21 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
                            accept_label=f"Order {have} now" if have else None)
         got = sum(x.sales_qty for x in plan.parts)
         if plan.needs_person:
-            head = plan.parts[0].sales_qty if plan.parts[0].product.id == pid else 0
             why = ". ".join(b.rstrip(".") for b in plan.breaks) or "No listed substitute can fill the rest"
             return replace(base, this_week_qty=got, total_cents=plan.total_cents, split=plan,
-                           sentence=f"{head} of {usual} {unit} can come. {why}. Order {got} now?",
+                           sentence=f"{short[0].sentence} {why}. Order {got} now?",
                            accept_label=f"Order {got} now")
         d = decide_split(plan, mandate, now, required_claims=ln.diet, deliver_by=delivery)
         if d.outcome is Outcome.ALLOW:
             extra = plan.total_cents - plan.base_cents
-            added = " plus ".join(f"{x.sales_qty} of {x.product.id}" for x in plan.parts if x.on_valio_list)
+            added = and_list([f"{qty_text(x.sales_qty, x.product.sales_unit)} of {display_name(x.product.name_en)}"
+                              for x in plan.parts if x.on_valio_list])
             limit = f"{mandate.split_max_extra_bp / 100:g}"
             return replace(base, this_week_qty=got, total_cents=plan.total_cents, result=LineResult.SPLIT_RENEWED,
                            split=plan, decision=d,
                            sentence=f"{short[0].sentence} So {added} come from Valio's own substitute list. "
-                                    f"{eur(extra)} ({plan.extra_pct} %) more, inside your {limit} % split limit.")
+                                    f"They cost {eur(extra)} ({plan.extra_pct} %) more, inside your {limit} % "
+                                    "split limit.")
         result = LineResult.BLOCKED if d.outcome is Outcome.DENY else LineResult.WAITING
         return replace(base, this_week_qty=got, total_cents=plan.total_cents, result=result, split=plan,
                        decision=d, sentence=d.sentence,

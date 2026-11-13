@@ -110,7 +110,7 @@ def test_473986_not_deliverable_attested(catalog, valio):
 def test_464306_price_attested_until_2026_12_31(catalog, valio):
     f = facts(catalog, valio, "464306")["price"]
     assert f.level == T.ATTESTED_UNTIL
-    assert f.value == "1.01 EUR"
+    assert f.value == "1.01 €"
     assert "2026-12-31" in f.note
 
 

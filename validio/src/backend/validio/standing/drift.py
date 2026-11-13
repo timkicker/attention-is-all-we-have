@@ -12,6 +12,8 @@ from statistics import mean, median
 
 from ..audit.sentences import eur
 from ..catalog.store import Catalog
+from ..text.format import count
+from ..text.format import unit_word as fmt_unit_word
 from ..trust.levels import stock_in_sales_units
 from ..valio.models import Availability, Quote
 from .model import DriftFlag, DriftKind, History, StandingOrder
@@ -20,13 +22,10 @@ PER_GUEST_UP = 0.20
 COST_UP = 0.10
 RENEWALS_AHEAD = 4
 FIRST_WEEKS, LAST_WEEKS = 4, 2
-UNIT_WORDS = {"BAG": "bags", "KI": "cartons", "ST": "packs", "KG": "kg", "L": "litres"}
-
-
 def unit_word(a: Availability | None, sales_unit: str | None = None) -> str:
-    """The word for the product's sales unit when given, else for the unit Valio answered in."""
+    """The word for the product's sales unit when given, else for the unit Valio answered in (plural)."""
     unit = sales_unit or (a.lines[0].sales_unit if a is not None and a.lines else "")
-    return UNIT_WORDS.get(unit, unit.lower() or "units")
+    return fmt_unit_word(unit) or "units"
 
 
 def day(d: date) -> str:
@@ -115,10 +114,14 @@ def _stock(so: StandingOrder, avail: dict[str, Availability], cat: Catalog) -> l
         stock = stock_in_sales_units(p, a) if p is not None else None
         if a is None or not a.deliverable:
             out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
-                                 f"Valio gives no delivery date for it, the usual line is {ln.sales_qty} {unit}.", 0))
+                                 f"Valio gives no delivery date for it, the usual line is {count(ln.sales_qty)} {unit}.", 0))
+        elif stock is not None and stock <= 0:
+            out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
+                                 f"Out of stock at Valio, the usual line is {count(ln.sales_qty)} {unit}.", stock))
         elif stock is not None and stock < ln.sales_qty:
             out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
-                                 f"Only {stock:g} {unit} in stock, the usual line is {ln.sales_qty}.", stock))
+                                 f"Only {count(stock)} {unit} in stock, the usual line is {count(ln.sales_qty)}.",
+                                 stock))
     return out
 
 

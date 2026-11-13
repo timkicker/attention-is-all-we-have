@@ -150,4 +150,4 @@ def test_real_stock_without_an_answer_says_has_stock():
     assert seed.real_stock(NoAnswer()) is None
     assert seed.stockout_note(None) == seed.STOCKOUT_NOTE
     assert seed.stockout_note((11603.0, "BAG")) == \
-        "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero."
+        "Stock-out simulated for the demo. Valio has 11,603 bags."

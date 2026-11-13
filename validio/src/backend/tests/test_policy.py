@@ -169,7 +169,7 @@ def test_rule_ids_are_names(mandate):
 
 
 def test_decision_has_a_sentence(mandate):
-    assert "1010.00 EUR" in decide(scene2(mandate), "464306").sentence
+    assert "1,010.00 €" in decide(scene2(mandate), "464306").sentence
     assert "hard cap" in decide(scene2(mandate, total_cents=219400), "462921").sentence
 
 

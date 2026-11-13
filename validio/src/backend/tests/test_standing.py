@@ -197,7 +197,7 @@ def test_pancakes_wait_for_human(renewal):
     p = line(renewal, "471376")
     assert p.result is LineResult.WAITING
     assert p.this_week_qty == 27
-    assert "wheat" in p.sentence and "27 of 30" in p.sentence
+    assert "wheat" in p.sentence and "Only 27 cartons in stock, the usual line is 30" in p.sentence
     assert p.accept_label == "Order 27 now"
 
 
