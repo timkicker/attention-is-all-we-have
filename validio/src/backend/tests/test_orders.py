@@ -218,3 +218,16 @@ def test_approve_keeps_the_line_diet(svc, mandate):
                    required_claims=("FREE_FROM_LACTOSE",))
     assert o["state"] == "waiting"  # lactose claim unchecked
     assert svc.approve(o["id"], "owner:anna")["state"] == "placed"
+
+
+def test_placeholder_stock_shown_in_facts_and_ledger(svc, mandate, monkeypatch):
+    monkeypatch.delenv("STRICT_PLACEHOLDER_STOCK", raising=False)
+    o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k-placeholder")
+    assert o["state"] == "placed"
+    (q,) = [f for f in o["lines"][0]["facts"] if f["field"] == "quantity"]
+    assert q["grade"] == "attested"
+    assert q["note"] == "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
+    (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
+    assert entry.sentence.endswith(" Valio reports 9999999999 for 464306, a placeholder, not a real count; "
+                                   "treated as in stock.")
+    assert svc.audit.verify().ok

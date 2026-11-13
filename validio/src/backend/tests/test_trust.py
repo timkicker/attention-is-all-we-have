@@ -264,3 +264,51 @@ def test_may_contain_gluten_contradicts_gluten_free():
     assert lv == T.CONTRADICTED
     assert notes == ["may contain gluten cereals"]
     assert claim_check(_gf("rice flour, water"), "FREE_FROM_GLUTEN")[0] == T.CONSISTENT  # control
+
+
+# Placeholder stock (review M1): 9999999999 and 666666666 stay attested and say so, until a Valio mentor answers.
+# STRICT_PLACEHOLDER_STOCK=1 treats them as not a real count.
+PLACEHOLDER_NOTE = "a placeholder, not a real count; treated as in stock"
+
+
+def _avail(amount, unit="ST", model="Stock"):
+    from validio.valio.models import Availability, ScheduleLine
+
+    return Availability("T-1", model, None, False, [ScheduleLine(amount, MON, unit, False)], None)
+
+
+@pytest.mark.parametrize("amount", [9999999999.0, 666666666.0])
+def test_placeholder_stock_is_marked(amount, monkeypatch):
+    from validio.trust.levels import quantity_fact, stock_in_sales_units
+
+    monkeypatch.delenv("STRICT_PLACEHOLDER_STOCK", raising=False)
+    f = quantity_fact(_avail(amount), _gf("rice"))
+    assert f.level == T.ATTESTED
+    assert f.note == f"Valio reports {amount:.0f}, {PLACEHOLDER_NOTE}"
+    assert stock_in_sales_units(_gf("rice"), _avail(amount)) == amount
+
+
+@pytest.mark.parametrize("amount", [9999999999.0, 666666666.0])
+def test_strict_placeholder_stock_is_unknown(amount, monkeypatch):
+    from validio.trust.levels import quantity_fact, stock_in_sales_units
+
+    monkeypatch.setenv("STRICT_PLACEHOLDER_STOCK", "1")
+    f = quantity_fact(_avail(amount), _gf("rice"))
+    assert f.level == T.UNKNOWN
+    assert f"Valio reports {amount:.0f}, a placeholder, not a real count" in f.note
+    assert stock_in_sales_units(_gf("rice"), _avail(amount)) is None
+
+
+def test_real_count_has_no_placeholder_note(monkeypatch):
+    from validio.trust.levels import quantity_fact
+
+    monkeypatch.setenv("STRICT_PLACEHOLDER_STOCK", "1")
+    f = quantity_fact(_avail(698.0), _gf("rice"))
+    assert f.level == T.ATTESTED and "placeholder" not in f.note
+
+
+def test_464306_placeholder_note(catalog, valio, monkeypatch):
+    monkeypatch.delenv("STRICT_PLACEHOLDER_STOCK", raising=False)
+    f = facts(catalog, valio, "464306")["quantity"]
+    assert f.level == T.ATTESTED
+    assert f.note == f"Valio reports 9999999999, {PLACEHOLDER_NOTE}"
