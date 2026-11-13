@@ -1,0 +1,105 @@
+"""Scene 4 over HTTP, end to end from a reset, twice in a row.
+
+Renew: milk 464306 renewed alone (300, 303.00 EUR), parmesan split 177 for 772.49 EUR (2.5 % more), pancakes
+471376 wait (27 of 30), mozzarella 466375 flagged 26 % more per guest. Accept the pancakes: the order is placed
+and the ledger verifies. Numbers from the blueprint, scene 4."""
+
+import pytest
+from fastapi.testclient import TestClient
+
+from validio.audit.log import AuditLog
+from validio.config import load_settings
+from validio.demo import seed
+from validio.orders.store import Store
+
+
+@pytest.fixture
+def client(tmp_path, monkeypatch, catalog):
+    s = load_settings()
+    if not any(s.valio_cache.glob("price/*/*.json")):
+        pytest.skip("needs_data: no recorded Valio answers, run make record")
+    monkeypatch.setenv("VALIDIO_DB", str(tmp_path / "validio.db"))
+    monkeypatch.setenv("VALIDIO_KEYS", str(tmp_path / "keys"))
+    seed.reset()
+    from validio.api.app import app
+
+    with TestClient(app) as c:
+        yield c
+
+
+def lines(body):
+    return {ln["productId"]: ln for ln in body["lines"]}
+
+
+def scene4(client):
+    (summary,) = client.get("/api/steady").json()
+    assert (summary["id"], summary["lineCount"], summary["weekday"]) == ("S-1", 4, "Monday")
+
+    before = client.get("/api/steady/S-1").json()
+    assert before["simulatedHistory"] is True and before["guestsPerWeek"] == 400 and before["weeksLearned"] == 8
+    assert {ln["result"] for ln in before["lines"]} == {"pending"}
+    assert lines(before)["466375"]["usualQuantity"] == 98
+    assert lines(before)["466375"]["history"] == [92, 92, 94, 96, 100, 108, 116, 120]
+
+    r = client.post("/api/steady/S-1/renew")
+    assert r.status_code == 200
+    got = lines(r.json())
+    milk, parm, pan, mozz = got["464306"], got["463968"], got["471376"], got["466375"]
+    assert (milk["result"], milk["thisWeekQuantity"], milk["totalCents"]) == ("renewed", 300, 30300)
+    assert (parm["result"], parm["thisWeekQuantity"], parm["totalCents"]) == ("split_renewed", 177, 77249)
+    assert parm["split"]["extraCostPct"] == 2.5 and parm["split"]["extraCostCents"] == 1849
+    assert [(p["productId"], p["quantity"], p["onValioList"]) for p in parm["split"]["parts"]] == \
+        [("463968", 137, False), ("469648", 40, True)]
+    assert (pan["result"], pan["thisWeekQuantity"], pan["acceptLabel"]) == ("waiting", 27, "Order 27 now")
+    assert "wheat" in pan["sentence"]
+    assert mozz["result"] == "flagged"
+    assert [(f["kind"], f["pct"]) for f in mozz["flags"]] == [("per_guest_up", 26)]
+    assert r.json()["renewedAt"]
+
+    store = Store(seed.db_path())
+    assert store.order(milk["orderId"])["state"] == "placed"
+    assert store.order(parm["orderId"])["state"] == "placed"
+    assert "orderId" not in pan and "orderId" not in mozz
+
+    again = client.post("/api/steady/S-1/renew").json()  # a second press orders nothing twice
+    assert lines(again)["464306"]["orderId"] == milk["orderId"]
+    assert len(store.orders()) == 2
+
+    a = client.post("/api/steady/S-1/lines/471376/accept")
+    assert a.status_code == 200
+    pan = lines(a.json())["471376"]
+    assert pan["result"] == "accepted"
+    order = store.order(pan["orderId"])
+    assert order["state"] == "placed"
+    assert [(ln["productId"], ln["quantity"]) for ln in order["lines"]] == [("471376", 27)]
+
+    assert client.post("/api/steady/S-1/lines/464306/accept").status_code == 409
+    assert client.post("/api/steady/S-1/lines/999/accept").status_code == 404
+
+    v = AuditLog(seed.db_path()).verify()
+    assert v.ok and v.count >= 6
+    return [ln["orderId"] for ln in (milk, parm, pan)]
+
+
+def test_scene4_end_to_end_twice_from_a_reset(client):
+    first = scene4(client)
+    seed.reset()  # `make seed` while the server runs: the stores reopen
+    second = scene4(client)
+    assert first == second == ["O-1", "O-2", "O-3"]
+
+
+def test_unknown_steady_order_is_404(client):
+    assert client.get("/api/steady/S-9").status_code == 404
+    assert client.post("/api/steady/S-9/renew").status_code == 404
+
+
+def test_accept_before_renew_is_409(client):
+    assert client.post("/api/steady/S-1/lines/471376/accept").status_code == 409
+
+
+def test_ledger_names_every_line_decision(client):
+    client.post("/api/steady/S-1/renew")
+    sentences = " ".join(e.sentence for e in AuditLog(seed.db_path()).list())
+    for pid in ("464306", "463968", "471376", "466375"):
+        assert pid in sentences
+    assert "26 % more per guest" in sentences
