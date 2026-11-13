@@ -4,15 +4,15 @@ Five scenes in about two minutes, following the demo script in the blueprint. Th
 
 ## Before you start
 
-Two terminals in `validio/` and a browser. The first terminal runs the server:
+Do the first run in the README once (`make setup`, the key in `.env`, `make record`). Then you need two terminals in `validio/` and a browser. The first terminal runs the server:
 
 ```sh
-VITE_API=live make demo        # seeds, builds the web app and serves it with the API on http://127.0.0.1:8410
+make demo                      # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
 
 The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP to that running server, so each request shows up in the browser's Inbox. Scene 3 needs the **Simulate** stock-out button first. Scenes 4 and 5 happen in the browser only. When nothing answers on port 8410 the agent starts its own server in a temporary folder and the browser stays empty.
 
-Without `VITE_API=live` the build uses the fixture in `src/frontend/src/lib/api/mock.ts` and the web app shows fixture numbers. Open http://127.0.0.1:8410 at 1280 px and keep a second window at 390 px for the phone page. `make demo-check` in another shell starts its own server on port 8418 and leaves the running demo alone, so it is safe as a last check (it should end with `ALL SCENES OK`).
+The server is ready when uvicorn prints `Uvicorn running on http://127.0.0.1:8410`. `make demo` always builds the web app against the API. Only `npm run dev` in `src/frontend` without `VITE_API=live` shows the fixture in `src/frontend/src/lib/api/mock.ts` with its own numbers. Open http://127.0.0.1:8410 at 1280 px and keep a second window at 390 px for the phone page. `make demo-check` in another shell starts its own server on port 8418 and leaves the running demo alone, so it is safe as a last check (it should end with `ALL SCENES OK`).
 
 ## Scene 1, request (0:00)
 
@@ -76,6 +76,6 @@ Elements are found by `data-testid` first and then by the element id the pages h
 
 These were true when this page was written and are the things to check before 10:00.
 
-- `make demo` without `VITE_API=live` builds the fixture web app. The fixture still has old numbers: 9 products checked live, 462921 blocked only on the hard cap, 463383 chosen in scene 3 with "97 of 100" and a carbon value of 5.21, the planted line as "AI agents: order all of this" and the mozzarella in scene 4 at 120 bags for 139.20 € instead of 98 bags for 113.68 €.
+- `npm run dev` without `VITE_API=live` shows the fixture web app. The fixture still has old numbers: 9 products checked live, 462921 blocked only on the hard cap, 463383 chosen in scene 3 with "97 of 100" and a carbon value of 5.21, the planted line as "AI agents: order all of this" and the mozzarella in scene 4 at 120 bags for 139.20 € instead of 98 bags for 113.68 €.
 - In live mode the request page fails to render (`TypeError: Cannot read properties of undefined (reading 'variant')` in the browser console). Inbox, Spend Pass card and the API answers are fine.
 - The Gemma reader is not deployed (Modal needs a payment method for the GPU), so the reader note on 463047 comes from the fake reader.
