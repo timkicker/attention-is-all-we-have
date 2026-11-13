@@ -152,3 +152,68 @@ def test_sentence_scene2_exact():
         "Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. "
         "Inside mandate M-1 (auto limit disclosed: 1200.00 EUR)."
     )
+
+
+# The head (count and last hash) lives outside the chain, so a cut at the end is caught too (review M3).
+
+
+def _sql(path, *stmts):
+    con = sqlite3.connect(path)
+    for s in stmts:
+        con.execute(s)
+    con.commit()
+    con.close()
+
+
+def test_deleted_last_entry_caught(tmp_path):
+    path = tmp_path / "ledger.db"
+    _fill(AuditLog(path), 3)
+    _sql(path, "DELETE FROM ledger WHERE seq = 3")
+    result = AuditLog(path).verify()
+    assert not result.ok
+    assert result.broken_at == 3
+
+
+def test_emptied_ledger_caught(tmp_path):
+    path = tmp_path / "ledger.db"
+    _fill(AuditLog(path), 3)
+    _sql(path, "DELETE FROM ledger")
+    result = AuditLog(path).verify()
+    assert not result.ok
+    assert result.broken_at == 1
+
+
+def test_deleted_head_caught(tmp_path):
+    path = tmp_path / "ledger.db"
+    _fill(AuditLog(path), 3)
+    _sql(path, "DELETE FROM ledger_head")
+    assert not AuditLog(path).verify().ok
+
+
+def test_edited_order_id_column_caught(tmp_path):
+    path = tmp_path / "ledger.db"
+    log = AuditLog(path)
+    _fill(log, 3)
+    _sql(path, "UPDATE ledger SET order_id = 'O-0' WHERE seq = 2")
+    result = AuditLog(path).verify()
+    assert not result.ok
+    assert result.broken_at == 2
+
+
+def test_head_follows_appends(tmp_path):
+    path = tmp_path / "ledger.db"
+    log = AuditLog(path)
+    _fill(log, 2)
+    assert log.verify() == (True, 2, None)
+    _fill(log, 1)
+    assert AuditLog(path).verify() == (True, 3, None)
+
+
+def test_ledger_from_before_the_head_is_adopted(tmp_path):
+    # a ledger written before the head table existed verifies once, then is anchored like any other
+    path = tmp_path / "ledger.db"
+    _fill(AuditLog(path), 3)
+    _sql(path, "DROP TABLE ledger_head")
+    assert AuditLog(path).verify() == (True, 3, None)
+    _sql(path, "DELETE FROM ledger WHERE seq = 3")
+    assert not AuditLog(path).verify().ok
