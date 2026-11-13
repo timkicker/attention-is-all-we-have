@@ -23,7 +23,7 @@ def client(ctx):
 
 @pytest.fixture
 def holder(client, ctx):
-    return Holder.from_seed(lambda: client.get("/agent/v1/nonce").json()["nonce"], ctx.db_path, ctx.keys_dir)
+    return Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
 
 
 def mozz(client, holder, key):
