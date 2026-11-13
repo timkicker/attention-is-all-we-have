@@ -16,14 +16,14 @@
   const flags = $derived(text.reader?.flags ?? []);
 </script>
 
-<div class="supplier">
+<div class="supplier" data-testid="supplier-{productId}">
   <div class="head">
     <span class="what">Supplier text</span>
     <State label="Untrusted" tone="quiet" id="supplier-{productId}" />
   </div>
   <blockquote>{text.text}</blockquote>
   {#if text.reader && (text.reader.summary || flags.length)}
-    <div class="reader" id="reader-{productId}">
+    <div class="reader" id="reader-{productId}" data-testid="reader-{productId}">
       <p class="by">Read by a model, never used for decisions</p>
       {#if text.reader.summary}<p class="summary">{text.reader.summary}</p>{/if}
       {#if flags.length}

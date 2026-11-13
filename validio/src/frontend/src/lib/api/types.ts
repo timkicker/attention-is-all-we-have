@@ -169,6 +169,8 @@ export interface SupplyRequest {
   createdAt: string;
   agent: string;
   text: string;
+  /** The kitchen's ask in display words, when the backend writes one. */
+  displayName?: string;
   deliverBy: string;
   status: RequestStatus;
   spendPassId: string;
@@ -188,6 +190,8 @@ export interface InboxItem {
   id: string;
   createdAt: string;
   text: string;
+  /** The kitchen's ask in display words, when the backend writes one. */
+  displayName?: string;
   status: RequestStatus;
   sentence: string;
   totalCents?: number;

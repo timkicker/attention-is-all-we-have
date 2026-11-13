@@ -37,15 +37,16 @@
       inputmode="numeric"
       autocomplete="one-time-code"
       maxlength={6}
-      placeholder="6 digits"
+      placeholder="6-digit code"
       class="code num"
+      data-testid="code-input"
       aria-invalid={wrong || problem ? true : undefined}
       aria-describedby="code-help"
     />
-    {#if onready}<Button type="submit" variant="outline" id="use-code">{action}</Button>{/if}
+    {#if onready}<Button type="submit" id="use-code" data-testid="code-submit">{action}</Button>{/if}
   </div>
   <p class="help" id="code-help" class:t-bad={wrong || problem}>
-    {wrong ? "The code has 6 digits." : problem || "Asked once, kept until you close the page."}
+    {wrong ? "The code has 6 digits." : problem || "Asked once per visit."}
   </p>
 </svelte:element>
 
@@ -65,7 +66,10 @@
     gap: 0.5rem;
   }
   .line :global(.code) {
-    max-width: 9rem;
+    max-width: 10rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .line :global(.code:not(:placeholder-shown)) {
     letter-spacing: 0.2em;
   }
   .help {
