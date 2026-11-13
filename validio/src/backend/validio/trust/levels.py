@@ -32,6 +32,11 @@ UNKNOWN_AMOUNT = 999999
 # Valio answers these on Stock products. They look like "not tracked", not like a count. See strict_placeholder_stock.
 PLACEHOLDER_AMOUNTS = frozenset({9999999999.0, 666666666.0})
 PLACEHOLDER_NOTE = "a placeholder, not a real count"
+
+
+def _n(x: float) -> str:
+    """A count as Valio sent it: 9999999999, never 1e+10."""
+    return f"{x:.0f}" if float(x).is_integer() else f"{x:g}"
 AVAIL = "Valio availability API"
 PRICE = "Valio price API"
 MASTER = "Valio product data"
@@ -71,10 +76,10 @@ def quantity_fact(a: Availability | None, p: Product | None = None) -> Fact:
     if p is not None and unit != p.sales_unit:
         factor = unit_factor(p, unit)
         if factor is None:
-            return Fact("quantity", f"{a.amount:g} {unit}", TrustLevel.UNKNOWN, AVAIL,
+            return Fact("quantity", f"{_n(a.amount)} {unit}", TrustLevel.UNKNOWN, AVAIL,
                         f"Valio counts in {unit}, the product is sold in {p.sales_unit}, no conversion known")
-        note += f", {a.amount * factor:g} {p.sales_unit} in sales units"
-    return Fact("quantity", f"{a.amount:g} {unit}", TrustLevel.ATTESTED, AVAIL, note)
+        note += f", {_n(a.amount * factor)} {p.sales_unit} in sales units"
+    return Fact("quantity", f"{_n(a.amount)} {unit}", TrustLevel.ATTESTED, AVAIL, note)
 
 
 def stock_in_sales_units(p: Product, a: Availability | None) -> float | None:

@@ -45,7 +45,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -190,7 +190,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -342,7 +342,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -480,7 +480,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -624,7 +624,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -762,7 +762,7 @@
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
