@@ -4,8 +4,10 @@ import math
 from datetime import datetime
 
 from ..catalog.model import Product
+from ..trust.claims import claim_check
+from ..trust.levels import TrustLevel, field_trust
 from ..valio.models import Availability, Quote
-from .need import Need, Ranked, amount_per_sales_unit
+from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit
 
 UNKNOWN_AMOUNT = 999999
 
@@ -22,6 +24,15 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
     reasons: list[str] = []
     notes: list[str] = []
     sales_qty = total = None
+    for claim in sorted(need.required_claims):
+        level, why = claim_check(p, claim)
+        name = CLAIM_NAMES.get(claim, claim)
+        if level == TrustLevel.CONTRADICTED:
+            reasons.append(f"Not {name}: {'; '.join(why)}")
+        elif level == TrustLevel.MISSING:
+            reasons.append(f"No {name} claim in Valio's data")
+        elif level == TrustLevel.UNCHECKED:
+            notes.append(f"{name.capitalize()} claim unchecked: {'; '.join(why)}")
     if q is None or q.error or q.price_cents is None:
         reasons.append("Valio has no price for it")
     per, note = amount_per_sales_unit(need, p, q)
@@ -42,7 +53,7 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
             reasons.append(f"Only {a.amount:g} {a.lines[0].sales_unit} in stock, {sales_qty} needed")
         if a.lines[0].available > need.deliver_by:
             reasons.append(f"Earliest delivery {a.lines[0].available:%d %b}, after {need.deliver_by:%d %b}")
-    return Ranked(p, sales_qty, total, not reasons, reasons, notes)
+    return Ranked(p, sales_qty, total, not reasons, reasons, notes, field_trust(p, q, a))
 
 
 def rank(need: Need, cands: list[Product], quotes: dict[str, Quote],
