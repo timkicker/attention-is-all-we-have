@@ -22,6 +22,25 @@
   --sidebar-accent-foreground: var(--color-fg-shell);
   --sidebar-border: color-mix(in srgb, var(--color-fg-shell) 10%, transparent);
   --sidebar-ring: var(--v-select);
+
+  /* The one page frame (Frame.svelte, the request pane): every title starts
+     at the same left edge. */
+  --frame-width: 56rem;
+  --frame-pad-x: 2rem;
+  --frame-pad-top: 1.5rem;
+}
+@media (max-width: 760px) {
+  :root {
+    --frame-pad-x: 1rem;
+    --frame-pad-top: 1rem;
+  }
+  /* Touch targets: every control on the phone is at least 44 px square
+     (WCAG 2.5.5); a link in running text keeps its line height. */
+  .content :is(button, [role="button"], input, select, a[href]:not(p a, li > a.inline)),
+  .bar :is(button, a[href]) {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
 }
 :root:root[data-theme="light"] {
   color-scheme: light;

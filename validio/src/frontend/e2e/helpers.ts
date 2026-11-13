@@ -6,9 +6,10 @@ export async function reset(page: Page) {
   await page.locator("#menu-reset").click();
 }
 
-/** The presenter's stock-out switch, on top of the inbox list. */
+/** The presenter's stock-out switch, in the same menu. */
 export async function stockOut(page: Page) {
   await page.goto("/");
+  await page.locator("#page-menu").click();
   await page.getByTestId("stock-out").click();
 }
 

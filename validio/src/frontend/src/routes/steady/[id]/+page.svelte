@@ -1,24 +1,18 @@
 <script lang="ts">
-  // One steady order as settings rows: each line says what this week brings
-  // and why, its state and total sit in the control column, and a line that
-  // waits carries its one button there too.
+  // One steady order: the lines that need the owner on top, each with one
+  // sentence and one button; the rest as plain rows whose reasons fold.
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Notice } from "@arlen/ui-kit/components/ui/notice";
-  import { Page } from "@arlen/ui-kit/components/ui/page";
-  import { Row } from "@arlen/ui-kit/components/ui/row";
-  import { Section } from "@arlen/ui-kit/components/ui/section";
-  import { SectionGrid } from "@arlen/ui-kit/components/ui/section-grid";
+  import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
   import { ApiError, api } from "$lib/api/client";
   import { owner } from "$lib/owner.svelte";
   import CodeField from "$lib/components/CodeField.svelte";
   import type { SteadyLine, SteadyOrder } from "$lib/api/types";
-  import { bump, chrome, setChrome } from "$lib/chrome.svelte";
-  import { LINE_RESULT, amount, dayTime, look, money, nameWord, prose } from "$lib/format";
+  import { bump, setChrome } from "$lib/chrome.svelte";
+  import { LINE_RESULT, amount, look, money, nameWord, prose, sentences } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import Drift from "$lib/components/Drift.svelte";
-  import Facts from "$lib/components/Facts.svelte";
-  import State from "$lib/components/State.svelte";
+  import Frame from "$lib/components/Frame.svelte";
 
   const id = $derived(page.params.id ?? "");
   const steady = live(() => api.steadyOrder(id));
@@ -60,165 +54,246 @@
   const weekTotal = $derived(
     (s?.lines ?? []).filter((l) => !asks(l) && l.result !== "pending").reduce((t, l) => t + (l.totalCents ?? 0), 0),
   );
+  // Amount and total in the label line, so the control slot holds one thing.
+  const figures = (l: SteadyLine) =>
+    l.thisWeekQuantity !== undefined
+      ? `${amount(l.thisWeekQuantity, l.unit)}, ${money(l.totalCents)}`
+      : `${amount(l.usualQuantity, l.unit)} usual`;
+  const needsYou = $derived((s?.lines ?? []).filter(asks));
+  const rest = $derived((s?.lines ?? []).filter((l) => !asks(l)));
+  // The one sentence a waiting line shows: what the owner decides on.
+  // "Waits for you because of the flag below" points at a folded flag, so the
+  // flag's own first sentence stands in for it.
+  const firstOf = (l: SteadyLine) => {
+    const own = sentences(l.sentence)[0];
+    const flag = sentences(l.flags[0]?.sentence)[0];
+    return prose((own && !/flag below/i.test(own) ? own : flag ?? own) ?? "");
+  };
   const waiting = $derived((s?.lines ?? []).filter(asks).length);
 </script>
 
 {#if s}
-  <Page title={s.name} back={chrome.phone ? undefined : { href: "/steady", label: "Steady orders" }}>
-    <SectionGrid>
-    <div class="top">
-      <Facts
-        items={[
-          { value: s.weekday, label: "every", before: true },
-          { value: String(s.guestsPerWeek), label: "guests a week" },
-          { value: String(s.weeksLearned), label: "weeks learned" },
-          ...(pending ? [{ value: "not renewed", label: "this week", before: true }] : [{ value: money(weekTotal), label: "ordered this week" }, { value: String(waiting), label: "need a look" }]),
-        ]}
-      />
-      {#if pending}
-        <Button id="renew" data-testid="renew" disabled={!!busy} onclick={() => act("renew", () => api.renew(s.id))}>Renew now</Button>
-      {:else if s.renewedAt}
-        <span class="t-quiet renewed">Renewed {dayTime(s.renewedAt)}</span>
-      {/if}
-    </div>
+  <Frame title={s.name}>
+    {#snippet head()}
+      <p class="facts">
+        <span>Every {s.weekday}</span>
+        {#if pending}<span>not renewed this week</span>
+        {:else}
+          <span><b class="num">{money(weekTotal)}</b> ordered</span>
+          {#if waiting}<span><b class="num">{waiting}</b> {waiting === 1 ? "needs" : "need"} you</span>{/if}
+        {/if}
+      </p>
+    {/snippet}
 
-    {#if s.simulatedHistory}
-      <div id="simulated-history" data-testid="simulated-history">
-        <Notice tone="neutral" text="Simulated history. The {s.weeksLearned} weeks behind this order are made up for the demo; the stock and prices are Valio's." />
-      </div>
+    {#if pending}
+      <div><Button id="renew" data-testid="renew" disabled={!!busy} onclick={() => act("renew", () => api.renew(s.id))}>Renew now</Button></div>
     {/if}
 
     {#if retry}
-      <div class="ask"><CodeField onready={retry} {problem} action="Continue" /></div>
+      <CodeField onready={retry} {problem} action="Continue" />
     {:else if problem}
       <p class="t-bad problem" role="alert">{problem}</p>
     {/if}
 
-    <Section>
-      {#each s.lines as l (l.productId)}
+    {#if needsYou.length}
+      <ul class="asks" aria-label="Lines that need you">
+        {#each needsYou as l (l.productId)}
+          <li class="ask" data-testid="line-{l.productId}" id="line-{l.productId}">
+            <p class="ask-name">{nameWord(l.name)} <span class="t-quiet num">{figures(l)}</span></p>
+            <p class="ask-why">{firstOf(l)}</p>
+            <div>
+              <Button
+                variant="outline"
+                id="accept-{l.productId}"
+                data-testid="accept-{l.productId}"
+                disabled={!!busy}
+                onclick={() => act(l.productId, () => api.acceptLine(s!.id, l.productId))}
+              >
+                {acceptLabel(l)}
+              </Button>
+            </div>
+            {@render fold(l, true)}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+
+    <ul class="rows" aria-label="Lines">
+      {#each rest as l (l.productId)}
         {@const r = look(LINE_RESULT, l.result)}
-        <div data-testid="line-{l.productId}">
-        <Row label={nameWord(l.name)} description={l.sentence && !/^usual amount\.?$/i.test(l.sentence) ? prose(l.sentence) : undefined} id="line-{l.productId}">
-          {#snippet control()}
-            <span class="ctl">
-              <span class="qty num">
-                {#if l.thisWeekQuantity !== undefined}{amount(l.thisWeekQuantity, l.unit)}{:else}{amount(l.usualQuantity, l.unit)} usual{/if}
-              </span>
-              <span class="sum num">{money(l.totalCents)}</span>
-              {#if l.result !== "pending"}<State label={r.label} tone={r.tone} />{/if}
-              {#if asks(l)}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  id="accept-{l.productId}"
-                  data-testid="accept-{l.productId}"
-                  disabled={!!busy}
-                  onclick={() => act(l.productId, () => api.acceptLine(s!.id, l.productId))}
-                >
-                  {acceptLabel(l)}
-                </Button>
-              {/if}
-            </span>
-          {/snippet}
-          {#snippet below()}
-            {@render more(l)}
-          {/snippet}
-        </Row>
-        </div>
+        <li data-testid="line-{l.productId}" id="line-{l.productId}">
+          <Collapsible.Root>
+            <Collapsible.Trigger class="row">
+              <span class="name">{nameWord(l.name)}</span>
+              <span class="qty num">{figures(l)}</span>
+              <span class="state">{l.result === "pending" ? "" : r.label}</span>
+              <Collapsible.Chevron />
+            </Collapsible.Trigger>
+            {@render body(l, false)}
+          </Collapsible.Root>
+        </li>
       {/each}
-    </Section>
-    </SectionGrid>
-  </Page>
+    </ul>
+
+    {#if s.simulatedHistory}
+      <p class="foot t-quiet" id="simulated-history" data-testid="simulated-history">
+        The {s.weeksLearned} weeks of history behind this order are simulated for the demo.
+      </p>
+    {/if}
+  </Frame>
 {:else if steady.error}
-  <Page title="Steady order" back={chrome.phone ? undefined : { href: "/steady", label: "Steady orders" }}>
+  <Frame title="Steady order">
     <p class="t-quiet">Cannot read {id}: {steady.error}</p>
-  </Page>
+  </Frame>
 {/if}
 
-{#snippet more(l: SteadyLine)}
-  {@const flags = l.flags.filter((f) => !l.sentence.includes(f.sentence))}
+{#snippet fold(l: SteadyLine, first: boolean)}
+  <Collapsible.Root>
+    <Collapsible.Trigger class="more-btn">
+      <Collapsible.Chevron />
+      Details
+    </Collapsible.Trigger>
+    {@render body(l, first)}
+  </Collapsible.Root>
+{/snippet}
+
+{#snippet body(l: SteadyLine, first: boolean)}
+  {@const shown = first ? firstOf(l) : ""}
+  {@const said = sentences(l.sentence).filter((t) => !/^usual amount\.?$/i.test(t) && !/^median of/i.test(t) && prose(t) !== shown)}
+  {@const flags = l.flags.filter((f) => !l.sentence.includes(f.sentence)).flatMap((f) => sentences(f.sentence)).filter((t) => prose(t) !== shown)}
   {@const chart = l.history && l.history.length > 1 && l.flags.some((f) => f.kind === "per_guest_up")}
-  {#if l.split || flags.length || chart || l.orderId}
-    <div class="below">
-      <span class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>Order <a href="/ledger">{l.orderId}</a></span>{/if}</span>
-      {#if l.split}
-        <table class="split">
-          <caption class="sr-only">How the line is split</caption>
-          <tbody>
-            {#each l.split.parts as p (p.productId)}
-              <tr>
-                <td>{nameWord(p.name)} <span class="mono t-quiet">{p.productId}</span>{#if p.onValioList}<span class="t-quiet">, on Valio's list</span>{/if}</td>
-                <td class="r num">{amount(p.quantity, p.unit)}</td>
-                <td class="r num">{money(p.totalCents)}</td>
+  <Collapsible.Content forceMount>
+    {#snippet child({ props, open })}
+      <div {...props} hidden={!open} class="below">
+        {#if said.length}<p class="why">{said.map(prose).join(" ")}</p>{/if}
+        {#if flags.length}<p class="why">{flags.map(prose).join(" ")}</p>{/if}
+        {#if l.split}
+          <table class="split">
+            <caption class="sr-only">How the line is split</caption>
+            <tbody>
+              {#each l.split.parts as p (p.productId)}
+                <tr>
+                  <td>{nameWord(p.name)} <span class="mono t-quiet">{p.productId}</span></td>
+                  <td class="r num">{amount(p.quantity, p.unit)}</td>
+                  <td class="r num">{money(p.totalCents)}</td>
+                </tr>
+              {/each}
+              <tr class="sum-row">
+                <td>Together, {money(l.split.extraCostCents)} ({l.split.extraCostPct}&nbsp;%) more</td>
+                <td></td>
+                <td class="r num">{money(l.split.totalCents)}</td>
               </tr>
-            {/each}
-            <tr class="sum-row">
-              <td>Together, {money(l.split.extraCostCents)} ({l.split.extraCostPct} %) more</td>
-              <td></td>
-              <td class="r num">{money(l.split.totalCents)}</td>
-            </tr>
-          </tbody>
-        </table>
-      {/if}
-      {#each flags as f, i (i)}
-        <p class="flag">{prose(f.sentence)}</p>
-      {/each}
-      {#if chart && l.history}
-        <Drift history={l.history} usual={l.usualQuantity} unit={l.unit} id="drift-{l.productId}" />
-      {/if}
-    </div>
-  {/if}
+            </tbody>
+          </table>
+        {/if}
+        {#if chart && l.history}
+          <Drift history={l.history} usual={l.usualQuantity} unit={l.unit} id="drift-{l.productId}" />
+        {/if}
+        <p class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>order <a href="/ledger">{l.orderId}</a></span>{/if}</p>
+      </div>
+    {/snippet}
+  </Collapsible.Content>
 {/snippet}
 
 <style>
-  .top {
+  .facts {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-fg-secondary);
   }
-  .renewed {
-    font-size: var(--text-xs);
-  }
-  .ask {
-    padding: 1rem;
-    border-radius: var(--radius-card);
-    border: 1px solid var(--color-border);
-    background: var(--color-bg-card);
+  .facts b {
+    font-weight: 500;
+    color: var(--color-fg-primary);
   }
   .problem {
     margin: 0;
     font-size: var(--text-sm);
   }
-  .ctl {
+  .asks,
+  .rows {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .asks {
+    gap: 1.5rem;
+  }
+  .ask {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .ask-name {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: 500;
+  }
+  .ask-why {
+    margin: 0;
+    max-width: 60ch;
+    font-size: var(--text-sm);
+    color: var(--color-fg-secondary);
+  }
+  .ask :global(.more-btn) {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-  }
-  .qty {
-    min-width: 7.5rem;
-    white-space: nowrap;
-    text-align: end;
+    gap: 0.35rem;
+    min-height: 2rem;
     font-size: var(--text-xs);
     color: var(--color-fg-secondary);
   }
-  .sum {
-    min-width: 5.5rem;
-    white-space: nowrap;
-    text-align: end;
+  .rows li + li {
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+  .rows :global(.row) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 9rem 1rem;
+    gap: 1rem;
+    align-items: baseline;
+    width: 100%;
+    padding: 0.55rem 0.35rem;
+    border-radius: var(--radius-input);
+    text-align: start;
+  }
+  .rows :global(.row:hover) {
+    background: color-mix(in srgb, var(--color-fg-primary) 5%, transparent);
+  }
+  .name {
     font-size: var(--text-sm);
     font-weight: 500;
+  }
+  .qty {
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+  .state {
+    font-size: var(--text-sm);
+    color: var(--color-fg-secondary);
+  }
+  .rows :global(.kit-chevron) {
+    align-self: center;
   }
   .below {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    font-size: var(--text-xs);
+    gap: 0.5rem;
+    padding: 0.25rem 0.35rem 0.75rem;
+  }
+  .why {
+    margin: 0;
+    max-width: 62ch;
+    font-size: var(--text-sm);
+    color: var(--color-fg-secondary);
   }
   .pid {
     display: flex;
     gap: 1rem;
+    margin: 0;
     font-size: var(--text-2xs);
     color: var(--color-fg-secondary);
   }
@@ -229,15 +304,18 @@
   }
   .split {
     width: 100%;
-    max-width: 34rem;
+    max-width: 40rem;
     border-collapse: collapse;
     font-size: var(--text-xs);
   }
   .split td {
-    padding: 0.3rem 0.75rem 0.3rem 0;
+    padding: 0.35rem 0;
+  }
+  .split td + td {
+    padding-inline-start: 1rem;
   }
   .split tr + tr td {
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
   }
   .sum-row td {
     font-weight: 500;
@@ -246,24 +324,26 @@
     text-align: end;
     white-space: nowrap;
   }
-  .flag {
+  .foot {
     margin: 0;
-    max-width: 62ch;
-    color: var(--color-fg-secondary);
-  }
-  .act {
-    display: flex;
-    gap: 0.5rem;
+    font-size: var(--text-xs);
   }
   @media (max-width: 760px) {
-    .ctl {
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 0.35rem 0.6rem;
+    .rows :global(.row) {
+      grid-template-columns: minmax(0, 1fr) 1rem;
+      gap: 0.1rem 0.75rem;
     }
     .qty,
-    .sum {
-      min-width: 0;
+    .state {
+      grid-column: 1;
+      font-size: var(--text-xs);
+    }
+    .rows :global(.kit-chevron) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    .ask :global(button) {
+      width: 100%;
     }
   }
 </style>

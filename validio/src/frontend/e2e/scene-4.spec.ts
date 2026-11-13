@@ -6,8 +6,8 @@ import { code, fresh } from "./helpers";
 test("scene 4: steady order renews with flags", async ({ page }) => {
   await fresh(page);
   await page.goto("/steady");
-  await page.getByTestId("steady-S-1").getByRole("link").click();
-  await expect(page.getByTestId("simulated-history")).toContainText("Simulated history");
+  await page.getByTestId("steady-S-1").click();
+  await expect(page.getByTestId("simulated-history")).toContainText("simulated for the demo");
 
   // The first write asks for the approval code once, then runs.
   await page.getByTestId("renew").click();
@@ -16,10 +16,12 @@ test("scene 4: steady order renews with flags", async ({ page }) => {
   await expect(page.getByTestId("line-463968")).toContainText("Split, renewed alone");
   await expect(page.getByTestId("line-463968")).toContainText("772.49");
   await expect(page.getByTestId("line-463968")).toContainText("2.5 %");
-  await expect(page.getByTestId("line-471376")).toContainText("Waiting for you");
-  await expect(page.getByTestId("line-471376")).toContainText("lists wheat as contained");
+  await expect(page.getByTestId("accept-471376")).toHaveText(/Order 27 now/);
+  await expect(page.getByTestId("line-471376")).toContainText(/wheat as contained/i);
   await expect(page.getByTestId("line-466375")).toContainText("26 % more per guest");
   await expect(page.getByTestId("accept-466375")).toHaveText(/Renew anyway/);
+  await expect(page.locator("#drift-466375")).toBeHidden();
+  await page.getByTestId("line-466375").locator(".more-btn").click();
   await expect(page.locator("#drift-466375")).toBeVisible();
 
   // The code is kept for the session: the second write does not ask again.

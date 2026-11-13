@@ -75,11 +75,16 @@ test("scene 1: the agent asks for 1000 litres of milk", async ({ request }) => {
   expect(r1.text).toBe("1000 litres of lactose-free milk by Monday, budget 1200 euro");
 });
 
-test("scene 1 on screen: Inbox shows R-1 and the Spend Pass card", async ({ page }) => {
+test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass page the rest", async ({ page }) => {
   await page.goto("/");
-  await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by",
-    "pass-valid-to", "pass-approvers");
+  await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap");
   await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000 litres of lactose-free milk/); // display words, "1,000"
+  await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
+  await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
+  // The request pane keeps one Spend Pass line; the whole pass is its own page.
+  if ((await page.getByTestId("nav-spend-pass").count()) > 0) await page.getByTestId("nav-spend-pass").click();
+  else await page.goto("/spend-pass");
+  await needs(page, "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by", "pass-valid-to", "pass-approvers");
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
@@ -137,6 +142,7 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
 
 test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ page, request }) => {
   await page.goto("/");
+  await page.locator("#page-menu").click(); // the switch sits in the bar's demo menu
   await act(page, "stock-out", async () => (await json(request, "/api/demo")).stockOut466375 === true,
     async () => { expect((await request.post("/api/demo/stock-out")).status()).toBe(200); });
   agent(3);
@@ -146,8 +152,8 @@ test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", as
 
 test("scene 3 on screen: Simulated, and R-2 waits at 180.10", async ({ page }) => {
   await page.goto("/");
-  await needs(page, "stock-out", "stock-out-note", "inbox-R-2");
-  await expect(page.getByTestId("stock-out")).toContainText("Simulated");
+  await needs(page, "stock-out-note", "inbox-R-2");
+  await expect(page.getByTestId("stock-out-note")).toContainText(/simulated/i);
   await expect(page.getByTestId("stock-out-note")).toContainText("11,603");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
   await expect(page.getByTestId("inbox-R-2")).toContainText(money("180.10"));
@@ -158,7 +164,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   const subs = ["466151", "473986", "468526", "475908"];
   const beyond = ["465256", "463383", "465174"];
   await needs(page, "request-rule", "live-checked", "option-466375", ...[...subs, ...beyond].map((p) => `option-${p}`));
-  await expect(page.getByTestId("option-466375")).toContainText(/Only 0 (BAG|bags) in stock, 200 needed/); // unit code or its word
+  await expect(page.getByTestId("option-466375")).toContainText(/Only 0 (BAG|bags) in stock, 200 needed|Out of stock at Valio/); // either copy
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
     await expect(page.getByTestId(`option-${p}`)).toContainText("Lists milk and has no lactose-free claim");
