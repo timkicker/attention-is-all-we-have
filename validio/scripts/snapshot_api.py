@@ -17,10 +17,10 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from demo_check import ROOT, Fail, Run, env, start_server
+from demo_check import ROOT, Fail, Run, env, free_port, start_server
 
 OUT = ROOT / "src" / "frontend" / "src" / "lib" / "api" / "snapshots"
-PORT = 8417
+PORT = free_port()  # never another lane's server
 # the approve code is not checked here: six random digits turn up in hashes by chance
 # a JWS or SD-JWT (eyJ...), an SD-JWT disclosure chain, a JWK private part
 SECRET = re.compile(r'eyJ[A-Za-z0-9_-]{10,}\.|~eyJ|"d"\s*:\s*"|"issuance"|"VALIO_API_KEY')

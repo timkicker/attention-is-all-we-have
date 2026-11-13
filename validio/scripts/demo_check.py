@@ -237,7 +237,21 @@ def env() -> dict[str, str]:
     return {**_read_env_file(DEFAULT_ENV), **os.environ}
 
 
+def free_port() -> int:
+    """A port nobody holds, so two lanes' checks on one machine never talk to each other's server."""
+    import socket
+
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
 def start_server(port: int, store: Path, token: str, code: str) -> subprocess.Popen:
+    try:
+        httpx.get(f"http://127.0.0.1:{port}/api/health", timeout=1)
+        raise SystemExit(f"something already answers on 127.0.0.1:{port}; it is not this check's server")
+    except httpx.HTTPError:
+        pass
     e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_DEMO_TOKEN": token,
          "VALIDIO_APPROVE_CODE": code, "VALIO_MODE": "replay", "VALIDIO_DEMO": "1"}
     log = open(store / "server.log", "w")  # noqa: SIM115  (the server writes it until it stops)
@@ -273,8 +287,9 @@ async def main() -> int:
         store = ROOT / "artifacts" / "demo-check"
         store.mkdir(parents=True, exist_ok=True)
         token, code = secrets.token_urlsafe(16), f"{secrets.randbelow(10**6):06d}"
-        proc = start_server(8418, store, token, code)
-        base, db = "http://127.0.0.1:8418", store / "validio.db"
+        port = free_port()
+        proc = start_server(port, store, token, code)
+        base, db = f"http://127.0.0.1:{port}", store / "validio.db"
     try:
         for i in range(args.rounds):
             print(f"round {i + 1} from a reset, scenes {args.scenes}")
