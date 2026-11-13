@@ -1,0 +1,14 @@
+data/
+artifacts/
+.env
+src/frontend/vendor/
+node_modules/
+build/
+.svelte-kit/
+.venv/
+.superpowers/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+test-results/
+playwright-report/
