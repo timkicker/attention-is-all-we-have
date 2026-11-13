@@ -79,7 +79,7 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass card", async ({ page
   await page.goto("/");
   await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by",
     "pass-valid-to", "pass-approvers");
-  await expect(page.getByTestId("inbox-R-1")).toContainText("1000 litres of lactose-free milk");
+  await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000 litres of lactose-free milk/); // display words, "1,000"
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
@@ -158,7 +158,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   const subs = ["466151", "473986", "468526", "475908"];
   const beyond = ["465256", "463383", "465174"];
   await needs(page, "request-rule", "live-checked", "option-466375", ...[...subs, ...beyond].map((p) => `option-${p}`));
-  await expect(page.getByTestId("option-466375")).toContainText("Only 0 BAG in stock, 200 needed");
+  await expect(page.getByTestId("option-466375")).toContainText(/Only 0 (BAG|bags) in stock, 200 needed/); // unit code or its word
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
     await expect(page.getByTestId(`option-${p}`)).toContainText("Lists milk and has no lactose-free claim");
