@@ -104,11 +104,19 @@ def test_parmesan_split_allowed_by_hard_lines_without_diet(parmesan):
     assert d.context["isSplit"] and d.context["splitExtraBp"] == 246
 
 
-def test_parmesan_split_under_lactose_free_pass_needs_person(parmesan):
-    # Neither parmesan claims lactose free, so under the demo pass's diet a person has to look.
-    d = decide_split(parmesan, DEMO_MANDATE, NOW)
-    assert d.outcome is Outcome.ESCALATE
-    assert "a diet rule cannot be checked" in d.sentence
+def test_parmesan_split_renews_alone_under_lactose_free_pass(parmesan):
+    # The diet rule applies per line: the parmesan line asks for no diet, so the pass's lactose free does not apply.
+    d = decide_split(parmesan, DEMO_MANDATE, NOW, required_claims=())
+    assert d.outcome is Outcome.ALLOW and "auto-order" in d.rule_ids
+    assert d.context["splitExtraBp"] == 246
+
+
+def test_split_for_a_lactose_free_line_needs_person(parmesan):
+    # Neither parmesan claims lactose free, so a line that needs lactose free still waits for a person.
+    for claims in (None, ("FREE_FROM_LACTOSE",)):
+        d = decide_split(parmesan, DEMO_MANDATE, NOW, required_claims=claims)
+        assert d.outcome is Outcome.ESCALATE
+        assert "a diet rule cannot be checked" in d.sentence
 
 
 def test_incomplete_split_is_not_decided_alone(pancakes):

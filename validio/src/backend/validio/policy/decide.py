@@ -7,7 +7,8 @@ and the app refuses to start.
 
 import json
 import os
-from dataclasses import dataclass, fields
+from collections.abc import Iterable
+from dataclasses import dataclass, fields, replace
 from datetime import datetime
 from enum import StrEnum
 from functools import cache
@@ -138,13 +139,18 @@ def context_for(
     split_base_cents: int | None = None,
     is_renewal: bool = False,
     drift_flag: bool = False,
+    required_claims: Iterable[str] | None = None,
 ) -> PolicyContext:
     """The Cedar context for one product line, from Fact Grades and Valio's availability answer.
 
-    `total_cents` must be recomputed from Valio's price, never taken from the agent."""
+    `total_cents` must be recomputed from Valio's price, never taken from the agent. The diet rule
+    applies per line: `required_claims` are the claims this line must keep (a Steady Order line carries
+    its own). None means the Spend Pass diet."""
     from validio.trust.claims import claim_check
     from validio.trust.levels import TrustLevel, quantity_fact
 
+    if required_claims is not None:
+        mandate = replace(mandate, diet=tuple(required_claims))
     q = quantity_fact(availability)
     deliverable = availability is not None and availability.deliverable
     closing = availability.closing_time if availability is not None else None
