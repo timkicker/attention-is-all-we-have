@@ -1,0 +1,16 @@
+# Copy of the CI job. GitHub only runs workflows from the repo root .github/, so this
+# file has to be moved there to run. Data tests skip without the Valio files.
+name: validio
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: validio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: cd src/backend && uv sync --frozen
+      - run: make guards
+      - run: cd src/backend && uv run ruff check validio tests ../../scripts && uv run pytest -q -rs
