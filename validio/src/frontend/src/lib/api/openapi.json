@@ -200,6 +200,17 @@
       },
       "DemoState": {
         "properties": {
+          "realStock466375": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RealStock"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what Valio really has of 466375, read at request time"
+          },
           "stockOut466375": {
             "title": "Stockout466375",
             "type": "boolean"
@@ -475,6 +486,64 @@
           "hash"
         ],
         "title": "LedgerEntryView",
+        "type": "object"
+      },
+      "LedgerHeadView": {
+        "description": "The Open Ledger head as the kitchen signed it. Valio can pin it and later check that the ledger it is\nshown still ends here or grew from here.",
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "hash": {
+            "title": "Hash",
+            "type": "string"
+          },
+          "publicKey": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publickey"
+          },
+          "signature": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signature"
+          },
+          "signatureOk": {
+            "title": "Signatureok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "count",
+          "hash",
+          "signatureOk"
+        ],
+        "title": "LedgerHeadView",
         "type": "object"
       },
       "LedgerView": {
@@ -995,6 +1064,24 @@
           "summary"
         ],
         "title": "ReaderView",
+        "type": "object"
+      },
+      "RealStock": {
+        "properties": {
+          "quantity": {
+            "title": "Quantity",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quantity",
+          "unit"
+        ],
+        "title": "RealStock",
         "type": "object"
       },
       "RequestLineView": {
@@ -2377,6 +2464,28 @@
           }
         },
         "summary": "Ledger",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/ledger/head": {
+      "get": {
+        "description": "The signed head: entry count, last hash and the time of the last entry, signed with the kitchen's key.",
+        "operationId": "ledger_head_api_ledger_head_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerHeadView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ledger Head",
         "tags": [
           "web"
         ]

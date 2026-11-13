@@ -67,6 +67,11 @@ def load_history(path: Path = HISTORY_FILE) -> History:
     )
 
 
+def kitchen_key(keys_dir: Path | None = None):
+    """The kitchen's private key: it signs the Spend Pass and the Open Ledger head."""
+    return load_or_create_key(Path(keys_dir or keys_path()) / "kitchen-es256.json")
+
+
 def reset(path: Path | None = None, keys_dir: Path | None = None) -> Path:
     """Drop every table in the local store, then write the seed. Keys are kept when they exist, so a reset
     never invalidates a pass an agent already holds. Stores that keep a connection open must reopen it."""

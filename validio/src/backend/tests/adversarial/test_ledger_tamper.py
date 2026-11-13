@@ -7,15 +7,17 @@ import sqlite3
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from jwcrypto.jwk import JWK
 
-from validio.audit.log import GENESIS, AuditLog, canonical, entry_hash
+from validio.audit.log import GENESIS, AuditLog, canonical, entry_hash, head_payload
 
 T0 = datetime.fromisoformat("2026-11-14T10:00:00+02:00")
 N = 6
+KITCHEN = JWK.generate(kty="EC", crv="P-256")  # the kitchen's key lives outside validio.db, in data/keys/
 
 
-def fill(path) -> AuditLog:
-    log = AuditLog(path)
+def fill(path, key=None) -> AuditLog:
+    log = AuditLog(path, key)
     for i in range(1, N + 1):
         log.append(at=T0 + timedelta(minutes=i), actor="validio", kind="decision", sentence=f"Decision {i}.",
                    facts=[{"field": "price", "value": f"{i}.00 EUR", "grade": "attested"}], mandate_id="M-1",
@@ -141,12 +143,7 @@ MATRIX = {
 }
 
 
-G9 = pytest.mark.xfail(strict=True, reason="review-2 G9: an entry appended past the head is reported at the last "
-                                           "honest seq, not at the forged one")
-CASES = [pytest.param(n, marks=G9) if n == "append without the head" else n for n in MATRIX]
-
-
-@pytest.mark.parametrize("name", CASES)
+@pytest.mark.parametrize("name", list(MATRIX))
 def test_tamper_is_caught(tmp_path, name):
     tamper, at = MATRIX[name]
     path = tmp_path / "validio.db"
@@ -161,8 +158,6 @@ def test_tamper_is_caught(tmp_path, name):
 
 # Bodies that are valid JSON but not an object: verify must say "broken", not crash.
 
-@pytest.mark.xfail(strict=True, reason="review-2 G6: verify() raises AttributeError on a body that is JSON but not "
-                                       "an object, so /api/ledger answers 500 instead of chain.ok false")
 @pytest.mark.parametrize("text", ["[]", "null", "42", '"x"'])
 def test_body_that_is_not_an_object_is_caught(tmp_path, text):
     path = tmp_path / "validio.db"
@@ -173,7 +168,8 @@ def test_body_that_is_not_an_object_is_caught(tmp_path, text):
     assert AuditLog(path).verify() == (False, 2, 3)
 
 
-# A full rewrite including the head is beyond what one file can prove (module docstring of audit/log.py).
+# A full rewrite including the head: caught by the kitchen's signature over the head (module docstring of
+# audit/log.py), unless the key is stolen too.
 
 def _rewrite_all(con, keep=lambda seq: True, change=lambda b: b):
     prev, n = GENESIS, 0
@@ -188,12 +184,10 @@ def _rewrite_all(con, keep=lambda seq: True, change=lambda b: b):
     con.execute("update ledger_head set count = ?, hash = ?", (n, prev))
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G7 (known limit): a rewrite of every row and the head is not "
-                                       "caught; needs the head published or signed outside validio.db")
 @pytest.mark.parametrize("how", ["drop seq 3 and rechain", "edit and rechain", "empty with head reset"])
 def test_full_rewrite_with_head_is_caught(tmp_path, how):
     path = tmp_path / "validio.db"
-    fill(path)
+    fill(path, KITCHEN)
     con = sqlite3.connect(path, isolation_level=None)
     if how == "drop seq 3 and rechain":
         _rewrite_all(con, keep=lambda s: s != 3)
@@ -203,7 +197,54 @@ def test_full_rewrite_with_head_is_caught(tmp_path, how):
         con.execute("delete from ledger")
         con.execute("update ledger_head set count = 0, hash = ?", (GENESIS,))
     con.close()
-    assert not AuditLog(path).verify().ok
+    assert AuditLog(path, KITCHEN).verify() == (False, AuditLog(path).verify().count, 1)
+    assert AuditLog(path).verify().ok, "without the key the rewrite still looks fine: the key is what catches it"
+
+
+def _resign(con, key):
+    count, h, at = con.execute("select count, hash, at from ledger_head").fetchone()
+    from jwcrypto.jws import JWS
+
+    jws = JWS(head_payload(count, h, at).encode())
+    jws.add_signature(key, alg="ES256", protected=json.dumps({"alg": "ES256"}))
+    con.execute("update ledger_head set sig = ?", (jws.serialize(compact=True),))
+
+
+@pytest.mark.parametrize("how", ["signature removed", "signed with another key", "old signature kept"])
+def test_rewrite_with_a_forged_head_signature_is_caught(tmp_path, how):
+    path = tmp_path / "validio.db"
+    fill(path, KITCHEN)
+    con = sqlite3.connect(path, isolation_level=None)
+    _rewrite_all(con, change=lambda b: {**b, "sentence": b["sentence"].replace("3", "9")})
+    if how == "signature removed":
+        con.execute("update ledger_head set sig = null")
+    elif how == "signed with another key":
+        _resign(con, JWK.generate(kty="EC", crv="P-256"))
+    con.close()
+    assert not AuditLog(path, KITCHEN).verify().ok
+
+
+def test_signed_head_survives_reopen_and_appends(tmp_path):
+    path = tmp_path / "validio.db"
+    fill(path, KITCHEN)
+    log = AuditLog(path, KITCHEN)
+    assert log.verify() == (True, N, None)
+    log.append(at=T0, actor="validio", kind="decision", sentence="later", facts=[], mandate_id=None, disclosed={},
+               rule_ids=[], order_id=None)
+    assert AuditLog(path, KITCHEN).verify() == (True, N + 1, None)
+    head = log.head()
+    assert (head.count, head.at) == (N + 1, T0.isoformat()) and head.signature.count(".") == 2
+
+
+def test_stolen_key_is_the_limit(tmp_path):
+    """With the kitchen's key, a full rewrite and a fresh signature pass: what Valio pinned is the last line."""
+    path = tmp_path / "validio.db"
+    fill(path, KITCHEN)
+    con = sqlite3.connect(path, isolation_level=None)
+    _rewrite_all(con, change=lambda b: {**b, "sentence": "rewritten"})
+    _resign(con, KITCHEN)
+    con.close()
+    assert AuditLog(path, KITCHEN).verify().ok
 
 
 def test_appends_after_tamper_do_not_heal_the_chain(tmp_path):
@@ -248,8 +289,6 @@ def test_api_ledger_reports_the_break(ctx, monkeypatch):
     assert r.json()["chain"] == {"ok": False, "count": 1, "brokenAt": 2}
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G8: AuditLog.list() builds AuditEntry(**body), so a row with an "
-                                       "added or missing key makes /api/ledger answer 500 instead of showing the break")
 @pytest.mark.parametrize("change", ["extra key", "missing key"])
 def test_api_ledger_survives_a_body_with_other_keys(ctx, change):
     from fastapi.testclient import TestClient
@@ -270,3 +309,32 @@ def test_api_ledger_survives_a_body_with_other_keys(ctx, change):
     with TestClient(app, raise_server_exceptions=False) as client:
         r = client.get("/api/ledger")
     assert r.status_code == 200 and r.json()["chain"]["ok"] is False
+
+
+def test_api_ledger_head_is_signed_and_a_full_rewrite_shows(ctx):
+    """GET /api/ledger/head gives what Valio can pin; after a rewrite of every row and the head, both the
+    head and /api/ledger say so."""
+    from fastapi.testclient import TestClient
+    from jwcrypto.jws import JWS
+
+    from validio.api.app import app
+
+    for i in range(3):
+        ctx.audit.append(at=T0, actor="validio", kind="decision", sentence=f"d{i}", facts=[], mandate_id=None,
+                         disclosed={}, rule_ids=[], order_id=None)
+    with TestClient(app) as client:
+        pinned = client.get("/api/ledger/head").json()
+        assert pinned["signatureOk"] is True and pinned["count"] == 3 and pinned["at"] == T0.isoformat()
+        jws = JWS()
+        jws.deserialize(pinned["signature"])
+        jws.verify(JWK(**pinned["publicKey"]), alg="ES256")
+        assert json.loads(jws.payload) == {"at": pinned["at"], "count": 3, "hash": pinned["hash"],
+                                           "typ": "validio-ledger-head"}
+        assert "d" not in pinned["publicKey"], "never the private part"
+        con = sqlite3.connect(ctx.db_path, isolation_level=None)
+        _rewrite_all(con, change=lambda b: {**b, "sentence": "rewritten"})
+        con.close()
+        head = client.get("/api/ledger/head").json()
+        chain = client.get("/api/ledger").json()["chain"]
+    assert head["signatureOk"] is False and head["hash"] != pinned["hash"]
+    assert chain == {"ok": False, "count": 3, "brokenAt": 1}
