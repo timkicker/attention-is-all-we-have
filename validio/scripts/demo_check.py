@@ -35,7 +35,8 @@ from validio.config import DEFAULT_ENV, _read_env_file
 
 MAX_IDS = 40
 SCENE2_SENTENCE = ("for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until "
-                   "31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).")
+                   "31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). "
+                   "Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.")
 
 
 class Fail(AssertionError):
