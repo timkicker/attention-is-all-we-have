@@ -16,11 +16,20 @@ from .budget import CallBudget
 from .models import Availability, Quote
 
 MAX_PER_CALL = 1000  # Valio rejects longer lists with 422
-FORBIDDEN = ("toimitustukku.valioaimo", "//api.valioaimo")  # Valio's real webshop, never
+TEST_API_HOST = "junction26.valioaimo.fi"  # Valio's test API. The real webshop is never called.
 
 
 class ReplayMiss(LookupError):
     pass
+
+
+def checked_base_url(url: str) -> str:
+    """The base URL when it is exactly https://junction26.valioaimo.fi, else ValueError. Parsed, not grepped,
+    so letter case, a user name or a look-alike host cannot get the key to another server."""
+    u = httpx.URL(url)
+    if u.scheme != "https" or u.host.lower() != TEST_API_HOST or u.userinfo or u.port not in (None, 443):
+        raise ValueError(f"refusing {u.host or url!r}: only https://{TEST_API_HOST} is allowed")
+    return f"https://{TEST_API_HOST}"
 
 
 def replay_key(endpoint: str, requested: date, ids: list[str]) -> str:
@@ -30,13 +39,12 @@ def replay_key(endpoint: str, requested: date, ids: list[str]) -> str:
 class ValioClient:
     def __init__(self, base_url: str, api_key: str, mode: str, cache_dir: Path | None,
                  customer: str = "hotel-espoo", chunk: int = MAX_PER_CALL, http: httpx.Client | None = None):
-        if any(f in base_url for f in FORBIDDEN):
-            raise ValueError("refusing Valio's real webshop, only the test API is allowed")
+        base_url = checked_base_url(base_url)
         if mode not in ("live", "record", "replay"):
             raise ValueError(f"unknown mode {mode!r}")
         if mode != "live" and cache_dir is None:
             raise ValueError(f"mode {mode} needs a cache_dir")
-        self.base_url, self.mode, self.customer = base_url.rstrip("/"), mode, customer
+        self.base_url, self.mode, self.customer = base_url, mode, customer
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self.chunk = min(chunk, MAX_PER_CALL)
         self._api_key = api_key
