@@ -247,7 +247,9 @@ def _unit(pid: str) -> str:
 
 def _line_out(pending: SteadyLineOut, rl: RenewedLine) -> SteadyLineOut:
     split = None
-    if rl.result is LineResult.SPLIT_RENEWED and rl.split is not None:
+    # a split that renewed, or one that waits for the chef ("Order the split"): show what accept would order
+    if rl.split is not None and (rl.result is LineResult.SPLIT_RENEWED
+                                 or any(x.product.id != rl.product_id for x in rl.split.parts)):
         plan = rl.split
         split = SplitOut(
             parts=[SplitPartOut(product_id=x.product.id, name=x.product.name_en, quantity=x.sales_qty,
@@ -269,6 +271,15 @@ def _order_lines(rl: RenewedLine) -> tuple[list[LineIn], int | None]:
         return ([LineIn(x.product.id, x.sales_qty, is_substitute=x.on_valio_list, on_valio_list=x.on_valio_list)
                  for x in rl.split.parts], rl.split.base_cents)
     return [LineIn(rl.product_id, rl.this_week_qty)], None
+
+
+def _accept_lines(line: SteadyLineOut) -> tuple[list[LineIn], int | None]:
+    """What accept orders: the split shown on the line, or this week's quantity of the product."""
+    if line.split is not None:
+        return ([LineIn(x.product_id, x.quantity, is_substitute=x.product_id != line.product_id,
+                        on_valio_list=x.on_valio_list) for x in line.split.parts],
+                line.split.total_cents - line.split.extra_cost_cents)
+    return [LineIn(line.product_id, line.this_week_quantity)], None
 
 
 def _view(state: dict) -> SteadyOrderOut:
@@ -366,13 +377,17 @@ def steady_accept(order_id: str, product_id: str, body: Annotated[ApproveIn | No
         diet = {ln.product_id: ln.diet for ln in so.lines}[product_id]
         delivery = date.fromisoformat(state["delivery"])
         try:
-            o = live.service.submit(
-                mandate=mandate, lines=[LineIn(product_id, line.this_week_quantity)], deliver_by=delivery,
-                idempotency_key=f"steady:{so.id}:{delivery}:{product_id}:accept", actor=CHEF,
-                required_claims=diet)
+            if line.order_id:  # renewed, then Valio's second answer made it wait: approve that order, no second one
+                o, fresh = live.service.get(line.order_id), False
+            else:
+                order_lines, base = _accept_lines(line)
+                o, fresh = live.service.submit(
+                    mandate=mandate, lines=order_lines, deliver_by=delivery,
+                    idempotency_key=f"steady:{so.id}:{delivery}:{product_id}:accept", actor=CHEF,
+                    required_claims=diet, split_base_cents=base), True
             if o["state"] == "waiting":
                 o = live.service.approve(o["id"], CHEF)  # Valio asked again, a block is never lifted
-            elif o["state"] == "placed":  # approve writes its own approval entry, this path needs one
+            elif o["state"] == "placed" and fresh:  # approve writes its own approval entry, this path needs one
                 live.audit.append(
                     at=s.now, actor=CHEF, kind="approval",
                     sentence=f"Chef accepted {line.this_week_quantity} {line.unit} of {product_id} {line.name} "
