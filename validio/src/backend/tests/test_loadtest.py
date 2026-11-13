@@ -7,7 +7,7 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "loadtest.py"
 
 
-def test_three_agents_two_rounds():
+def test_three_agents_two_rounds(catalog):  # needs the real catalog: skips in CI, fails under REQUIRE_DATA
     spec = importlib.util.spec_from_file_location("loadtest", SCRIPT)
     lt = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(lt)
