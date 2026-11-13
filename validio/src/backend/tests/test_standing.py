@@ -110,7 +110,7 @@ def test_next_four_renewals_from_saturday(so):
 @pytest.fixture(scope="module")
 def flags(so, history, catalog, valio):
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
-    return detect(so, history, quotes, avail, NOW)
+    return detect(so, history, quotes, avail, NOW, catalog)
 
 
 def test_mozzarella_per_guest_flag_26pct(flags):
@@ -137,7 +137,7 @@ def test_464306_contract_ends_after_the_next_four_renewals(flags):
 def test_contract_ends_flag_before_fourth_renewal(so, history, catalog, valio):
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
     quotes["464306"] = replace(quotes["464306"], valid_to=date(2026, 12, 1))
-    f = [x for x in detect(so, history, quotes, avail, NOW) if x.kind is DriftKind.CONTRACT_ENDS]
+    f = [x for x in detect(so, history, quotes, avail, NOW, catalog) if x.kind is DriftKind.CONTRACT_ENDS]
     assert [x.product_id for x in f] == ["464306"]
     assert "1 Dec" in f[0].sentence
 
@@ -145,10 +145,10 @@ def test_contract_ends_flag_before_fourth_renewal(so, history, catalog, valio):
 def test_cost_up_over_ten_pct(so, history, catalog, valio):
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
     paid = [replace(w, unit_cents={"464306": 91}) for w in history.weeks]  # 1.01 is 11 % over 0.91
-    f = detect(so, replace(history, weeks=paid), quotes, avail, NOW)
+    f = detect(so, replace(history, weeks=paid), quotes, avail, NOW, catalog)
     assert [(x.product_id, x.pct) for x in f if x.kind is DriftKind.COST_UP] == [("464306", 11)]
     paid = [replace(w, unit_cents={"464306": 93}) for w in history.weeks]  # 8.6 % over: no flag
-    f = detect(so, replace(history, weeks=paid), quotes, avail, NOW)
+    f = detect(so, replace(history, weeks=paid), quotes, avail, NOW, catalog)
     assert not [x for x in f if x.kind is DriftKind.COST_UP]
 
 
@@ -161,7 +161,7 @@ def test_per_guest_flag_threshold_is_20pct(so, catalog, valio):
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
     for last, flagged in [(120, False), (121, True)]:
         h = hist(last)
-        f = detect(learn(h), h, quotes, avail, NOW)
+        f = detect(learn(h), h, quotes, avail, NOW, catalog)
         assert bool([x for x in f if x.kind is DriftKind.PER_GUEST_UP]) is flagged, last
 
 
@@ -171,7 +171,7 @@ def test_per_guest_uses_guests_not_amount(so, catalog, valio):
              for i, (g, q) in enumerate([(400, 100)] * 4 + [(600, 150)] * 2)]
     h = History("hotel-espoo", 0, {"464306": ("FREE_FROM_LACTOSE",)}, weeks, True)
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
-    assert not [x for x in detect(learn(h), h, quotes, avail, NOW) if x.kind is DriftKind.PER_GUEST_UP]
+    assert not [x for x in detect(learn(h), h, quotes, avail, NOW, catalog) if x.kind is DriftKind.PER_GUEST_UP]
 
 
 # --- renewal ---
@@ -257,5 +257,33 @@ def test_price_comes_from_valio_not_history(so, history, catalog, valio, mandate
     q = Quote("464306", False, 150, None, True, None, None, None, None)
     quotes, avail, _ = fetch(so, catalog, valio, NOW, stockout=False)
     quotes["464306"] = q
-    r = renew(so, detect(so, history, quotes, avail, NOW), catalog, quotes, avail, mandate, NOW)
+    r = renew(so, detect(so, history, quotes, avail, NOW, catalog), catalog, quotes, avail, mandate, NOW)
     assert line(r, "464306").total_cents == 300 * 150
+
+
+# review-3 H4: Valio has 36 ST of 469054, that is 3 cartons of 12. Drift and renew count cartons.
+
+
+def _one_line(pid, qty):
+    from validio.standing.model import StandingLine, StandingOrder
+
+    return StandingOrder("SO-T", "hotel-espoo", "test", 0, [StandingLine(pid, qty, 0.0, ())], 200, 8, True)
+
+
+def test_drift_counts_stock_in_sales_units(history, catalog, valio):
+    so1 = _one_line("469054", 10)
+    quotes, avail, _ = fetch(so1, catalog, valio, NOW, stockout=False)
+    (f,) = [x for x in detect(so1, history, quotes, avail, NOW, catalog) if x.kind is DriftKind.STOCK_BELOW]
+    assert f.sentence == "Only 3 cartons in stock, the usual line is 10."
+    assert not [x for x in detect(_one_line("469054", 3), history, quotes, avail, NOW, catalog)
+                if x.kind is DriftKind.STOCK_BELOW]  # control: 3 cartons cover 3
+
+
+def test_renew_offers_stock_in_sales_units(history, catalog, valio, mandate):
+    so1 = _one_line("469054", 10)
+    quotes, avail, _ = fetch(so1, catalog, valio, NOW, stockout=False)
+    r = renew(so1, detect(so1, history, quotes, avail, NOW, catalog), catalog, quotes, avail, mandate, NOW,
+              split_fill=lambda *a, **k: None)
+    (ln,) = r.lines
+    assert ln.this_week_qty == 3
+    assert ln.accept_label == "Order 3 now"
