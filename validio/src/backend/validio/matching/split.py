@@ -7,6 +7,7 @@ a rule is never added: it lands in `breaks` and the line waits for a person.
 """
 
 import math
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
@@ -156,17 +157,18 @@ def split_fill(first: Product, wanted: int, required_claims: set[str], cat: Cata
 _WORST = {Outcome.ALLOW: 0, Outcome.ESCALATE: 1, Outcome.DENY: 2}
 
 
-def decide_split(plan: SplitPlan, mandate: Mandate, now: datetime, policy: Policy | None = None) -> Decision:
+def decide_split(plan: SplitPlan, mandate: Mandate, now: datetime, policy: Policy | None = None,
+                 required_claims: Iterable[str] | None = None) -> Decision:
     """Hard Lines for a complete split: Cedar judges every part with the split's total, the worst
     outcome wins. A split that falls short or refused a part always waits for a person and is not
-    sent here."""
+    sent here. `required_claims` is the line's own diet, None means the Spend Pass diet."""
     if plan.needs_person:
         raise ValueError("an incomplete split or one with a refused part waits for a person")
     worst = None
     for part in plan.parts:
         ctx = context_for(mandate, part.product, part.availability, total_cents=plan.total_cents, now=now,
                           is_substitute=part.on_valio_list, on_valio_list=part.on_valio_list,
-                          split_base_cents=plan.base_cents)
+                          split_base_cents=plan.base_cents, required_claims=required_claims)
         d = decide(ctx, part.product.id, policy=policy)
         if worst is None or _WORST[d.outcome] > _WORST[worst.outcome]:
             worst = d
