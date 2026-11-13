@@ -37,8 +37,10 @@
     text-align: start;
     vertical-align: top;
   }
-  tbody tr + tr :is(th, td) {
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+  @media (min-width: 761px) {
+    tbody tr + tr :is(th, td) {
+      border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+    }
   }
   th {
     width: 9rem;
@@ -65,7 +67,6 @@
     th,
     td {
       padding: 0;
-      border: 0 !important;
     }
     th {
       width: auto;
@@ -78,7 +79,7 @@
       grid-column: 1 / -1;
     }
     tbody tr + tr {
-      border-top: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+      border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
     }
   }
 </style>

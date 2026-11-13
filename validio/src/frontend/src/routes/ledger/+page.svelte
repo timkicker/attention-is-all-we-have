@@ -1,82 +1,64 @@
 <script lang="ts">
-  // The open ledger, one line per entry as Arlen's knowledge rows read: what
-  // kind of thing happened, what it was in one sentence, who did it, when.
-  // Whether the chain holds comes first. The recorded text, rules, shown Spend
-  // Pass fields and hashes open under an entry.
+  // The open ledger, one line per entry: when, what happened in one sentence,
+  // who. Whether the chain holds comes first. The raw record, rules, shown
+  // Spend Pass fields and hashes open under an entry; nothing is open at first.
   import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
-  import {
-    CalendarSync,
-    CircleCheck,
-    FileText,
-    FlaskConical,
-    Scale,
-    ShieldCheck,
-    ShieldX,
-    ShoppingCart,
-  } from "@lucide/svelte";
   import { api } from "$lib/api/client";
   import type { LedgerEntry } from "$lib/api/types";
   import { setChrome } from "$lib/chrome.svelte";
-  import { sentences, time } from "$lib/format";
+  import { hm, holderWord, prose, sentences, time } from "$lib/format";
   import { live } from "$lib/live.svelte";
-  import Facts from "$lib/components/Facts.svelte";
+  import Frame from "$lib/components/Frame.svelte";
   import Info from "$lib/components/Info.svelte";
-  import State from "$lib/components/State.svelte";
 
-  setChrome("Open ledger");
+  setChrome("Ledger");
   const ledger = live(() => api.ledger());
 
-  const entries = $derived([...(ledger.data?.entries ?? [])].reverse());
+  const newest = $derived([...(ledger.data?.entries ?? [])].reverse());
 
-  const KIND: Record<string, { label: string; icon: typeof FileText }> = {
-    request: { label: "Request", icon: FileText },
-    decision: { label: "Decision", icon: Scale },
-    order: { label: "Order", icon: ShoppingCart },
-    approval: { label: "Approval", icon: CircleCheck },
-    simulation: { label: "Simulated", icon: FlaskConical },
-    renewal: { label: "Renewal", icon: CalendarSync },
+  const KIND: Record<string, { label: string }> = {
+    request: { label: "Request" },
+    decision: { label: "Decision" },
+    order: { label: "Order" },
+    approval: { label: "Approval" },
+    simulation: { label: "Simulated" },
+    renewal: { label: "Renewal" },
   };
-  const who = (actor: string) => {
-    const [kind, name] = actor.split(":");
-    if (kind === "agent") return "Agent";
-    if (kind === "validio") return "Validio";
-    if (kind === "kitchen" && name) return name.charAt(0).toUpperCase() + name.slice(1);
-    return actor.charAt(0).toUpperCase() + actor.slice(1);
+  // Backend keys in words; an unknown key is split into words, never shown raw.
+  const FIELD: Record<string, string> = {
+    autoLimitCents: "auto limit",
+    hardCapCents: "hard cap",
+    diet: "diet",
+    deliverBy: "delivery date",
+    categories: "product groups",
+    substitutes: "substitutes",
+    split: "splitting",
+    preferLabels: "preferred labels",
   };
+  const fieldKey = (k: string) => FIELD[k] ?? k.replace(/Cents$/, "").replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
+  const ruleWord = (r: string) => r.replaceAll("-", " ").replaceAll("_", " ");
+
   const short = (h: string) => (h.length > 16 ? `${h.slice(0, 8)}…${h.slice(-6)}` : h);
-  const people = $derived(entries.filter((e) => e.kind === "approval").length);
-  const orders = $derived(entries.filter((e) => e.kind === "order").length);
 </script>
 
-<div class="ledger-page">
-  {#if ledger.data}
-    {@const chain = ledger.data.chain}
-    <header class="head">
-      <h2 class="chain" id="chain-status" data-testid="chain-status" class:bad={!chain.ok}>
-        {#if chain.ok}
-          <ShieldCheck size={18} strokeWidth={1.75} aria-hidden="true" />
-          Chain verified
-        {:else}
-          <ShieldX size={18} strokeWidth={1.75} aria-hidden="true" />
-          Chain broken at entry {chain.brokenAt}
-        {/if}
+<Frame title="Ledger" top>
+  {#snippet head()}
+    {#if ledger.data}
+      {@const chain = ledger.data.chain}
+      <p class="facts">
+        <span class="chain" id="chain-status" data-testid="chain-status" class:bad={!chain.ok}>
+          {#if chain.ok}Chain verified · <span class="num">{chain.count}</span> entries{:else}Chain broken at entry {chain.brokenAt} of {chain.count}{/if}
+        </span>
         <Info
           label="What the chain proves"
           text="Each entry carries the hash of the one before it. Change one letter anywhere and every later hash stops matching, so the ledger shows where."
         />
-        <span class="sr-only">over {chain.count} entries</span>
-      </h2>
-      <Facts
-        items={[
-          { value: String(chain.count), label: "entries" },
-          { value: String(orders), label: "orders" },
-          { value: String(people), label: "decided by a person" },
-        ]}
-      />
-    </header>
-
+      </p>
+    {/if}
+  {/snippet}
+  {#if ledger.data}
     <ol class="rows" id="ledger" data-testid="ledger">
-      {#each entries as e (e.seq)}
+      {#each newest as e (e.seq)}
         {@render entry(e)}
       {:else}
         <li class="empty t-quiet">Nothing happened yet.</li>
@@ -85,18 +67,17 @@
   {:else if ledger.error}
     <p class="t-quiet">Cannot read the ledger: {ledger.error}</p>
   {/if}
-</div>
+</Frame>
 
 {#snippet entry(e: LedgerEntry)}
-  {@const k = KIND[e.kind] ?? { label: e.kind, icon: FileText }}
+  {@const k = KIND[e.kind] ?? { label: e.kind }}
   {@const said = sentences(e.sentence)}
   <li class="entry" id="entry-{e.seq}" data-testid="ledger-entry">
     <Collapsible.Root>
       <Collapsible.Trigger class="line">
-        <span class="icon" aria-hidden="true"><k.icon size={15} strokeWidth={1.75} /></span>
-        <span class="object">{said[0] ?? ""}</span>
-        <span class="who">{who(e.actor)}</span>
-        <span class="when num">{time(e.at)}</span>
+        <span class="when num">{hm(e.at)}</span>
+        <span class="object">{prose(said[0] ?? "")}</span>
+        <span class="who">{holderWord(e.actor)}</span>
         <Collapsible.Chevron />
       </Collapsible.Trigger>
       <Collapsible.Content forceMount>
@@ -104,15 +85,11 @@
           <div {...props} hidden={!open} class="more" id="entry-more-{e.seq}">
             {#if said.length > 1}<p class="rest">{said.slice(1).join(" ")}</p>{/if}
             <dl>
-              <dt>Kind</dt>
-              <dd><State label={k.label} tone="quiet" /></dd>
               <dt>Entry</dt>
-              <dd class="num">#{e.seq}{#if e.orderId}, order {e.orderId}{/if}</dd>
-              <dt>Actor</dt>
-              <dd class="mono">{e.actor}</dd>
-              {#if e.ruleIds.length}<dt>Rules</dt><dd class="mono">{e.ruleIds.join(", ")}</dd>{/if}
-              {#if e.disclosed.length}<dt>Spend Pass fields shown</dt><dd class="mono">{e.disclosed.join(", ")}</dd>{/if}
-              <dt>As recorded</dt>
+              <dd class="num">#{e.seq}, {k.label.toLowerCase()}{#if e.orderId}, order {e.orderId}{/if}, {time(e.at)}</dd>
+              {#if e.ruleIds.length}<dt>Rules</dt><dd>{e.ruleIds.map(ruleWord).join(", ")}</dd>{/if}
+              {#if e.disclosed.length}<dt>Spend Pass fields shown</dt><dd>{e.disclosed.map(fieldKey).join(", ")}</dd>{/if}
+              <dt>Raw record</dt>
               <dd class="recorded" data-raw>{e.sentence}</dd>
               <dt>Hash</dt>
               <dd class="mono">{short(e.hash)}</dd>
@@ -127,27 +104,17 @@
 {/snippet}
 
 <style>
-  .ledger-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    max-width: 60rem;
-    padding: 1.5rem 1.75rem 3rem;
-  }
-  .head {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .chain {
+  .facts {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     margin: 0;
-    font-size: var(--text-lg);
-    font-weight: 600;
+    font-size: var(--text-sm);
   }
-  .chain.bad :global(svg:first-child) {
+  .chain {
+    font-weight: 500;
+  }
+  .chain.bad {
     color: var(--destructive-on-tint);
   }
   .rows {
@@ -157,51 +124,40 @@
     padding: 0;
     list-style: none;
   }
-  .entry {
-    border-bottom: 1px solid color-mix(in srgb, var(--foreground) 6%, transparent);
+  .entry + .entry {
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
   }
   .rows :global(.line) {
     display: grid;
-    grid-template-columns: 1.25rem minmax(0, 1fr) 5.5rem 5.5rem 1rem;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 6rem 1rem;
     gap: 0.75rem;
     align-items: baseline;
     width: 100%;
     padding: 0.5rem 0.35rem;
     border-radius: var(--radius-input);
     text-align: start;
-    cursor: pointer;
   }
   .rows :global(.line:hover) {
     background: color-mix(in srgb, var(--color-fg-primary) 5%, transparent);
   }
-  .icon {
-    display: inline-flex;
-    align-self: center;
-    color: var(--color-fg-secondary);
-  }
-  .object {
-    min-width: 0;
-    font-size: var(--text-sm);
-    line-height: 1.45;
-  }
+  .when,
   .who {
     font-size: var(--text-xs);
     color: var(--color-fg-secondary);
   }
-  .when {
-    text-align: end;
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
+  .object {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-sm);
   }
   .rows :global(.kit-chevron) {
     align-self: center;
-    color: var(--color-fg-secondary);
   }
   .more {
-    margin: 0 0 0.75rem 2rem;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius-input);
-    background: color-mix(in srgb, var(--color-fg-primary) 4%, transparent);
+    margin: 0 0 0.75rem calc(3.5rem + 1.1rem);
+    padding: 0.25rem 0;
     font-size: var(--text-xs);
   }
   .rest {
@@ -220,7 +176,7 @@
   }
   dd {
     margin: 0;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   .recorded {
     color: var(--color-fg-secondary);
@@ -230,24 +186,29 @@
     font-size: var(--text-sm);
   }
   @media (max-width: 760px) {
-    .ledger-page {
-      padding: 1rem 1rem 2rem;
-    }
+    /* Two lines: the event, then "Validio · 10:00". */
     .rows :global(.line) {
-      grid-template-columns: 1.25rem minmax(0, 1fr) 1rem;
-      gap: 0.15rem 0.6rem;
+      grid-template-columns: auto auto minmax(0, 1fr) 1rem;
+      gap: 0.15rem 0.35rem;
     }
-    .who,
+    .object {
+      grid-column: 1 / 4;
+      grid-row: 1;
+      white-space: normal;
+    }
+    .who {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .who::after {
+      content: " ·";
+    }
     .when {
       grid-column: 2;
-      text-align: start;
-      font-size: var(--text-2xs);
-    }
-    .when {
-      grid-row: 3;
+      grid-row: 2;
     }
     .rows :global(.kit-chevron) {
-      grid-column: 3;
+      grid-column: 4;
       grid-row: 1;
     }
     .more {

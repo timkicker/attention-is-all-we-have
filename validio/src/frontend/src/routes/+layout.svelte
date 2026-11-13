@@ -22,10 +22,9 @@
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import { IconAction } from "@arlen/ui-kit/components/ui/icon-action";
-  import { Avatar, AvatarFallback } from "@arlen/ui-kit/components/ui/avatar";
   import { Badge } from "@arlen/ui-kit/components/ui/badge";
   import * as DropdownMenu from "@arlen/ui-kit/components/ui/dropdown-menu";
-  import { CalendarSync, ChevronLeft, Ellipsis, Inbox, KeyRound, RotateCcw, ScrollText, ShieldCheck } from "@lucide/svelte";
+  import { CalendarSync, Check, ChevronLeft, Ellipsis, FlaskConical, Inbox, KeyRound, RotateCcw, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { ApiError, api, LIVE } from "$lib/api/client";
   import { owner } from "$lib/owner.svelte";
   import { CLOCK, dayTime } from "$lib/format";
@@ -37,7 +36,7 @@
   const NAV = [
     { href: "/", id: "nav-inbox", label: "Inbox", short: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/requests") },
     { href: "/steady", id: "nav-steady-orders", label: "Steady orders", short: "Steady", icon: CalendarSync, match: (p: string) => p.startsWith("/steady") },
-    { href: "/ledger", id: "nav-open-ledger", label: "Open ledger", short: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
+    { href: "/ledger", id: "nav-open-ledger", label: "Ledger", short: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
   ];
   const PASS = { href: "/spend-pass", id: "nav-spend-pass", label: "Spend Pass", short: "Pass", icon: ShieldCheck, match: (p: string) => p.startsWith("/spend-pass") };
 
@@ -95,6 +94,12 @@
   // The fixture answers at once; with the backend the kitchen's agent asks again first.
   const stockOut = () => demo(() => api.stockOut(), LIVE ? "/" : "/requests/R-2");
   demoActions.stockOut = stockOut;
+  // Whether the stock-out is on, for the check mark in the menu.
+  let stockIsOut = $state(false);
+  $effect(() => {
+    void chrome.version;
+    api.demoState().then((d) => (stockIsOut = d.stockOut466375), () => {});
+  });
   const reset = () => demo(() => api.reset(), "/");
   function useToken(e: SubmitEvent) {
     e.preventDefault();
@@ -114,11 +119,7 @@
   {#if !chrome.phone}
   <Sidebar collapsible="icon">
     <SidebarHeader>
-      <div class="brand">
-        <Avatar class="size-6 rounded-button"><AvatarFallback class="tile">V</AvatarFallback></Avatar>
-        <span class="brand-name">Validio</span>
-        {#if !LIVE}<span class="sample"><Badge variant="outline">Demo data</Badge></span>{/if}
-      </div>
+      <div class="brand"><span class="brand-name">Validio</span></div>
     </SidebarHeader>
     <SidebarContent>
       <nav aria-label="Main">
@@ -172,18 +173,35 @@
           <ChevronLeft size={18} strokeWidth={1.75} />
         </IconAction>
       {/if}
-      <span class="bar-title" id="bar-title">{chrome.title}</span>
+      <!-- On the phone a detail page names its parent here and the thing in its
+           own heading, so the title is said once. -->
+      <span class="bar-title" id="bar-title">{chrome.phone && chrome.back ? chrome.back.label : chrome.title}</span>
       <span class="grow"></span>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger>
           {#snippet child({ props })}
-            <button {...props} type="button" class="menu-btn" id="page-menu" aria-label="Demo controls">
-              <Ellipsis size={16} strokeWidth={1.75} />
-            </button>
+            <!-- The tooltip trigger sets its own id on the button, so the
+                 stable id the suites and the video click sits on this span. -->
+            <span class="menu-wrap" id="page-menu">
+              <Button {...props} variant="ghost" size="icon-sm" tooltip="Demo controls" aria-label="Demo controls" data-testid="page-menu" class="menu-btn">
+                <Ellipsis />
+              </Button>
+            </span>
           {/snippet}
         </DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end" class="w-56">
+        <DropdownMenu.Content align="end">
           <DropdownMenu.Label>Demo controls</DropdownMenu.Label>
+          {#if !LIVE}<p class="menu-note" id="demo-data">Example orders, not this kitchen's.</p>{/if}
+          <DropdownMenu.Item
+            id="stock-out"
+            data-testid="stock-out"
+            disabled={stockIsOut}
+            aria-label={stockIsOut ? "Stock-out of 466375 simulated" : "Simulate stock-out of 466375"}
+            onSelect={stockOut}
+          >
+            {#if stockIsOut}<Check size={15} strokeWidth={1.75} />{:else}<FlaskConical size={15} strokeWidth={1.75} />{/if}
+            {stockIsOut ? "Stock-out of 466375 simulated" : "Simulate stock-out of 466375"}
+          </DropdownMenu.Item>
           <DropdownMenu.Item id="menu-reset" onSelect={reset}>
             <RotateCcw size={15} strokeWidth={1.75} />
             Start over
@@ -220,7 +238,7 @@
 </Dialog>
 
 {#if !single}
-  <nav class="dock shadow-lg" aria-label="Main, phone">
+  <nav class="dock" aria-label="Main, phone">
     {#each [...NAV, PASS] as item (item.href)}
       <a href={item.href} class:on={item.match(path)} aria-current={item.match(path) ? "page" : undefined}>
         <span class="pw"><item.icon size={20} strokeWidth={1.75} /></span>
@@ -250,18 +268,10 @@
     padding-inline: 0.25rem;
     overflow: hidden;
   }
-  .brand :global(.tile) {
-    border-radius: var(--radius-button);
-    font-size: var(--text-xs);
-    font-weight: 600;
-  }
   .brand-name {
     font-size: var(--text-md);
     font-weight: 600;
     white-space: nowrap;
-  }
-  .sample {
-    margin-inline-start: auto;
   }
   .kitchen {
     display: flex;
@@ -278,7 +288,7 @@
     font-size: var(--text-2xs);
     color: var(--color-fg-secondary);
   }
-  :global([data-collapsible="icon"]) :is(.kitchen, .brand-name, .sample, .count) {
+  :global([data-collapsible="icon"]) :is(.kitchen, .brand-name, .count) {
     display: none;
   }
   .count {
@@ -306,18 +316,14 @@
   .grow {
     flex: 1;
   }
-  .menu-btn {
-    display: inline-grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--radius-input);
-    color: var(--color-fg-secondary);
-    transition: background-color var(--duration-fast) var(--ease-default);
+  .menu-wrap {
+    display: inline-flex;
   }
-  .menu-btn:hover {
-    background: color-mix(in srgb, var(--color-fg-primary) 8%, transparent);
-    color: var(--color-fg-primary);
+  .menu-note {
+    margin: 0;
+    padding: 0 0.5rem 0.35rem;
+    font-size: var(--text-xs);
+    color: var(--color-fg-secondary);
   }
   .token {
     display: flex;
@@ -365,7 +371,7 @@
       font-weight: 600;
       padding-inline-start: 0.5rem;
     }
-    .menu-btn {
+    .bar :global(.menu-btn) {
       width: 2.75rem;
       height: 2.75rem;
     }
@@ -385,9 +391,6 @@
       overflow: visible;
       padding-bottom: calc(6rem + env(safe-area-inset-bottom));
     }
-    .content.single {
-      padding-bottom: 0;
-    }
     .dock {
       position: fixed;
       inset-inline: 0.75rem;
@@ -401,6 +404,8 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-card);
       background: var(--color-bg-card);
+      /* Dark carries elevation in surface lightness; light lifts the card. */
+      box-shadow: var(--shadow-card, none);
     }
     .dock a {
       display: flex;

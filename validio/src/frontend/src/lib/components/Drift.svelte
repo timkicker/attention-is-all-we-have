@@ -1,6 +1,7 @@
 <script lang="ts">
   /// Eight weeks of one line as bars, oldest left. The usual amount is a line
-  /// across, so the drift shows as bars climbing over it.
+  /// across, behind the bars, so the drift shows as bars climbing over it.
+  /// Only the two recent weeks carry their number; the rest is in the label.
   let { history, usual, unit, id }: { history: number[]; usual?: number; unit: string; id?: string } = $props();
 
   const top = $derived(Math.max(...history, usual ?? 0) * 1.1 || 1);
@@ -18,7 +19,7 @@
     {/if}
     {#each history as n, i (i)}
       <span class="bar" class:recent={i >= history.length - 2} style="height: {pct(n)}%">
-        <span class="v num">{n}</span>
+        {#if i >= history.length - 2}<span class="v num">{n}</span>{/if}
       </span>
     {/each}
   </div>
@@ -49,7 +50,8 @@
   .bar {
     position: relative;
     flex: 1;
-    border-radius: 2px 2px 0 0;
+    z-index: 1;
+    border-radius: var(--radius-chip) var(--radius-chip) 0 0;
     background: color-mix(in srgb, var(--color-fg-primary) 22%, transparent);
   }
   .bar.recent {
@@ -67,7 +69,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 0;
     border-top: 1px dashed var(--color-fg-secondary);
   }
   .usual-l {

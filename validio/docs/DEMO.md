@@ -10,7 +10,7 @@ Do the first run in the README once (`make setup`, the key in `.env`, `make reco
 make demo                      # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
 
-The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP to that running server, so each request shows up in the browser's Inbox. Scene 3 needs the **Simulate** stock-out button first. Scenes 4 and 5 happen in the browser only. When nothing answers on port 8410 the agent starts its own server in a temporary folder and the browser stays empty.
+The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP to that running server, so each request shows up in the browser's Inbox. Scene 3 needs the stock-out switched on first (⋯ menu in the top bar). Scenes 4 and 5 happen in the browser only. When nothing answers on port 8410 the agent starts its own server in a temporary folder and the browser stays empty.
 
 The server is ready when uvicorn prints `Uvicorn running on http://127.0.0.1:8410`. `make demo` always builds the web app against the API. Only `npm run dev` in `src/frontend` without `VITE_API=live` shows the fixture in `src/frontend/src/lib/api/mock.ts` with its own numbers. Open http://127.0.0.1:8410 at 1280 px and keep a second window at 390 px for the phone page. `make demo-check` in another shell starts its own server on port 8418 and leaves the running demo alone, so it is safe as a last check (it should end with `ALL SCENES OK`).
 
@@ -38,7 +38,7 @@ The point to say out loud is that the planted line would have cost 132 × 2.01 +
 
 ## Scene 3, owner approves a swap (0:45)
 
-In the Inbox click **Simulate** next to "Stock-out of 466375". The button turns into "Simulated" and the note says that Valio really has 11,603 bags. Then run `make agent SCENE=3`.
+Open the **⋯** menu at the top right and click **Simulate stock-out of 466375**. The item gets a check mark, and under **Why this product** on the mozzarella request one muted line says the stock-out is simulated and that Valio really has 11,603 bags. Then run `make agent SCENE=3`.
 
 Request R-2 for 200 bags of 466375 appears as "Waiting for you" at 180.10 €. Click it. What must appear:
 
