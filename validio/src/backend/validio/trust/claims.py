@@ -14,7 +14,12 @@ GLUTEN_CODES = {"AW": "gluten cereals", "UW": "wheat", "NR": "rye", "GB": "barle
 FISH_CODES = {"AF": "fish", "AC": "crustaceans", "UM": "molluscs"}
 ANIMAL_CODES = {"AM": "milk", "AE": "egg", "ML": "lactose"}
 GLUTEN_WORDS = r"\b(WHEAT|BARLEY|RYE|SPELT|VEHNÄ|OHRA|RUIS)\w*"
-GLUTEN_FREE_NEAR = re.compile(r"gluten[- ]?fr?e?e\W{0,3}(\w+\W+){0,2}$", re.IGNORECASE)
+# A cereal word counts unless it is one of these known gluten-free ingredients, written out in full:
+# "gluten-free wheat starch", "gluten-free barley malt extract", "gluten-free malt extract (barley)".
+_GF = r"(?<![\w-])(?<!not )(?<!non-)(?<!non )gluten[- ]free\s+"
+GLUTEN_FREE_BEFORE = (re.compile(_GF + r"$", re.IGNORECASE), re.compile(_GF + r"malt\s+extract\s*\(\s*$", re.IGNORECASE))
+GLUTEN_FREE_AFTER = (re.compile(r"(wheat\s+st(ar|ra)ch|barley\s+malt\s+extract)\b", re.IGNORECASE),
+                     re.compile(r"barley\s*\)", re.IGNORECASE))
 MEAT_WORDS = re.compile(r"\b(pork|beef|chicken|turkey|lamb|meat|bacon|ham|gelatine?)\b(?!-free)", re.IGNORECASE)
 HONEY = re.compile(r"\bhoney\b", re.IGNORECASE)
 
@@ -24,9 +29,13 @@ def _contains(p: Product, codes: dict[str, str]) -> list[str]:
 
 
 def _gluten_words(text: str | None) -> list[str]:
+    text = text or ""
     out = []
-    for m in re.finditer(GLUTEN_WORDS, text or "", re.IGNORECASE):
-        if not GLUTEN_FREE_NEAR.search(text[max(0, m.start() - 30):m.start()]):
+    for m in re.finditer(GLUTEN_WORDS, text, re.IGNORECASE):
+        before, after = text[max(0, m.start() - 40):m.start()], text[m.start():]
+        exempt = any(b.search(before) and a.match(after) for b, a in zip(GLUTEN_FREE_BEFORE, GLUTEN_FREE_AFTER,
+                                                                            strict=True))
+        if not exempt:
             out.append(f"key ingredients name {m.group(0)}")
     return out
 
@@ -47,6 +56,7 @@ def claim_check(p: Product, claim: str) -> tuple[TrustLevel, list[str]]:
 
     if claim == "FREE_FROM_GLUTEN":
         bad = _contains(p, GLUTEN_CODES) + _gluten_words(p.key_ingredients_en)
+        bad += [f"may contain {name}" for c, name in GLUTEN_CODES.items() if c in p.may_contain]
         if bad:
             return TrustLevel.CONTRADICTED, bad
         if not has:
