@@ -66,3 +66,24 @@ def test_secret_check_catches_nvidia_and_modal_tokens(tmp_path):
         r = run("check_no_secrets.sh", root)
         assert r.returncode == 1, leak
         assert "Ab12Ab12" not in r.stdout and "Ab1_Ab1_" not in r.stdout
+
+
+def test_require_data_turns_a_data_skip_into_a_failure(tmp_path):
+    # T1: `make test` sets REQUIRE_DATA=1, so a missing catalog or recording fails locally instead of skipping
+    import os
+    import sys
+
+    backend = Path(__file__).resolve().parents[1]
+    env = {**os.environ, "VALIDIO_CATALOG_DB": str(tmp_path / "none.db"),
+           "VALIDIO_VALIO_CACHE": str(tmp_path / "none")}
+    target = "tests/test_policy.py::test_graded_scene2_464306_allowed"
+
+    def run_with(require: str | None) -> subprocess.CompletedProcess:
+        e = {k: v for k, v in env.items() if k != "REQUIRE_DATA"} | ({"REQUIRE_DATA": require} if require else {})
+        return subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", target],
+                              cwd=backend, env=e, capture_output=True, text=True, check=False)
+
+    skipped = run_with(None)
+    assert skipped.returncode == 0 and "1 skipped" in skipped.stdout
+    failed = run_with("1")
+    assert failed.returncode == 1 and "needs_data" in failed.stdout
