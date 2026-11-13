@@ -18,6 +18,9 @@ dependencies = [
   "psycopg[binary]==3.3.9",
 ]
 
+[project.scripts]
+validio-agent = "validio.agent.cli:main"
+
 [project.optional-dependencies]
 cloud = ["modal==1.6.4", "openai==3.50.0"]
 
