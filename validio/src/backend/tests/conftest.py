@@ -1,6 +1,18 @@
+import os
+
 import pytest
 
 from validio.config import load_settings
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """REQUIRE_DATA=1 (set by `make test`): a test that skips for missing Valio data fails instead, so a local
+    run never looks green without the data. CI leaves it unset and runs the synthetic set (test_synthetic.py)."""
+    outcome = yield
+    rep = outcome.get_result()
+    if os.environ.get("REQUIRE_DATA") == "1" and rep.skipped and "needs_data" in str(rep.longrepr):
+        rep.outcome = "failed"
 
 
 @pytest.fixture(scope="session")
