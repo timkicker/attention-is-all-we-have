@@ -113,7 +113,7 @@ class OrderService:
             if stock_override and p.id in stock_override:
                 a = _with_stock(a, stock_override[p.id])
             price = None if q is None or q.error else q.price_cents
-            qf = quantity_fact(a)
+            qf = quantity_fact(a, p)
             short = (a is not None and a.deliverable and str(qf.level) == "attested"
                      and a.amount is not None and a.amount < ln.sales_qty)
             out.append({
@@ -125,7 +125,7 @@ class OrderService:
                 "short": f"Only {a.amount:g} {a.lines[0].sales_unit} of {p.id} in stock, {ln.sales_qty} needed"
                 if short else None,
                 "isSubstitute": ln.is_substitute, "onValioList": ln.on_valio_list,
-                "facts": [fact_dict(quantity_fact(a)), fact_dict(price_fact(q))],
+                "facts": [fact_dict(qf), fact_dict(price_fact(q))],
                 "_product": p, "_avail": None if short else a,
             })
         return out

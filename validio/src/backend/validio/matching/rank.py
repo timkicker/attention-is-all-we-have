@@ -9,7 +9,7 @@ from datetime import datetime
 
 from ..catalog.model import Product
 from ..trust.claims import claim_check
-from ..trust.levels import TrustLevel, field_trust
+from ..trust.levels import TrustLevel, field_trust, stock_in_sales_units
 from ..valio.models import Availability, Quote
 from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit
 from .reasons import carbon_sentence, label_sentences, price_sentence, reliability_sentence
@@ -54,10 +54,11 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
     else:
         if a.closing_time and a.closing_time < now:
             reasons.append(f"Order cut-off {fmt_time(a.closing_time)} has passed")
-        if quantity_unknown(a):
+        stock = stock_in_sales_units(p, a)
+        if stock is None:
             notes.append("the quantity is unknown")
-        elif sales_qty is not None and a.amount < sales_qty:
-            reasons.append(f"Only {a.amount:g} {a.lines[0].sales_unit} in stock, {sales_qty} needed")
+        elif sales_qty is not None and stock < sales_qty:
+            reasons.append(f"Only {stock:g} {p.sales_unit} in stock, {sales_qty} needed")
         if a.lines[0].available > need.deliver_by:
             reasons.append(f"Earliest delivery {a.lines[0].available:%d %b}, after {need.deliver_by:%d %b}")
     return Ranked(p, sales_qty, total, not reasons, reasons, notes, field_trust(p, q, a))
