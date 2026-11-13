@@ -1,0 +1,69 @@
+# Surviving mutants that cannot change behaviour, one per line: mutant name, then why. mutate_score.py
+# leaves them out of the score. A survivor that does change behaviour belongs in a test, not here.
+validio.audit.log.x_canonical__mutmut_4 ensure_ascii=None is falsy, the same as False
+validio.audit.log.xǁAuditLogǁ__init____mutmut_11 check_same_thread=None is falsy, the same as False
+validio.audit.log.xǁAuditLogǁ__init____mutmut_13 default isolation level: every statement already runs inside an explicit BEGIN IMMEDIATE
+validio.audit.log.xǁAuditLogǁ__init____mutmut_19 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_23 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_32 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_33 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_39 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_40 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_48 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_51 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_4 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_8 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_9 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_53 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_54 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_61 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_62 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_65 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁappend__mutmut_68 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁlist__mutmut_5 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁlist__mutmut_6 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁlist__mutmut_13 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁlist__mutmut_14 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁverify__mutmut_9 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁverify__mutmut_10 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁverify__mutmut_14 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁverify__mutmut_15 SQL keywords and names are case-insensitive in SQLite
+validio.policy.mandate.x_load_or_create_key__mutmut_8 jwcrypto's default EC curve is P-256
+validio.policy.mandate.x_issue_mandate__mutmut_10 sd-jwt 0.10.4 signs with ES256 when sign_alg is None
+validio.policy.mandate.x_issue_mandate__mutmut_14 sd-jwt 0.10.4 signs with ES256 when sign_alg is None
+validio.policy.mandate.xǁNonceStoreǁissue__mutmut_2 nonce length only (32 instead of 24 random bytes)
+validio.policy.mandate.xǁNonceStoreǁissue__mutmut_3 nonce length only (25 instead of 24 random bytes)
+validio.policy.mandate.x__b64json__mutmut_7 base64.urlsafe_b64decode accepts surplus padding
+validio.policy.mandate.x_verify_presentation__mutmut_14 only element 0 of the split is used
+validio.matching.rank.x_best_pick__mutmut_7 cheapest is only read when at least one option is accepted
+validio.matching.rank.x_best_pick__mutmut_12 cheapest is only read when at least one option is accepted
+validio.matching.rank.x_best_pick__mutmut_19 rejected options sort after accepted ones (0) with 1 or 2
+validio.matching.rank.x_best_pick__mutmut_22 only reorders rejected options priced 0 cents against 1 cent
+validio.matching.rank.x_best_pick__mutmut_31 only differs when an out-of-band total is exactly 1 cent
+validio.matching.substitute.x_measured_need__mutmut_28 the pack size is rounded to 3 decimals, so 6 or 7 digits give the same quantity
+validio.matching.substitute.x_blend_note__mutmut_12 the placeholder name holds no product word
+validio.trust.claims.x__gluten_words__mutmut_3 the placeholder text holds no cereal word
+validio.trust.claims.x__gluten_words__mutmut_18 only differs for a cereal word 14 or more spaces after the exemption phrase
+validio.trust.claims.x__gluten_words__mutmut_26 zip over two tuples of the same length
+validio.trust.claims.x__gluten_words__mutmut_29 zip over two tuples of the same length
+validio.trust.claims.x__gluten_words__mutmut_30 zip over two tuples of the same length
+validio.trust.claims.x_claim_check__mutmut_68 MEAT_WORDS has one group around the whole word
+validio.trust.claims.x_claim_check__mutmut_71 the placeholder text holds no meat word
+validio.trust.claims.x_claim_check__mutmut_78 the placeholder text holds no honey
+validio.policy.decide.x__grade__mutmut_2 TrustLevel is a StrEnum, so str(g) is already its value
+validio.policy.decide.x__grade__mutmut_8 TrustLevel is a StrEnum, so str(g) is already its value
+validio.policy.decide.x__grade__mutmut_9 TrustLevel is a StrEnum, so str(g) is already its value
+validio.policy.decide.x__ask__mutmut_23 every reason Cedar gives is a policy id from the same file, so ids.get always hits
+validio.policy.decide.x__ask__mutmut_24 every reason Cedar gives is a policy id from the same file, so ids.get always hits
+validio.policy.decide.x__ask__mutmut_25 every reason Cedar gives is a policy id from the same file, so ids.get always hits
+validio.policy.decide.x_decide__mutmut_1 no policy reads the agent id or the product id, only their entity types
+validio.policy.decide.x_decide__mutmut_2 no policy reads the agent id or the product id, only their entity types
+validio.policy.decide.x_decide__mutmut_9 no policy reads the agent id or the product id, only their entity types
+validio.policy.mandate.x__kb_payload__mutmut_8 disclosures are base64url without dots, so the second dot part is the KB payload either way
+validio.policy.mandate.x__check_disclosures__mutmut_22 Python codec names are case-insensitive
+validio.policy.mandate.x_present__mutmut_23 Python codec names are case-insensitive
+validio.policy.mandate.x_present__mutmut_27 the key binding signs whatever JSON bytes it gets; spacing changes nothing that is checked
+validio.policy.mandate.x_present__mutmut_29 the key binding signs whatever JSON bytes it gets; spacing changes nothing that is checked
+validio.policy.mandate.x_verify_presentation__mutmut_17 only element 0 of the split is used
+validio.policy.mandate.x_verify_presentation__mutmut_33 the header alg is already checked to be ES256, jwcrypto uses it when alg is None
+validio.policy.mandate.x_verify_presentation__mutmut_35 the header alg is already checked to be ES256, jwcrypto uses it when alg is None
