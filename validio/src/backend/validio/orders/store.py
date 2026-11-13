@@ -43,11 +43,14 @@ class Store:
             self._con.execute("update supply_request set body = ? where id = ?", (json.dumps(body), body["id"]))
 
     def request(self, rid: str) -> dict[str, Any] | None:
-        row = self._con.execute("select body from supply_request where id = ?", (rid,)).fetchone()
+        with self._lock:  # reads take the lock too: worker threads share this one connection
+            row = self._con.execute("select body from supply_request where id = ?", (rid,)).fetchone()
         return json.loads(row[0]) if row else None
 
     def requests(self) -> list[dict[str, Any]]:
-        return [json.loads(b) for (b,) in self._con.execute("select body from supply_request order by n")]
+        with self._lock:
+            rows = self._con.execute("select body from supply_request order by n").fetchall()
+        return [json.loads(b) for (b,) in rows]
 
     def new_order(self, body: dict[str, Any]) -> dict[str, Any]:
         with self._lock:
@@ -62,15 +65,19 @@ class Store:
             self._con.execute("update supply_order set body = ? where id = ?", (json.dumps(body), body["id"]))
 
     def order(self, oid: str) -> dict[str, Any] | None:
-        row = self._con.execute("select body from supply_order where id = ?", (oid,)).fetchone()
+        with self._lock:
+            row = self._con.execute("select body from supply_order where id = ?", (oid,)).fetchone()
         return json.loads(row[0]) if row else None
 
     def orders(self) -> list[dict[str, Any]]:
-        return [json.loads(b) for (b,) in self._con.execute("select body from supply_order order by n")]
+        with self._lock:
+            rows = self._con.execute("select body from supply_order order by n").fetchall()
+        return [json.loads(b) for (b,) in rows]
 
     def idem_get(self, scope: str, key: str) -> tuple[str, str] | None:
-        row = self._con.execute("select body_hash, ref from idempotency where scope = ? and key = ?",
-                                (scope, key)).fetchone()
+        with self._lock:
+            row = self._con.execute("select body_hash, ref from idempotency where scope = ? and key = ?",
+                                    (scope, key)).fetchone()
         return (row[0], row[1]) if row else None
 
     def idem_put(self, scope: str, key: str, body_hash: str, ref: str) -> None:
@@ -82,5 +89,6 @@ class Store:
             self._con.execute("insert or replace into seen_pass values (?, ?)", (pass_id, json.dumps(body)))
 
     def seen_pass(self, pass_id: str) -> dict[str, Any] | None:
-        row = self._con.execute("select body from seen_pass where id = ?", (pass_id,)).fetchone()
+        with self._lock:
+            row = self._con.execute("select body from seen_pass where id = ?", (pass_id,)).fetchone()
         return json.loads(row[0]) if row else None

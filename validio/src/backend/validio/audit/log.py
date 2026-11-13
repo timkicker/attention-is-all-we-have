@@ -11,6 +11,7 @@ rewrites the head as well is not caught; that needs the head published or signed
 import hashlib
 import json
 import sqlite3
+import threading
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -75,6 +76,8 @@ class AuditLog:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
+        # the server's worker threads share this connection: one call at a time, or two BEGINs collide
+        self._lock = threading.RLock()
         con = self._con
         con.execute("BEGIN IMMEDIATE")
         try:
@@ -106,6 +109,11 @@ class AuditLog:
         rule_ids: list[str],
         order_id: str | None,
     ) -> AuditEntry:
+        with self._lock:
+            return self._append(at=at, actor=actor, kind=kind, sentence=sentence, facts=facts,
+                                mandate_id=mandate_id, disclosed=disclosed, rule_ids=rule_ids, order_id=order_id)
+
+    def _append(self, *, at, actor, kind, sentence, facts, mandate_id, disclosed, rule_ids, order_id) -> AuditEntry:
         con = self._con
         con.execute("BEGIN IMMEDIATE")
         try:
@@ -139,20 +147,22 @@ class AuditLog:
         return AuditEntry(**body, hash=h)
 
     def list(self, order_id: str | None = None) -> list[AuditEntry]:
-        if order_id is None:
-            rows = self._con.execute("SELECT body, hash FROM ledger ORDER BY seq").fetchall()
-        else:
-            rows = self._con.execute(
-                "SELECT body, hash FROM ledger WHERE order_id = ? ORDER BY seq", (order_id,)
-            ).fetchall()
+        with self._lock:
+            if order_id is None:
+                rows = self._con.execute("SELECT body, hash FROM ledger ORDER BY seq").fetchall()
+            else:
+                rows = self._con.execute(
+                    "SELECT body, hash FROM ledger WHERE order_id = ? ORDER BY seq", (order_id,)
+                ).fetchall()
         return [AuditEntry(**json.loads(b), hash=h) for b, h in rows]
 
     def verify(self) -> VerifyResult:
         prev = GENESIS
         count = 0
         expected_seq = 1
-        head = self._con.execute("SELECT count, hash FROM ledger_head WHERE id = 1").fetchone()
-        rows = self._con.execute("SELECT seq, order_id, body, hash FROM ledger ORDER BY seq")
+        with self._lock:
+            head = self._con.execute("SELECT count, hash FROM ledger_head WHERE id = 1").fetchone()
+            rows = self._con.execute("SELECT seq, order_id, body, hash FROM ledger ORDER BY seq").fetchall()
         for stored_seq, order_id, body_text, h in rows:
             try:
                 body = json.loads(body_text)
