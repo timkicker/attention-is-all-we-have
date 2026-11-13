@@ -1,9 +1,11 @@
 <script lang="ts">
   /// The list column of the inbox, as Arlen mail draws its message list: the
   /// request as the subject, the total on the right, its state and time under
-  /// it, and Validio's sentence as the snippet.
+  /// it, and Validio's first sentence as the snippet. The open request carries
+  /// the kit's selection fill and nothing else.
   import type { InboxItem } from "$lib/api/types";
-  import { STATUS, look, money, time } from "$lib/format";
+  import { STATUS, look, money, prose, sentences, time } from "$lib/format";
+  import State from "./State.svelte";
 
   let { items, selected }: { items: InboxItem[]; selected?: string } = $props();
 </script>
@@ -15,19 +17,20 @@
       <a
         href="/requests/{it.id}"
         id="inbox-{it.id}"
+        data-testid="inbox-{it.id}"
         class="item"
         class:on={it.id === selected}
         aria-current={it.id === selected ? "page" : undefined}
       >
         <span class="top">
-          <span class="subject">{it.text}</span>
+          <span class="subject">{it.displayName ?? prose(it.text)}</span>
           <span class="total num">{money(it.totalCents)}</span>
         </span>
         <span class="meta">
-          <span class="state t-{s.tone}">{#if s.tone === "act"}<span class="dot" aria-hidden="true"></span>{/if}{s.label}</span>
-          <span class="time num">{time(it.createdAt).slice(0, 5)}</span>
+          <State label={s.label} tone={s.tone} />
+          <span class="time num">{time(it.createdAt)}</span>
         </span>
-        <span class="snippet">{it.sentence}</span>
+        <span class="snippet">{sentences(it.sentence)[0] ?? ""}</span>
       </a>
     </li>
   {:else}
@@ -47,10 +50,9 @@
   .item {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.5rem 0.55rem;
+    gap: 0.25rem;
+    padding: 0.55rem 0.6rem;
     border-radius: var(--radius-input);
-    border: 1px solid transparent;
     color: inherit;
     text-decoration: none;
     transition: background-color var(--duration-fast) var(--ease-default);
@@ -59,55 +61,38 @@
     background: color-mix(in srgb, var(--color-fg-primary) 5%, transparent);
   }
   .item.on {
-    background: color-mix(in srgb, var(--color-fg-primary) 9%, transparent);
-    border-color: var(--v-select);
+    background: color-mix(in srgb, var(--color-fg-primary) 10%, transparent);
   }
   .top,
   .meta {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
   }
   .subject {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: var(--text-sm);
     font-weight: 500;
+    line-height: 1.35;
   }
   .total {
     flex-shrink: 0;
+    align-self: baseline;
     font-size: var(--text-sm);
   }
-  .meta {
-    font-size: var(--text-2xs);
-  }
-  .state {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-weight: 500;
-  }
-  .state.t-act {
-    color: var(--color-fg-primary);
-  }
-  .dot {
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: var(--radius-chip);
-    background: var(--color-fg-primary);
-  }
   .time {
+    font-size: var(--text-2xs);
     color: var(--color-fg-secondary);
   }
   .snippet {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--color-fg-primary) 50%, transparent);
+    color: var(--color-fg-secondary);
   }
   .empty {
     padding: 1rem 0.55rem;

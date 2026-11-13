@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke e2e-live a11y snapshots video
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -56,6 +56,11 @@ demo:
 	cd src/frontend && VITE_API=live npm run build
 	$(MAKE) seed
 	cd $(BACKEND) && VALIO_MODE=replay uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
+
+# The web app alone on its recorded answers (src/lib/api/snapshots/states.ts), no backend: the
+# sidebar says "Demo data". Never for the 10:00 run, which is `make demo`.
+demo-mock:
+	cd src/frontend && npm run build && npx vite preview --host 127.0.0.1 --port 8411 --strictPort
 
 DEMO_SCENES ?= 1,2,3,4,5
 demo-check:

@@ -20,9 +20,17 @@ export interface Answers {
 export const answers: Answers = {
  "demo": [
   {
+   "realStock466375": {
+    "quantity": 11603.0,
+    "unit": "BAG"
+   },
    "stockOut466375": false
   },
   {
+   "realStock466375": {
+    "quantity": 11603.0,
+    "unit": "BAG"
+   },
    "stockOut466375": true
   }
  ],
@@ -31,7 +39,7 @@ export const answers: Answers = {
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
     "status": "ordered_alone",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "totalCents": 101000
@@ -49,7 +57,7 @@ export const answers: Answers = {
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
     "status": "ordered_alone",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "totalCents": 101000
@@ -59,7 +67,7 @@ export const answers: Answers = {
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
     "id": "R-2",
-    "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
+    "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
     "status": "ordered",
     "text": "200 BAG of 466375",
     "totalCents": 18010
@@ -67,7 +75,7 @@ export const answers: Answers = {
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
     "status": "ordered_alone",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "totalCents": 101000
@@ -85,7 +93,7 @@ export const answers: Answers = {
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
     "status": "ordered_alone",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "totalCents": 101000
@@ -164,7 +172,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -177,14 +185,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     }
@@ -261,7 +269,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -274,14 +282,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -297,7 +305,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -310,14 +318,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 5,
      "spendPassId": "M-1"
     },
@@ -359,10 +367,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "ruleIds": [
       "auto-order"
      ],
@@ -379,9 +387,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "kind": "decision",
-     "prevHash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 7,
@@ -396,9 +404,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
+     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "kind": "decision",
-     "prevHash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "ruleIds": [
       "ask-human"
      ],
@@ -479,7 +487,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -492,14 +500,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -515,7 +523,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -528,14 +536,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 5,
      "spendPassId": "M-1"
     },
@@ -577,10 +585,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "ruleIds": [
       "auto-order"
      ],
@@ -597,9 +605,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "kind": "decision",
-     "prevHash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 7,
@@ -614,31 +622,14 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
+     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "kind": "decision",
-     "prevHash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
      "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "faf5135cd3814af14a2bd2ae7cc5c98004332be5b42449d943917e7a2d568456",
-     "kind": "approval",
-     "prevHash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 9,
      "spendPassId": "M-1"
     },
     {
@@ -665,14 +656,32 @@ export const answers: Answers = {
        "value": "33.53 EUR"
       }
      ],
-     "hash": "26182b627654b403f279360153a765e4c4ad824e86bc6e742e8feab0c4d88a76",
+     "hash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "faf5135cd3814af14a2bd2ae7cc5c98004332be5b42449d943917e7a2d568456",
+     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "ruleIds": [
       "auto-order"
      ],
      "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+     "seq": 9,
+     "spendPassId": "M-1"
+    },
+    {
+     "actor": "kitchen:chef",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "facts": [],
+     "hash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
+     "kind": "approval",
+     "orderId": "O-4",
+     "prevHash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
+     "ruleIds": [],
+     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
      "seq": 10,
      "spendPassId": "M-1"
     }
@@ -680,7 +689,7 @@ export const answers: Answers = {
   },
   {
    "chain": {
-    "count": 12,
+    "count": 11,
     "ok": true
    },
    "entries": [
@@ -749,7 +758,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -762,14 +771,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -785,7 +794,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -798,14 +807,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 5,
      "spendPassId": "M-1"
     },
@@ -847,10 +856,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "ruleIds": [
       "auto-order"
      ],
@@ -867,9 +876,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "kind": "decision",
-     "prevHash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 7,
@@ -884,9 +893,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
+     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "kind": "decision",
-     "prevHash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "ruleIds": [
       "ask-human"
      ],
@@ -895,23 +904,6 @@ export const answers: Answers = {
      "spendPassId": "M-1"
     },
     {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "e9ec01654b438fdd36a504a8bf9c68dbe052fed3ea2ee380f08ef04204291724",
-     "kind": "approval",
-     "prevHash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
-     "ruleIds": [],
-     "sentence": "Chef accepted 98 bags of 466375 Gran Castelli mozzarella 125g lactose free for Steady Order S-1: Waits for you because of the flag below.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
      "actor": "validio",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
@@ -935,15 +927,15 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "89f2b5495c055d25fb03a06f7e9da9aabd9d7b8044c52520bf61a909c6511480",
+     "hash": "b119b9bfe8e31f24754c5415395a42df606c6679545880df334099886a3bb00c",
      "kind": "decision",
      "orderId": "O-4",
-     "prevHash": "e9ec01654b438fdd36a504a8bf9c68dbe052fed3ea2ee380f08ef04204291724",
+     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Needs a person: a diet rule cannot be checked.",
-     "seq": 10,
+     "seq": 9,
      "spendPassId": "M-1"
     },
     {
@@ -970,13 +962,13 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "8f7eafd5390636934cd7ada1cbd93810a679447f8343f0e43f9ef3ea32a5e5f7",
+     "hash": "31098d59fc74a6a33168cce714b288dccbf44999353fe529a8c115c0db9b06c8",
      "kind": "approval",
      "orderId": "O-4",
-     "prevHash": "89f2b5495c055d25fb03a06f7e9da9aabd9d7b8044c52520bf61a909c6511480",
+     "prevHash": "b119b9bfe8e31f24754c5415395a42df606c6679545880df334099886a3bb00c",
      "ruleIds": [],
      "sentence": "Chef approved 98 BAG of 466375 for 113.68 EUR.",
-     "seq": 11,
+     "seq": 10,
      "spendPassId": "M-1"
     },
     {
@@ -1003,22 +995,22 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "50dd56eedf32b3e8531ccee987c0636c1610f776685fa60d7fa3393df052b6c9",
+     "hash": "23ebcc71cc6a73764bd25d9e8e6cd6b28368a39452039a353f4ca71093c22474",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "8f7eafd5390636934cd7ada1cbd93810a679447f8343f0e43f9ef3ea32a5e5f7",
+     "prevHash": "31098d59fc74a6a33168cce714b288dccbf44999353fe529a8c115c0db9b06c8",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Placed order O-4: 98 BAG of 466375 Gran Castelli mozzarella 125g lactose free for 113.68 EUR after the chef approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
-     "seq": 12,
+     "seq": 11,
      "spendPassId": "M-1"
     }
    ]
   },
   {
    "chain": {
-    "count": 14,
+    "count": 13,
     "ok": true
    },
    "entries": [
@@ -1087,7 +1079,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1100,14 +1092,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -1123,7 +1115,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1136,14 +1128,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 5,
      "spendPassId": "M-1"
     },
@@ -1185,10 +1177,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f88ec104b2da115f4c2fa9d596848f4690ad00db9d6b7b4c7ab2d369332ca2fe",
+     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
      "ruleIds": [
       "auto-order"
      ],
@@ -1205,9 +1197,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "kind": "decision",
-     "prevHash": "fb7fe2be9ecaecd00f43c2e8b453e7a237417ff31589cce53299921e249b7825",
+     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 7,
@@ -1222,31 +1214,14 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
+     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "kind": "decision",
-     "prevHash": "262e9ab052135da1d52ed358b2cf353fabbd1a0a07465081e72247d387e77be4",
+     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
      "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "faf5135cd3814af14a2bd2ae7cc5c98004332be5b42449d943917e7a2d568456",
-     "kind": "approval",
-     "prevHash": "2ab325b91bc006cd2106c5f29459810789278eb29dfd6317f5f0dc94cd8bf9c8",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 9,
      "spendPassId": "M-1"
     },
     {
@@ -1273,15 +1248,15 @@ export const answers: Answers = {
        "value": "33.53 EUR"
       }
      ],
-     "hash": "26182b627654b403f279360153a765e4c4ad824e86bc6e742e8feab0c4d88a76",
+     "hash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "faf5135cd3814af14a2bd2ae7cc5c98004332be5b42449d943917e7a2d568456",
+     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
      "ruleIds": [
       "auto-order"
      ],
      "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 10,
+     "seq": 9,
      "spendPassId": "M-1"
     },
     {
@@ -1293,12 +1268,13 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "5617d0847b74ea6764fa39acc61c7cfbb8ae0b5014a28b143ea5cd8139624be5",
+     "hash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
      "kind": "approval",
-     "prevHash": "26182b627654b403f279360153a765e4c4ad824e86bc6e742e8feab0c4d88a76",
+     "orderId": "O-4",
+     "prevHash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
      "ruleIds": [],
-     "sentence": "Chef accepted 98 bags of 466375 Gran Castelli mozzarella 125g lactose free for Steady Order S-1: Waits for you because of the flag below.",
-     "seq": 11,
+     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+     "seq": 10,
      "spendPassId": "M-1"
     },
     {
@@ -1325,15 +1301,15 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "18a26193fdfcb6806790dc6a21ea6f5eea9f3a3bc19c523fd36ff08d2bdbc83c",
+     "hash": "361af6b88b475e09ad74a060564c39b0431f26cd1a8e912d9d761472ca08e40c",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "5617d0847b74ea6764fa39acc61c7cfbb8ae0b5014a28b143ea5cd8139624be5",
+     "prevHash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Needs a person: a diet rule cannot be checked.",
-     "seq": 12,
+     "seq": 11,
      "spendPassId": "M-1"
     },
     {
@@ -1360,13 +1336,13 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "a151e617c36d31a0362753c93fdae0503c07a1faebd953de46287b6b0deceab1",
+     "hash": "56011e6287bb63d2017f924a0238c8e158ee85e8cc18ca1c3ece45b7e911eac4",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "18a26193fdfcb6806790dc6a21ea6f5eea9f3a3bc19c523fd36ff08d2bdbc83c",
+     "prevHash": "361af6b88b475e09ad74a060564c39b0431f26cd1a8e912d9d761472ca08e40c",
      "ruleIds": [],
      "sentence": "Chef approved 98 BAG of 466375 for 113.68 EUR.",
-     "seq": 13,
+     "seq": 12,
      "spendPassId": "M-1"
     },
     {
@@ -1393,15 +1369,15 @@ export const answers: Answers = {
        "value": "1.16 EUR"
       }
      ],
-     "hash": "c793eb61d4430ea243d64ec93c09a770430ca9facbc2305ad7facec6dc998c1e",
+     "hash": "e23b6a92c5ed8e6678d42050ddad6e8412f1b2867694514e145753dba7776f10",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "a151e617c36d31a0362753c93fdae0503c07a1faebd953de46287b6b0deceab1",
+     "prevHash": "56011e6287bb63d2017f924a0238c8e158ee85e8cc18ca1c3ece45b7e911eac4",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Placed order O-5: 98 BAG of 466375 Gran Castelli mozzarella 125g lactose free for 113.68 EUR after the chef approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
-     "seq": 14,
+     "seq": 13,
      "spendPassId": "M-1"
     }
    ]
@@ -1477,7 +1453,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1490,14 +1466,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -1506,11 +1482,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -1522,9 +1498,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -1542,7 +1518,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1554,10 +1530,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -1638,7 +1614,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1651,14 +1627,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -1667,11 +1643,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -1683,9 +1659,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -1703,7 +1679,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1715,10 +1691,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -1738,7 +1714,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1751,14 +1727,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "b4b02ca61dff25f61a4ae228b8ecb7dd8f7ccc8fece02930cc9709f9e509fd79",
+     "hash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 8,
      "spendPassId": "M-1"
     },
@@ -1800,10 +1776,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "41d818a88599291e61e3fc2c9e9b379e49325964eb4767ffa9d61aa10156a68b",
+     "hash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "b4b02ca61dff25f61a4ae228b8ecb7dd8f7ccc8fece02930cc9709f9e509fd79",
+     "prevHash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
      "ruleIds": [
       "auto-order"
      ],
@@ -1820,9 +1796,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "767568b42842c7419e4ba16a502590d2e3db195dfd584035e836add23d33d506",
+     "hash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
      "kind": "decision",
-     "prevHash": "41d818a88599291e61e3fc2c9e9b379e49325964eb4767ffa9d61aa10156a68b",
+     "prevHash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 10,
@@ -1837,9 +1813,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "c2105f4d4f39215d51433ff409ca6647cac56d95e8504d92208fdddf01df40a6",
+     "hash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
      "kind": "decision",
-     "prevHash": "767568b42842c7419e4ba16a502590d2e3db195dfd584035e836add23d33d506",
+     "prevHash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
      "ruleIds": [
       "ask-human"
      ],
@@ -1920,7 +1896,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1933,14 +1909,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -1949,11 +1925,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -1965,9 +1941,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -1985,7 +1961,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -1997,10 +1973,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2020,7 +1996,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2033,14 +2009,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "b4b02ca61dff25f61a4ae228b8ecb7dd8f7ccc8fece02930cc9709f9e509fd79",
+     "hash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 8,
      "spendPassId": "M-1"
     },
@@ -2082,10 +2058,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "41d818a88599291e61e3fc2c9e9b379e49325964eb4767ffa9d61aa10156a68b",
+     "hash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "b4b02ca61dff25f61a4ae228b8ecb7dd8f7ccc8fece02930cc9709f9e509fd79",
+     "prevHash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
      "ruleIds": [
       "auto-order"
      ],
@@ -2102,9 +2078,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "767568b42842c7419e4ba16a502590d2e3db195dfd584035e836add23d33d506",
+     "hash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
      "kind": "decision",
-     "prevHash": "41d818a88599291e61e3fc2c9e9b379e49325964eb4767ffa9d61aa10156a68b",
+     "prevHash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 10,
@@ -2119,31 +2095,14 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "c2105f4d4f39215d51433ff409ca6647cac56d95e8504d92208fdddf01df40a6",
+     "hash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
      "kind": "decision",
-     "prevHash": "767568b42842c7419e4ba16a502590d2e3db195dfd584035e836add23d33d506",
+     "prevHash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
      "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "4ed541e6451e2feb6e56dd98ca838716d0a97a6d75f8abc836f45b71b6641071",
-     "kind": "approval",
-     "prevHash": "c2105f4d4f39215d51433ff409ca6647cac56d95e8504d92208fdddf01df40a6",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 12,
      "spendPassId": "M-1"
     },
     {
@@ -2170,14 +2129,32 @@ export const answers: Answers = {
        "value": "33.53 EUR"
       }
      ],
-     "hash": "9b5a8b0ce99d27ee3401ae06b69bb7230616de24fe6680a1d0d0282e932119e3",
+     "hash": "a8697bf48fde00a2ffb74b9f6d94c2325f3ad7355b53d0310421ac84861474b6",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "4ed541e6451e2feb6e56dd98ca838716d0a97a6d75f8abc836f45b71b6641071",
+     "prevHash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
      "ruleIds": [
       "auto-order"
      ],
      "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+     "seq": 12,
+     "spendPassId": "M-1"
+    },
+    {
+     "actor": "kitchen:chef",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "facts": [],
+     "hash": "0976fec43ee0e73465b909e9efcfdd46748cb8d78fdd0acbbdf3be95e545f81c",
+     "kind": "approval",
+     "orderId": "O-5",
+     "prevHash": "a8697bf48fde00a2ffb74b9f6d94c2325f3ad7355b53d0310421ac84861474b6",
+     "ruleIds": [],
+     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
      "seq": 13,
      "spendPassId": "M-1"
     }
@@ -2254,7 +2231,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2267,14 +2244,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -2283,11 +2260,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -2299,9 +2276,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -2319,7 +2296,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2331,10 +2308,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2354,7 +2331,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2366,10 +2343,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
      "seq": 8,
@@ -2387,7 +2364,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2399,14 +2376,14 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "f95bbe8217fe2617b06d40ad70eb7e9224329c6905cc3f3d6583751705eebde3",
+     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
+     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
      "seq": 9,
      "spendPassId": "M-1"
     }
@@ -2483,7 +2460,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2496,14 +2473,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -2512,11 +2489,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -2528,9 +2505,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -2548,7 +2525,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2560,10 +2537,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2583,7 +2560,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2595,10 +2572,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
      "seq": 8,
@@ -2616,7 +2593,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2628,14 +2605,14 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "f95bbe8217fe2617b06d40ad70eb7e9224329c6905cc3f3d6583751705eebde3",
+     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
+     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
      "seq": 9,
      "spendPassId": "M-1"
     },
@@ -2651,7 +2628,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2664,14 +2641,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "fe8ee0df0151bbccfb3fe7671997b20ff4dae24d755e66f34fde539107def25c",
+     "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f95bbe8217fe2617b06d40ad70eb7e9224329c6905cc3f3d6583751705eebde3",
+     "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 10,
      "spendPassId": "M-1"
     },
@@ -2713,10 +2690,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "88724dcbb2d4b0269027777b52ecace23e5ebb45c7657a711c2ce25ece6208bf",
+     "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "fe8ee0df0151bbccfb3fe7671997b20ff4dae24d755e66f34fde539107def25c",
+     "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
      "ruleIds": [
       "auto-order"
      ],
@@ -2733,9 +2710,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2a184917419d30e3800a1c66a52d78b38f02cc7890905b63de2deb4102bbc4c7",
+     "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
      "kind": "decision",
-     "prevHash": "88724dcbb2d4b0269027777b52ecace23e5ebb45c7657a711c2ce25ece6208bf",
+     "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 12,
@@ -2750,9 +2727,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "a2aa3b0eeb40b32c4d9136d2cb93ca20fc70516f344d64a5272b623748c1e4c7",
+     "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
      "kind": "decision",
-     "prevHash": "2a184917419d30e3800a1c66a52d78b38f02cc7890905b63de2deb4102bbc4c7",
+     "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
      "ruleIds": [
       "ask-human"
      ],
@@ -2833,7 +2810,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2846,14 +2823,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -2862,11 +2839,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -2878,9 +2855,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -2898,7 +2875,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2910,10 +2887,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2933,7 +2910,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2945,10 +2922,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
      "seq": 8,
@@ -2966,7 +2943,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -2978,14 +2955,14 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "f95bbe8217fe2617b06d40ad70eb7e9224329c6905cc3f3d6583751705eebde3",
+     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "5e87a1707c0080e5010cb5c41cd72aee3b47e1942caa17fc16c85c22c7e376a8",
+     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
+     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
      "seq": 9,
      "spendPassId": "M-1"
     },
@@ -3001,7 +2978,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3014,14 +2991,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "fe8ee0df0151bbccfb3fe7671997b20ff4dae24d755e66f34fde539107def25c",
+     "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "f95bbe8217fe2617b06d40ad70eb7e9224329c6905cc3f3d6583751705eebde3",
+     "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 10,
      "spendPassId": "M-1"
     },
@@ -3063,10 +3040,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "88724dcbb2d4b0269027777b52ecace23e5ebb45c7657a711c2ce25ece6208bf",
+     "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "fe8ee0df0151bbccfb3fe7671997b20ff4dae24d755e66f34fde539107def25c",
+     "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
      "ruleIds": [
       "auto-order"
      ],
@@ -3083,9 +3060,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "2a184917419d30e3800a1c66a52d78b38f02cc7890905b63de2deb4102bbc4c7",
+     "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
      "kind": "decision",
-     "prevHash": "88724dcbb2d4b0269027777b52ecace23e5ebb45c7657a711c2ce25ece6208bf",
+     "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 12,
@@ -3100,31 +3077,14 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "a2aa3b0eeb40b32c4d9136d2cb93ca20fc70516f344d64a5272b623748c1e4c7",
+     "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
      "kind": "decision",
-     "prevHash": "2a184917419d30e3800a1c66a52d78b38f02cc7890905b63de2deb4102bbc4c7",
+     "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
      "seq": 13,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "15a817aef6c9b5a8b7adb97bc7d866c1ced415acc1fe19c20f51e96e68b51853",
-     "kind": "approval",
-     "prevHash": "a2aa3b0eeb40b32c4d9136d2cb93ca20fc70516f344d64a5272b623748c1e4c7",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 14,
      "spendPassId": "M-1"
     },
     {
@@ -3151,14 +3111,32 @@ export const answers: Answers = {
        "value": "33.53 EUR"
       }
      ],
-     "hash": "80d2c726620b8e9a916ceaa8aecdd4b58f53f4603b3e1347b79b30b8587bca0a",
+     "hash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "15a817aef6c9b5a8b7adb97bc7d866c1ced415acc1fe19c20f51e96e68b51853",
+     "prevHash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
      "ruleIds": [
       "auto-order"
      ],
      "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+     "seq": 14,
+     "spendPassId": "M-1"
+    },
+    {
+     "actor": "kitchen:chef",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "facts": [],
+     "hash": "0b94caf24df18e69eb68db0459b1e73e3a9e02578f1c7c15adf9420520be293f",
+     "kind": "approval",
+     "orderId": "O-5",
+     "prevHash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
+     "ruleIds": [],
+     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
      "seq": 15,
      "spendPassId": "M-1"
     }
@@ -3235,7 +3213,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3248,14 +3226,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -3264,11 +3242,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -3280,9 +3258,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -3300,7 +3278,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3312,10 +3290,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -3335,7 +3313,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3347,10 +3325,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "bed92dd5792de407aeebd51338f32fdd6e6de94b4cc8ed7cad1d1a972e29cc27",
+     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
      "seq": 8,
@@ -3429,7 +3407,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3442,14 +3420,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -3458,11 +3436,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -3474,9 +3452,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -3494,7 +3472,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3506,10 +3484,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -3529,7 +3507,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3541,10 +3519,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "bed92dd5792de407aeebd51338f32fdd6e6de94b4cc8ed7cad1d1a972e29cc27",
+     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
      "seq": 8,
@@ -3562,7 +3540,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3575,14 +3553,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f9b0cee75ec474e0bc4e240cdec8a1c65f15f38b18bf53f58748c51e812d75f9",
+     "hash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "bed92dd5792de407aeebd51338f32fdd6e6de94b4cc8ed7cad1d1a972e29cc27",
+     "prevHash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 9,
      "spendPassId": "M-1"
     },
@@ -3624,10 +3602,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "8332142be8b101930b98b7d3f820c21857fb1ebdc3bcb34526b22d2cd73631c0",
+     "hash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "f9b0cee75ec474e0bc4e240cdec8a1c65f15f38b18bf53f58748c51e812d75f9",
+     "prevHash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
      "ruleIds": [
       "auto-order"
      ],
@@ -3644,9 +3622,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "0346837aaffc33e87af3e4b9a8c42b2bb145eecc01485000bf40b94613aab918",
+     "hash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
      "kind": "decision",
-     "prevHash": "8332142be8b101930b98b7d3f820c21857fb1ebdc3bcb34526b22d2cd73631c0",
+     "prevHash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 11,
@@ -3661,9 +3639,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "d0c37a63cb2cdc84b0203d5dc6765bac2c96418f6dfe69ba7b6da797499e64a7",
+     "hash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
      "kind": "decision",
-     "prevHash": "0346837aaffc33e87af3e4b9a8c42b2bb145eecc01485000bf40b94613aab918",
+     "prevHash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
      "ruleIds": [
       "ask-human"
      ],
@@ -3744,7 +3722,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3757,14 +3735,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 4,
      "spendPassId": "M-1"
     },
@@ -3773,11 +3751,11 @@ export const answers: Answers = {
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [],
      "facts": [],
-     "hash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "kind": "simulation",
-     "prevHash": "dc305ab152d80f57a0191f65e2af764dd29acc2134acab52ae5c17a236e39320",
+     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has it in stock, the demo button sets it to zero.",
+     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
      "seq": 5
     },
     {
@@ -3789,9 +3767,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "kind": "request",
-     "prevHash": "d8908fa6e3de72078f3ee0567d1fe7c4db73ff61e16875473edec25b603a19df",
+     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
      "ruleIds": [],
      "sentence": "The agent asked for 200 BAG of 466375.",
      "seq": 6,
@@ -3809,7 +3787,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3821,10 +3799,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "559f0ab9d56ac7ec1c006f55a421e46aa05ae2f1a845f52bdbf57daf011b68d7",
+     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
      "ruleIds": [
       "ask-human"
      ],
@@ -3844,7 +3822,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3856,10 +3834,10 @@ export const answers: Answers = {
        "value": "18.01 EUR"
       }
      ],
-     "hash": "bed92dd5792de407aeebd51338f32fdd6e6de94b4cc8ed7cad1d1a972e29cc27",
+     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "21d0bd15aebeb6d90a1f40c06a81230efdfdbf69ecd4dc9d990003279792f605",
+     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
      "ruleIds": [],
      "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
      "seq": 8,
@@ -3877,7 +3855,7 @@ export const answers: Answers = {
       {
        "field": "quantity",
        "grade": "attested",
-       "note": "Stock at Valio",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
        "value": "1e+10 ST"
       },
@@ -3890,14 +3868,14 @@ export const answers: Answers = {
        "value": "1.01 EUR"
       }
      ],
-     "hash": "f9b0cee75ec474e0bc4e240cdec8a1c65f15f38b18bf53f58748c51e812d75f9",
+     "hash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "bed92dd5792de407aeebd51338f32fdd6e6de94b4cc8ed7cad1d1a972e29cc27",
+     "prevHash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR).",
+     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
      "seq": 9,
      "spendPassId": "M-1"
     },
@@ -3939,10 +3917,10 @@ export const answers: Answers = {
        "value": "6.40 EUR"
       }
      ],
-     "hash": "8332142be8b101930b98b7d3f820c21857fb1ebdc3bcb34526b22d2cd73631c0",
+     "hash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "f9b0cee75ec474e0bc4e240cdec8a1c65f15f38b18bf53f58748c51e812d75f9",
+     "prevHash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
      "ruleIds": [
       "auto-order"
      ],
@@ -3959,9 +3937,9 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "0346837aaffc33e87af3e4b9a8c42b2bb145eecc01485000bf40b94613aab918",
+     "hash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
      "kind": "decision",
-     "prevHash": "8332142be8b101930b98b7d3f820c21857fb1ebdc3bcb34526b22d2cd73631c0",
+     "prevHash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
      "seq": 11,
@@ -3976,31 +3954,14 @@ export const answers: Answers = {
       "hardCapCents"
      ],
      "facts": [],
-     "hash": "d0c37a63cb2cdc84b0203d5dc6765bac2c96418f6dfe69ba7b6da797499e64a7",
+     "hash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
      "kind": "decision",
-     "prevHash": "0346837aaffc33e87af3e4b9a8c42b2bb145eecc01485000bf40b94613aab918",
+     "prevHash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
      "ruleIds": [
       "ask-human"
      ],
      "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
      "seq": 12,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "27ba0fbada656bce64f89e3df50d81fef07830e991ec577f69bcd852f94b7afb",
-     "kind": "approval",
-     "prevHash": "d0c37a63cb2cdc84b0203d5dc6765bac2c96418f6dfe69ba7b6da797499e64a7",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 13,
      "spendPassId": "M-1"
     },
     {
@@ -4027,14 +3988,32 @@ export const answers: Answers = {
        "value": "33.53 EUR"
       }
      ],
-     "hash": "0441953f61d96a5f9dc23ced80c51b545701b1ca1311612a9a1ebcf92ef332c2",
+     "hash": "33ac34bb40a2b868c8a861394cfc5981fcace13492cf699ac75b8c01fb680ebb",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "27ba0fbada656bce64f89e3df50d81fef07830e991ec577f69bcd852f94b7afb",
+     "prevHash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
      "ruleIds": [
       "auto-order"
      ],
      "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+     "seq": 13,
+     "spendPassId": "M-1"
+    },
+    {
+     "actor": "kitchen:chef",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "facts": [],
+     "hash": "292f2bb0c7574c31f068d17ff99305aa72afb43e0ba0fd331140ecee6432f462",
+     "kind": "approval",
+     "orderId": "O-5",
+     "prevHash": "33ac34bb40a2b868c8a861394cfc5981fcace13492cf699ac75b8c01fb680ebb",
+     "ruleIds": [],
+     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
      "seq": 14,
      "spendPassId": "M-1"
     }
@@ -4067,7 +4046,7 @@ export const answers: Answers = {
        {
         "field": "quantity",
         "grade": "attested",
-        "note": "Stock at Valio",
+        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
         "source": "Valio availability API",
         "value": "1e+10 ST"
        },
@@ -4122,7 +4101,7 @@ export const answers: Answers = {
        {
         "field": "quantity",
         "grade": "attested",
-        "note": "Stock at Valio",
+        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
         "source": "Valio availability API",
         "value": "1e+10 ST"
        },
@@ -4182,7 +4161,7 @@ export const answers: Answers = {
        {
         "field": "quantity",
         "grade": "attested",
-        "note": "Stock at Valio",
+        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
         "source": "Valio availability API",
         "value": "1e+10 ST"
        },
@@ -4237,7 +4216,7 @@ export const answers: Answers = {
        {
         "field": "quantity",
         "grade": "attested",
-        "note": "Stock at Valio",
+        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
         "source": "Valio availability API",
         "value": "1e+10 ST"
        },
@@ -4276,7 +4255,7 @@ export const answers: Answers = {
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR)."
+     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
     },
     "deliverBy": "2026-11-16",
     "id": "R-1",
@@ -4305,7 +4284,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -4450,7 +4429,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -4602,7 +4581,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -4740,7 +4719,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -4884,7 +4863,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -5022,7 +5001,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -6329,7 +6308,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -6528,7 +6507,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -7343,7 +7322,7 @@ export const answers: Answers = {
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has stock, the demo button sets it to zero.",
+      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
       "what": "stock-out of 466375"
      }
     ],
@@ -7360,7 +7339,7 @@ export const answers: Answers = {
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %."
+     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
     },
     "deliverBy": "2026-11-16",
     "id": "R-2",
@@ -7372,7 +7351,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -7571,7 +7550,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -8386,7 +8365,7 @@ export const answers: Answers = {
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has stock, the demo button sets it to zero.",
+      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
       "what": "stock-out of 466375"
      }
     ],
@@ -8415,7 +8394,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -8614,7 +8593,7 @@ export const answers: Answers = {
          {
           "field": "quantity",
           "grade": "attested",
-          "note": "Stock at Valio",
+          "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
           "source": "Valio availability API",
           "value": "1e+10 ST"
          },
@@ -9429,7 +9408,7 @@ export const answers: Answers = {
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has stock, the demo button sets it to zero.",
+      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
       "what": "stock-out of 466375"
      }
     ],

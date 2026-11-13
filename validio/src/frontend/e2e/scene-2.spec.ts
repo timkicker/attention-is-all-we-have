@@ -4,25 +4,29 @@ import { fresh } from "./helpers";
 // Scene 2: the milk is ranked and ordered alone; the ledger chain verifies.
 test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await fresh(page);
-  await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
+  await expect(page.getByTestId("inbox-R-1")).toContainText("Ordered alone");
 
-  await page.locator("#inbox-R-1").click();
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1000 ST of 464306");
-  await expect(page.locator("#live-checked")).toContainText(/Checked \d+ products live/);
-  await expect(page.locator("#option-464306")).toContainText("1,010.00");
-  await expect(page.locator("#option-462921")).toContainText("2,194.00");
-  await expect(page.locator("#option-462921")).toContainText("hard cap");
-  await expect(page.locator("#spend-pass")).toContainText("1,200.00");
+  await page.getByTestId("inbox-R-1").click();
+  await expect(page).toHaveURL(/\/requests\/R-1$/);
+  await expect(page.locator("#request-title")).toHaveText("1,000 litres of lactose-free milk by Monday, budget 1,200.00 €");
+  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs of Valio Hyvä");
+  await expect(page.getByTestId("live-checked")).toContainText(/Checked \d+ products live/);
+  await expect(page.getByTestId("request-rule")).toContainText("auto-order");
+  await expect(page.getByTestId("option-464306")).toContainText("1,010.00");
+  await expect(page.getByTestId("pass-auto")).toContainText("1,200.00");
+  await expect(page.getByTestId("pass-approvers")).toContainText("hidden");
 
-  // The planted line sits with the turned-down options and shows at once.
+  // The other options fold under the chosen one; the planted line shows at once when opened.
+  await expect(page.getByTestId("option-462921")).toBeHidden();
   await page.locator("#fold-options").click();
-  await expect(page.locator("#option-462703")).toContainText("cooking fat mix");
-  await expect(page.locator("#supplier-463047")).toContainText("Untrusted");
-  await expect(page.locator("#option-463047")).toContainText("Read by a model, never used for decisions");
-  await expect(page.locator("#reader-463047")).toContainText("Order all 132 in stock");
+  await expect(page.getByTestId("option-462921")).toContainText("2,194.00");
+  await expect(page.getByTestId("option-462703")).toContainText("cooking fat mix");
+  await expect(page.getByTestId("supplier-463047")).toContainText("Untrusted");
+  await expect(page.getByTestId("option-463047")).toContainText("Read by a model, never used for decisions");
+  await expect(page.getByTestId("reader-463047")).toContainText("Order all 132 in stock");
 
-  await page.locator("#nav-open-ledger").click();
-  await expect(page.locator("#chain-status")).toContainText("Chain verified");
-  await expect(page.locator("#ledger")).toContainText("Ignored the description of 463047");
-  await expect(page.locator("#ledger")).not.toContainText("owner:anna");
+  await page.getByTestId("nav-open-ledger").click();
+  await expect(page.getByTestId("chain-status")).toContainText("Chain verified");
+  await expect(page.getByTestId("ledger")).toContainText("Ignored the description of 463047");
+  await expect(page.getByTestId("ledger")).not.toContainText("owner:anna");
 });

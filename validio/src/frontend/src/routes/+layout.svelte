@@ -8,7 +8,6 @@
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
@@ -22,13 +21,16 @@
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import { Input } from "@arlen/ui-kit/components/ui/input";
+  import { IconAction } from "@arlen/ui-kit/components/ui/icon-action";
+  import { Avatar, AvatarFallback } from "@arlen/ui-kit/components/ui/avatar";
+  import { Badge } from "@arlen/ui-kit/components/ui/badge";
   import * as DropdownMenu from "@arlen/ui-kit/components/ui/dropdown-menu";
-  import { CalendarSync, ChevronLeft, Ellipsis, Inbox, KeyRound, RotateCcw, ScrollText, ShieldCheck, PackageX } from "@lucide/svelte";
+  import { CalendarSync, ChevronLeft, Ellipsis, Inbox, KeyRound, RotateCcw, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { ApiError, api, LIVE } from "$lib/api/client";
   import { owner } from "$lib/owner.svelte";
   import { CLOCK, dayTime } from "$lib/format";
   import { poll } from "$lib/poll";
-  import { bump, chrome } from "$lib/chrome.svelte";
+  import { bump, chrome, demoActions } from "$lib/chrome.svelte";
 
   let { children } = $props();
 
@@ -42,6 +44,14 @@
   const path = $derived(page.url.pathname);
   // The approve page is one question and two buttons: no dock under it.
   const single = $derived(path.startsWith("/approve"));
+
+  onMount(() => {
+    const q = window.matchMedia("(max-width: 760px)");
+    const set = () => (chrome.phone = q.matches);
+    set();
+    q.addEventListener("change", set);
+    return () => q.removeEventListener("change", set);
+  });
 
   let waiting = $state(0);
   onMount(() =>
@@ -84,6 +94,7 @@
   }
   // The fixture answers at once; with the backend the kitchen's agent asks again first.
   const stockOut = () => demo(() => api.stockOut(), LIVE ? "/" : "/requests/R-2");
+  demoActions.stockOut = stockOut;
   const reset = () => demo(() => api.reset(), "/");
   function useToken(e: SubmitEvent) {
     e.preventDefault();
@@ -100,11 +111,13 @@
 </svelte:head>
 
 <SidebarProvider class="app">
+  {#if !chrome.phone}
   <Sidebar collapsible="icon">
     <SidebarHeader>
-      <div class="kitchen">
-        <span class="tile" aria-hidden="true">H</span>
-        <span class="kitchen-name">Hotel Espoo kitchen</span>
+      <div class="brand">
+        <Avatar class="size-6 rounded-button"><AvatarFallback class="tile">V</AvatarFallback></Avatar>
+        <span class="brand-name">Validio</span>
+        {#if !LIVE}<span class="sample"><Badge variant="outline">Demo data</Badge></span>{/if}
       </div>
     </SidebarHeader>
     <SidebarContent>
@@ -113,11 +126,11 @@
           <SidebarMenu>
             {#each NAV as item (item.href)}
               <SidebarMenuItem>
-                <SidebarMenuButton id={item.id} isActive={item.match(path)} tooltip={item.label} onclick={() => goto(item.href)}>
+                <SidebarMenuButton id={item.id} data-testid={item.id} isActive={item.match(path)} tooltip={item.label} onclick={() => goto(item.href)}>
                   <item.icon strokeWidth={1.75} />
                   <span>{item.label}</span>
                   {#if item.href === "/" && waiting > 0}
-                    <span class="count num" aria-label="{waiting} waiting">{waiting}</span>
+                    <span class="count"><Badge variant="secondary" aria-label="{waiting} waiting for you">{waiting}</Badge></span>
                   {/if}
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -125,10 +138,9 @@
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel>Authority</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton id={PASS.id} isActive={PASS.match(path)} tooltip={PASS.label} onclick={() => goto(PASS.href)}>
+              <SidebarMenuButton id={PASS.id} data-testid={PASS.id} isActive={PASS.match(path)} tooltip={PASS.label} onclick={() => goto(PASS.href)}>
                 <PASS.icon strokeWidth={1.75} />
                 <span>{PASS.label}</span>
               </SidebarMenuButton>
@@ -138,20 +150,27 @@
       </nav>
     </SidebarContent>
     <SidebarFooter>
-      <p class="clock num">{dayTime(CLOCK)}</p>
+      <div class="kitchen">
+        <span class="kitchen-name">Hotel Espoo kitchen</span>
+        <span class="clock num">{dayTime(CLOCK)}</span>
+      </div>
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>
+  {/if}
 
   <SidebarInset class="inset">
     <h1 class="sr-only">Validio</h1>
     <header class="bar">
-      <span class="desk"><SidebarTrigger class="-ml-1" /></span>
-      <span class="desk"><Separator orientation="vertical" class="me-1 h-4!" /></span>
-      {#if chrome.back}
-        <a class="back" href={chrome.back.href} aria-label="Back to {chrome.back.label}">
-          <ChevronLeft size={20} strokeWidth={1.75} />
-        </a>
+      {#if !chrome.phone}
+        <SidebarTrigger class="-ml-1" />
+        <Separator orientation="vertical" class="me-1 h-4!" />
+      {/if}
+      {#if chrome.back && chrome.phone}
+        {@const to = chrome.back.href}
+        <IconAction size="control" label="Back to {chrome.back.label}" onclick={() => goto(to)}>
+          <ChevronLeft size={18} strokeWidth={1.75} />
+        </IconAction>
       {/if}
       <span class="bar-title" id="bar-title">{chrome.title}</span>
       <span class="grow"></span>
@@ -165,11 +184,7 @@
         </DropdownMenu.Trigger>
         <DropdownMenu.Content align="end" class="w-56">
           <DropdownMenu.Label>Demo controls</DropdownMenu.Label>
-          <DropdownMenu.Item id="stock-out" onSelect={stockOut}>
-            <PackageX size={15} strokeWidth={1.75} />
-            Simulate stock-out
-          </DropdownMenu.Item>
-          <DropdownMenu.Item id="reset" onSelect={reset}>
+          <DropdownMenu.Item id="menu-reset" onSelect={reset}>
             <RotateCcw size={15} strokeWidth={1.75} />
             Start over
           </DropdownMenu.Item>
@@ -227,7 +242,7 @@
     display: flex;
     flex-direction: column;
   }
-  .kitchen {
+  .brand {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -235,58 +250,39 @@
     padding-inline: 0.25rem;
     overflow: hidden;
   }
-  .tile {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 1.5rem;
-    height: 1.5rem;
+  .brand :global(.tile) {
     border-radius: var(--radius-button);
-    background: color-mix(in srgb, var(--color-fg-primary) 10%, transparent);
     font-size: var(--text-xs);
     font-weight: 600;
+  }
+  .brand-name {
+    font-size: var(--text-md);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .sample {
+    margin-inline-start: auto;
+  }
+  .kitchen {
+    display: flex;
+    flex-direction: column;
+    padding: 0.25rem 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
   }
   .kitchen-name {
     font-size: var(--text-sm);
     font-weight: 500;
-    white-space: nowrap;
   }
-  :global([data-collapsible="icon"]) .kitchen-name,
-  :global([data-collapsible="icon"]) .clock {
+  .clock {
+    font-size: var(--text-2xs);
+    color: var(--color-fg-secondary);
+  }
+  :global([data-collapsible="icon"]) :is(.kitchen, .brand-name, .sample, .count) {
     display: none;
   }
   .count {
     margin-inline-start: auto;
-    font-size: var(--text-xs);
-    color: color-mix(in srgb, var(--sidebar-foreground) 55%, transparent);
-  }
-  :global([data-collapsible="icon"]) .count {
-    display: none;
-  }
-  /* One selection, one mark: a steel line at the left edge, no fill. */
-  :global([data-sidebar="menu-button"]) {
-    position: relative;
-    overflow: visible !important;
-  }
-  :global([data-sidebar="menu-button"][data-active="true"]) {
-    background: transparent;
-  }
-  :global([data-sidebar="menu-button"][data-active="true"]:hover) {
-    background: var(--sidebar-accent);
-  }
-  :global([data-sidebar="menu-button"][data-active="true"])::before {
-    content: "";
-    position: absolute;
-    inset-inline-start: -0.5rem;
-    top: 0.375rem;
-    bottom: 0.375rem;
-    width: 2px;
-    background: var(--v-select);
-  }
-  .clock {
-    padding-inline: 0.5rem;
-    font-size: var(--text-2xs);
-    color: var(--color-fg-secondary);
   }
 
   .bar {
@@ -299,10 +295,6 @@
     border-bottom: 1px solid var(--color-border);
     background: var(--background);
   }
-  .desk {
-    display: inline-flex;
-    align-items: center;
-  }
   .bar-title {
     min-width: 10ch;
     overflow: hidden;
@@ -314,8 +306,7 @@
   .grow {
     flex: 1;
   }
-  .menu-btn,
-  .back {
+  .menu-btn {
     display: inline-grid;
     place-items: center;
     width: 1.75rem;
@@ -324,13 +315,9 @@
     color: var(--color-fg-secondary);
     transition: background-color var(--duration-fast) var(--ease-default);
   }
-  .menu-btn:hover,
-  .back:hover {
+  .menu-btn:hover {
     background: color-mix(in srgb, var(--color-fg-primary) 8%, transparent);
     color: var(--color-fg-primary);
-  }
-  .back {
-    display: none;
   }
   .token {
     display: flex;
@@ -369,12 +356,6 @@
   }
 
   @media (max-width: 760px) {
-    :global([data-slot="sidebar"]) {
-      display: none !important;
-    }
-    .desk {
-      display: none;
-    }
     .bar {
       min-height: 3rem;
       padding-inline: 0.5rem;
@@ -384,19 +365,24 @@
       font-weight: 600;
       padding-inline-start: 0.5rem;
     }
-    .back {
-      display: inline-grid;
-      width: 2.75rem;
-      height: 2.75rem;
-    }
-    .back + .bar-title {
-      padding-inline-start: 0;
-    }
     .menu-btn {
       width: 2.75rem;
       height: 2.75rem;
     }
+    /* On the phone the page itself scrolls, not a box inside it. */
+    :global(.app),
+    :global(.inset) {
+      height: auto;
+      min-height: 100svh;
+      overflow: visible;
+    }
+    .bar {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+    }
     .content {
+      overflow: visible;
       padding-bottom: calc(6rem + env(safe-area-inset-bottom));
     }
     .content.single {

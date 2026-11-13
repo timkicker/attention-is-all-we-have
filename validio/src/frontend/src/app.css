@@ -3,13 +3,15 @@
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
 /* Validio runs on the kit's Arlen Dark and its own light theme. The accent
-   slot stays monochrome as Arlen ships it. Validio's one colour is a steel
-   blue for selection only. Nothing yellow, amber or ochre. */
+   slot stays monochrome as Arlen ships it. Validio's one theme deviation is a
+   steel blue focus ring (and the one highlight in a chart). Selection is the
+   kit's own fill. Nothing yellow, amber or ochre. */
 :root {
   color-scheme: dark;
   --v-select: #7f9fc4;
   --ring: var(--v-select);
   --font-size-base: 15px;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* The kit sidebar reads these, as Arlen mail sets them. */
   --sidebar: var(--color-bg-shell);
@@ -52,7 +54,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 .mono {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: var(--font-mono);
   font-feature-settings: normal;
 }
 /* Success and error as text, mixed toward the foreground as the kit's own
@@ -67,10 +69,4 @@ body {
   color: var(--color-fg-secondary);
 }
 
-/* On the phone the top bar carries the way back; the page header's own door
-   would say it twice. */
-@media (max-width: 760px) {
-  .page-back {
-    display: none !important;
-  }
-}
+

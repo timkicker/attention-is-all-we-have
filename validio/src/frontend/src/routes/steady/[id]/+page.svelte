@@ -13,8 +13,8 @@
   import { owner } from "$lib/owner.svelte";
   import CodeField from "$lib/components/CodeField.svelte";
   import type { SteadyLine, SteadyOrder } from "$lib/api/types";
-  import { bump, setChrome } from "$lib/chrome.svelte";
-  import { LINE_RESULT, amount, dayTime, look, money } from "$lib/format";
+  import { bump, chrome, setChrome } from "$lib/chrome.svelte";
+  import { LINE_RESULT, amount, dayTime, look, money, nameWord, prose } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import Drift from "$lib/components/Drift.svelte";
   import Facts from "$lib/components/Facts.svelte";
@@ -64,7 +64,7 @@
 </script>
 
 {#if s}
-  <Page title={s.name} back={{ href: "/steady", label: "Steady orders" }}>
+  <Page title={s.name} back={chrome.phone ? undefined : { href: "/steady", label: "Steady orders" }}>
     <SectionGrid>
     <div class="top">
       <Facts
@@ -72,18 +72,18 @@
           { value: s.weekday, label: "every", before: true },
           { value: String(s.guestsPerWeek), label: "guests a week" },
           { value: String(s.weeksLearned), label: "weeks learned" },
-          ...(pending ? [] : [{ value: money(weekTotal), label: "ordered this week" }, { value: String(waiting), label: "need a look" }]),
+          ...(pending ? [{ value: "not renewed", label: "this week", before: true }] : [{ value: money(weekTotal), label: "ordered this week" }, { value: String(waiting), label: "need a look" }]),
         ]}
       />
       {#if pending}
-        <Button id="renew" disabled={!!busy} onclick={() => act("renew", () => api.renew(s.id))}>Renew this week</Button>
+        <Button id="renew" data-testid="renew" disabled={!!busy} onclick={() => act("renew", () => api.renew(s.id))}>Renew now</Button>
       {:else if s.renewedAt}
         <span class="t-quiet renewed">Renewed {dayTime(s.renewedAt)}</span>
       {/if}
     </div>
 
     {#if s.simulatedHistory}
-      <div id="simulated-history">
+      <div id="simulated-history" data-testid="simulated-history">
         <Notice tone="neutral" text="Simulated history. The {s.weeksLearned} weeks behind this order are made up for the demo; the stock and prices are Valio's." />
       </div>
     {/if}
@@ -97,26 +97,40 @@
     <Section>
       {#each s.lines as l (l.productId)}
         {@const r = look(LINE_RESULT, l.result)}
-        <Row label={l.name} description={l.sentence} id="line-{l.productId}">
+        <div data-testid="line-{l.productId}">
+        <Row label={nameWord(l.name)} description={l.sentence && !/^usual amount\.?$/i.test(l.sentence) ? prose(l.sentence) : undefined} id="line-{l.productId}">
           {#snippet control()}
             <span class="ctl">
               <span class="qty num">
                 {#if l.thisWeekQuantity !== undefined}{amount(l.thisWeekQuantity, l.unit)}{:else}{amount(l.usualQuantity, l.unit)} usual{/if}
               </span>
               <span class="sum num">{money(l.totalCents)}</span>
-              <State label={r.label} tone={r.tone} />
+              {#if l.result !== "pending"}<State label={r.label} tone={r.tone} />{/if}
+              {#if asks(l)}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  id="accept-{l.productId}"
+                  data-testid="accept-{l.productId}"
+                  disabled={!!busy}
+                  onclick={() => act(l.productId, () => api.acceptLine(s!.id, l.productId))}
+                >
+                  {acceptLabel(l)}
+                </Button>
+              {/if}
             </span>
           {/snippet}
           {#snippet below()}
             {@render more(l)}
           {/snippet}
         </Row>
+        </div>
       {/each}
     </Section>
     </SectionGrid>
   </Page>
 {:else if steady.error}
-  <Page title="Steady order" back={{ href: "/steady", label: "Steady orders" }}>
+  <Page title="Steady order" back={chrome.phone ? undefined : { href: "/steady", label: "Steady orders" }}>
     <p class="t-quiet">Cannot read {id}: {steady.error}</p>
   </Page>
 {/if}
@@ -124,16 +138,16 @@
 {#snippet more(l: SteadyLine)}
   {@const flags = l.flags.filter((f) => !l.sentence.includes(f.sentence))}
   {@const chart = l.history && l.history.length > 1 && l.flags.some((f) => f.kind === "per_guest_up")}
-  {#if l.split || flags.length || chart || asks(l) || l.orderId}
+  {#if l.split || flags.length || chart || l.orderId}
     <div class="below">
-      <span class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>order <a class="mono" href="/ledger">{l.orderId}</a></span>{/if}</span>
+      <span class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>Order <a href="/ledger">{l.orderId}</a></span>{/if}</span>
       {#if l.split}
         <table class="split">
           <caption class="sr-only">How the line is split</caption>
           <tbody>
             {#each l.split.parts as p (p.productId)}
               <tr>
-                <td>{p.name} <span class="mono t-quiet">{p.productId}</span>{#if p.onValioList}<span class="t-quiet">, on Valio's list</span>{/if}</td>
+                <td>{nameWord(p.name)} <span class="mono t-quiet">{p.productId}</span>{#if p.onValioList}<span class="t-quiet">, on Valio's list</span>{/if}</td>
                 <td class="r num">{amount(p.quantity, p.unit)}</td>
                 <td class="r num">{money(p.totalCents)}</td>
               </tr>
@@ -147,23 +161,10 @@
         </table>
       {/if}
       {#each flags as f, i (i)}
-        <p class="flag">{f.sentence}</p>
+        <p class="flag">{prose(f.sentence)}</p>
       {/each}
       {#if chart && l.history}
         <Drift history={l.history} usual={l.usualQuantity} unit={l.unit} id="drift-{l.productId}" />
-      {/if}
-      {#if asks(l)}
-        <div class="act">
-          <Button
-            variant="outline"
-            size="sm"
-            id="accept-{l.productId}"
-            disabled={!!busy}
-            onclick={() => act(l.productId, () => api.acceptLine(s!.id, l.productId))}
-          >
-            {acceptLabel(l)}
-          </Button>
-        </div>
       {/if}
     </div>
   {/if}
@@ -196,13 +197,15 @@
     gap: 0.75rem;
   }
   .qty {
-    min-width: 6rem;
+    min-width: 7.5rem;
+    white-space: nowrap;
     text-align: end;
     font-size: var(--text-xs);
     color: var(--color-fg-secondary);
   }
   .sum {
     min-width: 5.5rem;
+    white-space: nowrap;
     text-align: end;
     font-size: var(--text-sm);
     font-weight: 500;
