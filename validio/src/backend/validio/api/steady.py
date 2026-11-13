@@ -155,7 +155,8 @@ class Runtime:
                 self._live.service.closed = True  # a call that waited through a reset gets 503, not a dead store
                 self._live.store.close()  # the ledger shares this connection, so it closes too
             store = Store(path)
-            audit = AuditLog(path, con=store.con, lock=store.lock)  # an order and its ledger entry commit together
+            # an order and its ledger entry commit together; the kitchen key signs the head
+            audit = AuditLog(path, seed.kitchen_key(), con=store.con, lock=store.lock)
             service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: self.settings.now,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    lock=self.lock)  # one lock for every write and the demo reset

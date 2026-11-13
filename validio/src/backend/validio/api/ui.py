@@ -15,12 +15,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
 
+from ..audit.log import head_signature_ok
 from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from .schemas import (
     ApproveIn,
     DemoState,
     InboxItem,
+    LedgerHeadView,
     LedgerView,
     OrderView,
     SessionIn,
@@ -166,6 +168,19 @@ def ledger(ctx: CtxDep):
                 "rule_ids": e.rule_ids, "order_id": e.order_id, "prev_hash": e.prev_hash, "hash": e.hash}
                for e in ctx.audit.list()]
     return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at})
+
+
+@router.get("/ledger/head", response_model=LedgerHeadView, response_model_exclude_none=True)
+def ledger_head(ctx: CtxDep):
+    """The signed head: entry count, last hash and the time of the last entry, signed with the kitchen's key."""
+    audit = ctx.audit
+    head = audit.head()
+    if head is None:
+        raise HTTPException(409, "the ledger has no head")
+    pub = audit.public
+    return LedgerHeadView(count=head.count, hash=head.hash, at=head.at, signature=head.signature,
+                          public_key=pub.export_public(as_dict=True) if pub is not None else None,
+                          signature_ok=pub is not None and head_signature_ok(head, pub))
 
 
 def _demo_state(ctx: Ctx, on: bool) -> DemoState:

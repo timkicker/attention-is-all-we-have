@@ -3,9 +3,12 @@
 The hash is SHA-256 over the entry as JSON with sorted keys and no spaces, without the hash itself.
 Hidden Spend Pass fields such as the approver list are dropped before anything is written.
 
-The head (entry count and last hash) is kept in its own row and moves in the same transaction as each append,
-so verify also catches entries cut from the end or an emptied table, not only gaps in the middle. Someone who
-rewrites the head as well is not caught; that needs the head published or signed outside this file.
+The head (entry count, last hash and the time of the last entry) is kept in its own row and moves in the same
+transaction as each append, so verify also catches entries cut from the end or an emptied table, not only gaps
+in the middle. With the kitchen's key the head is also signed (ES256) on every append and verify checks that
+signature, so someone who rewrites every hash and the head row as well is caught unless they hold the key.
+GET /api/ledger/head shows the signed head, so Valio can pin it: an older signed head shown again is the one
+thing the signature alone cannot tell apart.
 """
 
 import hashlib
@@ -17,7 +20,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, NamedTuple
 
+from jwcrypto.jwk import JWK
+from jwcrypto.jws import JWS, InvalidJWSObject, InvalidJWSSignature
+
 GENESIS = "0" * 64
+HEAD_TYP = "validio-ledger-head"
 
 # Spend Pass fields that never enter the ledger, even when an agent discloses them.
 NEVER_LOGGED = frozenset({"approvers"})
@@ -33,9 +40,14 @@ CREATE INDEX IF NOT EXISTS ledger_order ON ledger(order_id);
 CREATE TABLE IF NOT EXISTS ledger_head (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   count INTEGER NOT NULL,
-  hash TEXT NOT NULL
+  hash TEXT NOT NULL,
+  at TEXT,
+  sig TEXT
 );
 """
+
+FIELDS = ("seq", "at", "actor", "kind", "sentence", "facts", "mandate_id", "disclosed", "rule_ids", "order_id",
+          "prev_hash")
 
 
 def canonical(body: dict[str, Any]) -> str:
@@ -71,11 +83,37 @@ class VerifyResult(NamedTuple):
     broken_at: int | None  # seq of the first entry that does not check out
 
 
+class Head(NamedTuple):
+    count: int
+    hash: str
+    at: str | None
+    signature: str | None  # compact JWS over head_payload(), None without the kitchen's key
+
+
+def head_payload(count: int, h: str, at: str | None) -> str:
+    return canonical({"count": count, "hash": h, "at": at, "typ": HEAD_TYP})
+
+
+def head_signature_ok(head: Head, public: JWK) -> bool:
+    if not head.signature:
+        return False
+    try:
+        jws = JWS()
+        jws.deserialize(head.signature)
+        jws.verify(public, alg="ES256")
+    except (InvalidJWSObject, InvalidJWSSignature, ValueError):
+        return False
+    return jws.payload.decode() == head_payload(head.count, head.hash, head.at)
+
+
 class AuditLog:
-    def __init__(self, path: Path | str, con: sqlite3.Connection | None = None,
+    def __init__(self, path: Path | str, key: JWK | None = None, con: sqlite3.Connection | None = None,
                  lock: "threading.RLock | None" = None):
-        """`con` shares a connection (autocommit) with the order store, so an entry joins its transaction."""
+        """`key` is the kitchen's private key. With it every append signs the head and verify checks it.
+        `con` shares a connection (autocommit) with the order store, so an entry joins its transaction."""
         self.path = Path(path)
+        self._key = key
+        self.public = JWK.from_json(key.export_public()) if key is not None else None
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._con = con or sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
         # the server's worker threads share this connection: one call at a time, or two BEGINs collide.
@@ -89,11 +127,16 @@ class AuditLog:
             for stmt in SCHEMA.split(";"):
                 if stmt.strip():
                     con.execute(stmt)
+            cols = {r[1] for r in con.execute("PRAGMA table_info(ledger_head)")}
+            for col in ("at", "sig"):
+                if col not in cols:  # a head from before the signature: it stays unsigned, so a keyed verify fails
+                    con.execute(f"ALTER TABLE ledger_head ADD COLUMN {col} TEXT")
             if not had_head:
                 # a new file, or a ledger from before the head existed: anchor what is there now
                 row = con.execute("SELECT seq, hash FROM ledger ORDER BY seq DESC LIMIT 1").fetchone()
-                con.execute("INSERT INTO ledger_head (id, count, hash) VALUES (1, ?, ?)",
-                            (row[0], row[1]) if row else (0, GENESIS))
+                count, h = (row[0], row[1]) if row else (0, GENESIS)
+                con.execute("INSERT INTO ledger_head (id, count, hash, at, sig) VALUES (1, ?, ?, NULL, ?)",
+                            (count, h, self._sign(count, h, None)))
             con.execute("COMMIT")
         except BaseException:
             con.execute("ROLLBACK")
@@ -106,6 +149,19 @@ class AuditLog:
             with self._lock:
                 self._con.close()
             self._con, self._lock = con, lock
+
+    def _sign(self, count: int, h: str, at: str | None) -> str | None:
+        if self._key is None:
+            return None
+        jws = JWS(head_payload(count, h, at).encode())
+        jws.add_signature(self._key, alg="ES256",
+                          protected=canonical({"alg": "ES256", "typ": HEAD_TYP, "kid": self._key.thumbprint()}))
+        return jws.serialize(compact=True)
+
+    def head(self) -> Head | None:
+        with self._lock:
+            row = self._con.execute("SELECT count, hash, at, sig FROM ledger_head WHERE id = 1").fetchone()
+        return Head(*row) if row else None
 
     def append(
         self,
@@ -151,7 +207,8 @@ class AuditLog:
                 "INSERT INTO ledger (seq, order_id, body, hash) VALUES (?, ?, ?, ?)",
                 (seq, order_id, canonical(body), h),
             )
-            con.execute("INSERT OR REPLACE INTO ledger_head (id, count, hash) VALUES (1, ?, ?)", (seq, h))
+            con.execute("INSERT OR REPLACE INTO ledger_head (id, count, hash, at, sig) VALUES (1, ?, ?, ?, ?)",
+                        (seq, h, body["at"], self._sign(seq, h, body["at"])))
             con.execute("RELEASE ledger_append" if nested else "COMMIT")
         except BaseException:
             if nested:
@@ -170,14 +227,14 @@ class AuditLog:
                 rows = self._con.execute(
                     "SELECT body, hash FROM ledger WHERE order_id = ? ORDER BY seq", (order_id,)
                 ).fetchall()
-        return [AuditEntry(**json.loads(b), hash=h) for b, h in rows]
+        return [_entry(b, h) for b, h in rows]
 
     def verify(self) -> VerifyResult:
         prev = GENESIS
         count = 0
         expected_seq = 1
         with self._lock:
-            head = self._con.execute("SELECT count, hash FROM ledger_head WHERE id = 1").fetchone()
+            head = self.head()
             rows = self._con.execute("SELECT seq, order_id, body, hash FROM ledger ORDER BY seq").fetchall()
         for stored_seq, order_id, body_text, h in rows:
             try:
@@ -185,7 +242,9 @@ class AuditLog:
             except ValueError:
                 return VerifyResult(False, count, stored_seq)
             if (
-                stored_seq != expected_seq
+                not isinstance(body, dict)
+                or set(body) != set(FIELDS)
+                or stored_seq != expected_seq
                 or body.get("seq") != stored_seq
                 or body.get("prev_hash") != prev
                 or body.get("order_id") != order_id
@@ -197,7 +256,33 @@ class AuditLog:
             expected_seq += 1
         if head is None:
             return VerifyResult(False, count, 1)
-        if head[0] != count or head[1] != prev:
+        if head.count != count or head.hash != prev:
+            if count > head.count:  # entries past the head: the first one the head does not cover
+                return VerifyResult(False, count, head.count + 1)
             # entries are missing at the end: the first missing seq, or the last one if the head itself changed
-            return VerifyResult(False, count, min(count + 1, max(head[0], 1)))
+            return VerifyResult(False, count, min(count + 1, max(head.count, 1)))
+        if self.public is not None and not head_signature_ok(head, self.public):
+            # every row and the head agree, but the kitchen never signed this head: nothing in it can be trusted
+            return VerifyResult(False, count, 1)
         return VerifyResult(True, count, None)
+
+
+def _entry(body_text: str, h: str) -> AuditEntry:
+    """An entry for display even when its row was tampered with; verify() says whether to trust it."""
+    try:
+        body = json.loads(body_text)
+    except ValueError:
+        body = None
+    if not isinstance(body, dict):
+        body = {"sentence": "(this entry is not readable)"}
+    v = {k: body.get(k) for k in FIELDS}
+    return AuditEntry(
+        seq=v["seq"] if isinstance(v["seq"], int) else 0, at=str(v["at"] or ""), actor=str(v["actor"] or ""),
+        kind=str(v["kind"] or ""), sentence=str(v["sentence"] or ""),
+        facts=[f for f in v["facts"] if isinstance(f, dict)] if isinstance(v["facts"], list) else [],
+        mandate_id=None if v["mandate_id"] is None else str(v["mandate_id"]),
+        disclosed=v["disclosed"] if isinstance(v["disclosed"], dict) else {},
+        rule_ids=[str(r) for r in v["rule_ids"]] if isinstance(v["rule_ids"], list) else [],
+        order_id=None if v["order_id"] is None else str(v["order_id"]),
+        prev_hash=str(v["prev_hash"] or ""), hash=h,
+    )
