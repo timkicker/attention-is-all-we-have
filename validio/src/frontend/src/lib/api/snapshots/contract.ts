@@ -71,7 +71,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -216,7 +216,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -368,7 +368,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -506,7 +506,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -650,7 +650,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -788,7 +788,7 @@ export const scene1: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -2292,7 +2292,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -2437,7 +2437,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -2589,7 +2589,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -2727,7 +2727,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -2871,7 +2871,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -3009,7 +3009,7 @@ export const scene2: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -4350,7 +4350,7 @@ export const scene2: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -4451,7 +4451,7 @@ export const scene2: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -4473,7 +4473,7 @@ export const scene2: Snapshot = {
         ],
         "orderId": "O-1",
         "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd"
+        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
       }
     ],
     "chain": {
@@ -4564,7 +4564,7 @@ export const scene3: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "200 BAG of 466375",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
       "totalCents": 18010
     },
     {
@@ -4787,7 +4787,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -4985,7 +4985,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -5592,7 +5592,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -5655,7 +5655,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -5800,7 +5800,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -5952,7 +5952,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -6090,7 +6090,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -6234,7 +6234,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -6372,7 +6372,7 @@ export const scene3: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -7712,7 +7712,7 @@ export const scene3: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -7773,7 +7773,7 @@ export const scene3: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -7874,7 +7874,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -7896,7 +7896,7 @@ export const scene3: Snapshot = {
         ],
         "orderId": "O-1",
         "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd"
+        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
       },
       {
         "seq": 5,
@@ -7907,8 +7907,8 @@ export const scene3: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-        "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760"
+        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
+        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
       },
       {
         "seq": 6,
@@ -7924,8 +7924,8 @@ export const scene3: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-        "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1"
+        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
+        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
       },
       {
         "seq": 7,
@@ -7939,7 +7939,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -7959,8 +7959,8 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-        "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a"
+        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
+        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
       },
       {
         "seq": 8,
@@ -7974,7 +7974,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -7992,22 +7992,22 @@ export const scene3: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-        "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e"
+        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
+        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
         "facts": [
           {
             "field": "quantity",
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -8027,8 +8027,8 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-        "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039"
+        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
+        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
       }
     ],
     "chain": {
@@ -8119,7 +8119,7 @@ export const scene4: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "200 BAG of 466375",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
       "totalCents": 18010
     },
     {
@@ -8342,7 +8342,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -8540,7 +8540,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9147,7 +9147,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -9210,7 +9210,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9355,7 +9355,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9507,7 +9507,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9645,7 +9645,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9789,7 +9789,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -9927,7 +9927,7 @@ export const scene4: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -11267,7 +11267,7 @@ export const scene4: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -11328,7 +11328,7 @@ export const scene4: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -11429,7 +11429,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -11451,7 +11451,7 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-1",
         "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd"
+        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
       },
       {
         "seq": 5,
@@ -11462,8 +11462,8 @@ export const scene4: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-        "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760"
+        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
+        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
       },
       {
         "seq": 6,
@@ -11479,8 +11479,8 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-        "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1"
+        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
+        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
       },
       {
         "seq": 7,
@@ -11494,7 +11494,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -11514,8 +11514,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-        "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a"
+        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
+        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
       },
       {
         "seq": 8,
@@ -11529,7 +11529,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -11547,22 +11547,22 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-        "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e"
+        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
+        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
         "facts": [
           {
             "field": "quantity",
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -11582,8 +11582,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-        "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039"
+        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
+        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
       },
       {
         "seq": 10,
@@ -11597,7 +11597,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -11618,8 +11618,8 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
-        "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-        "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f"
+        "prevHash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125",
+        "hash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0"
       },
       {
         "seq": 11,
@@ -11667,8 +11667,8 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
-        "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-        "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381"
+        "prevHash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0",
+        "hash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e"
       },
       {
         "seq": 12,
@@ -11684,8 +11684,8 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-        "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288"
+        "prevHash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e",
+        "hash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93"
       },
       {
         "seq": 13,
@@ -11703,8 +11703,8 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-        "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a"
+        "prevHash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93",
+        "hash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35"
       },
       {
         "seq": 14,
@@ -11738,8 +11738,8 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-5",
-        "prevHash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
-        "hash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93"
+        "prevHash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35",
+        "hash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43"
       },
       {
         "seq": 15,
@@ -11756,8 +11756,8 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
-        "hash": "0b94caf24df18e69eb68db0459b1e73e3a9e02578f1c7c15adf9420520be293f"
+        "prevHash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43",
+        "hash": "edab13196d85cde4e0969de285658c3d6bccddaa70767841d4d82d59332b1d54"
       }
     ],
     "chain": {
@@ -11914,7 +11914,7 @@ export const scene5: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "200 BAG of 466375",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
       "totalCents": 18010
     },
     {
@@ -12137,7 +12137,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -12335,7 +12335,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -12942,7 +12942,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -13005,7 +13005,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -13150,7 +13150,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -13302,7 +13302,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -13440,7 +13440,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -13584,7 +13584,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -13722,7 +13722,7 @@ export const scene5: Snapshot = {
               "facts": [
                 {
                   "field": "quantity",
-                  "value": "1e+10 ST",
+                  "value": "9999999999 ST",
                   "grade": "attested",
                   "source": "Valio availability API",
                   "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -15062,7 +15062,7 @@ export const scene5: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -15123,7 +15123,7 @@ export const scene5: Snapshot = {
           "facts": [
             {
               "field": "quantity",
-              "value": "1e+10 ST",
+              "value": "9999999999 ST",
               "grade": "attested",
               "source": "Valio availability API",
               "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock"
@@ -15224,7 +15224,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -15246,7 +15246,7 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-1",
         "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd"
+        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
       },
       {
         "seq": 5,
@@ -15257,8 +15257,8 @@ export const scene5: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-        "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760"
+        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
+        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
       },
       {
         "seq": 6,
@@ -15274,8 +15274,8 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-        "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1"
+        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
+        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
       },
       {
         "seq": 7,
@@ -15289,7 +15289,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -15309,8 +15309,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-        "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a"
+        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
+        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
       },
       {
         "seq": 8,
@@ -15324,7 +15324,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -15342,22 +15342,22 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-        "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e"
+        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
+        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
         "facts": [
           {
             "field": "quantity",
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -15377,8 +15377,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-        "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039"
+        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
+        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
       },
       {
         "seq": 10,
@@ -15392,7 +15392,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
             "source": "Valio availability API",
-            "value": "1e+10 ST"
+            "value": "9999999999 ST"
           },
           {
             "field": "price",
@@ -15413,8 +15413,8 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
-        "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-        "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f"
+        "prevHash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125",
+        "hash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0"
       },
       {
         "seq": 11,
@@ -15462,8 +15462,8 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
-        "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-        "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381"
+        "prevHash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0",
+        "hash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e"
       },
       {
         "seq": 12,
@@ -15479,8 +15479,8 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-        "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288"
+        "prevHash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e",
+        "hash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93"
       },
       {
         "seq": 13,
@@ -15498,8 +15498,8 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-        "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a"
+        "prevHash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93",
+        "hash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35"
       },
       {
         "seq": 14,
@@ -15533,8 +15533,8 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-5",
-        "prevHash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
-        "hash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93"
+        "prevHash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35",
+        "hash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43"
       },
       {
         "seq": 15,
@@ -15551,8 +15551,8 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
-        "hash": "0b94caf24df18e69eb68db0459b1e73e3a9e02578f1c7c15adf9420520be293f"
+        "prevHash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43",
+        "hash": "edab13196d85cde4e0969de285658c3d6bccddaa70767841d4d82d59332b1d54"
       }
     ],
     "chain": {
