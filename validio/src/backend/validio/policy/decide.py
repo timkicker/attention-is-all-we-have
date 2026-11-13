@@ -68,6 +68,7 @@ class PolicyContext:
     delivery_in_time: bool = False
     substitutes_allowed: bool = False
     split_substitutes_allowed: bool = False
+    has_delivery_line: bool = False  # Valio gives a delivery line: without one not even a person can approve
 
     def __post_init__(self) -> None:
         for f in fields(self):
@@ -99,6 +100,7 @@ def build_context(
     drift_flag: bool = False,
     quantity_covers: bool = False,
     delivery_in_time: bool = False,
+    has_delivery_line: bool = False,
 ) -> PolicyContext:
     """Fill the Cedar context from typed facts. Undisclosed limits count as zero, an undisclosed
     diet counts as unchecked, so a pass that shows too little can never order alone."""
@@ -135,6 +137,7 @@ def build_context(
         delivery_in_time=delivery_in_time,
         substitutes_allowed=mandate.substitutes == SUBSTITUTES_LISTED,
         split_substitutes_allowed=mandate.split_allow_listed is True,
+        has_delivery_line=has_delivery_line,
     )
 
 
@@ -191,6 +194,7 @@ def context_for(
         drift_flag=drift_flag,
         quantity_covers=bool(covers),
         delivery_in_time=bool(in_time),
+        has_delivery_line=bool(deliverable),
     )
 
 
@@ -317,6 +321,8 @@ def decide(
         parts.append("a diet rule of the Spend Pass is contradicted by Valio's data")
     if "never-over-hard-cap" in blocked:
         parts.append(f"{eur(ctx.total_cents)} is over the hard cap of {eur(ctx.hard_cap_cents)}")
+    if not ctx.has_delivery_line and not ctx.sales_block:
+        parts.append("Valio gives no delivery line for it")
     if not parts:
         parts.append("no rule allows it (category outside the Spend Pass or a sales block)")
     return Decision(Outcome.DENY, blocked, "Blocked: " + "; ".join(parts) + ".", c)

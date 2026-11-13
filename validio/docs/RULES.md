@@ -7,7 +7,7 @@ The rules that decide every order are in `src/backend/validio/policy/policies.ce
 | Rule | Effect | Action | Decides | Inputs | Why the model cannot override it |
 |:---|:---|:---|:---|:---|:---|
 | `auto-order` | permit | `PlaceOrder` | the agent may order alone. Everything it needs must be attested, the diet kept, a substitute on Valio's list and allowed by the Spend Pass, a split inside its extra cost limit and the total inside the auto limit | `categoryAllowed` `salesBlock` `cutoffOk` `quantityAttested` `quantityCovers` `deliveryInTime` `dietUnchecked` `driftFlag` `isSubstitute` `onValioList` `substitutesAllowed` `isSplit` `splitExtraBp` `splitMaxExtraBp` `splitSubstitutesAllowed` `totalCents` `autoLimitCents` | every input is computed by Validio from Valio's answers and the signed Spend Pass. The total is recomputed from Valio's price, so a price the agent names changes nothing |
-| `ask-human` | permit | `Escalate` | when ordering alone is not allowed, a person may still be asked, as long as the category is in the Spend Pass, Valio has no sales block and the total is under the hard cap | `categoryAllowed` `salesBlock` `totalCents` `hardCapCents` | asking only puts the order in front of the owner. The order is placed after the owner taps approve and Validio has asked Valio again |
+| `ask-human` | permit | `Escalate` | when ordering alone is not allowed, a person may still be asked, as long as the category is in the Spend Pass, Valio has no sales block, Valio gives a delivery line and the total is under the hard cap | `categoryAllowed` `salesBlock` `hasDeliveryLine` `totalCents` `hardCapCents` | asking only puts the order in front of the owner. The order is placed after the owner taps approve and Validio has asked Valio again |
 | `never-break-diet` | forbid | every action | blocks ordering and asking when a diet rule of the request or Spend Pass is contradicted by Valio's own data | `dietContradicted` | the grade comes from the claim check over Valio's master data. Supplier text can only lower it and the reader's output never reaches it |
 | `never-over-hard-cap` | forbid | every action | blocks ordering and asking above the hard cap, even with approval | `totalCents` `hardCapCents` | the hard cap is a signed field of the Spend Pass and a forbid in Cedar always wins over a permit |
 
@@ -29,6 +29,7 @@ Money is in whole cents. Percentages are in basis points, so 5 % is 500.
 | `quantityAttested` | Valio gives a real stock number | availability answer (999999 from a Terminal product does not count) |
 | `quantityCovers` | the attested stock covers the amount ordered | availability answer, converted to the sales unit |
 | `deliveryInTime` | the earliest delivery is on or before the deadline | availability answer and the earlier of the signed deadline and the request |
+| `hasDeliveryLine` | Valio gives at least one delivery line for the product, so a person can approve it at all | availability answer |
 | `cutoffOk` | Valio's order cut-off has not passed | availability answer and the demo clock |
 | `isSubstitute` | the line replaces the product that was asked for | Safe Swap |
 | `onValioList` | the substitute is on Valio's own substitute list | Valio's product file |

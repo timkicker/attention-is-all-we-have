@@ -246,3 +246,11 @@ def test_short_in_sales_units_refuses_approve(svc, mandate):
     ok = svc.submit(mandate=mandate, lines=[LineIn("469054", 3)], deliver_by=MON, idempotency_key="h4-ok",
                     required_claims=())
     assert ok["lines"][0]["short"] is None  # control: 3 cartons are there
+
+
+def test_short_line_keeps_valio_answer_for_the_hard_lines(svc, mandate):
+    # L3: a short line goes to Cedar with Valio's real answer, so it asks a person instead of looking undeliverable
+    o = svc.submit(mandate=mandate, lines=[LineIn("469054", 10)], deliver_by=MON, idempotency_key="l3",
+                   required_claims=())
+    assert o["state"] == "waiting"
+    assert "Valio does not confirm enough stock" in o["decision"]["sentence"]

@@ -52,6 +52,7 @@ def scene2(mandate, **kw):
         "category": "10400",
         "quantity_covers": True,
         "delivery_in_time": True,
+        "has_delivery_line": True,
     }
     args.update(kw)
     return build_context(mandate, **args)
@@ -359,7 +360,7 @@ def test_late_delivery_never_orders_alone(mandate):
 def test_context_fails_closed_without_amount_and_date(mandate):
     args = {"total_cents": 101000, "diet_grades": {"FREE_FROM_LACTOSE": "consistent"},
             "quantity_grade": "attested", "cutoff_ok": True, "category": "10400"}
-    ctx = build_context(mandate, **args)
+    ctx = build_context(mandate, **args, has_delivery_line=True)
     assert ctx.quantity_covers is False and ctx.delivery_in_time is False
     assert decide(ctx, product_id="464306").outcome is Outcome.ESCALATE
 
@@ -460,4 +461,33 @@ def test_graded_placeholder_stock_strict_switch(catalog, valio, mandate, monkeyp
     monkeypatch.setenv("STRICT_PLACEHOLDER_STOCK", "1")
     d = graded(catalog, valio, mandate, "464306", 1000)
     assert d.context["quantityAttested"] is False
+    assert d.outcome is Outcome.ESCALATE
+
+
+# L3: a person cannot approve what Valio cannot deliver at all
+
+
+def test_no_delivery_line_blocks_even_for_a_person(mandate):
+    d = decide(scene2(mandate, has_delivery_line=False, quantity_grade="missing", quantity_covers=False,
+                      delivery_in_time=False), product_id="473986")
+    assert d.outcome is Outcome.DENY
+    assert "Valio gives no delivery line for it" in d.sentence
+    assert scene2(mandate).has_delivery_line is True
+
+
+def test_context_without_delivery_line_fails_closed(mandate):
+    args = {"total_cents": 101000, "diet_grades": {"FREE_FROM_LACTOSE": "consistent"},
+            "quantity_grade": "attested", "cutoff_ok": True, "category": "10400"}
+    assert build_context(mandate, **args).has_delivery_line is False
+
+
+def test_graded_not_deliverable_is_blocked(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "473986", 1)
+    assert d.context["hasDeliveryLine"] is False
+    assert d.outcome is Outcome.DENY
+
+
+def test_graded_short_stock_still_asks(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "464306", 1000, change=lambda a: _line(a, amount=0.0))
+    assert d.context["hasDeliveryLine"] is True
     assert d.outcome is Outcome.ESCALATE

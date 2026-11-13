@@ -16,7 +16,10 @@ when {
 
 @id("ask-human")
 permit(principal is Agent, action == Action::"Escalate", resource is Product)
-when { context.categoryAllowed && !context.salesBlock && context.totalCents <= context.hardCapCents };
+when {
+  context.categoryAllowed && !context.salesBlock && context.hasDeliveryLine
+  && context.totalCents <= context.hardCapCents
+};
 
 @id("never-break-diet")
 forbid(principal, action, resource)

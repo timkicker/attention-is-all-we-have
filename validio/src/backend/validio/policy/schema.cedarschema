@@ -11,6 +11,7 @@ type Ctx = {
   quantityAttested: Bool,
   quantityCovers: Bool,
   deliveryInTime: Bool,
+  hasDeliveryLine: Bool,
   cutoffOk: Bool,
   isSubstitute: Bool,
   onValioList: Bool,
