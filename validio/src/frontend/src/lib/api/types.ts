@@ -347,4 +347,6 @@ export interface SteadyOrderSummary {
 /** The few demo switches the presenter presses. Each one is simulated. */
 export interface DemoState {
   stockOut466375: boolean;
+  /** What Valio really has of 466375, read from its availability answer at request time. */
+  realStock466375?: { quantity: number; unit: string };
 }

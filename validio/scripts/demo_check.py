@@ -138,7 +138,9 @@ class Run:
                f"on 463047 ignored, checked {live['ids']} products live"
 
     async def scene3(self):
-        check(self.demo("stock-out") == {"stockOut466375": True}, "scene 3: stock-out switch")
+        st = self.demo("stock-out")
+        check(st == {"stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}},
+              f"scene 3: stock-out switch {st}")
         _, a = await self.agent(3)
         req = self.get(f"/api/requests/{a['request_supply']['id']}")
         check(req["status"] == "waiting" and req["decision"]["outcome"] == "ask_human",

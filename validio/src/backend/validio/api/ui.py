@@ -110,23 +110,29 @@ def ledger(ctx: CtxDep):
     return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at})
 
 
-@router.get("/demo", response_model=DemoState)
+def _demo_state(ctx: Ctx, on: bool) -> DemoState:
+    real = ctx.real_stock()
+    return DemoState(stock_out_466375=on,
+                     real_stock_466375={"quantity": real[0], "unit": real[1]} if real else None)
+
+
+@router.get("/demo", response_model=DemoState, response_model_exclude_none=True)
 def demo_state(ctx: CtxDep):
-    return DemoState(stock_out_466375=ctx.stockout())
+    return _demo_state(ctx, ctx.stockout())
 
 
-@router.post("/demo/stock-out", response_model=DemoState)
+@router.post("/demo/stock-out", response_model=DemoState, response_model_exclude_none=True)
 def stock_out(ctx: CtxDep, x_demo_token: Annotated[str | None, Header()] = None):
     """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock."""
     _demo(ctx, x_demo_token)
     if not ctx.stockout():
         ctx.set_stockout(True)
-    return DemoState(stock_out_466375=True)
+    return _demo_state(ctx, True)
 
 
-@router.post("/demo/reset", response_model=DemoState)
+@router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)
 def reset(ctx: CtxDep, x_demo_token: Annotated[str | None, Header()] = None):
     """Back to the state `make demo` starts from: drops every table, seeds again."""
     _demo(ctx, x_demo_token)
     ctx.reset()
-    return DemoState(stock_out_466375=ctx.stockout())
+    return _demo_state(ctx, ctx.stockout())
