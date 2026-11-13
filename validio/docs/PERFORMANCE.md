@@ -7,13 +7,13 @@ Every number on this page comes from `scripts/loadtest.py` or a profiler run on 
 | | |
 | --- | --- |
 | Machine | AMD Ryzen 7 7840U w/ Radeon 780M Graphics, 16 logical CPUs, 60 GiB RAM, Linux 7.2.6-arch2-1, Python 3.12.13 |
-| Server | one uvicorn process, one worker, the app of commit `0f73016`, a fresh seeded store per run, Valio in replay mode |
+| Server | one uvicorn process, one worker, a fresh seeded store per run, Valio in replay mode. The tables come from main with the lock fix (`lock shared sqlite connections`) before `harden key binding checks` |
 | Command | `cd validio/src/backend && uv run python ../../scripts/loadtest.py --agents 1 10 50 --rounds 5` |
 | Wide mix | the same with `--mix wide` |
 
 Each of the N agents has its own Holder and runs scene 2 five times in a row: nonce, `POST /agent/v1/requests`, nonce, `POST /agent/v1/orders`, `GET /agent/v1/orders/{id}`. All N agents start at once. The client measures each HTTP call. The server process counts the time callers waited for the three locks in front of the SQLite connections and every question it sends to Valio.
 
-The laptop was not idle. Other jobs ran on it during the tests. In the last run its load average went from 4.4 to 27.0. That is why throughput is given as a range over all runs on the same code. Later that night the machine reached 100 °C and heavy jobs were limited to two shared slots, so no more runs at N=50 were made after the ones on this page. They ran on a machine that was already hot and busy. Whether an idle and cool machine would give more is not measured.
+The laptop was not idle. Other jobs ran on it during the tests. In the last run its load average went from 4.4 to 27.0. That is why throughput is given as a range over all runs on the same code. Later that night the machine reached 100 °C and heavy jobs were limited to two shared slots, so no more runs at N=50 were made after the ones on this page. They ran on a machine that was already hot and busy. Whether an idle and cool machine would give more is not measured. One run at N=1 and 10 on main after `harden key binding checks` gave 72.2 and 104.8 requests per second with no error, inside the range below.
 
 ## Results
 
@@ -56,7 +56,7 @@ The wide mix sends one request with five lines (milk by text, 466375, 463968, 47
 
 ## Bug found under load
 
-The first run with 50 agents crashed the server with `sqlite3.DatabaseError: no more rows available` in `Store.new_request`. The order store and the ledger each share one SQLite connection between all worker threads. Writes in the order store took a lock but reads did not. The ledger had no lock at all, so two threads could start `BEGIN IMMEDIATE` on the same connection. `tests/test_store_threads.py` reproduces both (16 threads on the store and 12 on the ledger, red in each of three runs before the fix). Commit `0f73016` makes reads take the store's lock and gives the ledger its own. Since then no run has had an error.
+The first run with 50 agents crashed the server with `sqlite3.DatabaseError: no more rows available` in `Store.new_request`. The order store and the ledger each share one SQLite connection between all worker threads. Writes in the order store took a lock but reads did not. The ledger had no lock at all, so two threads could start `BEGIN IMMEDIATE` on the same connection. `tests/test_store_threads.py` reproduces both (16 threads on the store and 12 on the ledger, red in each of three runs before the fix). The commit `lock shared sqlite connections` makes reads take the store's lock and gives the ledger its own. Since then no run has had an error.
 
 ## Valio call budget
 
