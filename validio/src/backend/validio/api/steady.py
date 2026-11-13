@@ -6,6 +6,9 @@ POST /api/steady/{id}/renew                   Drift Watch, then renewal. Renewed
                                               a second press orders nothing twice
 POST /api/steady/{id}/lines/{pid}/accept      a person lets a waiting or flagged line through, it becomes an order
 
+Both POST routes place orders, so they need the approve code like /api/orders/{id}/approve
+(X-Approve-Code header or {"code": ...}).
+
 Every decision goes to the ledger. The renewal state lives in validio.db next to the seed, so `make seed`
 resets it too; the stores notice the new seed token and reopen.
 """
@@ -16,8 +19,9 @@ import threading
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Body, Header, HTTPException
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
@@ -32,6 +36,7 @@ from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
 from ..valio.client import ValioClient
+from .schemas import ApproveIn
 
 router = APIRouter(prefix="/api/steady", tags=["steady"])
 ACTOR = "validio:steady-order"
@@ -182,6 +187,14 @@ def _save(path: Path, order_id: str, body: dict) -> None:
         con.close()
 
 
+def _chef(key: str, header: str | None, body) -> None:
+    # the approve route's code check, imported late: api.state imports this module
+    from .state import get_ctx
+    from .ui import _code
+
+    _code(get_ctx(), key, header, body)
+
+
 def _steady() -> tuple[StandingOrder, object]:
     h = seed.load_history()
     return learn(h), h
@@ -278,7 +291,9 @@ def steady_order(order_id: str):
 
 
 @router.post("/{order_id}/renew", response_model=SteadyOrderOut, response_model_exclude_none=True)
-def steady_renew(order_id: str):
+def steady_renew(order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+                 x_approve_code: Annotated[str | None, Header()] = None):
+    _chef(f"steady:{order_id}", x_approve_code, body)
     with runtime.lock:
         live = runtime.live()
         so, h = _get_order(order_id)
@@ -319,7 +334,9 @@ def steady_renew(order_id: str):
 
 @router.post("/{order_id}/lines/{product_id}/accept", response_model=SteadyOrderOut,
              response_model_exclude_none=True)
-def steady_accept(order_id: str, product_id: str):
+def steady_accept(order_id: str, product_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+                  x_approve_code: Annotated[str | None, Header()] = None):
+    _chef(f"steady:{order_id}:{product_id}", x_approve_code, body)
     with runtime.lock:
         live = runtime.live()
         so, _h = _get_order(order_id)
