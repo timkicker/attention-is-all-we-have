@@ -20,6 +20,7 @@ class Scene:
     lines: list[dict]
     search: str | None = None
     claims: tuple[str, ...] = ()
+    steady: str | None = None  # a Steady Order to renew instead of request lines
 
 
 SCENES = {
@@ -30,6 +31,7 @@ SCENES = {
              [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}]),
     3: Scene("Owner approves a swap", "200 bags of Gran Castelli lactose-free mozzarella 466375 by Monday",
              [{"productId": "466375", "quantity": 200, "unit": "BAG"}]),
+    4: Scene("Steady Order renews", "Renew this week's Steady Order S-1", [], steady="S-1"),
 }
 
 
@@ -93,9 +95,12 @@ async def run(task: dict[str, Any], llm: LLM, port: McpPort, max_steps: int = 8,
 
 def task_for(n: int) -> dict[str, Any]:
     s = SCENES[n]
-    text = (f"Kitchen request: {s.request}. Request lines: {s.lines}. Deliver by {DELIVER_BY}.")
+    if s.steady:
+        text = f"Kitchen request: {s.request}. Steady Order id: {s.steady}."
+    else:
+        text = f"Kitchen request: {s.request}. Request lines: {s.lines}. Deliver by {DELIVER_BY}."
     return {"text": text, "request": s.request, "lines": s.lines, "deliverBy": DELIVER_BY, "search": s.search,
-            "claims": list(s.claims)}
+            "claims": list(s.claims), "steadyOrder": s.steady}
 
 
 async def run_scene(n: int, llm: LLM, port: McpPort, on_event=None) -> Transcript:

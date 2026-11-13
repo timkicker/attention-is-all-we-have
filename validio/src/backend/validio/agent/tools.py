@@ -1,4 +1,4 @@
-"""The five MCP tools as the kitchen's agent sees them, from the blueprint's tool table.
+"""The MCP tools as the kitchen's agent sees them, from the blueprint's tool table.
 
 The model never writes idempotency keys or the Spend Pass: the port adds both. Supplier free text
 never reaches the model: `redact` drops every field that carries it before a result goes back."""
@@ -52,8 +52,14 @@ TOOLS: list[dict[str, Any]] = [
     {"name": "get_order",
      "description": "Read an order and its state.",
      "parameters": {"type": "object", "properties": {"orderId": {"type": "string"}}, "required": ["orderId"]}},
+    {"name": "renew_steady_order",
+     "description": "Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, "
+                    "the rest wait for the chef with the reason.",
+     "parameters": {"type": "object", "properties": {"orderId": {"type": "string", "description": "e.g. S-1"}},
+                    "required": ["orderId"]}},
 ]
-WRITE_TOOLS = {"request_supply", "confirm_order"}
+WRITE_TOOLS = {"request_supply", "confirm_order"}  # get an idempotency key from the port
+PASS_TOOLS = WRITE_TOOLS | {"renew_steady_order"}  # get the Spend Pass from the port
 
 SUPPLIER_TEXT = re.compile(r"untrusted|description|marketing|ingredient|planted|supplier", re.IGNORECASE)
 
