@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -63,6 +63,11 @@ demo-mock:
 	cd src/frontend && npm run build && npx vite preview --host 127.0.0.1 --port 8411 --strictPort
 
 DEMO_SCENES ?= 1,2,3,4,5
+# Revoke a Spend Pass early, e.g. make revoke PASS=M-1 (a reset issues the demo pass again)
+revoke:
+	@test -n "$(PASS)" || { echo "usage: make revoke PASS=M-1"; exit 2; }
+	$(UV) python ../../scripts/revoke_pass.py $(PASS)
+
 demo-check:
 	$(UV) python -W ignore ../../scripts/demo_check.py --scenes $(DEMO_SCENES)
 
