@@ -70,7 +70,7 @@ class SwapResult:
                 f"but it is not on Valio's list, so a person decides.")
 
 
-def _diet(p: Product, claims: set[str]) -> str | None:
+def diet_break(p: Product, claims: set[str]) -> str | None:
     """Why the product breaks the line's diet, or None when it keeps it (unchecked counts as kept here,
     the rule engine sends unchecked claims to a person)."""
     for claim in sorted(claims):
@@ -132,7 +132,7 @@ def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, r
               budget: CallBudget, now: datetime, search_outside: bool = True) -> SwapResult:
     need = measured_need(need, original)
     listed_products = cat.substitutes_of(original.id)
-    blocked = {p.id: _diet(p, need.required_claims) for p in listed_products}
+    blocked = {p.id: diet_break(p, need.required_claims) for p in listed_products}
     live = _live([p for p in listed_products if blocked[p.id] is None], need, valio, requested, budget, now)
     listed = [SubOption(p, SubVerdict.BLOCKED_DIET, blocked[p.id], True) if blocked[p.id]
               else _judge(p, live[p.id], need, True) for p in listed_products]
@@ -144,7 +144,7 @@ def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, r
     skip = {original.id, *blocked}
     wide = replace(need, product_id=None)
     kept, _ = screen(wide, cat, limit=None)
-    extra = [p for p in kept if p.id not in skip and _diet(p, need.required_claims) is None][:MAX_EXTRA_IDS]
+    extra = [p for p in kept if p.id not in skip and diet_break(p, need.required_claims) is None][:MAX_EXTRA_IDS]
     result.extra_ids = [p.id for p in extra]
     live = _live(extra, need, valio, requested, budget, now)
     ranked = best_pick(list(live.values()))
