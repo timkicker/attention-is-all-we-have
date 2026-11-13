@@ -157,3 +157,47 @@ def test_accepted_line_has_one_approval_tied_to_its_order(client):
     new = log.list()[before:]
     assert [e.kind for e in new if e.kind == "approval"] == ["approval"]
     assert {e.order_id for e in new} == {pan["orderId"]}
+
+
+def test_renewed_line_that_waits_is_ordered_once(client, monkeypatch):
+    # review 3 M6 defect 1: Valio's second answer sends a renewed line to waiting with its own order O-x.
+    # Accept made a second order and left O-x approvable too. Replay never gets there, so the answer is faked.
+    from validio.orders.service import OrderService
+
+    real = OrderService._decide
+
+    def second_answer(self, mandate, quoted, *a, **kw):
+        if quoted[0]["productId"] == "464306":
+            return {"outcome": "ask_human", "ruleIds": [], "sentence": "Valio's second answer needs a person."}
+        return real(self, mandate, quoted, *a, **kw)
+
+    monkeypatch.setattr(OrderService, "_decide", second_answer)
+    milk = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["464306"]
+    assert milk["result"] == "waiting" and milk["orderId"]
+    monkeypatch.setattr(OrderService, "_decide", real)
+
+    got = lines(client.post("/api/steady/S-1/lines/464306/accept", headers=CHEF).json())["464306"]
+    store = Store(seed.db_path())
+    assert got["result"] == "accepted" and got["orderId"] == milk["orderId"]
+    assert store.order(milk["orderId"])["state"] == "placed"
+    assert [o["id"] for o in store.orders() if o["lines"][0]["productId"] == "464306"] == [milk["orderId"]]
+
+
+def test_order_the_split_orders_the_split_shown(client, monkeypatch):
+    # review 3 M6 defect 2: a split that waits ("Order the split") was accepted as 177 of the short 463968
+    from validio.policy.decide import Decision, Outcome
+    from validio.standing import renew
+
+    real = renew.decide_split
+    monkeypatch.setattr(renew, "decide_split", lambda *a, **kw: Decision(Outcome.ESCALATE, [], "The split waits.", {}))
+    parm = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["463968"]
+    assert (parm["result"], parm["acceptLabel"]) == ("waiting", "Order the split")
+    shown = [(p["productId"], p["quantity"]) for p in parm["split"]["parts"]]
+    assert shown == [("463968", 137), ("469648", 40)]
+    monkeypatch.setattr(renew, "decide_split", real)
+
+    got = lines(client.post("/api/steady/S-1/lines/463968/accept", headers=CHEF).json())["463968"]
+    order = Store(seed.db_path()).order(got["orderId"])
+    assert got["result"] == "accepted" and order["state"] == "placed"
+    assert [(ln["productId"], ln["quantity"]) for ln in order["lines"]] == shown
+    assert order["splitBaseCents"] == parm["split"]["totalCents"] - parm["split"]["extraCostCents"]
