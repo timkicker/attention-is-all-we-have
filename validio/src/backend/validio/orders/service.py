@@ -48,6 +48,18 @@ class IdempotencyConflict(OrderError):
     """The same idempotency key came with another body (HTTP 409)."""
 
 
+def revoke_pass(store: Store, audit: AuditLog, pass_id: str, at: datetime, actor: str = "kitchen") -> bool:
+    """The kitchen stops a Spend Pass early: from now on every presentation of it and every approve of an order
+    it holds is refused. One ledger entry. False when the pass was revoked already."""
+    if not store.revoke(pass_id, at.isoformat(), actor):
+        return False
+    audit.append(at=at, actor=actor, kind="revocation",
+                 sentence=f"The kitchen revoked Spend Pass {pass_id}. Validio refuses it from now on, also to "
+                          "approve its waiting orders.",
+                 facts=[], mandate_id=pass_id, disclosed={}, rule_ids=[], order_id=None)
+    return True
+
+
 class ApproveRefused(OrderError):
     """Valio's answer changed since the question was asked (HTTP 409). The order keeps waiting."""
 
@@ -258,6 +270,10 @@ class OrderService:
             if o["state"] != "waiting":
                 raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be approved")
             mandate = mandate_from(o["mandate"])
+            if self.store.is_revoked(mandate.id):
+                sentence = f"Approval refused: Spend Pass {mandate.id} was revoked by the kitchen."
+                self._log(o, "validio", "decision", sentence, [])
+                raise ApproveRefused(sentence)
             deliver_by = date.fromisoformat(o["deliverBy"])
             problems = self._time_problems(mandate, deliver_by)
             if problems:

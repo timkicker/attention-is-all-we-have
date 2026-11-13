@@ -61,7 +61,9 @@ Not covered: when Valio's fields agree with each other and are all wrong, Validi
 
 ## Stolen Spend Pass
 
-The Spend Pass in `policy/mandate.py` is an SD-JWT signed with ES256 by the kitchen's key and bound to the agent's own key. `verify_presentation` checks signature, algorithm, issuer, key binding, audience, a single-use nonce and the validity window. The agent shows only budget, hard cap and diet. The approver list stays hidden. A limit the agent does not show counts as zero, so hiding the hard cap blocks.
+The Spend Pass in `policy/mandate.py` is an SD-JWT signed with ES256 by the kitchen's key and bound to the agent's own key. `verify_presentation` checks signature, algorithm, issuer, key binding, audience, a single-use nonce and the validity window. It also refuses a key binding signed more than ten minutes before or a minute after Validio's clock, a pass issued in the future and a disclosure the pass does not refer to. The agent shows only budget, hard cap and diet. The approver list stays hidden. A limit the agent does not show counts as zero, so hiding the hard cap blocks.
+
+The kitchen can stop a pass early with `make revoke PASS=M-1` (`scripts/revoke_pass.py`). That puts it on the revocation list in `orders/store.py` and writes a ledger entry. `verify_presentation` checks the list on every presentation over MCP and `/agent/v1`. Approve and Steady Order renewal check it too, so an order still waiting under the pass is not placed either.
 
 Proof:
 
@@ -73,8 +75,11 @@ Proof:
 - `test_spend_pass.py::test_wrong_audience_rejected`
 - `test_policy.py::test_undisclosed_hard_cap_denies` and `test_policy.py::test_undisclosed_budget_escalates`
 - `test_mcp.py::test_mcp_refuses_tampered_and_reused_pass`
+- `adversarial/test_spend_pass_fuzz.py::test_key_binding_iat_far_from_now_is_refused`, `adversarial/test_spend_pass_fuzz.py::test_pass_issued_in_the_future_is_refused` and `adversarial/test_spend_pass_fuzz.py::test_unreferenced_disclosure_signed_by_the_holder_is_refused`
+- `test_revoke.py::test_revoked_pass_refused_over_http` and `test_revoke.py::test_revoked_pass_refused_over_mcp`
+- `test_revoke.py::test_waiting_order_under_a_revoked_pass_is_not_approved` and `test_revoke.py::test_steady_renew_under_a_revoked_pass_is_refused`
 
-Not covered: the issued pass alone is useless, but the pass together with the agent's key file is full power until the pass expires. In the demo that is Tue 17 Nov 00:00. There is no revocation list. Stopping a pass early means changing the kitchen key. In the demo the agent's key sits on the same machine as the server, under the ignored `data/keys/`.
+Not covered: the issued pass alone is useless, but the pass together with the agent's key file is full power until someone at the kitchen revokes it or it expires. In the demo it expires Tue 17 Nov 00:00. The revocation list sits in `data/validio.db`. A reset clears it and issues M-1 again. Someone who can write that file can delete a revocation, but the signed ledger still shows it. In the demo the agent's key sits on the same machine as the server, under the ignored `data/keys/`.
 
 ## Replay
 

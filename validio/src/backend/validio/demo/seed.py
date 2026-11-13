@@ -200,6 +200,8 @@ def spend_pass(path: Path | None = None, keys_dir: Path | None = None,
     con = sqlite3.connect(path or db_path())
     try:
         (issuance,) = con.execute("select issuance from spend_pass where id = ?", (SPEND_PASS_ID,)).fetchone()
+        has_list = con.execute("select 1 from sqlite_master where name = 'revoked_pass'").fetchone()
+        revoked = {r for (r,) in con.execute("select id from revoked_pass")} if has_list else set()
     finally:
         con.close()
     kitchen = load_or_create_key(keys_dir / "kitchen-es256.json")
@@ -207,4 +209,4 @@ def spend_pass(path: Path | None = None, keys_dir: Path | None = None,
     nonces = NonceStore()
     token = present(issuance, set(disclose), agent, AUDIENCE, nonces.issue(now), int(now.timestamp()))
     return verify_presentation(token, kitchen_pub=kitchen, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
-                               nonces=nonces, now=now)
+                               nonces=nonces, now=now, revoked=revoked.__contains__)
