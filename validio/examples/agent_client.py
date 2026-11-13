@@ -10,7 +10,6 @@ import argparse
 import base64
 import hashlib
 import json
-import time
 
 import httpx
 from jwcrypto import jwk, jws
@@ -27,12 +26,12 @@ def b64e(b: bytes) -> str:
     return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
 
 
-def presentation(issuance: str, key_json: str, nonce: str) -> str:
+def presentation(issuance: str, key_json: str, nonce: str, iat: int) -> str:
     """Issuer JWT, the disclosures we choose to show, then a KB-JWT signed with our key over the nonce."""
     jwt, *disclosures = [p for p in issuance.split("~") if p]
     shown = [d for d in disclosures if json.loads(b64d(d))[1] in DISCLOSE]
     sd = "~".join([jwt, *shown]) + "~"
-    claims = {"iat": int(time.time()), "aud": AUD, "nonce": nonce,
+    claims = {"iat": iat, "aud": AUD, "nonce": nonce,
               "sd_hash": b64e(hashlib.sha256(sd.encode()).digest())}
     kb = jws.JWS(json.dumps(claims))
     kb.add_signature(jwk.JWK.from_json(key_json), alg="ES256", protected={"alg": "ES256", "typ": "kb+jwt"})
@@ -47,8 +46,8 @@ def ok(r: httpx.Response) -> dict:
 
 def scene2(http: httpx.Client, issuance: str, key_json: str) -> dict:
     def auth() -> dict:  # a fresh nonce for every write, each one is good once
-        nonce = ok(http.get("/agent/v1/nonce"))["nonce"]
-        return {"Authorization": f"SD-JWT {presentation(issuance, key_json, nonce)}"}
+        ticket = ok(http.get("/agent/v1/nonce"))  # iat is Validio's clock, sign with it
+        return {"Authorization": f"SD-JWT {presentation(issuance, key_json, ticket['nonce'], ticket['iat'])}"}
 
     req = ok(http.post("/agent/v1/requests", headers=auth(), json={
         "lines": [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}],

@@ -67,7 +67,7 @@ class Run:
         return self.post(f"/api/demo/{action}", headers={"X-Demo-Token": self.token})
 
     async def agent(self, scene: int):
-        holder = Holder.from_seed(lambda: self.get("/agent/v1/nonce")["nonce"], self.db, self.keys)
+        holder = Holder.from_seed(lambda: self.get("/agent/v1/nonce"), self.db, self.keys)
         on_event = None
         if self.verbose:
             def on_event(e):

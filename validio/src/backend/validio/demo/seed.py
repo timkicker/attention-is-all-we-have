@@ -172,6 +172,6 @@ def spend_pass(path: Path | None = None, keys_dir: Path | None = None,
     kitchen = load_or_create_key(keys_dir / "kitchen-es256.json")
     agent = load_or_create_key(keys_dir / "agent-es256.json")
     nonces = NonceStore()
-    token = present(issuance, set(disclose), agent, AUDIENCE, nonces.issue(now))
+    token = present(issuance, set(disclose), agent, AUDIENCE, nonces.issue(now), int(now.timestamp()))
     return verify_presentation(token, kitchen_pub=kitchen, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
                                nonces=nonces, now=now)

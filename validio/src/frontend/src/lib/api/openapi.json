@@ -577,6 +577,10 @@
             "title": "Aud",
             "type": "string"
           },
+          "iat": {
+            "title": "Iat",
+            "type": "integer"
+          },
           "nonce": {
             "title": "Nonce",
             "type": "string"
@@ -584,7 +588,8 @@
         },
         "required": [
           "nonce",
-          "aud"
+          "aud",
+          "iat"
         ],
         "title": "NonceView",
         "type": "object"
@@ -2743,8 +2748,41 @@
               "title": "Product Id",
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -2785,8 +2823,41 @@
               "title": "Order Id",
               "type": "string"
             }
+          },
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {

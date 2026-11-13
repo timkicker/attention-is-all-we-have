@@ -22,7 +22,7 @@ def client(ctx):
 @pytest.fixture
 def waiting(client, ctx):
     """Scene 3: the stock-out of 466375 sends a swap to the owner. Returns the waiting order id."""
-    h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json()["nonce"], ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     assert client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN}).status_code == 200
     r = client.post("/agent/v1/requests", headers={"Authorization": f"SD-JWT {h.presentation()}"}, json={
         "lines": [{"productId": "466375", "quantity": 200, "unit": "BAG"}], "deliverBy": "2026-11-16",
@@ -73,7 +73,7 @@ def test_reject_after_approve(client, ctx, waiting):
 
 def test_placed_and_blocked_orders_cannot_be_approved(client, ctx):
     """An order placed alone or blocked by the Hard Lines never goes through approve."""
-    h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json()["nonce"], ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     auth = lambda: {"Authorization": f"SD-JWT {h.presentation()}"}
     for pid, qty, state in (("464306", 1000, "placed"), ("463047", 132, "blocked")):
         req = client.post("/agent/v1/requests", headers=auth(), json={

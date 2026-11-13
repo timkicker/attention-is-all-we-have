@@ -101,7 +101,7 @@ async def test_gemini_buyer_scene2_three_runs_same_order(ctx):
     from validio.api import tools
     from validio.api.mcp_server import server
 
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     orders = []
     for _ in range(3):
         llm = GeminiLLM.from_env()

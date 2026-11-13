@@ -17,7 +17,7 @@ from validio.api.mcp_server import server
 async def test_transcript_has_calls_answers_final_and_no_secrets(ctx, tmp_path, n):
     if n == 3:
         ctx.set_stockout(True)
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     passes = []
 
     def spend_pass():
@@ -43,7 +43,7 @@ async def test_transcript_has_calls_answers_final_and_no_secrets(ctx, tmp_path, 
 
 @pytest.mark.asyncio
 async def test_transcript_counts_withheld_supplier_text(ctx, tmp_path):
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     async with McpPort(server, spend_pass=h.presentation) as port:
         t = await run_scene(2, FakeLLM(2), port)
     md = write(t, 2, "Validio in process", tmp_path).read_text()
