@@ -55,7 +55,7 @@ def test_scene2_order_464306_then_464401(live):
     assert first.why[0] == "Cheapest safe option"
     assert "Valio delivered it as ordered every time in its records" in first.why
     assert second.why[0] == "90.00 EUR more than the cheapest"
-    assert "Has the Heart Symbol, which your Spend Pass does not ask for" in second.why
+    assert "Has the Heart Symbol label, which your Spend Pass does not ask for" in second.why
 
 
 def test_tie_band_uses_reliability(catalog):
@@ -86,7 +86,7 @@ def test_missing_reliability_sorts_last(catalog):
 def test_prefer_labels_changes_rank(live):
     out = scene2(live, prefer_labels=("FINNISH_HEART_SYMBOL",), band=0.10)
     assert out[0].product.id == "464401" and out[0].total_cents == 110000
-    assert "Has the Heart Symbol, which your Spend Pass asks for" in out[0].why
+    assert "Has the Heart Symbol label, which your Spend Pass asks for" in out[0].why
 
 
 def test_carbon_sentence_says_group_average(live):

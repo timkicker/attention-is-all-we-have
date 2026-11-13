@@ -30,7 +30,7 @@ def label_sentences(p: Product, prefer: tuple[str, ...]) -> list[str]:
     for code in sorted(p.labels):
         name = LABELS[code].name if code in LABELS else code
         asks = "asks for" if code in prefer else "does not ask for"
-        out.append(f"Has the {name}, which your Spend Pass {asks}")
+        out.append(f"Has the {name} label, which your Spend Pass {asks}")
     return out
 
 
