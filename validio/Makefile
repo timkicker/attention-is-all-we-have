@@ -24,7 +24,7 @@ test: test-backend test-web
 
 test-backend: guards
 	$(UV) ruff check validio tests ../../scripts ../../examples
-	$(UV) pytest -q
+	cd $(BACKEND) && REQUIRE_DATA=1 uv run pytest -q
 
 test-web:
 	cd src/frontend && npm run check && npx playwright test
