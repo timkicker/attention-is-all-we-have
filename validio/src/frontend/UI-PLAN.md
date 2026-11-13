@@ -50,7 +50,7 @@ The website's current design is `origin/main:app/kit.css`, which is built on hal
 | Arlen settings App access (`settings-privacy-1280.png`) | The Spend Pass as a capability grant: a grantee card with an initial tile and rows of the form `quiet verb / strong object / quiet provenance / action`. `LinkCard` as a door | The By app / By capability pivot |
 | Arlen settings and system monitor | Steady orders as a settings panel: `Page`, `StatGrid`, a `Section` of `Row`s, and row actions in the 200px control column | |
 | tim.kicker.dev | On the phone: a bottom bar and a header line with a back arrow (Arlen has no phone layout). Inter with `cv11`/`ss01`. Mono only for IDs and hashes. The steel accent | The website's own sidebar and token names: the kit's are used |
-| halbat | Data as data: one big tabular figure and charts in ink against a quiet context series. The same neutral dark ramp | The ochre accent |
+| halbat (current kit, `tmp/halbat-shots/`) | Density for tables and meta lines. A facts line under a title (value in fg 500, label muted, 24px gaps) instead of a row of stat tiles. Record lists as rows or tables with hairlines and right-aligned tabular numbers, never a card per item. The 8px spend bar with a tick at the limit. Drift bars where the weeks that matter are in fg and the average is a context line. Caveats sit behind an info popover rather than as a standing paragraph. No middot, en dash or em dash in UI text | The ochre accent and the orange warn pill, which Tim rules out |
 
 ## Theme
 
@@ -121,12 +121,15 @@ The kit's Inter Variable and its base-relative ladder off 15px: `2xs` 12, `xs` 1
 | Approve, done | One sentence ("Ordered. Valio was asked again first.") and three timeline rows | |
 | Spend Pass | The grant card: tile "B", "agent:buyer-1", "Signed by the kitchen". The rows are `may order alone / up to 1,200.00 €`, `never above / 2,000.00 €`, `only / lactose free`, `deliver by / 16 Nov`, `valid until / 17 Nov` | "What the agent sees" as one collapsible row |
 | Steady orders | One `LinkCard` per order | the order |
-| Steady order | `Page` with the back door, the neutral Notice that the history is simulated, a `StatGrid` (lines, this week's total, change against last week) and Renew as the primary button | After renewal, a `Section` of rows, one per line, with the result as text and its action in the control column. Each line's detail (the split, the substitute, the 8-week drift chart) is collapsible |
+| Steady order | `Page` with the back door, the neutral Notice that the history is simulated, a facts line (4 lines, this week's total, change against usual) and Renew as the primary button | After renewal, a `Section` of rows, one per line, with the result as text and its action in the control column. Each line's detail (the split, the substitute, the 8-week drift chart) is collapsible |
 | Open ledger | The chain status as the first line (`ShieldCheck` plus "Chain verified, 10 entries"), then the timeline grouped by request under caps heads | each entry's hash, previous hash and disclosed fields |
 
 ## Our own pieces
 
 These exist only where the kit has nothing that fits:
+- `Facts`: halbat's facts line under a title.
+- `OptionTable`: the ranked options as a halbat table (rank, product with id, amount, price, verdict). The kit has no table.
+- `SpendBar`: the kit `Progress` with a tick at the auto limit, on a scale up to the hard cap.
 - `Shell`: the kit sidebar wiring, the content bar, the phone header and the bottom bar.
 - `ListRow`: the mail row recipe, copied value for value. The kit has no list-row primitive.
 - `VerbRow`: the App-access and knowledge row (`verb / object / provenance / value`).
