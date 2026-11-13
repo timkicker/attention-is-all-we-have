@@ -231,3 +231,18 @@ def test_placeholder_stock_shown_in_facts_and_ledger(svc, mandate, monkeypatch):
     assert entry.sentence.endswith(" Valio reports 9999999999 for 464306, a placeholder, not a real count; "
                                    "treated as in stock.")
     assert svc.audit.verify().ok
+
+
+def test_short_in_sales_units_refuses_approve(svc, mandate):
+    # review-3 H4: Valio has 36 ST of 469054, which is 3 cartons of 12. 10 cartons must never be placed.
+    o = svc.submit(mandate=mandate, lines=[LineIn("469054", 10)], deliver_by=MON, idempotency_key="h4",
+                   required_claims=())
+    assert o["lines"][0]["short"] == "Only 3 KI of 469054 in stock, 10 needed"
+    assert o["lines"][0]["deliverable"] is False
+    assert o["state"] == "waiting"
+    with pytest.raises(ApproveRefused, match="Only 3 KI of 469054 in stock, 10 needed"):
+        svc.approve(o["id"], "owner:anna")
+    assert svc.get(o["id"])["state"] == "waiting"
+    ok = svc.submit(mandate=mandate, lines=[LineIn("469054", 3)], deliver_by=MON, idempotency_key="h4-ok",
+                    required_claims=())
+    assert ok["lines"][0]["short"] is None  # control: 3 cartons are there

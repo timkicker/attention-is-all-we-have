@@ -228,7 +228,7 @@ def _line_out(pending: SteadyLineOut, rl: RenewedLine) -> SteadyLineOut:
         plan = rl.split
         split = SplitOut(
             parts=[SplitPartOut(product_id=x.product.id, name=x.product.name_en, quantity=x.sales_qty,
-                                unit=unit_word(x.availability), total_cents=x.total_cents,
+                                unit=unit_word(x.availability, x.product.sales_unit), total_cents=x.total_cents,
                                 on_valio_list=x.on_valio_list) for x in plan.parts],
             total_cents=plan.total_cents, extra_cost_cents=plan.total_cents - plan.base_cents,
             extra_cost_pct=float(plan.extra_pct))

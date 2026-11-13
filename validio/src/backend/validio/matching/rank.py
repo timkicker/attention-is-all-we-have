@@ -16,15 +16,8 @@ from .reasons import carbon_sentence, label_sentences, price_sentence, reliabili
 
 TIE_BAND = 0.05
 
-UNKNOWN_AMOUNT = 999999
-
-
 def fmt_time(t: datetime) -> str:
     return f"{t.day} {t:%b %H:%M}"
-
-
-def quantity_unknown(a: Availability) -> bool:
-    return a.logistic_model == "Terminal" or a.amount == UNKNOWN_AMOUNT
 
 
 def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, now: datetime) -> Ranked:
