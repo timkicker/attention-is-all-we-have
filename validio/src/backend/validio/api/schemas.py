@@ -285,6 +285,17 @@ class RealStock(Model):
     unit: str
 
 
+class LedgerHeadView(Model):
+    """The Open Ledger head as the kitchen signed it. Valio can pin it and later check that the ledger it is
+    shown still ends here or grew from here."""
+    count: int
+    hash: str
+    at: str | None = None
+    signature: str | None = None  # compact JWS, ES256, payload {"at","count","hash","typ"} as canonical JSON
+    public_key: dict | None = None  # the kitchen's public JWK, the same key that signs the Spend Pass
+    signature_ok: bool
+
+
 class DemoState(Model):
     stock_out_466375: bool = Field(alias="stockOut466375")
     real_stock_466375: RealStock | None = Field(

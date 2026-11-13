@@ -94,7 +94,7 @@ Not covered: nonces live in memory. A restart drops them, which fails closed. Ru
 
 ## Tampered ledger
 
-The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON. A head row with the entry count and the last hash moves in the same transaction as each append, so deleting the newest entries is caught as well. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
+The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON. A head row with the entry count, the last hash and the time of the last entry moves in the same transaction as each append, so deleting the newest entries is caught as well. The kitchen's key signs that head on every append and verify checks the signature, so a rewrite of every hash and the head row is caught too. `GET /api/ledger/head` returns the signed head with the kitchen's public key, so Valio can pin it. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
 
 Proof:
 
@@ -105,8 +105,11 @@ Proof:
 - `test_audit.py::test_emptied_ledger_caught`
 - `test_audit.py::test_edited_order_id_column_caught`
 - `test_audit.py::test_undisclosed_claims_never_logged`
+- `adversarial/test_ledger_tamper.py::test_full_rewrite_with_head_is_caught`
+- `adversarial/test_ledger_tamper.py::test_rewrite_with_a_forged_head_signature_is_caught`
+- `adversarial/test_ledger_tamper.py::test_api_ledger_head_is_signed_and_a_full_rewrite_shows`
 
-Not covered: someone who can write the database file and rewrites every hash and the head row too is not caught. That needs the head published or signed outside the file. Only the ledger is chained. Requests and orders in `orders/store.py` are plain rows.
+Not covered: the kitchen's key sits in `data/keys/` on the same machine. Someone who can read it and write the database can rewrite everything and sign again (`adversarial/test_ledger_tamper.py::test_stolen_key_is_the_limit`). A ledger cut back to an older head with that head's old signature is caught only by someone who pinned a newer head, and nothing pins it automatically yet. Only the ledger is chained. Requests and orders in `orders/store.py` are plain rows.
 
 ## Approve abuse
 
