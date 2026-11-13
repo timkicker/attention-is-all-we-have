@@ -126,7 +126,7 @@ def test_record_then_replay_never_calls_network(tmp_path):
         b = CallBudget(40)
         assert set(c.price(["3", "1"], MON, b)) == {"1", "3"}  # a subset replays from the recorded call
         assert b.ids_sent == 2
-        with pytest.raises(ReplayMiss):
+        with pytest.raises(ReplayMiss, match="run make record first"):  # a fresh clone has no recordings
             c.price(["4"], MON, CallBudget(40))
         assert route.call_count == 0
 
