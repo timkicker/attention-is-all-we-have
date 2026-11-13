@@ -106,6 +106,10 @@ class Ctx:
             self.code_tries.clear()
             self.nonces = NonceStore()
 
+    def real_stock(self) -> tuple[float, str] | None:
+        """466375 as Valio answers it, read at request time (replayed in the demo)."""
+        return seed.real_stock(self.valio)
+
     def stockout(self) -> bool:
         return seed.stockout(self.db_path)
 
@@ -113,8 +117,8 @@ class Ctx:
         seed.set_stockout(self.db_path, on)
         if on:
             self.audit.append(at=self.now(), actor="presenter", kind="simulation",
-                              sentence=f"Simulated a stock-out of {seed.STOCKOUT_ID}. Valio really has it in stock, "
-                                       "the demo button sets it to zero.",
+                              sentence=seed.stockout_note(self.real_stock(),
+                                                          f"Simulated a stock-out of {seed.STOCKOUT_ID}."),
                               facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
 
     def verify(self, token: str) -> Mandate:
