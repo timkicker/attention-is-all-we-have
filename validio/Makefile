@@ -23,7 +23,7 @@ seed:
 test: test-backend test-web
 
 test-backend: guards
-	$(UV) ruff check validio tests ../../scripts
+	$(UV) ruff check validio tests ../../scripts ../../examples
 	$(UV) pytest -q
 
 test-web:
