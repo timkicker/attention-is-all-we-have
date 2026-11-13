@@ -101,6 +101,137 @@ Scene: a hotel kitchen in Espoo has a conference with 200 guests on Monday. The 
 | CRACI | our CI runs there |
 | Nemotron | optional: reads a photo of a paper order list. First thing we drop |
 
+## How it works inside
+
+First one order goes through the system from start to end, then each part is explained on its own. Where the plan has not fixed a detail yet, it says what GLaDOS uses tonight and marks it as *our choice*.
+
+### One request from start to end
+
+![One request through the system](docs/img/sequence.png)
+
+*One request. Steps 7 and 8 only happen when the rules say "ask a person".*
+
+1. The kitchen's agent calls the MCP tool `request_supply` with the text "1000 litres of lactose-free milk by Monday". With it comes the Spend Pass, showing only budget, hard cap and diet.
+
+2. Countersign checks the Spend Pass. Then it turns the text into a typed need (milk, 1000 litres, lactose free, deliver by 16 November) and searches its own copy of Valio's catalog. That search costs no API call and returns at most 12 candidates.
+
+3. Only for those candidates and their listed substitutes does it ask Valio's test API for price and availability, never more than 40 product ids per request. The screen later says how many it checked ("checked 9 products live").
+
+4. Every fact gets its grade. Bad options drop out with a reason, the rest are ranked. If stock is short, Safe Swap and Split Fill look for substitutes. Then the rule engine decides: order alone, ask a person or block.
+
+5. The decision lands in the Open Ledger as one sentence with its facts and the ids of the rules that fired.
+
+6. The agent gets the result back. If the answer is "allowed" it confirms the order with `confirm_order`.
+
+7. If the answer is "ask", the owner gets one question on the phone and taps approve or reject.
+
+8. Before anything is placed, Countersign asks Valio again, because prices and stock may have changed in the meantime. The approval goes into the ledger too and the agent reads the final state with `get_order`.
+
+### What we ask Valio
+
+Valio's test API at `junction26.valioaimo.fi` has two calls we use: `/api/price` and `/api/availability`. Both take a list of product ids and a requested date. Price gives the net price and how long it is valid. Availability gives the delivery model (Stock means from Valio's warehouse, Terminal means from the supplier), the amount, the earliest date and the order cut-off. Three details matter. Unknown products still return HTTP 200, so we check the `error` flag on every product. No delivery line means not deliverable. At most 1000 ids fit in one call, but we never send more than 40. Every answer is stored by a hash of endpoint, date and ids, so `make demo` replays them without the network. The real webshop is never called and a check in CI fails if its address shows up in the code.
+
+### Fact Grades
+
+Each fact is a small record: field, value, grade, source and a note. The grade says how far we can rely on it.
+
+| Grade | When it is given |
+|:---|:---|
+| attested | Valio says it directly: stock with a real number, a listed allergen, a label from Valio's master data, a delivery reliability value |
+| attested until | a price with an end date, for example 1.01 € until 31 December |
+| consistent | a claim that the other fields back up, for example "lactose free" and a lactose value of at most 0.01 g per 100 g |
+| contradicted | a claim that another field disproves: "lactose free" while milk is listed as contained, "gluten free" while the key ingredients say wheat flour |
+| unchecked | a claim nothing can confirm, for example "lactose free" with no lactose value |
+| unknown | Valio does not know it either, for example a Terminal product that reports 999999 as stock |
+| untrusted | supplier marketing text. It is shown and never used for a decision |
+
+The claim check reads the ingredient text only to look for contradictions. So supplier text can lower trust but never raise it. A missing value is a visible state, never a quiet "yes". Carbon is always shown as a group average, because Valio's file gives one value per product group.
+
+### Spend Pass
+
+The Spend Pass is an SD-JWT: a signed token where some fields stay hidden until the holder chooses to show them. The kitchen signs it with its own key (ES256, an elliptic curve signature). It is bound to the agent's key, so a copied token is useless without that key. The demo pass looks like this:
+
+| Field | Demo value |
+|:---|:---|
+| issuer, holder, id | `kitchen:hotel-espoo`, `agent:buyer-1`, `M-1` |
+| valid | 14 November 10:00 to 17 November 00:00 |
+| auto limit (hidden until shown) | 1200 €: the agent may order alone up to this |
+| hard cap (hidden until shown) | 2000 €: nothing above this, not even with approval |
+| diet (hidden until shown) | lactose free |
+| categories, deliver by | three product groups, 16 November |
+| substitutes, split | listed substitutes if every rule holds, at most 5 % extra cost |
+| approvers (hidden) | who may approve. Never shown to Countersign's log |
+
+For each order the agent fetches a fresh nonce from `/agent/v1/nonce` and presents the pass with budget, hard cap and diet shown. Countersign checks the signature, the key binding, audience, nonce and both time limits. The library does not check expiry, so we do. A tampered or reused token gets HTTP 401.
+
+### Hard Lines: why the model cannot override them
+
+The AI model never decides. It sends a typed request or proposal and Countersign recomputes every number from Valio's data, so a wrong price from the agent changes nothing. The decision itself comes from Cedar, a rule language from AWS that runs as plain code. Countersign fills a context of whole numbers and yes or no values (total in cents, auto limit, hard cap, diet contradicted, diet unchecked, amount attested, cut-off still open, is substitute, on Valio's list, split extra cost, drift flag) and asks Cedar. Four rules decide:
+
+- `auto-order` allows ordering alone when everything is attested, the diet is kept, any substitute is on Valio's list, a split stays within its limit and the total is under the auto limit.
+- `ask-human` allows a question to a person as long as the total is under the hard cap.
+- `never-break-diet` blocks every action when a diet claim is contradicted.
+- `never-over-hard-cap` blocks every action above the hard cap.
+
+A block always wins over an allow. Neither model output nor supplier text ever reaches this context. A policy file that fails to parse stops the app, so a typo can never turn into a silent rule change.
+
+### Best Pick
+
+Options are sorted by five keys in this order. First, all hard rules must pass. Second, total cost, where options within 5 % of the cheapest count as equal. Third, delivery reliability, which is the share Valio delivered as ordered (0 to 1). A product without a record sorts last and says so. Fourth, how many of the labels the kitchen asked for it carries. Fifth, carbon per kilo. Each key writes one sentence a chef understands, such as "Valio delivered it as ordered every time".
+
+### Safe Swap and Split Fill
+
+Safe Swap starts with Valio's own substitute list, in Valio's order. A substitute must keep every diet rule and must be deliverable. Only when none of the listed ones passes does it search the catalog, with at most 8 extra live ids. A substitute outside Valio's list always goes to a person. Split Fill takes the ordered product up to its attested stock, then adds listed substitutes in order. Each part must keep the diet, come from Stock with a real number and keep the extra cost within the Spend Pass limit. Pack sizes are converted by weight or volume. A part that would break a rule is never added. Instead the line waits for a person with the reason.
+
+### Steady Orders and Drift Watch
+
+A Steady Order is learned from at least 4 weeks of history: the median amount per line and the guests per week. For the demo we write 8 weeks of simulated history with 400 guests a week and label it simulated. Before each renewal Drift Watch looks for four things. The amount per guest is up when the last 2 weeks are 20 % above the first 4. The cost is up when this week is 10 % above the median. A contract price ends before the next 4 renewals. Stock is below the usual line. Lines without a flag renew through the normal pipeline. Flagged lines wait for a person.
+
+### Open Ledger
+
+Each entry holds a running number, time, actor, kind, the sentence, the facts, the Spend Pass id, the fields that were shown, the rule ids, the order id and the hash of the entry before it. Its own hash is SHA-256 over the entry as JSON with sorted keys and no spaces. To verify, Countersign walks the chain from the start and recomputes each hash. One changed letter anywhere breaks every hash after it and the ledger page says where. Hidden Spend Pass fields such as the approver list never enter the ledger.
+
+### Phone approval
+
+An order that needs a person goes to "waiting". The web app's inbox asks the server every 2 seconds and shows it. The approve page is built for a 390 pixel phone screen: one sentence, the options, approve and reject. Approve calls `POST /api/orders/{id}/approve`. The server asks Valio again and refuses if the price rose by more than 2 % or a line can no longer be delivered. Only then does it place the order. An order that is already placed cannot be approved twice. On the public Modal link the approve page sits behind a 6 digit code.
+
+### Data model
+
+| Where | Tables |
+|:---|:---|
+| catalog index (read only) | product, claim, allergen, unit (pack sizes), substitution, reliability, carbon, label |
+| orders and ledger | Spend Passes, requests, orders with one or more lines, ledger entries, Steady Orders |
+
+The catalog index is SQLite and built once by `make index`. Orders and the ledger use SQLite by default and Aiven Postgres when `DATABASE_URL` points there.
+
+### MCP tools
+
+| Tool | Input | Output |
+|:---|:---|:---|
+| `search_products` | text, category, claims, limit (at most 20) | products with claims and their grades, allergens, labels, supplier text marked untrusted. No live call |
+| `request_supply` | request lines (text, or product and amount), deliver by, idempotency key | status, ranked options per line, decision, substitutes, split, how many ids were checked live |
+| `get_request` | request id | the same result |
+| `confirm_order` | request id, chosen products and amounts, idempotency key | the order and its state |
+| `get_order` | order id | the order and its state |
+
+The same functions sit behind plain HTTP routes under `/agent/v1`, described as OpenAPI 3.1. Writes need the Spend Pass in the `Authorization` header. The idempotency key makes sure a retry never orders twice.
+
+### Repo layout
+
+| Folder | What is in it |
+|:---|:---|
+| `src/backend/countersign/` | catalog, valio, matching, trust, policy, orders, standing, audit, agent, api, demo |
+| `src/frontend/` | the SvelteKit web app, with the ui-kit fetched at a fixed commit and never edited |
+| `src/cloud/` | the two Modal apps |
+| `scripts/` | data download, index, demo check, guard checks |
+| `data/`, `artifacts/` | local only, never committed: Valio files, recorded answers, keys, screenshots, video |
+
+The package name is *our choice*: the build plan still says `gatehouse` and we rename it to the product name.
+
+### On Modal
+
+Two Modal apps. The first serves Gemma on one L40S GPU through vLLM. It answers `POST /read` with a fixed JSON shape and needs a bearer token. Which Gemma checkpoint we use is *our choice* tonight: the largest instruction tuned one that fits the GPU, written down in the repo. The second app runs Countersign itself in replay mode. The catalog and the recorded Valio answers live in a Modal volume, never in a public image or in git. The demo controls need a token and the approve page needs the 6 digit code. If the reader on Modal fails, Countersign falls back to the fake reader and notes it.
+
 ## How we build it
 
 GLaDOS builds all of it tonight and on Saturday, step by step in the order below. Each step has a test that says when it is done. A step only counts once its test passes. Progress goes to #general. Nobody has to hand out work.
@@ -147,11 +278,11 @@ The backend serves the built web app itself, so the whole thing is one process o
 
 ### Extensions, overnight if time is left
 
-12. **Best Pick.** Safe options first, then price (within 5 
+12. **Best Pick.** Safe options first, then price (within 5 % counts as a tie), then delivery reliability, then the labels the kitchen asked for, then carbon. Each step writes one sentence a chef understands and carbon is always called a group average.
 
-13. **Split Fill.** Fills the rest of a short line from listed substitutes when each part keeps every rule and the extra cost stays within 5 
+13. **Split Fill.** Fills the rest of a short line from listed substitutes when each part keeps every rule and the extra cost stays within 5 %. A part that breaks a rule is never added. Instead the line waits for a person with the reason. *Done:* parmesan splits into 137 plus 40 for 2.5 % more and the pancakes stop at the wheat.
 
-14. **Steady Orders and Drift Watch.** Learns the weekly order from 8 weeks of simulated history, renews the lines without a flag and holds the rest. Flags: more per guest, higher cost, a contract that ends, stock that is short. *Done:* the 33 
+14. **Steady Orders and Drift Watch.** Learns the weekly order from 8 weeks of simulated history, renews the lines without a flag and holds the rest. Flags: more per guest, higher cost, a contract that ends, stock that is short. *Done:* the 33 % mozzarella flag shows and scene 4 passes the demo check.
 
 15. **Web app skeleton.** Inbox, request page, approve page, ledger, Steady Orders and product page, with live data and no polish yet.
 
