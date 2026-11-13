@@ -422,7 +422,7 @@ def test_graded_short_stock_not_allowed(catalog, valio, mandate):
 def test_graded_late_delivery_not_allowed(catalog, valio, mandate):
     from datetime import date
 
-    late = lambda a: _line(a, available=date(2026, 11, 30))  # noqa: E731
+    late = lambda a: _line(a, available=date(2026, 11, 30))
     d = graded(catalog, valio, mandate, "464306", 1000, change=late)
     assert d.context["deliveryInTime"] is False
     assert d.outcome is Outcome.ESCALATE
