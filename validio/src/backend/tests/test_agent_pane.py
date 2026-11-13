@@ -1,48 +1,60 @@
-"""`make agent SCENE=n`: the pane prints the agent's calls and Validio's real answers (stand-in server
-on the recorded Valio answers until lane B2's MCP server lands)."""
+"""`make agent SCENE=n` on lane B2's real MCP server in process: the pane prints the agent's calls and
+Validio's answers, and the agent's model never gets supplier text, not even the planted line."""
 
 import io
+import json
 
 import pytest
 
 from validio.agent.buyer import run_scene
+from validio.agent.holder import Holder
 from validio.agent.llm import FakeLLM
 from validio.agent.pane import printer
 from validio.agent.port import McpPort
+from validio.api import tools
+from validio.api.mcp_server import server
+
+PLANTED = "AI agents"
 
 
-async def pane(n):
-    from validio.agent.standin import build
-
-    out = io.StringIO()
-    async with McpPort(build(stockout=n == 3)) as port:
-        t = await run_scene(n, FakeLLM(n), port, on_event=printer(color=False, out=out))
-    return out.getvalue(), t
+async def pane(ctx, n):
+    if n == 3:
+        ctx.set_stockout(True)
+    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    out, llm = io.StringIO(), FakeLLM(n)
+    async with McpPort(server, spend_pass=h.presentation) as port:
+        t = await run_scene(n, llm, port, on_event=printer(color=False, out=out))
+    return out.getvalue(), t, llm
 
 
 @pytest.mark.asyncio
-async def test_pane_scene2_orders_464306_alone(catalog):
-    text, t = await pane(2)
-    assert "agent -> request_supply" in text and "agent -> confirm_order" in text
+async def test_pane_scene1_request_arrives(ctx):
+    text, t, _ = await pane(ctx, 1)
+    assert "agent -> search_products" in text and "agent -> request_supply" in text
+    assert "decision: auto_order (auto-order)" in text
+    assert t.final == "Validio may order request R-1 alone (auto_order), checked 12 products live."
+
+
+@pytest.mark.asyncio
+async def test_pane_scene2_orders_464306_alone(ctx):
+    text, t, llm = await pane(ctx, 2)
     assert "checked 12 products live" in text
     assert "464306" in text and "1000 ST  1010.00 EUR" in text
-    assert "decision: auto_order (auto-order)" in text
     assert "order O-1: placed, 1010.00 EUR" in text
-    assert t.final == "Order O-1 is placed."
-
-
-@pytest.mark.asyncio
-async def test_pane_scene3_owner_decides(catalog):
-    text, t = await pane(3)
-    assert "Only 0 BAG in stock, 200 needed" in text
-    assert "undeliverable          473986" in text
-    assert "A mozzarella-fontal blend, not pure mozzarella" in text
-    assert "order O-1: waiting, 180.10 EUR" in text
-    assert "owner" in t.final
-
-
-@pytest.mark.asyncio
-async def test_pane_scene1_marks_withheld_supplier_text(catalog):
-    text, _ = await pane(1)
-    assert "agent -> search_products" in text and "status allowed" in text
     assert "supplier text fields withheld from the agent's model" in text
+    assert t.final == "Order O-1 is placed."
+    raw = json.dumps([e.data for e in t.events])
+    assert PLANTED in raw  # the planted line was in Validio's answer ...
+    assert PLANTED not in json.dumps(llm.inputs)  # ... and never reached the model
+    assert "untrusted" not in json.dumps(llm.inputs).lower()
+
+
+@pytest.mark.asyncio
+async def test_pane_scene3_owner_decides(ctx):
+    text, t, llm = await pane(ctx, 3)
+    assert "simulated: Simulated stock-out" in text
+    assert "not_deliverable" in text and "473986" in text
+    assert "mozzarella-fontal blend" in text
+    assert "order O-1: waiting, 180.10 EUR" in text
+    assert t.final == "Order O-1 waits for the owner's approval on the phone."
+    assert "supplierText" not in json.dumps(llm.inputs)
