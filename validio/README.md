@@ -14,7 +14,11 @@ make seed                   # demo state: kitchen hotel-espoo, Spend Pass M-1, 8
 make test                   # guard checks, ruff, pytest (no network)
 make agent SCENE=2          # the kitchen's agent runs scene 1, 2 or 3 and prints every tool call
 make dev                    # the API on http://127.0.0.1:8410
+make demo                   # builds the web app, seeds and serves both on http://127.0.0.1:8410
+make demo-check             # every demo scene end to end on its own server on port 8418
 ```
+
+`make demo` builds the web app on its fixture unless it runs as `VITE_API=live make demo`. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
 
 `make setup` reads the Valio files from `RAW` (default is the folder on the build machine), so elsewhere it is `make setup RAW=/path/to/files`. The files are checked against their sha256 before anything is indexed.
 
@@ -27,7 +31,7 @@ npm run kit                 # fetches the Arlen ui-kit at a pinned commit into v
 npm run dev                 # http://127.0.0.1:5410
 ```
 
-Without anything else the pages run on the fixture in `src/lib/api/mock.ts`. With `VITE_API=live npm run dev` they ask the backend on port 8410 instead, which today answers only the Steady Order routes and `/api/health`.
+Without anything else the pages run on the fixture in `src/lib/api/mock.ts`. With `VITE_API=live npm run dev` they ask the backend on port 8410 instead.
 
 `make record` calls Valio's test API with the key from `.env` and stores the answers. `make test-live` runs the tests that need the network (Valio's test API, plus the Gemma reader when `MODAL_GEMMA_URL` is set).
 
