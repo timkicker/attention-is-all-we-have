@@ -118,9 +118,12 @@ export async function order(id: string): Promise<Order> {
       id,
       requestId: "R-1",
       state: "placed",
-      lines: [{ productId: "464306", name: "Valio Arki Eila 1 l", quantity: 1000, unit: "cartons", totalCents: 101000 }],
+      lines: [{ productId: "464306", name: "Valio Arki Eila 1 l", quantity: 1000, unit: "cartons", priceCents: 101, totalCents: 101000, deliverable: true, isSubstitute: false, onValioList: false, facts: [] }],
       totalCents: 101000,
       history: [{ state: "placed", at: "2026-11-14T10:00:06+02:00" }],
+      decision: (await request("R-1")).decision,
+      spendPassId: "M-1",
+      deliverBy: "2026-11-16",
     };
   }
   if (id === "O-2" && s.stockOut) {
@@ -135,9 +138,13 @@ export async function order(id: string): Promise<Order> {
       id,
       requestId: "R-2",
       state: history[history.length - 1].state,
-      lines: [{ productId: "463383", name: "Maestrella grated mozzarella lactose free 2.5 kg", quantity: 10, unit: "bags", totalCents: 19660 }],
+      lines: [{ productId: "463383", name: "Maestrella grated mozzarella lactose free 2.5 kg", quantity: 10, unit: "bags", priceCents: 1966, totalCents: 19660, deliverable: true, isSubstitute: true, onValioList: false, facts: [] }],
       totalCents: 19660,
       history,
+      decision: (await request("R-2")).decision,
+      spendPassId: "M-1",
+      deliverBy: "2026-11-16",
+      ...(s.approval === "approved" ? { approvedBy: "owner" } : {}),
     };
   }
   throw new Error(`No order with id ${id}.`);

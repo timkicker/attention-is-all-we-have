@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web snapshots
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -60,3 +60,18 @@ demo:
 DEMO_SCENES ?= 1,2,3,4,5
 demo-check:
 	$(UV) python -W ignore ../../scripts/demo_check.py --scenes $(DEMO_SCENES)
+
+# Backend on 127.0.0.1:8410 plus the web app's dev server on 127.0.0.1:5410 with VITE_API=live
+# (Vite hands /api and /agent to the backend). The web client sends no approve code or demo token
+# yet, so this local run switches both off; Ctrl-C stops both.
+demo-web:
+	$(MAKE) seed
+	trap 'kill 0' INT TERM EXIT; \
+	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_APPROVE_CODE= VALIDIO_DEMO_TOKEN= \
+	  uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410) & \
+	(cd src/frontend && VITE_API=live npm run dev)
+
+# Every /api answer the web app reads, after each demo scene, into src/frontend/src/lib/api/snapshots;
+# `npm run check` then types them against types.ts.
+snapshots:
+	$(UV) python -W ignore ../../scripts/snapshot_api.py
