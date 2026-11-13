@@ -217,3 +217,17 @@ def test_ledger_from_before_the_head_is_adopted(tmp_path):
     assert AuditLog(path).verify() == (True, 3, None)
     _sql(path, "DELETE FROM ledger WHERE seq = 3")
     assert not AuditLog(path).verify().ok
+
+
+def test_hash_keeps_non_ascii_as_utf8(tmp_path):
+    # the hash is over UTF-8 with the letters as they are (ensure_ascii=False), not over escaped ASCII
+    import hashlib
+
+    log = AuditLog(tmp_path / "ledger.db")
+    e = log.append(at=NOW, actor="validio", kind="decision", sentence="Hyvää Suomesta label shown", facts=[],
+                   mandate_id="M-1", disclosed={}, rule_ids=[], order_id="O-1")
+    body = {k: v for k, v in e.as_dict().items() if k != "hash"}
+    text = json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    assert "Hyvää" in text
+    assert e.hash == hashlib.sha256(text.encode("utf-8")).hexdigest()
+    assert e.hash != hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
