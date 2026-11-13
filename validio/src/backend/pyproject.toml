@@ -1,0 +1,45 @@
+[project]
+name = "validio"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi==0.162.7",
+  "starlette==1.10.0",
+  "uvicorn[standard]==0.54.0",
+  "httpx==0.28.1",
+  "pydantic==2.14.3",
+  "cedarpy==4.12.2",
+  "joserfc==1.8.0",
+  "cryptography==50.0.2",
+  "sd-jwt==0.10.4",
+  "jwcrypto==1.6.1",
+  "google-genai==3.3.0",
+  "mcp==2.3.0",
+  "psycopg[binary]==3.3.9",
+]
+
+[project.optional-dependencies]
+cloud = ["modal==1.6.4", "openai==3.50.0"]
+
+[dependency-groups]
+dev = ["pytest==9.2.0", "pytest-asyncio==1.5.0", "respx==0.23.1", "ruff==0.17.5"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["validio"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+  "live: calls the real Valio test API",
+  "needs_data: needs data/catalog.db built from the Valio files",
+]
+addopts = "-m 'not live'"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
