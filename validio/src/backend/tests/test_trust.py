@@ -164,7 +164,7 @@ def test_rank_rejects_contradicted_diet(catalog, valio):
 def test_descriptions_never_change_decisions(catalog, valio):
     """Supplier text can never raise trust: swap every description for the planted line, nothing moves."""
     need = parse_need("1000 litres of lactose-free milk by Monday", date(2026, 11, 14))
-    kept, dropped = screen(need, catalog)
+    kept, _ = screen(need, catalog)
     ids = [p.id for p in kept] + ["463047", "466375", "465346", "462031", "476955"]
     b = CallBudget(40)
     q, a = valio.price(ids, MON, b), valio.availability(ids, MON, b)
