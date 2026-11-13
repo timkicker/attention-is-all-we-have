@@ -1,0 +1,28 @@
+// Every context field is required, so a typo in policies.cedar fails validation at startup.
+entity Agent;
+entity Product;
+
+type Ctx = {
+  totalCents: Long,
+  autoLimitCents: Long,
+  hardCapCents: Long,
+  dietContradicted: Bool,
+  dietUnchecked: Bool,
+  quantityAttested: Bool,
+  cutoffOk: Bool,
+  isSubstitute: Bool,
+  onValioList: Bool,
+  isSplit: Bool,
+  splitExtraBp: Long,
+  splitMaxExtraBp: Long,
+  categoryAllowed: Bool,
+  salesBlock: Bool,
+  isRenewal: Bool,
+  driftFlag: Bool,
+};
+
+action PlaceOrder, Escalate appliesTo {
+  principal: Agent,
+  resource: Product,
+  context: Ctx,
+};
