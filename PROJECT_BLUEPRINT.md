@@ -101,19 +101,85 @@ Scene: a hotel kitchen in Espoo has a conference with 200 guests on Monday. The 
 | CRACI | our CI runs there |
 | Nemotron | optional: reads a photo of a paper order list. First thing we drop |
 
-## Plan and who does what
+## How we build it
+
+GLaDOS builds all of it tonight and on Saturday, step by step in the order below. Each step has a test that says when it is done. A step only counts once its test passes. Progress goes to #general. Nobody has to hand out work.
+
+### Stack
+
+| Layer | What we use |
+|:---|:---|
+| Backend | Python 3.12 with uv, FastAPI and uvicorn, httpx for Valio calls, pydantic for every typed request |
+| Rules | Cedar through cedarpy. Money is in whole cents and a policy that fails to parse stops the app |
+| Spend Pass | SD-JWT (sd-jwt with jwcrypto keys, ES256). We check expiry ourselves because the library does not |
+| Agent interface | OpenAPI 3.1 under `/agent/v1` and an MCP server with five tools that call the same code |
+| Storage | SQLite by default, Aiven Postgres through psycopg when `DATABASE_URL` is set |
+| AI | Gemini through google-genai for the kitchen's agent, Gemma as the reader. Both have a fake twin for tests |
+| Web app | SvelteKit 5 as a static single page app with the Arlen ui-kit, Tailwind 4, openapi-fetch with types generated from the API |
+| Tests | pytest, respx for recorded Valio answers, Playwright for the click-through and screenshots |
+| Hosting | one container (compose) locally, Modal for the public link and the Gemma GPU, CI on CRACI |
+
+The backend serves the built web app itself, so the whole thing is one process on 127.0.0.1:8410. Valio's data files are downloaded by a script and never committed.
+
+### Core, overnight
+
+1. **Skeleton.** Repo layout, Makefile, CI, a health route and two guard checks: one fails on any key in the repo, the other on any call to Valio's real webshop. *Done:* `/api/health` answers and both guards catch a planted example.
+
+2. **Catalog index.** One script reads Valio's 87 MB product file, the delivery reliability file and the carbon file into a read-only SQLite index: products, claims, allergens, pack sizes, substitutes, labels. *Done:* the counts match the files (17,546 products, 4425 reliability rows, 11,033 carbon rows) and the script stops loudly when it reads nothing.
+
+3. **Valio client.** Price and availability calls to the test API with a call budget per request (at most 40 product ids) and a replay cache, so the demo also runs offline. *Done:* known answers come back right, including the Terminal product that reports 999999 and the mozzarella with no delivery line.
+
+4. **Need matching.** Turns "1000 litres of lactose-free milk by Monday" into a typed need, finds at most 12 candidates and converts litres or kilos into Valio's sales units from two sources that must agree. *Done:* 1000 litres of 464306 is 1000 cartons and every rejected option has a reason.
+
+5. **Fact Grades.** Every fact gets its grade. The claim check reads the ingredient list only to find contradictions, so it can lower trust but never raise it. *Done:* the lactose, gluten and vegetarian contradictions from Valio's data are caught.
+
+6. **Spend Pass and Hard Lines.** Issue, present and verify the SD-JWT, then let Cedar decide: order alone, ask a person or block. Diet contradictions and the hard cap always block. *Done:* one test per outcome, plus a broken policy that must stop the app.
+
+7. **Open Ledger.** Each decision becomes one entry with its sentence, facts and rule ids, chained by hash. Parts of the Spend Pass that were not shown never land in it. *Done:* the chain verifies and a changed entry is caught.
+
+8. **Order service.** Our own orders, since Valio's test API has none: draft, waiting, approved, placed, rejected, blocked. It asks Valio again before it places anything and ignores any price the agent sends. *Done:* a repeated submit does not order twice and a placed order cannot be approved again.
+
+9. **Safe Swap.** Valio's listed substitutes first. Only when none of them is safe does it search the catalog, with at most 8 extra live ids. *Done:* the three lactose mozzarellas are blocked and 463383 comes out on top.
+
+10. **Agent API and MCP.** The routes and tools the kitchen's agent uses: search products, request supply, read a request, confirm an order, read an order. Supplier text only ever appears in a field marked untrusted. *Done:* scene 2 runs end to end over HTTP and over MCP and a tampered Spend Pass gets a 401.
+
+11. **Fake agent and demo check.** A scripted agent plays scenes 1, 2, 3 and 5 through the API without a key. `make demo-check` asserts every number of the demo. *Done:* it prints `ALL SCENES OK` twice in a row from a reset. This is the end of the core.
+
+### Extensions, overnight if time is left
+
+12. **Best Pick.** Safe options first, then price (within 5 
+
+13. **Split Fill.** Fills the rest of a short line from listed substitutes when each part keeps every rule and the extra cost stays within 5 
+
+14. **Steady Orders and Drift Watch.** Learns the weekly order from 8 weeks of simulated history, renews the lines without a flag and holds the rest. Flags: more per guest, higher cost, a contract that ends, stock that is short. *Done:* the 33 
+
+15. **Web app skeleton.** Inbox, request page, approve page, ledger, Steady Orders and product page, with live data and no polish yet.
+
+### Saturday
+
+16. **Web app scenes.** Every scene can be clicked through: the stock-out button, the verdicts, One-Tap Approve at phone width, the Steady Order with its flags. Simulated parts and the planted line are labelled on screen. *Done:* one Playwright test per scene passes and the screenshots at 1280 and 390 pixels were looked at.
+
+17. **Polish** of the web app.
+
+18. **Live Gemini agent and Gemma reader.** Gemini drives the same MCP tools and never sees supplier text. The reader only fills fixed fields for display. *Done:* three live runs of scene 2 and the planted line flagged by the reader.
+
+19. **Modal.** Gemma on a Modal GPU first, then the app itself with replayed Valio answers. The public link only goes up once the team says go.
+
+20. **Container and CI.** `make up` starts everything and CI runs on CRACI.
+
+21. **Nemotron photo input** (optional, the first thing we drop).
+
+22. **Submission material:** README, a rules table, deck, video and submission text.
+
+### What the click-through demo needs
+
+`make demo` resets the database, seeds the Spend Pass and the Steady Order and starts the app in replay mode, so nothing depends on the venue's network. Then the five scenes run in the browser: the agent's request, the decision page with its ranked options, the stock-out and the phone approval, the Steady Order, the ledger. `make record` drives the same path with Playwright and writes the video.
+
+### Timeline
 
 ![Build timeline](docs/img/timeline.png)
 
-*The core runs overnight. At Saturday 12:00 the core demo must work, otherwise everything else stops.*
-
-| Who | What |
-|:---|:---|
-| GLaDOS | builds overnight and on Saturday, posts progress in #general, keeps the detailed build plan |
-| Tim | keys and accounts, morning check at 08:30, screen recording for the video |
-| Pavlo | submissions, mentor questions with Abdallah, reads every sentence the system writes aloud at 12:00, voice for the video |
-| Abdallah | mentor questions, the slides by Saturday evening |
-| Krish | Gemini key, a photo of a handwritten order list, help with slides and video |
+*The core runs overnight. At Saturday 12:00 the core demo must work, otherwise everything else stops. The time for the team's click-through on Saturday is still to be agreed.*
 
 **If time runs short we drop, in this order:** Nemotron, the public Modal link, Steady Orders as its own page (the warnings stay), Aiven (SQLite instead), the live Gemma reader. We never drop the real Valio calls, the agent API, Safe Swap, Best Pick with its sentences, Split Fill or the Open Ledger.
 
@@ -121,10 +187,9 @@ Scene: a hotel kitchen in Espoo has a conference with 200 guests on Monday. The 
 
 - **Valio data stays out of git.** Valio allows it only for this challenge, so the repo gets a download script instead.
 - **Lactose free** means below 0.01 g per 100 g. No value means unchecked, never safe.
-- **Git:** GLaDOS works on its own branches and merges once the demo check passes.
+- **Git:** GLaDOS pushes its work and keeps `main` passing the demo check.
 - **Repo** goes public at submission after a scan for keys.
 - **Ask Valio mentors on Saturday:** why Terminal products show a past cut-off and still deliver, what exactly delivery reliability measures, whether a 5 % split limit sounds right to a kitchen.
-- **Still open:** who pitches at peer review. Suggestion: Krish pitches, Tim takes the technical questions.
 
 ## Short glossary
 
