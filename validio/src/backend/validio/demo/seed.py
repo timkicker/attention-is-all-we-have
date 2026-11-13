@@ -7,6 +7,7 @@ stock-out switch for 466375 (off after a reset). The planted line on 463047 live
 
 import json
 import os
+import secrets
 import sqlite3
 from dataclasses import replace
 from datetime import date, datetime
@@ -85,6 +86,7 @@ def reset(path: Path | None = None, keys_dir: Path | None = None) -> Path:
         issuance = issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, kitchen_key, agent_key)
         con.execute("insert into spend_pass values (?, ?, ?)", (SPEND_PASS_ID, KITCHEN, issuance))
         con.execute("insert into demo_state values ('stockout_466375', '0')")
+        con.execute("insert into demo_state values ('seed_token', ?)", (secrets.token_hex(8),))
         h = load_history()
         for w in h.weeks:
             d = w.delivered.isoformat()
@@ -100,15 +102,34 @@ def reset(path: Path | None = None, keys_dir: Path | None = None) -> Path:
 
 
 def dump(path: Path) -> dict[str, list]:
-    """Every seeded row except the pass signature (ES256 signs with a fresh random value each time)."""
+    """Every seeded row except the pass signature (ES256 signs with a fresh random value each time) and the
+    seed token."""
     con = sqlite3.connect(path)
     try:
         return {
             t: con.execute(f"select * from {t} order by 1").fetchall()
-            for t in ("kitchen", "demo_state", "past_order", "past_line")
-        } | {"spend_pass": con.execute("select id, kitchen_id from spend_pass").fetchall()}
+            for t in ("kitchen", "past_order", "past_line")
+        } | {
+            "demo_state": con.execute("select * from demo_state where key != 'seed_token' order by 1").fetchall(),
+            "spend_pass": con.execute("select id, kitchen_id from spend_pass").fetchall(),
+        }
     finally:
         con.close()
+
+
+def seed_token(path: Path | None = None) -> str | None:
+    """Changes with every reset. None when the store was never seeded."""
+    path = Path(path or db_path())
+    if not path.is_file():
+        return None
+    con = sqlite3.connect(path)
+    try:
+        row = con.execute("select value from demo_state where key = 'seed_token'").fetchone()
+    except sqlite3.OperationalError:
+        return None
+    finally:
+        con.close()
+    return row[0] if row else None
 
 
 def stockout(path: Path | None = None) -> bool:

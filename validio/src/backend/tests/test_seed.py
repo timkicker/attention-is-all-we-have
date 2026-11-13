@@ -126,3 +126,15 @@ def test_stockout_sets_466375_to_zero(db):
 
 def test_stockout_is_labelled_simulated():
     assert "simulated" in seed.STOCKOUT_NOTE.lower()
+
+
+def test_each_reset_gets_a_new_seed_token(tmp_path):
+    # a running server compares it on each request and reopens its stores when it changed
+    seed.reset(tmp_path / "v.db", keys_dir=tmp_path / "keys")
+    first = seed.seed_token(tmp_path / "v.db")
+    seed.reset(tmp_path / "v.db", keys_dir=tmp_path / "keys")
+    assert first and seed.seed_token(tmp_path / "v.db") not in (None, first)
+
+
+def test_no_seed_token_before_a_reset(tmp_path):
+    assert seed.seed_token(tmp_path / "missing.db") is None
