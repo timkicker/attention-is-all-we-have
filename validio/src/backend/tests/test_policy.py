@@ -451,3 +451,13 @@ def test_deny_without_forbid_names_a_rule(mandate):
     d = decide(scene2(mandate, category="20100"), "x")
     assert d.outcome is Outcome.DENY
     assert d.rule_ids == ["no-permit"]
+
+
+def test_graded_placeholder_stock_strict_switch(catalog, valio, mandate, monkeypatch):
+    # off (default): scene 2 stays ordered alone. On: 9999999999 is no real count, a person looks
+    monkeypatch.delenv("STRICT_PLACEHOLDER_STOCK", raising=False)
+    assert graded(catalog, valio, mandate, "464306", 1000).outcome is Outcome.ALLOW
+    monkeypatch.setenv("STRICT_PLACEHOLDER_STOCK", "1")
+    d = graded(catalog, valio, mandate, "464306", 1000)
+    assert d.context["quantityAttested"] is False
+    assert d.outcome is Outcome.ESCALATE

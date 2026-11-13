@@ -3,6 +3,7 @@
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]  # the validio/ folder
@@ -56,3 +57,17 @@ def load_settings(env_file: Path | None = DEFAULT_ENV) -> Settings:
         catalog_db=Path(get("VALIDIO_CATALOG_DB", str(DATA / "catalog.db"))),
         valio_cache=Path(get("VALIDIO_VALIO_CACHE", str(DATA / "cache" / "valio"))),
     )
+
+
+@cache
+def _env_file_value(path: Path, key: str) -> str | None:
+    return _read_env_file(path).get(key)
+
+
+def strict_placeholder_stock() -> bool:
+    """STRICT_PLACEHOLDER_STOCK=1: Valio's placeholder stock numbers (9999999999, 666666666) count as no real
+    count, so nothing orders alone on them. Off by default until a Valio mentor says what they mean."""
+    v = os.environ.get("STRICT_PLACEHOLDER_STOCK")
+    if v is None:
+        v = _env_file_value(DEFAULT_ENV, "STRICT_PLACEHOLDER_STOCK")
+    return v == "1"
