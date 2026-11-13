@@ -163,7 +163,7 @@ export const MILK_REQUEST: SupplyRequest = {
   status: "ordered_alone",
   spendPassId: "M-1",
   totalCents: 101000,
-  liveChecked: 9,
+  liveChecked: { calls: 2, ids: 9, idsPerCall: [9, 9] },
   orderId: "O-1",
   decision: { outcome: "auto_order", ruleIds: ["auto-order"], sentence: MILK_SENTENCE },
   lines: [
@@ -207,7 +207,7 @@ export const MOZZARELLA_REQUEST: SupplyRequest = {
   status: "waiting",
   spendPassId: "M-1",
   totalCents: 19660,
-  liveChecked: 7,
+  liveChecked: { calls: 2, ids: 7, idsPerCall: [7, 7] },
   orderId: "O-2",
   question: MOZZARELLA_QUESTION,
   decision: {

@@ -15,7 +15,7 @@
     {#each request.decision.ruleIds as rule (rule)}
       <Badge variant="outline">rule {rule}</Badge>
     {/each}
-    <span class="live num" id="live-checked">Checked {request.liveChecked} products live</span>
+    <span class="live num" id="live-checked">Checked {request.liveChecked.ids} products live</span>
   </div>
   <p class="sentence" id="decision-sentence">
     {request.status === "waiting" && request.question ? request.question : request.decision.sentence}
