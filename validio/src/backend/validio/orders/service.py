@@ -131,7 +131,7 @@ class OrderService:
         return out
 
     def _decide(self, mandate: Mandate, quoted: list[dict], required_claims: list[str] | None = None,
-                split_base_cents: int | None = None) -> dict[str, Any]:
+                split_base_cents: int | None = None, deliver_by: date | None = None) -> dict[str, Any]:
         missing = [ln["productId"] for ln in quoted if ln["priceCents"] is None]
         if missing:
             return {"outcome": "block", "ruleIds": [],
@@ -141,7 +141,8 @@ class OrderService:
         for ln in quoted:
             ctx = context_for(mandate, ln["_product"], ln["_avail"], total_cents=total, now=self.clock(),
                               is_substitute=ln["isSubstitute"], on_valio_list=ln["onValioList"],
-                              split_base_cents=split_base_cents, required_claims=required_claims)
+                              split_base_cents=split_base_cents, required_claims=required_claims,
+                              sales_qty=ln["quantity"], deliver_by=deliver_by)
             per.append((OUTCOME[(d := decide(ctx, product_id=ln["productId"])).outcome], d, ln))
         worst = max((o for o, _, _ in per), key=SEVERITY.__getitem__)
         rule_ids: list[str] = []
@@ -185,7 +186,7 @@ class OrderService:
                 return self.get(seen[1])
             quoted = self.quote(lines, deliver_by, stock_override, budget)
             claims = None if required_claims is None else list(required_claims)
-            decision = self._decide(mandate, quoted, claims, split_base_cents)
+            decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by)
             state = STATE[decision["outcome"]]
             total = sum(ln["totalCents"] or 0 for ln in quoted)
             now = self.clock().isoformat()
@@ -229,7 +230,8 @@ class OrderService:
                                     f"{eur(new['priceCents'])}, more than 2 %")
             if not problems:
                 # a person may lift "ask", never a block
-                again = self._decide(mandate, fresh, o.get("requiredClaims"), o.get("splitBaseCents"))
+                again = self._decide(mandate, fresh, o.get("requiredClaims"), o.get("splitBaseCents"),
+                                     date.fromisoformat(o["deliverBy"]))
                 if again["outcome"] == "block":
                     problems.append(again["sentence"])
             if problems:
