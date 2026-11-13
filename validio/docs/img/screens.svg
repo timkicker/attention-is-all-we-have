@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1312 552" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="screens-title screens-desc" id="screens-root">
+<title id="screens-title">Validio demo layout</title>
+<desc id="screens-desc">Sketch of the demo layout: the agent's terminal pane with its tool calls, the web app inbox with R-1 ordered alone for 1,010.00 euro and R-2 waiting at 180.10 euro, and the phone page asking to approve 465256.</desc>
+<defs>
+      <style>#screens-root { font-family: 'Geist', system-ui, sans-serif; color: #2d3142; }
+      #screens-root .scroll { overflow-x: auto; }</style>
+  <pattern id="screens-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" fill="#2d3142" fill-opacity="0.10"/></pattern>
+  <marker id="screens-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+  <marker id="screens-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5d8a"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f5f5f5"/>
+<rect width="100%" height="100%" fill="url(#screens-dots)" opacity="0.55"/>
+<rect x="40" y="48" width="264" height="448" rx="8" fill="#2d3142"/>
+<text x="64" y="84" fill="#f5f5f5" font-size="13" font-family="'Geist', system-ui, sans-serif" text-anchor="start" font-weight="600">Kitchen agent</text>
+<text x="64" y="124" fill="#d9dce3" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">&gt; search_products("lactose free milk")</text>
+<text x="64" y="152" fill="#d9dce3" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">&gt; request_supply(1000 litres ...)</text>
+<text x="64" y="180" fill="#d9dce3" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">&gt; confirm_order(R-1, 464306 x 1000)</text>
+<text x="64" y="208" fill="#d9dce3" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">&gt; get_order(O-1)</text>
+<text x="64" y="264" fill="#d9dce3" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">Order O-1 is placed.</text>
+<text x="64" y="300" fill="#aab0bd" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">model: Gemini or the fake twin</text>
+<text x="64" y="316" fill="#aab0bd" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">server: make demo on :8410</text>
+<text x="172" y="524" fill="#4f5d75" font-size="10" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">make agent SCENE=2</text>
+<rect x="336" y="48" width="704" height="448" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="337" y="49" width="160" height="446" rx="7" fill="#2d3142" fill-opacity="0.05"/>
+<rect x="348" y="66" width="138" height="28" rx="4" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<text x="360" y="84" fill="#2f5d8a" font-size="12" font-family="'Geist', system-ui, sans-serif" text-anchor="start" font-weight="600">Inbox</text>
+<text x="360" y="124" fill="#2d3142" font-size="12" font-family="'Geist', system-ui, sans-serif" text-anchor="start">Steady Orders</text>
+<text x="360" y="164" fill="#2d3142" font-size="12" font-family="'Geist', system-ui, sans-serif" text-anchor="start">Open Ledger</text>
+<text x="520" y="84" fill="#2d3142" font-size="14" font-family="'Geist', system-ui, sans-serif" text-anchor="start" font-weight="600">Inbox</text>
+<rect x="760" y="64" width="256" height="64" rx="6" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.03" stroke-opacity="0.22"/>
+<text x="776" y="84" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start" font-weight="600">Spend Pass M-1</text>
+<text x="776" y="100" fill="#4f5d75" font-size="8.5" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">alone up to 1,200.00 €, cap 2,000.00 €</text>
+<text x="776" y="116" fill="#4f5d75" font-size="8.5" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">lactose free · approvers hidden</text>
+<rect x="520" y="152" width="496" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1" stroke-opacity="0.22"/>
+<rect x="532" y="166" width="96.60000000000001" height="20" rx="3" fill="#2d3142" stroke="#2d3142" stroke-width="1" fill-opacity="0.06" stroke-opacity="0.22"/>
+<text x="580.3" y="180" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">ordered alone</text>
+<text x="664" y="180" fill="#2d3142" font-size="11" font-family="'Geist', system-ui, sans-serif" text-anchor="start">R-1  1000 L lactose-free milk</text>
+<text x="1000" y="180" fill="#2d3142" font-size="11" font-family="'Geist', system-ui, sans-serif" text-anchor="end" font-weight="600">1,010.00 €</text>
+<rect x="520" y="216" width="496" height="48" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1" stroke-opacity="0.22"/>
+<rect x="532" y="230" width="109.0" height="20" rx="3" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<text x="586.5" y="244" fill="#2f5d8a" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">waiting for you</text>
+<text x="664" y="244" fill="#2d3142" font-size="11" font-family="'Geist', system-ui, sans-serif" text-anchor="start">R-2  200 bags mozzarella 466375</text>
+<text x="1000" y="244" fill="#2d3142" font-size="11" font-family="'Geist', system-ui, sans-serif" text-anchor="end" font-weight="600">180.10 €</text>
+<text x="520" y="312" fill="#4f5d75" font-size="8.5" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">R-1: 464306 chosen · 462921 blocked at 2,194.00 € · 463047 low lactose, its text ignored</text>
+<text x="520" y="328" fill="#4f5d75" font-size="8.5" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="start">R-2: 3 listed substitutes list milk · 473986 not deliverable · 465256 beyond the list</text>
+<line x1="520" y1="440" x2="1016" y2="440" stroke="#2d3142" stroke-width="1" stroke-opacity="0.22"/>
+<text x="520" y="464" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">Chain verified, 15 entries</text>
+<text x="688" y="524" fill="#4f5d75" font-size="10" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">web app on the laptop</text>
+<rect x="1072" y="48" width="200" height="448" rx="16" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="1092" y="92" fill="#2d3142" font-size="14" font-family="'Geist', system-ui, sans-serif" text-anchor="start" font-weight="600">Approve?</text>
+<text x="1092" y="124" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">466375 is out of stock</text>
+<text x="1092" y="140" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">(simulated). Order 10 bags</text>
+<text x="1092" y="156" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">of 465256 Valio mozzarella-</text>
+<text x="1092" y="172" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">fontal 2.5 kg crumbled</text>
+<text x="1092" y="188" fill="#2d3142" font-size="10" font-family="'Geist', system-ui, sans-serif" text-anchor="start">for 180.10 €?</text>
+<rect x="1092" y="380" width="160" height="32" rx="4" fill="#2f5d8a"/>
+<text x="1172" y="400" fill="#f5f5f5" font-size="12" font-family="'Geist', system-ui, sans-serif" text-anchor="middle" font-weight="600">Approve</text>
+<rect x="1092" y="424" width="160" height="32" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="1172" y="444" fill="#2d3142" font-size="12" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Reject</text>
+<text x="1172" y="524" fill="#4f5d75" font-size="10" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">phone, /approve/O-2</text>
+</svg>

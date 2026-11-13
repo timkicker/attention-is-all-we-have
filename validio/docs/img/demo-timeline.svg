@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1104 264" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="demo-timeline-title demo-timeline-desc" id="demo-timeline-root">
+<title id="demo-timeline-title">Validio demo timeline</title>
+<desc id="demo-timeline-desc">Five demo scenes from 0:00 to 1:45: request, ordered alone for 1,010.00 euro, owner approves a swap for 180.10 euro, Steady Order with a split and a Drift Watch flag, Open Ledger with 15 verified entries.</desc>
+<defs>
+      <style>#demo-timeline-root { font-family: 'Geist', system-ui, sans-serif; color: #2d3142; }
+      #demo-timeline-root .scroll { overflow-x: auto; }</style>
+  <pattern id="demo-timeline-dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.9" fill="#2d3142" fill-opacity="0.10"/></pattern>
+  <marker id="demo-timeline-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+  <marker id="demo-timeline-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2f5d8a"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#f5f5f5"/>
+<rect width="100%" height="100%" fill="url(#demo-timeline-dots)" opacity="0.55"/>
+<path d="M 40,84 V 76 H 664 V 84" fill="none" stroke="#5a6580" stroke-width="1"/>
+<rect x="40" y="96" width="192" height="84" rx="6" fill="#f5f5f5"/>
+<rect x="40" y="96" width="192" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="48" y="104" width="34" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="65.0" y="113" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">0:00</text>
+<text x="136.0" y="134" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Request</text>
+<text x="136.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">R-1 and the Spend Pass card</text>
+<text x="136.0" y="161" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">12 products checked live</text>
+<rect x="248" y="96" width="200" height="84" rx="6" fill="#f5f5f5"/>
+<rect x="248" y="96" width="200" height="84" rx="6" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<rect x="256" y="104" width="34" height="12" rx="2" fill="none" stroke="#2f5d8a" stroke-width="0.8" stroke-opacity="0.50"/>
+<text x="273.0" y="113" fill="#2f5d8a" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">0:15</text>
+<text x="348.0" y="134" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Ordered alone</text>
+<text x="348.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">464306, 1000 cartons</text>
+<text x="348.0" y="161" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">1,010.00 €, planted line ignored</text>
+<rect x="464" y="96" width="200" height="84" rx="6" fill="#f5f5f5"/>
+<rect x="464" y="96" width="200" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="472" y="104" width="34" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="489.0" y="113" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">0:45</text>
+<text x="564.0" y="134" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Owner approves a swap</text>
+<text x="564.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">465256, 10 bags, 180.10 €</text>
+<text x="564.0" y="161" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">approved on the phone</text>
+<rect x="680" y="96" width="200" height="84" rx="6" fill="#f5f5f5"/>
+<rect x="680" y="96" width="200" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="688" y="104" width="34" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="705.0" y="113" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">1:15</text>
+<text x="780.0" y="134" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Steady Order</text>
+<text x="780.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">parmesan split 177, 772.49 €</text>
+<text x="780.0" y="161" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">mozzarella +26 % per guest</text>
+<rect x="896" y="96" width="168" height="84" rx="6" fill="#f5f5f5"/>
+<rect x="896" y="96" width="168" height="84" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<rect x="904" y="104" width="34" height="12" rx="2" fill="none" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.40"/>
+<text x="921.0" y="113" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">1:45</text>
+<text x="980.0" y="134" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Open Ledger</text>
+<text x="980.0" y="149" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">chain verified</text>
+<text x="980.0" y="161" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">15 entries</text>
+<rect x="211.5" y="64" width="281" height="12" rx="2" fill="#f5f5f5"/>
+<text x="352.0" y="73" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CHALLENGE CORE: LOOKUP, ORDERING, HUMAN APPROVAL</text>
+<line x1="40" y1="208" x2="1064" y2="208" stroke="#2d3142" stroke-width="0.8" stroke-opacity="0.10"/>
+<text x="40" y="224" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.18em">LEGEND</text>
+<rect x="40" y="240" width="14" height="10" rx="2" fill="#2f5d8a" stroke="#2f5d8a" stroke-width="1" fill-opacity="0.08"/>
+<text x="60" y="248" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">The headline: Validio orders alone</text>
+<rect x="254.60000000000002" y="240" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<text x="274.6" y="248" fill="#4f5d75" font-size="8.5" font-family="'Geist', system-ui, sans-serif">Scene, with what it shows</text>
+</svg>
