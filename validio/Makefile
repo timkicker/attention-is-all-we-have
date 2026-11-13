@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index test test-live record guards dev ci
+.PHONY: setup data index seed test test-live record guards dev ci
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -15,6 +15,9 @@ data:
 
 index:
 	$(UV) python ../../scripts/index_catalog.py
+
+seed:
+	$(UV) python ../../scripts/seed_demo.py
 
 test: guards
 	$(UV) ruff check validio tests ../../scripts
