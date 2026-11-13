@@ -1,0 +1,198 @@
+"""Step 8, order service: Validio re-asks Valio for every number, a retry orders once,
+a placed order cannot be approved again. Numbers from the blueprint (scene 2, 462921, 463383)."""
+
+from dataclasses import replace
+from datetime import date, datetime
+
+import pytest
+
+from validio.audit.log import AuditLog
+from validio.orders.service import (
+    ApproveRefused,
+    IdempotencyConflict,
+    LineIn,
+    OrderService,
+    OrderStateError,
+)
+from validio.orders.store import Store
+from validio.valio.models import Quote
+
+NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")
+MON = date(2026, 11, 16)
+
+
+@pytest.fixture(scope="module")
+def valio():
+    from validio.config import load_settings
+    from validio.valio.client import ValioClient
+
+    s = load_settings()
+    if not any(s.valio_cache.glob("price/*/*.json")):
+        pytest.skip("needs_data: no recorded Valio answers, run make record")
+    return ValioClient(s.valio_base_url, "", "replay", s.valio_cache)
+
+
+@pytest.fixture(scope="module")
+def mandate():
+    from jwcrypto.jwk import JWK
+
+    from validio.policy.mandate import (
+        AUDIENCE,
+        DEMO_CLAIMS,
+        DEMO_SD_FIELDS,
+        NonceStore,
+        issue_mandate,
+        present,
+        verify_presentation,
+    )
+
+    kitchen, agent = JWK.generate(kty="EC", crv="P-256"), JWK.generate(kty="EC", crv="P-256")
+    nonces = NonceStore()
+    token = present(issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, kitchen, agent),
+                    {"autoLimitCents", "hardCapCents", "diet"}, agent, AUDIENCE, nonces.issue(NOW))
+    return verify_presentation(token, kitchen_pub=kitchen, issuer="kitchen:hotel-espoo", aud=AUDIENCE,
+                               nonces=nonces, now=NOW)
+
+
+class PriceUp:
+    """The recorded Valio answers with every price raised by `pct`, as if Valio changed it meanwhile."""
+
+    def __init__(self, inner, pct: float):
+        self.inner, self.pct = inner, pct
+
+    def price(self, ids, requested, budget):
+        out = self.inner.price(ids, requested, budget)
+        return {k: replace(q, price_cents=round(q.price_cents * (1 + self.pct / 100)))
+                if isinstance(q, Quote) and q.price_cents else q for k, q in out.items()}
+
+    def availability(self, ids, requested, budget):
+        return self.inner.availability(ids, requested, budget)
+
+
+@pytest.fixture
+def svc(tmp_path, catalog, valio):
+    store = Store(tmp_path / "validio.db")
+    return OrderService(store, catalog, valio, AuditLog(tmp_path / "validio.db"), clock=lambda: NOW)
+
+
+def milk(qty=1000, **kw):
+    return [LineIn(product_id="464306", sales_qty=qty, **kw)]
+
+
+def mozz_swap():
+    # 463383 grated mozzarella from outside Valio's list: 10 bags = 25 kg
+    return [LineIn(product_id="463383", sales_qty=10, is_substitute=True, on_valio_list=False)]
+
+
+def test_allow_goes_to_placed(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k1")
+    assert o["state"] == "placed"
+    assert o["totalCents"] == 101000
+    assert o["decision"]["outcome"] == "auto_order"
+    assert [h["state"] for h in o["history"]] == ["placed"]
+
+
+def test_escalate_waits_for_human(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k2")
+    assert o["state"] == "waiting"
+    assert o["totalCents"] == 19660
+    assert o["decision"]["outcome"] == "ask_human"
+    assert "not on Valio's list" in o["decision"]["sentence"]
+
+
+def test_deny_is_blocked_with_sentence(svc, mandate):
+    # 462921 Eila organic: 200 KI at 10.97 EUR = 2194.00 EUR, over the 2000 EUR hard cap
+    o = svc.submit(mandate=mandate, lines=[LineIn(product_id="462921", sales_qty=200)], deliver_by=MON,
+                   idempotency_key="k3")
+    assert o["state"] == "blocked"
+    assert o["totalCents"] == 219400
+    assert "never-over-hard-cap" in o["decision"]["ruleIds"]
+    assert "hard cap" in o["decision"]["sentence"]
+
+
+def test_idempotent_submit(svc, mandate):
+    a = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="same")
+    b = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="same")
+    assert a["id"] == b["id"]
+    assert len(svc.store.orders()) == 1
+    assert len([e for e in svc.audit.list() if e.kind == "order"]) == 1
+
+
+def test_same_key_other_body_is_refused(svc, mandate):
+    svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="same")
+    with pytest.raises(IdempotencyConflict):
+        svc.submit(mandate=mandate, lines=milk(999), deliver_by=MON, idempotency_key="same")
+
+
+def test_proposal_price_ignored(svc, mandate):
+    # the agent claims 1 cent per carton, Validio asks Valio and uses 1.01 EUR
+    o = svc.submit(mandate=mandate, lines=milk(proposed_price_cents=1), deliver_by=MON, idempotency_key="k4")
+    assert o["lines"][0]["priceCents"] == 101
+    assert o["totalCents"] == 101000
+    assert "proposedPriceCents" not in str(o)
+
+
+def test_approve_places_after_requote(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k5")
+    done = svc.approve(o["id"], approver="owner")
+    assert done["state"] == "placed"
+    assert [h["state"] for h in done["history"]] == ["waiting", "approved", "placed"]
+    kinds = [e.kind for e in svc.audit.list(order_id=o["id"])]
+    assert kinds == ["decision", "approval", "order"]
+
+
+def test_cannot_approve_placed_order(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k6")
+    svc.approve(o["id"], approver="owner")
+    with pytest.raises(OrderStateError):
+        svc.approve(o["id"], approver="owner")
+    auto = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k7")
+    with pytest.raises(OrderStateError):
+        svc.approve(auto["id"], approver="owner")
+
+
+def test_approve_requotes_and_refuses_price_rise(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k8")
+    svc.valio = PriceUp(svc.valio, 3)
+    with pytest.raises(ApproveRefused, match="price"):
+        svc.approve(o["id"], approver="owner")
+    assert svc.get(o["id"])["state"] == "waiting"
+
+
+def test_approve_accepts_small_price_rise(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k9")
+    svc.valio = PriceUp(svc.valio, 1.5)
+    assert svc.approve(o["id"], approver="owner")["state"] == "placed"
+
+
+def test_reject(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k10")
+    r = svc.reject(o["id"], approver="owner", reason="we want fresh balls")
+    assert r["state"] == "rejected"
+    with pytest.raises(OrderStateError):
+        svc.approve(o["id"], approver="owner")
+
+
+def test_order_with_two_lines(svc, mandate):
+    lines = milk(300) + [LineIn(product_id="464401", sales_qty=100)]
+    o = svc.submit(mandate=mandate, lines=lines, deliver_by=MON, idempotency_key="k11")
+    assert [ln["productId"] for ln in o["lines"]] == ["464306", "464401"]
+    assert o["totalCents"] == 300 * 101 + 100 * 110
+    assert o["state"] == "placed"
+
+
+def test_short_stock_never_orders_alone(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k12",
+                   stock_override={"464306": 0})
+    assert o["state"] != "placed"
+
+
+def test_scene2_ledger_sentence(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k13")
+    (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
+    assert entry.sentence.startswith("Ordered 1000 ST of 464306 ")
+    assert "for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until " \
+           "31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR)." in entry.sentence
+    assert entry.rule_ids == ["auto-order"]
+    assert "approvers" not in entry.disclosed
+    assert svc.audit.verify().ok
