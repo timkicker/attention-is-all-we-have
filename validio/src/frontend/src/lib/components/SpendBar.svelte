@@ -49,7 +49,6 @@
     width: 2px;
     height: 12px;
     margin-left: -1px;
-    border-radius: 1px;
     background: var(--color-fg-secondary);
   }
 </style>

@@ -10,10 +10,12 @@
   import { setChrome } from "$lib/chrome.svelte";
   import { day, dayTime, money } from "$lib/format";
   import { live } from "$lib/live.svelte";
+  import Facts from "$lib/components/Facts.svelte";
   import Info from "$lib/components/Info.svelte";
-  import State from "$lib/components/State.svelte";
 
   setChrome("Spend Pass");
+  // The bar and the page heading would both say "Spend Pass"; the heading
+  // says what the pass is.
   const pass = live(() => api.spendPass("M-1"));
   const inbox = live(() => api.inbox());
 
@@ -31,14 +33,19 @@
   const requests = $derived((inbox.data ?? []).filter((i) => i.totalCents !== undefined));
 </script>
 
-<Page title="Spend Pass" description="What the kitchen lets its agent buy. Validio checks every order against it.">
+<Page title="What the agent may buy">
   <SectionGrid>
   {#if pass.data}
     {@const p = pass.data}
     <div class="who">
-      <span class="mono">{p.id}</span>
-      <span class="t-quiet">held by</span> <span class="mono">{p.holder}</span>
-      <span class="t-quiet">issued by</span> <span class="mono">{p.issuer}</span>
+      <Facts
+        items={[
+          { value: p.id, label: "Spend Pass", before: true },
+          { value: p.holder, label: "held by", before: true },
+          { value: dayTime(p.validTo), label: "valid until", before: true },
+        ]}
+      />
+      <Info label="What the Spend Pass is" text="What the kitchen lets its agent buy, signed by the kitchen ({p.issuer}). Validio checks every order against it." />
     </div>
 
     {#if p.autoLimitCents !== undefined && p.hardCapCents !== undefined}
@@ -53,8 +60,8 @@
           <span class="tick" style="left: {at(p.autoLimitCents)}"></span>
           <span class="tick cap" style="left: {at(cap)}"></span>
           {#each requests as r (r.id)}
-            <span class="pin" style="left: {at(r.totalCents ?? 0)}" title="{r.id} {money(r.totalCents)}">
-              <span class="pin-l mono">{r.id}</span>
+            <span class="pin" style="left: {at(r.totalCents ?? 0)}">
+              <span class="pin-l">{r.id}</span>
             </span>
           {/each}
         </div>
@@ -100,7 +107,7 @@
         </h2>
         <Section>
           {#each p.hidden as h (h)}
-            <Row label={HIDDEN[h] ?? h} id="hidden-{h}">{#snippet control()}<State label="Sealed" tone="quiet" />{/snippet}</Row>
+            <Row label={HIDDEN[h] ?? h} id="hidden-{h}">{#snippet control()}<span class="prov">hidden from Validio</span>{/snippet}</Row>
           {/each}
         </Section>
       </div>
@@ -114,7 +121,7 @@
 {#snippet value(v: string, field?: string)}
   <span class="ctl">
     <span class="v">{v}</span>
-    {#if field}<State label={shown(field) ? "Shown" : "Not shown"} tone="quiet" />{/if}
+    {#if field}<span class="prov">{shown(field) ? "shown to Validio" : "not shown"}</span>{/if}
   </span>
 {/snippet}
 
@@ -146,7 +153,7 @@
   .zone.alone {
     left: 0;
     border-radius: var(--radius-full) 0 0 var(--radius-full);
-    background: color-mix(in srgb, var(--color-success) 55%, transparent);
+    background: var(--color-fg-primary);
   }
   .zone.ask {
     background: color-mix(in srgb, var(--color-fg-primary) 18%, transparent);
@@ -154,7 +161,7 @@
   .zone.over {
     right: 0;
     border-radius: 0 var(--radius-full) var(--radius-full) 0;
-    background: color-mix(in srgb, var(--destructive-on-tint) 45%, transparent);
+    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-fg-primary) 22%, transparent) 0 2px, transparent 2px 5px);
   }
   .tick {
     position: absolute;
@@ -170,8 +177,8 @@
     width: 0.75rem;
     height: 0.75rem;
     margin: -0.375rem 0 0 -0.375rem;
-    border-radius: 50%;
-    background: var(--color-fg-primary);
+    border-radius: var(--radius-full);
+    background: var(--v-select);
     border: 2px solid var(--color-bg-app);
   }
   .pin-l {
@@ -193,6 +200,11 @@
   .legend b {
     font-weight: 500;
     color: var(--color-fg-primary);
+  }
+  .prov {
+    min-width: 7.5rem;
+    font-size: var(--text-xs);
+    color: var(--color-fg-secondary);
   }
   .ctl {
     display: inline-flex;

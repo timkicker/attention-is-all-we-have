@@ -121,9 +121,69 @@ export function valueWord(field: string, value: unknown): string {
   if (field === "cutoff" && /^\d{4}-\d\d-\d\dT/.test(v)) return dayTime(v);
   if (field === "quantity" && v.startsWith("1e+10")) return "no limit given";
   if (CODE.test(v)) return v.toLowerCase().replaceAll("_", " ");
-  return v.replace(/ (ST|BAG|KI|PCS)$/, (_, u: string) => ` ${unitWord(u, 2)}`);
+  return prose(v.replace(/ (ST|BAG|KI|PCS)$/, (_, u: string) => ` ${unitWord(u, 2)}`)).replaceAll(/\b[A-ZÄÖÅ]{4,}\b/g, (w) => w.toLowerCase());
 }
 
 /** "1000 packs", "10 bags": a count and its unit, always together. */
 export const amount = (n: number | undefined, unit: string | undefined): string =>
-  n === undefined ? "" : `${n.toLocaleString("en-GB")} ${unit ? unitWord(unit, n) : ""}`.trim();
+  n === undefined ? "" : unit ? `${n.toLocaleString("en-GB")}\u00a0${unitWord(unit, n)}` : n.toLocaleString("en-GB");
+
+const UNIT_CODE = /\b(\d[\d,]*) (ST|BAG|KI|PCS|KPL|PS|PSS|LTK)\b/g;
+const CAPS_RUN = /\b[A-ZÄÖÅ][A-ZÄÖÅ-]{2,}(?:\s+[A-ZÄÖÅ0-9][A-ZÄÖÅ0-9-]+)*\b/g;
+
+/** A catalogue name as a person reads it: no ®, a run of capitals in
+ *  sentence case, a space before g, kg and l. The catalogue name itself stays
+ *  in the facts. */
+export function nameWord(n: string): string {
+  return n
+    .replaceAll(/[®™]/g, "")
+    .replaceAll(CAPS_RUN, (run) => (run.length <= 3 ? run : run.charAt(0) + run.slice(1).toLowerCase()))
+    .replaceAll(/(\d)(g|kg|l)\b/g, "$1 $2")
+    .replaceAll(/\s{2,}/g, " ")
+    .trim();
+}
+
+/** A backend sentence in display words: unit codes as unit words, amounts in
+ *  euro through money(), a product number dropped where its name follows,
+ *  catalogue names cleaned. A field the backend already wrote for display
+ *  passes through the same steps unchanged. */
+export function prose(s: string | undefined): string {
+  if (!s) return "";
+  return nameWord(
+    s
+      .replaceAll(UNIT_CODE, (_, n: string, u: string) => amount(Number(n.replaceAll(",", "")), u))
+      .replaceAll(/\b(\d+(?:\.\d+)?) (?:EUR|euro)\b/g, (_, n: string) => money(Math.round(Number(n) * 100)))
+      .replaceAll(/\b(\d{4,}) (litres|kg)\b/g, (_, n: string, u: string) => `${Number(n).toLocaleString("en-GB")} ${u}`)
+      .replaceAll(/\bof (\d{6}) (?=[A-Z])/g, "of "),
+  );
+}
+
+/** The sentences of a backend text, one by one, without the same sentence twice. */
+export function sentences(s: string | undefined): string[] {
+  const out: string[] = [];
+  for (const part of prose(s).split(/(?<=[.?!])\s+|;\s+/)) {
+    const t = part.trim();
+    if (!t) continue;
+    const w = t.charAt(0).toUpperCase() + t.slice(1);
+    const key = w.toLowerCase().replace(/[.?!]$/, "");
+    if (!out.some((o) => o.toLowerCase().replace(/[.?!]$/, "") === key)) out.push(/[.?!]$/.test(w) ? w : `${w}.`);
+  }
+  return out;
+}
+
+/** A request's title in the kitchen's words. The agent may send only a count,
+ *  a unit code and a product number ("200 BAG of 466375"); then the product's
+ *  name from the options stands in for the number. */
+export function requestTitle(r: {
+  displayName?: string;
+  text: string;
+  lines?: { options?: { productId: string; name: string }[] }[];
+}): string {
+  if (r.displayName) return r.displayName;
+  const m = /^(\d+) ([A-Za-z]+) of (\d{6})$/.exec(r.text.trim());
+  if (m) {
+    const o = (r.lines ?? []).flatMap((l) => l.options ?? []).find((x) => x.productId === m[3]);
+    if (o) return `${amount(Number(m[1]), m[2])} of ${nameWord(o.name)}`;
+  }
+  return prose(r.text);
+}

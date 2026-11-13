@@ -80,12 +80,13 @@ async def one(base, db, keys, token, code, moz: str, steady: str) -> dict:
         if moz in ("placed", "rejected"):
             act = "approve" if moz == "placed" else "reject"
             run.post(f"/api/orders/{oid}/{act}", json={"code": code})
+    chef = {"X-Approve-Code": code}  # renew and accept need the code too
     if steady != "pending":
-        run.post("/api/steady/S-1/renew")
+        run.post("/api/steady/S-1/renew", headers=chef)
         if steady in ("accepted", "both"):
-            run.post("/api/steady/S-1/lines/471376/accept")
+            run.post("/api/steady/S-1/lines/471376/accept", headers=chef)
         if steady in ("mozzarella", "both"):
-            r = run.http.post("/api/steady/S-1/lines/466375/accept")
+            r = run.http.post("/api/steady/S-1/lines/466375/accept", headers=chef)
             if r.status_code != 200:  # out of stock after the stock-out: the mock answers the same
                 return {"refused": r.json()["detail"]}
     return capture(run)
