@@ -6,23 +6,34 @@ The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT.md](.
 
 ## Setup
 
-You need Python 3.12 with uv, Node 20 and the three Valio data files from the resource portal. Every command runs from `validio/`.
+You need Python 3.12 with uv, Node 20 or newer (npm warns that `@axe-core/playwright` wants 22.12, the setup works on 20 anyway), the Valio API key and the three Valio data files. Every command runs from `validio/`.
+
+The three files are `valio_aimo_junction26_product_data.json`, `valio_aimo_junction26_delivery_reliability.csv` and `valio_aimo_junction26_carbon_footprint.csv`. Download them from the challenge's data page in the Junction resource portal (you have to log in) and put them into one folder. The API key is in the Valio Aimo challenge text.
+
+The first run goes in this order:
 
 ```sh
-make setup                  # .env from .env.example, uv sync, copy and check the Valio files, build data/catalog.db
-make seed                   # demo state: kitchen hotel-espoo, Spend Pass M-1, 8 weeks of simulated history
-make test                   # guard checks, ruff, pytest (no network)
-make agent SCENE=2          # the kitchen's agent runs scene 1, 2 or 3 against the running demo and prints every tool call
-make dev                    # the API on http://127.0.0.1:8410
-make demo                   # builds the web app, seeds and serves both on http://127.0.0.1:8410
-make demo-check             # every demo scene end to end on its own server on port 8418
+make setup RAW=/path/to/folder   # .env from .env.example, uv sync, web app packages, copy and check the files, build data/catalog.db
+# now open .env and put the key after VALIO_API_KEY=
+make record                      # asks Valio's test API once and stores the answers under data/cache/valio/
+make seed                        # demo state: kitchen hotel-espoo, Spend Pass M-1, 8 weeks of simulated history
+make demo                        # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
 
-`make demo` builds the web app on its fixture unless it runs as `VITE_API=live make demo`. For the click-through run `VITE_API=live make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser. Scene 3 needs the stock-out button first. With nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
+`make setup` checks the files against their sha256 before anything is indexed and stops on a wrong one. `make record` is the only step that goes to the network. It talks to Valio's test API only. Everything after it replays the stored answers, so without it the server fails with "run make record first".
 
-`make setup` reads the Valio files from `RAW` (default is the folder on the build machine), so elsewhere it is `make setup RAW=/path/to/files`. The files are checked against their sha256 before anything is indexed.
+After that:
 
-The web app is a separate SvelteKit project:
+```sh
+make test                        # guard checks, ruff, pytest and the web app tests (no network)
+make agent SCENE=2               # the kitchen's agent runs scene 1, 2 or 3 against the running demo and prints every tool call
+make dev                         # only the API on http://127.0.0.1:8410, reloading on changes
+make demo-check                  # every demo scene end to end on its own server on port 8418
+```
+
+For the click-through run `make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser as [docs/DEMO.md](docs/DEMO.md) describes. Scene 3 needs the stock-out button first. With nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
+
+The web app is a separate SvelteKit project. `make setup` already installs its packages and the ui-kit. To work on it alone:
 
 ```sh
 cd src/frontend
