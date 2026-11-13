@@ -164,7 +164,7 @@ class Ctx:
 
     def verify(self, token: str) -> Mandate:
         return verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
-                                   nonces=self.nonces, now=self.now())
+                                   nonces=self.nonces, now=self.now(), revoked=self.store.is_revoked)
 
 
 _ctx: Ctx | None = None

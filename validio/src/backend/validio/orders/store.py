@@ -16,6 +16,7 @@ create table if not exists idempotency (scope text, key text, body_hash text, re
                                         primary key (scope, key));
 create table if not exists seen_pass (id text primary key, body text not null);
 create unique index if not exists one_order_per_request on supply_order(request_id) where request_id is not null;
+create table if not exists revoked_pass (id text primary key, at text not null, by text not null);
 """
 
 
@@ -132,6 +133,16 @@ class Store:
     def remember_pass(self, pass_id: str, body: dict[str, Any]) -> None:
         with self._lock:
             self._con.execute("insert or replace into seen_pass values (?, ?)", (pass_id, json.dumps(body)))
+
+    def revoke(self, pass_id: str, at: str, by: str) -> bool:
+        """Put a Spend Pass on the kitchen's revocation list. False when it was on it already."""
+        with self._lock:
+            cur = self._con.execute("insert or ignore into revoked_pass values (?, ?, ?)", (pass_id, at, by))
+            return cur.rowcount == 1
+
+    def is_revoked(self, pass_id: str) -> bool:
+        with self._lock:
+            return self._con.execute("select 1 from revoked_pass where id = ?", (pass_id,)).fetchone() is not None
 
     def seen_pass(self, pass_id: str) -> dict[str, Any] | None:
         with self._lock:
