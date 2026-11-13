@@ -19,7 +19,7 @@ const STRICT = process.env.VIDEO_STRICT === "1";
 const { shots } = JSON.parse(readFileSync(process.env.VIDEO_SHOTS, "utf8"));
 const W = 1920, H = 1080, TERM = 640;
 
-const report = { testid: new Set(), id: new Set(), missing: new Set(), fallbacks: [], shots: [] };
+const report = { testid: new Set(), id: new Set(), missing: new Set(), hidden: new Set(), fallbacks: [], shots: [] };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
 
@@ -103,10 +103,40 @@ async function cursorTo(x, y) {
   await sleep(450);
 }
 
+// open the folds (Ranked options, an option's facts) that hide the element, by clicking their triggers
+async function reveal(id, loc) {
+  for (let i = 0; i < 4 && !(await loc.isVisible()); i++) {
+    const mark = await loc.evaluate((e, n) => {
+      const h = e.closest("[hidden]");
+      if (!h) return null;
+      const t = (h.id && document.querySelector(`[aria-controls="${CSS.escape(h.id)}"]`)) ||
+        h.parentElement?.querySelector('[aria-expanded="false"]');
+      if (!t) return null;
+      t.setAttribute("data-video-reveal", String(n));
+      return String(n);
+    }, i);
+    if (!mark) break;
+    const t = frame().locator(`[data-video-reveal="${mark}"]`).first();
+    await t.evaluate((e) => e.scrollIntoView({ behavior: "smooth", block: "center" }));
+    await sleep(350);
+    const b = await t.boundingBox();
+    if (b) await cursorTo(b.x + Math.min(b.width / 2, 120), b.y + b.height / 2);
+    await t.click();
+    await t.evaluate((e) => e.removeAttribute("data-video-reveal"));
+    await sleep(350);
+  }
+  if (await loc.isVisible()) return true;
+  report.hidden.add(id);
+  if (STRICT) throw new Error(`${id} is on the page but hidden`);
+  console.log(`  hidden: ${id}`);
+  return false;
+}
+
 // scroll the element into the middle, move the cursor onto it, hold
 async function point(id, hold = 1.5) {
   const loc = await find(id);
   if (!loc) return null;
+  await reveal(id, loc);
   await loc.evaluate((e) => e.scrollIntoView({ behavior: "smooth", block: "center" }));
   await sleep(450);
   const b = await loc.boundingBox();
@@ -131,7 +161,7 @@ async function act(id, done, fallback) {
   if (await click(id)) {
     const code = frame().locator('[data-testid="code-input"], [id="code-input"]').first();
     if (await code.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await code.pressSequentially(CODE, { delay: 90 });
+      await code.pressSequentially(CODE, { delay: 60 });
       await click("code-submit");
     }
     await sleep(800);
@@ -175,7 +205,7 @@ async function agent(n) {
     const s = lines.shift();
     const cls = classOf(s);
     await page.evaluate(([h, c]) => window.line(h, c), [esc(s), cls]);
-    await sleep(cls === "agent" || cls === "validio" || cls === "kitchen" ? 260 : 40);
+    await sleep(cls === "agent" || cls === "validio" || cls === "kitchen" ? 180 : 35);
   }
   const code = await exit;
   if (code !== 0) throw new Error(`make agent SCENE=${n} exited ${code}`);
@@ -202,25 +232,25 @@ const SCENES = {
     await agent(2);
     await go("/");
     await click("inbox-R-1");
-    await point("request-status", 1.5);
-    await point("live-checked", 1.5);
-    await point("option-464306", 2.5);
-    await point("option-464401", 1.5);
-    await point("option-462921", 2);
-    await point("supplier-463047", 2.5);
-    await point("reader-463047", 2.5);
+    await point("request-status", 1);
+    await point("live-checked", 1);
+    await point("option-464306", 2);
+    await point("option-464401", 1.2);
+    await point("option-462921", 1.5);
+    await point("supplier-463047", 2);
+    await point("reader-463047", 2);
   },
   // Shot 3: simulated stock-out, the swap waits, the owner approves on the phone
   3: async () => {
     await go("/");
     await act("stock-out", async () => (await api("/api/demo")).stockOut466375 === true,
       () => api("/api/demo/stock-out", { method: "POST" }));
-    await point("stock-out-note", 1.5);
+    await point("stock-out-note", 1);
     await agent(3);
     await go("/");
     await click("inbox-R-2");
-    for (const p of ["466151", "473986", "468526", "475908"]) await point(`option-${p}`, 0.9);
-    await point("option-465256", 2.5);
+    for (const p of ["466151", "473986", "468526", "475908"]) await point(`option-${p}`, 0.4);
+    await point("option-465256", 2);
     const order = (await api("/api/requests/R-2")).orderId;
     const opened = await click("open-approve");
     const at = new URL(frame().url()).pathname;
@@ -231,10 +261,10 @@ const SCENES = {
       await go(`/approve/${order}`);
     }
     await phone(true);
-    await point("approve-question", 2.5);
+    await point("approve-question", 1.6);
     await act("approve", async () => (await api(`/api/orders/${order}`)).state === "placed",
       () => api(`/api/orders/${order}/approve`, chef));
-    await point("order-steps", 3);
+    await point("order-steps", 2);
     await phone(false);
   },
   // Shot 4: the Steady Order renews, the parmesan splits, the pancakes wait, the mozzarella is flagged
@@ -259,7 +289,7 @@ const SCENES = {
     const led = await find("ledger");
     if (led) {
       await cursorTo(TERM + 640, 900);
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 3; i++) {
         await frame().evaluate(() => window.scrollBy({ top: 260, behavior: "smooth" }));
         await sleep(1300);
       }
@@ -303,10 +333,11 @@ const summary = {
   byTestid: [...report.testid],
   byIdOnly: [...report.id].filter((i) => !report.testid.has(i)),
   missing: [...report.missing],
+  hidden: [...report.hidden],
   fallbacks: report.fallbacks,
 };
 writeFileSync(`${RAW}/run.json`, JSON.stringify(summary, null, 2));
-console.log(`found by data-testid: ${summary.byTestid.length}, by id only: ${summary.byIdOnly.length}, missing: ${summary.missing.join(", ") || "none"}`);
+console.log(`found by data-testid: ${summary.byTestid.length}, by id only: ${summary.byIdOnly.length}, missing: ${summary.missing.join(", ") || "none"}, hidden: ${summary.hidden.join(", ") || "none"}`);
 console.log(`fallbacks by API: ${summary.fallbacks.join(", ") || "none"}`);
 if (failed) {
   console.error(failed);
