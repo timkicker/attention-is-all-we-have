@@ -81,7 +81,10 @@ class ValioClient:
         body = {"customer": self.customer, "requestedDate": requested.isoformat(), "products": ids}
         http = self._http or httpx.Client(timeout=30)
         try:
-            r = http.post(f"{self.base_url}/api/{endpoint}", json=body, headers={"X-API-Key": self._api_key})
+            req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
+                                     headers={"X-API-Key": self._api_key})
+            checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
+            r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
             r.raise_for_status()
             resp = r.json()
         finally:

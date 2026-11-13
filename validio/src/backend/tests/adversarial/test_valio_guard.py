@@ -123,8 +123,6 @@ def test_every_live_call_goes_to_the_test_host_with_the_key():
             assert call.request.headers["X-API-Key"] == "secret-key"
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G13: the guard checks the base URL once; an http client given to "
-                                       "ValioClient that follows redirects carries X-API-Key to the webshop")
 def test_injected_redirect_following_client_cannot_reach_the_webshop():
     with respx.mock(assert_all_called=False) as net:
         shop = _shop_routes(net)
