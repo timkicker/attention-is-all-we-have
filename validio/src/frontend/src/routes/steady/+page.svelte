@@ -1,37 +1,46 @@
 <script lang="ts">
+  // The kitchen's standing orders as settings rows: what it is, when it runs,
+  // what needs a look, and the way in.
+  import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Page } from "@arlen/ui-kit/components/ui/page";
+  import { Row } from "@arlen/ui-kit/components/ui/row";
+  import { Section } from "@arlen/ui-kit/components/ui/section";
   import { SectionGrid } from "@arlen/ui-kit/components/ui/section-grid";
-  import { LinkCard } from "@arlen/ui-kit/components/ui/link-card";
-  import { Notice } from "@arlen/ui-kit/components/ui/notice";
   import { api } from "$lib/api/client";
-  import type { SteadyOrderSummary } from "$lib/api/types";
+  import { setChrome } from "$lib/chrome.svelte";
   import { dayTime } from "$lib/format";
+  import { live } from "$lib/live.svelte";
 
-  let list = $state<SteadyOrderSummary[]>([]);
-  let error = $state("");
+  setChrome("Steady orders");
+  const list = live(() => api.steadyList());
 
-  $effect(() => {
-    api
-      .steadyList()
-      .then((l) => (list = l))
-      .catch((e) => (error = `Steady Orders could not be loaded: ${(e as Error).message}`));
-  });
-
-  const describe = (s: SteadyOrderSummary) =>
+  const describe = (s: { weekday: string; lineCount: number; flagCount: number; renewedAt?: string }) =>
     [
-      `${s.lineCount} lines, every ${s.weekday}`,
-      s.renewedAt ? `renewed ${dayTime(s.renewedAt)}` : "not renewed this week yet",
-      s.flagCount ? `${s.flagCount} ${s.flagCount === 1 ? "line waits" : "lines wait"} for you` : "",
+      `Every ${s.weekday}`,
+      `${s.lineCount} lines`,
+      s.flagCount ? `${s.flagCount} need a look` : "",
+      s.renewedAt ? `renewed ${dayTime(s.renewedAt)}` : "not renewed this week",
     ]
       .filter(Boolean)
-      .join(", ") + ".";
+      .join(", ");
 </script>
 
-<Page title="Steady Orders" description="The usual orders that renew themselves. Drift Watch holds a line when something looks off.">
+<Page title="Steady orders" description="Orders Validio renews every week from what the kitchen used.">
   <SectionGrid>
-    {#if error}<Notice tone="error" text={error} />{/if}
-    {#each list as s (s.id)}
-      <LinkCard href="/steady/{s.id}" title={s.name} description={describe(s)} />
-    {/each}
+  {#if list.data}
+    <Section>
+      {#each list.data as s (s.id)}
+        <Row label={s.name} description={describe(s)} id="steady-{s.id}">
+          {#snippet control()}
+            <Button variant="outline" size="sm" href="/steady/{s.id}" aria-label="Open {s.name}">Open</Button>
+          {/snippet}
+        </Row>
+      {:else}
+        <Row label="No steady orders yet" />
+      {/each}
+    </Section>
+  {:else if list.error}
+    <p class="t-quiet">Cannot read the steady orders: {list.error}</p>
+  {/if}
   </SectionGrid>
 </Page>
