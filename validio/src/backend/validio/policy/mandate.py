@@ -5,10 +5,12 @@ sd-jwt 0.10.4 does not check exp or nbf, so we do. Every failure is a MandateErr
 """
 
 import base64
+import hashlib
 import json
 import secrets
 import threading
-from collections.abc import Mapping
+import time
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -45,6 +47,11 @@ DEMO_CLAIMS: dict[str, Any] = {
 DEMO_SD_FIELDS = frozenset({"autoLimitCents", "hardCapCents", "diet", "preferLabels", "approvers"})
 
 _REGISTERED = {"iss", "sub", "jti", "iat", "nbf", "exp", "cnf", "_sd_alg"}
+
+# The key binding JWT must be signed close to now on Validio's clock (the frozen demo clock in the demo):
+# at most KB_MAX_AGE before, at most CLOCK_SKEW after. GET /agent/v1/nonce returns that clock as `iat`.
+KB_MAX_AGE = timedelta(minutes=10)
+CLOCK_SKEW = timedelta(seconds=60)
 
 
 class MandateError(Exception):
@@ -107,12 +114,22 @@ def issue_mandate(
     return issuer.sd_jwt_issuance
 
 
-def present(mandate: str, disclose: set[str] | frozenset[str], agent: JWK, aud: str, nonce: str) -> str:
+def _b64(raw: bytes) -> str:
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
+def present(mandate: str, disclose: set[str] | frozenset[str], agent: JWK, aud: str, nonce: str,
+            iat: int | None = None) -> str:
+    """The pass with only `disclose` shown and a key binding JWT over it. `iat` is the time on Validio's
+    clock, as GET /agent/v1/nonce gives it; the wall clock only when the caller has nothing better."""
     holder = SDJWTHolder(mandate)
-    holder.create_presentation(
-        {k: True for k in disclose}, nonce=nonce, aud=aud, holder_key=agent, sign_alg=ALG
-    )
-    return holder.sd_jwt_presentation
+    holder.create_presentation({k: True for k in disclose})
+    base = holder.sd_jwt_presentation  # issuer JWT~disclosure~...~
+    payload = {"nonce": nonce, "aud": aud, "iat": int(time.time()) if iat is None else iat,
+               "sd_hash": _b64(hashlib.sha256(base.encode("ascii")).digest())}
+    kb = JWS(json.dumps(payload, separators=(",", ":")).encode())
+    kb.add_signature(agent, alg=ALG, protected=json.dumps({"alg": ALG, "typ": "kb+jwt"}))
+    return base + kb.serialize(compact=True)
 
 
 class NonceStore:
@@ -153,22 +170,50 @@ def _b64json(segment: str) -> dict[str, Any]:
     return json.loads(base64.urlsafe_b64decode(segment + "=" * (-len(segment) % 4)))
 
 
-def _kb_nonce(token: str) -> str:
+def _kb_payload(token: str) -> dict[str, Any]:
     try:
-        kb = token.rsplit("~", 1)[1]
-        nonce = _b64json(kb.split(".")[1])["nonce"]
-    except (IndexError, KeyError, ValueError) as e:
+        kb = _b64json(token.rsplit("~", 1)[1].split(".")[1])
+    except (IndexError, ValueError) as e:
         raise MandateError("no key binding") from e
-    if not isinstance(nonce, str):
+    if not isinstance(kb, dict) or not isinstance(kb.get("nonce"), str):
         raise MandateError("no key binding")
-    return nonce
+    return kb
+
+
+def _digests(node: Any, out: set[str]) -> None:
+    """Every disclosure digest a (decoded) SD-JWT payload refers to: `_sd` lists and `{"...": d}` items."""
+    if isinstance(node, dict):
+        if isinstance(node.get("_sd"), list):
+            out.update(d for d in node["_sd"] if isinstance(d, str))
+        if set(node) == {"..."} and isinstance(node["..."], str):
+            out.add(node["..."])
+        for v in node.values():
+            _digests(v, out)
+    elif isinstance(node, list):
+        for v in node:
+            _digests(v, out)
+
+
+def _check_disclosures(token: str) -> None:
+    """RFC 9901: a disclosure that no digest of the signed pass (or of another disclosure) refers to is refused."""
+    jwt, *disclosures, _kb = token.split("~")
+    referenced: set[str] = set()
+    _digests(_b64json(jwt.split(".")[1]), referenced)
+    for d in disclosures:
+        _digests(_b64json(d), referenced)
+    for d in disclosures:
+        if _b64(hashlib.sha256(d.encode("ascii")).digest()) not in referenced:
+            raise MandateError("disclosure not part of the Spend Pass")
 
 
 def verify_presentation(
-    token: str, *, kitchen_pub: JWK, issuer: str, aud: str, nonces: NonceStore, now: datetime
+    token: str, *, kitchen_pub: JWK, issuer: str, aud: str, nonces: NonceStore, now: datetime,
+    revoked: Callable[[str], bool] | None = None,
 ) -> Mandate:
-    """Signature, ES256, issuer, key binding, audience, single-use nonce, nbf and exp."""
-    nonce = _kb_nonce(token)
+    """Signature, ES256, issuer, key binding (with its iat), audience, single-use nonce, every disclosure
+    referenced by the pass, iat, nbf and exp, and the kitchen's revocation list."""
+    kb = _kb_payload(token)
+    nonce = kb["nonce"]
     nonces.check(nonce, now)
     try:
         issuer_jwt = token.split("~", 1)[0]
@@ -202,14 +247,25 @@ def verify_presentation(
     except Exception as e:  # sd-jwt raises KeyError or other jwcrypto errors
         raise MandateError(f"invalid Spend Pass ({type(e).__name__})") from e
 
+    try:
+        _check_disclosures(token)
+    except (IndexError, ValueError, AttributeError) as e:
+        raise MandateError("disclosure not part of the Spend Pass") from e
     ts = int(now.timestamp())
-    nbf, exp = payload.get("nbf"), payload.get("exp")
-    if not isinstance(nbf, int) or not isinstance(exp, int):
+    kb_iat = kb.get("iat")
+    if type(kb_iat) is not int or not (ts - KB_MAX_AGE.total_seconds() <= kb_iat <= ts + CLOCK_SKEW.total_seconds()):
+        raise MandateError("key binding signed at the wrong time")
+    nbf, exp, iat = payload.get("nbf"), payload.get("exp"), payload.get("iat")
+    if type(nbf) is not int or type(exp) is not int or (iat is not None and type(iat) is not int):
         raise MandateError("Spend Pass without validity window")
+    if iat is not None and iat > ts + CLOCK_SKEW.total_seconds():
+        raise MandateError("Spend Pass issued in the future")
     if ts < nbf:
         raise MandateError("Spend Pass not valid yet")
     if ts >= exp:
         raise MandateError("Spend Pass expired")
+    if revoked is not None and revoked(str(payload.get("jti", ""))):
+        raise MandateError(f"Spend Pass {payload.get('jti')} was revoked by the kitchen")
     nonces.consume(nonce, now)
     return _mandate(payload)
 

@@ -42,7 +42,7 @@ def running(base: str) -> bool:
 
 
 def remote(base: str):
-    holder = Holder.from_seed(lambda: httpx.get(f"{base}/agent/v1/nonce", timeout=10).json()["nonce"])
+    holder = Holder.from_seed(lambda: httpx.get(f"{base}/agent/v1/nonce", timeout=10).json())
     return f"{base}/mcp/", holder, f"Validio at {base}"
 
 
@@ -58,7 +58,7 @@ def local(scene: int):
     ctx = get_ctx()
     if scene == 3:
         ctx.set_stockout(True)
-    holder = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    holder = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     return server, holder, "Validio in process, fresh seeded store" + (", simulated stock-out of 466375"
                                                                          if scene == 3 else "")
 

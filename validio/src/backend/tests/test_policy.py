@@ -36,7 +36,7 @@ def mandate():
     kitchen, agent = JWK.generate(kty="EC", crv="P-256"), JWK.generate(kty="EC", crv="P-256")
     issuance = issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, kitchen, agent)
     nonces = NonceStore()
-    token = present(issuance, {"autoLimitCents", "hardCapCents", "diet"}, agent, AUDIENCE, nonces.issue(NOW))
+    token = present(issuance, {"autoLimitCents", "hardCapCents", "diet"}, agent, AUDIENCE, nonces.issue(NOW), iat=int(NOW.timestamp()))
     return verify_presentation(
         token, kitchen_pub=kitchen, issuer="kitchen:hotel-espoo", aud=AUDIENCE, nonces=nonces, now=NOW
     )

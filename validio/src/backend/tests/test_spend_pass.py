@@ -41,7 +41,7 @@ def _verify(token, keys, nonces, now=NOW):
 
 def _present(issuance, keys, nonces, disclose=SHOWN, now=NOW, agent=None):
     nonce = nonces.issue(now)
-    return present(issuance, disclose, agent or keys[1], AUDIENCE, nonce)
+    return present(issuance, disclose, agent or keys[1], AUDIENCE, nonce, int(now.timestamp()))
 
 
 def test_demo_pass_matches_blueprint():
@@ -118,7 +118,7 @@ def test_not_yet_valid_rejected(issuance, keys):
 def test_wrong_nonce_rejected(issuance, keys):
     nonces = NonceStore()
     nonces.issue(NOW)
-    token = present(issuance, SHOWN, keys[1], AUDIENCE, "made-up-nonce")
+    token = present(issuance, SHOWN, keys[1], AUDIENCE, "made-up-nonce", iat=int(NOW.timestamp()))
     with pytest.raises(MandateError, match="nonce"):
         _verify(token, keys, nonces)
 
@@ -155,7 +155,7 @@ def test_foreign_issuer_key_rejected(keys):
 
 def test_wrong_audience_rejected(issuance, keys):
     nonces = NonceStore()
-    token = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonces.issue(NOW))
+    token = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonces.issue(NOW), iat=int(NOW.timestamp()))
     with pytest.raises(MandateError, match="^wrong audience$"):
         _verify(token, keys, nonces)
 
@@ -213,10 +213,10 @@ def test_failed_check_keeps_the_nonce_unused(issuance, keys):
     # a rejected presentation must not burn the nonce of a later honest one
     nonces = NonceStore()
     nonce = nonces.issue(NOW)
-    bad = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonce)
+    bad = present(issuance, SHOWN, keys[1], "https://elsewhere.example", nonce, iat=int(NOW.timestamp()))
     with pytest.raises(MandateError, match="^wrong audience$"):
         _verify(bad, keys, nonces)
-    assert _verify(present(issuance, SHOWN, keys[1], AUDIENCE, nonce), keys, nonces).id == "M-1"
+    assert _verify(present(issuance, SHOWN, keys[1], AUDIENCE, nonce, iat=int(NOW.timestamp())), keys, nonces).id == "M-1"
 
 
 def test_key_file_round_trip(tmp_path):

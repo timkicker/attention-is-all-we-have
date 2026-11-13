@@ -29,12 +29,15 @@ from validio.policy.mandate import (
 NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")
 SHOWN = {"autoLimitCents", "hardCapCents", "diet"}
 ISSUER = DEMO_CLAIMS["iss"]
+IAT = int(NOW.timestamp())
 
 # Every reason the verifier may give. "invalid Spend Pass (...)" names the parser error class.
 REASONS = ("no key binding", "unknown or reused nonce", "stale nonce", "wrong algorithm",
            "issuer signature does not verify", "unknown issuer", "holder key binding does not verify",
            "wrong audience", "disclosures do not match the key binding", "Spend Pass without validity window",
-           "Spend Pass not valid yet", "Spend Pass expired", "money must be whole cents", "invalid Spend Pass (")
+           "Spend Pass not valid yet", "Spend Pass expired", "money must be whole cents", "invalid Spend Pass (",
+           "disclosure not part of the Spend Pass", "key binding signed at the wrong time",
+           "Spend Pass issued in the future")
 
 KITCHEN = JWK.generate(kty="EC", crv="P-256")
 AGENT = JWK.generate(kty="EC", crv="P-256")
@@ -77,7 +80,7 @@ def kb(issuer_jwt: str, disclosures: list[str], nonce: str, *, key=AGENT, alg="E
 
 def honest_parts(nonces: NonceStore, issuance=ISSUANCE, disclose=SHOWN):
     nonce = nonces.issue(NOW)
-    token = present(issuance, disclose, AGENT, AUDIENCE, nonce)
+    token = present(issuance, disclose, AGENT, AUDIENCE, nonce, IAT)
     jwt, *disc, kbjwt = token.split("~")
     return nonce, jwt, disc, kbjwt
 
@@ -124,7 +127,7 @@ def _same_decoded(a: str, b: str) -> bool:
 @given(st.data())
 def test_any_single_mutation_is_refused(data):
     nonces = NonceStore()
-    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW))
+    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT)
     i = data.draw(st.integers(0, len(token) - 1), label="position")
     op = data.draw(st.sampled_from(["replace", "delete", "insert", "swap"]), label="op")
     ch = data.draw(st.sampled_from(B64_CHARS + "~.=+/ \x00é"), label="char")
@@ -226,20 +229,20 @@ def test_header_cannot_bring_its_own_key(extra):
 def test_pass_signed_by_the_agent_itself_is_refused():
     forged = issue_mandate({**DEMO_CLAIMS, "autoLimitCents": 10**9}, DEMO_SD_FIELDS, AGENT, AGENT)
     nonces = NonceStore()
-    assert refused(present(forged, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW)), nonces) == \
+    assert refused(present(forged, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT), nonces) == \
         "issuer signature does not verify"
 
 
 def test_kitchen_key_but_other_issuer_name_is_refused():
     other = issue_mandate({**DEMO_CLAIMS, "iss": "kitchen:elsewhere"}, DEMO_SD_FIELDS, KITCHEN, AGENT)
     nonces = NonceStore()
-    assert refused(present(other, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW)), nonces) == "unknown issuer"
+    assert refused(present(other, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT), nonces) == "unknown issuer"
 
 
 def test_pass_bound_to_another_holder_is_refused():
     """Mallory steals the issuance but holds another key: the cnf key in the signed payload is the agent's."""
     nonces = NonceStore()
-    assert refused(present(ISSUANCE, SHOWN, MALLORY, AUDIENCE, nonces.issue(NOW)), nonces) == \
+    assert refused(present(ISSUANCE, SHOWN, MALLORY, AUDIENCE, nonces.issue(NOW), IAT), nonces) == \
         "holder key binding does not verify"
 
 
@@ -285,8 +288,6 @@ def test_key_binding_variants_are_refused(variant):
     assert verify("~".join([jwt, *disc, kb(jwt, disc, nonce)]), nonces).id == "M-1"
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G2: a key-binding JWT payload that is not an object raises TypeError "
-                                       "outside the MandateError net (HTTP 500 instead of 401)")
 @pytest.mark.parametrize("payload", [[1, 2], "nonce", 7, None])
 def test_key_binding_payload_that_is_not_an_object_is_refused(payload):
     nonces = NonceStore()
@@ -295,8 +296,6 @@ def test_key_binding_payload_that_is_not_an_object_is_refused(payload):
     refused("~".join([jwt, *disc, bad]), nonces)
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G3: the key-binding JWT's iat is never checked (RFC 9901 asks "
-                                       "for an acceptable window)")
 @pytest.mark.parametrize("iat", [0, int((NOW + timedelta(days=365)).timestamp()),
                                  int((NOW - timedelta(days=30)).timestamp())])
 def test_key_binding_iat_far_from_now_is_refused(iat):
@@ -305,8 +304,6 @@ def test_key_binding_iat_far_from_now_is_refused(iat):
     refused("~".join([jwt, *disc, kb(jwt, disc, nonce, iat=iat)]), nonces)
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G4: a disclosure no digest of the signed pass refers to is "
-                                       "ignored, not refused (RFC 9901 says reject)")
 def test_unreferenced_disclosure_signed_by_the_holder_is_refused():
     nonces = NonceStore()
     nonce, jwt, disc, _ = honest_parts(nonces)
@@ -342,15 +339,14 @@ def test_unreferenced_disclosure_never_changes_the_mandate():
 def test_kitchen_signed_odd_values_are_refused(change, reason):
     claims = {k: v for k, v in {**DEMO_CLAIMS, **change}.items() if v is not None}
     nonces = NonceStore()
-    token = present(issue_mandate(claims, DEMO_SD_FIELDS, KITCHEN, AGENT), SHOWN, AGENT, AUDIENCE, nonces.issue(NOW))
+    token = present(issue_mandate(claims, DEMO_SD_FIELDS, KITCHEN, AGENT), SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT)
     assert refused(token, nonces) == reason
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G5: an issuer iat after now is not checked")
 def test_pass_issued_in_the_future_is_refused():
     claims = {**DEMO_CLAIMS, "iat": int((NOW + timedelta(days=2)).timestamp())}
     nonces = NonceStore()
-    token = present(issue_mandate(claims, DEMO_SD_FIELDS, KITCHEN, AGENT), SHOWN, AGENT, AUDIENCE, nonces.issue(NOW))
+    token = present(issue_mandate(claims, DEMO_SD_FIELDS, KITCHEN, AGENT), SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT)
     refused(token, nonces)
 
 
@@ -358,7 +354,7 @@ def test_pass_issued_in_the_future_is_refused():
 
 def test_concurrent_replay_wins_once():
     nonces = NonceStore()
-    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW))
+    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT)
     barrier, results = threading.Barrier(8), []
 
     def go():
@@ -380,13 +376,13 @@ def test_concurrent_replay_wins_once():
 
 def test_nonce_from_another_store_is_refused():
     other = NonceStore()
-    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, other.issue(NOW))
+    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, other.issue(NOW), IAT)
     assert refused(token, NonceStore()) == "unknown or reused nonce"
 
 
 def test_nonce_exactly_at_and_after_ttl():
     nonces = NonceStore(ttl=timedelta(minutes=5))
-    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW))
+    token = present(ISSUANCE, SHOWN, AGENT, AUDIENCE, nonces.issue(NOW), IAT)
     assert refused(token, nonces, now=NOW + timedelta(minutes=5, seconds=1)) == "stale nonce"
     assert verify(token, nonces, now=NOW + timedelta(minutes=5)).id == "M-1"
 
@@ -402,7 +398,7 @@ def wire(ctx):
     from validio.agent.holder import Holder
     from validio.api import tools
 
-    h = Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
     return ctx, h
 
 
@@ -419,10 +415,10 @@ def _bad_tokens(ctx, h):
         "alg none": ("~".join([none_jwt, *disc, kb(none_jwt, disc, nonce, key=h.key)]), "wrong algorithm"),
         "foreign issuer key": ("~".join([forged, *disc, kb(forged, disc, nonce, key=h.key)]),
                                "issuer signature does not verify"),
-        "foreign holder key": (present(h.issuance, SHOWN, MALLORY, AUDIENCE, tools.nonce(ctx).nonce),
+        "foreign holder key": (present(h.issuance, SHOWN, MALLORY, AUDIENCE, tools.nonce(ctx).nonce, IAT),
                                "holder key binding does not verify"),
         "no key binding": (h.issuance, "no key binding"),
-        "made-up nonce": (present(h.issuance, SHOWN, h.key, AUDIENCE, "made-up"), "unknown or reused nonce"),
+        "made-up nonce": (present(h.issuance, SHOWN, h.key, AUDIENCE, "made-up", IAT), "unknown or reused nonce"),
     }
 
 
@@ -506,7 +502,6 @@ def test_reset_kills_every_outstanding_nonce(wire):
     assert r.status_code == 401 and r.json()["detail"] == "unknown or reused nonce"
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G2: over HTTP the TypeError is a 500, not a 401")
 def test_http_key_binding_payload_that_is_not_an_object_is_401(wire):
     from fastapi.testclient import TestClient
 

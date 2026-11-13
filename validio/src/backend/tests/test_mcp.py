@@ -17,7 +17,7 @@ FIVE = {"search_products", "request_supply", "get_request", "confirm_order", "ge
 
 
 def holder_for(ctx):
-    return Holder.from_seed(lambda: tools.nonce(ctx).nonce, ctx.db_path, ctx.keys_dir)
+    return Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
 
 
 @pytest.mark.asyncio
