@@ -6,9 +6,11 @@
 permit(principal is Agent, action == Action::"PlaceOrder", resource is Product)
 when {
   context.categoryAllowed && !context.salesBlock && context.cutoffOk
-  && context.quantityAttested && !context.dietUnchecked && !context.driftFlag
-  && (!context.isSubstitute || context.onValioList)
+  && context.quantityAttested && context.quantityCovers && context.deliveryInTime
+  && !context.dietUnchecked && !context.driftFlag
+  && (!context.isSubstitute || (context.onValioList && context.substitutesAllowed))
   && (!context.isSplit || context.splitExtraBp <= context.splitMaxExtraBp)
+  && (!(context.isSplit && context.isSubstitute) || context.splitSubstitutesAllowed)
   && context.totalCents <= context.autoLimitCents
 };
 

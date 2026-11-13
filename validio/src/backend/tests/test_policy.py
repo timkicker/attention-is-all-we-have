@@ -50,6 +50,8 @@ def scene2(mandate, **kw):
         "quantity_grade": "attested",
         "cutoff_ok": True,
         "category": "10400",
+        "quantity_covers": True,
+        "delivery_in_time": True,
     }
     args.update(kw)
     return build_context(mandate, **args)
@@ -266,8 +268,16 @@ def graded(catalog, valio, mandate, pid, quantity, **kw):
     monday = date(2026, 11, 16)
     q = valio.price([pid], monday, CallBudget(40))[pid]
     a = valio.availability([pid], monday, CallBudget(40))[pid]
+    if "change" in kw:
+        a = kw.pop("change")(a)
+    kw.setdefault("sales_qty", quantity)
+    kw.setdefault("deliver_by", monday)
     ctx = context_for(mandate, catalog.get(pid), a, total_cents=quantity * q.price_cents, now=NOW, **kw)
     return decide(ctx, product_id=pid)
+
+
+def _line(a, **kw):
+    return replace(a, lines=[replace(a.lines[0], **kw), *a.lines[1:]])
 
 
 def test_graded_scene2_464306_allowed(catalog, valio, mandate):
@@ -328,4 +338,101 @@ def test_line_diet_replaces_the_pass_diet(catalog, valio, mandate):
 def test_default_line_diet_is_the_pass_diet(catalog, valio, mandate):
     d = graded(catalog, valio, mandate, "469648", 10)
     assert d.context["dietUnchecked"] is True
+    assert d.outcome is Outcome.ESCALATE
+
+
+# The final gate checks the amount and the date itself (review H1) and the limits the kitchen signed (H2).
+
+
+def test_not_enough_stock_never_orders_alone(mandate):
+    d = decide(scene2(mandate, quantity_covers=False), product_id="464306")
+    assert d.outcome is Outcome.ESCALATE
+    assert "Valio does not confirm enough stock" in d.sentence
+
+
+def test_late_delivery_never_orders_alone(mandate):
+    d = decide(scene2(mandate, delivery_in_time=False), product_id="464306")
+    assert d.outcome is Outcome.ESCALATE
+    assert "after the deadline" in d.sentence
+
+
+def test_context_fails_closed_without_amount_and_date(mandate):
+    args = {"total_cents": 101000, "diet_grades": {"FREE_FROM_LACTOSE": "consistent"},
+            "quantity_grade": "attested", "cutoff_ok": True, "category": "10400"}
+    ctx = build_context(mandate, **args)
+    assert ctx.quantity_covers is False and ctx.delivery_in_time is False
+    assert decide(ctx, product_id="464306").outcome is Outcome.ESCALATE
+
+
+def test_pass_without_substitutes_escalates_listed_substitute(mandate):
+    ctx = scene2(replace(mandate, substitutes="none"), is_substitute=True, on_valio_list=True)
+    assert ctx.substitutes_allowed is False
+    d = decide(ctx, product_id="469648")
+    assert d.outcome is Outcome.ESCALATE
+    assert "the Spend Pass allows no substitutes" in d.sentence
+
+
+def test_unknown_substitutes_value_fails_closed(mandate):
+    assert scene2(replace(mandate, substitutes="anything")).substitutes_allowed is False
+    assert scene2(replace(mandate, substitutes=None)).substitutes_allowed is False
+    assert scene2(mandate).substitutes_allowed is True
+
+
+def test_split_with_listed_substitute_needs_the_pass_permission(mandate):
+    no_split = replace(mandate, split_allow_listed=False)
+    ctx = scene2(no_split, total_cents=77249, split_base_cents=75400, is_substitute=True, on_valio_list=True,
+                 category="10600")
+    assert ctx.split_substitutes_allowed is False
+    d = decide(ctx, product_id="469648")
+    assert d.outcome is Outcome.ESCALATE
+    assert "the Spend Pass does not allow substitutes in a split" in d.sentence
+    # control: the same split with the permission orders alone
+    ok = scene2(mandate, total_cents=77249, split_base_cents=75400, is_substitute=True, on_valio_list=True,
+                category="10600")
+    assert decide(ok, product_id="469648").outcome is Outcome.ALLOW
+
+
+def test_deadline_is_the_earlier_of_pass_and_request(mandate):
+    from datetime import date
+
+    from validio.policy.mandate import effective_deadline
+
+    assert mandate.deliver_by == "2026-11-16"
+    assert effective_deadline(mandate, date(2026, 12, 24)) == date(2026, 11, 16)
+    assert effective_deadline(mandate, date(2026, 11, 15)) == date(2026, 11, 15)
+    assert effective_deadline(mandate, None) == date(2026, 11, 16)
+    assert effective_deadline(replace(mandate, deliver_by=None), None) is None
+    assert effective_deadline(replace(mandate, deliver_by="soon"), date(2026, 11, 15)) == date.min
+
+
+def test_graded_zero_stock_not_allowed(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "464306", 1000, change=lambda a: _line(a, amount=0.0))
+    assert d.context["quantityCovers"] is False
+    assert d.outcome is Outcome.ESCALATE
+
+
+def test_graded_short_stock_not_allowed(catalog, valio, mandate):
+    # 463380 has 698 ST in Stock: 699 is one too many
+    assert graded(catalog, valio, mandate, "463380", 698, required_claims=()).context["quantityCovers"] is True
+    d = graded(catalog, valio, mandate, "463380", 699, required_claims=())
+    assert d.context["quantityCovers"] is False
+    assert d.outcome is not Outcome.ALLOW
+
+
+def test_graded_late_delivery_not_allowed(catalog, valio, mandate):
+    from datetime import date
+
+    late = lambda a: _line(a, available=date(2026, 11, 30))  # noqa: E731
+    d = graded(catalog, valio, mandate, "464306", 1000, change=late)
+    assert d.context["deliveryInTime"] is False
+    assert d.outcome is Outcome.ESCALATE
+    # a later date in the request does not move the signed deadline of 16 Nov
+    d = graded(catalog, valio, mandate, "464306", 1000, change=late, deliver_by=date(2026, 12, 24))
+    assert d.context["deliveryInTime"] is False
+    assert d.outcome is Outcome.ESCALATE
+
+
+def test_graded_without_amount_fails_closed(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "464306", 1000, sales_qty=None)
+    assert d.context["quantityCovers"] is False
     assert d.outcome is Outcome.ESCALATE

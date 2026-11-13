@@ -158,7 +158,7 @@ _WORST = {Outcome.ALLOW: 0, Outcome.ESCALATE: 1, Outcome.DENY: 2}
 
 
 def decide_split(plan: SplitPlan, mandate: Mandate, now: datetime, policy: Policy | None = None,
-                 required_claims: Iterable[str] | None = None) -> Decision:
+                 required_claims: Iterable[str] | None = None, deliver_by: date | None = None) -> Decision:
     """Hard Lines for a complete split: Cedar judges every part with the split's total, the worst
     outcome wins. A split that falls short or refused a part always waits for a person and is not
     sent here. `required_claims` is the line's own diet, None means the Spend Pass diet."""
@@ -168,7 +168,8 @@ def decide_split(plan: SplitPlan, mandate: Mandate, now: datetime, policy: Polic
     for part in plan.parts:
         ctx = context_for(mandate, part.product, part.availability, total_cents=plan.total_cents, now=now,
                           is_substitute=part.on_valio_list, on_valio_list=part.on_valio_list,
-                          split_base_cents=plan.base_cents, required_claims=required_claims)
+                          split_base_cents=plan.base_cents, required_claims=required_claims,
+                          sales_qty=part.sales_qty, deliver_by=deliver_by)
         d = decide(ctx, part.product.id, policy=policy)
         if worst is None or _WORST[d.outcome] > _WORST[worst.outcome]:
             worst = d

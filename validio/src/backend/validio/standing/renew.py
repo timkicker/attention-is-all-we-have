@@ -8,7 +8,7 @@ claims (mozzarella lactose free, pancakes gluten free and vegan, parmesan none).
 
 from collections.abc import Callable
 from dataclasses import replace
-from datetime import datetime
+from datetime import date, datetime
 
 from ..audit.sentences import eur
 from ..catalog.store import Catalog
@@ -53,7 +53,8 @@ def fetch(so: StandingOrder, cat: Catalog, valio: ValioClient, now: datetime, st
 
 
 def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[str, Quote],
-          avail: dict[str, Availability], mandate: Mandate, now: datetime, split_fill: SplitFill) -> RenewedLine:
+          avail: dict[str, Availability], mandate: Mandate, now: datetime, split_fill: SplitFill,
+          delivery: date | None = None) -> RenewedLine:
     pid, usual = ln.product_id, ln.sales_qty
     p, q, a = cat.get(pid), quotes.get(pid), avail.get(pid)
     unit = unit_word(a)
@@ -67,7 +68,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
 
     if drift:
         d = decide(context_for(mandate, p, a, total_cents=total, now=now, is_renewal=True, drift_flag=True,
-                                required_claims=ln.diet), pid)
+                               required_claims=ln.diet, sales_qty=usual, deliver_by=delivery), pid)
         if d.outcome is Outcome.DENY:
             return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.BLOCKED,
                            sentence=d.sentence, decision=d)
@@ -89,7 +90,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
             return replace(base, this_week_qty=got, total_cents=plan.total_cents, split=plan,
                            sentence=f"{head} of {usual} {unit} can come. {why}. Order {got} now?",
                            accept_label=f"Order {got} now")
-        d = decide_split(plan, mandate, now, required_claims=ln.diet)
+        d = decide_split(plan, mandate, now, required_claims=ln.diet, deliver_by=delivery)
         if d.outcome is Outcome.ALLOW:
             extra = plan.total_cents - plan.base_cents
             added = " plus ".join(f"{x.sales_qty} of {x.product.id}" for x in plan.parts if x.on_valio_list)
@@ -104,7 +105,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
                        accept_label=None if result is LineResult.BLOCKED else "Order the split")
 
     d = decide(context_for(mandate, p, a, total_cents=total, now=now, is_renewal=True,
-                                required_claims=ln.diet), pid)
+                           required_claims=ln.diet, sales_qty=usual, deliver_by=delivery), pid)
     if d.outcome is Outcome.ALLOW:
         return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.RENEWED,
                        sentence="Same as usual.", decision=d)
@@ -117,7 +118,7 @@ def renew(so: StandingOrder, flags: list[DriftFlag], cat: Catalog, quotes: dict[
           avail: dict[str, Availability], mandate: Mandate, now: datetime, split_fill: SplitFill = plan_split) -> Renewal:
     delivery = next_renewals(so.weekday, now, 1)[0]
     lines = [_line(ln, [f for f in flags if f.product_id == ln.product_id], cat, quotes, avail, mandate, now,
-                   split_fill) for ln in so.lines]
+                   split_fill, delivery) for ln in so.lines]
     return Renewal(so.id, now, delivery, lines, so.simulated)
 
 
