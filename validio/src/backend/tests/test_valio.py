@@ -197,3 +197,17 @@ def test_fetch_data_refuses_other_hosts(tmp_path, monkeypatch):
     monkeypatch.setattr("sys.argv", ["fetch_data.py", "--out", str(tmp_path)])
     with pytest.raises(ValueError, match="only https://junction26.valioaimo.fi"):
         mod.main()
+
+
+def test_replay_refuses_recordings_that_disagree(tmp_path):
+    d = tmp_path / "price" / MON.isoformat()
+    d.mkdir(parents=True)
+    row = {"productId": "464306", "error": False, "catalogPrice": {"value": 1.01}}
+    for i, value in enumerate((1.01, 1.50)):
+        resp = {"timeNow": "2026-11-14T10:00:00+0200", "products": [{**row, "catalogPrice": {"value": value}},
+                                                                  {**row, "productId": f"9{i}"}]}
+        (d / f"{i}.json").write_text(json.dumps({"response": resp}))
+    client = ValioClient("https://junction26.valioaimo.fi", "", "replay", tmp_path)
+    with pytest.raises(ReplayMiss, match="recordings disagree"):
+        client.price(["464306"], MON, CallBudget(40))
+    assert client.price(["90"], MON, CallBudget(40))["90"].price_cents == 101  # control: no conflict

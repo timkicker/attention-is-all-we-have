@@ -118,8 +118,8 @@ def present(mandate: str, disclose: set[str] | frozenset[str], agent: JWK, aud: 
 class NonceStore:
     """Single-use nonces from /agent/v1/nonce. A nonce is good once and only for `ttl`."""
 
-    def __init__(self, ttl: timedelta = timedelta(minutes=5)):
-        self.ttl = ttl
+    def __init__(self, ttl: timedelta = timedelta(minutes=5), max_open: int = 10000):
+        self.ttl, self.max_open = ttl, max_open
         self._issued: dict[str, datetime] = {}
         self._lock = threading.Lock()
 
@@ -127,6 +127,8 @@ class NonceStore:
         nonce = secrets.token_urlsafe(24)
         with self._lock:
             self._issued = {n: t for n, t in self._issued.items() if now - t <= self.ttl}
+            if len(self._issued) >= self.max_open:
+                raise MandateError("too many open nonces")
             self._issued[nonce] = now
         return nonce
 

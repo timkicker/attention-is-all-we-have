@@ -4,7 +4,7 @@
 set -uo pipefail
 root="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
 . "$(dirname "$0")/_files.sh"
-pattern='junct_[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|AIza[0-9A-Za-z_-]{30,}|"d" *: *"[A-Za-z0-9_-]{40,}"'
+pattern='junct_[A-Za-z0-9_-]{20,}|nvapi-[A-Za-z0-9_-]{20,}|(^|[^A-Za-z0-9])a[ks]-[A-Za-z0-9]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|AIza[0-9A-Za-z_-]{30,}|"d" *: *"[A-Za-z0-9_-]{40,}"'
 hits=0
 while IFS= read -r f; do
   [ -f "$f" ] || continue

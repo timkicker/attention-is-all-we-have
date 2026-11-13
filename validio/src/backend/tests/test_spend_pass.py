@@ -225,3 +225,13 @@ def test_key_file_round_trip(tmp_path):
     k2 = load_or_create_key(path)
     assert k1.thumbprint() == k2.thumbprint()
     assert oct(path.stat().st_mode & 0o777) == "0o600"
+
+
+def test_nonce_store_is_capped():
+    nonces = NonceStore(max_open=3)
+    for _ in range(3):
+        nonces.issue(NOW)
+    with pytest.raises(MandateError, match="^too many open nonces$"):
+        nonces.issue(NOW)
+    # expired nonces make room again
+    assert nonces.issue(NOW + timedelta(minutes=6))
