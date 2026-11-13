@@ -35,10 +35,13 @@ export interface SupplierText {
   /** True when the team planted this line for the demo. */
   planted?: boolean;
   /** What the reader made of it. It never changes a decision. */
-  reader?: {
-    flags: { code: "addresses_agents" | "gives_instruction" | "mentions_claim"; text: string }[];
-    summary: string;
-  };
+  reader?: Reader;
+}
+
+/** What a model read in a supplier text. Shown, never used for a decision. */
+export interface Reader {
+  flags: { code: "addresses_agents" | "gives_instruction" | "mentions_claim"; text: string }[];
+  summary: string;
 }
 
 export interface Product {
@@ -190,9 +193,7 @@ export interface InboxItem {
   totalCents?: number;
 }
 
-// The API also answers "blocked" for an order the rules refused at confirm_order; the pages do not
-// show such an order yet, so it is left out here until they do.
-export type OrderState = "waiting" | "approved" | "placed" | "rejected";
+export type OrderState = "waiting" | "approved" | "placed" | "rejected" | "blocked";
 
 export interface OrderLine {
   productId: string;

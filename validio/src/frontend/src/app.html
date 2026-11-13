@@ -1,8 +1,16 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // Dark by default; light when the system asks for it or ?theme=light.
+      (function () {
+        var q = new URLSearchParams(location.search).get("theme");
+        var light = q ? q === "light" : matchMedia("(prefers-color-scheme: light)").matches;
+        if (light) document.documentElement.dataset.theme = "light";
+      })();
+    </script>
     <title>Validio</title>
     %sveltekit.head%
   </head>

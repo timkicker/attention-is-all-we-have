@@ -2,35 +2,75 @@
 @import "../vendor/arlen-ui-kit/src/lib/theme-light.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
+/* Validio runs on the kit's Arlen Dark and its own light theme. The accent
+   slot stays monochrome as Arlen ships it. Validio's one colour is a steel
+   blue for selection only. Nothing yellow, amber or ochre. */
+:root {
+  color-scheme: dark;
+  --v-select: #7f9fc4;
+  --ring: var(--v-select);
+  --font-size-base: 15px;
+
+  /* The kit sidebar reads these, as Arlen mail sets them. */
+  --sidebar: var(--color-bg-shell);
+  --sidebar-foreground: var(--color-fg-shell);
+  --sidebar-primary: var(--color-accent);
+  --sidebar-primary-foreground: var(--color-accent-foreground);
+  --sidebar-accent: color-mix(in srgb, var(--color-fg-shell) 10%, transparent);
+  --sidebar-accent-foreground: var(--color-fg-shell);
+  --sidebar-border: color-mix(in srgb, var(--color-fg-shell) 10%, transparent);
+  --sidebar-ring: var(--v-select);
+}
+:root:root[data-theme="light"] {
+  color-scheme: light;
+  --v-select: #3d6590;
+  --ring: var(--v-select);
+}
+
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
 html,
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg-app);
+  color: var(--color-fg-primary);
   font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  font-feature-settings: "cv11", "ss01";
 }
 
 .num {
   font-variant-numeric: tabular-nums;
 }
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-feature-settings: normal;
+}
+/* Success and error as text, mixed toward the foreground as the kit's own
+   Badge does it, so both clear 4.5:1 in both themes. */
+.t-ok {
+  color: color-mix(in srgb, var(--color-success) 76%, var(--foreground));
+}
+.t-bad {
+  color: var(--destructive-on-tint);
+}
+.t-quiet {
+  color: var(--color-fg-secondary);
+}
 
-/* The small "N facts" and "Details" disclosure trigger. */
-.facts-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  width: fit-content;
-  height: var(--height-control-compact, 26px);
-  margin-inline-start: -0.5rem;
-  padding-inline: 0.5rem;
-  border-radius: var(--radius-button);
-  font-size: var(--text-xs);
-  color: color-mix(in srgb, var(--foreground) 70%, transparent);
-}
-.facts-toggle:hover {
-  background: color-mix(in srgb, var(--foreground) 6%, transparent);
-  color: var(--foreground);
-}
-.facts-toggle:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 1px;
+/* On the phone the top bar carries the way back; the page header's own door
+   would say it twice. */
+@media (max-width: 760px) {
+  .page-back {
+    display: none !important;
+  }
 }
