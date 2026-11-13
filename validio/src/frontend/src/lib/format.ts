@@ -14,6 +14,10 @@ export const day = (iso: string): string =>
 export const time = (iso: string): string =>
   new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
 
+/** Hours and minutes, for lists; seconds only where order matters (ledger, steps). */
+export const hm = (iso: string): string =>
+  new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
+
 export const dayTime = (iso: string): string =>
   new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
 
@@ -186,4 +190,18 @@ export function requestTitle(r: {
     if (o) return `${amount(Number(m[1]), m[2])} of ${nameWord(o.name)}`;
   }
   return prose(r.text);
+}
+
+/** A principal id in words: "agent:buyer-1" is "Buyer agent 1", "kitchen:chef"
+ *  is "Chef", "validio" is "Validio". The raw id stays for an (i). */
+export function holderWord(id: string): string {
+  const cap = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
+  const [kind, name] = id.includes(":") ? id.split(":", 2) : ["", id];
+  if (kind === "agent") {
+    const m = /^([a-z]+)-?(\d+)?$/i.exec(name);
+    if (m) return `${cap(m[1])} agent${m[2] ? ` ${m[2]}` : ""}`;
+    return "Agent";
+  }
+  if (name === "presenter") return "Demo";
+  return cap(name.replaceAll("-", " "));
 }

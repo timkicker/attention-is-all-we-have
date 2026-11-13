@@ -5,13 +5,14 @@
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
-  import { Check, Circle } from "@lucide/svelte";
+  import { Check } from "@lucide/svelte";
   import { ApiError, api } from "$lib/api/client";
   import type { Order, RankedOption } from "$lib/api/types";
   import { bump, setChrome } from "$lib/chrome.svelte";
-  import { VERDICT, amount, day, look, money, nameWord, sentences, time } from "$lib/format";
+  import { VERDICT, amount, day, hm, look, money, nameWord, sentences, time } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import CodeField from "$lib/components/CodeField.svelte";
+  import Frame from "$lib/components/Frame.svelte";
   import State from "$lib/components/State.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
 
@@ -28,7 +29,8 @@
 
   $effect(() => {
     const rid = order.data?.requestId;
-    setChrome("Approve", rid ? { href: `/requests/${rid}`, label: `the request` } : { href: "/", label: "Inbox" });
+    const placed = !!done || (order.data && order.data.state !== "waiting");
+    setChrome(placed ? "Ordered" : "Approve", rid ? { href: `/requests/${rid}`, label: "Request" } : { href: "/", label: "Inbox" });
   });
 
   // The press that waits for the code, if the owner has not typed it yet.
@@ -52,6 +54,22 @@
       return `Order ${amount(l.quantity, l.unit)} of ${nameWord(l.name)} for ${money(o.totalCents)}?`;
     }
     return `Order these ${o.lines.length} lines for ${money(o.totalCents)}?`;
+  }
+
+  // One reason line: what speaks for the proposal, and when it comes.
+  const reason = $derived.by(() => {
+    const o = shown;
+    if (!o || o.lines.length !== 1) return "";
+    const l = o.lines[0];
+    const opt = (req.data?.lines ?? []).flatMap((x) => [...x.options, ...(x.substitutes ?? []), ...(x.beyondList ?? [])]).find((x) => x.productId === l.productId);
+    const why = sentences(opt?.sentence)[0] ?? "";
+    return [why, l.deliveryDate ? `Delivery ${day(l.deliveryDate)}.` : ""].filter(Boolean).join(" ");
+  });
+
+  function outcome(o: Order): string {
+    const word = o.state === "placed" ? "Ordered" : (STEP[o.state] ?? o.state);
+    const what = o.lines.length === 1 ? ` ${amount(o.lines[0].quantity, o.lines[0].unit)} of ${nameWord(o.lines[0].name)},` : "";
+    return `${word}${what} ${money(o.totalCents)}`;
   }
 
   function press(kind: "approve" | "reject") {
@@ -80,7 +98,9 @@
         status === 403
           ? "That code is not right."
           : status === 429
-            ? "Too many wrong codes for this order."
+            ? "Too many tries. Wait a few minutes, then try again."
+            : status === 409
+              ? `Cannot do that now: ${e instanceof Error ? e.message : "the order changed"}.`
             : e instanceof Error
               ? e.message
               : String(e);
@@ -90,7 +110,7 @@
   }
 
   const STEP: Record<string, string> = {
-    waiting: "Asked you",
+    waiting: "Waiting for you",
     approved: "Approved",
     placed: "Placed at Valio",
     rejected: "Rejected",
@@ -98,133 +118,77 @@
   };
 </script>
 
-<div class="approve">
-  {#if order.error && !shown}
-    <p class="t-quiet">Order {id}: {order.error}</p>
-  {:else if shown}
-    {#if shown.state === "waiting"}
-      <h2 id="question" data-testid="approve-question">{question(shown)}</h2>
-      <ul class="lines">
-        {#each shown.lines as l (l.productId)}
-          <li class="card">
-            <span class="top"><span class="name">{nameWord(l.name)}</span><span class="num price">{money(l.totalCents)}</span></span>
-            <span class="t-quiet meta">
-              <span class="mono">{l.productId}</span>{#if l.deliveryDate}<span>delivery {day(l.deliveryDate)}</span>{/if}{#if l.isSubstitute && !l.onValioList}<span>not on Valio's list</span>{/if}
-            </span>
-          </li>
-        {/each}
-      </ul>
-      {#if req.data?.question}
-        <p class="reason">{sentences(req.data.question)[0]}</p>
-      {/if}
-      {#if passed.length}
-        <Collapsible.Root>
-          <Collapsible.Trigger class="fold" id="fold-others">
-            <Collapsible.Chevron />
-            Why not the others ({passed.length})
-          </Collapsible.Trigger>
-          <Collapsible.Content>
-            <ul class="others">
-              {#each passed as o (o.productId)}
-                {@const v = look(VERDICT, o.verdict)}
-                <li>
-                  <span class="o-name">{nameWord(o.name)}</span>
-                  <State label={v.label} tone={v.tone} />
-                  <span class="o-why t-quiet">{sentences(o.sentence)[0] ?? ""}</span>
-                </li>
-              {/each}
-            </ul>
-          </Collapsible.Content>
-        </Collapsible.Root>
-      {/if}
-
-      {#if pending}
-        <div class="code">
-          <CodeField onready={() => decide(pending!)} {problem} action={pending === "approve" ? "Approve" : "Reject"} />
-        </div>
-      {:else if problem}
-        <p class="problem t-bad" id="approve-problem" role="alert">{problem}</p>
-      {/if}
-      <div class="buttons">
-        <Button variant="outline" size="lg" id="reject" data-testid="reject" disabled={busy} onclick={() => press("reject")}>Reject</Button>
-        <Button size="lg" id="approve" data-testid="approve" disabled={busy} onclick={() => press("approve")}>Approve</Button>
-      </div>
-    {:else}
-      <h2 id="outcome">
-        {shown.state === "placed" ? "Ordered" : STEP[shown.state] ?? shown.state}
-        {#if shown.lines.length === 1}{amount(shown.lines[0].quantity, shown.lines[0].unit)} of {nameWord(shown.lines[0].name)},{/if}
-        <span class="num">{money(shown.totalCents)}</span>
-      </h2>
-      <ol class="steps" id="order-steps" data-testid="order-steps">
-        {#each shown.history as h, i (i)}
-          <li>
-            {#if i === shown.history.length - 1}<Check size={14} strokeWidth={2} aria-hidden="true" />{:else}<Circle size={10} strokeWidth={2} aria-hidden="true" />{/if}
-            <span>{STEP[h.state] ?? h.state}</span>
-            <span class="t-quiet num">{time(h.at)}</span>
-          </li>
-        {/each}
-      </ol>
-      <Button variant="outline" href={shown.requestId ? `/requests/${shown.requestId}` : "/"}>Back to the request</Button>
+{#if order.error && !shown}
+  <Frame title="Approve" narrow><p class="t-quiet">Order {id}: {order.error}</p></Frame>
+{:else if shown && shown.state === "waiting"}
+  <Frame title={question(shown)} titleId="question" titleTestid="approve-question" narrow>
+    {#if reason}<p class="reason" id="approve-reason">{reason}</p>{/if}
+    {#if passed.length}
+      <Collapsible.Root>
+        <Collapsible.Trigger class="fold" id="fold-others">
+          <Collapsible.Chevron />
+          Why not the others ({passed.length})
+        </Collapsible.Trigger>
+        <Collapsible.Content>
+          <ul class="others">
+            {#each passed as o (o.productId)}
+              {@const v = look(VERDICT, o.verdict)}
+              <li>
+                <span class="o-name">{nameWord(o.name)}</span>
+                <State label={v.label} tone={v.tone} />
+                <span class="o-why t-quiet">{sentences(o.sentence)[0] ?? ""}</span>
+              </li>
+            {/each}
+          </ul>
+        </Collapsible.Content>
+      </Collapsible.Root>
     {/if}
-  {/if}
-</div>
+
+    {#if pending}
+      <CodeField onready={() => decide(pending!)} {problem} action={pending === "approve" ? "Approve" : "Reject"} />
+    {:else if problem}
+      <p class="problem t-bad" id="approve-problem" role="alert">{problem}</p>
+    {/if}
+    <div class="buttons">
+      <Button variant="outline" size="lg" id="reject" data-testid="reject" disabled={busy} onclick={() => press("reject")}>Reject</Button>
+      <Button size="lg" id="approve" data-testid="approve" disabled={busy} onclick={() => press("approve")}>Approve</Button>
+    </div>
+  </Frame>
+{:else if shown}
+  <Frame title={outcome(shown)} titleId="outcome" titleTestid="approve-question" narrow>
+    <p class="reason">
+      {shown.state === "placed" ? `Approved, order ${shown.id} placed at Valio ${hm(shown.history.at(-1)?.at ?? "")}.` : `Order ${shown.id}.`}
+      <a href="/ledger">See it in the ledger</a>
+    </p>
+    <Collapsible.Root>
+      <Collapsible.Trigger class="fold" id="fold-steps">
+        <Collapsible.Chevron />
+        Steps
+      </Collapsible.Trigger>
+      <Collapsible.Content forceMount>
+        {#snippet child({ props, open })}
+          <ol {...props} hidden={!open} class="steps" id="order-steps" data-testid="order-steps">
+            {#each shown.history as h, i (i)}
+              <li>
+                <span class="when num">{time(h.at)}</span>
+                <span class="mark" class:end={h.state === "rejected" || h.state === "blocked"} aria-hidden="true"><Check size={11} strokeWidth={3} /></span>
+                <span class="what">{STEP[h.state] ?? h.state}</span>
+              </li>
+            {/each}
+          </ol>
+        {/snippet}
+      </Collapsible.Content>
+    </Collapsible.Root>
+  </Frame>
+{/if}
 
 <style>
-  .approve {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    max-width: 26rem;
-    margin: 0 auto;
-    padding: 3rem 1.25rem;
-  }
-  h2 {
-    margin: 0;
-    font-size: var(--text-xl);
-    font-weight: 600;
-    line-height: 1.3;
-  }
-  .lines {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: var(--text-sm);
-  }
-  .card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.75rem 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-  }
-  .top {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  .name {
-    font-weight: 500;
-  }
-  .price {
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.1rem 0.75rem;
-    font-size: var(--text-xs);
-  }
   .reason {
     margin: 0;
     font-size: var(--text-sm);
     color: var(--color-fg-secondary);
   }
-  .approve :global(.fold) {
+  :global(.fold:is(#fold-others, #fold-steps)) {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -251,9 +215,6 @@
     grid-column: 1 / -1;
     font-size: var(--text-xs);
   }
-  .code {
-    margin-top: 0.25rem;
-  }
   .problem {
     margin: 0;
     font-size: var(--text-sm);
@@ -262,40 +223,68 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
-    margin-top: 0.75rem;
   }
+  .reason a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  /* The record: time in a quiet left column, a filled mark on a lifeline,
+     the step on the right. Every step shown has happened. */
   .steps {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
     margin: 0;
-    padding: 0;
+    padding: 0.5rem 0 0;
     list-style: none;
     font-size: var(--text-sm);
   }
   .steps li {
+    position: relative;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 5.5rem 1rem 1fr;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding-block: 0.45rem;
+  }
+  .steps li + li::before {
+    content: "";
+    position: absolute;
+    top: -0.45rem;
+    height: 0.9rem;
+    left: calc(5.5rem + 0.75rem + 0.5rem - 0.5px);
+    width: 1px;
+    background: var(--color-border);
+  }
+  .when {
+    font-size: var(--text-xs);
+    color: var(--color-fg-secondary);
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 1rem;
+    height: 1rem;
+    border-radius: var(--radius-full);
+    background: var(--color-fg-primary);
+    color: var(--color-bg-app);
+  }
+  .mark.end {
+    background: var(--color-fg-secondary);
   }
   @media (max-width: 760px) {
-    .approve {
-      padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom));
-    }
     /* The two answers stay under the thumb. */
     .buttons {
       position: fixed;
       inset-inline: 0;
       bottom: 0;
       z-index: 10;
-      margin: 0;
       padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
       border-top: 1px solid var(--color-border);
       background: var(--color-bg-app);
     }
     .buttons :global(button) {
-      min-height: 44px;
+      min-height: 2.75rem;
     }
   }
 </style>

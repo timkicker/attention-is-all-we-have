@@ -42,9 +42,7 @@ for (const theme of ["dark", "light"] as const) {
     await go("/requests/R-1");
     await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs");
     await shoot("request-milk");
-    await page.locator("#fold-options").click();
-    await page.locator("#option-464306 .open").click();
-    await page.locator("#option-463047").scrollIntoViewIfNeeded();
+    await page.locator("#fold-details").click();
     await shoot("request-milk-open");
 
     await stockOut(page);
@@ -75,7 +73,6 @@ for (const theme of ["dark", "light"] as const) {
 
     await go("/ledger");
     await expect(page.locator("#chain-status")).toContainText("Chain verified");
-    await page.locator("#entry-8 .line").click();
     await shoot("ledger");
     expect(problems, problems.join("\n")).toEqual([]);
   });

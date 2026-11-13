@@ -14,11 +14,15 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await expect(page.getByTestId("request-rule")).toContainText("auto-order");
   await expect(page.getByTestId("option-464306")).toContainText("1,010.00");
   await expect(page.getByTestId("pass-auto")).toContainText("1,200.00");
-  await expect(page.getByTestId("pass-approvers")).toContainText("hidden");
 
-  // The other options fold under the chosen one; the planted line shows at once when opened.
+  // Everything behind the one sentence sits in one fold; in it the first
+  // options show, "Show all" brings the rest.
+  await expect(page.getByTestId("option-464306")).toBeHidden();
+  await page.locator("#fold-details").click();
+  await expect(page.getByTestId("option-464306")).toBeVisible();
   await expect(page.getByTestId("option-462921")).toBeHidden();
   await page.locator("#fold-options").click();
+  await expect(page.getByTestId("option-462921")).toBeVisible();
   await expect(page.getByTestId("option-462921")).toContainText("2,194.00");
   await expect(page.getByTestId("option-462703")).toContainText("cooking fat mix");
   await expect(page.getByTestId("supplier-463047")).toContainText("Untrusted");

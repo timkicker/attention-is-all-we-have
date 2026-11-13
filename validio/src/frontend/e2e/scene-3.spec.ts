@@ -8,7 +8,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   await fresh(page);
   await stockOut(page);
   await page.goto("/");
-  await expect(page.getByTestId("stock-out")).toContainText("Simulated");
+  await expect(page.getByTestId("stock-out-note")).toContainText("Valio really has 11,603 bags");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
 
   await page.getByTestId("inbox-R-2").click();
