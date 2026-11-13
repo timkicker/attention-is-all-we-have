@@ -23,7 +23,7 @@ def holder_for(ctx):
 @pytest.mark.asyncio
 async def test_mcp_lists_five_tools(ctx):
     async with Client(server) as c:
-        assert {t.name for t in (await c.list_tools()).tools} == FIVE
+        assert {t.name for t in (await c.list_tools()).tools} == FIVE | {"renew_steady_order"}  # A2: scene 4
 
 
 @pytest.mark.asyncio

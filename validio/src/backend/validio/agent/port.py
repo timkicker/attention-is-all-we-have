@@ -7,7 +7,7 @@ from typing import Any, Self
 
 from mcp import Client
 
-from .tools import WRITE_TOOLS
+from .tools import PASS_TOOLS, WRITE_TOOLS
 
 
 def idempotency_key(name: str, args: dict[str, Any]) -> str:
@@ -34,8 +34,8 @@ class McpPort:
         sent = dict(args)
         if name in WRITE_TOOLS:
             sent["idempotencyKey"] = idempotency_key(name, args)
-            if self._spend_pass:
-                sent["spendPass"] = self._spend_pass()
+        if name in PASS_TOOLS and self._spend_pass:
+            sent["spendPass"] = self._spend_pass()
         r = await self._client.call_tool(name, sent)
         if r.is_error:
             text = " ".join(getattr(c, "text", "") for c in r.content)

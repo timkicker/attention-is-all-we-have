@@ -5,10 +5,13 @@ right shows the same request. Scene 3 needs the presenter's stock-out button fir
 when nothing answers on the port) it runs Validio's MCP server in process on a fresh seeded store under
 a temporary folder, and switches the simulated stock-out on itself for scene 3.
 
+Scene 4 renews the Steady Order S-1 through the tool renew_steady_order.
+
 The model is Gemini when GEMINI_API_KEY is set, otherwise the fake twin with the same tool calls."""
 
 import argparse
 import asyncio
+import logging
 import os
 import sqlite3
 import sys
@@ -73,6 +76,7 @@ async def main(scene: int, base: str, force_local: bool) -> None:
 
 
 if __name__ == "__main__":
+    logging.getLogger("httpx").setLevel(logging.WARNING)  # the pane shows Validio's answers, not HTTP lines
     ap = argparse.ArgumentParser()
     ap.add_argument("--scene", type=int, default=2, choices=sorted(SCENES))
     ap.add_argument("--base", default=BASE)

@@ -93,6 +93,26 @@ def _search(a, st: Style) -> list[str]:
         f"  {p['id']} {p.get('name', '')[:60]}" for p in items]
 
 
+def _steady(a: dict, st: Style) -> list[str]:
+    out = [f"steady order {a.get('id')} {a.get('name', '')} ({a.get('weekday')}), renewed {a.get('renewedAt')}"]
+    for ln in a.get("lines", []):
+        res = ln.get("result", "")
+        mark = st.ok(f"{res:<14}") if res in ("renewed", "split_renewed", "accepted") else st.bad(f"{res:<14}")
+        qty = ln.get("thisWeekQuantity", ln.get("usualQuantity"))
+        order = f"  order {ln['orderId']}" if ln.get("orderId") else ""
+        out.append(f"  {mark} {ln['productId']} {ln.get('name', '')[:40]:<40} {qty} {ln.get('unit')}  "
+                   f"{_eur(ln.get('totalCents'))}{order}")
+        out.append(st.dim(f"  {'':14} {ln.get('sentence', '')}"))
+        for f in ln.get("flags") or []:
+            if f.get("sentence") and f["sentence"] not in ln.get("sentence", ""):
+                out.append(st.dim(f"  {'':14} flag {f.get('kind')}: {f['sentence']}"))
+    waits = [ln for ln in a.get("lines", []) if ln.get("acceptLabel")]
+    if waits:
+        out.append("  waits for the chef: " + ", ".join(
+            f"{ln['productId']} ({ln['acceptLabel']})" for ln in waits))
+    return out
+
+
 def render(e: Event, st: Style) -> str:
     if e.kind == "task":
         return st.agent("kitchen") + f"  {e.data}\n"
@@ -107,6 +127,8 @@ def render(e: Event, st: Style) -> str:
         body = _request(a, st)
     elif e.name in ("confirm_order", "get_order"):
         body = _order(a, st)
+    elif e.name == "renew_steady_order":
+        body = _steady(a, st)
     elif e.name == "search_products":
         body = _search(a, st)
     else:

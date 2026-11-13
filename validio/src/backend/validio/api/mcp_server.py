@@ -93,3 +93,24 @@ def get_order(orderId: str) -> dict:
 def nonce_resource() -> str:
     """A fresh single-use nonce for the Spend Pass key binding."""
     return tools.nonce(get_ctx()).model_dump_json()
+
+
+# Lane A2, additive: scene 4 for the kitchen's agent. The renewal itself stays in lane D's route
+# POST /api/steady/{id}/renew, called over HTTP through the app in process (no socket, same code path
+# as the web app's button). The Spend Pass is checked first, so only the kitchen's agent can press it.
+@server.tool()
+async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
+    """Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, the rest
+    wait for the chef with the reason. A second renewal in the same week orders nothing twice."""
+    import httpx
+
+    from .app import app
+
+    _errors(get_ctx().verify)(spendPass)
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://validio") as c:
+        r = await c.post(f"/api/steady/{orderId}/renew")
+    if r.status_code != 200:
+        detail = r.json().get("detail", r.text) if r.headers.get("content-type", "").startswith("application/json") \
+            else r.text
+        raise ToolError(f"{r.status_code}: {detail}")
+    return r.json()

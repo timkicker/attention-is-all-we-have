@@ -22,7 +22,8 @@ SYSTEM = (
     "if its outcome is 'auto_order', call confirm_order with the request id and, for each line, the "
     "productId and salesQty of that line's 'chosen', then get_order. If the outcome is 'ask_human', "
     "Validio already holds the order for the owner: call get_order with the result's orderId and stop. "
-    "If the outcome is 'block', order nothing. Never invent prices or amounts, take them from Validio's "
+    "If the outcome is 'block', order nothing. If the task names a Steady Order, call renew_steady_order "
+    "with its id instead and report which lines were ordered and which wait for the chef. Never invent prices or amounts, take them from Validio's "
     "answer. End with one sentence on what happened.")
 
 
@@ -64,7 +65,7 @@ def outcome(result: dict) -> str | None:
 
 
 class FakeLLM:
-    """Deterministic twin for scenes 1 to 3, no key needed."""
+    """Deterministic twin for scenes 1 to 4, no key needed."""
 
     name = "fake model (no Gemini key)"
 
@@ -75,6 +76,8 @@ class FakeLLM:
     def step(self, history: list[dict[str, Any]]) -> Step:
         self.inputs.append(json.loads(json.dumps(history)))
         task = history[0]
+        if task.get("steadyOrder"):
+            return self._steady(task, history)
         req, order = _last(history, "request_supply"), _last(history, "confirm_order")
         if self.scene == 1 and not _results(history):
             return Step([ToolCall("search_products", {"text": task["search"], "claims": task["claims"],
@@ -105,6 +108,37 @@ class FakeLLM:
         if final is None:
             return Step([ToolCall("get_order", {"orderId": order["id"]})])
         return Step(text=f"Order {final.get('id')} is {final.get('state')}.")
+
+
+    @staticmethod
+    def _steady(task: dict, history: list[dict]) -> Step:
+        view = _last(history, "renew_steady_order")
+        if view is None:
+            return Step([ToolCall("renew_steady_order", {"orderId": task["steadyOrder"]})])
+        if "error" in view:
+            return Step(text=f"Validio did not renew {task['steadyOrder']}: {view['error']}")
+        done, waits = ordered(view), waiting(view)
+        parts = [f"{_and(done)} {'is' if len(done) == 1 else 'are'} ordered alone"] if done else []
+        if waits:
+            parts.append(f"{_and(waits)} wait{'s' if len(waits) == 1 else ''} for the chef")
+        return Step(text=f"Steady Order {view.get('id')} is renewed: {', '.join(parts) or 'nothing to do'}.")
+
+
+def ordered(view: dict) -> list[str]:
+    """Steady Order lines Validio ordered alone."""
+    return [ln["productId"] for ln in view.get("lines", [])
+            if ln.get("result") in ("renewed", "split_renewed") and ln.get("orderId")]
+
+
+def waiting(view: dict) -> list[str]:
+    """Steady Order lines that wait for the chef."""
+    done = set(ordered(view))
+    return [ln["productId"] for ln in view.get("lines", []) if ln["productId"] not in done
+            and ln.get("result") != "accepted"]
+
+
+def _and(ids: list[str]) -> str:
+    return ids[0] if len(ids) == 1 else f"{', '.join(ids[:-1])} and {ids[-1]}"
 
 
 class GeminiLLM:
