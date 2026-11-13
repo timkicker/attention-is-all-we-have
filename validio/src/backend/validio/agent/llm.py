@@ -12,12 +12,12 @@ from .tools import TOOLS
 
 SYSTEM = (
     "You are the purchasing agent of the kitchen hotel-espoo. You buy only through the Validio tools. "
-    "Call request_supply with the request lines and the delivery date. If the result's status is "
-    "'allowed', call confirm_order with the request id and the chosen product and amount of each line, "
-    "then get_order. If the status is 'ask', confirm the chosen option so the owner can approve it on "
-    "the phone, then get_order. If the status is 'blocked', order nothing. Never invent prices or "
-    "amounts, take them from Validio's answer. End with one sentence on what happened."
-)
+    "Call request_supply with the request lines and the delivery date. Read the result's decision: "
+    "if its outcome is 'auto_order', call confirm_order with the request id and, for each line, the "
+    "productId and salesQty of that line's 'chosen', then get_order. If the outcome is 'ask_human', "
+    "Validio already holds the order for the owner: call get_order with the result's orderId and stop. "
+    "If the outcome is 'block', order nothing. Never invent prices or amounts, take them from Validio's "
+    "answer. End with one sentence on what happened.")
 
 
 @dataclass
@@ -48,13 +48,13 @@ def _last(history: list[dict], tool: str) -> dict | None:
 
 
 def chosen(result: dict) -> list[dict]:
-    """The chosen product and amount of every line, as Validio named it."""
-    out = []
-    for line in result.get("lines", []):
-        c = line.get("chosen")
-        if c:
-            out.append({k: c[k] for k in ("productId", "salesQty", "isSubstitute", "onValioList") if k in c})
-    return out
+    """The chosen product and amount of every line, as Validio named it. confirm_order takes only these two."""
+    return [{"productId": c["productId"], "salesQty": c["salesQty"]}
+            for line in result.get("lines", []) if (c := line.get("chosen"))]
+
+
+def outcome(result: dict) -> str | None:
+    return (result.get("decision") or {}).get("outcome")
 
 
 class FakeLLM:
@@ -75,20 +75,29 @@ class FakeLLM:
                                                       "limit": 5})])
         if req is None:
             return Step([ToolCall("request_supply", {"lines": task["lines"], "deliverBy": task["deliverBy"]})])
-        status = req.get("status")
+        rid = req.get("requestId") or req.get("id")
+        out = outcome(req)
         if self.scene == 1:
-            return Step(text=f"Validio {'allows' if status == 'allowed' else 'says ' + str(status)} "
-                             f"request {req.get('requestId')}, checked {req.get('liveChecked', {}).get('ids')} "
-                             f"products live.")
-        if status == "blocked" or "error" in req:
-            return Step(text=f"Validio blocked the request, nothing ordered: {req.get('error', '')}".strip())
+            live = (req.get("liveChecked") or {}).get("ids")
+            what = {"auto_order": "may order", "ask_human": "asks a person about",
+                    "block": "blocks"}.get(out, "answered")
+            tail = " alone" if out == "auto_order" else ""
+            return Step(text=f"Validio {what} request {rid}{tail} ({out}), checked {live} products live.")
+        if "error" in req or out not in ("auto_order", "ask_human"):
+            why = req.get("error") or (req.get("decision") or {}).get("sentence", "")
+            return Step(text=f"Validio blocked request {rid}, nothing ordered. {why}".strip())
+        if out == "ask_human":
+            if _last(history, "get_order") is None and req.get("orderId"):
+                return Step([ToolCall("get_order", {"orderId": req["orderId"]})])
+            o = _last(history, "get_order") or {}
+            return Step(text=f"Order {o.get('id', req.get('orderId'))} waits for the owner's approval on the phone.")
         if order is None:
-            return Step([ToolCall("confirm_order", {"requestId": req["requestId"], "choice": chosen(req)})])
-        if _last(history, "get_order") is None and "id" in order:
+            return Step([ToolCall("confirm_order", {"requestId": rid, "choice": chosen(req)})])
+        if "error" in order:
+            return Step(text=f"Validio refused the order: {order['error']}")
+        final = _last(history, "get_order")
+        if final is None:
             return Step([ToolCall("get_order", {"orderId": order["id"]})])
-        final = _last(history, "get_order") or order
-        if order.get("state") == "waiting":
-            return Step(text=f"Order {order['id']} waits for the owner's approval on the phone.")
         return Step(text=f"Order {final.get('id')} is {final.get('state')}.")
 
 

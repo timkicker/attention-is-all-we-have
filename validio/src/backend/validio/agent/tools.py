@@ -58,10 +58,17 @@ WRITE_TOOLS = {"request_supply", "confirm_order"}
 SUPPLIER_TEXT = re.compile(r"untrusted|description|marketing|ingredient|planted|supplier", re.IGNORECASE)
 
 
+def untrusted_record(obj: Any) -> bool:
+    """A Fact Grade record of supplier text: {"field": "description", "value": ..., "grade": "untrusted"}."""
+    return isinstance(obj, dict) and ("untrusted" in (obj.get("grade"), obj.get("level"))
+                                      or SUPPLIER_TEXT.search(str(obj.get("field") or "")) is not None)
+
+
 def redact(obj: Any) -> Any:
-    """Drop every field whose name says it holds supplier text, at any depth."""
+    """Drop every field whose name says it holds supplier text and every record graded untrusted,
+    at any depth."""
     if isinstance(obj, dict):
-        return {k: redact(v) for k, v in obj.items() if not SUPPLIER_TEXT.search(k)}
+        return {k: redact(v) for k, v in obj.items() if not SUPPLIER_TEXT.search(k) and not untrusted_record(v)}
     if isinstance(obj, list):
-        return [redact(v) for v in obj]
+        return [redact(v) for v in obj if not untrusted_record(v)]
     return obj

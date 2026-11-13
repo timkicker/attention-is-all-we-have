@@ -8,7 +8,7 @@ from typing import Any
 
 from .llm import LLM
 from .port import McpPort
-from .tools import SUPPLIER_TEXT, redact
+from .tools import SUPPLIER_TEXT, redact, untrusted_record
 
 DELIVER_BY = "2026-11-16"
 
@@ -51,6 +51,8 @@ class Transcript:
 
 
 def _assert_clean(obj: Any) -> None:
+    if untrusted_record(obj):
+        raise AssertionError(f"supplier text record {obj.get('field')!r} would reach the model")
     if isinstance(obj, dict):
         for k, v in obj.items():
             if SUPPLIER_TEXT.search(k):

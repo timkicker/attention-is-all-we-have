@@ -6,7 +6,7 @@ import sys
 from typing import Any
 
 from .buyer import Event
-from .tools import SUPPLIER_TEXT
+from .tools import SUPPLIER_TEXT, untrusted_record
 
 
 def _eur(cents: int | None) -> str:
@@ -28,6 +28,8 @@ class Style:
 
 
 def _withheld(obj: Any) -> int:
+    if untrusted_record(obj):
+        return 1
     if isinstance(obj, dict):
         return sum(1 if SUPPLIER_TEXT.search(k) and v else _withheld(v) for k, v in obj.items())
     if isinstance(obj, list):
@@ -39,37 +41,42 @@ def _args(args: dict) -> str:
     return ", ".join(f"{k}={json.dumps(v, ensure_ascii=False)}" for k, v in args.items())
 
 
+def _opt(o: dict, st: Style, indent: str = "  ") -> list[str]:
+    good = o.get("verdict") in ("chosen", "ranked")
+    mark = st.ok(f"{o.get('verdict', ''):<15}") if good else st.bad(f"{o.get('verdict', ''):<15}")
+    amount = f"{o.get('quantity')} {o.get('unit')}  {_eur(o.get('totalCents'))}" if o.get("totalCents") else ""
+    return [f"{indent}{mark} {o['productId']} {o.get('name', '')[:42]:<42} {amount}",
+            st.dim(f"{indent}{'':15}  {o.get('sentence', '')}")]
+
+
 def _request(a: dict, st: Style) -> list[str]:
     lc = a.get("liveChecked") or {}
-    head = f"request {a.get('requestId')}: status {a.get('status')}, "
-    out = [head + f"checked {lc.get('ids')} products live in {lc.get('calls')} calls"]
+    rid = a.get("requestId") or a.get("id")
+    out = [f"request {rid}: {a.get('status')}, checked {lc.get('ids')} products live in {lc.get('calls')} calls"]
+    for m in a.get("simulated") or []:
+        out.append(st.dim(f"  simulated: {m.get('sentence')}"))
     for i, line in enumerate(a.get("lines", []), 1):
-        need = line.get("need", {})
-        what = need.get("text") or f"{need.get('quantity')} {need.get('unit')} of {need.get('productId')}"
-        out.append(f"  line {i}: {what}")
-        ranked = line.get("ranked", [])
-        ok = [r for r in ranked if r.get("accepted")]
-        no = [r for r in ranked if not r.get("accepted")]
-        for r in ok[:3]:
-            out.append(f"  {st.ok('ok')} {r['productId']} {r.get('name', '')[:44]:<44} "
-                       f"{r.get('salesQty')} {r.get('unit')}  {_eur(r.get('totalCents'))}")
-            out.append(st.dim(f"       {'. '.join((r.get('why') or [])[:2])}"))
-        for r in no[:3]:
-            out.append(f"  {st.bad('no')} {r['productId']} {r.get('name', '')[:44]:<44} "
-                       f"{'; '.join(r.get('why') or [])}")
-        rest = len(ok[3:]) + len(no[3:])
-        if rest:
-            out.append(st.dim(f"     and {rest} more options"))
-        sub = line.get("substitutes")
-        if sub:
-            out.append("  substitutes, Valio's list first:")
-            for o in sub.get("listed", []) + sub.get("outside", [])[:3]:
-                out.append(f"    {o['verdict']:<22} {o['productId']} {o['sentence']}")
-            out.append(f"    {sub.get('sentence', '')}")
-        d = line.get("decision") or {}
-        if d:
-            rules = ", ".join(d.get("ruleIds") or [])
-            out.append(f"  decision: {d.get('outcome')} ({rules}) {d.get('sentence', '')}")
+        out.append(f"  line {i}: {line.get('text', '')}")
+        opts = line.get("options", [])
+        for o in opts[:5]:
+            out += _opt(o, st, "    ")
+        if len(opts) > 5:
+            out.append(st.dim(f"    and {len(opts) - 5} more options"))
+        if line.get("substitutes"):
+            out.append("    Valio's substitute list:")
+            for o in line["substitutes"]:
+                out += _opt(o, st, "      ")
+        if line.get("beyondList"):
+            out.append("    beyond Valio's list:")
+            for o in line["beyondList"][:3]:
+                out += _opt(o, st, "      ")
+        if line.get("swapSentence"):
+            out.append(f"    {line['swapSentence']}")
+    d = a.get("decision") or {}
+    if d:
+        out.append(f"  decision: {d.get('outcome')} ({', '.join(d.get('ruleIds') or [])}) {d.get('sentence', '')}")
+    if a.get("question"):
+        out.append(f"  question to the owner: {a['question']}")
     return out
 
 
@@ -77,14 +84,13 @@ def _order(a: dict, st: Style) -> list[str]:
     out = [f"order {a.get('id')}: {a.get('state')}, {_eur(a.get('totalCents'))}"]
     for ln in a.get("lines", []):
         out.append(f"  {ln.get('quantity')} {ln.get('unit')} of {ln.get('productId')} {ln.get('name', '')[:46]}")
-    if (a.get("decision") or {}).get("sentence"):
-        out.append(f"  {a['decision']['sentence']}")
     return out
 
 
-def _search(a: dict, st: Style) -> list[str]:
-    return [f"{len(a.get('products', []))} products from the catalog, no live call"] + [
-        f"  {p['id']} {p.get('name', '')[:60]}" for p in a.get("products", [])]
+def _search(a, st: Style) -> list[str]:
+    items = a if isinstance(a, list) else a.get("products", [])
+    return [f"{len(items)} products from the catalog, no live call"] + [
+        f"  {p['id']} {p.get('name', '')[:60]}" for p in items]
 
 
 def render(e: Event, st: Style) -> str:
@@ -95,7 +101,7 @@ def render(e: Event, st: Style) -> str:
     if e.kind == "final":
         return "\n" + st.agent("agent") + f"  {e.data}\n"
     a = e.data
-    if "error" in a:
+    if isinstance(a, dict) and "error" in a:
         body = [st.bad(f"error: {a['error']}")]
     elif e.name in ("request_supply", "get_request"):
         body = _request(a, st)
