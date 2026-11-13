@@ -179,7 +179,11 @@ class Run:
         check(summary["id"] == "S-1", f"scene 4: {summary}")
         before = self.get("/api/steady/S-1")
         check(before["simulatedHistory"] is True, "scene 4: history not labelled simulated")
-        got = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/renew")["lines"]}
+        chef = {"X-Approve-Code": self.code}  # renew and accept place orders: the approve code, like approve
+        if self.code:
+            r = self.http.post("/api/steady/S-1/renew")
+            check(r.status_code == 403, f"scene 4: renew without the code answered {r.status_code}")
+        got = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/renew", headers=chef)["lines"]}
         milk, parm, pan, mozz = got["464306"], got["463968"], got["471376"], got["466375"]
         check((milk["result"], milk["thisWeekQuantity"], milk["totalCents"]) == ("renewed", 300, 30300),
               f"scene 4: milk {milk['result']} {milk.get('thisWeekQuantity')} {milk.get('totalCents')}")
@@ -189,7 +193,10 @@ class Run:
               f"scene 4: pancakes {pan['result']} {pan['sentence']}")
         check(mozz["result"] == "flagged" and ("per_guest_up", 26) in [(f["kind"], f.get("pct")) for f in mozz["flags"]],
               f"scene 4: mozzarella {mozz['result']} {mozz['flags']}")
-        acc = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/lines/471376/accept")["lines"]}
+        if self.code:
+            r = self.http.post("/api/steady/S-1/lines/471376/accept")
+            check(r.status_code == 403, f"scene 4: accept without the code answered {r.status_code}")
+        acc = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/lines/471376/accept", headers=chef)["lines"]}
         check(acc["471376"]["result"] == "accepted", f"scene 4: pancakes after accept {acc['471376']['result']}")
         return "milk renewed alone, parmesan split 177 for 772.49 EUR (2.5 % more), pancakes waited and the chef " \
                "ordered 27, mozzarella flagged 26 % more per guest"
