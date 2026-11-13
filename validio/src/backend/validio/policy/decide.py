@@ -8,6 +8,7 @@ and the app refuses to start.
 import json
 import os
 from dataclasses import dataclass, fields
+from datetime import datetime
 from enum import StrEnum
 from functools import cache
 from math import ceil
@@ -120,6 +121,45 @@ def build_context(
         split_max_extra_bp=mandate.split_max_extra_bp,
         category_allowed=any(category.startswith(c) for c in mandate.categories),
         sales_block=sales_block,
+        is_renewal=is_renewal,
+        drift_flag=drift_flag,
+    )
+
+
+def context_for(
+    mandate: Mandate,
+    product: Any,
+    availability: Any,
+    *,
+    total_cents: int,
+    now: datetime,
+    is_substitute: bool = False,
+    on_valio_list: bool = False,
+    split_base_cents: int | None = None,
+    is_renewal: bool = False,
+    drift_flag: bool = False,
+) -> PolicyContext:
+    """The Cedar context for one product line, from Fact Grades and Valio's availability answer.
+
+    `total_cents` must be recomputed from Valio's price, never taken from the agent."""
+    from validio.trust.claims import claim_check
+    from validio.trust.levels import TrustLevel, quantity_fact
+
+    q = quantity_fact(availability)
+    deliverable = availability is not None and availability.deliverable
+    closing = availability.closing_time if availability is not None else None
+    return build_context(
+        mandate,
+        total_cents=total_cents,
+        diet_grades={d: claim_check(product, d)[0] for d in mandate.diet or ()},
+        # "not deliverable" is an attested fact too, but nothing is there to order
+        quantity_grade=q.level if deliverable else TrustLevel.MISSING,
+        cutoff_ok=closing is not None and now < closing,
+        category=product.category,
+        is_substitute=is_substitute,
+        on_valio_list=on_valio_list,
+        split_base_cents=split_base_cents,
+        sales_block=bool(availability is not None and availability.sales_block),
         is_renewal=is_renewal,
         drift_flag=drift_flag,
     )
