@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke e2e-live snapshots
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke e2e-live a11y snapshots
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -86,3 +86,10 @@ demo-smoke:
 # data-testid a check needs makes that check a fixme (E2E_STRICT=1 makes it fail).
 e2e-live:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c e2e-live/demo.config.ts
+
+# Accessibility over every route at 1280 and 390 px, light and dark: axe-core WCAG 2.2 AA (contrast
+# included), visible focus, 44 px targets on the phone, keyboard-only approve, renew and accept.
+# Port A11Y_PORT (8420). Prints the findings per page; fails when there are any.
+a11y:
+	cd src/frontend && VITE_API=live npm run build && \
+	{ npx playwright test -c a11y/a11y.config.ts; s=$$?; node a11y/summary.mjs ../../artifacts/a11y/results; exit $$s; }
