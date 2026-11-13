@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web snapshots
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check demo-web demo-smoke snapshots
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -53,7 +53,7 @@ agent:
 
 # The demo on 127.0.0.1:8410 from replayed Valio answers: web app built, store seeded.
 demo:
-	cd src/frontend && npm run build
+	cd src/frontend && VITE_API=live npm run build
 	$(MAKE) seed
 	cd $(BACKEND) && VALIO_MODE=replay uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
 
@@ -75,3 +75,8 @@ demo-web:
 # `npm run check` then types them against types.ts.
 snapshots:
 	$(UV) python -W ignore ../../scripts/snapshot_api.py
+
+# The public-deploy shape in a browser: one FastAPI process serves the built app and the API (no Vite),
+# the real agent places scenes 2 and 3, the owner approves on the phone view. Port SMOKE_PORT (8416).
+demo-smoke:
+	cd src/frontend && VITE_API=live npm run build && npx playwright test -c playwright.live.config.ts
