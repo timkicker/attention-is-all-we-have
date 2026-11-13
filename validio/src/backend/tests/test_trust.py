@@ -215,3 +215,52 @@ def test_same_unit_needs_no_conversion(catalog, valio):
 
     _, a = live(valio, "463380")  # 698 ST, sold in ST
     assert stock_in_sales_units(catalog.get("463380"), a) == 698.0
+
+
+# Supplier wording cannot cancel a gluten cereal (review M4). These run without Valio's data.
+
+
+def _gf(text, may=frozenset()):
+    from validio.catalog.model import Product
+
+    return Product(
+        id="T-1", name_en="test bread", name_fi=None, category="10600", vendor="x", sales_unit="ST",
+        base_unit="ST", units={"ST": 1.0}, base_volume_l=None, base_weight_kg=0.5,
+        claims=frozenset({"FREE_FROM_GLUTEN"}), contains=frozenset(), may_contain=frozenset(may),
+        free_from=frozenset(), has_allergen_data=True, lacs_g=None, key_ingredients_en=text, marketing_en=None,
+        planted_en=None, substitutes=(), reliability=None, carbon_kg_per_kg=None, labels=frozenset(),
+        temperature=None, deleted=False)
+
+
+@pytest.mark.parametrize("text", [
+    "Contains gluten-free oats and WHEAT FLOUR",
+    "Not gluten-free: WHEAT FLOUR",
+    "glutenfree WHEAT",
+    "gluten-free flour mixture [WHEAT flour, sugar]",
+    "gluten free WHEAT flour",
+    "not gluten-free wheat starch",
+    "gluten-free oats, BARLEY",
+    "gluten free RYE",
+])
+def test_gluten_free_wording_cannot_cancel_a_cereal(text):
+    lv, notes = claim_check(_gf(text), "FREE_FROM_GLUTEN")
+    assert lv == T.CONTRADICTED, notes
+
+
+@pytest.mark.parametrize("text", [
+    "Water, gluten-free wheat starch, corn starch",
+    "GLUTEN FREE WHEAT STRACH, water",
+    "rapeseed oil, gluten free BARLEY malt extract, salt",
+    "syrup, GLUTEN FREE MALT EXTRACT (BARLEY), yeast",
+    "rice flour, gluten-free oat flour, water",
+])
+def test_known_gluten_free_ingredients_stay_consistent(text):
+    lv, notes = claim_check(_gf(text), "FREE_FROM_GLUTEN")
+    assert lv == T.CONSISTENT, notes
+
+
+def test_may_contain_gluten_contradicts_gluten_free():
+    lv, notes = claim_check(_gf("rice flour, water", may={"AW"}), "FREE_FROM_GLUTEN")
+    assert lv == T.CONTRADICTED
+    assert notes == ["may contain gluten cereals"]
+    assert claim_check(_gf("rice flour, water"), "FREE_FROM_GLUTEN")[0] == T.CONSISTENT  # control
