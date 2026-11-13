@@ -241,3 +241,71 @@ def test_good_policy_starts_the_app(monkeypatch):
 
 def test_policy_file_lives_in_the_package():
     assert POLICY_FILE == Path(__file__).resolve().parents[1] / "validio" / "policy" / "policies.cedar"
+
+
+# Wired to Fact Grades: the real catalog and the recorded answers of Valio's test API.
+
+
+@pytest.fixture(scope="module")
+def valio():
+    from validio.config import load_settings
+    from validio.valio.client import ValioClient
+
+    s = load_settings()
+    if not any(s.valio_cache.glob("price/*/*.json")):
+        pytest.skip(f"needs_data: no recorded Valio answers in {s.valio_cache}, run make record")
+    return ValioClient(s.valio_base_url, "", "replay", s.valio_cache)
+
+
+def graded(catalog, valio, mandate, pid, quantity, **kw):
+    from datetime import date
+
+    from validio.policy.decide import context_for
+    from validio.valio.budget import CallBudget
+
+    monday = date(2026, 11, 16)
+    q = valio.price([pid], monday, CallBudget(40))[pid]
+    a = valio.availability([pid], monday, CallBudget(40))[pid]
+    ctx = context_for(mandate, catalog.get(pid), a, total_cents=quantity * q.price_cents, now=NOW, **kw)
+    return decide(ctx, product_id=pid)
+
+
+def test_graded_scene2_464306_allowed(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "464306", 1000)
+    assert d.context["totalCents"] == 101000
+    assert d.outcome is Outcome.ALLOW
+    assert d.rule_ids == ["auto-order"]
+
+
+def test_graded_462921_blocked_by_hard_cap(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "462921", 200)  # 200 KI of 5 l
+    assert d.context["totalCents"] == 219400
+    assert d.outcome is Outcome.DENY
+    assert d.rule_ids == ["never-over-hard-cap"]
+
+
+def test_graded_465346_contradicted_blocks_under_budget(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "465346", 1)
+    assert d.context["totalCents"] == 1499
+    assert d.context["dietContradicted"] is True
+    assert d.outcome is Outcome.DENY
+    assert "never-break-diet" in d.rule_ids
+
+
+def test_graded_466375_unchecked_escalates(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "466375", 200)
+    assert d.context["dietUnchecked"] is True
+    assert d.outcome is Outcome.ESCALATE
+
+
+def test_graded_463038_terminal_escalates(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "463038", 50)
+    assert d.context["quantityAttested"] is False
+    assert d.context["cutoffOk"] is False
+    assert d.outcome is Outcome.ESCALATE
+
+
+def test_graded_not_deliverable_never_allowed(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "473986", 1)
+    assert d.context["quantityAttested"] is False
+    assert d.outcome is not Outcome.ALLOW
