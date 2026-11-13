@@ -138,3 +138,16 @@ def test_each_reset_gets_a_new_seed_token(tmp_path):
 
 def test_no_seed_token_before_a_reset(tmp_path):
     assert seed.seed_token(tmp_path / "missing.db") is None
+
+
+def test_real_stock_without_an_answer_says_has_stock():
+    from validio.valio.client import ReplayMiss
+
+    class NoAnswer:
+        def availability(self, *a):
+            raise ReplayMiss("no recording")
+
+    assert seed.real_stock(NoAnswer()) is None
+    assert seed.stockout_note(None) == seed.STOCKOUT_NOTE
+    assert seed.stockout_note((11603.0, "BAG")) == \
+        "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero."

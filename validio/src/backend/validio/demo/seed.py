@@ -35,6 +35,7 @@ KITCHEN = "hotel-espoo"
 SPEND_PASS_ID = "M-1"
 STOCKOUT_ID = "466375"
 STOCKOUT_NOTE = "Simulated stock-out: Valio really has stock, the demo button sets it to zero."
+UNIT_WORDS = {"BAG": "bags", "KI": "cartons", "ST": "packs"}
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
 SCHEMA = """
@@ -148,6 +149,33 @@ def set_stockout(path: Path | None, on: bool) -> None:
         con.commit()
     finally:
         con.close()
+
+
+def real_stock(valio, day: date | None = None) -> tuple[float, str] | None:
+    """What Valio answers for 466375 on the Spend Pass's delivery day, before the demo switch sets it to
+    zero: (quantity, sales unit). None when Valio (or the recording) has no answer."""
+    import httpx
+
+    from ..valio.budget import CallBudget
+    from ..valio.client import ReplayMiss
+
+    day = day or date.fromisoformat(DEMO_CLAIMS["deliverBy"])
+    try:
+        a = valio.availability([STOCKOUT_ID], day, CallBudget()).get(STOCKOUT_ID)
+    except (ReplayMiss, httpx.HTTPError):  # no recording or a failed call: the note says "has stock"
+        return None
+    if a is None or not a.lines or a.amount is None:
+        return None
+    return a.amount, a.lines[0].sales_unit
+
+
+def stockout_note(stock: tuple[float, str] | None, lead: str = "Simulated stock-out:") -> str:
+    if stock is None:
+        return STOCKOUT_NOTE if lead == "Simulated stock-out:" else \
+            f"{lead} Valio really has it in stock, the demo button sets it to zero."
+    qty, unit = stock
+    n = f"{int(qty):,}" if float(qty).is_integer() else f"{qty:,}"
+    return f"{lead} Valio really has {n} {UNIT_WORDS.get(unit, unit.lower())}; the demo sets it to zero."
 
 
 def apply_stockout(avail: dict[str, Availability], on: bool) -> dict[str, Availability]:

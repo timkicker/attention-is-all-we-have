@@ -169,9 +169,20 @@ def ask_mozzarella(client, holder):
 def test_demo_controls_need_token(client):
     assert client.post("/api/demo/stock-out").status_code == 403
     assert client.post("/api/demo/reset", headers={"X-Demo-Token": "wrong"}).status_code == 403
-    assert client.get("/api/demo").json() == {"stockOut466375": False}
+    assert client.get("/api/demo").json() == {"stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
     r = client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
-    assert r.json() == {"stockOut466375": True}
+    assert r.json() == {"stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+
+
+def test_stockout_names_what_valio_really_has(client, holder, ctx):
+    # read from Valio's (replayed) availability for the pass's delivery day, never a fixed number
+    client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
+    (entry,) = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "simulation"]
+    assert entry["sentence"] == ("Simulated a stock-out of 466375. Valio really has 11,603 bags; "
+                                 "the demo sets it to zero.")
+    req = ask_mozzarella(client, holder)
+    assert req["simulated"][0]["sentence"] == ("Simulated stock-out: Valio really has 11,603 bags; "
+                                               "the demo sets it to zero.")
 
 
 def test_scene3_swap_waits_and_approve_needs_code(client, holder):
@@ -214,7 +225,7 @@ def test_reset_starts_over(client, holder, ctx):
     ask_milk(client, holder)
     client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
     r = client.post("/api/demo/reset", headers={"X-Demo-Token": TOKEN})
-    assert r.json() == {"stockOut466375": False}
+    assert r.json() == {"stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
     assert client.get("/api/inbox").json() == []
     assert client.get("/api/ledger").json()["chain"] == {"ok": True, "count": 0}
     assert ask_milk(client, holder)["id"] == "R-1"

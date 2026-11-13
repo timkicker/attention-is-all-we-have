@@ -3,7 +3,7 @@ call these, so there is one code path. Writes take the Spend Pass presentation a
 
 from ..catalog.labels import LABELS
 from ..catalog.model import Product
-from ..demo.seed import STOCKOUT_ID, STOCKOUT_NOTE
+from ..demo.seed import STOCKOUT_ID, stockout_note
 from ..orders.supply import LineRequest
 from ..policy.mandate import AUDIENCE, MandateError
 from ..trust.claims import claim_check
@@ -59,7 +59,7 @@ def nonce(ctx: Ctx) -> NonceView:
 def _request_view(ctx: Ctx, req: dict) -> SupplyRequestView:
     view = SupplyRequestView.model_validate(req)
     if ctx.stockout() and any(ln.need.product_id == STOCKOUT_ID for ln in view.lines):
-        view.simulated = [SimulatedMark(what=f"stock-out of {STOCKOUT_ID}", sentence=STOCKOUT_NOTE)]
+        view.simulated = [SimulatedMark(what=f"stock-out of {STOCKOUT_ID}", sentence=stockout_note(ctx.real_stock()))]
     return view
 
 

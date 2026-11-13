@@ -276,8 +276,15 @@ class LedgerView(Model):
     chain: ChainStatus
 
 
+class RealStock(Model):
+    quantity: float
+    unit: str
+
+
 class DemoState(Model):
     stock_out_466375: bool = Field(alias="stockOut466375")
+    real_stock_466375: RealStock | None = Field(
+        None, alias="realStock466375", description="what Valio really has of 466375, read at request time")
 
 
 class NonceView(Model):
