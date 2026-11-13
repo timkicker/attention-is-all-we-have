@@ -29,6 +29,9 @@ class Fact:
 
 
 UNKNOWN_AMOUNT = 999999
+# Valio answers these on Stock products. They look like "not tracked", not like a count. See strict_placeholder_stock.
+PLACEHOLDER_AMOUNTS = frozenset({9999999999.0, 666666666.0})
+PLACEHOLDER_NOTE = "a placeholder, not a real count"
 AVAIL = "Valio availability API"
 PRICE = "Valio price API"
 MASTER = "Valio product data"
@@ -58,6 +61,13 @@ def quantity_fact(a: Availability | None, p: Product | None = None) -> Fact:
         return Fact("quantity", None, TrustLevel.UNKNOWN, AVAIL,
                     f"{a.logistic_model}: Valio reports {a.amount:g} {unit}, the goods sit at the supplier")
     note = f"{a.logistic_model} at Valio"
+    if a.amount in PLACEHOLDER_AMOUNTS:
+        from ..config import strict_placeholder_stock
+
+        said = f"Valio reports {a.amount:.0f}, {PLACEHOLDER_NOTE}"
+        if strict_placeholder_stock():
+            return Fact("quantity", None, TrustLevel.UNKNOWN, AVAIL, f"{said}; not treated as stock")
+        note = f"{said}; treated as in stock"
     if p is not None and unit != p.sales_unit:
         factor = unit_factor(p, unit)
         if factor is None:

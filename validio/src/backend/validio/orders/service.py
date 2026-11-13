@@ -8,6 +8,7 @@ approve  only from waiting. Asks Valio again and refuses if a price rose more th
 
 import hashlib
 import json
+import re
 import threading
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, fields
@@ -19,7 +20,7 @@ from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
-from ..trust.levels import Fact, price_fact, quantity_fact
+from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact
 from ..valio.budget import CallBudget
 from ..valio.models import Availability
 from .store import Store
@@ -289,5 +290,12 @@ class OrderService:
     def _log(self, o: dict, actor: str, kind: str, sentence: str, rule_ids: list[str]) -> None:
         m = o["mandate"]
         facts = [f for ln in o["lines"] for f in ln["facts"]]
+        if kind == "order":  # say so when the quantity rests on a placeholder, not a real count
+            for ln in o["lines"]:
+                for f in ln["facts"]:
+                    hit = re.match(r"Valio reports (\d+), (" + PLACEHOLDER_NOTE + r"; treated as in stock)",
+                                  f.get("note") or "")
+                    if f["field"] == "quantity" and hit:
+                        sentence += f" Valio reports {hit[1]} for {ln['productId']}, {hit[2]}."
         self.audit.append(at=self.clock(), actor=actor, kind=kind, sentence=sentence, facts=facts,
                           mandate_id=m["id"], disclosed=m["disclosed"], rule_ids=rule_ids, order_id=o["id"])
