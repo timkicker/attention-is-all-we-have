@@ -180,12 +180,14 @@ def test_code_cannot_be_guessed_across_order_ids(client, waiting):
     assert approve(client, waiting).status_code == 429
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G11: /api/steady/{id}/lines/{pid}/accept places a waiting or "
-                                       "flagged line without the approval code")
 def test_steady_accept_needs_the_code(client):
-    assert client.post("/api/steady/S-1/renew").status_code == 200
-    r = client.post("/api/steady/S-1/lines/471376/accept")
-    assert r.status_code == 403, r.text
+    """review-2 G11, fixed in 7681049: renew and accept place orders, so both need the code."""
+    assert client.post("/api/steady/S-1/renew").status_code == 403
+    assert client.post("/api/steady/S-1/renew", headers={"X-Approve-Code": CODE}).status_code == 200
+    assert client.post("/api/steady/S-1/lines/471376/accept").status_code == 403
+    assert client.post("/api/steady/S-1/lines/471376/accept", json={"code": "000000"}).status_code == 403
+    r = client.post("/api/steady/S-1/lines/471376/accept", headers={"X-Approve-Code": CODE})
+    assert r.status_code == 200, r.text
 
 
 # The re-check from Valio between the question and the approval
