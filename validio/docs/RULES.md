@@ -1,0 +1,43 @@
+# Hard Lines
+
+The rules that decide every order are in `src/backend/validio/policy/policies.cedar` and the context they read is typed in `schema.cedarschema` next to it. This page lists both. `tests/test_rules_doc.py` compares it with the Cedar files on every test run and fails when a rule id, its effect, its action or its inputs differ. It also fails when a context field is missing here.
+
+## Rules
+
+| Rule | Effect | Action | Decides | Inputs | Why the model cannot override it |
+|:---|:---|:---|:---|:---|:---|
+| `auto-order` | permit | `PlaceOrder` | the agent may order alone. Everything it needs must be attested, the diet kept, a substitute on Valio's list and allowed by the Spend Pass, a split inside its extra cost limit and the total inside the auto limit | `categoryAllowed` `salesBlock` `cutoffOk` `quantityAttested` `quantityCovers` `deliveryInTime` `dietUnchecked` `driftFlag` `isSubstitute` `onValioList` `substitutesAllowed` `isSplit` `splitExtraBp` `splitMaxExtraBp` `splitSubstitutesAllowed` `totalCents` `autoLimitCents` | every input is computed by Validio from Valio's answers and the signed Spend Pass. The total is recomputed from Valio's price, so a price the agent names changes nothing |
+| `ask-human` | permit | `Escalate` | when ordering alone is not allowed, a person may still be asked, as long as the category is in the Spend Pass, Valio has no sales block and the total is under the hard cap | `categoryAllowed` `salesBlock` `totalCents` `hardCapCents` | asking only puts the order in front of the owner. The order is placed after the owner taps approve and Validio has asked Valio again |
+| `never-break-diet` | forbid | every action | blocks ordering and asking when a diet rule of the request or Spend Pass is contradicted by Valio's own data | `dietContradicted` | the grade comes from the claim check over Valio's master data. Supplier text can only lower it and the reader's output never reaches it |
+| `never-over-hard-cap` | forbid | every action | blocks ordering and asking above the hard cap, even with approval | `totalCents` `hardCapCents` | the hard cap is a signed field of the Spend Pass and a forbid in Cedar always wins over a permit |
+
+Validio first asks Cedar about `PlaceOrder`. If that is allowed the outcome is "ordered alone". Otherwise it asks about `Escalate` and an allowed answer means "waiting for you". When neither is allowed the line is blocked and its sentence says why. With several lines in one order the strictest outcome counts for the whole order.
+
+The context of all four rules contains only whole numbers and yes or no values that Validio fills itself, so neither model output nor supplier text can be put into it. Every field is required by the schema, so a typo in a rule fails validation when the app starts and can never turn into a silent change. A Spend Pass that does not show a limit counts as a limit of zero and an undisclosed diet counts as unchecked, which means a pass that shows too little can never order alone.
+
+## Context fields
+
+Money is in whole cents. Percentages are in basis points, so 5 % is 500.
+
+| Field | Meaning | Filled from |
+|:---|:---|:---|
+| `totalCents` | the total of the order | Valio's net price times the amount, recomputed by Validio |
+| `autoLimitCents` | how much the agent may spend alone | Spend Pass, 0 when not shown |
+| `hardCapCents` | the most anyone may spend, approval included | Spend Pass, 0 when not shown |
+| `dietContradicted` | a required diet claim is disproved by another field | Fact Grade of the claim check |
+| `dietUnchecked` | a required diet claim is neither attested nor consistent | Fact Grade of the claim check, true when the Spend Pass hides the diet |
+| `quantityAttested` | Valio gives a real stock number | availability answer (999999 from a Terminal product does not count) |
+| `quantityCovers` | the attested stock covers the amount ordered | availability answer, converted to the sales unit |
+| `deliveryInTime` | the earliest delivery is on or before the deadline | availability answer and the earlier of the signed deadline and the request |
+| `cutoffOk` | Valio's order cut-off has not passed | availability answer and the demo clock |
+| `isSubstitute` | the line replaces the product that was asked for | Safe Swap |
+| `onValioList` | the substitute is on Valio's own substitute list | Valio's product file |
+| `substitutesAllowed` | the Spend Pass allows listed substitutes | Spend Pass |
+| `splitSubstitutesAllowed` | the Spend Pass allows listed substitutes inside a split | Spend Pass |
+| `isSplit` | the line is filled from more than one product | Split Fill |
+| `splitExtraBp` | how much more the split costs than the product asked for | Split Fill, rounded up |
+| `splitMaxExtraBp` | the extra cost the Spend Pass allows for a split | Spend Pass |
+| `categoryAllowed` | the product group is one the Spend Pass lists | product file and Spend Pass |
+| `salesBlock` | Valio blocks the product from sale | availability answer |
+| `isRenewal` | the line comes from a Steady Order | Steady Orders |
+| `driftFlag` | Drift Watch flagged the line before renewal | Drift Watch |
