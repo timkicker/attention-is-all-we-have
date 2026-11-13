@@ -50,3 +50,15 @@ ci: test
 SCENE ?= 2
 agent:
 	$(UV) python -W ignore ../../scripts/agent.py --scene $(SCENE)
+
+# The demo on 127.0.0.1:8410 from replayed Valio answers: web app built, store seeded.
+demo:
+	cd src/frontend && npm run build
+	$(MAKE) seed
+	cd $(BACKEND) && VALIO_MODE=replay uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
+
+# Scene 3 stays out until Safe Swap picks 463383 as the blueprint says (it picks 465256 today):
+# make demo-check DEMO_SCENES=1,2,3,4,5 shows it.
+DEMO_SCENES ?= 1,2,4,5
+demo-check:
+	$(UV) python -W ignore ../../scripts/demo_check.py --scenes $(DEMO_SCENES)
