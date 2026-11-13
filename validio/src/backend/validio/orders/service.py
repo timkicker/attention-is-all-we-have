@@ -127,7 +127,7 @@ class OrderService:
                 if short else None,
                 "isSubstitute": ln.is_substitute, "onValioList": ln.on_valio_list,
                 "facts": [fact_dict(qf), fact_dict(price_fact(q))],
-                "_product": p, "_avail": None if short else a,
+                "_product": p, "_avail": a,
             })
         return out
 
