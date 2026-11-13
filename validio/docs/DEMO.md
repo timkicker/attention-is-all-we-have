@@ -66,6 +66,12 @@ Click **Order 27 now**. The ledger gets the chef's order of 27 cartons.
 
 Click **Open Ledger**. Every step from the scenes above is one sentence with its facts. The entry for 463047 reads "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions." At the bottom it must say that the chain is verified with the number of entries. The approver list of the Spend Pass never shows up here.
 
+## Scripted recording
+
+`make video` records the five scenes without a person at the keyboard. It starts its own server on a free port with replayed Valio answers and a fresh store under `artifacts/video/store`. Headless Firefox films a 1920 by 1080 stage: the agent's terminal takes the left third and the web app the rest. For the approval the app shrinks to a 390 px phone frame. The clicks follow this page and the video script. Each shot is padded to its voice-over length from `scripts/video_shots.json` (15, 30, 30, 30 and 15 seconds). The result is `artifacts/video/validio-demo.webm` plus an mp4 when ffmpeg is installed, two minutes long. Nothing is uploaded.
+
+Elements are found by `data-testid` first and then by the element id the pages have now. The run prints what it could not find. A click the page cannot do yet, such as the approval without a code field, is done through the API and printed as a fallback. `VIDEO_STRICT=1` turns both into a failure.
+
 ## Gaps on main at 00:30
 
 These were true when this page was written and are the things to check before 10:00.
