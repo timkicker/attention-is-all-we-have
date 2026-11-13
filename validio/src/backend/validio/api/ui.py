@@ -1,11 +1,19 @@
-"""The web app's API under /api. Approve needs the 6 digit code when VALIDIO_APPROVE_CODE is set,
-the demo switches need VALIDIO_DEMO=1 and the X-Demo-Token header when VALIDIO_DEMO_TOKEN is set."""
+"""The web app's API under /api.
+
+Reads and writes: a caller on this machine needs nothing more; anyone else needs the kitchen token
+(VALIDIO_KITCHEN_TOKEN) as the X-Kitchen-Token header or the cookie POST /api/session sets, and finds the
+API closed while no token is configured.
+Approve and reject: the 6 digit code (VALIDIO_APPROVE_CODE) as X-Approve-Code or {"code"}. The order is
+looked up first, so an unknown id answers 404 whatever the code. Five wrong codes lock that order, and five
+from one client lock that client.
+Demo switches: VALIDIO_DEMO=1, plus X-Demo-Token when VALIDIO_DEMO_TOKEN is set.
+Without a code or a token, approve and the demo switches stay closed to anyone not on this machine."""
 
 import hmac
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, Header, HTTPException
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
 
 from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
@@ -15,33 +23,82 @@ from .schemas import (
     InboxItem,
     LedgerView,
     OrderView,
+    SessionIn,
     SpendPassView,
     SupplyRequestView,
 )
 from .state import MAX_CODE_TRIES, Ctx, get_ctx
 from .tools import get_order, get_request
 
-router = APIRouter(prefix="/api", tags=["web"])
 CtxDep = Annotated[Ctx, Depends(get_ctx)]
 HELSINKI = timezone(timedelta(hours=2))
+COOKIE = "validio_kitchen"
 
 
-def _code(ctx: Ctx, order_id: str, header: str | None, body: ApproveIn | None) -> None:
-    if not ctx.approve_code:
+def _same(given: str | None, secret: str) -> bool:
+    return hmac.compare_digest((given or "").encode(), secret.encode())
+
+
+def _host(request: Request) -> str | None:
+    return request.client.host if request.client else None
+
+
+def kitchen(request: Request, ctx: CtxDep) -> None:
+    """The gate in front of every /api route but health and session."""
+    if ctx.is_local(_host(request)):
         return
-    if ctx.code_tries.get(order_id, 0) >= MAX_CODE_TRIES:
-        raise HTTPException(429, "too many wrong codes for this order")
-    given = header or (body.code if body else None) or ""
-    if not hmac.compare_digest(given.encode(), ctx.approve_code.encode()):
-        ctx.code_tries[order_id] = ctx.code_tries.get(order_id, 0) + 1
+    if not ctx.kitchen_token:
+        raise HTTPException(403, "this server has no VALIDIO_KITCHEN_TOKEN, so the web API is closed to "
+                                 "callers that are not on this machine")
+    given = request.headers.get("x-kitchen-token") or request.cookies.get(COOKIE)
+    if not _same(given, ctx.kitchen_token):
+        raise HTTPException(401, "wrong or missing kitchen token")
+
+
+router = APIRouter(prefix="/api", tags=["web"], dependencies=[Depends(kitchen)])
+session_router = APIRouter(prefix="/api", tags=["web"])
+
+
+@session_router.post("/session", status_code=204)
+def session(ctx: CtxDep, request: Request, body: SessionIn) -> Response:
+    """Trade the kitchen token for a cookie, so the web app need not send the header itself."""
+    if not ctx.kitchen_token or not _same(body.token, ctx.kitchen_token):
+        raise HTTPException(401, "wrong kitchen token")
+    r = Response(status_code=204)
+    r.set_cookie(COOKIE, ctx.kitchen_token, httponly=True, samesite="strict",
+                 secure=request.url.scheme == "https", max_age=12 * 3600)
+    return r
+
+
+def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: ApproveIn | None) -> None:
+    """The approval code, for an order or a Steady Order button (`key`). Five wrong codes lock that key,
+    five from one client lock the client."""
+    if not ctx.approve_code:
+        if ctx.is_local(_host(request)):
+            return
+        raise HTTPException(403, "this server has no VALIDIO_APPROVE_CODE, so approval is closed")
+    keys = [("key", key), ("client", _host(request) or "?")]
+    if any(ctx.code_tries.get(k, 0) >= MAX_CODE_TRIES for k in keys):
+        raise HTTPException(429, "too many wrong codes, approval is locked")
+    if not _same(header or (body.code if body else None), ctx.approve_code):
+        for k in keys:
+            ctx.code_tries[k] = ctx.code_tries.get(k, 0) + 1
         raise HTTPException(403, "wrong or missing approval code")
 
 
-def _demo(ctx: Ctx, token: str | None) -> None:
+def _code(ctx: Ctx, request: Request, order_id: str, header: str | None, body: ApproveIn | None) -> None:
+    ctx.orders.get(order_id)  # 404 for an id that does not exist, before the code is looked at
+    check_code(ctx, request, order_id, header, body)
+
+
+def _demo(ctx: Ctx, request: Request, token: str | None) -> None:
     if not ctx.settings.demo:
         raise HTTPException(404, "demo controls are off")
-    if ctx.demo_token and not hmac.compare_digest((token or "").encode(), ctx.demo_token.encode()):
-        raise HTTPException(403, "wrong or missing demo token")
+    if ctx.demo_token:
+        if not _same(token, ctx.demo_token):
+            raise HTTPException(403, "wrong or missing demo token")
+    elif not ctx.is_local(_host(request)):
+        raise HTTPException(403, "this server has no VALIDIO_DEMO_TOKEN, so the demo switches are closed")
 
 
 @router.get("/inbox", response_model=list[InboxItem], response_model_exclude_none=True)
@@ -85,18 +142,19 @@ def order(ctx: CtxDep, order_id: str):
 
 
 @router.post("/orders/{order_id}/approve", response_model=OrderView, response_model_exclude_none=True)
-def approve(ctx: CtxDep, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+def approve(ctx: CtxDep, request: Request, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
             x_approve_code: Annotated[str | None, Header()] = None):
-    """Approve a waiting order. Validio asks Valio again and refuses if a price rose more than 2 %
-    or a line can no longer be delivered. A placed order cannot be approved twice."""
-    _code(ctx, order_id, x_approve_code, body)
+    """Approve a waiting order. Validio asks Valio again and refuses if a price rose more than 2 %, a
+    line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no
+    longer valid. A placed order cannot be approved twice."""
+    _code(ctx, request, order_id, x_approve_code, body)
     return OrderView.model_validate(ctx.orders.approve(order_id, approver="owner"))
 
 
 @router.post("/orders/{order_id}/reject", response_model=OrderView, response_model_exclude_none=True)
-def reject(ctx: CtxDep, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+def reject(ctx: CtxDep, request: Request, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
            x_approve_code: Annotated[str | None, Header()] = None):
-    _code(ctx, order_id, x_approve_code, body)
+    _code(ctx, request, order_id, x_approve_code, body)
     return OrderView.model_validate(ctx.orders.reject(order_id, approver="owner"))
 
 
@@ -122,17 +180,17 @@ def demo_state(ctx: CtxDep):
 
 
 @router.post("/demo/stock-out", response_model=DemoState, response_model_exclude_none=True)
-def stock_out(ctx: CtxDep, x_demo_token: Annotated[str | None, Header()] = None):
+def stock_out(ctx: CtxDep, request: Request, x_demo_token: Annotated[str | None, Header()] = None):
     """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock."""
-    _demo(ctx, x_demo_token)
+    _demo(ctx, request, x_demo_token)
     if not ctx.stockout():
         ctx.set_stockout(True)
     return _demo_state(ctx, True)
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)
-def reset(ctx: CtxDep, x_demo_token: Annotated[str | None, Header()] = None):
+def reset(ctx: CtxDep, request: Request, x_demo_token: Annotated[str | None, Header()] = None):
     """Back to the state `make demo` starts from: drops every table, seeds again."""
-    _demo(ctx, x_demo_token)
+    _demo(ctx, request, x_demo_token)
     ctx.reset()
     return _demo_state(ctx, ctx.stockout())

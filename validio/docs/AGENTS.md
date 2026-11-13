@@ -657,7 +657,7 @@ Over HTTP every refusal is a JSON object with one field `detail`. A 401 means th
 <!-- check: error 404 GET /agent/v1/orders/{order_id} -->
 ```json
 {
-  "detail": "O-99"
+  "detail": "no order O-99"
 }
 ```
 
@@ -667,7 +667,7 @@ Over MCP a refusal is a tool result with `isError` set. Its text starts with the
 
 ```
 Error executing tool confirm_order: 401 Spend Pass refused: no key binding
-Error executing tool get_order: 404 not found: O-99
+Error executing tool get_order: 404 not found: no order O-99
 ```
 
 ## Examples

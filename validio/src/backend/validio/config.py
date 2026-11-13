@@ -53,7 +53,7 @@ def load_settings(env_file: Path | None = DEFAULT_ENV) -> Settings:
         valio_max_ids=int(get("VALIO_MAX_IDS_PER_REQUEST", "40")),
         valio_customer=get("VALIO_CUSTOMER", "hotel-espoo"),
         now=datetime.fromisoformat(get("VALIDIO_NOW", "2026-11-14T10:00:00+02:00")),
-        demo=get("VALIDIO_DEMO", "1") == "1",
+        demo=get("VALIDIO_DEMO", "0") == "1",  # the demo switches are off unless asked for
         catalog_db=Path(get("VALIDIO_CATALOG_DB", str(DATA / "catalog.db"))),
         valio_cache=Path(get("VALIDIO_VALIO_CACHE", str(DATA / "cache" / "valio"))),
     )

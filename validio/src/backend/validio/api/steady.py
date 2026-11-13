@@ -21,7 +21,7 @@ from datetime import date
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Header, HTTPException
+from fastapi import APIRouter, Body, Header, HTTPException, Request
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
@@ -152,10 +152,13 @@ class Runtime:
             token = seed.seed_token(path)
         if self._live is None or (self._live.token, self._live.path) != (token, path):
             if self._live is not None:
-                self._live.store.close()
-            store, audit = Store(path), AuditLog(path)
+                self._live.service.closed = True  # a call that waited through a reset gets 503, not a dead store
+                self._live.store.close()  # the ledger shares this connection, so it closes too
+            store = Store(path)
+            audit = AuditLog(path, con=store.con, lock=store.lock)  # an order and its ledger entry commit together
             service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: self.settings.now,
-                                   adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)))
+                                   adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
+                                   lock=self.lock)  # one lock for every write and the demo reset
             self._live = _Live(token, path, store, audit, service)
         return self._live
 
@@ -187,12 +190,12 @@ def _save(path: Path, order_id: str, body: dict) -> None:
         con.close()
 
 
-def _chef(key: str, header: str | None, body) -> None:
+def _chef(request: Request, key: str, header: str | None, body) -> None:
     # the approve route's code check, imported late: api.state imports this module
     from .state import get_ctx
-    from .ui import _code
+    from .ui import check_code
 
-    _code(get_ctx(), key, header, body)
+    check_code(get_ctx(), request, key, header, body)
 
 
 def _refuse(path: Path, so_id: str, state: dict, view: SteadyOrderOut, idx: int, sentence: str,
@@ -312,9 +315,9 @@ def steady_order(order_id: str):
 
 
 @router.post("/{order_id}/renew", response_model=SteadyOrderOut, response_model_exclude_none=True)
-def steady_renew(order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
                  x_approve_code: Annotated[str | None, Header()] = None):
-    _chef(f"steady:{order_id}", x_approve_code, body)
+    _chef(request, f"steady:{order_id}", x_approve_code, body)
     with runtime.lock:
         live = runtime.live()
         so, h = _get_order(order_id)
@@ -355,9 +358,10 @@ def steady_renew(order_id: str, body: Annotated[ApproveIn | None, Body()] = None
 
 @router.post("/{order_id}/lines/{product_id}/accept", response_model=SteadyOrderOut,
              response_model_exclude_none=True)
-def steady_accept(order_id: str, product_id: str, body: Annotated[ApproveIn | None, Body()] = None,
+def steady_accept(request: Request, order_id: str, product_id: str,
+                  body: Annotated[ApproveIn | None, Body()] = None,
                   x_approve_code: Annotated[str | None, Header()] = None):
-    _chef(f"steady:{order_id}:{product_id}", x_approve_code, body)
+    _chef(request, f"steady:{order_id}:{product_id}", x_approve_code, body)
     with runtime.lock:
         live = runtime.live()
         so, _h = _get_order(order_id)

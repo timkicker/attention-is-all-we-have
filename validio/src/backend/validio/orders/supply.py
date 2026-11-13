@@ -5,6 +5,7 @@ Valio is asked only about those (and Safe Swap's few substitutes), every option 
 Best Pick ranks, Cedar decides per option. Nothing the agent says about price or trust is read.
 """
 
+import sqlite3
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
@@ -15,8 +16,20 @@ from ..matching.rank import rank
 from ..matching.substitute import SubOption, SubVerdict, safe_swap
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
-from ..valio.budget import CallBudget
-from .service import SEVERITY, LineIn, OrderError, OrderService, fact_dict, mandate_dict
+from ..valio.budget import CallBudget, CallBudgetExceeded
+from .service import (
+    SEVERITY,
+    IdempotencyConflict,
+    LineIn,
+    OrderError,
+    OrderService,
+    _hash,
+    fact_dict,
+    mandate_dict,
+)
+from .store import NotFound
+
+ACCEPTED = ("chosen", "ranked")  # the only verdicts an agent may confirm
 
 NEAR = {"FREE_FROM_LACTOSE": "LOW_LACTOSE"}
 
@@ -205,9 +218,14 @@ class SupplyService:
             raise RequestError("a request needs at least one line")
         if len(lines) > 10:
             raise RequestError("at most 10 lines per request")
-        with self.orders.lock:
+        body_hash = _hash({"lines": [(ln.text, ln.product_id, ln.quantity, ln.unit) for ln in lines],
+                           "deliverBy": deliver_by.isoformat() if deliver_by else None})
+        with self.orders.lock, self.store.tx():
+            self.orders.check_open()
             seen = self.store.idem_get(mandate.id, "request:" + idempotency_key)
             if seen:
+                if seen[0] != body_hash:
+                    raise IdempotencyConflict("this idempotency key was used for another request")
                 return self.get_request(seen[1])
             self.store.remember_pass(mandate.id, mandate_dict(mandate))
             budget = CallBudget(self.orders.max_ids)
@@ -218,53 +236,60 @@ class SupplyService:
                                           "spendPassId": mandate.id, "status": "working"})
             self._log(req, mandate, agent or mandate.holder, "request",
                       f"The agent asked for {req['text']}.", [], None)
-            built = [self._line(ln, mandate, deliver_by, budget, i + 1) for i, ln in enumerate(lines)]
-            req["lines"] = [b["line"] for b in built]
-            req["deliverBy"] = min(b["need"].deliver_by for b in built).isoformat()
-            proposals = [b["proposal"] for b in built if b["proposal"] is not None]
-            missing = [b["line"]["lineId"] for b in built if b["proposal"] is None]
-            for b in built:
-                if (p := b["proposal"]) is not None:
-                    b["line"]["chosen"] = {"productId": p.product_id, "salesQty": p.sales_qty,
-                                           "isSubstitute": p.is_substitute, "onValioList": p.on_valio_list}
-            for b in built:
-                for o in b["line"]["options"]:
-                    if (o.get("supplierText") or {}).get("planted"):
-                        self._log(req, mandate, "validio", "decision",
-                                  f"Ignored the description of {o['productId']}, which talks to AI agents. "
-                                  f"Descriptions are never used for decisions. {o['sentence']}", [], None)
-            if missing and not proposals:
-                req["decision"] = {"outcome": "block", "ruleIds": [],
-                                   "sentence": "No option keeps every rule and can be delivered, nothing was ordered."}
-                req["status"] = "blocked"
-            else:
-                # Cedar over the whole proposal, with totals Valio gives for the summed order
-                quoted = self.orders.quote(proposals, date.fromisoformat(req["deliverBy"]), budget=budget)
-                decision = self.orders._decide(mandate, quoted)
-                if missing:
-                    decision = {**decision, "outcome": max(decision["outcome"], "ask_human", key=SEVERITY.get),
-                                "sentence": decision["sentence"] + f" No safe option for {', '.join(missing)}."}
-                req["decision"] = decision
-                req["totalCents"] = sum(q["totalCents"] or 0 for q in quoted)
-                req["proposal"] = [{"productId": p.product_id, "salesQty": p.sales_qty,
-                                    "isSubstitute": p.is_substitute, "onValioList": p.on_valio_list}
-                                   for p in proposals]
-                if decision["outcome"] == "auto_order":
-                    req["status"] = "working"
-                    self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
-                elif decision["outcome"] == "ask_human":
-                    o = self.orders.submit(mandate=mandate, lines=proposals, deliver_by=date.fromisoformat(
-                        req["deliverBy"]), idempotency_key="request:" + req["id"], request_id=req["id"],
-                        actor=agent, budget=budget)
-                    req["orderId"] = o["id"]
-                    req["status"] = "waiting"
-                    req["question"] = self._question(built, o)
-                else:
+            try:
+                built = [self._line(ln, mandate, deliver_by, budget, i + 1) for i, ln in enumerate(lines)]
+                req["lines"] = [b["line"] for b in built]
+                req["deliverBy"] = min(b["need"].deliver_by for b in built).isoformat()
+                proposals = [b["proposal"] for b in built if b["proposal"] is not None]
+                missing = [b["line"]["lineId"] for b in built if b["proposal"] is None]
+                for b in built:
+                    if (p := b["proposal"]) is not None:
+                        b["line"]["chosen"] = {"productId": p.product_id, "salesQty": p.sales_qty,
+                                               "isSubstitute": p.is_substitute, "onValioList": p.on_valio_list}
+                for b in built:
+                    for o in b["line"]["options"]:
+                        if (o.get("supplierText") or {}).get("planted"):
+                            self._log(req, mandate, "validio", "decision",
+                                      f"Ignored the description of {o['productId']}, which talks to AI agents. "
+                                      f"Descriptions are never used for decisions. {o['sentence']}", [], None)
+                if missing and not proposals:
+                    req["decision"] = {"outcome": "block", "ruleIds": [],
+                                       "sentence": "No option keeps every rule and can be delivered, nothing was ordered."}
                     req["status"] = "blocked"
-                    self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
+                else:
+                    # Cedar over the whole proposal, with totals Valio gives for the summed order
+                    quoted = self.orders.quote(proposals, date.fromisoformat(req["deliverBy"]), budget=budget)
+                    decision = self.orders._decide(mandate, quoted)
+                    if missing:
+                        decision = {**decision, "outcome": max(decision["outcome"], "ask_human", key=SEVERITY.get),
+                                    "sentence": decision["sentence"] + f" No safe option for {', '.join(missing)}."}
+                    req["decision"] = decision
+                    req["totalCents"] = sum(q["totalCents"] or 0 for q in quoted)
+                    req["proposal"] = [{"productId": p.product_id, "salesQty": p.sales_qty,
+                                        "isSubstitute": p.is_substitute, "onValioList": p.on_valio_list}
+                                       for p in proposals]
+                    if decision["outcome"] == "auto_order":
+                        req["status"] = "working"
+                        self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
+                    elif decision["outcome"] == "ask_human":
+                        o = self.orders.submit(mandate=mandate, lines=proposals, deliver_by=date.fromisoformat(
+                            req["deliverBy"]), idempotency_key="request:" + req["id"], request_id=req["id"],
+                            actor=agent, budget=budget)
+                        req["orderId"] = o["id"]
+                        req["status"] = "waiting"
+                        req["question"] = self._question(built, o)
+                    else:
+                        req["status"] = "blocked"
+                        self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
+            except (RequestError, CallBudgetExceeded, OrderError) as e:
+                # refused before a decision: stored as blocked, with the reason in the ledger
+                req["lines"], req["status"] = [], "blocked"
+                req["decision"] = {"outcome": "block", "ruleIds": [],
+                                   "sentence": f"Refused the request: {str(e).strip(chr(39))}. Nothing was ordered."}
+                self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)
             req["liveChecked"] = {"calls": budget.calls, "ids": budget.ids_sent, "idsPerCall": budget.per_call}
             self.store.put_request(req)
-            self.store.idem_put(mandate.id, "request:" + idempotency_key, "", req["id"])
+            self.store.idem_put(mandate.id, "request:" + idempotency_key, body_hash, req["id"])
             return self.get_request(req["id"])
 
     def _question(self, built: list[dict], order: dict) -> str:
@@ -274,35 +299,52 @@ class SupplyService:
 
     def confirm_order(self, *, mandate: Mandate, request_id: str, choice: list[tuple[str, int]],
                       idempotency_key: str, agent: str | None = None) -> dict:
-        req = self.store.request(request_id)
-        if req is None:
-            raise KeyError(request_id)
-        if req["spendPassId"] != mandate.id:
-            raise OrderError("this request belongs to another Spend Pass")
-        if req.get("orderId"):
-            return self.orders.get(req["orderId"])
-        if req["status"] != "working":
-            raise OrderError(f"request {request_id} is {req['status']}, nothing to confirm")
-        known = {o["productId"]: o for ln in req["lines"]
-                 for o in ln["options"] + ln.get("substitutes", []) + ln.get("beyondList", [])}
-        lines = []
-        for pid, qty in choice:
-            if pid not in known:
-                raise OrderError(f"{pid} is not one of the options of {request_id}")
-            o = known[pid]
-            lines.append(LineIn(pid, int(qty), bool(o.get("isSubstitute")), bool(o.get("onValioList"))))
-        o = self.orders.submit(mandate=mandate, lines=lines, deliver_by=date.fromisoformat(req["deliverBy"]),
-                               idempotency_key=idempotency_key, request_id=request_id, actor=agent)
-        with self.orders.lock:
+        """One request gives at most one order: the whole call runs under the service lock, and the store
+        refuses a second order for the same request even from another process."""
+        with self.orders.lock, self.store.tx():
+            self.orders.check_open()
             req = self.store.request(request_id)
+            if req is None:
+                raise NotFound(f"no request {request_id}")
+            if req["spendPassId"] != mandate.id:
+                raise OrderError("this request belongs to another Spend Pass")
+            if req.get("orderId"):
+                return self.orders.get(req["orderId"])
+            if (done := self.store.order_for_request(request_id)) is not None:
+                return done
+            if req["status"] != "working":
+                raise OrderError(f"request {request_id} is {req['status']}, nothing to confirm")
+            allowed: dict[str, dict] = {}
+            refused: dict[str, str] = {}
+            for ln in req["lines"]:
+                for o in ln["options"] + ln.get("substitutes", []) + ln.get("beyondList", []):
+                    if o["verdict"] in ACCEPTED:
+                        allowed[o["productId"]] = o
+                    else:
+                        refused.setdefault(o["productId"], f"{o['verdict']} for this request: {o['sentence']}")
+            lines, seen = [], set()
+            for pid, qty in choice:
+                if pid in seen:
+                    raise OrderError(f"{pid} is in the choice twice, send one line with the whole amount")
+                seen.add(pid)
+                if pid not in allowed:
+                    raise OrderError(f"{pid} was {refused[pid]}" if pid in refused and pid not in allowed
+                                     else f"{pid} is not one of the options of {request_id}")
+                o = allowed[pid]
+                lines.append(LineIn(pid, int(qty), bool(o.get("isSubstitute")), bool(o.get("onValioList"))))
+            try:
+                o = self.orders.submit(mandate=mandate, lines=lines, deliver_by=date.fromisoformat(req["deliverBy"]),
+                                       idempotency_key=idempotency_key, request_id=request_id, actor=agent)
+            except sqlite3.IntegrityError:  # another process placed the order for this request first
+                return self.store.order_for_request(request_id)
             req["orderId"] = o["id"]
             self.store.put_request(req)
-        return o
+            return o
 
     def get_request(self, request_id: str) -> dict:
         req = self.store.request(request_id)
         if req is None:
-            raise KeyError(request_id)
+            raise NotFound(f"no request {request_id}")
         req["requestId"] = req["id"]
         if req.get("orderId"):
             o = self.orders.get(req["orderId"])

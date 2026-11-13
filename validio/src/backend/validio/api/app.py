@@ -1,11 +1,19 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
+from mcp.server.transport_security import TransportSecuritySettings
 
 from validio.api.steady import router as steady_router
 from validio.config import ROOT
-from validio.orders.service import ApproveRefused, IdempotencyConflict, OrderError, OrderStateError
+from validio.orders.service import (
+    ApproveRefused,
+    IdempotencyConflict,
+    OrderError,
+    OrderStateError,
+    ServiceClosed,
+)
+from validio.orders.store import NotFound
 from validio.orders.supply import RequestError
 from validio.policy.decide import load_policy, policy_file
 from validio.policy.mandate import MandateError
@@ -13,6 +21,7 @@ from validio.valio.budget import CallBudgetExceeded
 
 from . import agent_v1, ui
 from .mcp_server import server as mcp_server
+from .state import get_ctx
 
 SPA = ROOT / "src" / "frontend" / "build"
 
@@ -33,10 +42,25 @@ class McpMount:
 mcp_app = McpMount()
 
 
+LOCAL_HOSTS = ["127.0.0.1:*", "localhost:*", "[::1]:*"]
+LOCAL_ORIGINS = ["http://127.0.0.1:*", "http://localhost:*", "http://[::1]:*"]
+
+
+def mcp_security(hosts: list[str]) -> TransportSecuritySettings:
+    """DNS rebinding protection stays on; VALIDIO_MCP_HOSTS adds the public hostname (Modal)."""
+    return TransportSecuritySettings(
+        allowed_hosts=LOCAL_HOSTS + [x for h in hosts for x in (h, f"{h}:*")],
+        allowed_origins=LOCAL_ORIGINS + [f"https://{h}" for h in hosts])
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     load_policy(policy_file())  # a broken policy file stops the app, never a silent rule change
-    mcp_app.app = mcp_server.streamable_http_app(streamable_http_path="/", host="127.0.0.1")
+    ctx = get_ctx()
+    if missing := ctx.startup_problems():
+        raise RuntimeError(f"VALIDIO_PUBLIC=1 needs {', '.join(missing)}; refusing to start open")
+    mcp_app.app = mcp_server.streamable_http_app(streamable_http_path="/", host="127.0.0.1",
+                                                 transport_security=mcp_security(ctx.mcp_hosts))
     async with mcp_server.session_manager.run():
         yield
 
@@ -44,7 +68,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(title="Validio", version="0.1.0", lifespan=lifespan,
               description="Agent API under /agent/v1 (writes need `Authorization: SD-JWT <presentation>`), "
                           "web app API under /api, MCP at /mcp.")
-app.include_router(steady_router)
+app.include_router(steady_router, dependencies=[Depends(ui.kitchen)])
 
 
 @app.get("/api/health")
@@ -54,6 +78,7 @@ def health() -> dict[str, str]:
 
 app.include_router(agent_v1.router)
 app.include_router(ui.router)
+app.include_router(ui.session_router)
 app.mount("/mcp", mcp_app)
 
 
@@ -64,8 +89,9 @@ def _err(status: int):
     return handler
 
 
-for exc, status in ((MandateError, 401), (KeyError, 404), (OrderStateError, 409), (IdempotencyConflict, 409),
-                    (ApproveRefused, 409), (RequestError, 422), (OrderError, 422), (CallBudgetExceeded, 422)):
+for exc, status in ((MandateError, 401), (NotFound, 404), (OrderStateError, 409), (IdempotencyConflict, 409),
+                    (ApproveRefused, 409), (RequestError, 422), (OrderError, 422), (CallBudgetExceeded, 422),
+                    (ServiceClosed, 503)):
     app.add_exception_handler(exc, _err(status))
 
 

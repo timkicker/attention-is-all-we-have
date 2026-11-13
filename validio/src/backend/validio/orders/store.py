@@ -4,6 +4,8 @@ demo seed writes). Each record is one JSON document, ids count up from a reset (
 import json
 import sqlite3
 import threading
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -13,7 +15,12 @@ create table if not exists supply_order (id text primary key, n integer, request
 create table if not exists idempotency (scope text, key text, body_hash text, ref text,
                                         primary key (scope, key));
 create table if not exists seen_pass (id text primary key, body text not null);
+create unique index if not exists one_order_per_request on supply_order(request_id) where request_id is not null;
 """
+
+
+class NotFound(LookupError):
+    """No request or order with this id (HTTP 404). A bare KeyError is a bug, never a 404."""
 
 
 class Store:
@@ -22,10 +29,44 @@ class Store:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
         self._lock = threading.RLock()
+        self._depth = 0
         self._con.executescript(SCHEMA)
+
+    @property
+    def lock(self) -> threading.RLock:
+        """Held by every call on the connection; the ledger takes it too when it shares the connection."""
+        return self._lock
+
+    @property
+    def con(self) -> sqlite3.Connection:
+        """The one connection; the Open Ledger shares it, so an order and its entry commit together."""
+        return self._con
 
     def close(self) -> None:
         self._con.close()
+
+    @contextmanager
+    def tx(self) -> Iterator[None]:
+        """One SQLite transaction for everything inside, nested calls join the outer one."""
+        with self._lock:
+            if self._depth:
+                self._depth += 1
+                try:
+                    yield
+                finally:
+                    self._depth -= 1
+                return
+            self._con.execute("BEGIN IMMEDIATE")
+            self._depth = 1
+            try:
+                yield
+            except BaseException:
+                self._con.execute("ROLLBACK")
+                raise
+            else:
+                self._con.execute("COMMIT")
+            finally:
+                self._depth = 0
 
     def _next(self, table: str, prefix: str) -> tuple[str, int]:
         (n,) = self._con.execute(f"select coalesce(max(n), 0) + 1 from {table}").fetchone()
@@ -67,6 +108,10 @@ class Store:
     def order(self, oid: str) -> dict[str, Any] | None:
         with self._lock:
             row = self._con.execute("select body from supply_order where id = ?", (oid,)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def order_for_request(self, rid: str) -> dict[str, Any] | None:
+        row = self._con.execute("select body from supply_order where request_id = ?", (rid,)).fetchone()
         return json.loads(row[0]) if row else None
 
     def orders(self) -> list[dict[str, Any]]:

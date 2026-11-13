@@ -26,6 +26,7 @@ process.env.VALIDIO_KEYS = `${STORE}/keys`;
 process.env.VALIO_MODE = "replay";
 process.env.VALIDIO_APPROVE_CODE = "";
 process.env.VALIDIO_DEMO_TOKEN = "";
+process.env.VALIDIO_DEMO = "1";
 
 export default defineConfig({
   testDir: "e2e-live",
