@@ -34,7 +34,8 @@ def reader_from_env(env_file: Path | None = DEFAULT_ENV) -> Reader:
     if env.get("READER_MODE", "fake") == "modal":
         from validio.reader.remote import ModalReader
 
-        return ModalReader(env.get("MODAL_GEMMA_URL", ""), env.get("MODAL_GEMMA_TOKEN", ""))
+        return ModalReader(env.get("MODAL_GEMMA_URL", ""), env.get("MODAL_GEMMA_TOKEN", ""),
+                           float(env.get("READER_TIMEOUT_S", "60")))
     return FakeReader()
 
 
@@ -47,16 +48,18 @@ def read(
     product_id: str | None = None,
     env_file: Path | None = DEFAULT_ENV,
 ) -> Reading:
-    reader = reader or reader_from_env(env_file)
     fake = FakeReader()
-    if reader.name == fake.name:
-        return Reading(fake.read(product_text), fake.name)
+    name = getattr(reader, "name", "configured")
     try:
+        reader = reader or reader_from_env(env_file)  # inside the try: a broken setup falls back too
+        name = reader.name
+        if name == fake.name and type(reader) is FakeReader:
+            return Reading(fake.read(product_text), fake.name)
         raw = reader.read(product_text)
         result = raw if isinstance(raw, ReaderResult) else ReaderResult.model_validate(raw)
-        return Reading(result, reader.name)
+        return Reading(result, name)
     except Exception as e:  # noqa: BLE001 any failure, even a bad answer, means the fake reader answers
-        note = f"The {reader.name} reader failed ({type(e).__name__}), the fake reader answered instead."
+        note = f"The {name} reader failed ({type(e).__name__}), the fake reader answered instead."
         if ledger is not None:
             ledger.append(
                 at=now or datetime.now().astimezone(),
@@ -69,4 +72,4 @@ def read(
                 rule_ids=[],
                 order_id=None,
             )
-        return Reading(fake.read(product_text), fake.name, fell_back=True, note=note)
+        return Reading(FakeReader().read(product_text), fake.name, fell_back=True, note=note)
