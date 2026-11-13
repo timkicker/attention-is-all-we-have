@@ -65,7 +65,7 @@ class AuditLog:
     def __init__(self, path: Path | str):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._con = sqlite3.connect(self.path, isolation_level=None)
+        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
         self._con.executescript(SCHEMA)
 
     def append(
