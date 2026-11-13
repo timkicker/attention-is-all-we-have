@@ -34,6 +34,7 @@ packages = ["validio"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+asyncio_default_fixture_loop_scope = "function"
 markers = [
   "live: calls the real Valio test API",
   "needs_data: needs data/catalog.db built from the Valio files",
