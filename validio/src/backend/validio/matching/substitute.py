@@ -16,7 +16,7 @@ from ..trust.levels import TrustLevel
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
 from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit, screen
-from .rank import rank_one
+from .rank import best_pick, rank_one
 
 MAX_EXTRA_IDS = 8
 ALLERGEN_NAMES = {"AM": "milk", "ML": "lactose", "AW": "gluten cereals", "UW": "wheat"}
@@ -147,8 +147,7 @@ def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, r
     extra = [p for p in kept if p.id not in skip and _diet(p, need.required_claims) is None][:MAX_EXTRA_IDS]
     result.extra_ids = [p.id for p in extra]
     live = _live(extra, need, valio, requested, budget, now)
-    ranked = sorted(live.values(), key=lambda r: (not r.accepted, r.total_cents is None,
-                                                  r.total_cents or 0, r.product.id))
+    ranked = best_pick(list(live.values()))
     result.outside = [_judge(r.product, r, need, False) for r in ranked]
     return result
 

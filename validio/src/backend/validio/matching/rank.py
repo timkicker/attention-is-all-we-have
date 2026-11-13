@@ -1,4 +1,8 @@
-"""Rank candidates on live price and availability. Price only for now, Best Pick comes later."""
+"""Rank candidates on live price and availability with Best Pick.
+
+Keys in order: every hard rule passes, total cost (within 5 % of the cheapest counts as equal),
+delivery reliability (no record sorts last), labels the Spend Pass asks for, carbon per kilo.
+Each key writes one sentence."""
 
 import math
 from datetime import datetime
@@ -8,6 +12,9 @@ from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel, field_trust
 from ..valio.models import Availability, Quote
 from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit
+from .reasons import carbon_sentence, label_sentences, price_sentence, reliability_sentence
+
+TIE_BAND = 0.05
 
 UNKNOWN_AMOUNT = 999999
 
@@ -56,7 +63,32 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
     return Ranked(p, sales_qty, total, not reasons, reasons, notes, field_trust(p, q, a))
 
 
-def rank(need: Need, cands: list[Product], quotes: dict[str, Quote],
-         avail: dict[str, Availability], now: datetime) -> list[Ranked]:
+def best_pick(options: list[Ranked], prefer_labels: tuple[str, ...] = (), band: float = TIE_BAND) -> list[Ranked]:
+    """Sort by the five keys and write each option's sentences into `why`. Rejected options keep
+    their rejection reasons as sentences and come after every accepted one."""
+    ok = {id(r) for r in options if r.accepted and r.total_cents is not None}
+    cheapest = min((r.total_cents for r in options if id(r) in ok), default=0)
+    prefer = tuple(prefer_labels or ())
+
+    def key(r: Ranked) -> tuple:
+        p = r.product
+        if id(r) not in ok:
+            return (1, r.total_cents is None, r.total_cents or 0, p.id)
+        in_band = r.total_cents <= cheapest * (1 + band)
+        return (0, 0 if in_band else r.total_cents, p.reliability is None, -(p.reliability or 0),
+                -len(p.labels & set(prefer)), p.carbon_kg_per_kg is None, p.carbon_kg_per_kg or 0,
+                r.total_cents, p.id)
+
+    for r in options:
+        if id(r) in ok:
+            r.why = [price_sentence(r.total_cents, cheapest, band), reliability_sentence(r.product),
+                     *label_sentences(r.product, prefer), carbon_sentence(r.product)]
+        else:
+            r.why = list(r.reasons) or ["Not usable"]
+    return sorted(options, key=key)
+
+
+def rank(need: Need, cands: list[Product], quotes: dict[str, Quote], avail: dict[str, Availability],
+         now: datetime, prefer_labels: tuple[str, ...] = (), band: float = TIE_BAND) -> list[Ranked]:
     out = [rank_one(need, p, quotes.get(p.id), avail.get(p.id), now) for p in cands]
-    return sorted(out, key=lambda r: (not r.accepted, r.total_cents is None, r.total_cents or 0, r.product.id))
+    return best_pick(out, prefer_labels, band)

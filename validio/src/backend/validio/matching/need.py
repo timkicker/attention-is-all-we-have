@@ -37,6 +37,7 @@ class Ranked:
     reasons: list[str] = field(default_factory=list)  # why it was rejected, empty when accepted
     notes: list[str] = field(default_factory=list)  # facts worth showing that do not reject
     facts: list = field(default_factory=list)
+    why: list[str] = field(default_factory=list)  # Best Pick: one sentence per ranking key
 
 
 @dataclass(frozen=True)
