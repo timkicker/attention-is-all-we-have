@@ -35,7 +35,10 @@ export interface SupplierText {
   /** True when the team planted this line for the demo. */
   planted?: boolean;
   /** What the reader made of it. It never changes a decision. */
-  reader?: { mentionsClaims: string[]; addressesAgents: boolean; note: string };
+  reader?: {
+    flags: { code: "addresses_agents" | "gives_instruction" | "mentions_claim"; text: string }[];
+    summary: string;
+  };
 }
 
 export interface Product {

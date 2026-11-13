@@ -133,7 +133,7 @@ def test_reader_mode_modal_unset_url_falls_back(monkeypatch):
     assert got.fell_back and "addresses_agents" in codes(got.result)
 
 
-DECIDING = ("matching", "policy", "trust", "valio", "catalog")
+DECIDING = ("matching", "policy", "trust", "valio", "catalog", "orders", "standing")
 
 
 def test_deciding_code_never_imports_reader():

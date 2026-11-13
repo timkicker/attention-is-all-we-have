@@ -53,7 +53,10 @@ def test_scene2_end_to_end_http(client, holder, ctx):
     assert opts["463047"]["verdict"] == "rejected"
     assert "Low lactose is not lactose free" in opts["463047"]["sentence"]
     st = opts["463047"]["supplierText"]
-    assert st["planted"] is True and st["grade"] == "untrusted" and st["reader"]["addressesAgents"] is True
+    assert st["planted"] is True and st["grade"] == "untrusted"
+    assert set(st["reader"]) == {"flags", "summary"}  # the reader's fixed shape, nothing else
+    assert {"code": "addresses_agents", "text": "AI agents"} in st["reader"]["flags"]
+    assert "never used for decisions" in st["reader"]["summary"]
 
     # the agent claims a price of 1 cent, Validio asks Valio again
     o = client.post("/agent/v1/orders", headers=auth(holder), json={
@@ -221,3 +224,16 @@ def test_unknown_ids_are_404(client):
     assert client.get("/api/requests/R-99").status_code == 404
     assert client.get("/agent/v1/orders/O-99").status_code == 404
     assert client.get("/api/spend-passes/M-1").status_code == 404  # no agent has shown it yet
+
+
+def test_reader_failure_falls_back_with_ledger_note(client, holder, ctx, monkeypatch):
+    """READER_MODE=modal without a URL: the fake reader answers and the ledger notes it once per product."""
+    monkeypatch.setenv("READER_MODE", "modal")
+    monkeypatch.delenv("MODAL_GEMMA_URL", raising=False)
+    req = ask_milk(client, holder)
+    st = {o["productId"]: o for o in req["lines"][0]["options"]}["463047"]["supplierText"]
+    assert {"code": "addresses_agents", "text": "AI agents"} in st["reader"]["flags"]
+    client.get(f"/api/requests/{req['id']}")
+    notes = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "reader_fallback"]
+    assert len(notes) == 1
+    assert notes[0]["facts"] == [{"field": "product", "value": "463047"}]

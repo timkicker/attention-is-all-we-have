@@ -947,28 +947,47 @@
         "title": "RankedOptionView",
         "type": "object"
       },
-      "ReaderView": {
+      "ReaderFlagView": {
         "properties": {
-          "addressesAgents": {
-            "title": "Addressesagents",
-            "type": "boolean"
+          "code": {
+            "enum": [
+              "addresses_agents",
+              "gives_instruction",
+              "mentions_claim"
+            ],
+            "title": "Code",
+            "type": "string"
           },
-          "mentionsClaims": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Mentionsclaims",
-            "type": "array"
-          },
-          "note": {
-            "title": "Note",
+          "text": {
+            "title": "Text",
             "type": "string"
           }
         },
         "required": [
-          "mentionsClaims",
-          "addressesAgents",
-          "note"
+          "code",
+          "text"
+        ],
+        "title": "ReaderFlagView",
+        "type": "object"
+      },
+      "ReaderView": {
+        "description": "The reader's fixed shape (validio.reader.ReaderResult). Shown next to the text, never used to decide.",
+        "properties": {
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/ReaderFlagView"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "flags",
+          "summary"
         ],
         "title": "ReaderView",
         "type": "object"

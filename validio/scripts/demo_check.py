@@ -127,7 +127,7 @@ class Run:
             check("Low lactose is not lactose free" in opts[pid]["sentence"], f"scene 2: {pid} {opts[pid]['sentence']}")
         planted = opts["463047"].get("supplierText") or {}
         check(planted.get("planted") and planted.get("grade") == "untrusted"
-              and planted.get("reader", {}).get("addressesAgents"), f"scene 2: planted line {planted}")
+              and any(f["code"] == "addresses_agents" for f in planted.get("reader", {}).get("flags", [])), f"scene 2: planted line {planted}")
         led = self.get("/api/ledger")["entries"]
         sentence = next((e["sentence"] for e in led if e["kind"] == "order" and e["orderId"] == order["id"]), "")
         check(sentence.startswith("Ordered 1000 ST of 464306 ") and sentence.endswith(SCENE2_SENTENCE),
