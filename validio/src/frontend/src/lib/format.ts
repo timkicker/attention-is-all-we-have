@@ -36,6 +36,7 @@ export const GRADE: Record<FactGrade, { label: string; variant: BadgeVariant }> 
   unchecked: { label: "Unchecked", variant: "warn" },
   unknown: { label: "Unknown", variant: "warn" },
   untrusted: { label: "Untrusted", variant: "outline" },
+  missing: { label: "Missing", variant: "warn" },
 };
 
 export const VERDICT: Record<OptionVerdict, { label: string; variant: BadgeVariant }> = {

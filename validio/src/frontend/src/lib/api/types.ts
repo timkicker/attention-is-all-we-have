@@ -13,11 +13,13 @@ export type FactGrade =
   | "contradicted"
   | "unchecked"
   | "unknown"
-  | "untrusted";
+  | "untrusted"
+  | "missing";
 
 export interface Fact {
   field: string;
-  value: string | number | boolean | null;
+  /** Absent when Valio or the catalog has no value (grade "missing" or "unknown"). */
+  value?: string | number | boolean | null;
   grade: FactGrade;
   /** Where the value comes from, e.g. "valio:availability", "catalog:claims". */
   source: string;
@@ -78,6 +80,8 @@ export interface RankedOption {
   facts: Fact[];
   /** True when the option comes from Valio's own substitute list. */
   onValioList?: boolean;
+  /** True when the option replaces the product the request named. */
+  isSubstitute?: boolean;
   supplierText?: SupplierText;
 }
 
@@ -99,6 +103,8 @@ export interface Split {
 
 /** The typed need Validio read from the request text. */
 export interface Need {
+  /** Set when the request named a product id instead of text. */
+  productId?: string;
   what: string;
   quantity: number;
   unit: string;
@@ -124,6 +130,17 @@ export interface RequestLine {
   split?: Split;
   /** Footnote that applies to the whole line, e.g. the carbon note. */
   note?: string;
+  /** What Validio proposes for this line; the agent confirms it with confirm_order. */
+  chosen?: Choice;
+  /** One sentence on why a swap was needed and what it found. */
+  swapSentence?: string;
+}
+
+export interface Choice {
+  productId: string;
+  salesQty: number;
+  isSubstitute: boolean;
+  onValioList: boolean;
 }
 
 /** Something on screen that is not real, said out loud. */
@@ -132,9 +149,17 @@ export interface SimulatedMark {
   sentence: string;
 }
 
+export interface LiveChecked {
+  calls: number;
+  ids: number;
+  idsPerCall: number[];
+}
+
 /** `request_supply` / `get_request` result. */
 export interface SupplyRequest {
   id: string;
+  /** The same as id; the agent tools read this name. */
+  requestId?: string;
   createdAt: string;
   agent: string;
   text: string;
@@ -144,8 +169,8 @@ export interface SupplyRequest {
   lines: RequestLine[];
   decision: Decision;
   totalCents?: number;
-  /** How many product ids were asked live at Valio. */
-  liveChecked: number;
+  /** What was asked live at Valio: calls, distinct product ids, ids per call (at most 40). */
+  liveChecked: LiveChecked;
   orderId?: string;
   /** For waiting requests: the one question for the owner. */
   question?: string;
@@ -162,6 +187,8 @@ export interface InboxItem {
   totalCents?: number;
 }
 
+// The API also answers "blocked" for an order the rules refused at confirm_order; the pages do not
+// show such an order yet, so it is left out here until they do.
 export type OrderState = "waiting" | "approved" | "placed" | "rejected";
 
 export interface OrderLine {
@@ -169,7 +196,18 @@ export interface OrderLine {
   name: string;
   quantity: number;
   unit: string;
+  /** Valio's price per unit, asked again at order time. */
+  priceCents: number;
   totalCents: number;
+  /** End of the contract price, when Valio gives one. */
+  priceValidTo?: string;
+  /** The day Valio says it can deliver. */
+  deliveryDate?: string;
+  /** False when Valio cannot deliver this line by the date asked. */
+  deliverable: boolean;
+  isSubstitute: boolean;
+  onValioList: boolean;
+  facts: Fact[];
 }
 
 /** `confirm_order` / `get_order` result. */
@@ -181,6 +219,11 @@ export interface Order {
   totalCents: number;
   /** Every state the order went through, oldest first. */
   history: { state: OrderState; at: string }[];
+  decision: Decision;
+  spendPassId: string;
+  deliverBy: string;
+  /** The role that approved, e.g. "owner". Never a name. */
+  approvedBy?: string;
 }
 
 /**
@@ -271,6 +314,10 @@ export interface SteadyLine {
   acceptLabel?: string;
   /** Amount per week, oldest first, for the lines that drift. */
   history?: number[];
+  /** The order this line was placed in, once it was. */
+  orderId?: string;
+  /** The rules that decided the line. */
+  ruleIds?: string[];
 }
 
 export interface SteadyOrder {
