@@ -5,6 +5,7 @@ does it search the catalog, with at most 8 extra live ids. A substitute outside 
 goes to a person. Diet checks need no live call, so a blocked substitute costs nothing.
 """
 
+import re
 from dataclasses import dataclass, field, replace
 from datetime import date, datetime
 from enum import StrEnum
@@ -15,7 +16,7 @@ from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
-from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit, screen
+from .need import CLAIM_NAMES, KINDS, Need, Ranked, amount_per_sales_unit, screen
 from .rank import best_pick, rank_one
 
 MAX_EXTRA_IDS = 8
@@ -116,8 +117,20 @@ def _live(opts: list[Product], need: Need, valio: ValioClient, requested: date, 
     return {p.id: rank_one(need, p, q.get(p.id), a.get(p.id), now) for p in opts}
 
 
+def blend_note(p: Product, need: Need) -> str | None:
+    """A name like "mozzarella-fontal" or "Edam-Emmental-Mozzarella" is a blend with another cheese."""
+    for w in (KINDS[need.kind].words if need.kind in KINDS else ()):
+        m = re.search(rf"\b(?:\w+-)+{w}\b|\b{w}(?:-\w+)+", p.name_en or "", re.IGNORECASE)
+        if m:
+            return f"A {m.group(0).lower()} blend, not pure {w}"
+    return None
+
+
 def _judge(p: Product, r: Ranked, need: Need, listed: bool) -> SubOption:
     kept = _kept(p, need.required_claims)
+    if r.accepted and (blend := blend_note(p, need)):
+        kept = f"{kept}. {blend}"
+        r.notes.append(blend)
     if "Valio gives no delivery date for it" in r.reasons:
         return SubOption(p, SubVerdict.UNDELIVERABLE, f"{kept}, but Valio gives no delivery date for it", listed, r)
     if not r.accepted:

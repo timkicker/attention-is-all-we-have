@@ -59,6 +59,8 @@ def test_outside_search_ranks_cheapest_safe_first(scene3):
     assert [o.product.id for o in ok][:2] == ["465256", "463383"]
     assert r.best.product.id == "465256"
     assert (r.best.ranked.sales_qty, r.best.ranked.total_cents) == (10, 18010)
+    assert "A mozzarella-fontal blend, not pure mozzarella" in r.best.sentence
+    assert "blend" not in {o.product.id: o for o in ok}["463383"].sentence
     ids = [o.product.id for o in ok]
     assert ids.index("463383") < ids.index("470836")
 
