@@ -10,6 +10,12 @@ from typing import Any, Protocol
 
 from .tools import TOOLS
 
+# Stable model code with function calling, checked 2026-11-14 on the Gemini API docs:
+# https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash (model code `gemini-3.8-flash`,
+# "Function calling: Supported", latest update September 2026) and the supported-models table at
+# https://ai.google.dev/gemini-api/docs/function-calling. GEMINI_MODEL overrides it.
+DEFAULT_MODEL = "gemini-3.8-flash"
+
 SYSTEM = (
     "You are the purchasing agent of the kitchen hotel-espoo. You buy only through the Validio tools. "
     "Call request_supply with the request lines and the delivery date. Read the result's decision: "
@@ -127,7 +133,7 @@ class GeminiLLM:
         key = os.environ.get("GEMINI_API_KEY")
         if not key:
             raise RuntimeError("GEMINI_API_KEY is not set")
-        return cls(key, os.environ.get("GEMINI_MODEL") or "gemini-2.5-flash")
+        return cls(key, os.environ.get("GEMINI_MODEL") or DEFAULT_MODEL)
 
     def _contents(self, history: list[dict]) -> list:
         t = self._types
