@@ -50,7 +50,7 @@
         </div>
         <blockquote>{option.supplierText.text}</blockquote>
         {#if option.supplierText.reader}
-          <p class="reader">{option.supplierText.reader.note}</p>
+          <p class="reader">{option.supplierText.reader.summary}</p>
         {/if}
       </div>
     {/if}

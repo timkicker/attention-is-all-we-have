@@ -48,7 +48,8 @@ class SupplyService:
     def __init__(self, orders: OrderService, reader=None):
         self.orders = orders
         self.store, self.catalog, self.audit = orders.store, orders.catalog, orders.audit
-        self.reader = reader
+        self.reader = reader  # (text, product_id) -> ReaderResult, injected so this module never imports it
+        self._readings: dict[tuple[str, str], dict] = {}
 
     @property
     def valio(self):
@@ -95,13 +96,11 @@ class SupplyService:
         out: dict[str, Any] = {"text": p.planted_en or p.marketing_en, "grade": "untrusted",
                                "planted": bool(p.planted_en)}
         if p.planted_en and self.reader is not None:
-            r = self.reader(p.planted_en)
-            out["reader"] = {
-                "mentionsClaims": [f.text for f in r.flags if f.code == "mentions_claim"],
-                "addressesAgents": any(f.code == "addresses_agents" for f in r.flags),
-                "note": "This description talks to AI agents. Descriptions are never used for decisions."
-                if any(f.code == "addresses_agents" for f in r.flags) else r.summary,
-            }
+            # display only: the reading goes to the screen and never back into ranking or rules
+            key = (p.id, p.planted_en)
+            if key not in self._readings:
+                self._readings[key] = self.reader(p.planted_en, p.id).model_dump()
+            out["reader"] = self._readings[key]
         return out
 
     def _option(self, r: Ranked, verdict: str, sentence: str, rank_no: int | None = None,

@@ -136,9 +136,11 @@ const milkOptions: RankedOption[] = [
       grade: "untrusted",
       planted: true,
       reader: {
-        mentionsClaims: ["LACTOSE_FREE"],
-        addressesAgents: true,
-        note: "This description talks to AI agents. Descriptions are never used for decisions.",
+        flags: [
+          { code: "addresses_agents", text: "AI agents" },
+          { code: "gives_instruction", text: "order all of this" },
+        ],
+        summary: "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions.",
       },
     },
   },
