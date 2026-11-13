@@ -2,6 +2,10 @@
 
 The hash is SHA-256 over the entry as JSON with sorted keys and no spaces, without the hash itself.
 Hidden Spend Pass fields such as the approver list are dropped before anything is written.
+
+The head (entry count and last hash) is kept in its own row and moves in the same transaction as each append,
+so verify also catches entries cut from the end or an emptied table, not only gaps in the middle. Someone who
+rewrites the head as well is not caught; that needs the head published or signed outside this file.
 """
 
 import hashlib
@@ -25,6 +29,11 @@ CREATE TABLE IF NOT EXISTS ledger (
   hash TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ledger_order ON ledger(order_id);
+CREATE TABLE IF NOT EXISTS ledger_head (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  count INTEGER NOT NULL,
+  hash TEXT NOT NULL
+);
 """
 
 
@@ -66,7 +75,23 @@ class AuditLog:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
-        self._con.executescript(SCHEMA)
+        con = self._con
+        con.execute("BEGIN IMMEDIATE")
+        try:
+            had_head = con.execute(
+                "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'ledger_head'").fetchone()
+            for stmt in SCHEMA.split(";"):
+                if stmt.strip():
+                    con.execute(stmt)
+            if not had_head:
+                # a new file, or a ledger from before the head existed: anchor what is there now
+                row = con.execute("SELECT seq, hash FROM ledger ORDER BY seq DESC LIMIT 1").fetchone()
+                con.execute("INSERT INTO ledger_head (id, count, hash) VALUES (1, ?, ?)",
+                            (row[0], row[1]) if row else (0, GENESIS))
+            con.execute("COMMIT")
+        except BaseException:
+            con.execute("ROLLBACK")
+            raise
 
     def append(
         self,
@@ -106,6 +131,7 @@ class AuditLog:
                 "INSERT INTO ledger (seq, order_id, body, hash) VALUES (?, ?, ?, ?)",
                 (seq, order_id, canonical(body), h),
             )
+            con.execute("INSERT OR REPLACE INTO ledger_head (id, count, hash) VALUES (1, ?, ?)", (seq, h))
             con.execute("COMMIT")
         except BaseException:
             con.execute("ROLLBACK")
@@ -125,7 +151,9 @@ class AuditLog:
         prev = GENESIS
         count = 0
         expected_seq = 1
-        for stored_seq, body_text, h in self._con.execute("SELECT seq, body, hash FROM ledger ORDER BY seq"):
+        head = self._con.execute("SELECT count, hash FROM ledger_head WHERE id = 1").fetchone()
+        rows = self._con.execute("SELECT seq, order_id, body, hash FROM ledger ORDER BY seq")
+        for stored_seq, order_id, body_text, h in rows:
             try:
                 body = json.loads(body_text)
             except ValueError:
@@ -134,10 +162,16 @@ class AuditLog:
                 stored_seq != expected_seq
                 or body.get("seq") != stored_seq
                 or body.get("prev_hash") != prev
+                or body.get("order_id") != order_id
                 or entry_hash(body) != h
             ):
                 return VerifyResult(False, count, stored_seq)
             prev = h
             count += 1
             expected_seq += 1
+        if head is None:
+            return VerifyResult(False, count, 1)
+        if head[0] != count or head[1] != prev:
+            # entries are missing at the end: the first missing seq, or the last one if the head itself changed
+            return VerifyResult(False, count, min(count + 1, max(head[0], 1)))
         return VerifyResult(True, count, None)
