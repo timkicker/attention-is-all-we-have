@@ -86,8 +86,8 @@ class Ctx:
             from ..reader import read
 
             audit = svc.audit
-            self._supply = (svc, SupplyService(svc, reader=lambda text: read(text, ledger=audit,
-                                                                             now=svc.clock()).result))
+            self._supply = (svc, SupplyService(svc, reader=lambda text, pid: read(
+                text, ledger=audit, now=svc.clock(), product_id=pid).result))
         return self._supply[1]
 
     def now(self):

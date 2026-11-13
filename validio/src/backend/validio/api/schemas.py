@@ -61,10 +61,15 @@ class FactView(Model):
     until: str | None = None
 
 
+class ReaderFlagView(Model):
+    code: Literal["addresses_agents", "gives_instruction", "mentions_claim"]
+    text: str
+
+
 class ReaderView(Model):
-    mentions_claims: list[str]
-    addresses_agents: bool
-    note: str
+    """The reader's fixed shape (validio.reader.ReaderResult). Shown next to the text, never used to decide."""
+    flags: list[ReaderFlagView]
+    summary: str
 
 
 class SupplierTextView(Model):
