@@ -6,6 +6,7 @@ The Spend Pass gives the money limits. The diet rule applies per line: each line
 claims (mozzarella lactose free, pancakes gluten free and vegan, parmesan none).
 """
 
+import math
 from collections.abc import Callable
 from dataclasses import replace
 from datetime import date, datetime
@@ -15,6 +16,7 @@ from ..catalog.store import Catalog
 from ..matching.split import SplitPlan, decide_split, plan_split
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
+from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
 from ..valio.models import Availability, Quote
@@ -57,7 +59,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
           delivery: date | None = None) -> RenewedLine:
     pid, usual = ln.product_id, ln.sales_qty
     p, q, a = cat.get(pid), quotes.get(pid), avail.get(pid)
-    unit = unit_word(a)
+    unit = unit_word(a, p.sales_unit if p else None)
     price = None if q is None or q.error else q.price_cents
     base = RenewedLine(pid, usual, None, None, LineResult.WAITING, "", flags)
     if p is None or price is None:
@@ -79,7 +81,8 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
     if short:
         plan = split_fill(p, usual, set(ln.diet), cat, quotes, avail, mandate.split_max_extra_bp)
         if plan is None or not plan.parts:
-            have = int(a.amount) if a is not None and a.deliverable and a.amount else 0
+            stock = stock_in_sales_units(p, a)
+            have = min(usual, math.floor(round(stock, 6))) if stock else 0
             return replace(base, this_week_qty=have or None, split=plan,
                            sentence=short[0].sentence + " No split keeps every rule, so it waits for you.",
                            accept_label=f"Order {have} now" if have else None)
@@ -125,7 +128,7 @@ def renew(so: StandingOrder, flags: list[DriftFlag], cat: Catalog, quotes: dict[
 def run(so: StandingOrder, history: History, cat: Catalog, valio: ValioClient, mandate: Mandate, now: datetime,
         stockout: bool, split_fill: SplitFill = plan_split) -> Renewal:
     quotes, avail, _ = fetch(so, cat, valio, now, stockout)
-    return renew(so, detect(so, history, quotes, avail, now), cat, quotes, avail, mandate, now, split_fill)
+    return renew(so, detect(so, history, quotes, avail, now, cat), cat, quotes, avail, mandate, now, split_fill)
 
 
 def accept(renewal: Renewal, product_id: str, approver: str) -> Renewal:

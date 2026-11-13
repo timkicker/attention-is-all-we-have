@@ -20,7 +20,7 @@ from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
-from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact
+from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact, stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.models import Availability
 from .store import Store
@@ -115,15 +115,15 @@ class OrderService:
                 a = _with_stock(a, stock_override[p.id])
             price = None if q is None or q.error else q.price_cents
             qf = quantity_fact(a, p)
-            short = (a is not None and a.deliverable and str(qf.level) == "attested"
-                     and a.amount is not None and a.amount < ln.sales_qty)
+            stock = stock_in_sales_units(p, a)  # in the product's sales unit, None when not a real count
+            short = stock is not None and stock < ln.sales_qty
             out.append({
                 "productId": p.id, "name": p.name_en, "quantity": int(ln.sales_qty), "unit": p.sales_unit,
                 "priceCents": price, "totalCents": None if price is None else price * int(ln.sales_qty),
                 "priceValidTo": q.valid_to.isoformat() if q and q.valid_to else None,
                 "deliveryDate": a.lines[0].available.isoformat() if a and a.lines else None,
                 "deliverable": bool(a and a.deliverable) and not short,
-                "short": f"Only {a.amount:g} {a.lines[0].sales_unit} of {p.id} in stock, {ln.sales_qty} needed"
+                "short": f"Only {stock:g} {p.sales_unit} of {p.id} in stock, {ln.sales_qty} needed"
                 if short else None,
                 "isSubstitute": ln.is_substitute, "onValioList": ln.on_valio_list,
                 "facts": [fact_dict(qf), fact_dict(price_fact(q))],
