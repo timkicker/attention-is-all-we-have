@@ -181,7 +181,7 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
   await page.goto("/requests/R-2");
   await page.waitForLoadState("networkidle");
   if ((await page.getByTestId("open-approve").count()) > 0) await page.getByTestId("open-approve").click();
-  else await page.goto("/approve/O-2");
+  else await page.goto("/approve/R-2");
   const placed = async () => (await json(request, "/api/orders/O-2")).state === "placed";
   await act(page, "approve", placed, async () => {
     expect((await request.post("/api/orders/O-2/approve", { headers: chef })).status()).toBe(200);
@@ -193,7 +193,7 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
 
 test("scene 3 on screen: the phone page says placed", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/approve/O-2");
+  await page.goto("/approve/R-2");
   await needs(page, "approve-question", "order-steps");
   await expect(page.getByTestId("approve-question")).toContainText(money("180.10"));
   await expect(page.getByTestId("order-steps")).toContainText(/waiting/i);
