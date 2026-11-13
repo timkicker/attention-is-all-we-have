@@ -282,7 +282,8 @@ class OrderService:
         names = " and ".join(f"{x['quantity']} {x['unit']} of {x['productId']} {x['name']}" for x in o["lines"])
         if approver is None:
             return f"Ordered {names} for {eur(o['totalCents'])} without a human. Inside mandate {m['id']}."
-        return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the approval. "
+        role = approver.split(":")[-1]  # the role only, never the approver list of the Spend Pass
+        return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the {role} approved. "
                 f"Valio was asked again: every line can be delivered and no price rose more than 2 %.")
 
     def _log(self, o: dict, actor: str, kind: str, sentence: str, rule_ids: list[str]) -> None:

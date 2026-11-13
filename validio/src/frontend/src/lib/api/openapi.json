@@ -1,0 +1,2800 @@
+{
+  "components": {
+    "schemas": {
+      "ApproveIn": {
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the 6 digit approval code, or the X-Approve-Code header",
+            "title": "Code"
+          }
+        },
+        "title": "ApproveIn",
+        "type": "object"
+      },
+      "ChainStatus": {
+        "properties": {
+          "brokenAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brokenat"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "count"
+        ],
+        "title": "ChainStatus",
+        "type": "object"
+      },
+      "ChoiceIn": {
+        "properties": {
+          "productId": {
+            "maxLength": 20,
+            "title": "Productid",
+            "type": "string"
+          },
+          "salesQty": {
+            "exclusiveMinimum": 0.0,
+            "maximum": 1000000.0,
+            "title": "Salesqty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "productId",
+          "salesQty"
+        ],
+        "title": "ChoiceIn",
+        "type": "object"
+      },
+      "ChoiceView": {
+        "properties": {
+          "isSubstitute": {
+            "default": false,
+            "title": "Issubstitute",
+            "type": "boolean"
+          },
+          "onValioList": {
+            "default": false,
+            "title": "Onvaliolist",
+            "type": "boolean"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "salesQty": {
+            "title": "Salesqty",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "productId",
+          "salesQty"
+        ],
+        "title": "ChoiceView",
+        "type": "object"
+      },
+      "ClaimView": {
+        "properties": {
+          "claim": {
+            "title": "Claim",
+            "type": "string"
+          },
+          "grade": {
+            "enum": [
+              "attested",
+              "attested_until",
+              "consistent",
+              "contradicted",
+              "unchecked",
+              "unknown",
+              "untrusted",
+              "missing"
+            ],
+            "title": "Grade",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": [
+          "claim",
+          "grade"
+        ],
+        "title": "ClaimView",
+        "type": "object"
+      },
+      "ConfirmIn": {
+        "properties": {
+          "choice": {
+            "items": {
+              "$ref": "#/components/schemas/ChoiceIn"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Choice",
+            "type": "array"
+          },
+          "idempotencyKey": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Idempotencykey",
+            "type": "string"
+          },
+          "requestId": {
+            "maxLength": 20,
+            "title": "Requestid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requestId",
+          "choice",
+          "idempotencyKey"
+        ],
+        "title": "ConfirmIn",
+        "type": "object"
+      },
+      "DecisionView": {
+        "properties": {
+          "outcome": {
+            "enum": [
+              "auto_order",
+              "ask_human",
+              "block"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "ruleIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ruleids",
+            "type": "array"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "ruleIds",
+          "sentence"
+        ],
+        "title": "DecisionView",
+        "type": "object"
+      },
+      "DemoState": {
+        "properties": {
+          "stockOut466375": {
+            "title": "Stockout466375",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "stockOut466375"
+        ],
+        "title": "DemoState",
+        "type": "object"
+      },
+      "DriftFlagOut": {
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "sentence"
+        ],
+        "title": "DriftFlagOut",
+        "type": "object"
+      },
+      "FactView": {
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "grade": {
+            "enum": [
+              "attested",
+              "attested_until",
+              "consistent",
+              "contradicted",
+              "unchecked",
+              "unknown",
+              "untrusted",
+              "missing"
+            ],
+            "title": "Grade",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Until"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "field",
+          "grade",
+          "source"
+        ],
+        "title": "FactView",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HistoryStep": {
+        "properties": {
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "at"
+        ],
+        "title": "HistoryStep",
+        "type": "object"
+      },
+      "InboxItem": {
+        "properties": {
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "text",
+          "status",
+          "sentence"
+        ],
+        "title": "InboxItem",
+        "type": "object"
+      },
+      "LedgerEntryView": {
+        "properties": {
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "disclosed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Disclosed",
+            "type": "array"
+          },
+          "facts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Facts",
+            "type": "array"
+          },
+          "hash": {
+            "title": "Hash",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "orderId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderid"
+          },
+          "prevHash": {
+            "title": "Prevhash",
+            "type": "string"
+          },
+          "ruleIds": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ruleids",
+            "type": "array"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          },
+          "seq": {
+            "title": "Seq",
+            "type": "integer"
+          },
+          "spendPassId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spendpassid"
+          }
+        },
+        "required": [
+          "seq",
+          "at",
+          "actor",
+          "kind",
+          "sentence",
+          "facts",
+          "disclosed",
+          "ruleIds",
+          "prevHash",
+          "hash"
+        ],
+        "title": "LedgerEntryView",
+        "type": "object"
+      },
+      "LedgerView": {
+        "properties": {
+          "chain": {
+            "$ref": "#/components/schemas/ChainStatus"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntryView"
+            },
+            "title": "Entries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "entries",
+          "chain"
+        ],
+        "title": "LedgerView",
+        "type": "object"
+      },
+      "LiveChecked": {
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "ids": {
+            "description": "how many product ids were asked live at Valio for this request, at most 40",
+            "title": "Ids",
+            "type": "integer"
+          },
+          "idsPerCall": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Idspercall",
+            "type": "array"
+          }
+        },
+        "required": [
+          "calls",
+          "ids",
+          "idsPerCall"
+        ],
+        "title": "LiveChecked",
+        "type": "object"
+      },
+      "NeedView": {
+        "properties": {
+          "deliverBy": {
+            "title": "Deliverby",
+            "type": "string"
+          },
+          "diet": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Diet",
+            "type": "array"
+          },
+          "productId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "what": {
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "what",
+          "quantity",
+          "unit",
+          "diet",
+          "deliverBy"
+        ],
+        "title": "NeedView",
+        "type": "object"
+      },
+      "NonceView": {
+        "properties": {
+          "aud": {
+            "title": "Aud",
+            "type": "string"
+          },
+          "nonce": {
+            "title": "Nonce",
+            "type": "string"
+          }
+        },
+        "required": [
+          "nonce",
+          "aud"
+        ],
+        "title": "NonceView",
+        "type": "object"
+      },
+      "OrderLineView": {
+        "properties": {
+          "deliverable": {
+            "title": "Deliverable",
+            "type": "boolean"
+          },
+          "deliveryDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverydate"
+          },
+          "facts": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/FactView"
+            },
+            "title": "Facts",
+            "type": "array"
+          },
+          "isSubstitute": {
+            "default": false,
+            "title": "Issubstitute",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "onValioList": {
+            "default": false,
+            "title": "Onvaliolist",
+            "type": "boolean"
+          },
+          "priceCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricecents"
+          },
+          "priceValidTo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricevalidto"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "quantity",
+          "unit",
+          "deliverable"
+        ],
+        "title": "OrderLineView",
+        "type": "object"
+      },
+      "OrderView": {
+        "properties": {
+          "approvedBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approvedby"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/DecisionView"
+          },
+          "deliverBy": {
+            "title": "Deliverby",
+            "type": "string"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryStep"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/OrderLineView"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requestid"
+          },
+          "spendPassId": {
+            "title": "Spendpassid",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "waiting",
+              "approved",
+              "placed",
+              "rejected",
+              "blocked"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "totalCents": {
+            "title": "Totalcents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "lines",
+          "totalCents",
+          "history",
+          "decision",
+          "spendPassId",
+          "deliverBy"
+        ],
+        "title": "OrderView",
+        "type": "object"
+      },
+      "ProductSummary": {
+        "properties": {
+          "allergensContains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Allergenscontains",
+            "type": "array"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimView"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "descriptionUntrusted": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SupplierTextView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "salesUnit": {
+            "title": "Salesunit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "salesUnit",
+          "claims",
+          "allergensContains",
+          "labels"
+        ],
+        "title": "ProductSummary",
+        "type": "object"
+      },
+      "RankedOptionView": {
+        "properties": {
+          "facts": {
+            "items": {
+              "$ref": "#/components/schemas/FactView"
+            },
+            "title": "Facts",
+            "type": "array"
+          },
+          "isSubstitute": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issubstitute"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "onValioList": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Onvaliolist"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rank"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          },
+          "supplierText": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SupplierTextView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "verdict": {
+            "enum": [
+              "chosen",
+              "ranked",
+              "rejected",
+              "blocked",
+              "not_deliverable"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "verdict",
+          "sentence",
+          "facts"
+        ],
+        "title": "RankedOptionView",
+        "type": "object"
+      },
+      "ReaderView": {
+        "properties": {
+          "addressesAgents": {
+            "title": "Addressesagents",
+            "type": "boolean"
+          },
+          "mentionsClaims": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Mentionsclaims",
+            "type": "array"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mentionsClaims",
+          "addressesAgents",
+          "note"
+        ],
+        "title": "ReaderView",
+        "type": "object"
+      },
+      "RequestLineView": {
+        "properties": {
+          "beyondList": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RankedOptionView"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Beyondlist"
+          },
+          "chosen": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChoiceView"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what Validio would order for this line"
+          },
+          "lineId": {
+            "title": "Lineid",
+            "type": "string"
+          },
+          "need": {
+            "$ref": "#/components/schemas/NeedView"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/RankedOptionView"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "substitutes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RankedOptionView"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutes"
+          },
+          "swapSentence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Swapsentence"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "lineId",
+          "text",
+          "need",
+          "options"
+        ],
+        "title": "RequestLineView",
+        "type": "object"
+      },
+      "SimulatedMark": {
+        "properties": {
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          },
+          "what": {
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "what",
+          "sentence"
+        ],
+        "title": "SimulatedMark",
+        "type": "object"
+      },
+      "SpendPassView": {
+        "properties": {
+          "autoLimitCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autolimitcents"
+          },
+          "categories": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "deliverBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverby"
+          },
+          "diet": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diet"
+          },
+          "disclosed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Disclosed",
+            "type": "array"
+          },
+          "hardCapCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hardcapcents"
+          },
+          "hidden": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Hidden",
+            "type": "array"
+          },
+          "holder": {
+            "title": "Holder",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "issuer": {
+            "title": "Issuer",
+            "type": "string"
+          },
+          "split": {
+            "$ref": "#/components/schemas/SplitView"
+          },
+          "substitutes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutes"
+          },
+          "validFrom": {
+            "title": "Validfrom",
+            "type": "string"
+          },
+          "validTo": {
+            "title": "Validto",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "issuer",
+          "holder",
+          "validFrom",
+          "validTo",
+          "categories",
+          "split",
+          "disclosed",
+          "hidden"
+        ],
+        "title": "SpendPassView",
+        "type": "object"
+      },
+      "SplitOut": {
+        "properties": {
+          "extraCostCents": {
+            "title": "Extracostcents",
+            "type": "integer"
+          },
+          "extraCostPct": {
+            "title": "Extracostpct",
+            "type": "number"
+          },
+          "parts": {
+            "items": {
+              "$ref": "#/components/schemas/SplitPartOut"
+            },
+            "title": "Parts",
+            "type": "array"
+          },
+          "totalCents": {
+            "title": "Totalcents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "parts",
+          "totalCents",
+          "extraCostCents",
+          "extraCostPct"
+        ],
+        "title": "SplitOut",
+        "type": "object"
+      },
+      "SplitPartOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "onValioList": {
+            "title": "Onvaliolist",
+            "type": "boolean"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "totalCents": {
+            "title": "Totalcents",
+            "type": "integer"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "quantity",
+          "unit",
+          "totalCents",
+          "onValioList"
+        ],
+        "title": "SplitPartOut",
+        "type": "object"
+      },
+      "SplitView": {
+        "properties": {
+          "allowListedSubstitutes": {
+            "title": "Allowlistedsubstitutes",
+            "type": "boolean"
+          },
+          "maxExtraCostPct": {
+            "title": "Maxextracostpct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "maxExtraCostPct",
+          "allowListedSubstitutes"
+        ],
+        "title": "SplitView",
+        "type": "object"
+      },
+      "SteadyLineOut": {
+        "properties": {
+          "acceptLabel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Acceptlabel"
+          },
+          "flags": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/DriftFlagOut"
+            },
+            "title": "Flags",
+            "type": "array"
+          },
+          "history": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "History"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "orderId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderid"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "result": {
+            "title": "Result",
+            "type": "string"
+          },
+          "ruleIds": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ruleids"
+          },
+          "sentence": {
+            "title": "Sentence",
+            "type": "string"
+          },
+          "split": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SplitOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thisWeekQuantity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thisweekquantity"
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "usualQuantity": {
+            "title": "Usualquantity",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "unit",
+          "usualQuantity",
+          "result",
+          "sentence"
+        ],
+        "title": "SteadyLineOut",
+        "type": "object"
+      },
+      "SteadyOrderOut": {
+        "properties": {
+          "guestsPerWeek": {
+            "title": "Guestsperweek",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/SteadyLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "renewedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Renewedat"
+          },
+          "simulatedHistory": {
+            "title": "Simulatedhistory",
+            "type": "boolean"
+          },
+          "weekday": {
+            "title": "Weekday",
+            "type": "string"
+          },
+          "weeksLearned": {
+            "title": "Weekslearned",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "weekday",
+          "guestsPerWeek",
+          "weeksLearned",
+          "simulatedHistory",
+          "lines"
+        ],
+        "title": "SteadyOrderOut",
+        "type": "object"
+      },
+      "SteadyOrderSummaryOut": {
+        "properties": {
+          "flagCount": {
+            "title": "Flagcount",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lineCount": {
+            "title": "Linecount",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "renewedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Renewedat"
+          },
+          "weekday": {
+            "title": "Weekday",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "weekday",
+          "lineCount",
+          "flagCount"
+        ],
+        "title": "SteadyOrderSummaryOut",
+        "type": "object"
+      },
+      "SupplierTextView": {
+        "properties": {
+          "grade": {
+            "const": "untrusted",
+            "default": "untrusted",
+            "title": "Grade",
+            "type": "string"
+          },
+          "planted": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Planted"
+          },
+          "reader": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReaderView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "SupplierTextView",
+        "type": "object"
+      },
+      "SupplyLineIn": {
+        "properties": {
+          "productId": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Productid"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "maximum": 1000000.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "free text, e.g. '1000 litres of lactose-free milk'",
+            "title": "Text"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "maxLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the product's sales unit, or L / KG",
+            "title": "Unit"
+          }
+        },
+        "title": "SupplyLineIn",
+        "type": "object"
+      },
+      "SupplyRequestIn": {
+        "properties": {
+          "deliverBy": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverby"
+          },
+          "idempotencyKey": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Idempotencykey",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/SupplyLineIn"
+            },
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Lines",
+            "type": "array"
+          }
+        },
+        "required": [
+          "lines",
+          "idempotencyKey"
+        ],
+        "title": "SupplyRequestIn",
+        "type": "object"
+      },
+      "SupplyRequestView": {
+        "properties": {
+          "agent": {
+            "title": "Agent",
+            "type": "string"
+          },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string"
+          },
+          "decision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DecisionView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deliverBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverby"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/RequestLineView"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "liveChecked": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LiveChecked"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "orderId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderid"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "requestId": {
+            "title": "Requestid",
+            "type": "string"
+          },
+          "simulated": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SimulatedMark"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Simulated"
+          },
+          "spendPassId": {
+            "title": "Spendpassid",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "working",
+              "ordered_alone",
+              "waiting",
+              "approved",
+              "ordered",
+              "rejected",
+              "blocked"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          }
+        },
+        "required": [
+          "id",
+          "requestId",
+          "createdAt",
+          "agent",
+          "text",
+          "status",
+          "spendPassId"
+        ],
+        "title": "SupplyRequestView",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Agent API under /agent/v1 (writes need `Authorization: SD-JWT <presentation>`), web app API under /api, MCP at /mcp.",
+    "title": "Validio",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/agent/v1/nonce": {
+      "get": {
+        "description": "A fresh single-use nonce for the Spend Pass key binding.",
+        "operationId": "get_nonce",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonceView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Nonce",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/orders": {
+      "post": {
+        "description": "Confirm the chosen products and amounts. Validio asks Valio again for every price, the\nagent's numbers are never read.",
+        "operationId": "confirm_order",
+        "parameters": [
+          {
+            "description": "SD-JWT <presentation>",
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "SD-JWT <presentation>",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Confirm Order",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/orders/{order_id}": {
+      "get": {
+        "operationId": "get_order",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Order",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/products": {
+      "get": {
+        "description": "Products from Valio's catalog with graded claims. Static data only, no live call.\nSupplier text sits in descriptionUntrusted and is never used for a decision.",
+        "operationId": "search_products",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "in": "query",
+            "name": "claims",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Claims"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 20,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductSummary"
+                  },
+                  "title": "Response Search Products",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Products",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/requests": {
+      "post": {
+        "description": "Text or typed lines in, ranked options and the Hard Lines decision out. A retry with the\nsame idempotency key returns the same request.",
+        "operationId": "request_supply",
+        "parameters": [
+          {
+            "description": "SD-JWT <presentation>",
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "SD-JWT <presentation>",
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplyRequestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyRequestView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Supply",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/requests/{request_id}": {
+      "get": {
+        "operationId": "get_request",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyRequestView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Request",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/api/demo": {
+      "get": {
+        "operationId": "demo_state_api_demo_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemoState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo State",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/demo/reset": {
+      "post": {
+        "description": "Back to the state `make demo` starts from: drops every table, seeds again.",
+        "operationId": "reset_api_demo_reset_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-demo-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemoState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/demo/stock-out": {
+      "post": {
+        "description": "Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock.",
+        "operationId": "stock_out_api_demo_stock_out_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-demo-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemoState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock Out",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Api Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health"
+      }
+    },
+    "/api/inbox": {
+      "get": {
+        "operationId": "inbox_api_inbox_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InboxItem"
+                  },
+                  "title": "Response Inbox Api Inbox Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Inbox",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/ledger": {
+      "get": {
+        "operationId": "ledger_api_ledger_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ledger",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/orders/{order_id}": {
+      "get": {
+        "operationId": "order_api_orders__order_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Order",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/orders/{order_id}/approve": {
+      "post": {
+        "description": "Approve a waiting order. Validio asks Valio again and refuses if a price rose more than 2 %\nor a line can no longer be delivered. A placed order cannot be approved twice.",
+        "operationId": "approve_api_orders__order_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/orders/{order_id}/reject": {
+      "post": {
+        "operationId": "reject_api_orders__order_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ApproveIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/requests/{request_id}": {
+      "get": {
+        "operationId": "request_detail_api_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplyRequestView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Request Detail",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/spend-passes/{pass_id}": {
+      "get": {
+        "description": "The Spend Pass as the agent last showed it. Fields it did not disclose stay absent.",
+        "operationId": "spend_pass_api_spend_passes__pass_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "pass_id",
+            "required": true,
+            "schema": {
+              "title": "Pass Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendPassView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Spend Pass",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/steady": {
+      "get": {
+        "operationId": "steady_list_api_steady_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SteadyOrderSummaryOut"
+                  },
+                  "title": "Response Steady List Api Steady Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Steady List",
+        "tags": [
+          "steady"
+        ]
+      }
+    },
+    "/api/steady/{order_id}": {
+      "get": {
+        "operationId": "steady_order_api_steady__order_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SteadyOrderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Steady Order",
+        "tags": [
+          "steady"
+        ]
+      }
+    },
+    "/api/steady/{order_id}/lines/{product_id}/accept": {
+      "post": {
+        "operationId": "steady_accept_api_steady__order_id__lines__product_id__accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "title": "Product Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SteadyOrderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Steady Accept",
+        "tags": [
+          "steady"
+        ]
+      }
+    },
+    "/api/steady/{order_id}/renew": {
+      "post": {
+        "operationId": "steady_renew_api_steady__order_id__renew_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "required": true,
+            "schema": {
+              "title": "Order Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SteadyOrderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Steady Renew",
+        "tags": [
+          "steady"
+        ]
+      }
+    }
+  }
+}

@@ -3,11 +3,12 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-live record guards dev ci agent
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-check
 
 setup:
 	[ -f .env ] || cp .env.example .env
 	cd $(BACKEND) && uv sync --frozen
+	cd src/frontend && sh scripts/fetch-ui-kit.sh && npm ci
 	$(MAKE) data index
 
 data:
@@ -19,9 +20,17 @@ index:
 seed:
 	$(UV) python ../../scripts/seed_demo.py
 
-test: guards
+test: test-backend test-web
+
+test-backend: guards
 	$(UV) ruff check validio tests ../../scripts
 	$(UV) pytest -q
+
+test-web:
+	cd src/frontend && npm run check && npx playwright test
+
+types:
+	$(UV) python ../../scripts/export_openapi.py
 
 test-live:
 	$(UV) pytest -q -m live
