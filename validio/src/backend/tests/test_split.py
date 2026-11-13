@@ -122,3 +122,11 @@ def test_split_for_a_lactose_free_line_needs_person(parmesan):
 def test_incomplete_split_is_not_decided_alone(pancakes):
     with pytest.raises(ValueError):
         decide_split(pancakes, replace(DEMO_MANDATE, diet=()), NOW)
+
+
+def test_split_stock_in_sales_units(catalog, valio):
+    # 469054 is sold in boxes of 12 and Valio answers 36 ST: Split Fill may plan 3 boxes, not 36
+    from validio.matching.split import _stock
+
+    a = valio.availability(["469054"], MON, CallBudget(40))["469054"]
+    assert _stock(catalog.get("469054"), a) == 3

@@ -183,3 +183,35 @@ def test_descriptions_never_change_decisions(catalog, valio):
     assert before[0] == after[0]
     for (pid, c, lv0), (_, _, lv1) in zip(before[1], after[1], strict=True):
         assert lv1 == lv0 or lv1 == T.CONTRADICTED, (pid, c)  # text may only lower trust
+
+
+# Valio answers 469054 in ST although its sales unit is KI (a box of 12): 36 ST are 3 boxes (review H3).
+
+
+def test_469054_stock_in_sales_units(catalog, valio):
+    from validio.trust.levels import stock_in_sales_units
+
+    p = catalog.get("469054")
+    _, a = live(valio, "469054")
+    assert (p.sales_unit, a.lines[0].sales_unit, a.amount) == ("KI", "ST", 36.0)
+    assert stock_in_sales_units(p, a) == 3.0
+    f = facts(catalog, valio, "469054")["quantity"]
+    assert f.level == T.ATTESTED
+    assert "3 KI" in f.note
+
+
+def test_unconvertible_unit_is_unknown(catalog, valio):
+    from validio.trust.levels import quantity_fact, stock_in_sales_units
+
+    p = dataclasses.replace(catalog.get("469054"), units={"KI": 12.0})  # no size for ST, base unit ST missing
+    p = dataclasses.replace(p, base_unit="KG")
+    _, a = live(valio, "469054")
+    assert stock_in_sales_units(p, a) is None
+    assert quantity_fact(a, p).level == T.UNKNOWN
+
+
+def test_same_unit_needs_no_conversion(catalog, valio):
+    from validio.trust.levels import stock_in_sales_units
+
+    _, a = live(valio, "463380")  # 698 ST, sold in ST
+    assert stock_in_sales_units(catalog.get("463380"), a) == 698.0

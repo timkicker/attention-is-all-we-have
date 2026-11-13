@@ -34,7 +34,21 @@ PRICE = "Valio price API"
 MASTER = "Valio product data"
 
 
-def quantity_fact(a: Availability | None) -> Fact:
+def unit_factor(p: Product, unit: str) -> float | None:
+    """How many of the product's sales units one `unit` is. None when the catalog does not give both sizes."""
+    if unit == p.sales_unit:
+        return 1.0
+
+    def size(u: str) -> float | None:
+        return p.units.get(u) or (1.0 if u == p.base_unit else None)
+
+    have, sell = size(unit), size(p.sales_unit)
+    return have / sell if have and sell else None
+
+
+def quantity_fact(a: Availability | None, p: Product | None = None) -> Fact:
+    """Valio's amount is in the unit of its schedule line. With the product, a unit that cannot be converted
+    to the product's sales unit makes the quantity unknown."""
     if a is None:
         return Fact("quantity", None, TrustLevel.MISSING, AVAIL, "not asked")
     if not a.lines:
@@ -43,7 +57,21 @@ def quantity_fact(a: Availability | None) -> Fact:
     if a.logistic_model == "Terminal" or a.amount == UNKNOWN_AMOUNT:
         return Fact("quantity", None, TrustLevel.UNKNOWN, AVAIL,
                     f"{a.logistic_model}: Valio reports {a.amount:g} {unit}, the goods sit at the supplier")
-    return Fact("quantity", f"{a.amount:g} {unit}", TrustLevel.ATTESTED, AVAIL, f"{a.logistic_model} at Valio")
+    note = f"{a.logistic_model} at Valio"
+    if p is not None and unit != p.sales_unit:
+        factor = unit_factor(p, unit)
+        if factor is None:
+            return Fact("quantity", f"{a.amount:g} {unit}", TrustLevel.UNKNOWN, AVAIL,
+                        f"Valio counts in {unit}, the product is sold in {p.sales_unit}, no conversion known")
+        note += f", {a.amount * factor:g} {p.sales_unit} in sales units"
+    return Fact("quantity", f"{a.amount:g} {unit}", TrustLevel.ATTESTED, AVAIL, note)
+
+
+def stock_in_sales_units(p: Product, a: Availability | None) -> float | None:
+    """Stock Valio attests, in the product's sales unit. None when it is not deliverable or not a real count."""
+    if a is None or not a.deliverable or quantity_fact(a, p).level != TrustLevel.ATTESTED:
+        return None
+    return a.amount * unit_factor(p, a.lines[0].sales_unit)
 
 
 def price_fact(q: Quote | None) -> Fact:
@@ -58,7 +86,7 @@ def price_fact(q: Quote | None) -> Fact:
 def field_trust(p: Product, q: Quote | None, a: Availability | None) -> list[Fact]:
     from .claims import claim_check
 
-    out = [quantity_fact(a), price_fact(q)]
+    out = [quantity_fact(a, p), price_fact(q)]
     if a is not None and a.closing_time:
         out.append(Fact("cutoff", a.closing_time.isoformat(), TrustLevel.ATTESTED, AVAIL, "order cut-off"))
     if p.reliability is None:

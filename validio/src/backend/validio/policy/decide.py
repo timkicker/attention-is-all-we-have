@@ -164,15 +164,15 @@ def context_for(
     asks for. Stock must cover the amount, and the first delivery date must be on or before the earlier of
     `deliver_by` and the signed `deliverBy`. Without them the line cannot order alone."""
     from validio.trust.claims import claim_check
-    from validio.trust.levels import TrustLevel, quantity_fact
+    from validio.trust.levels import TrustLevel, quantity_fact, stock_in_sales_units
 
     if required_claims is not None:
         mandate = replace(mandate, diet=tuple(required_claims))
-    q = quantity_fact(availability)
+    q = quantity_fact(availability, product)
     deliverable = availability is not None and availability.deliverable
     closing = availability.closing_time if availability is not None else None
-    attested = deliverable and q.level == TrustLevel.ATTESTED
-    covers = attested and sales_qty is not None and availability.amount >= sales_qty
+    stock = stock_in_sales_units(product, availability)
+    covers = stock is not None and sales_qty is not None and stock >= sales_qty
     deadline = effective_deadline(mandate, deliver_by)
     in_time = deliverable and deadline is not None and availability.lines[0].available <= deadline
     return build_context(
