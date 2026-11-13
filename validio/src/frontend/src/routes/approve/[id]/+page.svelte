@@ -60,7 +60,7 @@
         <StatusBadge status={req.status} />
         <span class="num">{time(req.createdAt)}</span>
       </div>
-      <p class="question" id="question">{req.question ?? req.decision.sentence}</p>
+      <p class="question" id={req.status === "waiting" ? "question" : "answered"}>{req.status === "waiting" && req.question ? req.question : req.decision.sentence}</p>
     </div>
 
     {#if pick}
@@ -101,7 +101,6 @@
           <li><span>{ORDER_STATE[step.state]}</span><span class="num">{time(step.at)}</span></li>
         {/each}
       </ol>
-      <p class="fine" id="answered">{req.decision.sentence}</p>
     {/if}
   {/if}
 </div>
@@ -156,7 +155,7 @@
   }
   .pick-total {
     font-size: var(--text-lg);
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
   }
   .pick-meta {
