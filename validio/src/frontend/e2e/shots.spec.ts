@@ -14,8 +14,20 @@ for (const theme of ["dark", "light"] as const) {
     const go = (path: string) => page.goto(`${path}${path.includes("?") ? "&" : "?"}theme=${theme}`);
     async function shoot(name: string) {
       for (const width of [1280, 390]) {
-        await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+        const height = width === 390 ? 844 : 900;
+        await page.setViewportSize({ width, height });
         await page.waitForTimeout(200);
+        // At desktop width the panes scroll inside a fixed-height frame, so a
+        // full-page shot would stop at the viewport. Grow the viewport by what
+        // the tallest inner scroller hides, so the shot holds the whole page.
+        const hidden = await page.evaluate(() =>
+          Math.max(0, ...[...document.querySelectorAll("*")].map((e) =>
+            getComputedStyle(e).overflowY.match(/auto|scroll/) ? e.scrollHeight - e.clientHeight : 0)),
+        );
+        if (hidden > 0) {
+          await page.setViewportSize({ width, height: height + hidden });
+          await page.waitForTimeout(200);
+        }
         await page.screenshot({ path: `${OUT}/${name}-${width}-${theme}.png`, fullPage: true });
         problems.push(...(await slop(page)).map((p) => `${name} ${width}: ${p}`));
       }
