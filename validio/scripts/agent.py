@@ -5,6 +5,7 @@ right shows the same request. Scene 3 needs the presenter's stock-out button fir
 when nothing answers on the port) it runs Validio's MCP server in process on a fresh seeded store under
 a temporary folder, and switches the simulated stock-out on itself for scene 3.
 
+It also writes artifacts/agent/scene-n.md: every tool call, the answer the model saw, the final line.
 Scene 4 renews the Steady Order S-1 through the tool renew_steady_order.
 
 The model is Gemini when GEMINI_API_KEY is set, otherwise the fake twin with the same tool calls."""
@@ -26,8 +27,10 @@ from validio.agent.holder import Holder
 from validio.agent.llm import make_llm
 from validio.agent.pane import printer
 from validio.agent.port import McpPort
+from validio.agent.record import write
 
 BASE = "http://127.0.0.1:8410"
+ARTIFACTS = Path(__file__).resolve().parents[1] / "artifacts" / "agent"
 
 
 def running(base: str) -> bool:
@@ -72,7 +75,9 @@ async def main(scene: int, base: str, force_local: bool) -> None:
     llm = make_llm(scene)
     print(f"Validio demo, scene {scene}: {SCENES[scene].title}\nmodel: {llm.name} | {label}\n", flush=True)
     async with McpPort(target, spend_pass=holder.presentation) as port:
-        await run_scene(scene, llm, port, on_event=printer())
+        t = await run_scene(scene, llm, port, on_event=printer())
+    path = write(t, scene, label, ARTIFACTS)
+    print(f"transcript: {path.relative_to(ARTIFACTS.parents[1])}", flush=True)
 
 
 if __name__ == "__main__":
