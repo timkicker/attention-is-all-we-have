@@ -319,7 +319,7 @@ export const STEADY_PENDING: SteadyLine[] = [
     unit: "cartons",
     usualQuantity: 300,
     result: "pending",
-    sentence: "Usual amount.",
+    sentence: "Same amount every week.",
     flags: [],
   },
   {
@@ -328,7 +328,7 @@ export const STEADY_PENDING: SteadyLine[] = [
     unit: "packs",
     usualQuantity: 200,
     result: "pending",
-    sentence: "Usual amount.",
+    sentence: "Same amount every week.",
     flags: [],
   },
   {
@@ -337,7 +337,7 @@ export const STEADY_PENDING: SteadyLine[] = [
     unit: "cartons",
     usualQuantity: 30,
     result: "pending",
-    sentence: "Usual amount.",
+    sentence: "Same amount every week.",
     flags: [],
   },
   {
@@ -366,7 +366,7 @@ export const STEADY_RENEWED: SteadyLine[] = [
     totalCents: 77249,
     result: "split_renewed",
     sentence:
-      "Only 137 in stock, so 40 blocks of 200 g of the same cheese come from Valio's own substitute list. 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "Only 137 in stock, so 40 blocks of 200 g of the same cheese come from Valio's own substitute list. 18.49 € (2.5 %) more, inside your 5 % split limit.",
     split: {
       parts: [
         {
@@ -397,7 +397,7 @@ export const STEADY_RENEWED: SteadyLine[] = [
     result: "waiting",
     sentence:
       "27 of 30 cartons can come. Valio's only listed substitute 476523 contains wheat, so the rest would break the gluten-free rule. Order 27 now?",
-    flags: [{ kind: "stock_below", sentence: "Only 27 cartons in stock." }],
+    flags: [],
     acceptLabel: "Order 27 now",
   },
   {
@@ -411,7 +411,7 @@ export const STEADY_RENEWED: SteadyLine[] = [
         kind: "per_guest_up",
         pct: 26,
         sentence:
-          "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more mozzarella per guest. Renew anyway?",
+          "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more mozzarella per guest. Renew anyway?",
       },
     ],
     acceptLabel: "Renew anyway",

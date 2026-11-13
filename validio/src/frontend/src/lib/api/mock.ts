@@ -195,7 +195,7 @@ export async function steadyList(): Promise<SteadyOrderSummary[]> {
       name: o.name,
       weekday: o.weekday,
       lineCount: o.lines.length,
-      flagCount: o.lines.filter((l) => l.flags.length > 0 && l.result !== "accepted").length,
+      flagCount: o.lines.filter((l) => l.result === "waiting" || l.result === "flagged").length,
       renewedAt: o.renewedAt,
     },
   ];
@@ -331,7 +331,7 @@ function drafts(s: MockState): Draft[] {
         actor: "validio",
         kind: "renewal",
         sentence:
-          "Renewed the weekly Monday order: milk as usual, parmesan split with 40 blocks of 469648 for 18.49 € (2.5 %) more.",
+          "Renewed the weekly Monday order: milk as usual, parmesan split with 40 blocks of 469648 for 18.49 € (2.5 %) more.",
         facts: [],
         spendPassId: "M-1",
         disclosed: ["autoLimitCents"],
@@ -342,7 +342,7 @@ function drafts(s: MockState): Draft[] {
         actor: "validio",
         kind: "renewal",
         sentence:
-          "Held two lines for the chef: pancakes (27 of 30, the only substitute contains wheat) and mozzarella (26 % more per guest).",
+          "Held two lines for the chef: pancakes (27 of 30, the only substitute contains wheat) and mozzarella (26 % more per guest).",
         facts: [],
         spendPassId: "M-1",
         disclosed: ["diet"],
