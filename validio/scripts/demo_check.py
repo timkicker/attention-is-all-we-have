@@ -148,10 +148,14 @@ class Run:
         subs = {o["productId"]: o["verdict"] for o in line["substitutes"]}
         check(subs == {"466151": "blocked", "468526": "blocked", "475908": "blocked", "473986": "not_deliverable"},
               f"scene 3: listed substitutes {subs}")
-        check(line["chosen"] == {"productId": "463383", "salesQty": 10, "isSubstitute": True, "onValioList": False},
-              f"scene 3: Safe Swap chose {line['chosen']}, the blueprint expects 463383 x 10")
+        # the real data ranks the mozzarella-fontal blend (0 g lactose) first; it is cheaper than 463383
+        check(line["chosen"] == {"productId": "465256", "salesQty": 10, "isSubstitute": True, "onValioList": False},
+              f"scene 3: Safe Swap chose {line['chosen']}, expected 465256 x 10")
+        pick = next((o for o in line.get("beyondList") or [] if o["productId"] == "465256"), {})
+        check("mozzarella-fontal blend" in pick.get("sentence", "") and "465256" in (line.get("swapSentence") or ""),
+              f"scene 3: 465256 explained as {pick.get('sentence')!r}, swap sentence {line.get('swapSentence')!r}")
         order = self.get(f"/api/orders/{req['orderId']}")
-        check(order["state"] == "waiting" and order["totalCents"] == 19660, f"scene 3: order {order['state']} "
+        check(order["state"] == "waiting" and order["totalCents"] == 18010, f"scene 3: order {order['state']} "
               f"{order['totalCents']}")
         check(req.get("question", "").endswith("?"), "scene 3: no question for the owner")
         r = self.http.post(f"/api/orders/{order['id']}/approve", json={"code": self.code})
@@ -162,7 +166,11 @@ class Run:
         again = self.http.post(f"/api/orders/{order['id']}/approve", json={"code": self.code})
         check(again.status_code == 409, f"scene 3: second approve answered {again.status_code}")
         check(self.get(f"/api/requests/{req['id']}")["status"] == "ordered", "scene 3: request not ordered")
-        return "3 listed substitutes blocked for lactose, 473986 not deliverable, 463383 10 bags for 196.60 EUR " \
+        placed = [e["sentence"] for e in self.get("/api/ledger")["entries"]
+                  if e["kind"] == "order" and e["orderId"] == order["id"]]
+        check(len(placed) == 1 and "after the owner approved" in placed[0] and "without a human" not in placed[0],
+              f"scene 3: order sentence {placed}")
+        return "3 listed substitutes blocked for lactose, 473986 not deliverable, 465256 blend 10 for 180.10 EUR " \
                "approved by the owner, a second approve refused"
 
     async def scene4(self):
