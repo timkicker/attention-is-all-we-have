@@ -124,3 +124,36 @@ def test_renew_and_accept_need_the_approve_code(client):
     assert client.post("/api/steady/S-1/lines/471376/accept", json={"code": "000000"}).status_code == 403
     assert lines(client.get("/api/steady/S-1").json())["471376"]["result"] == "waiting"
     assert len(store.orders()) == 2
+
+
+def test_refused_accept_leaves_one_decision_and_no_hidden_order(client):
+    # review 3 M5 probe: stock-out, renew, accept the mozzarella three times. Each try wrote "Chef accepted"
+    # with no order id before anything was decided, and O-3 stayed waiting where no page showed it
+    seed.set_stockout(seed.db_path(), True)
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    log = AuditLog(seed.db_path())
+    before = len(log.list())
+    r = client.post("/api/steady/S-1/lines/466375/accept", headers=CHEF)
+    assert r.status_code == 409 and "Approval refused" in r.json()["detail"]
+    after_first = log.list()[before:]
+    assert all(e.order_id for e in after_first)
+    assert not [e for e in after_first if e.actor == "kitchen:chef"]  # the chef's acceptance never came true
+    store = Store(seed.db_path())
+    assert [o["state"] for o in store.orders() if o["lines"][0]["productId"] == "466375"] == ["rejected"]
+    mozz = lines(client.get("/api/steady/S-1").json())["466375"]
+    assert mozz["result"] == "blocked" and "Approval refused" in mozz["sentence"] and "acceptLabel" not in mozz
+
+    for _ in range(2):  # a retry decides nothing new
+        assert client.post("/api/steady/S-1/lines/466375/accept", headers=CHEF).status_code == 409
+    assert len(log.list()) == before + len(after_first)
+    assert not [o for o in store.orders() if o["state"] == "waiting"]
+
+
+def test_accepted_line_has_one_approval_tied_to_its_order(client):
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    log = AuditLog(seed.db_path())
+    before = len(log.list())
+    pan = lines(client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF).json())["471376"]
+    new = log.list()[before:]
+    assert [e.kind for e in new if e.kind == "approval"] == ["approval"]
+    assert {e.order_id for e in new} == {pan["orderId"]}

@@ -29,7 +29,7 @@ from ..audit.log import AuditLog
 from ..catalog.store import Catalog
 from ..config import load_settings
 from ..demo import seed
-from ..orders.service import LineIn, OrderError, OrderService
+from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
 from ..orders.store import Store
 from ..standing.drift import unit_word
 from ..standing.learn import learn
@@ -195,6 +195,16 @@ def _chef(key: str, header: str | None, body) -> None:
     _code(get_ctx(), key, header, body)
 
 
+def _refuse(path: Path, so_id: str, state: dict, view: SteadyOrderOut, idx: int, sentence: str,
+            order_id: str) -> None:
+    """The accept could not place the line. Keep the reason on the line, so a retry decides nothing new."""
+    lines = list(view.lines)
+    lines[idx] = lines[idx].model_copy(update={"result": str(LineResult.BLOCKED), "sentence": sentence,
+                                               "accept_label": None, "order_id": order_id})
+    _save(path, so_id, {**state, "view": _dump(view.model_copy(update={"lines": lines}))})
+    raise HTTPException(409, sentence)
+
+
 def _steady() -> tuple[StandingOrder, object]:
     h = seed.load_history()
     return learn(h), h
@@ -355,11 +365,6 @@ def steady_accept(order_id: str, product_id: str, body: Annotated[ApproveIn | No
         mandate = seed.spend_pass(live.path, now=s.now)
         diet = {ln.product_id: ln.diet for ln in so.lines}[product_id]
         delivery = date.fromisoformat(state["delivery"])
-        live.audit.append(
-            at=s.now, actor=CHEF, kind="approval",
-            sentence=f"Chef accepted {line.this_week_quantity} {line.unit} of {product_id} {line.name} "
-                     f"for Steady Order {so.id}: {line.sentence}",
-            facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=[], order_id=None)
         try:
             o = live.service.submit(
                 mandate=mandate, lines=[LineIn(product_id, line.this_week_quantity)], deliver_by=delivery,
@@ -367,10 +372,20 @@ def steady_accept(order_id: str, product_id: str, body: Annotated[ApproveIn | No
                 required_claims=diet)
             if o["state"] == "waiting":
                 o = live.service.approve(o["id"], CHEF)  # Valio asked again, a block is never lifted
+            elif o["state"] == "placed":  # approve writes its own approval entry, this path needs one
+                live.audit.append(
+                    at=s.now, actor=CHEF, kind="approval",
+                    sentence=f"Chef accepted {line.this_week_quantity} {line.unit} of {product_id} {line.name} "
+                             f"for Steady Order {so.id}: {line.sentence}",
+                    facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=[], order_id=o["id"])
+        except ApproveRefused as e:
+            # no waiting order is left behind where no page shows it: the line ends blocked with the reason
+            o = live.service.reject(o["id"], "validio", reason="approval refused")
+            _refuse(live.path, so.id, state, view, idx, str(e), o["id"])
         except OrderError as e:
             raise HTTPException(409, str(e)) from e
         if o["state"] != "placed":
-            raise HTTPException(409, o["decision"]["sentence"])
+            _refuse(live.path, so.id, state, view, idx, o["decision"]["sentence"], o["id"])
         lines = list(view.lines)
         lines[idx] = line.model_copy(update={"result": str(LineResult.ACCEPTED), "accept_label": None,
                                              "order_id": o["id"], "total_cents": o["totalCents"]})
