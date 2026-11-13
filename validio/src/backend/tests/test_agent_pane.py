@@ -52,7 +52,7 @@ async def test_pane_scene2_orders_464306_alone(ctx):
 @pytest.mark.asyncio
 async def test_pane_scene3_owner_decides(ctx):
     text, t, llm = await pane(ctx, 3)
-    assert "simulated: Simulated stock-out" in text
+    assert "simulated: Stock-out simulated" in text
     assert "not_deliverable" in text and "473986" in text
     assert "mozzarella-fontal blend" in text
     assert "order O-1: waiting, 180.10 EUR" in text

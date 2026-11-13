@@ -5,6 +5,7 @@ from enum import StrEnum
 
 from ..catalog.labels import LABELS
 from ..catalog.model import Product
+from ..text.format import money
 from ..valio.models import Availability, Quote
 
 
@@ -92,7 +93,7 @@ def stock_in_sales_units(p: Product, a: Availability | None) -> float | None:
 def price_fact(q: Quote | None) -> Fact:
     if q is None or q.error or q.price_cents is None:
         return Fact("price", None, TrustLevel.MISSING, PRICE, "Valio has no price for it")
-    value = f"{q.price_cents / 100:.2f} EUR"
+    value = money(q.price_cents)
     if q.valid_to:
         return Fact("price", value, TrustLevel.ATTESTED_UNTIL, PRICE, f"until {q.valid_to.isoformat()}")
     return Fact("price", value, TrustLevel.ATTESTED, PRICE, "catalog price, no end date")

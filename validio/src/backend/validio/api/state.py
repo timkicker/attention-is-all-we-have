@@ -28,6 +28,7 @@ from ..policy.mandate import (
     load_or_create_key,
     verify_presentation,
 )
+from ..text.format import display_name
 from .steady import Runtime, runtime
 
 MAX_CODE_TRIES = 5
@@ -159,8 +160,13 @@ class Ctx:
         if on:
             self.audit.append(at=self.now(), actor="presenter", kind="simulation",
                               sentence=seed.stockout_note(self.real_stock(),
-                                                          f"Simulated a stock-out of {seed.STOCKOUT_ID}."),
+                                                          f"Simulated a stock-out of {self._stockout_name()} ({seed.STOCKOUT_ID}) "
+                                                          "for the demo."),
                               facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
+
+    def _stockout_name(self) -> str:
+        p = self.catalog.get(seed.STOCKOUT_ID)
+        return display_name(p.name_en) if p else seed.STOCKOUT_ID
 
     def verify(self, token: str) -> Mandate:
         return verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,

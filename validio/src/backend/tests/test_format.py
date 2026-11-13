@@ -3,7 +3,7 @@ catalogue names without shouting or trademark signs. The raw values stay where t
 
 import pytest
 
-from validio.text.format import count, display_name, money, qty_text, unit_word
+from validio.text.format import and_list, count, display_name, money, qty_text, sentences, unit_word
 
 
 @pytest.mark.parametrize("cents, text", [
@@ -58,3 +58,17 @@ def test_display_name_keeps_empty_and_unchanged_names():
     assert display_name("") == ""
     assert display_name(None) == ""
     assert display_name("Castelli mozzarella 125 g") == "Castelli mozzarella 125 g"
+
+
+def test_and_list_has_no_comma_before_and():
+    assert and_list([]) == ""
+    assert and_list(["wheat"]) == "wheat"
+    assert and_list(["gluten cereals", "wheat"]) == "gluten cereals and wheat"
+    assert and_list(["a", "b", "c"]) == "a, b and c"
+
+
+def test_sentences_from_fragments():
+    assert sentences(["Sour milk, not plain milk", "Low lactose is not lactose free"]) == \
+        "Sour milk, not plain milk. Low lactose is not lactose free."
+    assert sentences(["order cut-off has passed.", "", "Order 27 now?"]) == "Order cut-off has passed. Order 27 now?"
+    assert sentences(["Same", "Same"]) == "Same."

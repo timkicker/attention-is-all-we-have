@@ -9,6 +9,7 @@ from datetime import date, timedelta
 
 from ..catalog.model import Product
 from ..catalog.store import Catalog
+from ..text.format import qty_text
 from ..valio.models import Quote
 
 MAX_CANDIDATES = 12
@@ -197,7 +198,7 @@ def static_reasons(need: Need, p: Product) -> list[str]:
         if per is None:
             reasons.append(f"Pack size unknown ({note})")
         elif need.unit == "L" and need.quantity >= 100 and piece < 1:
-            reasons.append(f"{piece:g} l packs, too small for {need.quantity:g} litres")
+            reasons.append(f"{piece:g} l packs, too small for {qty_text(need.quantity, 'L')}")
     return reasons
 
 

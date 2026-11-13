@@ -54,8 +54,8 @@ def test_scene2_order_464306_then_464401(live):
     first, second = out[0], out[1]
     assert first.why[0] == "Cheapest safe option"
     assert "Valio delivered it as ordered every time in its records" in first.why
-    assert second.why[0] == "90.00 EUR more than the cheapest"
-    assert "Has the Heart Symbol label, which your Spend Pass does not ask for" in second.why
+    assert second.why[0] == "90.00 € more than the cheapest"
+    assert "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for" in second.why
 
 
 def test_tie_band_uses_reliability(catalog):
@@ -64,7 +64,7 @@ def test_tie_band_uses_reliability(catalog):
     steady = option(catalog, "464401", 103000, reliability=1.0)
     out = best_pick([cheap, steady])
     assert [r.product.id for r in out] == ["464401", "464306"]
-    assert out[0].why[0] == "30.00 EUR more than the cheapest, within 5 %, so it counts as equal on price"
+    assert out[0].why[0] == "30.00 € more than the cheapest, within 5 %, so it counts as equal on price"
     assert "Valio delivered it as ordered 90 of 100 times" in out[1].why
 
 
@@ -115,6 +115,6 @@ def test_unit_mismatch_counts_sales_units(catalog, valio):
     r = rank_one(Need("item", 10, "PCS", set(), set(), MON, None, product_id=p.id), p, q, a, NOW)
     assert r.sales_qty == 10
     assert not r.accepted
-    assert any("Only 3 KI in stock" in x for x in r.reasons)
+    assert any("Only 3 cartons in stock" in x for x in r.reasons)
     ok = rank_one(Need("item", 3, "PCS", set(), set(), MON, None, product_id=p.id), p, q, a, NOW)
     assert not any("in stock" in x for x in ok.reasons)

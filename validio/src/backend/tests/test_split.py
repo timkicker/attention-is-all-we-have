@@ -58,18 +58,19 @@ def test_parmesan_split_137_plus_40(parmesan):
     assert p.extra_pct == "2.5"
     assert p.breaks == [] and p.complete and not p.needs_person
     assert p.parts[1].on_valio_list
-    assert p.sentence == ("137 ST of 463968 plus 40 ST of 469648 from Valio's own substitute list for "
-                          "772.49 EUR. 18.49 EUR (2.5 %) more, inside your 5 % split limit")
+    assert p.sentence == ("137 packs of Castelli Parmesan Reggiano 125 g PDO plus 40 packs of Castelli parmigiano "
+                          "reggiano 200 g block from Valio's own substitute list for 772.49 €. "
+                          "18.49 € (2.5 %) more, inside your 5 % split limit")
 
 
 def test_pancake_split_breaks_gluten(pancakes):
     p = pancakes
     assert [(x.product.id, x.sales_qty) for x in p.parts] == [("471376", 27)]
     assert [r.id for r, _ in p.refused] == ["476523"]
-    assert len(p.breaks) == 1 and "wheat" in p.breaks[0] and "476523" in p.breaks[0]
+    assert len(p.breaks) == 1 and "wheat" in p.breaks[0] and "Findus Pancake" in p.breaks[0]
     assert p.covered == pytest.approx(0.9)
     assert not p.complete and p.needs_person
-    assert p.sentence.startswith("27 of 30 KI can come.")
+    assert p.sentence.startswith("27 of 30 cartons can come.")
 
 
 def test_split_skips_undeliverable(catalog, valio):
@@ -83,8 +84,8 @@ def test_split_skips_undeliverable(catalog, valio):
 def test_split_over_cost_limit_escalates(catalog, valio):
     p = fill(catalog, valio, "463968", 200, max_extra_bp=200)
     assert [x.product.id for x in p.parts] == ["463968"]
-    assert p.breaks == [("469648 Castelli parmigiano reggiano 200g block would break a rule: "
-                         "the split would cost 2.5 % more, over your 2 % split limit")]
+    assert p.breaks == [("Castelli parmigiano reggiano 200 g block would break a rule. "
+                         "The split would cost 2.5 % more, over your 2 % split limit")]
     assert p.needs_person
 
 
