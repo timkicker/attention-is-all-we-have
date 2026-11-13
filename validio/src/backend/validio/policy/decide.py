@@ -274,6 +274,8 @@ def _ask(policy: Policy, action: str, product_id: str, agent_id: str, ctx: dict)
 
 def _escalation_reasons(c: PolicyContext) -> list[str]:
     out = []
+    if c.total_cents <= 0:
+        out.append(f"a total of {eur(c.total_cents)} is not a price Valio quoted")
     if c.total_cents > c.auto_limit_cents:
         out.append(f"{eur(c.total_cents)} is over the auto limit of {eur(c.auto_limit_cents)}")
     if c.diet_unchecked:

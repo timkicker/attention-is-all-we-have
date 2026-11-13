@@ -2,8 +2,12 @@
 
 submit   re-quotes price and availability, asks the Hard Lines and lands in placed, waiting or blocked.
          The idempotency key makes a retry return the same order.
-approve  only from waiting. Asks Valio again and refuses if a price rose more than 2 % or a line
-         can no longer be delivered. Only then is the order placed.
+approve  only from waiting. Asks Valio again and refuses if a price rose more than 2 %, a line can no
+         longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid.
+         Only then is the order placed.
+
+Every state change and its ledger entry are one SQLite transaction (the ledger shares the store's
+connection), under one lock that the demo reset takes too.
 """
 
 import hashlib
@@ -13,17 +17,18 @@ import threading
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, fields
 from datetime import date, datetime
+from pathlib import Path
 from typing import Any
 
 from ..audit.log import NEVER_LOGGED, AuditLog
 from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
 from ..policy.decide import Outcome, context_for, decide
-from ..policy.mandate import Mandate
+from ..policy.mandate import Mandate, effective_deadline
 from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact, stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.models import Availability
-from .store import Store
+from .store import NotFound, Store
 
 MAX_PRICE_RISE_BP = 200  # 2 %
 OUTCOME = {Outcome.ALLOW: "auto_order", Outcome.ESCALATE: "ask_human", Outcome.DENY: "block"}
@@ -45,6 +50,15 @@ class IdempotencyConflict(OrderError):
 
 class ApproveRefused(OrderError):
     """Valio's answer changed since the question was asked (HTTP 409). The order keeps waiting."""
+
+
+class ServiceClosed(Exception):
+    """The demo was reset while this call waited; its store is gone (HTTP 503, send it again)."""
+
+
+def day(d: date | str) -> str:
+    d = date.fromisoformat(d) if isinstance(d, str) else d
+    return f"{d.day} {d.strftime('%b')}"
 
 
 @dataclass(frozen=True)
@@ -90,12 +104,20 @@ def _with_stock(a: Availability | None, amount: float) -> Availability | None:
 class OrderService:
     def __init__(self, store: Store, catalog: Catalog, valio, audit: AuditLog,
                  clock: Callable[[], datetime], adjust: Callable[[dict], dict] | None = None,
-                 max_ids: int = 40):
+                 max_ids: int = 40, lock: "threading.RLock | None" = None):
         self.store, self.catalog, self.valio, self.audit = store, catalog, valio, audit
+        if audit.path.resolve() == Path(store.path).resolve():
+            audit.join(store.con, store.lock)  # one connection, else the ledger waits on the store's own write lock
         self.clock = clock
         self.adjust = adjust or (lambda avail: avail)  # the demo stock-out switch
         self.max_ids = max_ids
-        self.lock = threading.RLock()
+        self.lock = lock or threading.RLock()
+        self.closed = False
+
+    def check_open(self) -> None:
+        """Call with the lock held: a reset may have replaced this service while the call waited."""
+        if self.closed:
+            raise ServiceClosed("the demo was reset while this call waited, send it again")
 
     # Valio, asked again
 
@@ -133,10 +155,15 @@ class OrderService:
 
     def _decide(self, mandate: Mandate, quoted: list[dict], required_claims: list[str] | None = None,
                 split_base_cents: int | None = None, deliver_by: date | None = None) -> dict[str, Any]:
+        return self._judge(mandate, quoted, required_claims, split_base_cents, deliver_by)[0]
+
+    def _judge(self, mandate: Mandate, quoted: list[dict], required_claims: list[str] | None = None,
+               split_base_cents: int | None = None, deliver_by: date | None = None) -> tuple[dict, list]:
+        """The decision for the whole order and, per line, (outcome, Cedar decision, line, context)."""
         missing = [ln["productId"] for ln in quoted if ln["priceCents"] is None]
         if missing:
             return {"outcome": "block", "ruleIds": [],
-                    "sentence": f"Blocked: Valio has no price for {', '.join(missing)}."}
+                    "sentence": f"Blocked: Valio has no price for {', '.join(missing)}."}, []
         total = sum(ln["totalCents"] for ln in quoted)
         per = []
         for ln in quoted:
@@ -144,11 +171,11 @@ class OrderService:
                               is_substitute=ln["isSubstitute"], on_valio_list=ln["onValioList"],
                               split_base_cents=split_base_cents, required_claims=required_claims,
                               sales_qty=ln["quantity"], deliver_by=deliver_by)
-            per.append((OUTCOME[(d := decide(ctx, product_id=ln["productId"])).outcome], d, ln))
-        worst = max((o for o, _, _ in per), key=SEVERITY.__getitem__)
+            per.append((OUTCOME[(d := decide(ctx, product_id=ln["productId"])).outcome], d, ln, ctx))
+        worst = max((o for o, *_ in per), key=SEVERITY.__getitem__)
         rule_ids: list[str] = []
         sentences: list[str] = []
-        for o, d, ln in per:
+        for o, d, ln, _c in per:
             if o != worst:
                 continue
             rule_ids += [r for r in d.rule_ids if r not in rule_ids]
@@ -158,7 +185,7 @@ class OrderService:
                 sentences.append(f"{ln['productId']} is a substitute that is not on Valio's list.")
             if d.sentence not in sentences:
                 sentences.append(d.sentence)
-        return {"outcome": worst, "ruleIds": rule_ids, "sentence": " ".join(sentences)}
+        return {"outcome": worst, "ruleIds": rule_ids, "sentence": " ".join(sentences)}, per
 
     @staticmethod
     def _public(lines: list[dict]) -> list[dict]:
@@ -179,7 +206,8 @@ class OrderService:
                                      for ln in lines], "deliverBy": deliver_by.isoformat(),
                            "requestId": request_id, "requiredClaims": required_claims,
                            "splitBaseCents": split_base_cents})
-        with self.lock:
+        with self.lock, self.store.tx():
+            self.check_open()
             seen = self.store.idem_get(mandate.id, idempotency_key)
             if seen:
                 if seen[0] != body_hash:
@@ -208,19 +236,35 @@ class OrderService:
     def get(self, order_id: str) -> dict:
         o = self.store.order(order_id)
         if o is None:
-            raise KeyError(order_id)
+            raise NotFound(f"no order {order_id}")
         return o
+
+    def _time_problems(self, mandate: Mandate, deliver_by: date) -> list[str]:
+        now = self.clock()
+        if now.timestamp() >= mandate.expires:
+            end = datetime.fromtimestamp(mandate.expires, now.tzinfo)
+            return [f"Spend Pass {mandate.id} expired at {end:%d %b %H:%M}"]
+        if now.timestamp() < mandate.not_before:
+            return [f"Spend Pass {mandate.id} is not valid yet"]
+        deadline = effective_deadline(mandate, deliver_by)
+        if deadline is None or now.date() > deadline:
+            return [f"the delivery date {day(deliver_by)} has passed"]
+        return []
 
     def approve(self, order_id: str, approver: str) -> dict:
         with self.lock:
+            self.check_open()
             o = self.get(order_id)
             if o["state"] != "waiting":
                 raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be approved")
             mandate = mandate_from(o["mandate"])
+            deliver_by = date.fromisoformat(o["deliverBy"])
+            problems = self._time_problems(mandate, deliver_by)
+            if problems:
+                self._refuse(o, problems)
             lines = [LineIn(ln["productId"], ln["quantity"], ln["isSubstitute"], ln["onValioList"])
                      for ln in o["lines"]]
-            fresh = self.quote(lines, date.fromisoformat(o["deliverBy"]))
-            problems = []
+            fresh = self.quote(lines, deliver_by)
             for old, new in zip(o["lines"], fresh, strict=True):
                 if not new["deliverable"]:
                     problems.append(new["short"] or f"{new['productId']} can no longer be delivered")
@@ -230,30 +274,43 @@ class OrderService:
                     problems.append(f"the price of {new['productId']} rose from {eur(old['priceCents'])} to "
                                     f"{eur(new['priceCents'])}, more than 2 %")
             if not problems:
-                # a person may lift "ask", never a block
-                again = self._decide(mandate, fresh, o.get("requiredClaims"), o.get("splitBaseCents"),
-                                     date.fromisoformat(o["deliverBy"]))
+                # a person may lift "ask", never a block, a passed cut-off or a late delivery
+                again, per = self._judge(mandate, fresh, o.get("requiredClaims"), o.get("splitBaseCents"),
+                                         deliver_by)
                 if again["outcome"] == "block":
                     problems.append(again["sentence"])
+                for _o, _d, ln, c in per:
+                    a = ln["_avail"]
+                    if not c.cutoff_ok:
+                        when = f" ({a.closing_time:%d %b %H:%M})" if a is not None and a.closing_time else ""
+                        problems.append(f"the order cut-off for {ln['productId']} has passed{when}")
+                    elif not c.delivery_in_time:
+                        problems.append((f"Valio now delivers {ln['productId']} on {day(ln['deliveryDate'])}, "
+                                         f"after {day(deliver_by)}") if ln["deliveryDate"] else
+                                        f"Valio gives no delivery date for {ln['productId']}")
             if problems:
-                sentence = "Approval refused, Valio was asked again: " + "; ".join(problems) + "."
-                self._log(o, "validio", "decision", sentence, [])
-                raise ApproveRefused(sentence)
+                self._refuse(o, problems)
             now = self.clock().isoformat()
             o["lines"] = self._public(fresh)
             o["totalCents"] = sum(ln["totalCents"] for ln in fresh)
             o["history"] += [{"state": "approved", "at": now}, {"state": "placed", "at": now}]
             o["state"] = "placed"
             o["approvedBy"] = approver
-            self.store.put_order(o)
-            self._log(o, approver, "approval",
-                      f"{approver.split(':')[-1].capitalize()} approved {self._parts(o)} for {eur(o['totalCents'])}.",
-                      [])
-            self._log(o, "validio", "order", self._placed_sentence(o, approver), o["decision"]["ruleIds"])
+            with self.store.tx():
+                self.store.put_order(o)
+                self._log(o, approver, "approval", f"{approver.split(':')[-1].capitalize()} approved "
+                          f"{self._parts(o)} for {eur(o['totalCents'])}.", [])
+                self._log(o, "validio", "order", self._placed_sentence(o, approver), o["decision"]["ruleIds"])
             return o
 
+    def _refuse(self, o: dict, problems: list[str]) -> None:
+        sentence = "Approval refused, Valio was asked again: " + "; ".join(problems) + "."
+        self._log(o, "validio", "decision", sentence, [])
+        raise ApproveRefused(sentence)
+
     def reject(self, order_id: str, approver: str, reason: str | None = None) -> dict:
-        with self.lock:
+        with self.lock, self.store.tx():
+            self.check_open()
             o = self.get(order_id)
             if o["state"] != "waiting":
                 raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be rejected")
@@ -285,7 +342,8 @@ class OrderService:
             return f"Ordered {names} for {eur(o['totalCents'])} without a human. Inside mandate {m['id']}."
         role = approver.split(":")[-1]  # the role only, never the approver list of the Spend Pass
         return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the {role} approved. "
-                f"Valio was asked again: every line can be delivered and no price rose more than 2 %.")
+                f"Valio was asked again: every line is delivered by {day(o['deliverBy'])}, before its order "
+                f"cut-off, inside Spend Pass {m['id']}, and no price rose more than 2 %.")
 
     def _log(self, o: dict, actor: str, kind: str, sentence: str, rule_ids: list[str]) -> None:
         m = o["mandate"]

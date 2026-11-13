@@ -43,7 +43,7 @@ guards:
 	bash scripts/check_forbidden_hosts.sh
 
 dev:
-	$(UV) uvicorn validio.api.app:app --host 127.0.0.1 --port 8410 --reload
+	$(UV) env VALIDIO_DEMO=1 uvicorn validio.api.app:app --host 127.0.0.1 --port 8410 --reload
 
 ci: test
 
@@ -55,7 +55,7 @@ agent:
 demo:
 	cd src/frontend && VITE_API=live npm run build
 	$(MAKE) seed
-	cd $(BACKEND) && VALIO_MODE=replay uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
+	cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
 
 # The web app alone on its recorded answers (src/lib/api/snapshots/states.ts), no backend: the
 # sidebar says "Demo data". Never for the 10:00 run, which is `make demo`.
@@ -72,7 +72,7 @@ demo-check:
 demo-web:
 	$(MAKE) seed
 	trap 'kill 0' INT TERM EXIT; \
-	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_APPROVE_CODE= VALIDIO_DEMO_TOKEN= \
+	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= VALIDIO_DEMO_TOKEN= \
 	  uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410) & \
 	(cd src/frontend && VITE_API=live npm run dev)
 

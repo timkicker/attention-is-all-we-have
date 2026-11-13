@@ -11,7 +11,7 @@ when {
   && (!context.isSubstitute || (context.onValioList && context.substitutesAllowed))
   && (!context.isSplit || context.splitExtraBp <= context.splitMaxExtraBp)
   && (!(context.isSplit && context.isSubstitute) || context.splitSubstitutesAllowed)
-  && context.totalCents <= context.autoLimitCents
+  && context.totalCents > 0 && context.totalCents <= context.autoLimitCents
 };
 
 @id("ask-human")
