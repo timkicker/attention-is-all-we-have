@@ -159,7 +159,7 @@ async def agent(i: int, rounds: int, lines: list, http, holder_for, lat: dict, e
 
     async def auth():
         n = await timed("GET /agent/v1/nonce", "GET", "/agent/v1/nonce")
-        return {"Authorization": f"SD-JWT {holder.present(n['nonce'])}"}
+        return {"Authorization": f"SD-JWT {holder.present(n['nonce'], n.get('iat'))}"}
 
     for k in range(rounds):
         req = await timed("POST /agent/v1/requests", "POST", "/agent/v1/requests", headers=await auth(), json={
@@ -185,8 +185,9 @@ class Presenter:
         from validio.policy.mandate import AUDIENCE, present
         self.issuance, self.key, self._present, self._aud, self._disclose = issuance, key, present, AUDIENCE, DISCLOSE
 
-    def present(self, nonce: str) -> str:
-        return self._present(self.issuance, self._disclose, self.key, self._aud, nonce)
+    def present(self, nonce: str, iat: int | None = None) -> str:
+        """Signed on Validio's clock (`iat` from the nonce answer), as the server checks it."""
+        return self._present(self.issuance, self._disclose, self.key, self._aud, nonce, iat)
 
 
 def run_level(n: int, rounds: int, mix: str = "scene2") -> dict:
