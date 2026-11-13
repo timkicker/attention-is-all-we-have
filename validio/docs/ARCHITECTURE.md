@@ -46,7 +46,7 @@ Scene 2 of the demo: "1000 litres of lactose-free milk by Monday, budget 1200 eu
 
 ![Scene 3 sequence](img/sequence-scene3.svg)
 
-The presenter first switches on the simulated stock-out of 466375 in the web app. Then the agent asks for 200 bags. Valio's answer shows 0 bags. `safe_swap` walks Valio's own substitute list first, in Valio's order. Three of the four list milk and have no lactose-free claim. That needs no live call, because the diet check uses catalog data only. 473986 is lactose free, but Valio gives no delivery date for it. So Safe Swap searches the catalog with at most 8 more ids and finds 465256, 10 bags for 180.10 €. A substitute outside Valio's list always goes to a person, so Cedar answers `ask-human` and the order O-2 waits. The owner approves on the phone, Validio asks Valio again and places the order. Over the whole request 10 products were checked live.
+The presenter first switches on the simulated stock-out of 466375 in the web app. Then the agent asks for 200 bags. Valio's answer shows 0 bags. `safe_swap` walks Valio's own substitute list first, in Valio's order. Three of the four list milk and have no lactose-free claim. That needs no live call, because the diet check uses catalog data only. 473986 is lactose free, but Valio gives no delivery date for it. So Safe Swap searches the catalog with at most 8 more ids and finds 465256, 10 × 2.5 kg for 180.10 €. A substitute outside Valio's list always goes to a person, so Cedar answers `ask-human` and the order O-2 waits. The owner approves on the phone, Validio asks Valio again and places the order. Over the whole request 10 products were checked live.
 
 ## What can be replaced
 
