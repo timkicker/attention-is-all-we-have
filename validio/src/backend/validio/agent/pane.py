@@ -139,6 +139,7 @@ def render(e: Event, st: Style) -> str:
     return st.validio(f"Validio <- {e.name}") + "\n" + "\n".join("  " + b for b in body) + "\n"
 
 
-def printer(color: bool | None = None, out=sys.stdout):
+def printer(color: bool | None = None, out=None):
+    out = out or sys.stdout
     st = Style(out.isatty() and not os.environ.get("NO_COLOR") if color is None else color)
     return lambda e: print(render(e, st), file=out, flush=True)
