@@ -22,18 +22,18 @@ async def scene(n, llm=None):
     return t, list(agent_double.calls)
 
 
-def test_five_tools_declared():
+def test_six_tools_declared():
     assert [t["name"] for t in TOOLS] == [
-        "search_products", "request_supply", "get_request", "confirm_order", "get_order"]
+        "search_products", "request_supply", "get_request", "confirm_order", "get_order", "renew_steady_order"]
     for t in TOOLS:  # the model never writes idempotency keys or the Spend Pass
         assert "idempotencyKey" not in t["parameters"]["properties"]
         assert "spendPass" not in t["parameters"]["properties"]
 
 
 @pytest.mark.asyncio
-async def test_port_sees_five_tools():
+async def test_port_sees_the_double_tools():
     async with McpPort(agent_double.build()) as port:
-        assert sorted(await port.tool_names()) == sorted(t["name"] for t in TOOLS)
+        assert sorted(await port.tool_names()) == sorted(t["name"] for t in TOOLS[:5])  # no Steady Order
 
 
 @pytest.mark.asyncio
