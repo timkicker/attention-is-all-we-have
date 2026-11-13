@@ -1,0 +1,10 @@
+{
+  "note": "The five shots of tmp/pitch/video-script.md. start and seconds follow its voice-over times.",
+  "shots": [
+    {"scene": 1, "title": "Request", "start": 0, "seconds": 15},
+    {"scene": 2, "title": "Ordered alone", "start": 15, "seconds": 30},
+    {"scene": 3, "title": "Owner approves a swap", "start": 45, "seconds": 30},
+    {"scene": 4, "title": "Steady Order", "start": 75, "seconds": 30},
+    {"scene": 5, "title": "Open Ledger", "start": 105, "seconds": 15}
+  ]
+}
