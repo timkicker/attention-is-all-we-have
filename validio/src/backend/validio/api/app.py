@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from validio.api.steady import router as steady_router
 from validio.policy.decide import load_policy, policy_file
 
 
@@ -12,6 +13,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="Validio", version="0.1.0", lifespan=lifespan)
+app.include_router(steady_router)
 
 
 @app.get("/api/health")

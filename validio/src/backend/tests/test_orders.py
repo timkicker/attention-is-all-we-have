@@ -196,3 +196,25 @@ def test_scene2_ledger_sentence(svc, mandate):
     assert entry.rule_ids == ["auto-order"]
     assert "approvers" not in entry.disclosed
     assert svc.audit.verify().ok
+
+
+def test_split_order_with_line_diet_is_placed_alone(svc, mandate):
+    # Steady Order parmesan: the line has no diet of its own, the split is 2.5 % over the 754.00 base
+    lines = [LineIn("463968", 137), LineIn("469648", 40, is_substitute=True, on_valio_list=True)]
+    o = svc.submit(mandate=mandate, lines=lines, deliver_by=MON, idempotency_key="parm",
+                   required_claims=(), split_base_cents=75400)
+    assert o["state"] == "placed" and o["totalCents"] == 77249
+    assert o["requiredClaims"] == [] and o["splitBaseCents"] == 75400
+
+
+def test_line_diet_defaults_to_the_pass_diet(svc, mandate):
+    lines = [LineIn("463968", 137), LineIn("469648", 40, is_substitute=True, on_valio_list=True)]
+    o = svc.submit(mandate=mandate, lines=lines, deliver_by=MON, idempotency_key="parm2")
+    assert o["state"] == "waiting"  # parmesan claims nothing about lactose, so under the pass diet a person looks
+
+
+def test_approve_keeps_the_line_diet(svc, mandate):
+    o = svc.submit(mandate=mandate, lines=[LineIn("466375", 98)], deliver_by=MON, idempotency_key="mozz",
+                   required_claims=("FREE_FROM_LACTOSE",))
+    assert o["state"] == "waiting"  # lactose claim unchecked
+    assert svc.approve(o["id"], "owner:anna")["state"] == "placed"
