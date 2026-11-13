@@ -40,7 +40,7 @@ def test_raw_context_invariants(c):
     if c.total_cents > c.hard_cap_cents or c.diet_contradicted:
         assert d.outcome is Outcome.DENY, "a forbid must win over every permit"
     if d.outcome is Outcome.ALLOW:
-        assert c.total_cents <= c.auto_limit_cents
+        assert 0 < c.total_cents <= c.auto_limit_cents
         assert c.total_cents <= c.hard_cap_cents
         assert not c.diet_unchecked and not c.diet_contradicted
         assert c.quantity_attested and c.quantity_covers and c.delivery_in_time and c.cutoff_ok
@@ -68,6 +68,7 @@ def test_worse_facts_never_give_a_better_outcome(c, flag, more):
     worse = replace(c, **{flag: flag in BAD_FLAGS})
     assert RANK[decide(worse, "P-1").outcome] >= base
     pricier = replace(c, total_cents=c.total_cents + more)
+    assume(c.total_cents > 0)  # 0 or less is no price at all (G1), not the cheapest one
     assert RANK[decide(pricier, "P-1").outcome] >= base
 
 
@@ -75,7 +76,7 @@ def test_worse_facts_never_give_a_better_outcome(c, flag, more):
 def test_deny_wins_whatever_else_is_true(c):
     best = replace(c, **{f: False for f in BAD_FLAGS}, **{f: True for f in GOOD_FLAGS},
                    is_split=False, is_substitute=False, total_cents=min(c.total_cents, c.auto_limit_cents))
-    assume(best.total_cents <= best.hard_cap_cents)
+    assume(0 < best.total_cents <= best.hard_cap_cents)
     assert decide(best, "P-1").outcome is Outcome.ALLOW
     for forbid in (replace(best, diet_contradicted=True), replace(best, total_cents=best.hard_cap_cents + 1)):
         d = decide(forbid, "P-1")
@@ -225,7 +226,6 @@ def test_context_refuses_non_integer_money(bad):
         PolicyContext(**{**kw, "total_cents": bad})
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G1: a total of 0 or less cents orders alone, even with no limit shown")
 @pytest.mark.parametrize("total", [0, -1, -101000])
 def test_free_or_negative_total_never_orders_alone(total):
     """A price of zero or below is not a fact a person signed off on. With the auto limit undisclosed (0)

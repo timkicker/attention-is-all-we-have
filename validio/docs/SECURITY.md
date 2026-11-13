@@ -12,7 +12,7 @@ Proof:
 
 - `test_orders.py::test_proposal_price_ignored` and `test_api.py::test_scene2_end_to_end_http`, where the agent claims 1 cent and the order costs 1,010.00 €
 - `test_api.py::test_choice_outside_options_refused`
-- `test_api.py::test_contradicted_choice_is_blocked`
+- `test_api.py::test_contradicted_choice_is_refused`
 - `test_orders.py::test_same_key_other_body_is_refused`
 - `adversarial/test_policy_props.py::test_worse_facts_never_give_a_better_outcome` and `adversarial/test_policy_props.py::test_full_path_invariants`, property tests over random facts
 - `test_agent.py::test_gemini_buyer_scene2_three_runs_same_order`

@@ -79,8 +79,13 @@ def test_placed_and_blocked_orders_cannot_be_approved(client, ctx):
         req = client.post("/agent/v1/requests", headers=auth(), json={
             "lines": [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}],
             "deliverBy": "2026-11-16", "idempotencyKey": f"milk-{pid}"}).json()
-        o = client.post("/agent/v1/orders", headers=auth(), json={
-            "requestId": req["id"], "idempotencyKey": f"o-{pid}", "choice": [{"productId": pid, "salesQty": qty}]}).json()
+        r = client.post("/agent/v1/orders", headers=auth(), json={
+            "requestId": req["id"], "idempotencyKey": f"o-{pid}", "choice": [{"productId": pid, "salesQty": qty}]})
+        if state == "blocked":  # review 3 M2: an option Validio refused never becomes an order at all
+            assert r.status_code == 422 and "rejected" in r.json()["detail"]
+            assert client.get("/api/orders/O-2").status_code == 404  # O-1 is the placed one
+            continue
+        o = r.json()
         assert o["state"] == state
         assert approve(client, o["id"]).status_code == 409
         assert client.get(f"/api/orders/{o['id']}").json()["state"] == state
@@ -168,15 +173,16 @@ def test_header_wins_over_body(client, waiting):
     assert r.status_code == 403
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G10: the code is global but the lockout counts per order id, so "
-                                       "unknown order ids give unlimited guesses and 404 vs 403 tells a right code")
 def test_code_cannot_be_guessed_across_order_ids(client, waiting):
+    """review-2 G10: unknown ids gave unlimited guesses and 404 vs 403 told a right code. Now the order is
+    looked up first, so an unknown id answers 404 whatever the code, and wrong codes count per client."""
     guesses = [f"{n:06d}" for n in range(30) if f"{n:06d}" != CODE]
-    for i, g in enumerate(guesses):
-        assert approve(client, f"O-{9000 + i}", code=g).status_code in (403, 429)
-    # an attacker learns nothing new from an unknown id with the right code ...
-    assert approve(client, "O-9999", code=CODE).status_code in (403, 429)
-    # ... and after 29 wrong guesses the right code no longer works anywhere
+    # an attacker learns nothing from an unknown id, right code or wrong ...
+    assert {approve(client, f"O-{9000 + i}", code=g).status_code for i, g in enumerate(guesses)} == {404}
+    assert approve(client, "O-9999", code=CODE).status_code == 404
+    # ... and five wrong guesses on a real order lock this client out, the right code included
+    for g in guesses[:5]:
+        assert approve(client, waiting, code=g).status_code == 403
     assert approve(client, waiting).status_code == 429
 
 
@@ -271,8 +277,6 @@ def test_service_refuses_directly_too(ctx, waiting):
         ctx.orders.approve(waiting, approver="owner")
 
 
-@pytest.mark.xfail(strict=True, reason="review-2 G12: approve does not check that the Spend Pass is still valid; "
-                                       "a waiting order is placed after the pass expired")
 def test_approve_after_the_spend_pass_expired(client, ctx, waiting, monkeypatch):
     monkeypatch.setenv("VALIDIO_NOW", "2026-11-17T00:00:01+02:00")  # M-1 ends 17 Nov 00:00
     r = approve(client, waiting)

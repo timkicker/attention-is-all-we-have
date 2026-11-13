@@ -41,6 +41,10 @@ class ConfirmIn(Model):
     idempotency_key: str = Field(min_length=1, max_length=100)
 
 
+class SessionIn(Model):
+    token: str = Field(max_length=200)
+
+
 class ApproveIn(Model):
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 

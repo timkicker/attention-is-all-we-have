@@ -72,12 +72,15 @@ class VerifyResult(NamedTuple):
 
 
 class AuditLog:
-    def __init__(self, path: Path | str):
+    def __init__(self, path: Path | str, con: sqlite3.Connection | None = None,
+                 lock: "threading.RLock | None" = None):
+        """`con` shares a connection (autocommit) with the order store, so an entry joins its transaction."""
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
-        # the server's worker threads share this connection: one call at a time, or two BEGINs collide
-        self._lock = threading.RLock()
+        self._con = con or sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
+        # the server's worker threads share this connection: one call at a time, or two BEGINs collide.
+        # A shared connection brings its owner's lock (`lock`), so both sides take the same one.
+        self._lock = lock or threading.RLock()
         con = self._con
         con.execute("BEGIN IMMEDIATE")
         try:
@@ -95,6 +98,14 @@ class AuditLog:
         except BaseException:
             con.execute("ROLLBACK")
             raise
+
+    def join(self, con: sqlite3.Connection, lock) -> None:
+        """Write through `con` (the order store's) and take its `lock` from now on, so an order and its
+        entry commit together."""
+        if con is not self._con:
+            with self._lock:
+                self._con.close()
+            self._con, self._lock = con, lock
 
     def append(
         self,
@@ -115,7 +126,8 @@ class AuditLog:
 
     def _append(self, *, at, actor, kind, sentence, facts, mandate_id, disclosed, rule_ids, order_id) -> AuditEntry:
         con = self._con
-        con.execute("BEGIN IMMEDIATE")
+        nested = con.in_transaction  # inside the order store's transaction: commit or roll back with it
+        con.execute("SAVEPOINT ledger_append" if nested else "BEGIN IMMEDIATE")
         try:
             row = con.execute("SELECT seq, hash FROM ledger ORDER BY seq DESC LIMIT 1").fetchone()
             seq, prev = (row[0] + 1, row[1]) if row else (1, GENESIS)
@@ -140,9 +152,13 @@ class AuditLog:
                 (seq, order_id, canonical(body), h),
             )
             con.execute("INSERT OR REPLACE INTO ledger_head (id, count, hash) VALUES (1, ?, ?)", (seq, h))
-            con.execute("COMMIT")
+            con.execute("RELEASE ledger_append" if nested else "COMMIT")
         except BaseException:
-            con.execute("ROLLBACK")
+            if nested:
+                con.execute("ROLLBACK TO ledger_append")
+                con.execute("RELEASE ledger_append")
+            else:
+                con.execute("ROLLBACK")
             raise
         return AuditEntry(**body, hash=h)
 

@@ -100,13 +100,13 @@ def test_choice_outside_options_refused(client, holder):
     assert r.status_code == 422
 
 
-def test_contradicted_choice_is_blocked(client, holder):
-    # the planted line asks for 463047; the rules refuse it whatever the agent says
+def test_contradicted_choice_is_refused(client, holder):
+    # the planted line asks for 463047; Validio rejected it for this need, so the agent cannot pick it
     req = ask_milk(client, holder)
     o = client.post("/agent/v1/orders", headers=auth(holder), json={
         "requestId": req["id"], "idempotencyKey": "planted", "choice": [{"productId": "463047", "salesQty": 132}]})
-    assert o.json()["state"] == "blocked"
-    assert "never-break-diet" in o.json()["decision"]["ruleIds"]
+    assert o.status_code == 422
+    assert "rejected" in o.json()["detail"] and "Low lactose is not lactose free" in o.json()["detail"]
 
 
 def test_order_requires_valid_presentation(client, holder):
