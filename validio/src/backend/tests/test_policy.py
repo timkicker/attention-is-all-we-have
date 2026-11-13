@@ -309,3 +309,23 @@ def test_graded_not_deliverable_never_allowed(catalog, valio, mandate):
     d = graded(catalog, valio, mandate, "473986", 1)
     assert d.context["quantityAttested"] is False
     assert d.outcome is not Outcome.ALLOW
+
+
+def test_line_without_diet_ignores_the_pass_diet(catalog, valio, mandate):
+    # parmesan claims nothing about lactose: as a line with no diet of its own it may order alone
+    d = graded(catalog, valio, mandate, "469648", 10, required_claims=())
+    assert d.context["dietUnchecked"] is False
+    assert d.outcome is Outcome.ALLOW
+
+
+def test_line_diet_replaces_the_pass_diet(catalog, valio, mandate):
+    # 476523 lists wheat: a line that must stay gluten free is blocked even though the pass only says lactose free
+    d = graded(catalog, valio, mandate, "476523", 1, required_claims=("FREE_FROM_GLUTEN",))
+    assert d.context["dietContradicted"] is True
+    assert d.outcome is Outcome.DENY
+
+
+def test_default_line_diet_is_the_pass_diet(catalog, valio, mandate):
+    d = graded(catalog, valio, mandate, "469648", 10)
+    assert d.context["dietUnchecked"] is True
+    assert d.outcome is Outcome.ESCALATE
