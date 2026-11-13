@@ -5,7 +5,8 @@ from ..catalog.model import Product
 
 
 def eur(cents: int) -> str:
-    return f"{cents // 100}.{cents % 100:02d} EUR"
+    sign, cents = ("-" if cents < 0 else ""), abs(cents)
+    return f"{sign}{cents // 100}.{cents % 100:02d} EUR"
 
 
 def price_sentence(total: int, cheapest: int, band: float) -> str:

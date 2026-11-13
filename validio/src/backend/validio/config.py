@@ -1,7 +1,7 @@
 """Settings from the environment and validio/.env. Secrets live only in .env (gitignored)."""
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
@@ -25,7 +25,7 @@ def _read_env_file(path: Path) -> dict[str, str]:
 @dataclass(frozen=True)
 class Settings:
     valio_base_url: str
-    valio_api_key: str
+    valio_api_key: str = field(repr=False)  # never in a log line
     valio_mode: str
     valio_max_ids: int
     valio_customer: str

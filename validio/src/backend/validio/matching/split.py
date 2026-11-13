@@ -83,6 +83,9 @@ class SplitPlan:
             f"{p.sales_qty} {p.product.sales_unit} of {p.product.id}" for p in self.parts)
         diff = self.total_cents - self.base_cents
         limit = f"{self.max_extra_bp / 100:g} %"
+        if diff < 0:
+            return (f"{parts} from Valio's own substitute list for {eur(self.total_cents)}. "
+                    f"{eur(-diff)} less than the ordered product alone")
         return (f"{parts} from Valio's own substitute list for {eur(self.total_cents)}. "
                 f"{eur(diff)} ({self.extra_pct} %) more, inside your {limit} split limit")
 

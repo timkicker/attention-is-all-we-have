@@ -311,7 +311,7 @@ def decide(
     if allowed:
         reasons = _escalation_reasons(ctx) or ["no rule lets the agent order it alone"]
         return Decision(Outcome.ESCALATE, esc_rules, "Needs a person: " + "; ".join(reasons) + ".", c)
-    blocked = sorted(set(rules) | set(esc_rules))
+    blocked = sorted(set(rules) | set(esc_rules)) or ["no-permit"]  # no forbid fired, nothing permitted it
     parts = []
     if "never-break-diet" in blocked:
         parts.append("a diet rule of the Spend Pass is contradicted by Valio's data")
