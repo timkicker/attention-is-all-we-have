@@ -9,7 +9,7 @@ import json
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass, fields, replace
-from datetime import datetime
+from datetime import date, datetime
 from enum import StrEnum
 from functools import cache
 from math import ceil
@@ -19,7 +19,7 @@ from typing import Any
 import cedarpy
 
 from validio.audit.sentences import eur
-from validio.policy.mandate import Mandate
+from validio.policy.mandate import SUBSTITUTES_LISTED, Mandate, effective_deadline
 
 HERE = Path(__file__).resolve().parent
 POLICY_FILE = HERE / "policies.cedar"
@@ -63,6 +63,11 @@ class PolicyContext:
     sales_block: bool = False
     is_renewal: bool = False
     drift_flag: bool = False
+    # fail closed: a context that does not say otherwise has too little stock, comes too late and may not swap
+    quantity_covers: bool = False
+    delivery_in_time: bool = False
+    substitutes_allowed: bool = False
+    split_substitutes_allowed: bool = False
 
     def __post_init__(self) -> None:
         for f in fields(self):
@@ -92,6 +97,8 @@ def build_context(
     sales_block: bool = False,
     is_renewal: bool = False,
     drift_flag: bool = False,
+    quantity_covers: bool = False,
+    delivery_in_time: bool = False,
 ) -> PolicyContext:
     """Fill the Cedar context from typed facts. Undisclosed limits count as zero, an undisclosed
     diet counts as unchecked, so a pass that shows too little can never order alone."""
@@ -124,6 +131,10 @@ def build_context(
         sales_block=sales_block,
         is_renewal=is_renewal,
         drift_flag=drift_flag,
+        quantity_covers=quantity_covers,
+        delivery_in_time=delivery_in_time,
+        substitutes_allowed=mandate.substitutes == SUBSTITUTES_LISTED,
+        split_substitutes_allowed=mandate.split_allow_listed is True,
     )
 
 
@@ -140,12 +151,18 @@ def context_for(
     is_renewal: bool = False,
     drift_flag: bool = False,
     required_claims: Iterable[str] | None = None,
+    sales_qty: int | None = None,
+    deliver_by: date | None = None,
 ) -> PolicyContext:
     """The Cedar context for one product line, from Fact Grades and Valio's availability answer.
 
     `total_cents` must be recomputed from Valio's price, never taken from the agent. The diet rule
     applies per line: `required_claims` are the claims this line must keep (a Steady Order line carries
-    its own). None means the Spend Pass diet."""
+    its own). None means the Spend Pass diet.
+
+    `sales_qty` is the amount the line needs in the product's sales unit and `deliver_by` the date the request
+    asks for. Stock must cover the amount, and the first delivery date must be on or before the earlier of
+    `deliver_by` and the signed `deliverBy`. Without them the line cannot order alone."""
     from validio.trust.claims import claim_check
     from validio.trust.levels import TrustLevel, quantity_fact
 
@@ -154,6 +171,10 @@ def context_for(
     q = quantity_fact(availability)
     deliverable = availability is not None and availability.deliverable
     closing = availability.closing_time if availability is not None else None
+    attested = deliverable and q.level == TrustLevel.ATTESTED
+    covers = attested and sales_qty is not None and availability.amount >= sales_qty
+    deadline = effective_deadline(mandate, deliver_by)
+    in_time = deliverable and deadline is not None and availability.lines[0].available <= deadline
     return build_context(
         mandate,
         total_cents=total_cents,
@@ -168,6 +189,8 @@ def context_for(
         sales_block=bool(availability is not None and availability.sales_block),
         is_renewal=is_renewal,
         drift_flag=drift_flag,
+        quantity_covers=bool(covers),
+        delivery_in_time=bool(in_time),
     )
 
 
@@ -253,10 +276,18 @@ def _escalation_reasons(c: PolicyContext) -> list[str]:
         out.append("a diet rule cannot be checked")
     if not c.quantity_attested:
         out.append("Valio does not confirm the stock")
+    elif not c.quantity_covers:
+        out.append("Valio does not confirm enough stock")
+    if not c.delivery_in_time:
+        out.append("the delivery date is after the deadline or unknown")
     if not c.cutoff_ok:
         out.append("the order cut-off has passed")
     if c.is_substitute and not c.on_valio_list:
         out.append("the substitute is not on Valio's list")
+    if c.is_substitute and not c.substitutes_allowed:
+        out.append("the Spend Pass allows no substitutes")
+    if c.is_split and c.is_substitute and not c.split_substitutes_allowed:
+        out.append("the Spend Pass does not allow substitutes in a split")
     if c.is_split and c.split_extra_bp > c.split_max_extra_bp:
         out.append(f"the split costs {c.split_extra_bp / 100:.2f} % more, over the limit")
     if c.drift_flag:

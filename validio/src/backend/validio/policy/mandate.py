@@ -10,7 +10,7 @@ import secrets
 import threading
 from collections.abc import Mapping
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -67,6 +67,23 @@ class Mandate:
     diet: tuple[str, ...] | None
     prefer_labels: tuple[str, ...] | None
     disclosed: dict[str, Any]  # only the selectively disclosable fields the agent showed
+
+
+# The only `substitutes` value that lets a listed substitute order alone. Anything else fails closed.
+SUBSTITUTES_LISTED = "listed_and_rules_kept"
+
+
+def effective_deadline(m: Mandate, requested: date | None) -> date | None:
+    """The deadline that counts: the earlier of the signed `deliverBy` and the request. A request can
+    move it earlier, never later. A `deliverBy` that does not parse lets nothing arrive in time."""
+    signed = None
+    if m.deliver_by is not None:
+        try:
+            signed = date.fromisoformat(str(m.deliver_by))
+        except ValueError:
+            return date.min
+    dates = [d for d in (signed, requested) if d is not None]
+    return min(dates) if dates else None
 
 
 def load_or_create_key(path: Path) -> JWK:

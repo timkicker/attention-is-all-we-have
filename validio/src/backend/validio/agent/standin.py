@@ -21,7 +21,7 @@ from ..matching.substitute import safe_swap
 from ..orders.service import OUTCOME, LineIn, OrderService
 from ..orders.store import Store
 from ..policy.decide import context_for, decide
-from ..policy.mandate import Mandate
+from ..policy.mandate import Mandate, effective_deadline
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
 
@@ -63,6 +63,7 @@ def build(stockout: bool = False, now: datetime = NOW, workdir: Path | None = No
         return Need(kind, line["quantity"], "PCS", claims, set(), deliver_by, None, product_id=p.id)
 
     def one_line(line: dict, deliver_by: date, budget: CallBudget) -> dict:
+        deliver_by = effective_deadline(DEMO_PASS, deliver_by)  # the signed deadline, a request cannot move it later
         need = need_for(line, deliver_by)
         cands = candidates(need, cat)
         ids = [p.id for p in cands]
@@ -74,7 +75,8 @@ def build(stockout: bool = False, now: datetime = NOW, workdir: Path | None = No
         if top:
             chosen = {"productId": top.product.id, "salesQty": top.sales_qty}
             ctx = context_for(DEMO_PASS, top.product, a.get(top.product.id), total_cents=top.total_cents,
-                              now=now, required_claims=need.required_claims)
+                              now=now, required_claims=need.required_claims, sales_qty=top.sales_qty,
+                              deliver_by=deliver_by)
         else:
             swap = safe_swap(cat.get(ids[0]), need, cat, valio, deliver_by, budget, now)
             out["substitutes"] = {
@@ -93,7 +95,8 @@ def build(stockout: bool = False, now: datetime = NOW, workdir: Path | None = No
             sa = valio.availability([b.product.id], deliver_by, budget)[b.product.id]
             ctx = context_for(DEMO_PASS, b.product, sa, total_cents=b.ranked.total_cents, now=now,
                               is_substitute=True, on_valio_list=b.on_valio_list,
-                              required_claims=need.required_claims)
+                              required_claims=need.required_claims, sales_qty=b.ranked.sales_qty,
+                              deliver_by=deliver_by)
         d = decide(ctx, chosen["productId"])
         out["chosen"] = chosen
         out["decision"] = {"outcome": OUTCOME[d.outcome], "ruleIds": d.rule_ids, "sentence": d.sentence}
