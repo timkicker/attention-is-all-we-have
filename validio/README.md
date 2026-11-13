@@ -12,13 +12,13 @@ You need Python 3.12 with uv, Node 20 and the three Valio data files from the re
 make setup                  # .env from .env.example, uv sync, copy and check the Valio files, build data/catalog.db
 make seed                   # demo state: kitchen hotel-espoo, Spend Pass M-1, 8 weeks of simulated history
 make test                   # guard checks, ruff, pytest (no network)
-make agent SCENE=2          # the kitchen's agent runs scene 1, 2 or 3 and prints every tool call
+make agent SCENE=2          # the kitchen's agent runs scene 1, 2 or 3 against the running demo and prints every tool call
 make dev                    # the API on http://127.0.0.1:8410
 make demo                   # builds the web app, seeds and serves both on http://127.0.0.1:8410
 make demo-check             # every demo scene end to end on its own server on port 8418
 ```
 
-`make demo` builds the web app on its fixture unless it runs as `VITE_API=live make demo`. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
+`make demo` builds the web app on its fixture unless it runs as `VITE_API=live make demo`. For the click-through run `VITE_API=live make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser. Scene 3 needs the stock-out button first. With nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
 
 `make setup` reads the Valio files from `RAW` (default is the folder on the build machine), so elsewhere it is `make setup RAW=/path/to/files`. The files are checked against their sha256 before anything is indexed.
 
