@@ -12,6 +12,9 @@ from validio.config import load_settings
 from validio.demo import seed
 from validio.orders.store import Store
 
+CODE = "135790"
+CHEF = {"X-Approve-Code": CODE}  # renew and accept place orders: the same code as approve (review 3 H2)
+
 
 @pytest.fixture
 def client(tmp_path, monkeypatch, catalog):
@@ -20,11 +23,15 @@ def client(tmp_path, monkeypatch, catalog):
         pytest.skip("needs_data: no recorded Valio answers, run make record")
     monkeypatch.setenv("VALIDIO_DB", str(tmp_path / "validio.db"))
     monkeypatch.setenv("VALIDIO_KEYS", str(tmp_path / "keys"))
+    monkeypatch.setenv("VALIDIO_APPROVE_CODE", CODE)
     seed.reset()
     from validio.api.app import app
+    from validio.api.state import set_ctx
 
+    set_ctx(None)  # a fresh Ctx reads the code above
     with TestClient(app) as c:
         yield c
+    set_ctx(None)
 
 
 def lines(body):
@@ -41,7 +48,7 @@ def scene4(client):
     assert lines(before)["466375"]["usualQuantity"] == 98
     assert lines(before)["466375"]["history"] == [92, 92, 94, 96, 100, 108, 116, 120]
 
-    r = client.post("/api/steady/S-1/renew")
+    r = client.post("/api/steady/S-1/renew", headers=CHEF)
     assert r.status_code == 200
     got = lines(r.json())
     milk, parm, pan, mozz = got["464306"], got["463968"], got["471376"], got["466375"]
@@ -61,11 +68,11 @@ def scene4(client):
     assert store.order(parm["orderId"])["state"] == "placed"
     assert "orderId" not in pan and "orderId" not in mozz
 
-    again = client.post("/api/steady/S-1/renew").json()  # a second press orders nothing twice
+    again = client.post("/api/steady/S-1/renew", headers=CHEF).json()  # a second press orders nothing twice
     assert lines(again)["464306"]["orderId"] == milk["orderId"]
     assert len(store.orders()) == 2
 
-    a = client.post("/api/steady/S-1/lines/471376/accept")
+    a = client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
     assert a.status_code == 200
     pan = lines(a.json())["471376"]
     assert pan["result"] == "accepted"
@@ -73,8 +80,8 @@ def scene4(client):
     assert order["state"] == "placed"
     assert [(ln["productId"], ln["quantity"]) for ln in order["lines"]] == [("471376", 27)]
 
-    assert client.post("/api/steady/S-1/lines/464306/accept").status_code == 409
-    assert client.post("/api/steady/S-1/lines/999/accept").status_code == 404
+    assert client.post("/api/steady/S-1/lines/464306/accept", headers=CHEF).status_code == 409
+    assert client.post("/api/steady/S-1/lines/999/accept", headers=CHEF).status_code == 404
 
     v = AuditLog(seed.db_path()).verify()
     assert v.ok and v.count >= 6
@@ -90,16 +97,30 @@ def test_scene4_end_to_end_twice_from_a_reset(client):
 
 def test_unknown_steady_order_is_404(client):
     assert client.get("/api/steady/S-9").status_code == 404
-    assert client.post("/api/steady/S-9/renew").status_code == 404
+    assert client.post("/api/steady/S-9/renew", headers=CHEF).status_code == 404
 
 
 def test_accept_before_renew_is_409(client):
-    assert client.post("/api/steady/S-1/lines/471376/accept").status_code == 409
+    assert client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF).status_code == 409
 
 
 def test_ledger_names_every_line_decision(client):
-    client.post("/api/steady/S-1/renew")
+    client.post("/api/steady/S-1/renew", headers=CHEF)
     sentences = " ".join(e.sentence for e in AuditLog(seed.db_path()).list())
     for pid in ("464306", "463968", "471376", "466375"):
         assert pid in sentences
     assert "26 % more per guest" in sentences
+
+
+def test_renew_and_accept_need_the_approve_code(client):
+    # review 3 H2 probe: renew and accept without a code placed orders O-1 to O-3
+    assert client.post("/api/steady/S-1/renew").status_code == 403
+    assert client.post("/api/steady/S-1/renew", headers={"X-Approve-Code": "000000"}).status_code == 403
+    store = Store(seed.db_path())
+    assert store.orders() == [] and client.get("/api/steady/S-1").json()["lines"][0]["result"] == "pending"
+
+    assert client.post("/api/steady/S-1/renew", json={"code": CODE}).status_code == 200  # body works like approve
+    assert client.post("/api/steady/S-1/lines/471376/accept").status_code == 403
+    assert client.post("/api/steady/S-1/lines/471376/accept", json={"code": "000000"}).status_code == 403
+    assert lines(client.get("/api/steady/S-1").json())["471376"]["result"] == "waiting"
+    assert len(store.orders()) == 2

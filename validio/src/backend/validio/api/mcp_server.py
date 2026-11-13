@@ -106,9 +106,11 @@ async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
 
     from .app import app
 
-    _errors(get_ctx().verify)(spendPass)
+    ctx = get_ctx()
+    _errors(ctx.verify)(spendPass)
+    # the Spend Pass stands in for the approve code here, the route asks for the code (review 3 H2)
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://validio") as c:
-        r = await c.post(f"/api/steady/{orderId}/renew")
+        r = await c.post(f"/api/steady/{orderId}/renew", headers={"X-Approve-Code": ctx.approve_code})
     if r.status_code != 200:
         detail = r.json().get("detail", r.text) if r.headers.get("content-type", "").startswith("application/json") \
             else r.text
