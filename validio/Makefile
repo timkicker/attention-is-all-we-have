@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke mutate
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -28,6 +28,10 @@ test-backend: guards
 
 test-web:
 	cd src/frontend && npm run check && npx playwright test
+
+# mutation testing on the deciding modules, see docs/TESTING.md (slow: one worker)
+mutate:
+	bash scripts/mutate.sh $(MUTATE)
 
 types:
 	$(UV) python ../../scripts/export_openapi.py
