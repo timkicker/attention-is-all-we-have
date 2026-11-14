@@ -12,7 +12,7 @@ export const QUERY_H = 'The query'
 export const QUERY_P = 'The Differences list reads one past day and finds the five closest statements across all editions'
 /** Under live data the logged statement keeps the five closest per edition, so it says so. */
 export const QUERY_P_STORED = 'The Differences list for one day, as it last ran:'
-export const QUERY_P_LIVE = 'The vector search behind the Differences list for one day, as it last ran:'
+export const QUERY_P_LIVE = 'The vector search behind the Differences list for one day:'
 export const NUMBERS_H = 'Numbers'
 /** "Versions stored for Winter War". */
 export function versionsFor(topic: string): string {
