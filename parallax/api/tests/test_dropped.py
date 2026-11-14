@@ -40,10 +40,10 @@ def test_en_staged_is_dropped_with_matches_through_fi(client):
     assert en["gloss"] is None or en["gloss"]
 
 
-def test_rows_sorted_by_days_alive_and_paged(client):
+def test_rows_sorted_newest_removal_first_and_paged(client):
     body = client.get("/api/dropped", params={"topic": "winterwar"}).json()
-    days = [r["days"] for r in body["rows"]]
-    assert days == sorted(days, reverse=True)
+    died = [r["died"] for r in body["rows"]]
+    assert died == sorted(died, reverse=True)
     one = client.get("/api/dropped", params={"topic": "winterwar", "limit": 1, "offset": 1}).json()
     assert one["total"] == body["total"] and one["rows"][0]["h"] == body["rows"][1]["h"]
 
