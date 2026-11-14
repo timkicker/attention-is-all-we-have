@@ -224,6 +224,7 @@ export function holderWord(id: string): string {
   const cap = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
   const [kind, name] = id.includes(":") ? id.split(":", 2) : ["", id];
   if (kind === "agent") {
+    if (name === "mcp-agent") return "MCP agent";
     const m = /^([a-z]+)-?(\d+)?$/i.exec(name);
     if (m) return `${cap(m[1])} agent${m[2] ? ` ${m[2]}` : ""}`;
     return "Agent";

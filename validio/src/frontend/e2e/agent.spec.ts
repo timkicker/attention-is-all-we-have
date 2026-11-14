@@ -45,11 +45,14 @@ for (const v of VIEWS) {
     await shoot("none");
 
     await page.getByTestId("agent-connect").click();
-    await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/);
-    await shoot("pairing");
+    await expect(page.getByTestId("agent-state")).toHaveText("Waiting for your agent");
+    // The MCP URL is the page's one job; the pairing code waits in the fold for agents without MCP.
+    await expect(page.getByTestId("pair-code")).toBeHidden();
     await page.getByTestId("vendor-fold").click();
-    await expect(page.getByTestId("mcp-url")).toContainText("/mcp/k/");
-    await shoot("pairing-vendor");
+    await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/);
+    await expect(page.getByTestId("mcp-url")).toContainText("/mcp/c/");
+    await expect(page.getByTestId("mcp-hint")).toHaveText("Add this URL to your agent as an MCP server. Allow appears here on its first call.");
+    await shoot("pairing");
 
     await page.getByTestId("agent-demo").click();
     await expect(page.getByTestId("consent")).toContainText("Orders alone up to 1,200.00 €");
@@ -134,4 +137,34 @@ test("rules refuse alone above approval and a week below it", async ({ page }) =
   await page.getByTestId("rules-edit").click();
   await page.getByRole("button", { name: "Cancel" }).click();
   await expect(page.getByTestId("rules-alone")).toContainText("900.00");
+});
+
+const PAIR_SHOTS = process.env.SHOTS_PAIR ?? `${OUT}/claude`;
+
+test("any MCP agent: its first call on the pairing URL shows the consent without a reload", async ({ page, context }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/login");
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await demoLogin(page);
+  await page.goto("/agent");
+  await page.getByTestId("agent-connect").click();
+  const url = (await page.getByTestId("mcp-url").textContent())!;
+  expect(url).toMatch(/^https?:\/\/.+\/mcp\/c\/[0-9a-f]+\/$/);
+  await expect(page.getByTestId("mcp-hint")).toHaveText("Add this URL to your agent as an MCP server. Allow appears here on its first call.");
+  for (const w of [1280, 390]) {
+    await page.setViewportSize({ width: w, height: w === 390 ? 844 : 900 });
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: `${PAIR_SHOTS}/pairing-${w}.png`, fullPage: true });
+  }
+
+  // The agent calls the URL; the page polls and turns to the consent card by itself.
+  await page.evaluate(() => (window as unknown as { validioMcpCall: () => void }).validioMcpCall());
+  await expect(page.getByTestId("consent")).toContainText("MCP agent wants to order", { timeout: 5000 });
+  await page.getByTestId("consent-allow").click();
+  await expect(page.getByTestId("agent-state")).toHaveText("Active");
+  await expect(page.getByTestId("agent-name")).toHaveText("MCP agent");
+  await page.getByTestId("agent-disconnect").click();
+  await page.getByTestId("disconnect-confirm").click();
+  await expect(page.getByTestId("agent-state")).toHaveText("Not connected");
 });

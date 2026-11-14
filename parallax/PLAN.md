@@ -777,7 +777,7 @@ You are the coding agent for Track A "data and engine" of Parallax, our MariaDB 
 Start with A1.
 ```
 
-### Track B
+### Track B - Done
 
 ```text
 You are the coding agent for Track B "app" of Parallax, our MariaDB entry at Junction 2026. Deadline Sunday 10:00 Helsinki time.
