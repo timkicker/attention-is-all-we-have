@@ -195,6 +195,24 @@ def issued_claims(token: str) -> dict:
     return claims
 
 
+# A kitchen's own account runs on the wall clock: its pass is valid for PASS_DAYS from when it was signed and is
+# signed again, with one ledger entry, once fewer than RENEW_BEFORE are left. It names no fixed delivery day; each
+# request names its own. The local kitchen and demo copies keep DEMO_CLAIMS' window on the demo clock.
+PASS_DAYS = timedelta(days=30)
+RENEW_BEFORE = timedelta(days=7)
+
+
+def own_window(now: datetime) -> dict:
+    ts = int(now.timestamp())
+    return {"iat": ts, "nbf": ts - 60, "exp": int((now + PASS_DAYS).timestamp()), "deliverBy": None}
+
+
+def window_ok(path: Path | None, now: datetime) -> bool:
+    """The pass M-1 is on the account's own window and has at least RENEW_BEFORE left."""
+    c = issued_claims(issuance(path))
+    return c.get("deliverBy") is None and c.get("exp", 0) - now.timestamp() >= RENEW_BEFORE.total_seconds()
+
+
 VERSION_SCHEMA = ("create table if not exists pass_version (pass_id text, ver integer, issuance text, at text, "
                   "why text, primary key (pass_id, ver))")
 

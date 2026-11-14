@@ -11,7 +11,7 @@ import sqlite3
 import time
 from collections import Counter
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 from ..catalog.model import Product
@@ -157,7 +157,8 @@ class SupplyService:
         return qty_of(ln.quantity or 0, p, ln.unit)
 
     def _default_by(self, mandate: Mandate) -> date:
-        return date.fromisoformat(mandate.deliver_by) if mandate.deliver_by else self.now().date()
+        """The pass's delivery day, else two days from now, as a text request without a day gets (parse_need)."""
+        return date.fromisoformat(mandate.deliver_by) if mandate.deliver_by else self.now().date() + timedelta(days=2)
 
     # options as the web app and the agent see them
 

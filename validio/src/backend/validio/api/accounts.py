@@ -206,12 +206,14 @@ class Accounts:
             c = self.open.get(account_id)
             if c is not None:
                 self.open.move_to_end(account_id)
+                self._keep_window(c)
                 return c
             row = self.get(account_id)
             if row is None:
                 raise KeyError(account_id)
             db, keys = self.paths(account_id)
-            rt = Runtime(db, keys, shared=self.shared)
+            # a kitchen's own account decides on the wall clock; a demo copy keeps the demo story's clock
+            rt = Runtime(db, keys, shared=self.shared, real_clock=not row["is_demo"])
 
             def code_ok(given: str, _id=account_id) -> bool:
                 return bool(re.fullmatch(r"\d{6}", given)) and secret_ok(given, (self.get(_id) or {}).get("code_hash"))
@@ -221,11 +223,24 @@ class Accounts:
                 self._copy_store(_id)
 
             c = Ctx(rt, account=row, code_ok=code_ok, reseed=reseed)
+            self._keep_window(c)
             self.open[account_id] = c
             while len(self.open) > MAX_OPEN:
                 _, old = self.open.popitem(last=False)
                 old.rt.close()
             return c
+
+    WINDOW_CHECK = 3600  # seconds between two looks at the pass's validity of one open account
+
+    def _keep_window(self, c: Ctx) -> None:
+        """A kitchen's own account: sign M-1 again on its own window when it is not on one yet or runs out within
+        seed.RENEW_BEFORE. Looked at once an hour per open account."""
+        if c.account["is_demo"] or time.monotonic() - getattr(c, "_window_at", -1e9) < self.WINDOW_CHECK:
+            return
+        from .settings import renew_window
+
+        renew_window(c)
+        c._window_at = time.monotonic()
 
     # sessions
 
