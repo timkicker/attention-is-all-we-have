@@ -199,7 +199,7 @@
     {#snippet extraF()}<UnitField id="f-extra" label="Extra cost up to" unit="%" narrow start={chrome.phone} bind:value={f.extra} problem={bad.extra} />{/snippet}
 
     <!-- On the desk a field sits on the right of its row; on the phone under its label. -->
-    <ListSection id="money" title="Money">
+    <ListSection id="money" title="Money, before VAT">
       <ListRow id="row-alone" label="Ordered alone up to" description={was("alone")} {...place(aloneF)} />
       <ListRow id="row-waiting" label="Waiting for you up to" description={was("waiting") ?? "Above it, blocked"} {...place(waitingF)} />
       <ListRow id="row-week" label="Per week" description={was("week") ?? (f.week.trim() ? undefined : "Empty: no weekly limit")} {...place(weekF)} />
