@@ -80,7 +80,7 @@ AgentState = {
 * `mcpUrl`: `https://<host>/mcp/c/<token>/`, the connector for any MCP agent (see below);
   `apiUrl`: `https://<host>/agent/v1/k/<accountId>`. Signing agents (the CLI) keep using the code and
   `/mcp/k/<accountId>/`.
-* `may`: the Rules in words, e.g. `["Order alone up to 1,200.00 €", "Ask you up to 2,000.00 €",
+* `may`: the Rules in words, e.g. `["Orders automatically up to 1,200.00 €", "Ask you up to 2,000.00 €",
   "Never above 2,000.00 €", "Substitutes from Valio's list"]`.
 * `keyId`: the JWK thumbprint of the agent's key, first 8 characters, for the Technical fold.
 * `verifyCode`: `XXX-XXX` from `A-Z` and `2-9` without `0 O 1 I L`, new for every connection, made when
@@ -171,16 +171,16 @@ gets a 401.
 
 ## Rules
 
-What the agent may do, in one place. Alone and approval always count per order. With `perWeekCents` set,
+What the agent may do, in one place. Automatic and approval limits always count per order. With `perWeekCents` set,
 the week counts every order placed under the pass together (over it: blocked); null means no weekly limit.
 
-The demo kitchen starts with: alone up to 1,200.00 €, approval up to 5,000.00 €, per week 8,000.00 €,
+The demo kitchen starts with: automatically up to 1,200.00 €, approval up to 5,000.00 €, per week 8,000.00 €,
 substitutes `extra` 5 % (`api/settings.DEMO_RULES`). So the example request (1,000 l milk, 1,010.00 €) is
-ordered alone, lowering alone to 800.00 € makes the same request wait, and 246810 approves it.
+ordered automatically, lowering the automatic limit to 800.00 € makes the same request wait, and 246810 approves it.
 
 ```
 Rules = {
-  aloneUpToCents: number,        // orders alone up to this
+  aloneUpToCents: number,        // orders automatically up to this
   approvalUpToCents: number,     // needs approval up to this, blocked above
   substitutes: "off" | "listed" | "extra",
   maxExtraPct: number,           // only with "extra": a swap may cost up to this % more (0 to 20)
@@ -248,13 +248,13 @@ ActivityItem = {
   totalCents: number | null,
   at: string,
   orderId: string | null,
-  approvedByYou: boolean         // ordered because the owner approved it, not alone
+  approvedByYou: boolean         // ordered because the owner approved it, not automatically
 }
 ```
 
-* Status: ordered alone and approved are `ordered` (`approvedByYou` tells them apart); waiting is `waiting`; blocked and rejected are
-  `blocked`. A request cleared to order alone that the agent has not confirmed yet is no item until it is.
-* `why`: "Under your 1,200.00 € limit, ordered alone", "Over your 1,200.00 € limit for ordering alone",
+* Status: ordered automatically and approved are `ordered` (`approvedByYou` tells them apart); waiting is `waiting`; blocked and rejected are
+  `blocked`. A request cleared to order automatically that the agent has not confirmed yet is no item until it is.
+* `why`: "Under your 1,200.00 € limit, ordered automatically", "Over your 1,200.00 € limit for automatic orders",
   "Above your 5,000.00 € limit, blocked", "You approved it", "You said no"; the Steady Order "Every Monday,
   4 lines" (", 1 waiting for you" for lines that wait for the owner after a renewal, ", 1 blocked" for lines
   blocked this week); its `totalCents` is what the ordered lines cost, null before a renewal.

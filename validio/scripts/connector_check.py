@@ -3,7 +3,7 @@ Client over streamable HTTP on a connector URL, with no spendPass and no idempot
 
     uv run python scripts/connector_check.py https://<host>/mcp/c/<token>/
 
-Prints every call and answer in short and exits 0 when the order went through Validio (ordered alone, or
+Prints every call and answer in short and exits 0 when the order went through Validio (ordered automatically, or
 waiting for the kitchen's approval). On a new connection the first call answers that Validio waits for Allow:
 it prints the verification code from that answer, which must match the code on the Agent page; press Allow
 there and run it again."""

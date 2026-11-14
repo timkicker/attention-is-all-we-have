@@ -1,7 +1,7 @@
 """The juror's path on a fresh copy of the demo template (orchestrator, 14 Nov): the template is built the way
 `make template` and Modal fill() build it (five scenes, then the demo Rules), a browser takes a demo copy,
 pairs the demo agent's key (as a signing agent does on /agent/v1/pair) and that agent asks over MCP: 1,000 l
-milk for 1,010.00 € is ordered alone. The juror lowers alone to 800 €, the same request waits, 246810 approves it. Never blocked,
+milk for 1,010.00 € is ordered automatically. The juror lowers the automatic limit to 800 €, the same request waits, 246810 approves it. Never blocked,
 although O-1 and O-2 already used 1,190.10 € of the pass."""
 
 import subprocess
@@ -85,13 +85,13 @@ def test_ordered_then_waits_then_approved(juror):
 
 
 def test_a_fresh_demo_copy_has_its_activity(juror):
-    """Home and Activity on a fresh copy of the template: the five scenes left R-1 ordered alone and R-2 approved,
+    """Home and Activity on a fresh copy of the template: the five scenes left R-1 ordered automatically and R-2 approved,
     and the week counts what they placed."""
     juror.post("/api/account/demo")
     out = juror.get("/api/activity").json()
     by_id = {it["id"]: it for it in out["items"]}
     assert by_id["R-1"]["status"] == "ordered" and by_id["R-1"]["orderId"], by_id.get("R-1")
-    assert by_id["R-1"]["why"] == "Under your 1,200.00 € limit, ordered alone"
+    assert by_id["R-1"]["why"] == "Under your 1,200.00 € limit, ordered automatically"
     assert (by_id["R-2"]["status"], by_id["R-2"]["why"]) == ("ordered", "You approved it"), by_id.get("R-2")
     assert out["counts"] == {"all": 3, "ordered": 2, "waiting": 0, "blocked": 0, "standing": 1}
     for rid in ("R-1", "R-2"):

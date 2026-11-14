@@ -32,7 +32,7 @@ async def test_pane_scene1_request_arrives(ctx):
     text, t, _ = await pane(ctx, 1)
     assert "agent -> search_products" in text and "agent -> request_supply" in text
     assert "decision: auto_order (auto-order)" in text
-    assert t.final == "Validio may order request R-1 alone (auto_order), checked 12 products live."
+    assert t.final == "Validio may order request R-1 automatically (auto_order), checked 12 products live."
 
 
 @pytest.mark.asyncio

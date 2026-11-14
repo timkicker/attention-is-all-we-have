@@ -1,6 +1,6 @@
 """Scene 4 over HTTP, end to end from a reset, twice in a row.
 
-Renew: milk 464306 renewed alone (300, 303.00 EUR), parmesan split 177 for 772.49 EUR (2.5 % more), pancakes
+Renew: milk 464306 renewed automatically (300, 303.00 EUR), parmesan split 177 for 772.49 EUR (2.5 % more), pancakes
 471376 wait (27 of 30), mozzarella 466375 flagged 26 % more per guest. Accept the pancakes: the order is placed
 and the ledger verifies. Numbers from the blueprint, scene 4."""
 

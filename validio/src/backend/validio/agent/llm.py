@@ -103,7 +103,7 @@ class FakeLLM:
             live = (req.get("liveChecked") or {}).get("ids")
             what = {"auto_order": "may order", "ask_human": "asks a person about",
                     "block": "blocks"}.get(out, "answered")
-            tail = " alone" if out == "auto_order" else ""
+            tail = " automatically" if out == "auto_order" else ""
             return Step(text=f"Validio {what} request {rid}{tail} ({out}), checked {live} products live.")
         if "error" in req or out not in ("auto_order", "ask_human"):
             why = req.get("error") or (req.get("decision") or {}).get("sentence", "")
@@ -131,14 +131,14 @@ class FakeLLM:
         if "error" in view:
             return Step(text=f"Validio did not renew {task['steadyOrder']}: {view['error']}")
         done, waits = ordered(view), waiting(view)
-        parts = [f"{_and(done)} {'is' if len(done) == 1 else 'are'} ordered alone"] if done else []
+        parts = [f"{_and(done)} {'is' if len(done) == 1 else 'are'} ordered automatically"] if done else []
         if waits:
             parts.append(f"{_and(waits)} wait{'s' if len(waits) == 1 else ''} for the owner")
         return Step(text=f"Steady Order {view.get('id')} is renewed: {', '.join(parts) or 'nothing to do'}.")
 
 
 def ordered(view: dict) -> list[str]:
-    """Steady Order lines Validio ordered alone."""
+    """Steady Order lines Validio ordered automatically."""
     return [ln["productId"] for ln in view.get("lines", [])
             if ln.get("result") in ("renewed", "split_renewed") and ln.get("orderId")]
 

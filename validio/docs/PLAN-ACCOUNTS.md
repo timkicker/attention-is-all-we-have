@@ -9,7 +9,7 @@ Today Validio is one shared demo page: the limits sit inside the Spend Pass page
 ## Three parties
 
 * **Kitchen:** the only party with a UI. Every kitchen has its own account.
-* **Validio:** in the middle. Checks every agent request, orders alone, asks the kitchen or blocks, writes the ledger.
+* **Validio:** in the middle. Checks every agent request, orders automatically, asks the kitchen or blocks, writes the ledger.
 * **Valio Aimo:** behind Validio, API only. No accounts in our app; the kitchen's customer number is a field in its account.
 
 The kitchen connects its purchasing agent to its account.
@@ -22,7 +22,7 @@ The kitchen connects its purchasing agent to its account.
 * **Orders:** requests and steady orders in one list.
 * **Agent:**
   * Connect with a pairing code, then a consent screen (Allow / Deny). The consent screen shows a verification code the agent shows too.
-  * **Rules**, the one place for what the agent may do: orders alone up to X €, needs approval up to Y €, blocked above; per week; substitutes. One save, one approval code, a new signed pass version.
+  * **Rules**, the one place for what the agent may do: orders automatically up to X €, needs approval up to Y €, blocked above; per week; substitutes. One save, one approval code, a new signed pass version.
   * Pause, Disconnect, link to its ledger entries, technical details folded away.
 * **Ledger:** as today, plus pass replaced, connected, paused, disconnected.
 * **Settings**, one page: Kitchen, Diet and allergens, Login and approval code, Theme, Log out.
@@ -34,7 +34,7 @@ Cut for now: notifications, presets, several users per kitchen, real OAuth.
 
 1. Try the demo kitchen.
 2. Connect a real agent (MCP connector URL), check the verification code, Allow.
-3. The agent sends the example request (1,000 l lactose-free milk): ordered alone.
+3. The agent sends the example request (1,000 l lactose-free milk): ordered automatically.
 4. Lower the limit in Rules, the agent asks again: now it waits. Approve with the code.
 5. Pause the agent: its next request is refused and logged.
 

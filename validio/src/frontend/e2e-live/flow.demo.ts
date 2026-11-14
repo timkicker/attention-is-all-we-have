@@ -2,7 +2,7 @@ import { connectMcp, connector, requested } from "./connector";
 import { CODE, expect, fresh, test } from "./kitchen";
 
 // The v2 key flow against the live backend, on a demo copy from the plain seed: a real MCP client
-// (scripts/connector_check.py) connects through the Agent page, orders alone, then, after the owner
+// (scripts/connector_check.py) connects through the Agent page, orders automatically, then, after the owner
 // lowers the limit in Rules, waits for the owner, who approves on the detail page. Pause refuses it,
 // Disconnect ends the connector URL. Needs no local store: runs against E2E_BASE as well.
 
@@ -25,7 +25,7 @@ test("connect: the code on the page is the code the client got, then Allow", asy
   await expect(page.getByTestId("agent-name-value")).not.toBeEmpty();
 });
 
-test("the client orders 1,000 l lactose-free milk alone: Home Latest and Activity", async ({ page }) => {
+test("the client orders 1,000 l lactose-free milk automatically: Home Latest and Activity", async ({ page }) => {
   const run = connector(url);
   expect(run.ok, run.out).toBe(true);
   const r = requested(run.out);
@@ -34,21 +34,21 @@ test("the client orders 1,000 l lactose-free milk alone: Home Latest and Activit
   await page.goto("/");
   const row = page.getByTestId("section-latest").getByTestId(`activity-${r.id}`);
   await expect(row).toHaveAttribute("data-status", "ordered");
-  await expect(row).toContainText("Ordered alone");
+  await expect(row).toContainText("Ordered automatically");
   await expect(row).toContainText(/milk/i);
 
   await page.getByTestId("nav-activity").click();
   await expect(page).toHaveURL(/\/activity$/);
   const a = page.getByTestId(`activity-${r.id}`);
-  await expect(a).toContainText("Ordered alone");
+  await expect(a).toContainText("Ordered automatically");
   await a.click();
   await expect(page).toHaveURL(new RegExp(`/activity/${r.id}$`));
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
+  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
   await expect(page.getByTestId("asked")).toContainText(/lactose-free milk/i);
   await expect(page.getByTestId("approval")).toHaveCount(0);
 });
 
-test("Rules: lower the alone limit with the code", async ({ page }) => {
+test("Rules: lower the automatic limit with the code", async ({ page }) => {
   await page.goto("/rules");
   const before = Number(((await page.getByTestId("rules-version").textContent()) ?? "").match(/\d+/)?.[0]);
   await page.getByTestId("rules-edit").click();

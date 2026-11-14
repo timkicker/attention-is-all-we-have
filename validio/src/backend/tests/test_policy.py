@@ -140,7 +140,7 @@ def test_category_outside_pass_denied(mandate):
 
 
 def test_undisclosed_budget_escalates(mandate):
-    # no auto limit disclosed: never allow alone
+    # no auto limit disclosed: never allow automatically
     ctx = replace(scene2(mandate), auto_limit_cents=0)
     assert decide(ctx, product_id="464306").outcome is Outcome.ESCALATE
     no_limit = replace(mandate, auto_limit_cents=None)
@@ -323,7 +323,7 @@ def test_graded_not_deliverable_never_allowed(catalog, valio, mandate):
 
 
 def test_line_without_diet_ignores_the_pass_diet(catalog, valio, mandate):
-    # parmesan claims nothing about lactose: as a line with no diet of its own it may order alone
+    # parmesan claims nothing about lactose: as a line with no diet of its own it may order automatically
     d = graded(catalog, valio, mandate, "469648", 10, required_claims=())
     assert d.context["dietUnchecked"] is False
     assert d.outcome is Outcome.ALLOW
@@ -387,7 +387,7 @@ def test_split_with_listed_substitute_needs_the_pass_permission(mandate):
     d = decide(ctx, product_id="469648")
     assert d.outcome is Outcome.ESCALATE
     assert "the Spend Pass does not allow substitutes in a split" in d.sentence
-    # control: the same split with the permission orders alone
+    # control: the same split with the permission orders automatically
     ok = scene2(mandate, total_cents=77249, split_base_cents=75400, is_substitute=True, on_valio_list=True,
                 category="10600")
     assert decide(ok, product_id="469648").outcome is Outcome.ALLOW
@@ -455,7 +455,7 @@ def test_deny_without_forbid_names_a_rule(mandate):
 
 
 def test_graded_placeholder_stock_strict_switch(catalog, valio, mandate, monkeypatch):
-    # off (default): scene 2 stays ordered alone. On: 9999999999 is no real count, a person looks
+    # off (default): scene 2 stays ordered automatically. On: 9999999999 is no real count, a person looks
     monkeypatch.delenv("STRICT_PLACEHOLDER_STOCK", raising=False)
     assert graded(catalog, valio, mandate, "464306", 1000).outcome is Outcome.ALLOW
     monkeypatch.setenv("STRICT_PLACEHOLDER_STOCK", "1")

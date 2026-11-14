@@ -132,7 +132,7 @@
         "properties": {
           "approvedByYou": {
             "default": false,
-            "description": "ordered because the owner approved it, not alone",
+            "description": "ordered because the owner approved it, not automatically",
             "title": "Approvedbyyou",
             "type": "boolean"
           },
@@ -728,7 +728,7 @@
                 "type": "null"
               }
             ],
-            "description": "one plain sentence in the words of the kitchen's own limits: \"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone.\"",
+            "description": "one plain sentence in the words of the kitchen's own limits: \"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders.\"",
             "title": "Ownertext"
           },
           "reasonCode": {
@@ -2984,7 +2984,7 @@
       "RulesIn": {
         "properties": {
           "aloneUpToCents": {
-            "description": "the agent orders alone up to this",
+            "description": "the agent orders automatically up to this",
             "maximum": 10000000.0,
             "minimum": 0.0,
             "title": "Aloneuptocents",
@@ -3250,7 +3250,7 @@
         "description": "The owner signs M-1 again. Same id and window, so the week's spend carries over.",
         "properties": {
           "autoLimitCents": {
-            "description": "the agent may order alone up to this",
+            "description": "the agent may order automatically up to this",
             "exclusiveMinimum": 0.0,
             "maximum": 10000000.0,
             "title": "Autolimitcents",
@@ -3297,7 +3297,7 @@
           },
           "substitutes": {
             "default": true,
-            "description": "whether a swap from Valio's list may order alone",
+            "description": "whether a swap from Valio's list may order automatically",
             "title": "Substitutes",
             "type": "boolean"
           }
@@ -4577,7 +4577,7 @@
   "paths": {
     "/agent/v1/nonce": {
       "get": {
-        "description": "A fresh single-use nonce for the Spend Pass key binding.",
+        "description": "A fresh single-use nonce for the Spend Pass key binding. At most 120 a minute per client.",
         "operationId": "get_nonce",
         "responses": {
           "200": {

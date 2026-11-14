@@ -111,7 +111,7 @@ def test_consent_then_allow_signs_the_pass_to_the_agents_key(client, holder, ctx
     assert s["state"] == "consent"
     assert s["consent"]["name"] == "Kitchen buyer"
     assert s["consent"]["keyId"] == key.thumbprint()[:8]
-    assert s["consent"]["may"] == ["Orders alone up to 1,200.00 €", "Waiting for you up to 2,000.00 €",
+    assert s["consent"]["may"] == ["Orders automatically up to 1,200.00 €", "Waiting for you up to 2,000.00 €",
                                    "Blocked above 2,000.00 €", "Substitutes up to 5 % extra"]
     assert client.get("/api/rules").json()["maxExtraPct"] == 5  # the consent says what Rules say
     assert client.get("/agent/v1/pass", params={"code": code}).json() == {"status": "consent"}
@@ -203,7 +203,7 @@ def test_consent_says_the_rules_as_saved(client):  # noqa: F811
     assert r.status_code == 200, r.text
     pair_own_agent(client)
     assert client.get("/api/agent").json()["consent"]["may"] == [
-        "Orders alone up to 1,000.00 €", "Waiting for you up to 3,000.00 €", "Blocked above 3,000.00 €",
+        "Orders automatically up to 1,000.00 €", "Waiting for you up to 3,000.00 €", "Blocked above 3,000.00 €",
         "Per week up to 8,000.00 €", "Substitutes up to 5 % extra"]
 
 

@@ -237,7 +237,7 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
 
     check_code(ctx, request, "spend-pass", x_approve_code, body)
     if body.auto_limit_cents > body.hard_cap_cents:
-        raise HTTPException(422, f"alone up to {money(body.auto_limit_cents)} is above never above "
+        raise HTTPException(422, f"orders automatically up to {money(body.auto_limit_cents)} is above never above "
                                  f"{money(body.hard_cap_cents)}")
     changes = {"autoLimitCents": body.auto_limit_cents, "hardCapCents": body.hard_cap_cents,
                "diet": sorted(set(body.diet)), "deliverBy": body.deliver_by.isoformat(),

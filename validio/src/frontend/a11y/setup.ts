@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 
-// The state the pages are audited in, played by the demo agent into the local kitchen: R-1 ordered alone,
+// The state the pages are audited in, played by the demo agent into the local kitchen: R-1 ordered automatically,
 // R-2 waiting for approval (O-2), the Steady Order S-1 renewed with two lines waiting. The demo copy every
 // test shares is taken from it and starts with no agent connected; the specs walk the agent states.
 function agent(scene: number) {

@@ -128,7 +128,7 @@ class Run:
               f"scene 1: Spend Pass card {sp}")
         check("approvers" in sp["hidden"] and "approvers" not in sp["disclosed"], "scene 1: approvers shown")
         live = self.ids_ok(req, 1)
-        return f"request {req['id']} arrived, Spend Pass card 1,200.00 € alone, 2,000.00 € cap, lactose free, " \
+        return f"request {req['id']} arrived, Spend Pass card 1,200.00 € automatic, 2,000.00 € cap, lactose free, " \
                f"checked {live['ids']} products live"
 
     async def scene2(self):
@@ -162,7 +162,7 @@ class Run:
               f"scene 2: ledger sentence {sentence!r}")
         check(t.final.endswith("is placed."), f"scene 2: agent said {t.final!r}")
         plain([o["sentence"] for o in opts.values()] + [req["decision"]["sentence"], req["text"]], "scene 2")
-        return f"464306 ordered alone, 1,000 × 1 l for 1,010.00 €, 462921 blocked at 2,194.00 €, planted line " \
+        return f"464306 ordered automatically, 1,000 × 1 l for 1,010.00 €, 462921 blocked at 2,194.00 €, planted line " \
                f"on 463047 ignored, checked {live['ids']} products live"
 
     async def scene3(self):
@@ -239,7 +239,7 @@ class Run:
             check(r.status_code == 403, f"scene 4: accept without the code answered {r.status_code}")
         acc = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/lines/471376/accept", headers=chef)["lines"]}
         check(acc["471376"]["result"] == "accepted", f"scene 4: pancakes after accept {acc['471376']['result']}")
-        return "milk renewed alone, parmesan split 177 for 772.49 € (2.5 % more), pancakes waited and the owner " \
+        return "milk renewed automatically, parmesan split 177 for 772.49 € (2.5 % more), pancakes waited and the owner " \
                "ordered 27, mozzarella blocked: none in stock, also 26 % more per guest"
 
     async def scene5(self):

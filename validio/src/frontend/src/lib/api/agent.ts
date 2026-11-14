@@ -50,7 +50,7 @@ const euro = (c: number) => `${(c / 100).toLocaleString("en-US", { minimumFracti
 export function mayWords(r: Rules): string[] {
   if (!r.saved) return ["Every order needs approval"];
   return [
-    `Orders alone up to ${euro(r.aloneUpToCents)}`,
+    `Orders automatically up to ${euro(r.aloneUpToCents)}`,
     `Waiting for you up to ${euro(r.approvalUpToCents)}`,
     `Blocked above ${euro(r.approvalUpToCents)}`,
     ...(r.perWeekCents == null ? [] : [`Per week up to ${euro(r.perWeekCents)}`]),
@@ -232,7 +232,7 @@ const mock = {
     }
     const max = 10_000_000;
     if ([body.aloneUpToCents, body.approvalUpToCents].some((c) => !(c >= 0) || c > max)) throw new ApiError(422, "an amount is out of range");
-    if (body.aloneUpToCents > body.approvalUpToCents) throw new ApiError(422, "orders alone must not be above needs approval");
+    if (body.aloneUpToCents > body.approvalUpToCents) throw new ApiError(422, "orders automatically must not be above needs approval");
     if (body.perWeekCents != null && body.perWeekCents < body.approvalUpToCents) throw new ApiError(422, "per week is below needs approval");
     if (body.diet) {
       const bad = [...body.diet.mustBe.filter((w) => !DIET_OPTIONS.mustBe.includes(w)), ...body.diet.never.filter((w) => !DIET_OPTIONS.never.includes(w))];

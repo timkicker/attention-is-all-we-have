@@ -1,16 +1,16 @@
 // The four words every v2 page uses for what happened, and their pill tone.
-// Same words everywhere: Ordered alone, Approved by you, Waiting for you, Blocked, Standing.
+// Same words everywhere: Ordered automatically, Approved by you, Waiting for you, Blocked, Standing.
 import type { ActivityFilter, ActivityItem, ActivityStatus } from "$lib/api/types";
 import type { Pill } from "$lib/v";
 
 export const STATUS_PILL: Record<ActivityStatus, Pill> = {
-  ordered: { label: "Ordered alone", tone: "ok" },
+  ordered: { label: "Ordered automatically", tone: "ok" },
   waiting: { label: "Waiting for you", tone: "wait" },
   blocked: { label: "Blocked", tone: "bad" },
   standing: { label: "Standing", tone: "neutral" },
 };
 
-/** An order the owner approved is ordered too, but not alone. */
+/** An order the owner approved is ordered too, but not automatically. */
 export const APPROVED_PILL: Pill = { label: "Approved by you", tone: "ok" };
 
 export const pillOf = (item: Pick<ActivityItem, "status" | "approvedByYou">): Pill =>

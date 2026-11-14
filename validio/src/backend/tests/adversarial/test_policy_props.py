@@ -1,6 +1,6 @@
 """Hard Lines under random input: whatever the amounts, stock, dates, claims and pass limits, the
 invariants of the blueprint hold. Nothing over the hard cap is ever allowed, nothing above the auto limit
-orders alone, a diet that is undisclosed or not backed by Valio's data never orders alone, a forbid wins."""
+orders automatically, a diet that is undisclosed or not backed by Valio's data never orders automatically, a forbid wins."""
 
 from dataclasses import fields, replace
 from datetime import date, datetime, timedelta, timezone
@@ -149,7 +149,7 @@ def test_full_path_invariants(m, p, a, total, qty, by, is_sub, on_list, split_ba
     # Only an ALLOW is left: every fact it rests on must really be there.
     assert m.auto_limit_cents is not None and total <= m.auto_limit_cents
     assert m.hard_cap_cents is not None and total <= m.hard_cap_cents
-    assert diet is not None, "an undisclosed diet never orders alone"
+    assert diet is not None, "an undisclosed diet never orders automatically"
     assert all(g in DIET_KEPT for g in grades.values()), grades
     assert a is not None and a.deliverable and a.closing_time is not None and NOW < a.closing_time
     stock = stock_in_sales_units(p, a)

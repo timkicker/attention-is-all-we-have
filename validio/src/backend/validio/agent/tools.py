@@ -53,7 +53,7 @@ TOOLS: list[dict[str, Any]] = [
      "description": "Read an order and its state.",
      "parameters": {"type": "object", "properties": {"orderId": {"type": "string"}}, "required": ["orderId"]}},
     {"name": "renew_steady_order",
-     "description": "Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, "
+     "description": "Renew this week's Steady Order. Lines that match the usual pattern are ordered automatically, "
                     "the rest wait for the owner with the reason.",
      "parameters": {"type": "object", "properties": {"orderId": {"type": "string", "description": "e.g. S-1"}},
                     "required": ["orderId"]}},

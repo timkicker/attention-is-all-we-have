@@ -71,8 +71,8 @@ class DriftFlag:
 
 
 class LineResult(StrEnum):
-    RENEWED = "renewed"  # through the normal pipeline, ordered alone
-    SPLIT_RENEWED = "split_renewed"  # Split Fill kept every rule, ordered alone
+    RENEWED = "renewed"  # through the normal pipeline, ordered automatically
+    SPLIT_RENEWED = "split_renewed"  # Split Fill kept every rule, ordered automatically
     WAITING = "waiting"  # Hard Lines or a split that breaks a rule ask a person
     FLAGGED = "flagged"  # Drift Watch flagged it, a person decides
     BLOCKED = "blocked"  # a Hard Line forbids it, not even a person can let it through

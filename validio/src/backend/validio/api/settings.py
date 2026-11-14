@@ -40,7 +40,7 @@ MUST_BE = {"lactose-free": "FREE_FROM_LACTOSE", "gluten-free": "FREE_FROM_GLUTEN
 NEVER = tuple(NEVER_ALLERGENS)
 DEFAULT_NAME = "Hotel Espoo kitchen"
 # the demo kitchen's saved Rules (the template, after the five scenes): O-1 and O-2 already used 1,190.10 € of
-# the pass, so alone and approval count per order and only the week counts them all
+# the pass, so automatic orders and approval count per order and only the week counts them all
 DEMO_RULES = {"aloneUpToCents": 120000, "approvalUpToCents": 200000, "substitutes": "extra", "maxExtraPct": 5,
               "perWeekCents": 800000}
 
@@ -79,10 +79,10 @@ def _said(c: dict) -> list[tuple[str, str]]:
     d = date.fromisoformat(str(c["deliverBy"])) if c.get("deliverBy") else None
     split = c.get("split") or {}
     pct = float(split.get("maxExtraCostPct", 0))
-    return [("Orders alone up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
+    return [("Orders automatically up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
             ("Diet", " and ".join(CLAIM_NAMES.get(x, x) for x in sorted(c.get("diet") or ())) or "none"),
             ("Delivered by", f"{d.day} {d:%b}" if d else "the day each request names"),
-            ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none alone"),
+            ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none automatically"),
             ("Extra for a split", f"up to {pct:g} %" if pct else "none"),
             ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none"),
             ("Never contains", " and ".join(sorted(c.get("neverContains") or ())) or "nothing ruled out")]
@@ -180,7 +180,7 @@ class RulesOut(Model):
 
 
 class RulesIn(Model):
-    alone_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="the agent orders alone up to this")
+    alone_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="the agent orders automatically up to this")
     approval_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="needs approval up to this, blocked above")
     substitutes: Literal["off", "listed", "extra"] = Field(description="off, Valio's list, or Valio's list "
                                                            "with a split that may cost up to maxExtraPct more")
@@ -228,7 +228,7 @@ def put_rules(ctx: CtxDep, request: Request, body: RulesIn,
     from .ui import check_code
 
     if body.alone_up_to_cents > body.approval_up_to_cents:
-        raise HTTPException(422, f"alone up to {money(body.alone_up_to_cents)} is above the approval limit "
+        raise HTTPException(422, f"orders automatically up to {money(body.alone_up_to_cents)} is above the approval limit "
                                  f"{money(body.approval_up_to_cents)}")
     if body.per_week_cents is not None and body.per_week_cents < body.approval_up_to_cents:
         raise HTTPException(422, f"per week {money(body.per_week_cents)} is below the approval limit "

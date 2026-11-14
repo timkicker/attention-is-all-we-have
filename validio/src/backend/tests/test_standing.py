@@ -1,7 +1,7 @@
 """Step 15, Steady Orders and Drift Watch.
 
 Acceptance from the blueprint: the mozzarella flag shows 26 % more per guest (last 2 weeks against the first 4),
-parmesan renews alone (split 137 x 463968 plus 40 x 469648, 772.49 EUR, 2.5 % more), pancakes wait for the chef
+parmesan renews automatically (split 137 x 463968 plus 40 x 469648, 772.49 EUR, 2.5 % more), pancakes wait for the chef
 (471376 covers 27 of 30, 476523 contains wheat). Thresholds: per guest +20 %, cost +10 % over the median,
 a contract price that ends before the next 4 renewals, stock below the usual line.
 

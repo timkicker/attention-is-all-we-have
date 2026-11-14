@@ -24,7 +24,7 @@ test("app and API from one process, every page behind the login", async ({ brows
   await anon.close();
 });
 
-test("the connected agent orders alone, the row opens from Activity", async ({ page, kitchen }) => {
+test("the connected agent orders automatically, the row opens from Activity", async ({ page, kitchen }) => {
   await fresh(kitchen);
   const url = await connectMcpAgent(kitchen);
   const run = connector(url);
@@ -36,9 +36,9 @@ test("the connected agent orders alone, the row opens from Activity", async ({ p
   await page.getByTestId("nav-activity").click();
   await page.getByTestId(`activity-${id}`).click();
   await expect(page).toHaveURL(new RegExp(`/activity/${id}$`));
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
+  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
   await page.reload(); // served by FastAPI's fallback
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
+  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
 });
 
 test("Reset in the demo bar starts the copy again", async ({ page }) => {

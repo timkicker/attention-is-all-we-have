@@ -49,7 +49,7 @@ async def test_pane_scene4_renews_and_names_what_waits(ctx):
     assert "renewed 10:00" in text and "T10:00" not in text
     assert "471376" in text and "Order 27 now" in text
     assert "466375" in text and "Renew anyway" in text
-    assert t.final == ("Steady Order S-1 is renewed: 464306 and 463968 are ordered alone, "
+    assert t.final == ("Steady Order S-1 is renewed: 464306 and 463968 are ordered automatically, "
                        "471376 and 466375 wait for the owner.")
     assert "untrusted" not in json.dumps(llm.inputs).lower()
 
