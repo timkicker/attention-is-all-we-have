@@ -1,10 +1,18 @@
 # Parallax
 
 Parallax shows where seven Wikipedia editions (Finnish, Swedish, German, English, Russian, Estonian, Ukrainian) tell the same article differently, statement by statement.
-It also lists statements one edition removed while others still have them, and checks a chatbot answer against the editions.
-Every version is kept in MariaDB system-versioned tables, so any past day can be read back, and vector search matches statements across languages in the same query.
+It also lists statements one edition removed while others still have them and it checks a chatbot answer against the editions.
+Every version is kept in MariaDB 12.3 system-versioned tables, so any past day can be read back. Vector search matches statements across languages in the same query (`FOR SYSTEM_TIME AS OF` together with `VEC_DISTANCE_COSINE`).
 
-Live: https://135.181.63.238.sslip.io
+Live: https://135.181.63.238.sslip.io, with the Winter War preloaded. Good places to start:
+
+- https://135.181.63.238.sslip.io/t/Q134949 lists the statements the editions tell differently.
+- https://135.181.63.238.sslip.io/t/Q134949?date=2008-06-01 shows the same list as of 1 June 2008.
+- https://135.181.63.238.sslip.io/t/Q134949/check checks a chatbot answer. Pick one of the recorded Gemini answers below the text box.
+
+The live server runs on a Verda instance with Docker Compose (see [deploy/README.md](deploy/README.md)) and without a model (`ENGINE=fake`).
+
+![The Winter War: statements other editions tell differently](../docs/img/parallax-differences.png)
 
 It only shows evidence and never edits Wikipedia. Background: [docs/PRODUCT.md](docs/PRODUCT.md), [docs/RESEARCH.md](docs/RESEARCH.md), [PLAN.md](PLAN.md).
 
@@ -26,7 +34,7 @@ For development: `make api` (API only) and `make web` (Vite dev server; `?mock=1
 
 ## Load any article
 
-Any article that has a Finnish version can be loaded. In the app, type its name on the start page and pick it. A progress page shows each edition, and the comparison opens once the Finnish page and a first edition are done (usually 1 to 2 minutes). The rest loads in the background.
+Any article that has a Finnish version can be loaded. In the app, type its name on the start page and pick it. A progress page shows each edition and the comparison opens once the Finnish page and a first edition are done (usually 1 to 2 minutes). The rest loads in the background.
 
 From the command line:
 
@@ -42,10 +50,14 @@ make prepare QIDS="Q1292442 Q155093"  # several
 | `/` | Start: search an article, prepared articles, one example |
 | `/t/:qid/loading` | Loading progress per edition |
 | `/t/:qid` | Differences (`?date=YYYY-MM-DD` for a past day) |
-| `/t/:qid/s/:lang/:pageId/:h` | One statement in every edition, and when it changed |
+| `/t/:qid/s/:lang/:pageId/:h` | One statement in every edition and when it changed |
 | `/t/:qid/removed` | Statements one edition removed while others still have them |
-| `/t/:qid/check`, `/t/:qid/check/:runId` | Check a chatbot answer, and a checked answer |
-| `/hood` | Under the hood: the query, numbers, limits |
+| `/t/:qid/check`, `/t/:qid/check/:runId` | Check a chatbot answer and a checked answer |
+| `/hood` | Under the hood: the query, numbers and limits |
+
+![One statement in seven editions](../docs/img/parallax-statement.png)
+
+![Check an AI answer, before anything is pasted](../docs/img/parallax-check.png)
 
 ## API
 
@@ -67,19 +79,19 @@ Seed v4 holds the Winter War in all seven editions with their full edit history,
 make test                     # contract, pipeline and API tests
 make test-web                 # web unit tests
 make e2e                      # browser tests on seed-mini (port 8057)
-make demo-check               # walks the demo on the running `make demo` (API_PORT), or BASE_URL=https://… for a deployed one
+make demo-check               # walks the demo on the running `make demo` (API_PORT) or BASE_URL=https://… for a deployed one
 ```
 
 ## What is real and what is recorded
 
 - Differences, Removed, past days, statements and their history are computed from the stored Wikipedia versions.
-- Model calls (statement matching, translations, checking an answer) go through `ENGINE`. With `ENGINE=real` they use Gemini and need `GEMINI_API_KEY`. With `ENGINE=fake` no model is called. Matching and translations then come only from what the seed already holds, and a pasted answer gets a fixed example answer.
-- The chatbot answers listed under "Check an AI answer" were recorded once with the real engine (`make record-checks`), and each is labelled with the model that gave it. They are checked again against the editions every time they are opened.
+- Model calls (statement matching, translations, checking an answer) go through `ENGINE`. With `ENGINE=real` they use Gemini and need `GEMINI_API_KEY`. With `ENGINE=fake` no model is called. Matching and translations then come only from what the seed already holds and a pasted answer gets a fixed example answer.
+- The chatbot answers listed under "Check an AI answer" were recorded once with the real engine (`make record-checks`) and each is labelled with the model that gave it. They are checked again against the editions every time they are opened.
 
 ## Limits
 
 - English lines are machine translations, so some wording differences come from the translation.
-- Only seven editions, and only articles that have a Finnish version.
+- Only seven editions and only articles that have a Finnish version.
 - The matching model misses some matches. Check the source edition before quoting.
 - Large articles take longer than 2 minutes to load on a CPU; embedding is the slow step.
 - Statements in an article loaded with `ENGINE=fake` stay untranslated.
