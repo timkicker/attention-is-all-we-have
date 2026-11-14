@@ -1,8 +1,10 @@
 # Validio
 
-A kitchen's purchasing agent orders from Valio Aimo through Validio. Within the Rules the kitchen sets, the agent orders alone. Above them it needs the owner's approval, and beyond them it is blocked.
+A kitchen's purchasing agent orders from Valio Aimo through Validio. Within the Rules the kitchen sets, the agent orders alone. Above them it needs the owner's approval. Beyond them it is blocked.
 
-Live: https://timkicker--validio.us-east.modal.run. Click **Try the demo kitchen**. Your browser gets its own copy of a filled demo kitchen, and the bar on top shows its approval code, 246810. **Reset** in that bar takes the copy back to the start.
+Live: https://timkicker--validio.us-east.modal.run. Click **Try the demo kitchen**. Your browser gets its own copy of a filled demo kitchen. The bar on top shows its approval code (246810) and **Start over** in that bar takes the copy back to the start. Nothing you do there reaches Valio or another visitor.
+
+![Home in the demo kitchen](../docs/img/validio-home.png)
 
 The plan and the reasoning behind each part are in [PROJECT_BLUEPRINT-validio.md](../PROJECT_BLUEPRINT-validio.md). The click path is in [docs/DEMO.md](docs/DEMO.md).
 
@@ -24,34 +26,36 @@ The connector offers seven tools: `search_products`, `request_supply`, `confirm_
 
 ## The pages
 
-- **Home**: a three-step checklist (Rules, connect the agent, first order) until the first order arrives. After that it shows the agent and this week's spend, what needs you, and the newest activity. It refreshes every two seconds.
-- **Activity**: everything the agent did, newest first, filtered by All, Ordered, Waiting, Blocked and Standing. One item reads from top to bottom: what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. While an item waits, Approve (with the approval code) and Reject sit here. The ledger entries for the item are folded away under **Proof**.
+- **Home**: a three-step checklist (Rules, connect the agent, first order) until the first order arrives. After that it shows whether the agent is active, this week's spend, what needs you and the latest activity. It refreshes every two seconds.
+- **Activity**: everything the agent did, newest first, filtered by All, Ordered, Waiting, Blocked and Standing. One item reads from top to bottom: what the agent asked for, what Validio checked at Valio, the rule that decided and the result. While an item waits, Approve (with the approval code) and Reject sit here. The ledger entries for the item are folded away under **Proof**.
 - **Rules**: what the agent may do, in three groups: Money, Diet and allergens, Substitutes. **Edit** saves all of them at once with the approval code. Every save signs a new version of the agent's Spend Pass and writes one ledger entry.
-- **Agent**: connect, the verification code, Allow or Deny, then the agent's name and last use, **Pause** and **Disconnect**. A paused agent is refused on every call, and the refusal is logged. Disconnect makes the connector address return 404.
-- **Settings**: kitchen name and delivery address, login, approval code, theme, log out.
+- **Agent**: connect, the verification code, Allow or Deny, then the agent's name and last use, **Pause** and **Disconnect**. A paused agent is refused on every call and the refusal is logged. Disconnect makes the connector address return 404.
+- **Settings** (the kitchen's name at the top right): kitchen name and delivery address, login, approval code, theme, log out.
+
+![One Activity item: what the agent asked, what Validio checked at Valio, the rule that decided and the result](../docs/img/validio-activity.png)
 
 ## Rules
 
 - **Per order.** "Ordered alone up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
 - **Per week.** An optional cap on everything the Spend Pass has placed this week. An order that would go over it is blocked. Validio checks this limit before it asks Cedar, so it is not one of the Cedar rules. The demo kitchen has 8,000.00 €.
-- **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product whose own Valio data contradicts the diet, or that lists a "never" allergen, is blocked. A product where the diet cannot be confirmed, or that may contain a "never" allergen or has no allergen data, waits for you.
-- **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered alone. With extra cost: the same, and a line may also be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
+- **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product is blocked when its own Valio data contradicts the diet or when it lists a "never" allergen. It waits for you when the diet cannot be confirmed, when it may contain a "never" allergen or when it has no allergen data.
+- **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered alone. With extra cost: as from Valio's list, plus a line may be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
 
 A budget written in the request ("budget 1200 euro") counts too: above it, the order waits for you. Before it places any order, Validio asks Valio again. If a price rose by more than 2 % or a line can no longer be delivered, the order is refused. The rules themselves are listed in [docs/RULES.md](docs/RULES.md).
 
 ## Proof
 
-Every decision, approval, Rules change, pause and refusal becomes one sentence in the Open Ledger. Each entry carries the SHA-256 hash of the entry before it. The head of the chain (entry count, last hash and time) is stored next to the chain, moves in the same transaction as each new entry, and is signed with the kitchen's key (ES256). Verification therefore catches an entry that was changed, removed from the middle, or cut from the end. It also catches a chain that was rewritten in full by anyone without the key. `GET /api/ledger/head` returns the signed head and the public key, so Valio can pin the head and check later that the ledger still ends there or grew from there. Hidden Spend Pass fields such as the approver list never enter the ledger.
+Every decision, approval, Rules change, pause and refusal becomes one sentence in the Open Ledger. Each entry carries the SHA-256 hash of the entry before it. The head of the chain (entry count, last hash and time) is stored next to the chain and moves in the same transaction as each new entry. It is signed with the kitchen's key (ES256). Verification therefore catches an entry that was changed, removed from the middle or cut from the end. It also catches a chain that was rewritten in full by anyone without the key. `GET /api/ledger/head` returns the signed head and the public key, so Valio can pin the head and check later that the ledger still ends there or grew from there. Hidden Spend Pass fields such as the approver list never enter the ledger.
 
 ## Valio's answers: real, recorded, 16 to 20 Nov 2026
 
 The 17,546 products, with their claims, allergens, substitutes, delivery reliability and carbon values, come from Valio's challenge files. Every price and availability answer is a real answer from Valio's test API (`junction26.valioaimo.fi`, customer `hotel-espoo`). `make record` asked the API once for each delivery day from Monday 16 to Friday 20 November 2026 and stored the answers. The app replays them and never connects to Valio while it runs.
 
-- Any other delivery day returns `503 not recorded`, and the error names the recorded days. The `request_supply` tool's description lists them too, so an agent can choose one. "Monday" means 16 Nov. With no day given, the order is due on 16 Nov.
+- Any other delivery day returns `503 not recorded` and the error names the recorded days. The `request_supply` tool's description lists them too, so an agent can choose one. "Monday" means 16 Nov. With no day given, the order is due on 16 Nov.
 - Answers were recorded for the products the demo scenes need and for a list of common kitchen requests (milk, cream, cheeses, butter, eggs and others), each with Valio's listed substitutes. Any other product returns "aren't recorded for this demo" and nothing is ordered.
 - Decisions run on a fixed demo clock, Saturday 14 November 2026 10:00 Helsinki time, because Valio's cut-offs and delivery dates in the recordings fit that time. On the live site, what people do is stamped with the real time.
 
-Three things are simulated: the stock-out of mozzarella 466375 (Valio really has it in stock), the 8 weeks of order history behind the weekly Steady Order, and the line in product 463047's description that talks to AI agents. We planted that line ourselves and keep it in its own table, apart from Valio's text. The API answers flag the stock-out and the history as simulated, and the stock-out has its own ledger entry.
+Three things are simulated: the stock-out of mozzarella 466375 (Valio really has it in stock), the 8 weeks of order history behind the weekly Steady Order and the line in product 463047's description that talks to AI agents. We planted that line ourselves and keep it in its own table, apart from Valio's text. The API answers flag the stock-out and the history as simulated and the stock-out has its own ledger entry.
 
 ## Architecture
 
@@ -60,8 +64,8 @@ Three things are simulated: the stock-out of mozzarella 466375 (Valio really has
 - **FastAPI** (`src/backend/validio/api/`): one Python service for the web app's API under `/api`, the agent API under `/agent/v1` (OpenAPI 3.1) and MCP under `/mcp`. All three call the same functions.
 - **Spend Pass** (`policy/mandate.py`): the kitchen's signed permission, an SD-JWT bound to the agent's P-256 key and checked with a single-use nonce. The Rules are claims inside it, so every Rules change signs a new version.
 - **Cedar** (`policy/policies.cedar`): four rules decide whether to order alone, ask a person or block. The rules read only numbers and yes/no values that Validio fills from Valio's data and the pass. Model output and supplier text never reach a decision.
-- **Matching and Fact Grades** (`matching/`, `trust/`): the request turns into a typed need, the local catalog narrows it down, and at most 40 ids per call go to Valio. Every fact is graded, and a missing value never counts as a yes.
-- **MCP** (`api/mcp_server.py`): the connector server at `/mcp/c/<token>/` for any client, and `/mcp/k/<account>/` for agents that sign.
+- **Matching and Fact Grades** (`matching/`, `trust/`): the request turns into a typed need, the local catalog narrows it down and at most 40 ids per call go to Valio. Every fact is graded and a missing value never counts as a yes.
+- **MCP** (`api/mcp_server.py`): the connector server at `/mcp/c/<token>/` for any client and `/mcp/k/<account>/` for agents that sign.
 - **SvelteKit** (`src/frontend/`): the web app, built to static files and served by the same FastAPI process.
 - **Modal** (`src/cloud/app_validio.py`): one container that scales to zero, with SQLite, the catalog index and the recorded answers on the Modal volume `validio-data`. Nothing from Valio is in the image or in git.
 
@@ -81,7 +85,7 @@ make demo                        # builds the web app, seeds and serves everythi
 
 Open http://127.0.0.1:8410 and click **Try the demo kitchen**. Without `make template`, a demo copy starts from the plain seed. Without `make record`, every request returns "not recorded".
 
-To look at the web app alone, without a key or data: `cd src/frontend && npm ci && npm run kit`, then `make demo-mock` from `validio/`. The app then runs on a fixture on http://127.0.0.1:8411, and no agent can talk to it.
+To look at the web app alone, without a key or data: `cd src/frontend && npm ci && npm run kit`, then `make demo-mock` from `validio/`. The app then runs on a fixture on http://127.0.0.1:8411 and no agent can talk to it.
 
 Other targets:
 
@@ -101,12 +105,12 @@ make test-live                   # the tests that need the network
 make mutate                      # mutation testing on the deciding modules (slow)
 ```
 
-`make guards` (part of `make test`) fails on a committed key or `.env`, and on any address of Valio's production systems outside `docs/`. Details are in [docs/TESTING.md](docs/TESTING.md).
+`make guards` (part of `make test`) fails on a committed key or `.env` and on any address of Valio's production systems outside `docs/`. Details are in [docs/TESTING.md](docs/TESTING.md).
 
 ## Deploy
 
 ```sh
-make modal-data                  # upload data/catalog.db and data/cache/valio to the volume (once, and after make record)
+make modal-data                  # upload data/catalog.db and data/cache/valio to the volume (once and again after make record)
 make modal-secret                # the secret validio-web from a gitignored env file
 make modal-deploy                # build the web app, deploy, then fill the demo kitchen template in the volume
 ```
@@ -119,9 +123,9 @@ With `VALIDIO_PUBLIC=1` the app refuses to start without its approval code and k
 |:---|:---|
 | `src/backend/validio/api/` | FastAPI app, MCP servers, accounts, agent connect, Rules and Settings, Home and Activity |
 | `src/backend/validio/policy/` | Spend Pass (SD-JWT) and the Cedar rules |
-| `src/backend/validio/orders/` | from request to decision, and orders that ask Valio again before placing |
+| `src/backend/validio/orders/` | requests and their decisions, plus orders that ask Valio again before placing |
 | `src/backend/validio/matching/`, `trust/` | need parsing, ranking, Safe Swap, Split Fill, Fact Grades and the claim check |
-| `src/backend/validio/catalog/`, `valio/` | the SQLite index over Valio's product file, and the test API client with record and replay |
+| `src/backend/validio/catalog/`, `valio/` | the SQLite index over Valio's product file and the test API client with record and replay |
 | `src/backend/validio/audit/` | the Open Ledger |
 | `src/backend/validio/standing/` | Steady Orders and Drift Watch |
 | `src/backend/validio/reader/` | a reader that flags supplier text aimed at agents; it is only shown and never decides |
