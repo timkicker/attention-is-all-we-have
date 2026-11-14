@@ -34,6 +34,7 @@ from .schemas import (
     LedgerHeadView,
     LedgerView,
     OrderView,
+    ResetIn,
     SessionIn,
     SpendPassIn,
     SpendPassView,
@@ -394,8 +395,9 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn):
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)
-def reset(ctx: CtxDep, request: Request):
-    """Back to the state `make demo` starts from: drops every table, seeds again."""
+def reset(ctx: CtxDep, request: Request, body: Annotated[ResetIn | None, Body()] = None):
+    """Back to the state `make demo` starts from: drops every table, seeds again. A demo copy goes back to the
+    template, or with {"fresh": true} to the plain seed with no agent connected."""
     _demo(ctx, request)
-    ctx.reset()
+    ctx.reset(fresh=bool(body and body.fresh))
     return _demo_state(ctx, ctx.stockout())
