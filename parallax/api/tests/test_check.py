@@ -39,7 +39,10 @@ def test_mainila_answer_says_and_stopped_saying(run):
 
 
 def test_one_statement_per_claim_uses_the_vector_index(run):
-    nearest = [s for s in run["sql"] if "VEC_DISTANCE_COSINE" in s["text"]]
+    # the reworded check (s.row_start = d.row_end) compares stored vectors and is not a nearest search
+    nearest = [
+        s for s in run["sql"] if "VEC_DISTANCE_COSINE" in s["text"] and "s.row_start = d.row_end" not in s["text"]
+    ]
     assert len(nearest) == len(run["claims"])
     assert all("FOR SYSTEM_TIME ALL" in s["text"] and s["index"] == "emb" for s in nearest)
 
@@ -146,7 +149,7 @@ def _life(h, label, born, died=None, terms=None, numbers=None):
     v = {"label": label}
     if terms is not None:
         v["terms"], v["numbers"] = terms, numbers or []
-    return {"h": h, "born": born, "died": died, "verdict": v}
+    return {"lang": "en", "page_id": 1, "h": h, "born": born, "died": died, "verdict": v}
 
 
 def test_reworded_sentence_still_says():
