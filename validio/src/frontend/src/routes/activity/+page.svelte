@@ -1,10 +1,10 @@
 <script lang="ts">
   /// Activity: everything the agent did, newest first under day heads. The
-  /// filter chips carry their counts and live in the address (?status=), so a
-  /// filtered list can be linked and Back walks the filters.
+  /// filters are words with their counts, the chosen one underlined in petrol;
+  /// they live in the address (?status=), so a filtered list can be linked and
+  /// Back walks the filters.
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import { Chip } from "@arlen/ui-kit/components/ui/chip";
   import { api } from "$lib/api/client";
   import type { ActivityFilter } from "$lib/api/types";
   import { ActivityRow, byDay, Empty, FILTERS, isFilter, ListSection, live, Loading, LoadError, PageHead } from "$lib/v2";
@@ -35,20 +35,16 @@
 </script>
 
 <PageHead title="Activity">
-  {#snippet facts()}<span>Everything your agent did, with the reason</span>{/snippet}
+  <p class="lead">Everything your agent did, with the reason.</p>
 </PageHead>
 
 <!-- A kitchen with nothing yet gets no filters: five zeros say nothing. -->
 {#if !list.data || list.data.counts.all > 0}
 <div class="filters" role="group" aria-label="Show">
   {#each FILTERS as f (f.id)}
-    <Chip
-      id="filter-{f.id}"
-      label={f.label}
-      meta={list.data ? String(list.data.counts[f.id]) : undefined}
-      pressed={status === f.id}
-      onclick={() => pick(f.id)}
-    />
+    <button type="button" id="filter-{f.id}" aria-pressed={status === f.id} onclick={() => pick(f.id)}>
+      {f.label}{#if list.data}<em>{list.data.counts[f.id]}</em>{/if}
+    </button>
   {/each}
 </div>
 {/if}
@@ -77,42 +73,40 @@
 
 <style>
   .filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 24px;
+    margin-top: 32px;
   }
   @media (max-width: 760px) {
-    /* One row that scrolls sideways on its own, edge to edge, not two rows.
-       The chips stay the kit's size; their press area (app.css) reaches past
-       them into the row's padding. */
+    /* One row that scrolls sideways on its own, edge to edge. */
     .filters {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scrollbar-width: none;
-      margin: 12px -16px 0;
-      padding: 10px 16px;
+      margin: 20px -16px 0;
+      padding: 0 16px;
     }
-    .filters :global(.chip) {
+    .filters button {
       flex: none;
     }
   }
   .days {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    margin-top: 24px;
+    gap: 8px;
+    margin-top: 8px;
   }
   .dg {
     display: flex;
     flex-direction: column;
   }
+  /* The day heads: small and quiet over the ruled list, not section titles. */
   .dg .v-h {
+    min-height: 0;
     margin: 0;
+    padding: 24px 0 8px;
+    font-family: var(--v-sans);
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    font-weight: 600;
+    color: var(--v-muted);
   }
-  @media (max-width: 760px) {
-    .days {
-      margin-top: 14px;
-    }
+  .dg :global(.section-card) {
+    border-top-color: var(--v-line-strong);
   }
 </style>

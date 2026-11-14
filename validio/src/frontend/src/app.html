@@ -4,13 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <script>
-      // The theme before the first paint: ?theme=, then the stored choice, then the system.
+      // The theme before the first paint: ?theme=, then the stored choice, then light.
       (function () {
         var KEY = "validio-theme";
         var q = new URLSearchParams(location.search).get("theme");
-        var mode = "system";
+        var mode = "light";
         try {
-          mode = localStorage.getItem(KEY) || "system";
+          mode = localStorage.getItem(KEY) || "light";
         } catch (e) {}
         var mq = matchMedia("(prefers-color-scheme: light)");
         function set() {
@@ -21,7 +21,7 @@
         set();
         mq.addEventListener("change", function () {
           try {
-            mode = localStorage.getItem(KEY) || "system";
+            mode = localStorage.getItem(KEY) || "light";
           } catch (e) {}
           set();
         });
