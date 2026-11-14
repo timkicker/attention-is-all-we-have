@@ -7,9 +7,10 @@ out of the OpenAPI document; docs/AGENTS.md names the prefix."""
 import re
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 
 from . import connect, tools
+from .limits import NONCES, client_ip
 from .schemas import ConfirmIn, NonceView, OrderView, ProductSummary, SupplyRequestIn, SupplyRequestView
 from .state import Ctx, get_ctx
 
@@ -47,8 +48,10 @@ def _routes(router: APIRouter, CtxDep, suffix: str = "") -> APIRouter:
 
 
     @router.get("/nonce", response_model=NonceView, operation_id=f"get_nonce{suffix}")
-    def get_nonce(ctx: CtxDep):
-        """A fresh single-use nonce for the Spend Pass key binding."""
+    def get_nonce(ctx: CtxDep, request: Request):
+        """A fresh single-use nonce for the Spend Pass key binding. At most 120 a minute per client."""
+        kitchen = ctx.account["id"] if ctx.account else "local"
+        NONCES.check(f"{kitchen}:{client_ip(request)}", "nonces")
         return tools.nonce(ctx)
 
 

@@ -28,13 +28,13 @@ from pydantic.alias_generators import to_camel
 
 from ..audit.log import AuditLog
 from ..catalog.store import Catalog
-from ..config import load_settings
+from ..config import load_settings, strict_stock
 from ..demo import seed
 from ..demo.clock import demo_now
 from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
 from ..orders.store import Store
 from ..policy.mandate import Mandate
-from ..standing.drift import unit_word
+from ..standing.drift import next_renewals, unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
@@ -216,9 +216,13 @@ class Runtime:
     Without a path the store is the local kitchen's (VALIDIO_DB, VALIDIO_KEYS). An account's runtime has its
     own path and keys and borrows the catalog and the Valio client of `shared`."""
 
-    def __init__(self, path: Path | None = None, keys: Path | None = None, shared: "Runtime | None" = None):
+    def __init__(self, path: Path | None = None, keys: Path | None = None, shared: "Runtime | None" = None,
+                 real_clock: bool = False):
+        """`real_clock`: decisions run on the wall clock (a kitchen's own account), not on the demo clock that
+        starts at VALIDIO_NOW and moves a few minutes per ledger entry (the local kitchen and demo copies)."""
         self.lock = threading.RLock()
         self._path, self._keys, self._shared = path, keys, shared
+        self.real_clock = real_clock
         self._live: _Live | None = None
         self._catalog: Catalog | None = None
         self._valio: ValioClient | None = None
@@ -264,13 +268,14 @@ class Runtime:
             store = Store(path)
             # an order and its ledger entry commit together; the kitchen key signs the head
             audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
-            clock = lambda: demo_now(self.settings.now, store.con)
             wall = lambda: datetime.now(self.settings.now.tzinfo)
+            clock = wall if self.real_clock else (lambda: _demo_clock(self.settings.now, store))
             service = OrderService(store, self.catalog, self.valio, audit, clock=clock,
-                                   stamp=wall if self.settings.real_time else clock,
+                                   stamp=wall if self.settings.real_time or self.real_clock else clock,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    valio_down=lambda: seed.valio_down(path),
-                                   lock=self.lock)  # one lock for every write and the demo reset
+                                   lock=self.lock,  # one lock for every write and the demo reset
+                                   strict_stock=self.real_clock)  # a kitchen's own account: real money
             self._live = _Live(token, path, store, audit, service, self.keys_dir())
         return self._live
 
@@ -280,6 +285,13 @@ class Runtime:
                 self._live.service.closed = True
                 self._live.store.close()
                 self._live = None
+
+
+def _demo_clock(base: datetime, store: Store) -> datetime:
+    """The demo clock reads the ledger on the store's shared connection, so it takes the store's lock as every
+    other read does: request_supply asks for the time without the kitchen lock while other agents write."""
+    with store.lock:
+        return demo_now(base, store.con)
 
 
 runtime = Runtime()
@@ -337,11 +349,21 @@ def _steady() -> tuple[StandingOrder, object]:
     return learn(h), h
 
 
-def _get_order(order_id: str) -> tuple[StandingOrder, object]:
+def _get_order(order_id: str, rt: "Runtime | None" = None) -> tuple[StandingOrder, object]:
+    if rt is not None and rt.real_clock:
+        raise HTTPException(404, f"No Steady Order with id {order_id}: this kitchen has none yet.")
     so, h = _steady()
     if order_id != so.id:
         raise HTTPException(404, f"No Steady Order with id {order_id}.")
     return so, h
+
+
+def _this_week(live, so: StandingOrder) -> dict | None:
+    """The renewal for the delivery that is next now, or None: last week's renewal is history, so a new week
+    renews again (the idempotency keys name the delivery day, so nothing orders twice)."""
+    state = _load(live.path, so.id)
+    target = next_renewals(so.weekday, live.service.clock(), 1)[0].isoformat()
+    return state if state and state.get("delivery") == target else None
 
 
 def _pending(so: StandingOrder, h) -> SteadyOrderOut:
@@ -442,10 +464,12 @@ def _dump(view: SteadyOrderOut) -> dict:
 @router.get("", response_model=list[SteadyOrderSummaryOut], response_model_exclude_none=True)
 def steady_list(request: Request):
     rt = _ctx(request).rt
+    if rt.real_clock:  # S-1 is learned from the demo kitchen's history; a kitchen's own account has none yet
+        return []
     with rt.lock:
         live = rt.live()
         so, h = _steady()
-        state = _load(live.path, so.id)
+        state = _this_week(live, so)
         view = _view(state) if state else _pending(so, h)
     flagged = [ln for ln in view.lines if ln.flags and ln.result != "accepted"]
     return [SteadyOrderSummaryOut(id=view.id, name=view.name, weekday=view.weekday, line_count=len(view.lines),
@@ -457,8 +481,8 @@ def steady_order(request: Request, order_id: str):
     rt = _ctx(request).rt
     with rt.lock:
         live = rt.live()
-        so, h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         return _with_pass(_view(state) if state else _pending(so, h), live)
 
 
@@ -479,13 +503,14 @@ def renew(order_id: str, rt: Runtime | None = None) -> SteadyOrderOut:
         rt = get_ctx().rt
     with rt.lock:
         live = rt.live()
-        so, h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         if state:  # already renewed this week: nothing is ordered twice
             return _with_pass(_view(state), live)
         now = live.service.clock()
         mandate = _pass(live.path, live.keys)
-        renewal = run(so, h, rt.catalog, rt.valio, mandate, now, stockout=seed.stockout(live.path))
+        with strict_stock(live.service.strict_stock):
+            renewal = run(so, h, rt.catalog, rt.valio, mandate, now, stockout=seed.stockout(live.path))
         pending = {ln.product_id: ln for ln in _pending(so, h).lines}
         diet = {ln.product_id: ln.diet for ln in so.lines}
         out = []
@@ -524,8 +549,8 @@ def steady_accept(request: Request, order_id: str, product_id: str,
     _chef(ctx, request, f"steady:{order_id}:{product_id}", x_approve_code, body)
     with rt.lock:
         live = rt.live()
-        so, _h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, _h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         if not state:
             raise HTTPException(409, "Renew the order first.")
         view = _view(state)

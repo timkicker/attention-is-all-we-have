@@ -63,6 +63,10 @@ if LOCAL:  # the files ride along at deploy time; in the container they are alre
         .add_local_file(ROOT / "scripts" / "demo_check.py", f"{REMOTE}/scripts/demo_check.py")
     )
 
+# GET routes that can write to the store: the Agent page (a connector URL), the agent and MCP paths (last use,
+# consent), the account (opening one may sign its pass again)
+GET_WRITERS = ("/api/agent", "/api/account", "/mcp", "/agent/v1")
+
 data = modal.Volume.from_name("validio-data", create_if_missing=True)
 web_secret = modal.Secret.from_name("validio-web")
 app = modal.App("validio-web")
@@ -73,15 +77,25 @@ app = modal.App("validio-web")
 @modal.concurrent(max_inputs=32)
 @modal.asgi_app(label="validio")
 def web():
+    import time
+
     from fastapi import Request
 
     from validio.api.app import app as api  # serves the built web app too, and refuses to start open
 
+    last = [0.0]
+
     @api.middleware("http")
     async def commit_after_writes(request: Request, call_next):
+        """The next container must see every order and ledger entry. Writes commit at once. Some reads write
+        too (the Agent page makes a connector URL, an MCP call notes its use, opening an account may sign its
+        pass for 30 more days): those paths commit at once, and any other read at most every 30 s."""
         response = await call_next(request)
-        if request.method not in ("GET", "HEAD", "OPTIONS"):
-            await data.commit.aio()  # the next container must see every order and ledger entry
+        path = request.url.path
+        writes = request.method not in ("GET", "HEAD", "OPTIONS") or path.startswith(GET_WRITERS)
+        if writes or time.monotonic() - last[0] > 30:
+            await data.commit.aio()
+            last[0] = time.monotonic()
         return response
 
     return api

@@ -227,11 +227,25 @@ def test_key_file_round_trip(tmp_path):
     assert oct(path.stat().st_mode & 0o777) == "0o600"
 
 
-def test_nonce_store_is_capped():
+def test_nonce_store_is_capped_and_drops_the_oldest():
     nonces = NonceStore(max_open=3)
-    for _ in range(3):
+    first = nonces.issue(NOW)
+    for _ in range(2):
         nonces.issue(NOW)
-    with pytest.raises(MandateError, match="^too many open nonces$"):
-        nonces.issue(NOW)
-    # expired nonces make room again
-    assert nonces.issue(NOW + timedelta(minutes=6))
+    # a flood of unused nonces never stops issuing: the oldest open one goes
+    fresh = nonces.issue(NOW)
+    assert len(nonces._issued) == 3
+    with pytest.raises(MandateError, match="unknown or reused nonce"):
+        nonces.check(first, NOW)
+    nonces.check(fresh, NOW)
+
+
+def test_nonce_expires_on_the_wall_clock_while_the_demo_clock_stands_still():
+    wall = [1000.0]
+    nonces = NonceStore(ttl=timedelta(minutes=5), wall=lambda: wall[0])
+    n = nonces.issue(NOW)
+    wall[0] += 6 * 60  # the decision clock still says NOW
+    with pytest.raises(MandateError, match="stale nonce"):
+        nonces.check(n, NOW)
+    nonces.issue(NOW)
+    assert n not in nonces._issued  # expired nonces are swept on the next issue

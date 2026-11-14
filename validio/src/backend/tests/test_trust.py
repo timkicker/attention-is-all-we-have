@@ -77,9 +77,9 @@ def test_476523_gluten_contradicted(catalog):
     assert level(catalog, "476523", "FREE_FROM_GLUTEN") == T.CONTRADICTED
 
 
-def test_471376_gluten_consistent(catalog):
-    # contains oats (GO) and its text says gluten-free oat flour, neither is a gluten cereal
-    assert level(catalog, "471376", "FREE_FROM_GLUTEN") == T.CONSISTENT
+def test_471376_gluten_waits_for_a_person(catalog):
+    # contains oats (GO): a gluten-free claim with oats is safe only with gluten-free oats, so a person checks it
+    assert level(catalog, "471376", "FREE_FROM_GLUTEN") == T.UNCHECKED
 
 
 def test_476955_vegetarian_contradicted(catalog):

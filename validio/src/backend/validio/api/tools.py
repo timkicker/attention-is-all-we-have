@@ -1,6 +1,8 @@
 """The five agent tools as plain functions. The HTTP routes under /agent/v1 and the MCP server both
 call these, so there is one code path. Writes take the Spend Pass presentation and verify it first."""
 
+import threading
+
 from ..catalog.labels import LABELS
 from ..catalog.model import Product
 from ..demo.seed import STOCKOUT_ID, stockout_note
@@ -78,8 +80,54 @@ def request_supply(ctx: Ctx, spend_pass: str, body: SupplyRequestIn) -> SupplyRe
     return _request_view(ctx, req)
 
 
+# Built views by (store file, store serial, request id), each with the store's change count it was built at. The
+# inbox, Activity and the ledger are polled every two seconds and build a view per request, so a view is built
+# again only after a write to the kitchen's store (or a demo switch). The serial is never reused in the process
+# (unlike id(), which a new store may get once an evicted account's runtime is gone), so one kitchen never gets
+# another's view; a reset opens a new store and also drops the file's views (forget_views). Callers get a deep
+# copy: some of them trim the lists.
+_VIEWS: dict[tuple[str, int, str], tuple[int, SupplyRequestView]] = {}
+_VIEWS_MAX = 5000
+_VIEWS_LOCK = threading.Lock()
+
+
+def _generation(store) -> int:
+    """Rows changed through the kitchen's one connection: every write, the ledger and the demo switches (each
+    switch writes a ledger entry) count."""
+    return store.con.total_changes
+
+
+def forget_views(db_path) -> None:
+    """Every built view of this store file, called on a reset."""
+    path = str(db_path)
+    with _VIEWS_LOCK:
+        for k in [k for k in _VIEWS if k[0] == path]:
+            del _VIEWS[k]
+
+
+def _copy(v: SupplyRequestView) -> SupplyRequestView:
+    """A copy whose own fields and option lists a caller may change (ui.asked_apart trims the lists); the
+    options themselves are shared and never changed in place."""
+    lines = [ln.model_copy(update={"options": list(ln.options),
+                                   "substitutes": None if ln.substitutes is None else list(ln.substitutes),
+                                   "beyond_list": None if ln.beyond_list is None else list(ln.beyond_list)})
+             for ln in v.lines]
+    return v.model_copy(update={"lines": lines})
+
+
 def get_request(ctx: Ctx, request_id: str) -> SupplyRequestView:
-    return _request_view(ctx, ctx.supply.get_request(request_id))
+    store = ctx.store
+    key, gen = (str(store.path), store.serial, request_id), _generation(store)
+    with _VIEWS_LOCK:
+        hit = _VIEWS.get(key)
+    if hit is not None and hit[0] == gen:
+        return _copy(hit[1])
+    view = _request_view(ctx, ctx.supply.get_request(request_id))
+    with _VIEWS_LOCK:
+        if len(_VIEWS) >= _VIEWS_MAX:
+            _VIEWS.clear()
+        _VIEWS[key] = (gen, _copy(view))
+    return view
 
 
 def confirm_order(ctx: Ctx, spend_pass: str, body: ConfirmIn) -> OrderView:

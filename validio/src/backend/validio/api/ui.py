@@ -13,6 +13,8 @@ caller on this machine. Nothing here orders: only an agent over MCP or the agent
 import hmac
 import json
 import re
+import threading
+import time
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
@@ -24,6 +26,7 @@ from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from . import display
 from .accounts import request_ctx
+from .limits import client_ip, secure_cookies
 from .schemas import (
     ApproveIn,
     AskedFor,
@@ -81,25 +84,35 @@ def session(ctx: CtxDep, request: Request, body: SessionIn) -> Response:
         raise HTTPException(401, "wrong kitchen token")
     r = Response(status_code=204)
     r.set_cookie(COOKIE, ctx.kitchen_token, httponly=True, samesite="strict",
-                 secure=request.url.scheme == "https", max_age=12 * 3600)
+                 secure=secure_cookies(request), max_age=12 * 3600)
     return r
 
 
+CODE_WINDOW = 15 * 60  # seconds: five wrong codes within it lock the order or button, and the client
+_tries_lock = threading.Lock()
+
+
 def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: ApproveIn | None) -> None:
-    """The approval code, for an order or a Steady Order button (`key`). Five wrong codes lock that key,
-    five from one client lock the client. Which code counts is `ctx.code_ok`: the account's own, 246810 on a
+    """The approval code, for an order or a Steady Order button (`key`). Five wrong codes within 15 minutes lock
+    that key, five from one client lock the client, each until its oldest miss is 15 minutes old: a miss never
+    locks anything for good, and the client is the real caller behind a trusted proxy (api/limits.py). Which code counts is `ctx.code_ok`: the account's own, 246810 on a
     demo copy, VALIDIO_APPROVE_CODE for the local kitchen."""
     if not ctx.has_code:
         if ctx.is_local(_host(request)):
             return
         raise HTTPException(403, "this server has no VALIDIO_APPROVE_CODE, so approval is closed")
-    keys = [("key", key), ("client", _host(request) or "?")]
-    if any(ctx.code_tries.get(k, 0) >= MAX_CODE_TRIES for k in keys):
-        raise HTTPException(429, "too many wrong codes, approval is locked")
+    keys = [("key", key), ("client", client_ip(request))]
+    now = time.monotonic()
+    with _tries_lock:
+        recent = {k: [t for t in ctx.code_tries.get(k, []) if t > now - CODE_WINDOW] for k in keys}
+    if any(len(v) >= MAX_CODE_TRIES for v in recent.values()):
+        raise HTTPException(429, "too many wrong codes, approval is locked for 15 minutes",
+                            headers={"Retry-After": str(CODE_WINDOW)})
     given = header or (body.code if body else None)
     if not ctx.code_ok(given):
-        for k in keys:
-            ctx.code_tries[k] = ctx.code_tries.get(k, 0) + 1
+        with _tries_lock:
+            for k in keys:
+                ctx.code_tries[k] = [*recent[k], now]
         raise HTTPException(403, "wrong or missing approval code")
 
 
@@ -306,7 +319,8 @@ def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
         elif steady:
             rid = steady.group(1)
         elif e["kind"] == "request":
-            current = rid = next(asked, None)
+            tagged = next((f.get("value") for f in e.get("facts") or [] if f.get("field") == "request"), None)
+            current = rid = tagged or next(asked, None)  # entries from before the tag: in request order
         elif e["kind"] in ("spend_pass", "agent"):
             rid = e["spend_pass_id"]  # the owner's change belongs to the pass, not the request before it
         elif e["kind"] == "simulation":

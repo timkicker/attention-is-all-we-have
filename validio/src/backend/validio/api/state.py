@@ -13,6 +13,7 @@ closed while those are unset. The demo switches are for demo copies (a session) 
 import os
 import re
 import threading
+import time
 from contextvars import ContextVar
 from pathlib import Path
 
@@ -23,7 +24,6 @@ from ..demo import seed
 from ..orders.supply import SupplyService
 from ..policy.mandate import (
     AUDIENCE,
-    DEMO_CLAIMS,
     Mandate,
     NonceStore,
     load_or_create_key,
@@ -53,10 +53,11 @@ class Ctx:
         self.approve_code = "" if account is not None else env.get("VALIDIO_APPROVE_CODE", "")
         if self.approve_code and not re.fullmatch(r"\d{6}", self.approve_code):
             raise ValueError("VALIDIO_APPROVE_CODE must be 6 digits")
-        self.code_tries: dict[tuple[str, str], int] = {}  # ("key", order or button) and ("client", host)
-        self.nonces = NonceStore()
+        # ("key", order or button) and ("client", address): the times of the wrong codes in the last 15 minutes
+        self.code_tries: dict[tuple[str, str], list[float]] = {}
+        self.nonces = NonceStore(decision_clock=False)
         self._supply: tuple[object, SupplyService] | None = None
-        self._kitchen: tuple[Path, JWK] | None = None
+        self._kitchen: tuple[tuple, JWK] | None = None
 
     @property
     def has_code(self) -> bool:
@@ -166,15 +167,33 @@ class Ctx:
 
     @property
     def kitchen_pub(self) -> JWK:
+        """The kitchen's public key, read again whenever its file changed (a reset of a copy gives a new key)."""
         path = self.keys_dir / "kitchen-es256.json"
-        if self._kitchen is None or self._kitchen[0] != path:
-            self._kitchen = (path, JWK.from_json(load_or_create_key(path).export_public()))
+        stamp = (path, path.stat().st_mtime_ns if path.is_file() else None)
+        if self._kitchen is None or self._kitchen[0] != stamp:
+            pub = JWK.from_json(load_or_create_key(path).export_public())
+            self._kitchen = ((path, path.stat().st_mtime_ns), pub)
         return self._kitchen[1]
 
     def reset(self, fresh: bool = False) -> None:
         """`fresh` on an account: the seed of `make seed` in its own store and keys instead of the template, with no
         agent connected (the live e2e starts every run from there, also against the public link)."""
+        # a request, order or approval asking Valio outside the lock writes first, then the tables go: wait without
+        # the lock until none is out there, then reset under it (a call may start meanwhile; after a minute the
+        # reset goes on and a late call gets a clean 503 from check_open)
+        give_up = time.monotonic() + 60
+        while True:
+            with self.rt.lock:
+                live = self.rt._live
+                if live is None or live.service.idle() or time.monotonic() >= give_up:
+                    self._reset_locked(fresh)
+                    return
+            live.service.wait_idle(max(0.0, give_up - time.monotonic()))
+
+    def _reset_locked(self, fresh: bool) -> None:
         with self.rt.lock:
+            if self.rt._live is not None:
+                self.rt._live.service.closed = True  # a late call that waited through the reset gets 503
             if fresh and self.account is not None:
                 from .connect import leave_unconnected
 
@@ -186,7 +205,10 @@ class Ctx:
             else:
                 seed.reset(self.db_path, self.keys_dir)
             self.code_tries.clear()
-            self.nonces = NonceStore()
+            self.nonces = NonceStore(decision_clock=False)
+            from .tools import forget_views
+
+            forget_views(self.db_path)
 
     def real_stock(self) -> tuple[float, str] | None:
         """466375 as Valio answers it, read at request time (replayed in the demo)."""
@@ -233,7 +255,7 @@ class Ctx:
     def verify(self, token: str) -> Mandate:
         from .connect import check_use
 
-        m = verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
+        m = verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=seed.issuer(self.db_path), aud=AUDIENCE,
                                    nonces=self.nonces, now=self.now(), revoked=self.store.is_revoked,
                                    version=lambda jti: seed.pass_version(self.db_path, jti))
         check_use(self, m, token)  # a paused agent is refused here, with a ledger entry
