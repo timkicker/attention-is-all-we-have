@@ -1,0 +1,66 @@
+{
+ "results": [
+  {
+   "qid": "Q152306",
+   "title": "Carl Gustaf Emil Mannerheim",
+   "description": "Finnish military leader and statesman (1867–1951)",
+   "fi_title": "Carl Gustaf Emil Mannerheim",
+   "status": "new",
+   "eta_s": 1117
+  },
+  {
+   "qid": "Q155093",
+   "title": "Mannerheim Line",
+   "description": "defensive fortification line built by Finland against the Soviet Union",
+   "fi_title": "Mannerheim-linja",
+   "status": "ready",
+   "eta_s": null
+  },
+  {
+   "qid": "Q1501828",
+   "title": "Mannerheim Cross",
+   "description": "Finnish World War II military decoration",
+   "fi_title": "Mannerheim-risti",
+   "status": "new",
+   "eta_s": 125
+  },
+  {
+   "qid": "Q2415388",
+   "title": "Carl Gustaf Mannerheim (naturalist)",
+   "description": "Swedish entomologist and governor (1797–1854)",
+   "fi_title": "Carl Gustaf Mannerheim",
+   "status": "new",
+   "eta_s": 91
+  },
+  {
+   "qid": "Q4965407",
+   "title": "Eva Mannerheim-Sparre",
+   "description": "Finnish artist and writer (1870–1957)",
+   "fi_title": "Eva Mannerheim-Sparre",
+   "status": "new",
+   "eta_s": 57
+  },
+  {
+   "qid": "Q3741344",
+   "title": "Mannerheim Museum",
+   "description": "Biographical museum in Helsinki, Finland",
+   "fi_title": "Mannerheim-museo",
+   "status": "new",
+   "eta_s": 55
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT wikidata_id FROM topic WHERE wikidata_id IN %s",
+   "ms": 0.34,
+   "rows": 1,
+   "index": "none"
+  },
+  {
+   "text": "SELECT qid, state FROM ingest_job WHERE qid IN %s",
+   "ms": 0.16,
+   "rows": 1,
+   "index": "none"
+  }
+ ]
+}

@@ -1,118 +1,144 @@
 # Validio
 
-Validio sits between a kitchen's purchasing agent and Valio Aimo's wholesale API. The agent asks for supplies in plain words or by product id and Validio turns that into a typed need, searches its own copy of Valio's catalog and asks Valio's test API for price and availability of the few candidates only. Every fact it uses carries a Fact Grade that says how far it can be trusted (a missing value is never read as a yes). A rule engine (Cedar) then decides whether the agent may order alone, has to ask a person or is blocked, so no model output can move money on its own. Each decision ends up as one sentence in a hash-chained ledger that the kitchen and Valio read the same way.
+A kitchen's purchasing agent orders from Valio Aimo through Validio. Within the Rules the kitchen sets, the agent orders alone. Above them it needs the owner's approval, and beyond them it is blocked.
 
-The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-validio.md](../PROJECT_BLUEPRINT-validio.md). The Hard Lines are listed in [docs/RULES.md](docs/RULES.md) and the click-through for the demo in [docs/DEMO.md](docs/DEMO.md).
+Live: https://timkicker--validio.us-east.modal.run. Click **Try the demo kitchen**. Your browser gets its own copy of a filled demo kitchen, and the bar on top shows its approval code, 246810. **Reset** in that bar takes the copy back to the start.
 
-**In progress:** accounts per kitchen, settings and agent connect, see [docs/PLAN-ACCOUNTS.md](docs/PLAN-ACCOUNTS.md).
+The plan and the reasoning behind each part are in [PROJECT_BLUEPRINT-validio.md](../PROJECT_BLUEPRINT-validio.md). The click path is in [docs/DEMO.md](docs/DEMO.md).
 
-## Quick look
+## Quick start with any MCP client
 
-Draft for the accounts build. It is not live yet. Demo link: updated after deploy.
+1. Open the demo kitchen, go to **Agent** and click **Connect agent**. The page shows an MCP address of the form `https://…/mcp/c/<token>/`. Keep the slash at the end.
+2. Add that address to your agent as a remote MCP server (streamable HTTP, no OAuth). With the Claude Code CLI:
 
-1. Open the demo link and click **Try the demo kitchen**. Your browser gets its own copy. The bar on top shows the approval code 246810.
-2. On **Agent** click **Connect agent** and add the MCP connector URL to your own agent (a chat app's custom connector, a coding tool). Its first call shows a verification code on the Agent page and in the agent; when both match, click **Allow**.
-3. Ask the agent for "1000 litres of lactose-free milk by Monday, budget 1200 euro". Validio orders it for 1,010.00 € alone.
-4. In **Rules** on the Agent page lower "Orders alone up to" and save with the code. Ask the agent again. Now it waits until you approve with the code.
-5. Click **Pause** and ask once more. The agent is refused and the ledger says so.
-6. Click the kitchen's name at the bottom of the sidebar for Settings: kitchen, diet, login, theme.
+   ```sh
+   claude mcp add --transport http validio <URL>
+   ```
 
-Every step with what should appear is in [docs/DEMO.md](docs/DEMO.md). To run it on your own machine follow the setup below and use `make demo`.
+   A chat app's custom connector works the same way.
+3. Ask the agent to order something, for example "1000 litres of lactose-free milk by Monday, budget 1200 euro". Until the kitchen allows it, every tool answers with a verification code like `K7P-3QX`. The read-only tool `connection_status` returns the same code at any time. The Agent page now shows a code as well.
+4. If the two codes match, click **Allow**. Validio holds the agent's key and signs every call for it, so the agent never handles a pass, a key or a code.
+5. Ask again. The milk is ordered alone for 1,010.00 € and shows up on **Home** and in **Activity**.
 
-## Setup
+The connector offers seven tools: `search_products`, `request_supply`, `confirm_order`, `get_request`, `get_order`, `renew_steady_order` and `connection_status`. An agent that signs its own Spend Pass pairs with the code under "Agent without MCP" instead. [docs/AGENTS.md](docs/AGENTS.md) covers both ways and OpenAPI.
 
-For a quick look without key or data you only need Node 20 or newer. From `validio/`:
+## The pages
 
-```sh
-cd src/frontend && npm ci && npm run kit && cd ../..
-make demo-mock                   # builds the web app and serves it on http://127.0.0.1:8411
-```
+- **Home**: a three-step checklist (Rules, connect the agent, first order) until the first order arrives. After that it shows the agent and this week's spend, what needs you, and the newest activity. It refreshes every two seconds.
+- **Activity**: everything the agent did, newest first, filtered by All, Ordered, Waiting, Blocked and Standing. One item reads from top to bottom: what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. While an item waits, Approve (with the approval code) and Reject sit here. The ledger entries for the item are folded away under **Proof**.
+- **Rules**: what the agent may do, in three groups: Money, Diet and allergens, Substitutes. **Edit** saves all of them at once with the approval code. Every save signs a new version of the agent's Spend Pass and writes one ledger entry.
+- **Agent**: connect, the verification code, Allow or Deny, then the agent's name and last use, **Pause** and **Disconnect**. A paused agent is refused on every call, and the refusal is logged. Disconnect makes the connector address return 404.
+- **Settings**: kitchen name and delivery address, login, approval code, theme, log out.
 
-On a fresh clone this was up in about 25 seconds. The web app then runs on answers recorded from the backend, as its page menu says. The Inbox shows the milk request R-1 as "Ordered alone" at 1,010.00 €. Nothing in it is live and the agent cannot talk to it.
+## Rules
 
-For the full demo you need Python 3.12 with uv, Node 20 or newer (npm warns that `@axe-core/playwright` wants 22.12, the setup works on 20 anyway), the Valio API key and the three Valio data files. Every command runs from `validio/`.
+- **Per order.** "Ordered alone up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
+- **Per week.** An optional cap on everything the Spend Pass has placed this week. An order that would go over it is blocked. Validio checks this limit before it asks Cedar, so it is not one of the Cedar rules. The demo kitchen has 8,000.00 €.
+- **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product whose own Valio data contradicts the diet, or that lists a "never" allergen, is blocked. A product where the diet cannot be confirmed, or that may contain a "never" allergen or has no allergen data, waits for you.
+- **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered alone. With extra cost: the same, and a line may also be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
 
-The three files are `valio_aimo_junction26_product_data.json`, `valio_aimo_junction26_delivery_reliability.csv` and `valio_aimo_junction26_carbon_footprint.csv`. Download them from the challenge's data page in the Junction resource portal (you have to log in) and put them into one folder. The API key is in the Valio Aimo challenge text.
+A budget written in the request ("budget 1200 euro") counts too: above it, the order waits for you. Before it places any order, Validio asks Valio again. If a price rose by more than 2 % or a line can no longer be delivered, the order is refused. The rules themselves are listed in [docs/RULES.md](docs/RULES.md).
 
-The first run goes in this order:
+## Proof
 
-```sh
-make setup RAW=/path/to/folder   # .env from .env.example, uv sync, web app packages, copy and check the files, build data/catalog.db
-# now open .env and put the key after VALIO_API_KEY=
-make record                      # asks Valio's test API once per delivery day (Mon 16 to Fri 20 Nov) and stores the answers under data/cache/valio/
-make seed                        # demo state: kitchen hotel-espoo, Spend Pass M-1, 8 weeks of simulated history
-make demo                        # builds the web app, seeds and serves both on http://127.0.0.1:8410
-```
+Every decision, approval, Rules change, pause and refusal becomes one sentence in the Open Ledger. Each entry carries the SHA-256 hash of the entry before it. The head of the chain (entry count, last hash and time) is stored next to the chain, moves in the same transaction as each new entry, and is signed with the kitchen's key (ES256). Verification therefore catches an entry that was changed, removed from the middle, or cut from the end. It also catches a chain that was rewritten in full by anyone without the key. `GET /api/ledger/head` returns the signed head and the public key, so Valio can pin the head and check later that the ledger still ends there or grew from there. Hidden Spend Pass fields such as the approver list never enter the ledger.
 
-`make setup` checks the files against their sha256 before anything is indexed and stops on a wrong one. `make record` is the only step that goes to the network. It talks to Valio's test API only. Everything after it replays the stored answers. Without them `make seed` and `make demo` still run, but the Inbox stays empty. `make agent` then ends with "Validio could not take the request, nothing ordered." followed by the reason, which ends in "run make record first".
+## Valio's answers: real, recorded, 16 to 20 Nov 2026
 
-After that:
+The 17,546 products, with their claims, allergens, substitutes, delivery reliability and carbon values, come from Valio's challenge files. Every price and availability answer is a real answer from Valio's test API (`junction26.valioaimo.fi`, customer `hotel-espoo`). `make record` asked the API once for each delivery day from Monday 16 to Friday 20 November 2026 and stored the answers. The app replays them and never connects to Valio while it runs.
 
-```sh
-make test                        # guard checks, ruff, pytest and the web app tests (no network)
-make agent SCENE=2               # the kitchen's agent runs scene 1, 2 or 3 against the running demo and prints every tool call
-make dev                         # only the API on http://127.0.0.1:8410, reloading on changes
-make demo-check                  # every demo scene end to end on its own server on port 8418
-```
+- Any other delivery day returns `503 not recorded`, and the error names the recorded days. The `request_supply` tool's description lists them too, so an agent can choose one. "Monday" means 16 Nov. With no day given, the order is due on 16 Nov.
+- Answers were recorded for the products the demo scenes need and for a list of common kitchen requests (milk, cream, cheeses, butter, eggs and others), each with Valio's listed substitutes. Any other product returns "aren't recorded for this demo" and nothing is ordered.
+- Decisions run on a fixed demo clock, Saturday 14 November 2026 10:00 Helsinki time, because Valio's cut-offs and delivery dates in the recordings fit that time. On the live site, what people do is stamped with the real time.
 
-For the click-through run `make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser as [docs/DEMO.md](docs/DEMO.md) describes. Scene 3 needs the simulated stock-out, which has no button: with nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
-
-The web app is a separate SvelteKit project. `make setup` already installs its packages and the ui-kit. To work on it alone:
-
-```sh
-cd src/frontend
-npm ci
-npm run kit                 # fetches the Arlen ui-kit at a pinned commit into vendor/ (gitignored)
-npm run dev                 # http://127.0.0.1:5410
-```
-
-Without anything else the pages run on the fixture in `src/lib/api/mock.ts`. With `VITE_API=live npm run dev` they ask the backend on port 8410 instead.
-
-`make record` calls Valio's test API with the key from `.env` and stores the answers. `make test-live` runs the tests that need the network (Valio's test API, plus the Gemma reader when `MODAL_GEMMA_URL` is set).
+Three things are simulated: the stock-out of mozzarella 466375 (Valio really has it in stock), the 8 weeks of order history behind the weekly Steady Order, and the line in product 463047's description that talks to AI agents. We planted that line ourselves and keep it in its own table, apart from Valio's text. The API answers flag the stock-out and the history as simulated, and the stock-out has its own ledger entry.
 
 ## Architecture
 
 ![One request through the system](../docs/img/sequence.png)
 
-The agent calls `request_supply`. Validio checks the Spend Pass (an SD-JWT bound to the agent's key) and parses the need. It searches the catalog without any API call and sends at most 40 product ids to Valio for price and availability. It then grades every fact, ranks the safe options and asks Cedar for the decision. The decision goes into the Open Ledger and back to the agent, which confirms it with `confirm_order`. If Cedar says "ask", then the owner answers on the phone. Before anything is placed Validio asks Valio again and refuses when the price rose by more than 2 % or a line can no longer be delivered.
+- **FastAPI** (`src/backend/validio/api/`): one Python service for the web app's API under `/api`, the agent API under `/agent/v1` (OpenAPI 3.1) and MCP under `/mcp`. All three call the same functions.
+- **Spend Pass** (`policy/mandate.py`): the kitchen's signed permission, an SD-JWT bound to the agent's P-256 key and checked with a single-use nonce. The Rules are claims inside it, so every Rules change signs a new version.
+- **Cedar** (`policy/policies.cedar`): four rules decide whether to order alone, ask a person or block. The rules read only numbers and yes/no values that Validio fills from Valio's data and the pass. Model output and supplier text never reach a decision.
+- **Matching and Fact Grades** (`matching/`, `trust/`): the request turns into a typed need, the local catalog narrows it down, and at most 40 ids per call go to Valio. Every fact is graded, and a missing value never counts as a yes.
+- **MCP** (`api/mcp_server.py`): the connector server at `/mcp/c/<token>/` for any client, and `/mcp/k/<account>/` for agents that sign.
+- **SvelteKit** (`src/frontend/`): the web app, built to static files and served by the same FastAPI process.
+- **Modal** (`src/cloud/app_validio.py`): one container that scales to zero, with SQLite, the catalog index and the recorded answers on the Modal volume `validio-data`. Nothing from Valio is in the image or in git.
 
-Supplier text never reaches a decision. The reader in `validio/reader/` looks at descriptions and flags text that talks to AI agents, but its output is only shown. A test checks that matching, trust and policy never import it. A second test with a control proves that the comparison would notice if someone wired it in.
+More detail is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/SECURITY.md](docs/SECURITY.md) and [docs/PRODUCTION.md](docs/PRODUCTION.md).
+
+## Run it locally
+
+You need Python 3.12 with uv, Node 20 or newer, the Valio API key and the three challenge files (`valio_aimo_junction26_product_data.json`, `valio_aimo_junction26_delivery_reliability.csv`, `valio_aimo_junction26_carbon_footprint.csv`) in one folder. Every command runs from `validio/`.
+
+```sh
+make setup RAW=/path/to/folder   # .env from .env.example, uv sync, web app packages, checks the files' sha256, builds data/catalog.db
+# put the key after VALIO_API_KEY= in .env
+make record                      # the only network step: Valio's test API, Mon 16 to Fri 20 Nov, into data/cache/valio/
+make template                    # optional: plays the five demo scenes into data/template/, the filled demo kitchen
+make demo                        # builds the web app, seeds and serves everything on http://127.0.0.1:8410
+```
+
+Open http://127.0.0.1:8410 and click **Try the demo kitchen**. Without `make template`, a demo copy starts from the plain seed. Without `make record`, every request returns "not recorded".
+
+To look at the web app alone, without a key or data: `cd src/frontend && npm ci && npm run kit`, then `make demo-mock` from `validio/`. The app then runs on a fixture on http://127.0.0.1:8411, and no agent can talk to it.
+
+Other targets:
+
+```sh
+make dev                         # only the API on :8410, reloading on changes
+make agent SCENE=2               # our own agent runs scene 1, 2 or 3 and prints every tool call
+```
+
+## Tests
+
+```sh
+make test                        # guard checks, ruff, pytest, svelte-check and the Playwright specs (no network)
+make demo-check                  # the five demo scenes end to end on their own server (port 8418), ends with ALL SCENES OK
+make e2e-live                    # the web app against the real backend, with a real MCP client connected on the Agent page
+make a11y                        # axe-core WCAG 2.2 AA on every page at 1280 and 390 px, light and dark
+make test-live                   # the tests that need the network
+make mutate                      # mutation testing on the deciding modules (slow)
+```
+
+`make guards` (part of `make test`) fails on a committed key or `.env`, and on any address of Valio's production systems outside `docs/`. Details are in [docs/TESTING.md](docs/TESTING.md).
+
+## Deploy
+
+```sh
+make modal-data                  # upload data/catalog.db and data/cache/valio to the volume (once, and after make record)
+make modal-secret                # the secret validio-web from a gitignored env file
+make modal-deploy                # build the web app, deploy, then fill the demo kitchen template in the volume
+```
+
+With `VALIDIO_PUBLIC=1` the app refuses to start without its approval code and kitchen token. Stop it with `modal app stop validio-web`.
 
 ## Folders
 
 | Path | What is in it |
 |:---|:---|
-| `src/backend/validio/catalog/` | the SQLite index over Valio's product file, labels, substitutes and the planted line kept in its own table |
-| `src/backend/validio/valio/` | the client for Valio's test API with record and replay, plus the call budget |
-| `src/backend/validio/trust/` | Fact Grades and the claim check |
-| `src/backend/validio/matching/` | need parsing, Best Pick ranking, Safe Swap and Split Fill |
-| `src/backend/validio/policy/` | the Spend Pass (SD-JWT) and the Cedar rules in `policies.cedar` |
-| `src/backend/validio/orders/` | the order service that re-asks Valio before it places anything |
-| `src/backend/validio/standing/` | Steady Orders and Drift Watch |
+| `src/backend/validio/api/` | FastAPI app, MCP servers, accounts, agent connect, Rules and Settings, Home and Activity |
+| `src/backend/validio/policy/` | Spend Pass (SD-JWT) and the Cedar rules |
+| `src/backend/validio/orders/` | from request to decision, and orders that ask Valio again before placing |
+| `src/backend/validio/matching/`, `trust/` | need parsing, ranking, Safe Swap, Split Fill, Fact Grades and the claim check |
+| `src/backend/validio/catalog/`, `valio/` | the SQLite index over Valio's product file, and the test API client with record and replay |
 | `src/backend/validio/audit/` | the Open Ledger |
-| `src/backend/validio/reader/` | the reader of supplier text (fake by default, Gemma on Modal when configured) |
-| `src/backend/validio/agent/` | the kitchen's purchasing agent and the terminal pane for the demo |
-| `src/backend/validio/api/` | the FastAPI app |
-| `src/backend/validio/demo/` | the planted line, the simulated order history and the seed |
-| `src/frontend/` | the web app: inbox, decision view, phone approval, Steady Orders, Open Ledger |
-| `src/cloud/` | the Modal app for the Gemma reader |
-| `scripts/` | data import, indexing, recording, seeding, the agent runner and the guard checks |
-| `data/` | Valio's files, the catalog index, recorded answers and the local database (gitignored) |
+| `src/backend/validio/standing/` | Steady Orders and Drift Watch |
+| `src/backend/validio/reader/` | a reader that flags supplier text aimed at agents; it is only shown and never decides |
+| `src/backend/validio/agent/` | our own purchasing agent for the demo scenes, run by `make agent` |
+| `src/backend/validio/demo/` | the seed, the simulated history and the planted line |
+| `src/frontend/` | the SvelteKit web app |
+| `src/cloud/` | the Modal app |
+| `scripts/` | import, indexing, recording, seeding, demo checks and guard checks |
+| `data/` | Valio's files, the catalog index, recorded answers and local stores (gitignored) |
 
-## Real and simulated
+## Limits
 
-All 17,546 products come from Valio's files with their claims, allergens, substitutes, delivery reliability and carbon values. Every price and availability answer comes from Valio's test API at `junction26.valioaimo.fi` for customer `hotel-espoo`. The demo clock is fixed at 14 November 2026 10:00 Helsinki time, which is why the Terminal products with a cut-off on 12 November drop out.
-
-The screen marks everything that is simulated. Mozzarella 466375 runs out in scene 3 although Valio really has it in stock. The 8 weeks of order history behind the Steady Order with 400 guests a week are invented. The line in 463047's description that talks to AI agents was planted by us and is kept in its own table apart from Valio's text. The kitchen's agent runs on a fake model with fixed answers when no Gemini key is set. The Gemma reader is not deployed because Modal needs a payment method for its GPUs, so the fake reader answers.
-
-## Replay
-
-Every answer from Valio's test API is stored under `data/cache/valio/<endpoint>/<date>/` and named by the SHA-256 of endpoint, date and the sorted product ids. With `VALIO_MODE=replay` (the default) the client answers only from those files and never opens a connection. A question it has no answer for raises `ReplayMiss`, so a missing recording shows up as an error and never as a quiet empty result. The delivery days replay can answer are the date folders recorded for both endpoints: `make record` records Monday to Friday of the week after the demo clock, skipping ids a day already has, and an agent asking for any other day gets `503 not recorded` with the recorded days named, as does the description of the `request_supply` tool. `VALIO_MODE=record` calls the API and saves the answers and `live` calls it without saving. Valio's data and the recordings never go into git because Valio allows their use only for this challenge.
-
-## Guard checks
-
-`make guards` runs two scripts over every file git would see. `make test` runs them first.
-
-`scripts/check_no_secrets.sh` fails on a Valio API key, a Gemini key, a private key or a JWK with its private part. A committed `.env` fails it too. It prints file and line, never the secret.
-
-`scripts/check_forbidden_hosts.sh` fails when the address of Valio's real webshop or its production API appears anywhere outside `docs/`. Validio only ever talks to the test API.
+- Valio's test API has no order endpoint, so "placed" means placed in Validio.
+- Only 16 to 20 Nov 2026 and the recorded products can be ordered. The decision clock stands still at 14 Nov 10:00.
+- Each kitchen has one shared 6-digit approval code. There are no named approvers, passkeys or two-factor login.
+- The weekly limit is checked in Python, not in Cedar.
+- Steady Orders renew only through the agent's `renew_steady_order`. The web app has no button for it. Split Fill only runs during a renewal.
+- SQLite on one Modal container. Production needs Postgres and a shared nonce store ([docs/PRODUCTION.md](docs/PRODUCTION.md)).
+- The supplier text reader is a pattern matcher without a model. The model-based reader is not deployed.
+- Valio's data and the recordings never go into git, because Valio allows their use for this challenge only.

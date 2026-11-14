@@ -1,17 +1,18 @@
 /// <reference types="vitest/config" />
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 
-// Vue and Codex stay out of the bundle: index.html maps both to jsDelivr through an import map.
-const external = ['vue', '@wikimedia/codex']
+// Each agent points the dev server at its own API with API_PORT (default 8047).
+const env = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env ?? {}
+const API = `http://127.0.0.1:${env.API_PORT ?? 8047}`
 
 export default defineConfig({
-  plugins: [vue()],
-  build: { rolldownOptions: { external } },
+  plugins: [svelte()],
+  resolve: { alias: { '@arlen/ui-kit': new URL('./vendor/arlen-ui-kit/src/lib', import.meta.url).pathname } },
   server: {
-    port: Number(process.env.WEB_PORT ?? 5173),
-    strictPort: true,
-    proxy: { '/api': `http://127.0.0.1:${process.env.API_PORT ?? 8000}` },
+    // Compile every component at start so the first page never gets a raw .svelte as its CSS.
+    warmup: { clientFiles: ['./src/**/*.svelte'] },
+    proxy: { '/api': API },
   },
-  test: { environment: 'jsdom', include: ['src/**/*.test.ts'], maxWorkers: 2 },
+  test: { include: ['src/**/*.test.ts'], environment: 'node', maxWorkers: 2 },
 })

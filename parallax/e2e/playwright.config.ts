@@ -3,14 +3,14 @@
 // (the specs assert seed-mini rows, whatever seed the main database holds) and starts uvicorn on it on E2E_PORT.
 import { defineConfig, devices } from '@playwright/test'
 
-const port = Number(process.env.E2E_PORT ?? 8010)
+const port = Number(process.env.E2E_PORT ?? 8057)
 const db = 'DB_NAME=parallax_e2e SEED=mini ENGINE=fake'
 const external = process.env.E2E_URL
 
 export default defineConfig({
   testDir: '.',
   outputDir: 'results',
-  workers: 2,
+  workers: 1,
   retries: 0,
   reporter: [['list']],
   use: {

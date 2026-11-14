@@ -99,7 +99,8 @@
     <Section class="v-card">
       <div class="none" data-testid="agent-none">
         <p class="none-title">No agent connected</p>
-        <p class="none-text">Your purchasing agent orders from Valio through Validio, inside your Rules.</p>
+        <p class="none-text">Your purchasing agent orders from Valio through Validio.</p>
+        <p class="none-text none-rules" data-testid="agent-none-rules">Check your <a class="v-link" href="/rules" id="agent-rules-link">Rules</a> first. Your agent orders within them.</p>
         <Button id="agent-connect" data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
       </div>
     </Section>
@@ -196,10 +197,13 @@
     font-weight: 600;
   }
   .none-text {
-    margin: 0 0 16px;
+    margin: 0;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
+  }
+  .none-rules {
+    margin-bottom: 16px;
   }
   /* ---------- pairing ---------- */
   .pair {

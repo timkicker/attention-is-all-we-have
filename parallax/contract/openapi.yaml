@@ -176,6 +176,22 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Stats"}
               examples: {default: {externalValue: examples/stats.json}}
+  /api/sql/vector:
+    get:
+      operationId: sqlVector
+      parameters:
+        - {name: topic, in: query, required: true, schema: {type: string}}
+        - {name: as_of, in: query, schema: {type: string}}
+        - {name: anchor, in: query, schema: {type: string, default: fi}}
+        - {name: limit, in: query, schema: {type: integer, default: 25}}
+      responses:
+        "200":
+          description: Runs the vector search behind the Differences list for one day and returns that statement
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SqlPanel"}
+              examples: {default: {externalValue: examples/sql_panel.json}}
+        "404": {$ref: "#/components/responses/Error"}
   /api/sql/{panel_id}:
     get:
       operationId: sqlPanel
@@ -188,6 +204,63 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/SqlPanel"}
               examples: {default: {externalValue: examples/sql_panel.json}}
+        "404": {$ref: "#/components/responses/Error"}
+  /api/search:
+    get:
+      operationId: search
+      description: >
+        Wikipedia articles by name (English, else Finnish search) with their Wikidata item. status ready = loaded,
+        loading = an ingest job is queued or running, new = can be loaded in about eta_s seconds, no_finnish = no
+        Finnish article. At most 6 results. Wikimedia responses are cached on disk.
+      parameters:
+        - {name: q, in: query, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Matching articles
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Search"}
+              examples: {default: {externalValue: examples/search.json}}
+        "429": {$ref: "#/components/responses/Error"}
+  /api/ingest:
+    post:
+      operationId: ingest
+      description: >
+        Queue the ingest of one Wikidata item. Idempotent: a job that exists is returned as is, a loaded topic as done.
+        422 no_finnish, 429 rate_limited with header Retry-After and error.retry_after_s.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [qid]
+              properties:
+                qid: {type: string, pattern: "^Q[1-9][0-9]*$"}
+                since: {type: string, description: "ISO date; history only from then on"}
+      responses:
+        "202":
+          description: The job
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Ingest"}
+              examples: {default: {externalValue: examples/ingest.json}}
+        "422": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
+  /api/ingest/{qid}:
+    get:
+      operationId: ingestStatus
+      parameters:
+        - {name: qid, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: >
+            Progress of the ingest. usable = Finnish plus at least one other edition done, /api/compare works for
+            topic_id; the rest keeps loading. A topic loaded without a job reads done.
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Ingest"}
+              examples: {default: {externalValue: examples/ingest.json}}
         "404": {$ref: "#/components/responses/Error"}
 components:
   responses:
@@ -226,6 +299,49 @@ components:
         kind: {type: string, enum: [number, term]}
         this: {type: string}
         other: {type: string}
+    Search:
+      type: object
+      required: [results, sql]
+      properties:
+        results:
+          type: array
+          maxItems: 6
+          items:
+            type: object
+            required: [qid, title, description, fi_title, status, eta_s]
+            properties:
+              qid: {type: string}
+              title: {type: string}
+              description: {type: [string, "null"]}
+              fi_title: {type: [string, "null"]}
+              status: {type: string, enum: [ready, loading, new, no_finnish]}
+              eta_s: {type: [integer, "null"]}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Ingest:
+      type: object
+      required: [job_id, qid, topic_id, title, state, eta_s, since, editions]
+      properties:
+        job_id: {type: string}
+        qid: {type: string}
+        topic_id: {type: string}
+        title: {type: string}
+        state: {type: string, enum: [queued, running, usable, done, failed]}
+        eta_s: {type: [integer, "null"]}
+        since: {type: [string, "null"]}
+        editions:
+          type: array
+          minItems: 7
+          maxItems: 7
+          items:
+            type: object
+            required: [lang, state, pct, error, retry_at]
+            properties:
+              lang: {$ref: "#/components/schemas/Lang"}
+              state: {type: string, enum: [waiting, running, done, failed]}
+              pct: {type: integer, minimum: 0, maximum: 100}
+              error: {type: [string, "null"], description: "rate_limited, no_article, or an error class name"}
+              retry_at: {$ref: "#/components/schemas/Ts"}
+        sql: {$ref: "#/components/schemas/Sql"}
     Error:
       type: object
       required: [error]
@@ -377,6 +493,13 @@ components:
               died_comment: {type: [string, "null"]}
               days: {type: integer}
               reason: {$ref: "#/components/schemas/Reason"}
+              removed:
+                type: [object, "null"]
+                description: character offsets of the cut part when an edit kept the sentence minus some words
+                required: [start, end]
+                properties:
+                  start: {type: integer}
+                  end: {type: integer}
               alive_in:
                 type: array
                 items:
@@ -437,6 +560,7 @@ components:
         answer_model: {type: [string, "null"]}
         answer_date: {type: [string, "null"]}
         engine: {type: string, enum: [fake, real]}
+        text: {type: string, description: the whole answer}
         claims:
           type: array
           items:

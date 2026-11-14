@@ -22,7 +22,11 @@ ROUTES = {
     "/api/ask": "get",
     "/api/atlas": "get",
     "/api/stats": "get",
+    "/api/sql/vector": "get",
     "/api/sql/{panel_id}": "get",
+    "/api/search": "get",
+    "/api/ingest": "post",
+    "/api/ingest/{qid}": "get",
 }
 
 
@@ -57,5 +61,5 @@ def test_example_matches_schema(name, schema, example):
 def test_success_examples_carry_sql():
     for name, _, example in _responses():
         data = json.loads((CONTRACT / example).read_text())
-        if name.endswith(" 200"):
+        if name.endswith((" 200", " 202")):
             assert "sql" in data or "statements" in data, name

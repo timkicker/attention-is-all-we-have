@@ -138,3 +138,39 @@ def test_judged_pair_below_the_nearest_five_is_matched(client):
         assert en["h"] == far["h"] and en["status"] == "matched" and en["verdict"]["label"] == "partial"
     finally:
         sqllog.run("DELETE FROM verdict WHERE prompt_version = 'test'")
+
+
+def test_h_filter_returns_one_statement(client):
+    r = client.get("/api/compare", params={"topic": "winterwar", "h": MAINILA.split(":")[2]})
+    assert r.status_code == 200
+    body = r.json()
+    assert [x["row_id"] for x in body["rows"]] == [MAINILA]
+    assert body["total_rows"] == 1
+
+
+def test_term_marks_get_english_word_when_known():
+    import re
+
+    from api.routes.compare import add_english
+
+    marks = [{"kind": "term", "this": "lavasti", "other": "reported"}, {"kind": "term", "this": "x", "other": "y"}]
+    add_english(marks, [(re.compile("lavast", re.I), "staged")])
+    assert marks[0]["this_en"] == "staged"
+    assert "this_en" not in marks[1]
+
+
+def test_align_cache_of_another_topic_is_not_used(client):
+    sqllog.run("DELETE FROM align")
+    sqllog.run(
+        "INSERT INTO align VALUES ('2026-11-14', 'fi', 999999, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b',"
+        " 0.1, 'exact')"
+    )
+    try:
+        (n,) = sqllog.run_file("compare_align_dates", {"day": "2026-11-14", "anchor": "fi", "topic": "winterwar"})
+        assert n["n"] == 0
+        r = client.get("/api/compare", params={"topic": "winterwar", "as_of": "2026-11-14", "limit": 200})
+        assert r.status_code == 200
+        assert r.json()["total_rows"] == 49
+        assert not any("FROM align al" in s["text"] for s in r.json()["sql"])
+    finally:
+        sqllog.run("DELETE FROM align")
