@@ -35,7 +35,7 @@
 </script>
 
 <PageHead title="Activity">
-  <p class="lead">Everything your agent did, with the reason.</p>
+  <p class="lead">Everything your agent did, and why.</p>
 </PageHead>
 
 <!-- A kitchen with nothing yet gets no filters: five zeros say nothing. -->
