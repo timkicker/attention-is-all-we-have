@@ -1,6 +1,6 @@
 <script lang="ts">
-  // STUB by the shell. Owner: P4. Dev-only page for screenshot 12: the four states stacked,
-  // with the wireframe's example values from fixture.STATES_EXAMPLE.
+  // Dev-only page for screenshot 12. Owner: P4. The four states stacked, with the wireframe's
+  // example values from fixture.STATES_EXAMPLE.
   import * as copy from '../lib/copy'
   import { STATES_EXAMPLE, WINTER_WAR } from '../lib/fixture'
   import { paths } from '../lib/router.svelte'
@@ -25,7 +25,7 @@
   </section>
   <section class="st">
     <p class="cap t13">{copy.states.CAP_EMPTY}</p>
-    <EmptyFilter q={ex.emptyFilter.q} date={ex.emptyFilter.date} onclear={() => {}} />
+    <EmptyFilter q={ex.emptyFilter.q} date={ex.emptyFilter.date} onclear={() => {}} bare />
   </section>
   <section class="st">
     <p class="cap t13">{copy.states.CAP_FAILED}</p>
@@ -33,7 +33,7 @@
   </section>
   <section class="st">
     <p class="cap t13">{copy.states.CAP_BEFORE}</p>
-    <BeforeArticle lang={ex.beforeArticle.lang} date={ex.beforeArticle.date} startsOn={ex.beforeArticle.startsOn} href={paths.differencesOn(WINTER_WAR.qid, ex.beforeArticle.startsOn)} />
+    <BeforeArticle lang={ex.beforeArticle.lang} date={ex.beforeArticle.date} startsOn={ex.beforeArticle.startsOn} href={paths.differencesOn(WINTER_WAR.qid, ex.beforeArticle.startsOn)} bare />
   </section>
   <Footer />
 </main>
