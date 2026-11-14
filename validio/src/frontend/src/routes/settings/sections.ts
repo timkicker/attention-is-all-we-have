@@ -6,7 +6,6 @@ import { session } from "$lib/owner.svelte";
 
 export const SECTIONS = [
   { id: "kitchen", label: "Kitchen" },
-  { id: "diet", label: "Diet and allergens" },
   { id: "login", label: "Login and approval code" },
   { id: "theme", label: "Theme" },
 ] as const;

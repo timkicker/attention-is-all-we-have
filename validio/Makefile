@@ -29,7 +29,6 @@ test-backend: guards
 
 test-web:
 	cd src/frontend && npm run check && npx playwright test
-	$(MAKE) accounts-e2e
 
 # mutation testing on the deciding modules, see docs/TESTING.md (slow: one worker)
 mutate:
@@ -63,8 +62,7 @@ demo:
 	$(MAKE) seed
 	cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
 
-# The web app alone on its recorded answers (src/lib/api/snapshots/states.ts), no backend: the
-# sidebar says "Demo data". Never for the 10:00 run, which is `make demo`.
+# The web app alone on its fixture (src/lib/api/mock.ts), no backend. Never for the 10:00 run, which is `make demo`.
 demo-mock:
 	cd src/frontend && npm run build && npx vite preview --host 127.0.0.1 --port 8411 --strictPort
 
@@ -112,7 +110,7 @@ e2e-live:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c e2e-live/demo.config.ts
 
 # The accounts plan's "Done means" in a fresh browser against the real backend (port ACCOUNTS_PORT, 8417):
-# demo kitchen, connect the demo agent, example ordered, lower Rules, wait, approve, pause, refusal, diet.
+# Its v1 spec (accounts-demo) went with the v1 pages on 14 Nov; v2 builders add the new one.
 accounts-e2e:
 	cd src/frontend && npx playwright test -c playwright.accounts.config.ts
 

@@ -1,24 +1,21 @@
-// The one place the pages get data from. `VITE_API=live` talks to the Validio
-// backend under /api; anything else serves the answers the real backend gave,
-// recorded in snapshots/states.ts (see mock.ts).
+// The one place the pages get data from (Agent and Rules: agent.ts, Settings:
+// settings.ts). `VITE_API=live` talks to the Validio backend under /api;
+// anything else plays the contract in this browser (mock.ts). The shapes are
+// UI-V2-API.md.
 
 import { ApiError, needsToken, tokenPrompt } from "./error";
 import * as mock from "./mock";
 import { owner, session } from "../owner.svelte";
 import type {
   Account,
-  AskOut,
+  ActivityDetail,
+  ActivityFilter,
+  ActivityList,
   DemoState,
-  InboxItem,
-  Ledger,
+  HomeOut,
   LoginIn,
   Order,
-  SpendPass,
-  SpendPassIn,
-  SteadyOrder,
   SignupIn,
-  SteadyOrderSummary,
-  SupplyRequest,
 } from "./types";
 
 export { ApiError, needsToken };
@@ -78,30 +75,18 @@ export const api = {
   /** A copy of the demo kitchen for this browser session (the same copy on reload). */
   demoLogin: (): Promise<Account> => (LIVE ? post("/api/account/demo") : mock.demoLogin()),
   logout: (): Promise<void> => (LIVE ? post("/api/account/logout") : mock.logout()),
-  inbox: (): Promise<InboxItem[]> => (LIVE ? get("/api/inbox") : mock.inbox()),
-  request: (rid: string): Promise<SupplyRequest> =>
-    LIVE ? get(`/api/requests/${id(rid)}`) : mock.request(rid),
-  spendPass: (pid: string): Promise<SpendPass> =>
-    LIVE ? get(`/api/spend-passes/${id(pid)}`) : mock.spendPass(pid),
-  order: (oid: string): Promise<Order> => (LIVE ? get(`/api/orders/${id(oid)}`) : mock.order(oid)),
+  /** Home in one call: agent status, the week, what needs the owner, the newest five. */
+  home: (): Promise<HomeOut> => (LIVE ? get("/api/home") : mock.home()),
+  /** The timeline, newest first, with the count of every filter. */
+  activity: (status: ActivityFilter = "all"): Promise<ActivityList> =>
+    LIVE ? get(`/api/activity?status=${status}`) : mock.activity(status),
+  /** One request or standing order, top to bottom: asked, checked, rule, result, proof. */
+  activityItem: (aid: string): Promise<ActivityDetail> => (LIVE ? get(`/api/activity/${id(aid)}`) : mock.activityItem(aid)),
+  /** Approve sends owner.code as X-Approve-Code; set it first. */
   approve: (oid: string): Promise<Order> =>
     both(() => write(`/api/orders/${id(oid)}/approve`), () => mock.approve(oid, owner.code)),
   reject: (oid: string): Promise<Order> =>
-    both(() => write(`/api/orders/${id(oid)}/reject`), () => mock.reject(oid, owner.code)),
-  ledger: (): Promise<Ledger> => (LIVE ? get("/api/ledger") : mock.ledger()),
-  steadyList: (): Promise<SteadyOrderSummary[]> => (LIVE ? get("/api/steady") : mock.steadyList()),
-  steadyOrder: (sid: string): Promise<SteadyOrder> =>
-    LIVE ? get(`/api/steady/${id(sid)}`) : mock.steadyOrder(sid),
-  renew: (sid: string): Promise<SteadyOrder> =>
-    both(() => write(`/api/steady/${id(sid)}/renew`), () => mock.renew(sid, owner.code)),
-  acceptLine: (sid: string, pid: string): Promise<SteadyOrder> =>
-    both(() => write(`/api/steady/${id(sid)}/lines/${id(pid)}/accept`), () => mock.acceptLine(sid, pid, owner.code)),
-  demoState: (): Promise<DemoState> => (LIVE ? get("/api/demo") : mock.demoState()),
-  /** On by default; `false` ends the simulated stock-out. */
-  stockOut: (on = true): Promise<DemoState> => both(() => demo("/api/demo/stock-out", { on }), () => mock.stockOut(on)),
-  /** The kitchen's agent on the owner's own text. */
-  ask: (text: string): Promise<AskOut> => both(() => demo("/api/demo/ask", { text }), () => mock.ask(text)),
-  /** The owner signs Spend Pass M-1 again with new limits; the code goes as X-Approve-Code. */
-  signPass: (body: SpendPassIn): Promise<SpendPass> => both(() => write("/api/spend-pass", body), () => mock.signPass(body, owner.code)),
+    both(() => write(`/api/orders/${id(oid)}/reject`), () => mock.reject(oid)),
+  /** Demo kitchens only: back to the sample data. */
   reset: (): Promise<DemoState> => both(() => demo("/api/demo/reset"), () => mock.reset()),
 };
