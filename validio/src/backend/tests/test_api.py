@@ -237,7 +237,9 @@ def test_reset_starts_over(client, holder, ctx):
 def test_unknown_ids_are_404(client):
     assert client.get("/api/requests/R-99").status_code == 404
     assert client.get("/agent/v1/orders/O-99").status_code == 404
-    assert client.get("/api/spend-passes/M-1").status_code == 404  # no agent has shown it yet
+    # before any agent showed it, the page shows the pass as the kitchen issued it to the agent
+    fresh = client.get("/api/spend-passes/M-1").json()
+    assert (fresh["autoLimitCents"], fresh["hardCapCents"], fresh["usedCents"]) == (120000, 200000, 0)
 
 
 def test_reader_failure_falls_back_with_ledger_note(client, holder, ctx, monkeypatch):
