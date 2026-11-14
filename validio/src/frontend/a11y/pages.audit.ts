@@ -1,19 +1,24 @@
+import { generateKeyPairSync } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect, type Page } from "@playwright/test";
 
-// Every route at 1280 and 390 px, light and dark: axe-core with the WCAG 2.2 A and AA rules (colour
+// Every v2 route at 1280 and 390 px, light and dark: axe-core with the WCAG 2.2 A and AA rules (colour
 // contrast AA included), every Tab stop has a visible focus indicator, and on the phone every target is
-// at least 44 x 44 px. Then approve, renew and accept by keyboard only. Then the pages those changed,
-// once more. Each test writes what it found to artifacts/a11y/results/<name>.json.
+// at least 44 x 44 px. The Agent page in each of its states (none, pairing, consent, active, paused), Home
+// before and after the agent is connected, Login without a session. Approve, connect and allow by keyboard
+// only. Each test writes what it found to artifacts/a11y/results/<name>.json.
 
+const BASE = process.env.A11Y_BASE!;
 const CODE = process.env.A11Y_CODE!;
 const OUT = `${process.env.A11Y_OUT}/results`;
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 390, height: 844 } };
 const SCHEMES = ["light", "dark"] as const;
-const BEFORE = ["/", "/requests/R-1", "/requests/R-2", "/approve/R-2", "/orders", "/steady/S-1", "/ledger", "/agent", "/settings"];
-const AFTER = ["/approve/R-2", "/steady/S-1", "/ledger"]; // after the keyboard approve, renew and accept
+// R-1 ordered alone, R-2 waiting for approval, S-1 the Steady Order (setup.ts)
+const PAGES = ["/", "/activity", "/activity/R-1", "/activity/R-2", "/activity/S-1", "/rules", "/rules/edit", "/settings"];
+const STATES = ["none", "pairing", "consent", "active", "paused"] as const;
+type AgentState = (typeof STATES)[number];
 
 type Found = { route: string; variant: string; axe: object[]; focus: string[]; targets: string[]; error?: string };
 
@@ -21,17 +26,10 @@ const slug = (s: string) => s.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")
 const save = (name: string, f: Found) => writeFileSync(`${OUT}/${slug(name)}.json`, JSON.stringify(f, null, 1));
 
 async function open(page: Page, route: string, scheme: "light" | "dark") {
-  await page.emulateMedia({ colorScheme: scheme });
+  await page.emulateMedia({ colorScheme: scheme }); // the app follows the system theme until one is chosen
   await page.goto(route);
-  // Every page needs a session now: the demo kitchen's copy for this browser context.
-  if (new URL(page.url()).pathname === "/login" || (await page.locator("#try-demo").count())) {
-    await page.locator("#try-demo").click();
-    await page.waitForURL((u) => u.pathname !== "/login");
-    await page.goto(route);
-  }
-  // the kit switches on data-theme; the rebuilt app may follow prefers-color-scheme, both are set
-  await page.evaluate((s) => document.documentElement.setAttribute("data-theme", s), scheme);
   await page.waitForLoadState("networkidle");
+  if (route !== "/login" && new URL(page.url()).pathname === "/login") throw new Error(`${route} sent to /login: no session`);
 }
 
 const describe = (el: Element) => {
@@ -84,18 +82,32 @@ async function smallTargets(page: Page): Promise<string[]> {
       const inline = el.tagName === "A" && getComputedStyle(el).display === "inline"
         && (el.parentElement?.textContent || "").trim().length > (el.textContent || "").trim().length;
       if (inline) continue;
-      if (r.width < 44 || r.height < 44) out.push(`${d(el)} ${Math.round(r.width)}x${Math.round(r.height)}`);
+      // a hit area widened by an absolutely placed ::before or ::after (inset: -10px) counts
+      let w = r.width, h = r.height;
+      for (const pseudo of ["::before", "::after"]) {
+        const p = getComputedStyle(el, pseudo);
+        if (p.content === "none" || p.position !== "absolute") continue;
+        const px = (v: string) => (v.endsWith("px") ? parseFloat(v) : 0);
+        w = Math.max(w, r.width - px(p.left) - px(p.right), parseFloat(p.width) || 0);
+        h = Math.max(h, r.height - px(p.top) - px(p.bottom), parseFloat(p.height) || 0);
+      }
+      if (w < 44 || h < 44) out.push(`${d(el)} ${Math.round(w)}x${Math.round(h)}`);
     }
     return out;
   }, describe.toString());
 }
 
-function scan(phase: string, route: string) {
+// One page in one state, four ways. `agent` puts the demo copy's agent in that state first; `login`
+// opens the page without a session.
+function scan(phase: string, route: string, opts: { agent?: AgentState; login?: boolean } = {}) {
   for (const [vp, size] of Object.entries(VIEWPORTS)) {
     for (const scheme of SCHEMES) {
       const name = `${phase} ${route} ${vp} ${scheme}`;
-      test(name, async ({ page }) => {
+      test(name, async ({ page: shared, browser }) => {
+        const ctx = opts.login ? await browser.newContext({ baseURL: BASE, storageState: { cookies: [], origins: [] } }) : null;
+        const page = ctx ? await ctx.newPage() : shared;
         await page.setViewportSize(size);
+        if (opts.agent) await agentTo(page, opts.agent);
         await open(page, route, scheme);
         const axe = await new AxeBuilder({ page }).withTags(TAGS).analyze();
         const violations = axe.violations.map((v) => ({
@@ -105,6 +117,7 @@ function scan(phase: string, route: string) {
         const focus = await focusGaps(page);
         const targets = vp === "phone" ? await smallTargets(page) : [];
         save(name, { route, variant: `${phase} ${vp} ${scheme}`, axe: violations, focus, targets });
+        await ctx?.close();
         expect.soft(violations, "axe WCAG 2.2 AA violations").toEqual([]);
         expect.soft(focus, "Tab stops without a visible focus indicator").toEqual([]);
         expect.soft(targets, "targets under 44 x 44 px on the phone").toEqual([]);
@@ -159,35 +172,80 @@ async function keyboard(page: Page, id: string, done: () => Promise<boolean>, fa
   expect(problems, `keyboard-only ${id}`).toEqual([]);
 }
 
-const api = (page: Page, path: string, post = false) =>
-  page.evaluate(async ([p, m, c]) => {
-    const r = await fetch(p, { method: m, headers: { "X-Approve-Code": c, accept: "application/json" } });
+const api = (page: Page, path: string, method = "GET", body?: object) =>
+  page.evaluate(async ([p, m, c, b]) => {
+    const r = await fetch(p, {
+      method: m,
+      headers: { "X-Approve-Code": c, accept: "application/json", ...(b ? { "content-type": "application/json" } : {}) },
+      body: b ?? undefined,
+    });
     return { ok: r.ok, body: await r.json().catch(() => null) };
-  }, [path, post ? "POST" : "GET", CODE] as const);
+  }, [path, method, CODE, body ? JSON.stringify(body) : null] as const);
 
-for (const route of BEFORE) scan("before", route);
+const agentState = async (page: Page): Promise<AgentState> => (await api(page, "/api/agent")).body?.state;
 
-test("keyboard: approve O-2 with the code on the phone", async ({ page }) => {
+// The agent's own side of pairing, as any third-party agent does it (docs/AGENTS.md): answer the code
+// with a name and a P-256 key. The kitchen then sees the consent screen.
+async function agentCalls(page: Page): Promise<boolean> {
+  const account = (await api(page, "/api/account")).body?.id;
+  const code = (await api(page, "/api/agent")).body?.pairing?.code;
+  const { publicKey } = generateKeyPairSync("ec", { namedCurve: "P-256" });
+  const r = await fetch(`${BASE}/agent/v1/k/${account}/pair`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ code, name: "Claude Code", publicJwk: publicKey.export({ format: "jwk" }) }),
+  });
+  return r.status === 202;
+}
+
+// Walk the demo copy's agent to `want` through the real routes: back to none, then forward.
+async function agentTo(page: Page, want: AgentState) {
+  if (page.url() === "about:blank") await page.goto("/rules"); // a page of the app, for fetch with the session
+  const now = await agentState(page);
+  if (now === want) return;
+  if (now === "active" || now === "paused") await api(page, "/api/agent/disconnect", "POST");
+  else if (now === "pairing" || now === "consent") await api(page, "/api/agent/deny", "POST");
+  const steps: [AgentState, () => Promise<unknown>][] = [
+    ["pairing", () => api(page, "/api/agent/pair", "POST")],
+    ["consent", () => agentCalls(page)],
+    ["active", () => api(page, "/api/agent/allow", "POST")],
+    ["paused", () => api(page, "/api/agent/pause", "POST", { paused: true })],
+  ];
+  for (const [state, step] of steps) {
+    if (STATES.indexOf(want) < STATES.indexOf(state)) break;
+    await step();
+  }
+  expect(await agentState(page), `agent ${want}`).toBe(want);
+}
+
+for (const route of PAGES) scan("before", route, { agent: "none" });
+scan("before", "/login", { login: true });
+
+test("keyboard: approve R-2 with the code on the phone", async ({ page }) => {
   await page.setViewportSize(VIEWPORTS.phone);
-  await open(page, "/approve/R-2", "light");
-  await keyboard(page, "approve", async () => (await api(page, "/api/orders/O-2")).body?.state === "placed",
-    async () => (await api(page, "/api/orders/O-2/approve", true)).ok);
+  await open(page, "/activity/R-2", "light");
+  const o2 = async () => (await api(page, "/api/orders/O-2")).body?.state;
+  await keyboard(page, "approve", async () => (await o2()) === "placed",
+    async () => (await api(page, "/api/orders/O-2/approve", "POST")).ok);
 });
+scan("after", "/activity/R-2");
 
-test("keyboard: renew S-1", async ({ page }) => {
+test("keyboard: connect an agent", async ({ page }) => {
   await page.setViewportSize(VIEWPORTS.desktop);
-  await open(page, "/steady/S-1", "light");
-  await keyboard(page, "renew", async () => !!(await api(page, "/api/steady/S-1")).body?.renewedAt,
-    async () => (await api(page, "/api/steady/S-1/renew", true)).ok);
+  await agentTo(page, "none");
+  await open(page, "/agent", "light");
+  await keyboard(page, "agent-connect", async () => (await agentState(page)) === "pairing",
+    async () => (await api(page, "/api/agent/pair", "POST")).ok);
 });
 
-test("keyboard: accept the pancakes line", async ({ page }) => {
+for (const state of STATES) scan(`agent ${state}`, "/agent", { agent: state });
+
+test("keyboard: allow the agent", async ({ page }) => {
   await page.setViewportSize(VIEWPORTS.desktop);
-  await open(page, "/steady/S-1", "light");
-  const pan = async () => (await api(page, "/api/steady/S-1")).body?.lines
-    ?.find((l: { productId: string }) => l.productId === "471376")?.result;
-  await keyboard(page, "accept-471376", async () => (await pan()) === "accepted",
-    async () => (await api(page, "/api/steady/S-1/lines/471376/accept", true)).ok);
+  await agentTo(page, "consent");
+  await open(page, "/agent", "light");
+  await keyboard(page, "consent-allow", async () => (await agentState(page)) === "active",
+    async () => (await api(page, "/api/agent/allow", "POST")).ok);
 });
 
-for (const route of AFTER) scan("after", route);
+scan("agent active", "/", { agent: "active" });

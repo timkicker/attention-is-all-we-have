@@ -96,16 +96,17 @@ snapshots:
 	$(UV) python -W ignore ../../scripts/snapshot_api.py
 
 # The public-deploy shape in a browser: one FastAPI process serves the built app and the API (no Vite),
-# login page to a demo copy, the real agent (agent.py --kitchen, paired on the Agent page) places scenes 2
-# and 3, the owner approves on the phone view. Port SMOKE_PORT (8416); SMOKE_BASE=https://... for a running one.
+# login page to a demo copy, a real MCP client (scripts/connector_check.py) connects on the Agent page and
+# orders, Home and Activity show it (e2e-live/smoke.spec.ts). Port SMOKE_PORT (8416); SMOKE_BASE=https://...
+# for a running one.
 demo-smoke:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c playwright.live.config.ts
 
-# The 10:00 click-through of docs/DEMO.md in a browser against the live backend: built app and API from
-# one process on E2E_PORT (8419), a demo copy from the plain seed, the real agent (agent.py --kitchen, paired
-# on the Agent page) for scenes 1 to 3. E2E_BASE=https://... runs it against a running server or the public
-# link (no build needed then: npx playwright test -c e2e-live/demo.config.ts in src/frontend). A page without
-# the data-testid a check needs makes that check a fixme (E2E_STRICT=1 makes it fail).
+# The v2 pages in a browser against the live backend: built app and API from one process on E2E_PORT (8419),
+# a demo copy from the plain seed, a real MCP client connected on the Agent page. flow.demo.ts: order alone,
+# lower the alone limit in Rules, the next order waits, approve, Pause, Disconnect; pages.demo.ts: every page.
+# E2E_BASE=https://... runs it against a running server or the public link (no build needed then:
+# npx playwright test -c e2e-live/demo.config.ts in src/frontend).
 e2e-live:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c e2e-live/demo.config.ts
 
@@ -114,9 +115,9 @@ e2e-live:
 accounts-e2e:
 	cd src/frontend && npx playwright test -c playwright.accounts.config.ts
 
-# Accessibility over every route at 1280 and 390 px, light and dark: axe-core WCAG 2.2 AA (contrast
-# included), visible focus, 44 px targets on the phone, keyboard-only approve, renew and accept.
-# Port A11Y_PORT (8420). Prints the findings per page; fails when there are any.
+# Accessibility over every route and agent state at 1280 and 390 px, light and dark: axe-core WCAG 2.2 AA
+# (contrast included), visible focus, 44 px targets on the phone, keyboard-only approve, connect and allow.
+# Port A11Y_PORT (8441). Prints the findings per page; fails when there are any.
 a11y:
 	cd src/frontend && VITE_API=live npm run build && \
 	{ npx playwright test -c a11y/a11y.config.ts; s=$$?; node a11y/summary.mjs ../../artifacts/a11y/results; exit $$s; }

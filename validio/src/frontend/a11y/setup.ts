@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 
-// The state the pages are audited in: R-1 ordered alone, the stock-out simulated, R-2 and O-2 waiting,
-// the Steady Order not yet renewed (the keyboard test renews it).
+// The state the pages are audited in, played by the demo agent into the local kitchen: R-1 ordered alone,
+// R-2 waiting for approval (O-2), the Steady Order S-1 renewed with two lines waiting. The demo copy every
+// test shares is taken from it and starts with no agent connected; the specs walk the agent states.
 function agent(scene: number) {
   execFileSync("uv", ["run", "python", "-W", "ignore", "../../scripts/agent.py", "--scene", String(scene),
     "--base", process.env.A11Y_BASE!], { cwd: "../backend", env: process.env, stdio: "pipe" });
@@ -14,12 +15,7 @@ export default async function setup() {
   mkdirSync(out, { recursive: true });
   const post = (path: string) => fetch(`${process.env.A11Y_BASE}${path}`, { method: "POST" });
   if (!(await post("/api/demo/reset")).ok) throw new Error("reset failed");
-  agent(1);
-  agent(2);
-  // The stock-out has no route: set in the local kitchen's store, as scripts/demo_check.py does.
-  execFileSync("uv", ["run", "python", "-W", "ignore", "-c", "from validio.api.state import get_ctx; get_ctx().set_stockout(True)"],
-    { cwd: "../backend", env: process.env, stdio: "pipe" });
-  agent(3);
+  for (const scene of [1, 2, 3, 4]) agent(scene);
   // One demo copy of that state for every test, so the keyboard steps and the "after" scans share it.
   const r = await post("/api/account/demo");
   if (!r.ok) throw new Error("demo login failed");

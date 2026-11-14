@@ -3,16 +3,17 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@playwright/test";
 
-// `make e2e-live`: the 10:00 click-through of docs/DEMO.md in a browser against the live backend, on a
-// demo copy as a juror gets it (e2e-live/kitchen.ts): login page, Try the demo kitchen, the agent paired
-// through the Agent page, scripts/agent.py --kitchen on /mcp/k/{account}/.
+// `make e2e-live`: the v2 pages in a browser against the live backend, on a demo copy as a juror gets it
+// (e2e-live/kitchen.ts): login page, Try the demo kitchen, a real MCP client (scripts/connector_check.py)
+// connected on the Agent page's URL (flow.demo.ts: order alone, lower Rules, approve, Pause, Disconnect;
+// pages.demo.ts: a click through every page).
 // Here one FastAPI process serves the built web app (VITE_API=live) and the API with accounts in their own
 // store under artifacts/e2e-live, replayed Valio answers, its own port (E2E_PORT, default 8419), so
 // `make demo` on 8410, demo-smoke on 8416, accounts-e2e on 8417 and demo-check on 8418 are never touched.
 // The server reads the web app from build/, which the default Playwright config rebuilds in mock mode: do
 // not run both at once.
 // E2E_BASE=https://... runs the same tests against a running server or the public link instead, no server
-// started here. E2E_STRICT=1 turns a missing data-testid into a failure instead of a fixme.
+// started here. Nothing in these two files needs the server's local store.
 const REMOTE = process.env.E2E_BASE?.replace(/\/$/, "");
 const PORT = process.env.E2E_PORT || "8419";
 const BASE = REMOTE || `http://127.0.0.1:${PORT}`;
