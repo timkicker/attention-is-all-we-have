@@ -8,8 +8,8 @@ let f: DemoFacts
 
 // Tagged @demo: make e2e leaves it out, since its facts need a full seed (not seed-mini).
 test.describe('demo script @demo', () => {
-  // a step opens up to four pages; the statement page waits for the tab counts (slow /api/dropped, px3-t-bugs 3, 4)
-  test.describe.configure({ timeout: 90_000 })
+  // a step opens up to four pages; 20 s per step fails a demo whose pages load slowly
+  test.describe.configure({ timeout: 20_000 })
   test.beforeAll(async ({ request }) => {
     const seed = (await (await request.get('/api/health')).json()).seed
     if (!FACTS[seed]) throw new Error(`no demo facts for seed ${seed}; load seed ${Object.keys(FACTS).join(', ')}`)

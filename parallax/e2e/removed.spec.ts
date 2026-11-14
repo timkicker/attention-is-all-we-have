@@ -10,7 +10,8 @@ test('removed lists what one edition removed while others still have it', async 
   await expect(rows).toHaveCount(2)
   const en = rows.filter({ hasText: `${copy.edition('en')} removed` })
   await expect(en).toContainText('Mainila')
-  await expect(en).toContainText(copy.fmtDate('2009-12-31'))
+  // seed-mini has yearly snapshots, so the removal is dated by year only
+  await expect(en).toContainText(copy.noteText(copy.removedNote('en', 'all', '2009-12-31', false)))
   await expect(en).toContainText(copy.stillIn(['fi', 'sv', 'de', 'ru', 'et']).split(',')[0])
   await expectFooter(page)
 })
