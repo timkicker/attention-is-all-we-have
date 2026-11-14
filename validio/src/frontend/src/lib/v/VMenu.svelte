@@ -17,6 +17,19 @@
   let sheet = $state(false);
   const stockLabel = $derived(chrome.stockIsOut ? "Stock-out simulated" : "Simulate stock-out of mozzarella");
 
+  // A radio group is one tab stop; the arrows move the choice (WAI-ARIA radio).
+  function arrows(e: KeyboardEvent) {
+    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+    const home = e.key === "Home" ? 0 : e.key === "End" ? MODES.length - 1 : undefined;
+    if (step === undefined && home === undefined) return;
+    e.preventDefault();
+    const at = MODES.findIndex((m) => m.id === theme.mode);
+    const next = home ?? (at + (step ?? 0) + MODES.length) % MODES.length;
+    setMode(MODES[next].id);
+    const group = e.currentTarget as HTMLElement;
+    group.querySelectorAll<HTMLElement>('[role="radio"]')[next]?.focus();
+  }
+
   function run(fn: () => Promise<void>) {
     sheet = false;
     void fn();
@@ -37,9 +50,9 @@
       <button type="button" class="mi" id="menu-reset" onclick={() => run(demoActions.reset)}>Start over</button>
       <div class="msep" role="separator"></div>
       <p class="mlabel" id="theme-label">Theme</p>
-      <div role="radiogroup" aria-labelledby="theme-label">
+      <div role="radiogroup" aria-labelledby="theme-label" tabindex="-1" onkeydown={arrows}>
         {#each MODES as m (m.id)}
-          <button type="button" class="mi" role="radio" aria-checked={theme.mode === m.id} onclick={() => setMode(m.id)}>
+          <button type="button" class="mi" role="radio" aria-checked={theme.mode === m.id} tabindex={theme.mode === m.id ? 0 : -1} onclick={() => setMode(m.id)}>
             <span class="ck" class:on={theme.mode === m.id}><Check size={16} strokeWidth={1.75} aria-hidden="true" /></span>{m.label}
           </button>
         {/each}
