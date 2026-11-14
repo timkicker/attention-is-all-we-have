@@ -51,7 +51,7 @@
   <form class="edit" onsubmit={save} novalidate data-testid="kitchen-form">
     <Section class="v-card">
       <div class="in"><VField id="f-kitchen-name" label="Name" bind:value={f.name} problem={bad.name} autocomplete="organization" /></div>
-      <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "None"} />
+      <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "Not set"} />
       <div class="in"><VField id="f-kitchen-address" label="Delivery address" bind:value={f.address} autocomplete="street-address" /></div>
     </Section>
     {#if bad.form}<p class="problem" role="alert">{bad.form}</p>{/if}
@@ -63,8 +63,8 @@
 {:else}
   <Section class="v-card">
     <VValueRow label="Name" value={s.kitchen.name} testid="kitchen-name" />
-    <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "None"} testid="kitchen-customer" />
-    <VValueRow label="Delivery address" value={s.kitchen.deliveryAddress || "None"} testid="kitchen-address" />
+    <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "Not set"} testid="kitchen-customer" />
+    <VValueRow label="Delivery address" value={s.kitchen.deliveryAddress || "Not set"} testid="kitchen-address" />
   </Section>
   <div class="acts"><Button variant="outline" data-testid="kitchen-edit" onclick={edit}>Edit</Button></div>
 {/if}

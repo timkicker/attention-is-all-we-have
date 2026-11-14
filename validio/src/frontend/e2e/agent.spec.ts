@@ -52,7 +52,7 @@ for (const v of VIEWS) {
     await shoot("pairing-vendor");
 
     await page.getByTestId("agent-demo").click();
-    await expect(page.getByTestId("consent")).toContainText("Order alone up to 1,200.00 €");
+    await expect(page.getByTestId("consent")).toContainText("Orders alone up to 1,200.00 €");
     await expect(page.getByTestId("pair-code")).toHaveCount(0);
     await shoot("consent");
     await page.getByTestId("consent-allow").click();

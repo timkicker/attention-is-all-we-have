@@ -74,7 +74,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await connect.click();
   await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/);
   await el(page, "agent-demo", "button", /connect the demo agent/i).click();
-  await expect(page.getByText(/order alone up to 1,200\.00 €/i).first()).toBeVisible();
+  await expect(page.getByText(/orders alone up to 1,200\.00 €/i).first()).toBeVisible();
   await el(page, "consent-allow", "button", /^allow$/i).click();
   await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
 
@@ -92,26 +92,39 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   // 5 the same request again waits
   await sendExample(page, /waiting for you/i);
   const waiting = page.locator("main").getByText(/waiting for you/i).first();
-  await expect(page.getByText(/blocked/i)).toHaveCount(0);
+  // the request waits; it is not blocked (the inbox facts still name the "blocked above" limit)
+  await expect(page.locator("main").getByText(/blocked(?! above)/i)).toHaveCount(0);
 
   // 6 approve with the code
   await waiting.click();
   await el(page, "open-approve", "link", /open approval/i).click();
   await el(page, "approve", "button", /^approve$/i).click();
-  // the code typed for Rules can still be in memory this visit; then Approve asks none
-  if (await page.getByTestId("code-input").isVisible({ timeout: 2_000 }).catch(() => false)) await typeCode(page);
+  // every approval asks for the code, also when Rules took it this visit; the demo bar shows it here
+  await expect(page.getByTestId("demo-bar")).toContainText("246810");
+  await expect(page.getByTestId("approve-why")).toHaveText(/over your 800\.00\s€ limit for ordering alone/i);
+  await expect(page.getByTestId("code-input")).toBeVisible();
+  await typeCode(page);
   await expect(page.getByText(/^(placed|ordered)$/i).filter({ visible: true }).first()).toBeVisible({ timeout: 30_000 });
 
   // 7 pause, send again, the refusal stands in the ledger
   await agentNav.click();
   await el(page, "agent-pause", "button", /^pause$/i).click();
   await expect(page.getByTestId("agent-state")).toHaveText(/paused/i);
-  await sendExample(page, /^refused$/i);
+  await sendExample(page, /^refused: agent paused/i);
   await agentNav.click();
   await el(page, "agent-ledger", "link", /see in ledger/i).click();
   await expect(page).toHaveURL(/\/ledger/);
   await expect(page.getByText(/paused/i).first()).toBeVisible();
   await expect(page.getByText(/refused/i).first()).toBeVisible();
+  // the Agent filter narrows the list and the count follows it; All shows the steady order too
+  const rows = page.getByTestId("ledger-entry");
+  const mine = await rows.count();
+  await expect(page.getByTestId("ledger-count")).toHaveText(`${mine} entries`);
+  await page.locator("#ledger-all").click();
+  await expect(page.getByTestId("ledger-group-S-1")).toBeVisible();
+  const every = await rows.count();
+  expect(every).toBeGreaterThan(mine);
+  await expect(page.getByTestId("ledger-count")).toHaveText(`${every} entries`);
 
   // 8 Settings: the kitchen's name opens them; a diet change asks the code
   await page.getByTestId("nav-settings").or(page.getByTestId("phone-settings")).or(page.getByRole("link", { name: /hotel espoo kitchen/i })).filter({ visible: true }).first().click();
