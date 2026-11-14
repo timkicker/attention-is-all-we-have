@@ -210,7 +210,9 @@ async function walk(browser, v) {
   if (await settings.count()) {
     await settings.click();
     await shoot("settings");
-    if (await click("settings-diet", /^set-(nav|row)-diet$/, "link", /diet and allergens/i)) await shoot("settings-diet");
+    // one page with a section list on the side at 1280; on the phone one list, nothing to pick
+    const sections = (await page.getByTestId(/^set-(nav|row)-/).filter({ visible: true }).count()) > 0;
+    if (sections && (await click("settings-diet", /^set-(nav|row)-diet$/, "link", /diet and allergens/i))) await shoot("settings-diet");
     const gluten = page.getByRole("switch", { name: /gluten/i }).or(page.getByRole("checkbox", { name: /gluten/i })).filter({ visible: true }).first();
     if (await gluten.count()) {
       await gluten.click();
@@ -219,7 +221,7 @@ async function walk(browser, v) {
         await shoot("settings-saved");
       }
     } else missing.add("settings: gluten switch");
-    for (const [id, name] of [["kitchen", /^kitchen$/i], ["login", /login and approval code/i], ["theme", /^theme$/i]]) {
+    for (const [id, name] of sections ? [["kitchen", /^kitchen$/i], ["login", /login and approval code/i], ["theme", /^theme$/i]] : []) {
       await page.goto("/settings");
       if (!(await click(`settings-${id}`, new RegExp(`^set-(nav|row)-${id}$`), "link", name))) continue;
       await shoot(`settings-${id}`);
