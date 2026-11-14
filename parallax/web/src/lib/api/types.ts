@@ -9,8 +9,8 @@ export interface SqlStatement {
   ms: number
   rows: number
   index: 'emb' | 'none'
-  /** Bound parameters; a list parameter is logged as its length. */
-  params?: Record<string, string | number | null | { count: number }>
+  /** Bound parameters; a list parameter is logged as its length, a long string as its length in characters. */
+  params?: Record<string, string | number | null | { count: number } | { chars: number }>
 }
 
 export interface ApiErrorBody {
@@ -51,6 +51,8 @@ export interface TopicEditionRaw {
   history: 'every' | 'yearly' | 'none'
   revisions: number
   first_ts: Ts
+  /** Newest stored revision (data is not refreshed after a load). Older APIs omit it. */
+  last_ts?: Ts | null
 }
 export interface TopicRaw {
   topic_id: string
@@ -179,6 +181,8 @@ export interface CheckReq {
   text: string
   as_of?: string
   langs?: string[]
+  /** topic_id: evidence only from this topic. */
+  topic?: string
 }
 
 // GET /api/check/recorded

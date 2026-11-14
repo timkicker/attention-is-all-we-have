@@ -50,6 +50,8 @@
     if (r.ok) router.navigate(paths.checkRun(params.qid, r.data.runId))
     else if (r.error.code === 'empty_text') problem = copy.check.EMPTY_ANSWER
     else if (r.error.code === 'text_too_long') problem = copy.check.TOO_LONG
+    else if (r.error.code === 'too_many') problem = copy.ERR.tooMany(r.error.retryAfterS ?? 60)
+    else if (r.error.code === 'model_unavailable' || r.error.code === 'embed_unavailable') problem = copy.ERR.modelUnavailable
     else problem = r.error.code === 'network' ? copy.ERR.network : copy.ERR.generic
   }
 </script>

@@ -2,9 +2,9 @@
 
 import json
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 
-from api import match, sqllog
+from api import match, ratelimit, sqllog
 from api.util import ApiError, iso, lang_order, oldid_url, parse_as_of, sql_ts
 from contract.engine import get_engine
 
@@ -19,7 +19,9 @@ def _langs(langs: str | None) -> list[str]:
 
 
 @router.get("/api/ask")
-def ask(q: str, as_of: str | None = None, langs: str | None = None, k: int = Query(3, ge=1, le=10)) -> dict:
+def ask(
+    request: Request, q: str, as_of: str | None = None, langs: str | None = None, k: int = Query(3, ge=1, le=10)
+) -> dict:
     sqllog.panel("ask")
     q = q.strip()
     if not q:
@@ -30,6 +32,7 @@ def ask(q: str, as_of: str | None = None, langs: str | None = None, k: int = Que
     editions = _langs(langs)
     quotes: dict[str, list[dict]] = {lang: [] for lang in editions}
     if editions:
+        ratelimit.check(request, "ask")
         vec = get_engine().embed([q])[0]
         block = sqllog.query("ask")
         text = "\nUNION ALL\n".join(f"({block.replace('{n}', str(i))})" for i in range(len(editions)))

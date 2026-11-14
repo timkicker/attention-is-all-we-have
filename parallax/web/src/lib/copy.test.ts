@@ -39,6 +39,8 @@ describe('copy', () => {
     expect(copy.showingDate('2008-01-01', ['et', 'uk'])).toBe('Showing 1 Jan 2008. Estonian and Ukrainian had no article yet')
     expect(copy.asOf(null)).toBe('As of today')
     expect(copy.asOf('2008-01-01')).toBe('As of 1 Jan 2008')
+    expect(copy.asOf(null, '2026-11-03')).toBe('Newest version 3 Nov 2026')
+    expect(copy.asOf('2008-01-01', '2026-11-03')).toBe('As of 1 Jan 2008')
     expect(copy.showMore(38)).toBe('Show 38 more')
     expect(copy.start.toLoad(360)).toBe('6 min to load')
     expect(copy.start.faster(2021, 2026, 60)).toBe('Faster: load only 2021 to 2026, about 1 min')

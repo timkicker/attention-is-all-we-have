@@ -80,3 +80,19 @@ def test_rate_limited_sets_cooldown(monkeypatch):
     assert len(waits) == wapi.MAX_429_TRIES - 1
     assert wapi.cooldown_left() > 100
     monkeypatch.setattr(wapi, "_cooldown_until", 0.0)
+
+
+def test_parse_process_gives_the_same_lives_as_the_thread(monkeypatch):
+    from pathlib import Path
+
+    text = (Path(__file__).parent / "fixtures" / "fi-current.wiki").read_text(encoding="utf-8")
+    fetched = {
+        "snaps": [
+            {"rev_id": 1, "ts": "2020-01-01T00:00:00Z", "sha1": "a", "comment": None, "text": text},
+            {"rev_id": 2, "ts": "2021-01-01T00:00:00Z", "sha1": "b", "comment": "cut", "text": text[: len(text) // 2]},
+        ]
+    }
+    here = job.lives_of(fetched)
+    monkeypatch.setenv("INGEST_PARSE_PROCESS", "1")
+    there = job.parse_elsewhere(fetched)
+    assert there.lives and there.lives == here.lives and there.sections == here.sections
