@@ -122,7 +122,7 @@ class Accounts:
                is_demo: bool = False) -> dict:
         from .settings import _put
 
-        account_id = f"k-{secrets.token_hex(4)}"
+        account_id = f"k-{secrets.token_hex(16)}"  # 128 random bits: the id is in the agent URLs
         self._copy_store(account_id)
         db, _keys = self.paths(account_id)
         _put(db, {"kitchen_name": name} | ({} if is_demo else {"rules_saved": "0"}))
@@ -149,10 +149,12 @@ class Accounts:
         shutil.rmtree(self.root / account_id, ignore_errors=True)
 
     def sweep(self, now: float | None = None) -> list[str]:
-        """Demo copies older than 48 h go, with their sessions and files."""
+        """Demo copies older than 48 h go, with their sessions and files, and demo copies with the short ids of
+        before (32 bits, guessable)."""
         cutoff = (now or time.time()) - DEMO_MAX_AGE
         with self._db() as con:
-            old = [r[0] for r in con.execute("select id from account where is_demo = 1 and created_at < ?", (cutoff,))]
+            old = [r[0] for r in con.execute("select id from account where is_demo = 1 and (created_at < ? or "
+                                             "length(id) < 34)", (cutoff,))]
             con.execute("delete from session where expires < ?", (now or time.time(),))
         for a in old:
             self.delete(a)

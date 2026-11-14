@@ -20,7 +20,7 @@ integer cents, times are ISO 8601 with offset. Every error is `{"detail": "<one 
 
 ```
 Account = {
-  id: string,                 // "k-3f9a1c2e", also used in the agent URLs below
+  id: string,                 // "k-" and 32 hex digits, also used in the agent URLs below
   name: string,               // "Hotel Espoo kitchen"
   email: string | null,       // null for a demo copy
   customerNumber: string,     // Valio customer number, read only after signup
@@ -119,6 +119,10 @@ Agent side (for any agent, documented in AGENTS.md as well):
 The old `/agent/v1/...` (with `/agent/v1/pair` and `/agent/v1/pass`) and `/mcp/` keep serving the
 local kitchen for `make agent` and the tests. An unknown account in the path answers 404. Over MCP the
 kitchen's nonce is the resource `validio://k/<account>/nonce` (the six tools read the account from the URL).
+Account ids carry 128 random bits (`k-` and 32 hex digits). On `/agent/v1/k/...` and `/mcp/k/...` the reads
+`get_request` and `get_order` need the pass too (header, or the `spendPass` argument over MCP), and every
+pass must be the very copy this kitchen signed last, so a pass from another demo copy (same template key)
+gets a 401.
 
 ## Rules
 

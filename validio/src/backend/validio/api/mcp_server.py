@@ -29,6 +29,23 @@ from .state import Ctx, get_ctx
 ACCOUNT = "validio.account"  # put on the ASGI scope by the /mcp/k/{account}/ mount in app.py
 
 
+def _in_url(mc: Context | None) -> bool:
+    try:
+        request = mc.request_context.request if mc is not None else None
+    except ValueError:
+        request = None
+    return bool(request is not None and getattr(request, "scope", {}).get(ACCOUNT))
+
+
+def _read_gate(ctx: Ctx, mc: Context | None, spend_pass: str | None) -> None:
+    """Reads on /mcp/k/{account}/ need the kitchen's pass (the account id is no secret); a pass sent anyway is
+    checked. In process and on the local /mcp/ they stay open, as before."""
+    if spend_pass or _in_url(mc):
+        if not spend_pass:
+            raise MandateError("no Spend Pass in the spendPass argument")
+        ctx.verify(spend_pass)
+
+
 def kitchen(mc: Context | None) -> Ctx:
     """The kitchen a tool call works on: the account in the URL (/mcp/k/{account}/), read from the HTTP request
     of this call, because a streamable-HTTP session runs in its own task and sees no contextvar from the
@@ -97,9 +114,11 @@ def request_supply(spendPass: str, lines: list[SupplyLineIn], idempotencyKey: st
 
 @server.tool()
 @_errors
-def get_request(requestId: str, mc: Context | None = None) -> dict:
-    """The current state of a request."""
-    return _dump(tools.get_request(kitchen(mc), requestId))
+def get_request(requestId: str, spendPass: str | None = None, mc: Context | None = None) -> dict:
+    """The current state of a request. On a kitchen's own URL (/mcp/k/...) it needs the Spend Pass."""
+    ctx = kitchen(mc)
+    _read_gate(ctx, mc, spendPass)
+    return _dump(tools.get_request(ctx, requestId))
 
 
 @server.tool()
@@ -114,9 +133,12 @@ def confirm_order(spendPass: str, requestId: str, choice: list[dict], idempotenc
 
 @server.tool()
 @_errors
-def get_order(orderId: str, mc: Context | None = None) -> dict:
-    """The order and its state: waiting, approved, placed, rejected or blocked."""
-    return _dump(tools.get_order(kitchen(mc), orderId))
+def get_order(orderId: str, spendPass: str | None = None, mc: Context | None = None) -> dict:
+    """The order and its state: waiting, approved, placed, rejected or blocked. On a kitchen's own URL
+    (/mcp/k/...) it needs the Spend Pass."""
+    ctx = kitchen(mc)
+    _read_gate(ctx, mc, spendPass)
+    return _dump(tools.get_order(ctx, orderId))
 
 
 @server.resource("validio://nonce", mime_type="application/json")

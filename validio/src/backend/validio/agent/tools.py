@@ -59,7 +59,7 @@ TOOLS: list[dict[str, Any]] = [
                     "required": ["orderId"]}},
 ]
 WRITE_TOOLS = {"request_supply", "confirm_order"}  # get an idempotency key from the port
-PASS_TOOLS = WRITE_TOOLS | {"renew_steady_order"}  # get the Spend Pass from the port
+PASS_TOOLS = WRITE_TOOLS | {"renew_steady_order", "get_request", "get_order"}  # get the Spend Pass from the port
 
 SUPPLIER_TEXT = re.compile(r"untrusted|description|marketing|ingredient|planted|supplier", re.IGNORECASE)
 

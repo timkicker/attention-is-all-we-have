@@ -215,7 +215,7 @@ class Ctx:
         m = verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
                                    nonces=self.nonces, now=self.now(), revoked=self.store.is_revoked,
                                    version=lambda jti: seed.pass_version(self.db_path, jti))
-        check_use(self, m)  # a paused agent is refused here, with a ledger entry
+        check_use(self, m, token)  # a paused agent is refused here, with a ledger entry
         return m
 
 

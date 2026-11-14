@@ -19,7 +19,7 @@ For an MCP host the whole configuration is in `examples/mcp.json`:
 
 Keep the slash at the end of the URL. A POST to `/mcp` without it never reaches the MCP server and gets a 405.
 
-On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The kitchen's Agent page shows both. Over MCP that kitchen's nonce is the resource `validio://k/<account>/nonce`. An unknown account gets a 404. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
+On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The kitchen's Agent page shows both. Over MCP that kitchen's nonce is the resource `validio://k/<account>/nonce`. An unknown account gets a 404. On a kitchen's own address the two reads, `get_request` and `get_order`, need the Spend Pass as well (the `Authorization` header, over MCP the `spendPass` argument), because the address is no secret; a pass from another kitchen gets a 401. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
 
 ### Pairing
 
@@ -80,9 +80,9 @@ Both writes also take an `idempotencyKey`. A retry with the same key returns the
 | --- | --- | --- |
 | `search_products` | `GET /agent/v1/products` | no |
 | `request_supply` | `POST /agent/v1/requests` | yes |
-| `get_request` | `GET /agent/v1/requests/{request_id}` | no |
+| `get_request` | `GET /agent/v1/requests/{request_id}` | on a kitchen's own address |
 | `confirm_order` | `POST /agent/v1/orders` | yes |
-| `get_order` | `GET /agent/v1/orders/{order_id}` | no |
+| `get_order` | `GET /agent/v1/orders/{order_id}` | on a kitchen's own address |
 | `renew_steady_order` | MCP only, runs `POST /api/steady/{order_id}/renew` | yes |
 
 The usual run is `request_supply`, then a look at `decision.outcome`. With `auto_order` the agent confirms the `chosen` product and amount of each line and is done. For `ask_human` Validio already holds the order for the owner, who answers on the phone, so the agent reads the order and waits. With `block` nothing is ordered. Prices in `confirm_order` are never taken from the agent because Validio asks Valio again before it places anything.
