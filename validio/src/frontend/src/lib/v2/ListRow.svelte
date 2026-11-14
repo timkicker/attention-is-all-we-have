@@ -31,7 +31,6 @@
   .lr-value {
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
-    font-variant-numeric: tabular-nums;
     color: var(--v-fg);
   }
 </style>

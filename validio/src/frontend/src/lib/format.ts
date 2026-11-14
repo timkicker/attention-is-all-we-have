@@ -15,7 +15,7 @@ const UNIT = "g|kg|l|ml|cl|dl|%|€|litres?|cartons?|bags?|packs?|boxes|box|piec
 const NB_RULES: [RegExp, string][] = [
   [new RegExp(`(\\d) (?=(?:${UNIT})(?![\\p{L}\\d]))`, "gu"), `$1${NB}`],
   [new RegExp(`(\\d) (?=(?:${MONTH})\\b)`, "g"), `$1${NB}`],
-  [new RegExp(`\\b(${WEEKDAY}),? (?=\\d)`, "g"), `$1${NB}`],
+  [new RegExp(`\\b(${WEEKDAY}) (?=\\d)`, "g"), `$1${NB}`],
   [/(\d) × (?=\d)/g, `$1${NB}×${NB}`],
 ];
 /** halbat's NB rule: a number never parts from its unit, a day never from its

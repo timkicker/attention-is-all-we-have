@@ -100,7 +100,7 @@ function day(): Entry[] {
             : answer === "rejected"
               ? { text: "You said no.", version: RULE_V }
               : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V },
-        result: answer === "approved" ? { orderId: "O-7", delivery: "2026-11-16" } : null,
+        result: answer === "approved" ? { orderId: "O-7", orderIds: ["O-7"], delivery: "2026-11-16" } : null,
         approval: answer === "waiting" ? { orderId: "O-7", holdUntil: "2026-11-14T15:00:00+02:00" } : null,
         proof: r4proof,
       },
@@ -156,7 +156,7 @@ function day(): Entry[] {
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
         rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered alone.", version: RULE_V },
-        result: { orderId: "O-6", delivery: "2026-11-16" },
+        result: { orderId: "O-6", orderIds: ["O-6"], delivery: "2026-11-16" },
         approval: null,
         proof: [
           { at: "2026-11-14T10:51:01+02:00", actor: AGENT, text: "Asked for 25 kg of lactose-free mozzarella", hash: h(21) },
@@ -186,7 +186,7 @@ function day(): Entry[] {
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
         rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
-        result: { orderId: "O-5", delivery: "2026-11-16" },
+        result: { orderId: "O-5", orderIds: ["O-5"], delivery: "2026-11-16" },
         approval: null,
         proof: [
           { at: "2026-11-14T10:14:01+02:00", actor: AGENT, text: "Asked for 1,000 litres of lactose-free milk", hash: h(11) },
@@ -243,7 +243,7 @@ function day(): Entry[] {
           { label: "Allergens", value: "Contains milk, no nuts", note: null, ok: true },
         ],
         rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
-        result: { orderId: "O-4", delivery: "2026-11-09" },
+        result: { orderId: "O-4", orderIds: ["O-4"], delivery: "2026-11-09" },
         approval: null,
         proof: [
           { at: "2026-11-07T14:32:01+02:00", actor: AGENT, text: "Asked for 40 kg of unsalted butter", hash: h(1) },

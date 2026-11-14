@@ -75,7 +75,7 @@
 {#snippet facts()}
   {#if pill}<VPill label={pill.label} tone={pill.tone} testid="agent-state" id="agent-state" />{/if}
   {#if a?.state === "consent" && a.consent}
-    <span data-testid="consent-who">{a.consent.name}{#if a.consent.at} called at {hm(a.consent.at)}{/if}</span>
+    <span data-testid="consent-who">{a.consent.at ? `${a.consent.name} called at ${hm(a.consent.at)}` : a.consent.name}</span>
   {/if}
 {/snippet}
 
