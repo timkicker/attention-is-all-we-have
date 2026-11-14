@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { TopicsRes } from '../api/types'
 import type { SqlStatement } from '../api/types'
-import { formatSql, fromStats, pickQuery, versionsOf, wrapLine } from './hood'
+import { formatSql, fromStats, pickQuery, queryKind, shortGpu, versionsOf, wrapLine } from './hood'
 
 const st = (text: string, rows: number, params?: SqlStatement['params']): SqlStatement => ({
   text,
@@ -43,9 +43,9 @@ describe('fromStats', () => {
   it('reads recall, agreement and embedding rate', () => {
     const v = fromStats({
       judge_eval: { accuracy: 0.912, n: 120, alignment: { 'R@1': 0.57, 'R@5': 0.89 } },
-      embed_rate: { per_s: 4555.2, gpu: 'A100 on Verda' },
+      embed_rate: { per_s: 4555.2, gpu: 'NVIDIA A100-SXM4-80GB on Verda, bge-m3 fp16' },
     })
-    expect(v).toEqual({ top1: 0.57, top5: 0.89, embedRate: 4555.2, embedGpu: 'A100 on Verda', judgeAccuracy: 0.912, judgeN: 120 })
+    expect(v).toEqual({ top1: 0.57, top5: 0.89, embedRate: 4555.2, embedGpu: 'A100 GPU, bge-m3', judgeAccuracy: 0.912, judgeN: 120 })
   })
   it('gives null for every missing stat, never a made-up number', () => {
     expect(fromStats({ embed_rate: { laptop_ollama: 19.98 } })).toEqual({
@@ -105,5 +105,19 @@ describe('wrapLine keeps calls whole', () => {
     const out = wrapLine(line, 60)
     expect(out.some((l) => l.includes('VEC_DISTANCE_COSINE(b.emb, a.emb)'))).toBe(true)
     expect(out.some((l) => l.trimStart().startsWith('IGNORE INDEX'))).toBe(true)
+  })
+})
+
+describe('stored matches', () => {
+  it('picks the align read over the verdict lookup and says it reads stored matches', () => {
+    const align = st('SELECT al.src_h, al.`rank` AS rnk FROM align al JOIN claim b ON 1', 750)
+    const verdict = st('SELECT x.src_h, VEC_DISTANCE_COSINE(b.emb, a.emb) AS dist FROM (SELECT 1) x', 70)
+    expect(pickQuery([verdict, align])).toBe(align)
+    expect(queryKind(align)).toBe('stored')
+    expect(queryKind(verdict)).toBe('vector')
+  })
+  it('shortens the GPU text and keeps unknown text', () => {
+    expect(shortGpu('NVIDIA A100-SXM4-80GB on Verda, bge-m3 fp16')).toBe('A100 GPU, bge-m3')
+    expect(shortGpu('laptop')).toBe('laptop')
   })
 })

@@ -11,6 +11,8 @@ export const MATCHED_P2 = 'Each Finnish statement gets an embedding. Vector sear
 export const QUERY_H = 'The query'
 export const QUERY_P = 'The Differences list reads one past day and finds the five closest statements across all editions'
 /** Under live data the logged statement keeps the five closest per edition, so it says so. */
+export const QUERY_P_STORED =
+  'The Differences list reads one day from the stored versions and takes the matches found ahead for that day: the five closest statements in each other edition. This is the statement as it last ran'
 export const QUERY_P_LIVE = 'The Differences list reads one day and finds the five closest statements in each other edition. This is the statement as it last ran'
 export const NUMBERS_H = 'Numbers'
 /** "Versions stored for Winter War". */
@@ -29,9 +31,9 @@ export function recall(n: number): string {
   return n.toFixed(2)
 }
 export const NOT_MEASURED = 'Not measured'
-/** "Embedding rate on NVIDIA A100 ..." (gpu as the API stores it). */
+/** "Embedding rate (A100 GPU, bge-m3)". */
 export function embedRate(gpu: string | null): string {
-  return gpu ? `Embedding rate on ${gpu}` : 'Embedding rate'
+  return gpu ? `Embedding rate (${gpu})` : 'Embedding rate'
 }
 /** "4,555 per second". */
 export function perSecond(n: number): string {
@@ -49,7 +51,9 @@ export function share(n: number): string {
 export const LIMITS_H = 'Limits'
 export const LIMIT_TRANSLATION = 'English lines are machine translations, so wording differences can come from the translation'
 /** "The model misses some matches. Top-1 recall is 0.57, so check the source edition before quoting". */
-export function limitRecall(top1: number): string {
-  return `The model misses some matches. Top-1 recall is ${recall(top1)}, so check the source edition before quoting`
+export function limitRecall(top1: number | null): string {
+  return top1 === null
+    ? 'The model misses some matches, so check the source edition before quoting'
+    : `The model misses some matches. Top-1 recall is ${recall(top1)}, so check the source edition before quoting`
 }
 export const LIMIT_SCOPE = 'Only seven editions, and only articles that have a Finnish version'
