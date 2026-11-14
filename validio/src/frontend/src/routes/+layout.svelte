@@ -431,12 +431,12 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 24px;
+    padding: var(--v-dialog-pad);
   }
   .token h2 {
     margin: 0;
-    font-size: 15px;
-    line-height: 22px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     font-weight: 600;
   }
   .token p {

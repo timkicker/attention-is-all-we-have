@@ -43,7 +43,7 @@
   .vr {
     display: grid;
     grid-template-columns: 184px minmax(0, 1fr) auto;
-    align-items: start;
+    align-items: baseline;
     min-height: 56px;
     padding: 12px 16px;
     color: inherit;

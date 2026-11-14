@@ -121,10 +121,10 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 20px 20px;
+    padding: var(--v-dialog-pad);
   }
   .ask.phone {
-    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--v-dialog-pad) + env(safe-area-inset-bottom));
   }
   header {
     display: flex;
@@ -134,8 +134,8 @@
   }
   h2 {
     margin: 0;
-    font-size: 15px;
-    line-height: 22px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     font-weight: 600;
   }
   .send {
@@ -188,7 +188,7 @@
   }
   .none {
     margin: 0;
-    padding: 12px 0;
+    padding: 12px 8px;
     font-size: 13px;
     line-height: 20px;
     color: var(--v-muted);

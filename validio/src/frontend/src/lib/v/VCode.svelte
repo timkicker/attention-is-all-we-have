@@ -56,9 +56,8 @@
 </form>
 
 <style>
+  /* Field and buttons at the one control height (tokens.css): 32 on the desk, 44 on the phone. */
   .vcode {
-    --height-control: 44px;
-    --height-control-prominent: 44px;
     display: flex;
     flex-direction: column;
     gap: 4px;
