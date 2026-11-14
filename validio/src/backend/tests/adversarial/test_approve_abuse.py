@@ -74,7 +74,7 @@ def test_reject_after_approve(client, ctx, waiting):
 
 
 def test_placed_and_blocked_orders_cannot_be_approved(client, ctx):
-    """An order placed alone or blocked by the Hard Lines never goes through approve."""
+    """An order placed automatically or blocked by the Hard Lines never goes through approve."""
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     auth = lambda: {"Authorization": f"SD-JWT {h.presentation()}"}
     # the refused choice first: after the milk is placed, M-1's running total blocks a second milk request

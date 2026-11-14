@@ -1,5 +1,5 @@
 """Renew a Steady Order. Lines without a flag go through the normal pipeline (Fact Grades, Hard Lines).
-A line short on stock goes to Split Fill and renews alone only when the split keeps every rule.
+A line short on stock goes to Split Fill and renews automatically only when the split keeps every rule.
 Lines Drift Watch flagged wait for a person.
 
 The Spend Pass gives the money limits. The diet rule applies per line: each line carries its own required

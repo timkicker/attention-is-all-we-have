@@ -5,7 +5,7 @@ import { defineConfig } from "@playwright/test";
 
 // `make e2e-live`: the v2 pages in a browser against the live backend, on a demo copy as a juror gets it
 // (e2e-live/kitchen.ts): login page, Try the demo kitchen, a real MCP client (scripts/connector_check.py)
-// connected on the Agent page's URL (flow.demo.ts: order alone, lower Rules, approve, Pause, Disconnect;
+// connected on the Agent page's URL (flow.demo.ts: order automatically, lower Rules, approve, Pause, Disconnect;
 // pages.demo.ts: a click through every page).
 // Here one FastAPI process serves the built web app (VITE_API=live) and the API with accounts in their own
 // store under artifacts/e2e-live, replayed Valio answers, its own port (E2E_PORT, default 8419), so

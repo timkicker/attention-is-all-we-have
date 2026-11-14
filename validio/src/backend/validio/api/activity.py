@@ -6,7 +6,7 @@ GET /api/activity/{id}    one item read top to bottom: what the agent asked, wha
                           rule that decided, the result or the approval, the ledger entries as proof
 
 Everything here is composed from the views that already exist (requests, orders, Steady Orders, the ledger, the
-Rules and the agent link); nothing decides, nothing is stored. A request the agent was cleared to order alone
+Rules and the agent link); nothing decides, nothing is stored. A request the agent was cleared to order automatically
 but has not confirmed yet ("working") is no item until it is ordered."""
 
 import re
@@ -43,7 +43,7 @@ class ActivityItem(Model):
     total_cents: int | None
     at: str
     order_id: str | None
-    approved_by_you: bool = Field(False, description="ordered because the owner approved it, not alone")
+    approved_by_you: bool = Field(False, description="ordered because the owner approved it, not automatically")
 
 
 class Counts(Model):
@@ -144,7 +144,7 @@ def _why(ctx: Ctx, v: SupplyRequestView) -> str:
     decided = _decided(ctx, v.id)
     if v.status == "ordered_alone":
         alone = re.search(r"inside the auto limit of ([\d,.]+ €)", decided)
-        return f"Under your {alone.group(1)} limit, ordered alone" if alone else "Ordered alone"
+        return f"Under your {alone.group(1)} limit, ordered automatically" if alone else "Ordered automatically"
     if v.status in ("approved", "ordered"):
         return "You approved it"
     if v.status == "rejected":
@@ -364,7 +364,7 @@ def _standing_detail(ctx: Ctx, request: Request, sid: str) -> ActivityDetail:
     checks = [Check(label="Product", value=(v := display_name(ln.name)), note=_note(v, _line_note(ln)),
                     ok=LINE_OK.get(ln.result)) for ln in full.lines]
     sp = full.steady_pass
-    limits = (f"Under the Steady Order's own pass: alone up to {money(sp.auto_limit_cents)}, blocked above "
+    limits = (f"Under the Steady Order's own pass: orders automatically up to {money(sp.auto_limit_cents)}, blocked above "
               f"{money(sp.hard_cap_cents)}." if sp and sp.auto_limit_cents is not None and sp.hard_cap_cents is not None
               else "Under the Steady Order's own pass.")
     weeks = f", learned from {full.weeks_learned} weeks" if full.weeks_learned else ""

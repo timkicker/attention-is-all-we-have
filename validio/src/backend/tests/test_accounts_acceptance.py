@@ -1,14 +1,14 @@
 """Acceptance: the "Done means" path of the accounts plan through the HTTP API, two demo browsers side by side.
 
 Browser A walks the path: try the demo kitchen, pair the demo agent's key (a signing agent on /agent/v1/pair),
-let that agent send the example request over MCP and see it ordered, lower the alone limit in Rules with the code, send again and see it wait, approve with the code,
+let that agent send the example request over MCP and see it ordered, lower the automatic limit in Rules with the code, send again and see it wait, approve with the code,
 pause the agent and see the refusal in the ledger, change the diet in Settings. Browser B holds its own demo
 copy the whole time; after every step nothing A did shows in B. At the end B runs the example itself and is
 judged on its own limits and its own week.
 
 Numbers: docs/ACCOUNTS-API.md and the demo template the orchestrator fixed (agent not connected at start,
-alone up to 1,200.00 €, approval up to 2,000.00 €, demo code 246810; the example request is 1,000 l of
-lactose-free milk, 1,010.00 € from the recorded Valio answers, ordered alone; alone limit 800.00 € makes
+automatically up to 1,200.00 €, approval up to 2,000.00 €, demo code 246810; the example request is 1,000 l of
+lactose-free milk, 1,010.00 € from the recorded Valio answers, ordered automatically; automatic limit 800.00 € makes
 the same request wait).
 
 Both browsers call from addresses that are not this machine, so only the session cookie lets them in, as on

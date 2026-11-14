@@ -10,12 +10,12 @@ from validio.orders.explain import explain
 
 @pytest.mark.parametrize("decision, status, code, text", [
     ({"outcome": "auto_order", "ruleIds": ["auto-order"],
-      "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs "
+      "sentence": "May order it automatically: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs "
                   "is attested."}, "ordered_alone", "auto_ok",
-     "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."),
+     "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders."),
     ({"outcome": "ask_human", "ruleIds": ["ask-human"],
       "sentence": "Needs a person: 1,390.00 € is over the auto limit of 1,200.00 €."}, "waiting", "over_alone",
-     "Waiting for you: 1,390.00 € is over your 1,200.00 € limit for buying alone."),
+     "Waiting for you: 1,390.00 € is over your 1,200.00 € limit for automatic orders."),
     ({"outcome": "block", "ruleIds": ["never-over-hard-cap"],
       "sentence": "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."}, "blocked", "hard_cap",
      "Not ordered: 2,194.00 € is over your 2,000.00 € never-above limit. Your buying agent can't change this."),
@@ -40,7 +40,7 @@ def test_auto_order_request_explains_itself_and_compares(client, holder):  # noq
     v = client.get(f"/api/requests/{req['id']}").json()
     d = v["decision"]
     assert d["reasonCode"] == "auto_ok"
-    assert d["ownerText"] == "Cleared to buy without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
+    assert d["ownerText"] == "Cleared to buy without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders."
     assert v["valioMode"] == "replay" and v["valioText"] == "Valio's recorded answers"
     assert isinstance(v["elapsedMs"], int) and v["speedText"].startswith("Done in ")
     assert f"{v['liveChecked']['ids']} products checked with Valio" in v["speedText"]

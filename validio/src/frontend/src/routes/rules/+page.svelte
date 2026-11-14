@@ -44,7 +44,7 @@
       <Notice id="rules-saved" text="Saved. Your agent follows these rules from its next order." />
     {/if}
     <ListSection id="money" title="Money, before VAT">
-      <ListRow id="rule-alone" label="Ordered alone" value={upTo(r.aloneUpToCents)} />
+      <ListRow id="rule-alone" label="Ordered automatically" value={upTo(r.aloneUpToCents)} />
       <ListRow id="rule-waiting" label="Waiting for you" value={upTo(r.approvalUpToCents)} />
       <ListRow id="rule-blocked" label="Blocked" value="Above {money(r.approvalUpToCents)}" />
       <ListRow id="rule-week" label="Per week" value={r.perWeekCents == null ? "No limit" : upTo(r.perWeekCents)} />

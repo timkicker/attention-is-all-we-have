@@ -72,7 +72,7 @@ function day(): Entry[] {
         ? "You approved it"
         : answer === "rejected"
           ? "You said no"
-          : "Over your 1,200.00 € limit for ordering alone",
+          : "Over your 1,200.00 € limit for automatic orders",
     totalCents: 151500,
     at: "2026-11-14T11:05:00+02:00",
     orderId: "O-7",
@@ -98,10 +98,10 @@ function day(): Entry[] {
         ],
         rule:
           answer === "approved"
-            ? { text: "Over your 1,200.00 € limit for ordering alone. You approved it.", version: RULE_V }
+            ? { text: "Over your 1,200.00 € limit for automatic orders. You approved it.", version: RULE_V }
             : answer === "rejected"
               ? { text: "You said no.", version: RULE_V }
-              : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V },
+              : { text: "Over your 1,200.00 € limit for automatic orders.", version: RULE_V },
         result: answer === "approved" ? { orderId: "O-7", orderIds: ["O-7"], delivery: "2026-11-16" } : null,
         approval: answer === "waiting" ? { orderId: "O-7", holdUntil: "2026-11-14T15:00:00+02:00" } : null,
         proof: r4proof,
@@ -157,13 +157,13 @@ function day(): Entry[] {
           { label: "Price", value: "7.20 € per kg", note: "4 % above the original", ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered automatically.", version: RULE_V },
         result: { orderId: "O-6", orderIds: ["O-6"], delivery: "2026-11-16" },
         approval: null,
         proof: [
           { at: "2026-11-14T10:51:01+02:00", actor: AGENT, text: "Asked for 25 kg of lactose-free mozzarella", hash: h(21) },
           { at: "2026-11-14T10:51:03+02:00", actor: "Validio", text: "Out of stock, substitute from Valio's list", hash: h(22) },
-          { at: "2026-11-14T10:51:05+02:00", actor: "Validio", text: "Ordered alone, order O-6", hash: h(23) },
+          { at: "2026-11-14T10:51:05+02:00", actor: "Validio", text: "Ordered automatically, order O-6", hash: h(23) },
         ],
       },
     },
@@ -187,12 +187,12 @@ function day(): Entry[] {
           { label: "Stock", value: "In stock, delivery Mon 16 Nov", note: null, ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Under your 1,200.00 € limit, ordered automatically.", version: RULE_V },
         result: { orderId: "O-5", orderIds: ["O-5"], delivery: "2026-11-16" },
         approval: null,
         proof: [
           { at: "2026-11-14T10:14:01+02:00", actor: AGENT, text: "Asked for 1,000 litres of lactose-free milk", hash: h(11) },
-          { at: "2026-11-14T10:14:03+02:00", actor: "Validio", text: "Ordered alone, order O-5", hash: h(12) },
+          { at: "2026-11-14T10:14:03+02:00", actor: "Validio", text: "Ordered automatically, order O-5", hash: h(12) },
         ],
       },
     },
@@ -202,7 +202,7 @@ function day(): Entry[] {
         kind: "standing",
         status: "standing",
         title: "Weekly Monday order, 4 lines",
-        why: "Next run Mon 17 Nov, ordered alone if under your limits",
+        why: "Next run Mon 17 Nov, ordered automatically if under your limits",
         totalCents: 198080,
         at: "2026-11-13T09:00:00+02:00",
         orderId: null,
@@ -215,7 +215,7 @@ function day(): Entry[] {
           { label: "Price", value: "1,980.80 € a week", note: "Valio prices on Thu 13 Nov", ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Each run is checked again; ordered alone if under your limits.", version: RULE_V },
+        rule: { text: "Each run is checked again; ordered automatically if under your limits.", version: RULE_V },
         result: null,
         approval: null,
         proof: [
@@ -244,12 +244,12 @@ function day(): Entry[] {
           { label: "Stock", value: "In stock, delivery Mon 9 Nov", note: null, ok: true },
           { label: "Allergens", value: "Contains milk, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Under your 1,200.00 € limit, ordered automatically.", version: RULE_V },
         result: { orderId: "O-4", orderIds: ["O-4"], delivery: "2026-11-09" },
         approval: null,
         proof: [
           { at: "2026-11-07T14:32:01+02:00", actor: AGENT, text: "Asked for 40 kg of unsalted butter", hash: h(1) },
-          { at: "2026-11-07T14:32:03+02:00", actor: "Validio", text: "Ordered alone, order O-4", hash: h(2) },
+          { at: "2026-11-07T14:32:03+02:00", actor: "Validio", text: "Ordered automatically, order O-4", hash: h(2) },
         ],
       },
     },
@@ -317,7 +317,7 @@ function order(id: string): Order {
     lines: [],
     totalCents: 151500,
     history: [{ state: "waiting", at: "2026-11-14T11:05:04+02:00" }],
-    decision: { outcome: "ask_human", ruleIds: ["approval_up_to"], sentence: "Over your 1,200.00 € limit for ordering alone" },
+    decision: { outcome: "ask_human", ruleIds: ["approval_up_to"], sentence: "Over your 1,200.00 € limit for automatic orders" },
     spendPassId: "M-1",
     deliverBy: "2026-11-16",
   };

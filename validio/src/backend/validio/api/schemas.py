@@ -108,7 +108,7 @@ class DecisionView(Model):
                           "outside_groups, none_available, blocked_other, valio_down, too_many, unreadable")
     owner_text: str | None = Field(
         None, description="one plain sentence in the words of the kitchen's own limits: "
-                          "\"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone.\"")
+                          "\"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders.\"")
 
     @model_validator(mode="after")
     def _text(self):
@@ -535,12 +535,12 @@ class LedgerHeadView(Model):
 
 class SpendPassIn(Model):
     """The owner signs M-1 again. Same id and window, so the week's spend carries over."""
-    auto_limit_cents: int = Field(gt=0, le=10_000_000, description="the agent may order alone up to this")
+    auto_limit_cents: int = Field(gt=0, le=10_000_000, description="the agent may order automatically up to this")
     hard_cap_cents: int = Field(gt=0, le=10_000_000, description="never above this, not even with approval")
     diet: list[Literal["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN", "VEGAN"]] = Field(
         [], description="every line must keep these; Valio answers are recorded for lactose free only")
     deliver_by: date = Field(description="the latest delivery; Valio answers are recorded for 2026-11-16 only")
-    substitutes: bool = Field(True, description="whether a swap from Valio's list may order alone")
+    substitutes: bool = Field(True, description="whether a swap from Valio's list may order automatically")
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
 

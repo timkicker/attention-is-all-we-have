@@ -8,7 +8,7 @@ The login page offers email login, **Create account** and **Try the demo kitchen
 
 A thin bar on top shows the approval code 246810 and **Reset**. The code is shown on purpose, because there is no other way to learn it. The sidebar holds Home, Activity, Rules and Agent, and the kitchen's name at the bottom opens Settings. On the phone the kitchen's name sits at the top.
 
-**Activity** already holds the demo scenes: the lactose-free milk ordered alone, the mozzarella swap the owner approved, and the weekly Steady Order. **Rules** shows the demo kitchen's limits: ordered alone up to 1,200.00 €, waiting for you up to 2,000.00 €, 8,000.00 € per week, and substitutes from Valio's list with up to 5 % extra cost.
+**Activity** already holds the demo scenes: the lactose-free milk ordered automatically, the mozzarella swap the owner approved, and the weekly Steady Order. **Rules** shows the demo kitchen's limits: ordered automatically up to 1,200.00 €, waiting for you up to 2,000.00 €, 8,000.00 € per week, and substitutes from Valio's list with up to 5 % extra cost.
 
 ## 2 Connect an agent
 
@@ -16,13 +16,13 @@ Click **Agent**, then **Connect agent**. The page shows an MCP address `…/mcp/
 
 The agent's first call turns the Agent page into a check. It shows a verification code like `K7P-3QX` and lists what the agent may do. The agent receives the same code: every tool answers "Waiting for the kitchen to press Allow in Validio. Show the user this verification code: …" until you press Allow, and `connection_status` returns the code at any time. If the codes match, click **Allow**. The page now shows the agent's name, when it connected and when it was last used.
 
-## 3 Order alone
+## 3 Order automatically
 
-Ask the agent: "1000 litres of lactose-free milk by Monday, budget 1200 euro". It calls `request_supply`, gets `auto_order` and confirms. **Home** shows the order under Latest as "Ordered alone". Open it in **Activity** to see what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. **Proof** at the bottom shows the order's ledger entries with their hashes.
+Ask the agent: "1000 litres of lactose-free milk by Monday, budget 1200 euro". It calls `request_supply`, gets `auto_order` and confirms. **Home** shows the order under Latest as "Ordered automatically". Open it in **Activity** to see what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. **Proof** at the bottom shows the order's ledger entries with their hashes.
 
 ## 4 Lower the limit, then approve
 
-Go to **Rules**, then **Edit**. Set "Ordered alone up to" to 500 and save with the code 246810. Rules now shows the next version.
+Go to **Rules**, then **Edit**. Set "Ordered automatically up to" to 500 and save with the code 246810. Rules now shows the next version.
 
 Ask the agent for the same milk again. This time the answer is `ask_human`, and Home lists the order under **Needs you**. Open it. It says "Waiting for you" and "Not ordered yet". Click **Approve**, type 246810 and confirm. Validio asks Valio again for price and stock before placing the order, and the item disappears from Needs you. This works the same way in the 390 px window.
 

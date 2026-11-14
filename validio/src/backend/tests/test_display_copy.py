@@ -69,7 +69,7 @@ def test_spend_pass_fields_in_user_words(client, holder):
     ask_milk(client, holder)
     sp = client.get("/api/spend-passes/M-1").json()
     words = sp["disclosedText"] + sp["hiddenText"]
-    assert "preferred labels" in words and "orders alone up to" in words
+    assert "preferred labels" in words and "orders automatically up to" in words
     assert not {"prefer labels", "auto limit"} & set(words)
 
 

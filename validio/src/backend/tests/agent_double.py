@@ -18,7 +18,7 @@ def _text(t, planted=False):
 def _milk():
     return {
         "id": "R-1", "requestId": "R-1", "status": "working",
-        "decision": {"outcome": "auto_order", "ruleIds": ["auto-order"], "sentence": "May order 464306 alone."},
+        "decision": {"outcome": "auto_order", "ruleIds": ["auto-order"], "sentence": "May order 464306 automatically."},
         "liveChecked": {"calls": 2, "ids": 12, "idsPerCall": [12, 12]}, "totalCents": 101000,
         "lines": [{"lineId": "L1", "text": "1000 litres of lactose-free milk",
                    "options": [{"productId": "464306", "name": "Valio Arki Eila 1 l", "verdict": "chosen",

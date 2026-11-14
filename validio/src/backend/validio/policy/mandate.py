@@ -94,7 +94,7 @@ NEVER_ALLERGENS: dict[str, frozenset[str]] = {
     "mustard": frozenset({"BM"}), "lupin": frozenset({"NL"}), "sulphites": frozenset({"AU"}),
 }
 
-# The only `substitutes` value that lets a listed substitute order alone. Anything else fails closed.
+# The only `substitutes` value that lets a listed substitute order automatically. Anything else fails closed.
 SUBSTITUTES_LISTED = "listed_and_rules_kept"
 
 

@@ -228,7 +228,7 @@ const SCENES = {
     await point("pass-auto", 2);
     await point("pass-cap", 2);
   },
-  // Shot 2: ordered alone, the ranking and the planted line
+  // Shot 2: ordered automatically, the ranking and the planted line
   2: async () => {
     await agent(2);
     await click("nav-orders");

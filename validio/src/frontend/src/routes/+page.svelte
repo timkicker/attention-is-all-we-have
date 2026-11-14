@@ -14,7 +14,7 @@
 
   const home = live(() => api.home());
 
-  // The most the agent orders alone, for the figures; only once the rules were saved.
+  // The most the agent orders automatically, for the figures; only once the rules were saved.
   const rules = live(() => agentApi.rules().catch(() => null));
   const alone = $derived(rules.data?.saved ? rules.data.aloneUpToCents : null);
 
@@ -32,7 +32,7 @@
       id: "rules",
       done: h.setup.rulesSaved,
       title: "Check your rules",
-      detail: "How much your agent orders alone, what needs you, what never goes",
+      detail: "How much your agent orders automatically, what needs you, what never goes",
       href: "/rules",
       action: "Rules",
     },
@@ -129,7 +129,7 @@
         {#if alone != null}
           <a class="fig end" href="/rules" data-testid="home-alone">
             <span class="f-num num">{nb(money(alone))}</span>
-            <span class="f-cap">ordered alone, at most</span>
+            <span class="f-cap">ordered automatically, at most</span>
           </a>
         {/if}
       </div>

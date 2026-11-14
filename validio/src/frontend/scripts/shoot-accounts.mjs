@@ -170,15 +170,15 @@ async function walk(browser, v) {
     } else missing.add("agent-technical: tech-fold");
   }
 
-  // the example request, ordered alone, and its page
+  // the example request, ordered automatically, and its page
   await example("inbox-ordered");
-  const ordered = page.getByText(/ordered alone/i).filter({ visible: true }).first();
+  const ordered = page.getByText(/ordered automatically/i).filter({ visible: true }).first();
   if (await ordered.count()) {
     await ordered.click();
     await shoot("request-ordered");
   }
 
-  // Rules: lower the alone limit, the code prompt, saved
+  // Rules: lower the automatic limit, the code prompt, saved
   if (await nav("rules", "nav-agent", /^agent$/i)) {
     await page.locator("#rules").scrollIntoViewIfNeeded().catch(() => {});
     if (await click("rules", "rules-edit", "button", /^(edit|set rules)$/i)) {

@@ -82,7 +82,7 @@ State is shown with the kit `Badge` at 20px and one width per column (min-width 
 
 | State | Badge |
 |:---|:---|
-| ordered alone, ordered, approved, chosen, renewed, chain verified | `success` |
+| ordered automatically, ordered, approved, chosen, renewed, chain verified | `success` |
 | blocked, rejected, contradicted, chain broken | `destructive` |
 | waiting for you, drift flag | `secondary` plus a lucide `Hand` or `TrendingUp` icon. It is a call to act, carried by the word and the icon, not by a warning colour |
 | ranked, attested, unchecked, not deliverable, simulated, fixture | `outline` (neutral) |
@@ -123,10 +123,10 @@ The kit's Inter Variable and its base-relative ladder off 15px: `2xs` 12, `xs` 1
 | Screen | Visible at once | Opens on request |
 |:---|:---|:---|
 | Inbox list | The sample Notice, the filter (All / Waiting / Blocked) and the rows. A row is the request name and its time, the outcome and the total, and one clause of reason | the request, in the pane |
-| Request pane | The title ("1000 cartons of lactose-free milk"). One `Section` card holding the outcome as icon and text, the total as the big figure, the agent's sentence in secondary and "Checked 9 products live". Under it, a `Progress` bar for the Spend Pass ("1,010.00 € of 1,200.00 € allowed alone"). When the request is waiting, the card holds "Open approval" as the primary button | "Ranked options (7)" as a `Collapsible`. Each option is a verb row: `chosen / Valio Arki Eila 1 l / 464306 / 1,010.00 €`. Each row's facts open one level deeper, with the grade as a word. Substitutes and options beyond the list open the same way. A `LinkCard` leads to the Spend Pass |
+| Request pane | The title ("1000 cartons of lactose-free milk"). One `Section` card holding the outcome as icon and text, the total as the big figure, the agent's sentence in secondary and "Checked 9 products live". Under it, a `Progress` bar for the Spend Pass ("1,010.00 € of 1,200.00 € allowed automatically"). When the request is waiting, the card holds "Open approval" as the primary button | "Ranked options (7)" as a `Collapsible`. Each option is a verb row: `chosen / Valio Arki Eila 1 l / 464306 / 1,010.00 €`. Each row's facts open one level deeper, with the grade as a word. Substitutes and options beyond the list open the same way. A `LinkCard` leads to the Spend Pass |
 | Approve (390) | The question in at most 12 words ("Order grated Maestrella for 196.60 €?"), two short body sentences, the proposal card, then Reject and Approve | "Why not the others (4)" as verb rows |
 | Approve, done | One sentence ("Ordered. Valio was asked again first.") and three timeline rows | |
-| Spend Pass | The grant card: tile "B", "agent:buyer-1", "Signed by the kitchen". The rows are `may order alone / up to 1,200.00 €`, `never above / 2,000.00 €`, `only / lactose free`, `deliver by / 16 Nov`, `valid until / 17 Nov` | "What the agent sees" as one collapsible row |
+| Spend Pass | The grant card: tile "B", "agent:buyer-1", "Signed by the kitchen". The rows are `may order automatically / up to 1,200.00 €`, `never above / 2,000.00 €`, `only / lactose free`, `deliver by / 16 Nov`, `valid until / 17 Nov` | "What the agent sees" as one collapsible row |
 | Steady orders | One `LinkCard` per order | the order |
 | Steady order | `Page` with the back door, the neutral Notice that the history is simulated, a facts line (4 lines, this week's total, change against usual) and Renew as the primary button | After renewal, a `Section` of rows, one per line, with the result as text and its action in the control column. Each line's detail (the split, the substitute, the 8-week drift chart) is collapsible |
 | Open ledger | The chain status as the first line (`ShieldCheck` plus "Chain verified, 10 entries"), then a lifeline (one lane, 10:00:02 to 10:01:15, a mark per entry, the human wait drawn as a bar), then the entries as rows grouped by request under sentence-case heads | each entry's hash, previous hash and disclosed fields |

@@ -103,8 +103,8 @@ demo-smoke:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c playwright.live.config.ts
 
 # The v2 pages in a browser against the live backend: built app and API from one process on E2E_PORT (8419),
-# a demo copy from the plain seed, a real MCP client connected on the Agent page. flow.demo.ts: order alone,
-# lower the alone limit in Rules, the next order waits, approve, Pause, Disconnect; pages.demo.ts: every page.
+# a demo copy from the plain seed, a real MCP client connected on the Agent page. flow.demo.ts: order automatically,
+# lower the automatic limit in Rules, the next order waits, approve, Pause, Disconnect; pages.demo.ts: every page.
 # E2E_BASE=https://... runs it against a running server or the public link (no build needed then:
 # npx playwright test -c e2e-live/demo.config.ts in src/frontend).
 e2e-live:

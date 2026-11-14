@@ -342,7 +342,7 @@ The answer, here with 3 of 31 options and 2 facts each:
     "ruleIds": [
       "auto-order"
     ],
-    "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+    "sentence": "May order 464306 automatically: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
   },
   "totalCents": 101000,
   "liveChecked": {
@@ -549,7 +549,7 @@ Over HTTP it is the body below, sent to `POST /agent/v1/orders` with the Spend P
     "ruleIds": [
       "auto-order"
     ],
-    "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+    "sentence": "May order 464306 automatically: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
   },
   "spendPassId": "M-1",
   "deliverBy": "2026-11-16",
@@ -609,7 +609,7 @@ Reads an order and its state, which is `waiting`, `approved`, `placed`, `rejecte
     "ruleIds": [
       "auto-order"
     ],
-    "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+    "sentence": "May order 464306 automatically: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
   },
   "spendPassId": "M-1",
   "deliverBy": "2026-11-16",
@@ -619,7 +619,7 @@ Reads an order and its state, which is `waiting`, `approved`, `placed`, `rejecte
 
 ### renew_steady_order
 
-Renews this week's Steady Order. Lines that match the kitchen's usual pattern are ordered alone and the rest wait for the owner with a reason and a button label. A second renewal in the same week orders nothing twice. The tool exists only over MCP and calls the web app's renewal route behind the Spend Pass check.
+Renews this week's Steady Order. Lines that match the kitchen's usual pattern are ordered automatically and the rest wait for the owner with a reason and a button label. A second renewal in the same week orders nothing twice. The tool exists only over MCP and calls the web app's renewal route behind the Spend Pass check.
 
 <!-- check: mcp renew_steady_order -->
 ```json

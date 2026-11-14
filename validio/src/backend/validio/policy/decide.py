@@ -1,4 +1,4 @@
-"""Hard Lines: Cedar decides order alone, ask a person or block. The AI model never reaches this.
+"""Hard Lines: Cedar decides to order automatically, ask a person or block. The AI model never reaches this.
 
 The context holds only whole numbers and yes/no values that Validio computed from Valio's data
 and the verified Spend Pass. A policy file that fails to parse or validate raises PolicyError,
@@ -104,7 +104,7 @@ def build_context(
     has_delivery_line: bool = False,
 ) -> PolicyContext:
     """Fill the Cedar context from typed facts. Undisclosed limits count as zero, an undisclosed
-    diet counts as unchecked, so a pass that shows too little can never order alone."""
+    diet counts as unchecked, so a pass that shows too little can never order automatically."""
     grades = {k: _grade(v) for k, v in diet_grades.items()}
     diet = mandate.diet
     if diet is None:
@@ -166,7 +166,7 @@ def context_for(
 
     `sales_qty` is the amount the line needs in the product's sales unit and `deliver_by` the date the request
     asks for. Stock must cover the amount, and the first delivery date must be on or before the earlier of
-    `deliver_by` and the signed `deliverBy`. Without them the line cannot order alone."""
+    `deliver_by` and the signed `deliverBy`. Without them the line cannot order automatically."""
     from validio.trust.claims import claim_check
     from validio.trust.levels import TrustLevel, quantity_fact, stock_in_sales_units
 
@@ -329,13 +329,13 @@ def decide(
     allowed, rules = _ask(policy, "PlaceOrder", product_id, agent_id, c)
     if allowed:
         sentence = (
-            f"May order it alone: {eur(ctx.total_cents)} is inside the auto limit of "
+            f"May order it automatically: {eur(ctx.total_cents)} is inside the auto limit of "
             f"{eur(ctx.auto_limit_cents)} and every fact it needs is attested."
         )
         return Decision(Outcome.ALLOW, rules, sentence, c)
     allowed, esc_rules = _ask(policy, "Escalate", product_id, agent_id, c)
     if allowed:
-        reasons = _escalation_reasons(ctx) or ["no rule lets the agent order it alone"]
+        reasons = _escalation_reasons(ctx) or ["no rule lets the agent order it automatically"]
         return Decision(Outcome.ESCALATE, esc_rules, "Needs a person: " + and_list(reasons) + ".", c)
     blocked = sorted(set(rules) | set(esc_rules)) or ["no-permit"]  # no forbid fired, nothing permitted it
     parts = []
