@@ -7,6 +7,6 @@ export { default as Empty } from "./Empty.svelte";
 export { default as Loading } from "./Loading.svelte";
 export { default as LoadError } from "./LoadError.svelte";
 export { default as PageHead } from "$lib/v/VHead.svelte";
-export { STATUS_PILL, FILTERS, isFilter } from "./status";
+export { STATUS_PILL, APPROVED_PILL, pillOf, FILTERS, isFilter } from "./status";
 export { byDay, dayHead, dayTime, hm, money, nb, total, weekText } from "./format";
 export { live } from "$lib/live.svelte";

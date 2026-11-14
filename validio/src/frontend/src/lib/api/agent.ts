@@ -76,7 +76,13 @@ function start(): Mock {
       wrong: 0,
     };
   return {
-    agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
+    agent: {
+      state: "none",
+      versions: [
+        { version: 2, at: "2026-11-14T10:44:00+02:00", why: "Rules changed" },
+        { version: 1, at: "2026-11-14T10:00:00+02:00", why: "Agent connected" },
+      ],
+    },
     rules: {
       aloneUpToCents: 120000,
       approvalUpToCents: 500000,
@@ -84,8 +90,8 @@ function start(): Mock {
       substitutes: "extra",
       maxExtraPct: 5,
       saved: true,
-      passVersion: 1,
-      diet: { mustBe: [], never: [], options: DIET_OPTIONS },
+      passVersion: 2,
+      diet: { mustBe: ["lactose-free"], never: [], options: DIET_OPTIONS },
     },
     wrong: 0,
   };
@@ -146,17 +152,6 @@ export function mockMcpCall(): string | undefined {
   m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode, at: now() }, versions: m.agent.versions };
   store(m);
   return verifyCode;
-}
-
-// When each consent was first seen on this page, for a server that does not say.
-const seen = new Map<string, string>();
-
-/** When the agent's first call came: the server's `consent.at` once it sends one, else when this page first saw it. */
-export function consentAt(c: NonNullable<AgentState["consent"]>): string {
-  const at = (c as { at?: string }).at;
-  if (at) return at;
-  if (!seen.has(c.keyId)) seen.set(c.keyId, now());
-  return seen.get(c.keyId) as string;
 }
 
 /** Fixture only: the demo Reset puts this kitchen's agent and rules back to the start. */

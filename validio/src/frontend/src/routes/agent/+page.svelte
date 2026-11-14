@@ -8,7 +8,7 @@
   import { Row } from "@arlen/ui-kit/components/ui/row";
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { ChevronRight } from "@lucide/svelte";
-  import { agentApi, consentAt, type AgentState } from "$lib/api/agent";
+  import { agentApi, type AgentState } from "$lib/api/agent";
   import { bump, chrome } from "$lib/chrome.svelte";
   import { ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
   import VPill from "$lib/v/VPill.svelte";
@@ -75,7 +75,7 @@
 {#snippet facts()}
   {#if pill}<VPill label={pill.label} tone={pill.tone} testid="agent-state" id="agent-state" />{/if}
   {#if a?.state === "consent" && a.consent}
-    <span data-testid="consent-who">{a.consent.name} called at {hm(consentAt(a.consent))}</span>
+    <span data-testid="consent-who">{a.consent.name}{#if a.consent.at} called at {hm(a.consent.at)}{/if}</span>
   {/if}
 {/snippet}
 
