@@ -15,6 +15,13 @@ def pytest_runtest_makereport(item, call):
         rep.outcome = "failed"
 
 
+@pytest.fixture(autouse=True)
+def _fake_model(monkeypatch):
+    """The agent's model reads validio/.env, so a developer's Gemini key there would make tests call Gemini.
+    Every test runs the fake twin unless it changes LLM_MODE itself; GeminiLLM.from_env() is not affected."""
+    monkeypatch.setenv("LLM_MODE", "fake")
+
+
 @pytest.fixture(scope="session")
 def catalog():
     from validio.catalog.store import Catalog
