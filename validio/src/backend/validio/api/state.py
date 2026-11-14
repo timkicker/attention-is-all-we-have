@@ -3,11 +3,11 @@
 One runtime for the whole app: the Steady Order routes' `runtime` (api/steady.py) holds the catalog,
 the Valio client and the stores, and reopens the stores when the seed token changes after a reset.
 Ctx adds what only the agent side needs: nonces, the kitchen's public key, the supply pipeline, the
-approval code, the demo token and the kitchen token.
+approval code and the kitchen token.
 
-Public deploys (VALIDIO_PUBLIC=1) must set VALIDIO_APPROVE_CODE, VALIDIO_KITCHEN_TOKEN and, with the demo
-switches on, VALIDIO_DEMO_TOKEN, or the app does not start. Without VALIDIO_PUBLIC, a caller that is not on
-this machine still finds approve, the demo switches and the web reads closed while those are unset.
+Public deploys (VALIDIO_PUBLIC=1) must set VALIDIO_APPROVE_CODE and VALIDIO_KITCHEN_TOKEN, or the app does
+not start. Without VALIDIO_PUBLIC, a caller that is not on this machine still finds approve and the web reads
+closed while those are unset. The demo switches are for demo copies (a session) and this machine only.
 """
 
 import os
@@ -53,7 +53,6 @@ class Ctx:
         self.approve_code = "" if account is not None else env.get("VALIDIO_APPROVE_CODE", "")
         if self.approve_code and not re.fullmatch(r"\d{6}", self.approve_code):
             raise ValueError("VALIDIO_APPROVE_CODE must be 6 digits")
-        self.demo_token = env.get("VALIDIO_DEMO_TOKEN", "")
         self.code_tries: dict[tuple[str, str], int] = {}  # ("key", order or button) and ("client", host)
         self.nonces = NonceStore()
         self._supply: tuple[object, SupplyService] | None = None
@@ -108,8 +107,6 @@ class Ctx:
             return []
         missing = [k for k, v in (("VALIDIO_APPROVE_CODE", self.approve_code),
                                   ("VALIDIO_KITCHEN_TOKEN", self.kitchen_token)) if not v]
-        if self.settings.demo and not self.demo_token:
-            missing.append("VALIDIO_DEMO_TOKEN")
         return missing
 
     @property

@@ -35,7 +35,7 @@ def test_server_env_is_offline_with_its_own_store(tmp_path):
     assert env["VALIDIO_DB"] == str(tmp_path / "validio.db")
     assert env["VALIDIO_KEYS"] == str(tmp_path / "keys")
     assert env["VALIDIO_APPROVE_CODE"] == "123456"
-    assert env["VALIDIO_DEMO_TOKEN"] == ""
+    assert "VALIDIO_DEMO_TOKEN" not in env
     assert env["NO_COLOR"] == "1"
     assert "VALIO_API_KEY" not in env and "GEMINI_API_KEY" not in env
     assert env["PATH"] == "/bin"

@@ -82,12 +82,12 @@ template:
 	$(UV) python -W ignore ../../scripts/demo_check.py --rounds 1 --template --store $(abspath data/template)
 
 # Backend on 127.0.0.1:8410 plus the web app's dev server on 127.0.0.1:5410 with VITE_API=live
-# (Vite hands /api and /agent to the backend). The web client sends no approve code or demo token
-# yet, so this local run switches both off; Ctrl-C stops both.
+# (Vite hands /api and /agent to the backend). The web client sends no approve code
+# yet, so this local run switches it off; Ctrl-C stops both.
 demo-web:
 	$(MAKE) seed
 	trap 'kill 0' INT TERM EXIT; \
-	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= VALIDIO_DEMO_TOKEN= \
+	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= \
 	  uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410) & \
 	(cd src/frontend && VITE_API=live npm run dev)
 

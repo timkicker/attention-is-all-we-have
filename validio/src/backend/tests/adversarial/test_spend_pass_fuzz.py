@@ -488,7 +488,6 @@ async def test_replay_across_http_and_mcp_and_tools(wire):
 
 
 def test_reset_kills_every_outstanding_nonce(wire):
-    from conftest import TOKEN
     from fastapi.testclient import TestClient
 
     from validio.api.app import app
@@ -496,7 +495,7 @@ def test_reset_kills_every_outstanding_nonce(wire):
     _ctx, h = wire
     token = h.presentation()  # nonce issued before the reset
     with TestClient(app) as client:
-        assert client.post("/api/demo/reset", headers={"X-Demo-Token": TOKEN}).status_code == 200
+        assert client.post("/api/demo/reset").status_code == 200
         r = client.post("/agent/v1/requests", headers={"Authorization": f"SD-JWT {token}"},
                         json={"lines": MILK, "idempotencyKey": "after-reset"})
     assert r.status_code == 401 and r.json()["detail"] == "unknown or reused nonce"

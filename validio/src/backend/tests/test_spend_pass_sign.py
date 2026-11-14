@@ -95,8 +95,7 @@ def test_needs_the_code(client):  # noqa: F811
 
 def test_start_over_restores_the_seeded_pass(client, holder, ctx):  # noqa: F811
     assert sign(client).status_code == 200
-    from conftest import TOKEN
-    assert client.post("/api/demo/reset", headers={"X-Demo-Token": TOKEN}).status_code == 200
+    assert client.post("/api/demo/reset").status_code == 200
     fresh = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     assert ask(client, fresh, "500 litres of lactose-free milk by Monday", "c").status_code == 200
     assert client.get("/api/spend-passes/M-1").json()["autoLimitCents"] == 120000

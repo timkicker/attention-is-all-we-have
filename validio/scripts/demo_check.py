@@ -5,8 +5,8 @@ tap and the presenter's buttons go through the web app API. Every number is chec
 blueprint's demo script. Each round starts from a reset; two rounds by default. Ends with ALL SCENES OK.
 
 Without --base it starts its own server on 127.0.0.1:8418 with its own store under artifacts/, so a
-running `make demo` is not touched. With --base it checks that server (VALIDIO_DEMO_TOKEN and
-VALIDIO_APPROVE_CODE from the environment or .env).
+running `make demo` is not touched. With --base it checks that server on this machine (VALIDIO_APPROVE_CODE
+from the environment or .env); the demo switches answer callers on this machine.
 """
 
 import argparse
@@ -66,8 +66,8 @@ def check(cond, what: str):
 
 
 class Run:
-    def __init__(self, base: str, db: Path, keys: Path, token: str, code: str, verbose: bool):
-        self.base, self.db, self.keys, self.token, self.code, self.verbose = base, db, keys, token, code, verbose
+    def __init__(self, base: str, db: Path, keys: Path, code: str, verbose: bool):
+        self.base, self.db, self.keys, self.code, self.verbose = base, db, keys, code, verbose
         self.http = httpx.Client(base_url=base, timeout=30)
 
     def get(self, path: str):
@@ -81,7 +81,7 @@ class Run:
         return r.json()
 
     def demo(self, action: str):
-        return self.post(f"/api/demo/{action}", headers={"X-Demo-Token": self.token})
+        return self.post(f"/api/demo/{action}")
 
     async def agent(self, scene: int):
         holder = Holder.from_seed(lambda: self.get("/agent/v1/nonce"), self.db, self.keys)
@@ -278,13 +278,13 @@ def free_port() -> int:
         return s.getsockname()[1]
 
 
-def start_server(port: int, store: Path, token: str, code: str, keys: Path) -> subprocess.Popen:
+def start_server(port: int, store: Path, code: str, keys: Path) -> subprocess.Popen:
     try:
         httpx.get(f"http://127.0.0.1:{port}/api/health", timeout=1)
         raise SystemExit(f"something already answers on 127.0.0.1:{port}; it is not this check's server")
     except httpx.HTTPError:
         pass
-    e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_KEYS": str(keys), "VALIDIO_DEMO_TOKEN": token,
+    e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_KEYS": str(keys),
          "VALIDIO_APPROVE_CODE": code, "VALIO_MODE": "replay", "VALIDIO_DEMO": "1"}
     log = open(store / "server.log", "w")  # noqa: SIM115  (the server writes it until it stops)
     p = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
@@ -319,20 +319,20 @@ async def main() -> int:
     proc = None
     if args.base:
         base, db = args.base.rstrip("/"), Path(env().get("VALIDIO_DB") or ROOT / "data" / "validio.db")
-        token, code = env().get("VALIDIO_DEMO_TOKEN", ""), env().get("VALIDIO_APPROVE_CODE", "")
+        code = env().get("VALIDIO_APPROVE_CODE", "")
     else:
         store = Path(args.store).resolve() if args.store else ROOT / "artifacts" / "demo-check"
         store.mkdir(parents=True, exist_ok=True)
         if args.store:
             keys = store / "keys"
-        token, code = secrets.token_urlsafe(16), f"{secrets.randbelow(10**6):06d}"
+        code = f"{secrets.randbelow(10**6):06d}"
         port = free_port()
-        proc = start_server(port, store, token, code, keys)
+        proc = start_server(port, store, code, keys)
         base, db = f"http://127.0.0.1:{port}", store / "validio.db"
     try:
         for i in range(args.rounds):
             print(f"round {i + 1} from a reset, scenes {args.scenes}")
-            await Run(base, db, keys, token, code, args.verbose).round(scenes)
+            await Run(base, db, keys, code, args.verbose).round(scenes)
         if args.template:
             from validio.api.settings import DEMO_RULES
 

@@ -5,7 +5,7 @@ the Modal Volume `validio-data` and a volume commit after every write. The catal
 Valio answers sit in the same volume, never in the image or in git. The app's own gate does the rest:
 VALIDIO_PUBLIC=1 makes it refuse to start without the 6 digit approve code, the kitchen token and the demo
 token, all from the Modal secret `validio-web` (VALIDIO_PUBLIC, VALIDIO_DEMO, VALIDIO_APPROVE_CODE,
-VALIDIO_KITCHEN_TOKEN, VALIDIO_DEMO_TOKEN, VALIDIO_MCP_HOSTS, VALIDIO_PUBLIC_READ), never in git.
+VALIDIO_KITCHEN_TOKEN, VALIDIO_MCP_HOSTS, VALIDIO_PUBLIC_READ), never in git.
 VALIDIO_PUBLIC_READ=1 lets a visitor read without the kitchen token; every write stays behind the gates.
 
 Run from validio/:
@@ -113,10 +113,10 @@ def fill() -> str:
 
     demo_seed.reset(Path(TEMPLATE_DB), Path(TEMPLATE_KEYS))
     port = "8419"
-    # a throwaway code and demo token that live only in this container, so the scenes check the gates too
+    # a throwaway code that lives only in this container, so the scenes check the gate too
     env = {**os.environ, "VALIDIO_PUBLIC": "", "VALIDIO_KITCHEN_TOKEN": "",
            "VALIDIO_DB": TEMPLATE_DB, "VALIDIO_KEYS": TEMPLATE_KEYS,
-           "VALIDIO_APPROVE_CODE": f"{secrets.randbelow(10**6):06d}", "VALIDIO_DEMO_TOKEN": secrets.token_urlsafe(16)}
+           "VALIDIO_APPROVE_CODE": f"{secrets.randbelow(10**6):06d}"}
     server = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
                                "--port", port], cwd=f"{REMOTE}/src/backend", env=env)
     try:
