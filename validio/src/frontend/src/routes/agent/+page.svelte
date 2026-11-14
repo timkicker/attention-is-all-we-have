@@ -407,7 +407,7 @@
     overflow-wrap: anywhere;
   }
   .hint {
-    grid-column: 2;
+    grid-column: 2 / -1;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
@@ -535,7 +535,7 @@
       grid-column: 1 / -1;
     }
     .hint {
-      grid-column: 1;
+      grid-column: 1 / -1;
     }
   }
 </style>
