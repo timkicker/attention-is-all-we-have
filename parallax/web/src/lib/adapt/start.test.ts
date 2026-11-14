@@ -131,6 +131,11 @@ describe('loadStart', () => {
     expect(markedWords).toEqual([['staged'], [], ['was reported'], []])
   })
 
+  it('puts Winter War first and keeps the API order for the rest', async () => {
+    const r = await loadStart(client([topic('Q1', 'A'), topic('Q134949', 'Winter War'), topic('Q2', 'B')], { ok: true, data: FULL }))
+    expect(r.ok && r.data.prepared.map((p) => p.title)).toEqual(['Winter War', 'A', 'B'])
+  })
+
   it('hides the example without Winter War, on a failed call or with fewer than two differing editions', async () => {
     expect(((await loadStart(client([topic('Q152786', 'M')], { ok: true, data: FULL }))) as { data: { example: unknown } }).data.example).toBeNull()
     const failed = await loadStart(client([topic('Q134949', 'Winter War')], { ok: false, error: { status: 500, code: 'x', message: '' } }))
