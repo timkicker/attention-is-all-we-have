@@ -124,6 +124,20 @@ def _with_stock(a: Availability | None, amount: float) -> Availability | None:
     return None if a is None else replace(a, lines=[replace(ln, amount=float(amount)) for ln in a.lines])
 
 
+
+def over_budget(decision: dict[str, Any], quoted: list[dict], budget_cents: int | None) -> dict[str, Any]:
+    """A budget the request names counts: above it, a person decides, never Validio alone. A block stays."""
+    total = sum(ln["totalCents"] or 0 for ln in quoted)
+    if not budget_cents or total <= budget_cents or decision["outcome"] == "block":
+        return decision
+    why = f"{eur(total)} is over the budget of {eur(budget_cents)} the request names"
+    rules = [*decision["ruleIds"], "over-budget"]
+    if decision["outcome"] == "ask_human":
+        return {**decision, "ruleIds": rules, "sentence": f"{decision['sentence']} Also {why}."}
+    kept = [s for s in re.split(r"(?<=\.)\s+(?=[A-Z])", decision["sentence"]) if not s.startswith("May order it alone")]
+    return {**decision, "outcome": "ask_human", "ruleIds": [r for r in rules if r != "auto-order"],
+            "sentence": " ".join([*kept, f"Needs a person: {why}."]).strip()}
+
 class OrderService:
     def __init__(self, store: Store, catalog: Catalog, valio, audit: AuditLog,
                  clock: Callable[[], datetime], adjust: Callable[[dict], dict] | None = None,
@@ -176,8 +190,10 @@ class OrderService:
         return out
 
     def _decide(self, mandate: Mandate, quoted: list[dict], required_claims: list[str] | None = None,
-                split_base_cents: int | None = None, deliver_by: date | None = None) -> dict[str, Any]:
-        return self._judge(mandate, quoted, required_claims, split_base_cents, deliver_by)[0]
+                split_base_cents: int | None = None, deliver_by: date | None = None,
+                budget_cents: int | None = None) -> dict[str, Any]:
+        decision = self._judge(mandate, quoted, required_claims, split_base_cents, deliver_by)[0]
+        return over_budget(decision, quoted, budget_cents)
 
     def _judge(self, mandate: Mandate, quoted: list[dict], required_claims: list[str] | None = None,
                split_base_cents: int | None = None, deliver_by: date | None = None) -> tuple[dict, list]:
@@ -241,7 +257,7 @@ class OrderService:
                stock_override: dict[str, float] | None = None, budget: CallBudget | None = None,
                required_claims: tuple[str, ...] | list[str] | None = None,
                split_base_cents: int | None = None, accepted_by: str | None = None,
-               accept_note: str | None = None) -> dict:
+               accept_note: str | None = None, budget_cents: int | None = None) -> dict:
         """`required_claims` is the line's own diet (a Steady Order line), None means the Spend Pass diet.
         `split_base_cents` marks the order as a split and is what the wanted amount alone would cost.
         `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without asking you".
@@ -261,7 +277,7 @@ class OrderService:
                 return self.get(seen[1])
             quoted = self.quote(lines, deliver_by, stock_override, budget)
             claims = None if required_claims is None else list(required_claims)
-            decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by)
+            decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by, budget_cents)
             state = STATE[decision["outcome"]]
             total = sum(ln["totalCents"] or 0 for ln in quoted)
             now = self.clock().isoformat()
