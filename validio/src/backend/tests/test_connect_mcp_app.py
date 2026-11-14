@@ -1,0 +1,245 @@
+"""Any MCP agent, also one that cannot sign (a chat app connector, a coding tool, a script): pairing shows
+/mcp/c/<token>/, the first request there asks for consent as "MCP agent", and after Allow Validio holds the key
+and signs for it, so its tools take no spendPass. Rules, approval, Pause and the ledger stay as they are."""
+
+import asyncio
+import hashlib
+import importlib.util
+import re
+import socket
+import sqlite3
+import threading
+import time
+
+import pytest
+from fastapi.testclient import TestClient
+from test_accounts import SIGNUP, app_env  # noqa: F401
+from test_agent_routing import MCP_HEADERS, Mcp, _init
+
+from validio.api import connect
+from validio.api.accounts import get_accounts
+from validio.config import ROOT
+
+MILK = [{"text": "1000 litres of lactose-free milk"}]
+URL = re.compile(r"http://testserver/mcp/c/([A-Za-z0-9_-]{43})/")
+
+
+@pytest.fixture
+def kitchens(app_env):  # noqa: F811
+    """A demo copy (Rules saved) and a signed-up kitchen (Rules never saved), neither with an agent."""
+    agent_http = TestClient(app_env, base_url="http://127.0.0.1:8410")  # MCP checks the Host header
+    with TestClient(app_env) as demo, TestClient(app_env) as new, agent_http as agent:
+        a = demo.post("/api/account/demo").json()["id"]
+        b = new.post("/api/account/signup", json=SIGNUP).json()["id"]
+        yield demo, new, agent, a, b
+
+
+def start_pairing(web) -> str:
+    s = web.post("/api/agent/pair").json()
+    m = URL.fullmatch(s["pairing"]["mcpUrl"])
+    assert m, s["pairing"]
+    return m.group(1)
+
+
+def connect_app(web, agent) -> str:
+    """Connect agent, the MCP agent opens the URL, the kitchen sees "MCP agent" and allows."""
+    token = start_pairing(web)
+    Mcp(agent, f"/mcp/c/{token}/")
+    s = web.get("/api/agent").json()
+    assert s["state"] == "consent" and s["consent"]["name"] == "MCP agent", s
+    out = web.post("/api/agent/allow").json()
+    assert out["state"] == "active" and out["agent"]["kind"] == "mcp" and out["agent"]["name"] == "MCP agent", out
+    return token
+
+
+def test_pairing_shows_the_connector_and_a_reload_keeps_it(kitchens):
+    demo, _, _, a, _ = kitchens
+    token = start_pairing(demo)
+    assert demo.get("/api/agent").json()["pairing"]["mcpUrl"] == f"http://testserver/mcp/c/{token}/"
+    assert connect.connector_ctx(token).account["id"] == a
+    assert demo.get("/api/agent").json()["state"] == "pairing"  # looking it up is no request on the URL
+
+
+def test_tools_wait_for_allow(kitchens):
+    demo, _, agent, _, _ = kitchens
+    token = start_pairing(demo)
+    m = Mcp(agent, f"/mcp/c/{token}/")
+    assert demo.get("/api/agent").json()["state"] == "consent"
+    res = m.call("request_supply", {"lines": MILK})
+    assert res.get("isError") and "press Allow" in res["content"][0]["text"]
+    assert demo.get("/api/inbox").json() == []
+
+
+def test_token_is_kept_as_a_hash_after_allow_and_ends_on_disconnect(kitchens):
+    demo, _, agent, a, _ = kitchens
+    token = connect_app(demo, agent)
+    s = demo.get("/api/agent").json()
+    assert s["agent"]["kind"] == "mcp" and "pairing" not in s
+    db, _ = get_accounts().paths(a)
+    con = sqlite3.connect(db)
+    stored, clear = con.execute("select token_hash, token from connector").fetchone()
+    con.close()
+    assert stored == hashlib.sha256(token.encode()).hexdigest() and clear is None
+    assert token.encode() not in db.read_bytes()
+    assert connect.connector_ctx(token).account["id"] == a
+    assert connect.connector_ctx(token[:-1] + ("A" if token[-1] != "A" else "B")) is None
+    demo.post("/api/agent/disconnect")
+    assert connect.connector_ctx(token) is None
+    again = connect_app(demo, agent)  # a new pairing makes a new token, the old one stays dead
+    assert again != token and connect.connector_ctx(token) is None and connect.connector_ctx(again) is not None
+
+
+def test_cancel_and_a_new_pairing_end_the_token(kitchens):
+    demo, _, _, _, _ = kitchens
+    token = start_pairing(demo)
+    second = start_pairing(demo)
+    assert connect.connector_ctx(token) is None and connect.connector_ctx(second) is not None
+    demo.post("/api/agent/deny")
+    assert connect.connector_ctx(second) is None
+
+
+def test_the_url_outlives_the_code(kitchens, monkeypatch):
+    from datetime import timedelta
+
+    demo, _, agent, _, _ = kitchens
+    token = start_pairing(demo)
+    later = connect._wall() + timedelta(hours=2)
+    monkeypatch.setattr(connect, "_wall", lambda: later)
+    Mcp(agent, f"/mcp/c/{token}/")
+    assert demo.get("/api/agent").json()["state"] == "consent"
+
+
+def test_an_agent_with_its_own_key_ends_the_connector(kitchens):
+    demo, *_ = kitchens
+    token = start_pairing(demo)
+    demo.post("/api/agent/deny")
+    demo.post("/api/agent/demo")
+    out = demo.post("/api/agent/allow").json()
+    assert out["agent"]["kind"] == "agent" and connect.connector_ctx(token) is None
+
+
+def test_the_code_still_pairs_a_signing_agent(kitchens):
+    demo, *_ = kitchens
+    token = start_pairing(demo)
+    assert demo.post("/api/agent/demo").json()["consent"]["name"] != "MCP agent"
+    demo.post("/api/agent/allow")
+    assert connect.connector_ctx(token) is None
+
+
+def test_orders_alone_without_any_pass(kitchens):
+    demo, _, agent, _, _ = kitchens
+    m = Mcp(agent, f"/mcp/c/{connect_app(demo, agent)}/")
+    res = m.call("request_supply", {"lines": MILK, "deliverBy": "2026-11-16"})
+    assert not res.get("isError"), res
+    req = res["structuredContent"]
+    assert req["decision"]["outcome"] == "auto_order", req["decision"]
+    choice = [{"productId": ln["chosen"]["productId"], "salesQty": ln["chosen"]["salesQty"]} for ln in req["lines"]]
+    order = m.call("confirm_order", {"requestId": req["id"], "choice": choice})
+    assert not order.get("isError"), order
+    inbox = {i["id"]: i for i in demo.get("/api/inbox").json()}
+    assert inbox[req["id"]]["status"] == "ordered_alone"
+    assert m.call("get_request", {"requestId": req["id"]})["structuredContent"]["status"] == "ordered_alone"
+    # no idempotencyKey: the same words again are a new request, not the old one handed back
+    second = m.call("request_supply", {"lines": MILK, "deliverBy": "2026-11-16"})["structuredContent"]
+    assert second["id"] != req["id"]
+    actors = {e.get("actorText") for e in demo.get("/api/ledger").json()["entries"]}
+    assert "MCP agent" in actors
+
+
+def test_waits_for_the_kitchens_approval(kitchens):
+    demo, _, agent, _, _ = kitchens
+    m = Mcp(agent, f"/mcp/c/{connect_app(demo, agent)}/")
+    big = [{"text": "1500 litres of lactose-free milk"}]  # above what the demo Rules let it order alone
+    req = m.call("request_supply", {"lines": big, "deliverBy": "2026-11-16"})["structuredContent"]
+    assert req["decision"]["outcome"] == "ask_human" and req["orderId"], req["decision"]
+    order = m.call("get_order", {"orderId": req["orderId"]})["structuredContent"]
+    assert order["state"] == "waiting"
+
+
+def test_refused_while_paused_with_a_ledger_entry(kitchens):
+    demo, _, agent, _, _ = kitchens
+    m = Mcp(agent, f"/mcp/c/{connect_app(demo, agent)}/")
+    demo.post("/api/agent/pause", json={"paused": True})
+    res = m.call("request_supply", {"lines": MILK, "deliverBy": "2026-11-16"})
+    assert res.get("isError") and "paused" in res["content"][0]["text"]
+    refused = [e for e in demo.get("/api/ledger").json()["entries"] if e["sentence"].startswith("Refused MCP agent")]
+    assert len(refused) == 1
+
+
+def test_404_after_disconnect_and_for_unknown_tokens(kitchens):
+    demo, _, agent, _, _ = kitchens
+    token = connect_app(demo, agent)
+    assert agent.post(f"/mcp/c/{token}/", headers=MCP_HEADERS, json=_init(1)).status_code == 200
+    demo.post("/api/agent/disconnect")
+    assert agent.post(f"/mcp/c/{token}/", headers=MCP_HEADERS, json=_init(1)).status_code == 404
+    assert agent.post("/mcp/c/not-a-token/", headers=MCP_HEADERS, json=_init(1)).status_code == 404
+
+
+def test_the_kitchen_path_still_needs_the_pass(kitchens):
+    demo, _, agent, a, _ = kitchens
+    connect_app(demo, agent)
+    m = Mcp(agent, f"/mcp/k/{a}/")
+    res = m.call("request_supply", {"lines": MILK, "idempotencyKey": "k1", "deliverBy": "2026-11-16"})
+    assert res.get("isError"), res
+
+
+def test_a_public_host_is_allowed_on_the_connector(app_env, monkeypatch):  # noqa: F811
+    monkeypatch.setenv("VALIDIO_MCP_HOSTS", "kitchen.example.org")
+    pub = TestClient(app_env, base_url="https://kitchen.example.org")
+    evil = TestClient(app_env, base_url="https://evil.example.org")
+    with TestClient(app_env) as demo, pub, evil:
+        demo.post("/api/account/demo")
+        token = connect_app(demo, pub)
+        assert pub.post(f"/mcp/c/{token}/", headers=MCP_HEADERS, json=_init(1)).status_code == 200
+        assert evil.post(f"/mcp/c/{token}/", headers=MCP_HEADERS, json=_init(1)).status_code == 421
+
+
+# the way any MCP agent does it: the python mcp Client with only the URL, over streamable HTTP, against a
+# running server
+
+
+def _free_port() -> int:
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+async def _first_call(url: str) -> str:
+    from mcp import Client
+
+    async with Client(url) as c:
+        r = await c.call_tool("request_supply", {"lines": MILK})
+        return " ".join(getattr(x, "text", "") for x in r.content) if r.is_error else "no error"
+
+
+def test_mcp_client_with_only_the_url_orders_after_allow(app_env):  # noqa: F811
+    import httpx
+    import uvicorn
+
+    spec = importlib.util.spec_from_file_location("connector_check", ROOT / "scripts" / "connector_check.py")
+    check = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(check)
+    port = _free_port()
+    server = uvicorn.Server(uvicorn.Config(app_env, host="127.0.0.1", port=port, log_level="warning"))
+    t = threading.Thread(target=server.run, daemon=True)
+    t.start()
+    try:
+        for _ in range(100):
+            if server.started:
+                break
+            time.sleep(0.05)
+        with httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=60) as web:
+            web.post("/api/account/demo")
+            url = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
+            assert re.fullmatch(rf"http://127\.0\.0\.1:{port}/mcp/c/[A-Za-z0-9_-]{{43}}/", url), url
+            assert "press Allow" in asyncio.run(_first_call(url))
+            s = web.get("/api/agent").json()
+            assert s["state"] == "consent" and s["consent"]["name"] == "MCP agent"
+            assert web.post("/api/agent/allow").json()["state"] == "active"
+            lines: list[str] = []
+            out = asyncio.run(check.order_milk(url, say=lines.append))
+            assert out["status"] == "ordered_alone", lines
+            assert out["request"]["id"] in {i["id"] for i in web.get("/api/inbox").json()}
+    finally:
+        server.should_exit = True
+        t.join(5)

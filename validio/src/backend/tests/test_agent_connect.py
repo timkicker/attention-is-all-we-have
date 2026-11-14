@@ -58,7 +58,7 @@ def test_pairing_shows_a_code_and_the_urls(client):  # noqa: F811
     s = client.post("/api/agent/pair").json()
     assert s["state"] == "pairing"
     assert re.fullmatch(r"[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}", s["pairing"]["code"])
-    assert s["pairing"]["mcpUrl"].endswith("/mcp/") and s["pairing"]["apiUrl"].endswith("/agent/v1")
+    assert re.search(r"/mcp/c/[A-Za-z0-9_-]{43}/$", s["pairing"]["mcpUrl"]) and s["pairing"]["apiUrl"].endswith("/agent/v1")
     again = client.post("/api/agent/pair").json()
     assert again["pairing"]["code"] != s["pairing"]["code"]  # a new code each time
 

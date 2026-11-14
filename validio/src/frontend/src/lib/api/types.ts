@@ -556,7 +556,7 @@ export interface AgentState {
   state: "none" | "pairing" | "consent" | "active" | "paused";
   pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
   consent?: { name: string; keyId: string; may: string[] };
-  agent?: { name: string; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
+  agent?: { name: string; kind: "agent" | "mcp"; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
   /** Newest first. */
   versions: { version: number; at: string; why: string }[];
 }

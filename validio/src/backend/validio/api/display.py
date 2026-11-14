@@ -56,6 +56,8 @@ def pass_fields(keys: list[str]) -> list[str]:
 def actor(a: str) -> str:
     if a in ACTORS:
         return ACTORS[a]
+    if a == "agent:mcp-agent":
+        return "MCP agent"
     if a.startswith("agent:"):
         return "Agent"
     if a.startswith("validio:"):
