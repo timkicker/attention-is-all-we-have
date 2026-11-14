@@ -27,7 +27,8 @@
   const vm = $derived(res?.ok ? res.data : null)
   const h = copy.hood
   // Wireframe words in mock mode; live data says what the logged statement really does.
-  const queryLead = $derived(router.mock ? h.QUERY_P : h.QUERY_P_LIVE)
+  const kind = $derived(vm && 'queryKind' in vm ? (vm as HoodVM & { queryKind: string }).queryKind : null)
+  const queryLead = $derived(router.mock || !kind ? h.QUERY_P : kind === 'stored' ? h.QUERY_P_STORED : h.QUERY_P_LIVE)
 </script>
 
 <Bar right={from && fromTitle ? 'back' : 'none'} backTitle={fromTitle} backHref={from ? paths.differences(from) : ''} />
@@ -83,7 +84,7 @@
     <section class="s" data-testid={TID.hoodSection} data-section="limits">
       <h2>{h.LIMITS_H}</h2>
       <p>{h.LIMIT_TRANSLATION}</p>
-      {#if vm.top1 !== null}<p>{h.limitRecall(vm.top1)}</p>{/if}
+      <p>{h.limitRecall(vm.top1)}</p>
       <p>{h.LIMIT_SCOPE}</p>
     </section>
   {/if}
@@ -95,7 +96,7 @@
   .top p { margin-top: 4px; }
   section.s { margin-top: 56px; }
   section.s p { margin-top: 8px; color: var(--fg2); }
-  pre { margin-top: 16px; padding: 16px; background: var(--soft); border-radius: var(--r); font: 400 var(--fs-13) / var(--lh-13) var(--mono); overflow-x: auto; white-space: pre; font-variant-ligatures: none; }
+  pre { margin-top: 16px; padding: 16px; background: var(--soft); border-radius: var(--r); font: 400 var(--fs-13) / var(--lh-13) var(--mono); overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-variant-ligatures: none; }
   dl { margin-top: 8px; }
   dl div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   dt { color: var(--fg2); }

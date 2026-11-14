@@ -13,17 +13,29 @@ type Param = NonNullable<SqlStatement['params']>[string]
 
 const VEC = /VEC_DISTANCE/i
 
-/** The statement that finds the closest statements: the vector statement that returned the most rows. */
+/** The statement that reads the closest statements per edition (rank column rnk): from table align when it holds
+ *  the day, else the live vector search. Falls back to any vector statement. Most rows wins. */
 export function pickQuery(statements: SqlStatement[]): SqlStatement | null {
-  let best: SqlStatement | null = null
-  for (const s of statements) if (VEC.test(s.text) && (!best || s.rows > best.rows)) best = s
-  return best
+  const best = (xs: SqlStatement[]) => xs.reduce<SqlStatement | null>((b, s) => (!b || s.rows > b.rows ? s : b), null)
+  return best(statements.filter((s) => /\brnk\b/.test(s.text))) ?? best(statements.filter((s) => VEC.test(s.text)))
+}
+
+/** 'stored' when the statement reads the stored matches (table align), else 'vector'. */
+export function queryKind(s: SqlStatement): 'stored' | 'vector' {
+  return /\bFROM align\b/i.test(s.text) && !VEC.test(s.text) ? 'stored' : 'vector'
+}
+
+/** "NVIDIA A100-SXM4-80GB on Verda, bge-m3 fp16" -> "A100 GPU, bge-m3"; anything else as it is. */
+export function shortGpu(gpu: string): string {
+  const card = gpu.match(/\b([A-Z]\d{2,3})(?=[-\s]|$)/)?.[1]
+  const model = gpu.split(',')[1]?.trim().split(/\s+/)[0]
+  return card && model ? `${card} GPU, ${model}` : gpu
 }
 
 function literal(v: Param): string {
   if (v === null) return 'NULL'
   if (typeof v === 'number') return String(v)
-  if (typeof v === 'object') return `(/* ${v.count} values */)`
+  if (typeof v === 'object') return `(/* ${v.count} ${v.count === 1 ? "value" : "values"} */)`
   return `'${v.replace(/'/g, "''")}'`
 }
 
@@ -91,7 +103,7 @@ export function fromStats(
     top1: num(align?.['R@1']),
     top5: num(align?.['R@5']),
     embedRate: num(embed?.per_s),
-    embedGpu: typeof gpu === 'string' && gpu.trim() ? gpu.trim() : null,
+    embedGpu: typeof gpu === 'string' && gpu.trim() ? shortGpu(gpu.trim()) : null,
     judgeAccuracy: num(ev?.accuracy),
     judgeN: num(ev?.n),
   }
@@ -109,7 +121,10 @@ export function versionsOf(topics: TopicsRes | null, topicId: string): number | 
   return n
 }
 
-export async function loadHood(api: Client, from: TopicRef | null): Promise<Result<HoodVM>> {
+/** HoodVM plus what the shown statement does (model.ts has no field for it yet). */
+export type HoodLiveVM = HoodVM & { queryKind: 'stored' | 'vector' }
+
+export async function loadHood(api: Client, from: TopicRef | null): Promise<Result<HoodLiveVM>> {
   const [topics, stats, logged] = await Promise.all([api.topics(), api.stats(), api.sqlPanel('compare')])
   const topicsRes = topics.ok ? topics.data : null
   let statements: SqlStatement[] = logged.ok ? logged.data.statements : []
@@ -133,6 +148,7 @@ export async function loadHood(api: Client, from: TopicRef | null): Promise<Resu
       versions: topicId ? versionsOf(topicsRes, topicId) : null,
       ...fromStats(stats.ok ? stats.data.stats : null),
       queryMs: q.ms,
+      queryKind: queryKind(q),
       sql: formatSql(q),
     },
   }
