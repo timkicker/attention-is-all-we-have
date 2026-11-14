@@ -36,3 +36,10 @@ export async function connectMcp(page: Page): Promise<string> {
   await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
   return url;
 }
+
+/** The request id and outcome the connector printed ("request_supply: R-3 auto_order: ..."). */
+export function requested(out: string): { id: string; outcome: string } {
+  const m = out.match(/request_supply: (\S+) (\w+):/);
+  expect(m, out).toBeTruthy();
+  return { id: m![1], outcome: m![2] };
+}
