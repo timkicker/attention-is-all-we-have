@@ -4,6 +4,7 @@ from api import match, sqllog
 from api.util import MAX_TS, ApiError, iso, lang_order
 
 router = APIRouter()
+NEAREST = 200  # lives per other edition, nearest to the claim over the whole history
 
 
 def _life(row: dict, verdict: dict | None) -> dict:
@@ -48,7 +49,14 @@ def timeline(lang: str, page_id: int, h: str) -> dict:
     last = own[-1]
     lives = [_life(r, None) for r in own]
     if last["topic_id"]:
-        rows = sqllog.run_file("timeline_match", params | {"topic": last["topic_id"]})
+        rows = sqllog.run_file("timeline_match", params | {"topic": last["topic_id"], "near": NEAREST})
+        # a judged pair can lie beyond the NEAREST lives of its edition; add its lives (paired_only, see pick)
+        seen = {(r["lang"], r["h"], r["row_start"]) for r in rows}
+        rows += [
+            r | {"paired_only": True}
+            for r in sqllog.run_file("timeline_judged", params | {"topic": last["topic_id"]})
+            if (r["lang"], r["h"], r["row_start"]) not in seen
+        ]
         picked = matched_lives(lang, h, rows, match.verdicts(lang, [h]))
         picked.sort(key=lambda p: (lang_order(p[0]["lang"]), p[0]["row_start"]))
         lives += [_life(row, verdict) for row, verdict in picked]
