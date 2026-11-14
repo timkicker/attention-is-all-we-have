@@ -117,3 +117,41 @@ def test_ru_staged_clause_on_a_full_seed(client):
     body = client.get("/api/dropped", params={"topic": "winterwar", "lang": "ru", "limit": 200}).json()
     ru = [r for r in body["rows"] if "инсценированный советской стороной" in r["text"]]
     assert any(r["died_rev"] == 64106894 and "de" in {a["lang"] for a in r["alive_in"]} for r in ru)
+
+
+def test_cut_span_finds_the_one_cut():
+    from api.routes.dropped import cut_span
+
+    text = "Stalin expected the Red Army to reach Helsinki within twelve days."
+    end = cut_span(text, "Stalin expected the Red Army to reach Helsinki.")
+    assert text[end["start"] : end["end"]] == "within twelve days." and end["end"] == len(text)
+    mid = cut_span("The Soviet Union staged the shots.", "The Soviet Union the shots.")
+    assert mid == {"start": 17, "end": 23}
+    assert cut_span(text, "Stalin hoped the Red Army would reach Helsinki.") is None  # reworded, not cut
+    assert cut_span(text, text) is None
+    assert cut_span("A — B c d", "A B c d") is None  # only a dash went
+
+
+def test_rows_carry_the_removed_part(client):
+    body = client.get("/api/dropped", params={"topic": "winterwar", "limit": 200}).json()
+    for r in body["rows"]:
+        assert r["removed"] is None or 0 <= r["removed"]["start"] < r["removed"]["end"] <= len(r["text"])
+
+
+def test_scale_prefers_stored_stat_keys(monkeypatch):
+    from api import sqllog
+    from api.routes import dropped as d
+
+    stored = {"fi_lives": 1118463, "fi_dead": 532372, "fi_dead_1y": 292344, "fi_revisions": 862076}
+    counted = {"fi_lives": 9, "fi_dead": 8, "fi_dead_1y": 7, "fi_revisions": 2143}
+
+    def fake(name, params=None):
+        if name == "dropped_stat":
+            return [{"k": k, "v": str(v)} for k, v in stored.items()]
+        assert name == "dropped_scale", "all keys stored: nothing is counted"
+        return [counted]
+
+    monkeypatch.setattr(sqllog, "run_file", fake)
+    assert d.scale() == stored
+    del stored["fi_revisions"]  # a missing key falls back to the count, the others stay stored
+    assert d.scale() == {"fi_lives": 1118463, "fi_dead": 532372, "fi_dead_1y": 292344, "fi_revisions": 2143}
