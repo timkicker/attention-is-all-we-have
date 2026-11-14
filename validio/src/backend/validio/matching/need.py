@@ -286,6 +286,8 @@ def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tupl
     for p in seen.values():
         if not _in_net(need, p):
             continue
+        if kind.off_name and kind.off and re.search(kind.off, (p.name_en or "").lower()):
+            continue  # a flavoured drink or a cream blend is another product: not listed, not refused
         reasons = static_reasons(need, p)
         if reasons:
             dropped.append(Ranked(p, None, None, False, reasons))

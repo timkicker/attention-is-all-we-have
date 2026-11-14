@@ -7,6 +7,7 @@ Best Pick ranks, Cedar decides per option. Nothing the agent says about price or
 
 import logging
 import sqlite3
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
@@ -36,6 +37,25 @@ from .store import NotFound
 ACCEPTED = ("chosen", "ranked")  # the only verdicts an agent may confirm
 
 NEAR = {"FREE_FROM_LACTOSE": "LOW_LACTOSE"}
+
+
+def _why_none(b: dict) -> str:
+    """Why a line has no option, in one sentence: what Valio does not have, or the reason most of its options
+    were turned down, the Spend Pass rules first since those options were otherwise fine."""
+    from ..api.display import group, reasons
+
+    need, options = b["need"], b["line"]["options"]
+    what = need.kind.replace("_", " ") or "it"
+    if not options:
+        return f"Valio has no {_none_of(need)}."
+    blocked = [o for o in options if o["verdict"] == "blocked"] or options
+    heads = Counter(group(reasons(o["sentence"]))[0] for o in blocked)
+    head = heads.most_common(1)[0][0]
+    if head == "Outside the pass's product groups":
+        return f"Blocked: {what} is outside the Spend Pass's product groups."
+    if head.startswith("Not ") and head[4:] in {v for v in CLAIM_NAMES.values()}:
+        return f"No plain {head[4:].replace(' ', '-')} {what} at Valio."
+    return f"No {what} can be ordered: {head[0].lower()}{head[1:]}."
 
 
 def _none_of(need: Need) -> str:
@@ -279,11 +299,8 @@ class SupplyService:
                                       f"Descriptions are never used for decisions. {o['sentence']}", [], None)
                 if missing and not proposals:
                     # a line with no product at all says what Valio does not have, not that rules were broken
-                    empty = [b for b in built if b["proposal"] is None and not b["line"]["options"]]
-                    sentence = ("No option keeps every rule and can be delivered, nothing was ordered."
-                                if len(empty) < len(missing) else
-                                " ".join(f"Valio has no {_none_of(b['need'])}." for b in empty)
-                                + " Nothing was ordered.")
+                    # each line says its leading reason, not that rules were broken somewhere
+                    sentence = " ".join(_why_none(b) for b in built if b["proposal"] is None) + " Nothing was ordered."
                     req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": sentence}
                     req["status"] = "blocked"
                     self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)
