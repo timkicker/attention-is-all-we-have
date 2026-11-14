@@ -160,6 +160,7 @@ class GeminiLLM:
         self.model = model
         self.name = f"Gemini {model}"
         self.inputs: list = []
+        self._turns: list = []  # the model's own answers as sent, thought signatures included
         self._config = types.GenerateContentConfig(
             system_instruction=SYSTEM, temperature=0,
             tools=[types.Tool(function_declarations=[
@@ -178,11 +179,15 @@ class GeminiLLM:
     def _contents(self, history: list[dict]) -> list:
         t = self._types
         out = []
+        turns = iter(self._turns)
         for h in history:
             if h["role"] == "user":
                 out.append(t.Content(role="user", parts=[t.Part(text=h["text"])]))
             elif h["role"] == "model":
-                out.append(t.Content(role="model", parts=[
+                # Gemini 3 wants each function call back with its thought signature, so its own turn goes
+                # back as it came; a turn it did not make (none in practice) is rebuilt from the calls
+                sent = next(turns, None)
+                out.append(sent if sent is not None else t.Content(role="model", parts=[
                     t.Part(function_call=t.FunctionCall(name=c["name"], args=c["args"])) for c in h["calls"]]))
             else:
                 out.append(t.Content(role="user", parts=[
@@ -194,6 +199,8 @@ class GeminiLLM:
         r = self._client.models.generate_content(model=self.model, contents=self._contents(history),
                                                  config=self._config)
         calls = [ToolCall(fc.name, dict(fc.args or {})) for fc in (r.function_calls or [])]
+        if calls and r.candidates and r.candidates[0].content is not None:
+            self._turns.append(r.candidates[0].content)
         return Step(calls, None if calls else (r.text or "").strip())
 
 
