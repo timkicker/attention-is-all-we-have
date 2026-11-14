@@ -22,8 +22,10 @@ MAX_KEYS = 10_000  # visitors remembered per limit; the least recently seen are 
 DEFAULTS = {
     # each check splits and judges an answer with the model; generous, since a whole room on one Wi-Fi shares an address
     "check": (20.0, 30),
-    "ingest": (0.2, 3),  # each new article is minutes of embedding and dozens of model calls
-    "search": (60.0, 20),  # each search asks Wikipedia up to five times
+    # a new article is minutes of embedding and model calls, but INGEST_MAX_ACTIVE caps the server; this only stops
+    # one address from filling the queue, and a room of visitors shares one address
+    "ingest": (30.0, 20),
+    "search": (240.0, 60),  # each search asks Wikipedia up to five times; sized for ~30 people on one address
     "ask": (20.0, 10),  # each question is embedded
 }
 
@@ -43,8 +45,8 @@ class Limit:
         self._buckets: OrderedDict[str, _Bucket] = OrderedDict()
         self._lock = threading.Lock()
 
-    def take(self, key: str) -> float:
-        """0 when the request may go ahead, else the seconds until it may."""
+    def take(self, key: str, spend: bool = True) -> float:
+        """0 when the request may go ahead, else the seconds until it may. spend=False only looks."""
         now = self.clock()
         with self._lock:
             b = self._buckets.pop(key, None) or _Bucket(float(self.burst), now)
@@ -54,7 +56,8 @@ class Limit:
             while len(self._buckets) > MAX_KEYS:
                 self._buckets.popitem(last=False)
             if b.tokens >= 1:
-                b.tokens -= 1
+                if spend:
+                    b.tokens -= 1
                 return 0.0
             return (1 - b.tokens) / self.rate if self.rate else 3600.0
 
@@ -90,14 +93,24 @@ def too_many(seconds: float, message: str = "Too many requests. Try again later.
     return err
 
 
-def check(request: Request, name: str) -> None:
-    """Raise 429 too_many when this visitor used up the `name` limit."""
+def _visitor(request: Request) -> str:
+    return request.client.host if request.client else "unknown"
+
+
+def check(request: Request, name: str, spend: bool = True) -> None:
+    """Raise 429 too_many when this visitor used up the `name` limit. spend=False checks without using a token, for
+    routes that only know after the work started whether it cost anything (then they call spend)."""
     if not enabled():
         return
-    visitor = request.client.host if request.client else "unknown"
-    wait = _limit(name).take(visitor)
+    wait = _limit(name).take(_visitor(request), spend=spend)
     if wait > 0:
         raise too_many(wait)
+
+
+def spend(request: Request, name: str) -> None:
+    """Use one token of the `name` limit (after check(spend=False) let the request through)."""
+    if enabled():
+        _limit(name).take(_visitor(request))
 
 
 def reset() -> None:
