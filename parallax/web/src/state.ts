@@ -20,6 +20,7 @@ export interface UrlState {
   anchor: string
   section: string // '' means every section; set by deep links such as /compare?section=Osapuolten%20tappiot
   claim: string // 'lang:page_id:h' of the claim whose timeline is open, '' for none
+  run: string // run_id of the checked answer shown in Check, '' for none
 }
 
 const DEFAULT_TOPIC = 'winterwar'
@@ -36,6 +37,7 @@ export function parse(loc: { pathname: string; search: string }): UrlState {
     anchor: q.get('anchor') || DEFAULT_ANCHOR,
     section: q.get('section') || '',
     claim: q.get('claim') || '',
+    run: q.get('run') || '',
   }
 }
 
@@ -46,6 +48,7 @@ export function format(s: UrlState): string {
   if (s.anchor && s.anchor !== DEFAULT_ANCHOR) q.set('anchor', s.anchor)
   if (s.section) q.set('section', s.section)
   if (s.claim) q.set('claim', s.claim)
+  if (s.run) q.set('run', s.run)
   const qs = q.toString()
   return `/${s.view}${qs ? `?${qs}` : ''}`
 }
