@@ -78,10 +78,39 @@ def _no_difference(verdict: dict) -> bool:
     return "terms" in verdict and "numbers" in verdict and not verdict["terms"] and not verdict["numbers"]
 
 
-def label(judged: list[dict], as_of: dt.datetime) -> dict:
-    """{label, evidence} for one edition from its judged candidates, at as_of."""
+REWORDED = 0.12  # cosine distance to a sentence the same revision wrote: at most this = the sentence was reworded
+
+
+def _key(e: dict) -> tuple:
+    return (e["lang"], e["page_id"], e["h"], e["died"])
+
+
+def reworded(judged_runs: list[dict]) -> set[tuple]:
+    """Keys of ended `same` or `partial` sentence lives that the ending revision only reworded (same page, near)."""
+    ended = {
+        _key(e)
+        for judged in judged_runs
+        for rows in judged.values()
+        for e in rows
+        if e["died"] and e["verdict"]["label"] in MATCH
+    }
+    if not ended:
+        return set()
+    keys = tuple((lang, page_id, h, sql_ts(_ts(died))) for lang, page_id, h, died in ended)
+    out = set()
+    for r in sqllog.run_file("check_reworded", {"keys": keys}):
+        if r["dist"] is not None and float(r["dist"]) <= REWORDED:
+            out.add((r["lang"], r["page_id"], r["h"], iso(r["row_end"])))
+    return out
+
+
+def label(judged: list[dict], as_of: dt.datetime, rewritten: set[tuple] = frozenset()) -> dict:
+    """{label, evidence} for one edition from its judged candidates, at as_of.
+
+    A `same` sentence that ended because its revision reworded it (key in `rewritten`) still counts as said.
+    """
     seen = [e for e in judged if _ts(e["born"]) <= as_of]
-    alive = [e for e in seen if e["died"] is None or _ts(e["died"]) > as_of]
+    alive = [e for e in seen if e["died"] is None or _ts(e["died"]) > as_of or _key(e) in rewritten]
     dead = sorted((e for e in seen if e not in alive), key=lambda e: e["died"], reverse=True)
 
     def with_label(rows, lab):
@@ -169,11 +198,10 @@ def load_run(run_id: str, as_of: dt.datetime | None = None) -> dict | None:
     head = rows[0]
     at = as_of or head["as_of"] or dt.datetime.now(dt.UTC).replace(tzinfo=None)
     claims = []
-    for r in rows:
-        if r["idx"] is None:  # an answer without a single claim
-            continue
-        judged = json.loads(r["labels"])["judged"]
-        per_lang = {lang: label(judged[lang], at) for lang in sorted(judged, key=lang_order)}
+    stored = [(r, json.loads(r["labels"])["judged"]) for r in rows if r["idx"] is not None]  # None: no claim
+    rewritten = reworded([j for _, j in stored])
+    for r, judged in stored:
+        per_lang = {lang: label(judged[lang], at, rewritten) for lang in sorted(judged, key=lang_order)}
         claims.append({"idx": r["idx"], "text": r["text"], "per_lang": per_lang})
     return {
         "run_id": head["run_id"],
