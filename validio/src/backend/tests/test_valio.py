@@ -8,7 +8,7 @@ import respx
 
 from validio.config import load_settings
 from validio.valio.budget import CallBudget, CallBudgetExceeded
-from validio.valio.client import ReplayMiss, ValioClient
+from validio.valio.client import ReplayMiss, ValioClient, recorded_days
 
 BASE = "https://junction26.valioaimo.fi"
 MON = date(2026, 11, 16)
@@ -211,3 +211,42 @@ def test_replay_refuses_recordings_that_disagree(tmp_path):
     with pytest.raises(ReplayMiss, match="recordings disagree"):
         client.price(["464306"], MON, CallBudget(40))
     assert client.price(["90"], MON, CallBudget(40))["90"].price_cents == 101  # control: no conflict
+
+
+def test_recorded_days_are_the_folders_with_both_answers(tmp_path):
+    with respx.mock() as mock:
+        mock.post(f"{BASE}/api/price").mock(side_effect=echo_price)
+        mock.post(f"{BASE}/api/availability").mock(return_value=httpx.Response(200, json={"products": []}))
+        c = ValioClient(BASE, "k", "record", tmp_path)
+        for day in (MON, date(2026, 11, 18)):
+            c.price(["1"], day, CallBudget(40))
+            c.availability(["1"], day, CallBudget(40))
+        c.price(["1"], date(2026, 11, 17), CallBudget(40))  # price only: replay could not answer that day
+    (tmp_path / "price" / "notes").mkdir()
+    assert recorded_days(tmp_path) == [MON, date(2026, 11, 18)]
+    assert ValioClient(BASE, "", "replay", tmp_path).recorded_days() == [MON, date(2026, 11, 18)]
+    assert ValioClient(BASE, "k", "live", None).recorded_days() is None  # live asks Valio, any day
+    assert recorded_days(tmp_path / "nothing") == []
+
+
+def test_replay_miss_on_an_unrecorded_day_names_the_recorded_ones(tmp_path):
+    with respx.mock() as mock:
+        mock.post(f"{BASE}/api/price").mock(side_effect=echo_price)
+        mock.post(f"{BASE}/api/availability").mock(return_value=httpx.Response(200, json={"products": []}))
+        c = ValioClient(BASE, "k", "record", tmp_path)
+        c.price(["1"], MON, CallBudget(40))
+        c.availability(["1"], MON, CallBudget(40))
+    with respx.mock(assert_all_called=False) as mock:
+        route = mock.route()
+        with pytest.raises(ReplayMiss, match="on 2026-11-23, recorded delivery days: Mon 2026-11-16, run make record"):
+            ValioClient(BASE, "", "replay", tmp_path).price(["1"], date(2026, 11, 23), CallBudget(40))
+        assert route.call_count == 0  # never a made-up answer, never the network
+
+
+def test_not_recorded_day_text():
+    from validio.orders.supply import not_recorded_day
+
+    assert not_recorded_day(date(2026, 11, 23), [MON, date(2026, 11, 17)]) == (
+        "Valio's answers for delivery on Mon 2026-11-23 aren't recorded for this demo. "
+        "Recorded delivery days: Mon 2026-11-16, Tue 2026-11-17. Nothing was ordered.")
+    assert "Recorded" not in not_recorded_day(MON, [])

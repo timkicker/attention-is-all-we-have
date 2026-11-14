@@ -62,6 +62,24 @@ async def test_mcp_and_http_give_the_same_result(ctx):
 
 
 @pytest.mark.asyncio
+async def test_unrecorded_delivery_day_is_a_503_naming_the_recorded_days(ctx):
+    from validio.valio.client import days_text, recorded_days
+
+    days = days_text(recorded_days(ctx.settings.valio_cache))
+    assert "Mon 2026-11-16" in days
+    h = holder_for(ctx)
+    async with Client(server) as c:
+        desc = next(t.description for t in (await c.list_tools()).tools if t.name == "request_supply")
+        assert f"deliverBy must be one of these days: {days}." in desc
+        r = await c.call_tool("request_supply", {"spendPass": h.presentation(), "idempotencyKey": "day-1",
+                                                 "lines": [{"text": "100 litres of lactose-free milk"}],
+                                                 "deliverBy": "2026-11-23"})
+    assert r.is_error
+    assert r.content[0].text.endswith("503 not recorded: Valio's answers for delivery on Mon 2026-11-23 aren't recorded "
+                                 f"for this demo. Recorded delivery days: {days}. Nothing was ordered.")
+
+
+@pytest.mark.asyncio
 async def test_mcp_refuses_tampered_and_reused_pass(ctx):
     h = holder_for(ctx)
     token = h.presentation()
