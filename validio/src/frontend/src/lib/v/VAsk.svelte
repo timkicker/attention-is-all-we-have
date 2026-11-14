@@ -160,6 +160,8 @@
     list-style: none;
     max-height: 264px;
     overflow-y: auto;
+    /* 8 px of room each side for the row hover; the text stays flush with the input. */
+    margin-inline: -8px;
     border-top: 1px solid var(--v-line);
   }
   .results li {
@@ -169,8 +171,8 @@
   .results :global(.v-row) {
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 4px;
-    padding-inline: 0;
-    border-radius: 0;
+    padding-inline: 8px;
+    border-radius: var(--radius-button);
   }
   .results :global(.v-row-lead) {
     grid-row: 1;
