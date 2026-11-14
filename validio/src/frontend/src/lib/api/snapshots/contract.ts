@@ -256,7 +256,21 @@ export const scene1: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest safe option, always delivered in full.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464401",
@@ -456,7 +470,22 @@ export const scene1: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more."
+              "shortText": "90.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.10 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "463335",
@@ -638,7 +667,21 @@ export const scene1: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more."
+              "shortText": "390.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.40 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464201",
@@ -828,7 +871,21 @@ export const scene1: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more."
+              "shortText": "550.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.56 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464073",
@@ -1010,7 +1067,21 @@ export const scene1: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more."
+              "shortText": "630.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.64 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464398",
@@ -1192,7 +1263,21 @@ export const scene1: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more."
+              "shortText": "640.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.65 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "469287",
@@ -1380,7 +1465,19 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 27.39 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "464119",
@@ -1580,7 +1677,21 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 13.32 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "465039",
@@ -1771,7 +1882,20 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 6.86 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "476240",
@@ -1970,7 +2094,21 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 7.62 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "463038",
@@ -2151,7 +2289,19 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 31.31 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462921",
@@ -2351,7 +2501,22 @@ export const scene1: Snapshot = {
               ],
               "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
               "groupText": "Over the hard cap",
-              "groupOrder": 1
+              "groupOrder": 1,
+              "checks": [
+                "Price 10.97 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label EU organic",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Order cut-off 12 Nov 15:00 has passed.",
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462626",
@@ -2373,7 +2538,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463047",
@@ -2412,7 +2579,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463203",
@@ -2434,7 +2603,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463380",
@@ -2456,7 +2627,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463779",
@@ -2478,7 +2651,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464198",
@@ -2500,7 +2675,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464237",
@@ -2522,7 +2699,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464399",
@@ -2544,7 +2723,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464440",
@@ -2566,7 +2747,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "465149",
@@ -2588,7 +2771,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "466288",
@@ -2610,7 +2795,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469331",
@@ -2632,7 +2819,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469541",
@@ -2654,7 +2843,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "472492",
@@ -2676,7 +2867,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "473142",
@@ -2698,7 +2891,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "475534",
@@ -2721,7 +2916,11 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Sour milk, not plain milk."
+              ]
             },
             {
               "productId": "476957",
@@ -2743,7 +2942,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "477050",
@@ -2765,7 +2966,9 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "462703",
@@ -2787,7 +2990,11 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": [
+                "Lactose free but a cooking fat mix, not milk."
+              ]
             }
           ],
           "chosen": {
@@ -3305,7 +3512,21 @@ export const scene2: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest safe option, always delivered in full.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464401",
@@ -3505,7 +3726,22 @@ export const scene2: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more."
+              "shortText": "90.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.10 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "463335",
@@ -3687,7 +3923,21 @@ export const scene2: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more."
+              "shortText": "390.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.40 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464201",
@@ -3877,7 +4127,21 @@ export const scene2: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more."
+              "shortText": "550.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.56 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464073",
@@ -4059,7 +4323,21 @@ export const scene2: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more."
+              "shortText": "630.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.64 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464398",
@@ -4241,7 +4519,21 @@ export const scene2: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more."
+              "shortText": "640.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.65 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "469287",
@@ -4429,7 +4721,19 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 27.39 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "464119",
@@ -4629,7 +4933,21 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 13.32 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "465039",
@@ -4820,7 +5138,20 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 6.86 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "476240",
@@ -5019,7 +5350,21 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 7.62 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "463038",
@@ -5200,7 +5545,19 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 31.31 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462921",
@@ -5400,7 +5757,22 @@ export const scene2: Snapshot = {
               ],
               "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
               "groupText": "Over the hard cap",
-              "groupOrder": 1
+              "groupOrder": 1,
+              "checks": [
+                "Price 10.97 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label EU organic",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Order cut-off 12 Nov 15:00 has passed.",
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462626",
@@ -5422,7 +5794,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463047",
@@ -5461,7 +5835,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463203",
@@ -5483,7 +5859,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463380",
@@ -5505,7 +5883,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463779",
@@ -5527,7 +5907,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464198",
@@ -5549,7 +5931,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464237",
@@ -5571,7 +5955,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464399",
@@ -5593,7 +5979,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464440",
@@ -5615,7 +6003,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "465149",
@@ -5637,7 +6027,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "466288",
@@ -5659,7 +6051,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469331",
@@ -5681,7 +6075,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469541",
@@ -5703,7 +6099,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "472492",
@@ -5725,7 +6123,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "473142",
@@ -5747,7 +6147,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "475534",
@@ -5770,7 +6172,11 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Sour milk, not plain milk."
+              ]
             },
             {
               "productId": "476957",
@@ -5792,7 +6198,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "477050",
@@ -5814,7 +6222,9 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "462703",
@@ -5836,7 +6246,11 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": [
+                "Lactose free but a cooking fat mix, not milk."
+              ]
             }
           ],
           "chosen": {
@@ -6313,7 +6727,11 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "473986",
@@ -6405,7 +6823,16 @@ export const scene3: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 1.21 €",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "468526",
@@ -6423,7 +6850,11 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "475908",
@@ -6441,7 +6872,11 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             }
           ],
           "beyondList": [
@@ -6604,7 +7039,25 @@ export const scene3: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 18.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "A mozzarella-fontal blend, not pure mozzarella.",
+                "10 × 2.5 kg for 180.10 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "463383",
@@ -6715,7 +7168,21 @@ export const scene3: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more."
+              "shortText": "16.50 € more.",
+              "checks": [
+                "Stock: 4,318 bags",
+                "Price 19.66 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 96.9 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 bags for 196.60 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "465174",
@@ -6874,7 +7341,24 @@ export const scene3: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more."
+              "shortText": "54.80 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 23.49 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 97.8 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 × 2.5 kg for 234.90 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "470836",
@@ -6985,7 +7469,20 @@ export const scene3: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more."
+              "shortText": "154.43 € more.",
+              "checks": [
+                "Stock: 154 pieces",
+                "Price 5.31 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk"
+              ],
+              "whyReasons": [
+                "Lactose free, claim unchecked.",
+                "63 × 400 g for 334.53 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "474642",
@@ -7144,7 +7641,16 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 36.17 €",
+                "Order cut-off 12 Nov 15:00",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "467107",
@@ -7305,7 +7811,17 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 18.29 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "463685",
@@ -7413,7 +7929,17 @@ export const scene3: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 108.09 €",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "467197",
@@ -7527,7 +8053,19 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 76.33 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 94.1 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from gluten",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
+              ]
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -7799,7 +8337,21 @@ export const scene3: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest safe option, always delivered in full.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464401",
@@ -7999,7 +8551,22 @@ export const scene3: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more."
+              "shortText": "90.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.10 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "463335",
@@ -8181,7 +8748,21 @@ export const scene3: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more."
+              "shortText": "390.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.40 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464201",
@@ -8371,7 +8952,21 @@ export const scene3: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more."
+              "shortText": "550.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.56 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464073",
@@ -8553,7 +9148,21 @@ export const scene3: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more."
+              "shortText": "630.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.64 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464398",
@@ -8735,7 +9344,21 @@ export const scene3: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more."
+              "shortText": "640.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.65 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "469287",
@@ -8923,7 +9546,19 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 27.39 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "464119",
@@ -9123,7 +9758,21 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 13.32 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "465039",
@@ -9314,7 +9963,20 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 6.86 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "476240",
@@ -9513,7 +10175,21 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 7.62 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "463038",
@@ -9694,7 +10370,19 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 31.31 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462921",
@@ -9894,7 +10582,22 @@ export const scene3: Snapshot = {
               ],
               "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
               "groupText": "Over the hard cap",
-              "groupOrder": 1
+              "groupOrder": 1,
+              "checks": [
+                "Price 10.97 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label EU organic",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Order cut-off 12 Nov 15:00 has passed.",
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462626",
@@ -9916,7 +10619,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463047",
@@ -9955,7 +10660,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463203",
@@ -9977,7 +10684,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463380",
@@ -9999,7 +10708,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463779",
@@ -10021,7 +10732,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464198",
@@ -10043,7 +10756,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464237",
@@ -10065,7 +10780,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464399",
@@ -10087,7 +10804,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464440",
@@ -10109,7 +10828,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "465149",
@@ -10131,7 +10852,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "466288",
@@ -10153,7 +10876,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469331",
@@ -10175,7 +10900,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469541",
@@ -10197,7 +10924,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "472492",
@@ -10219,7 +10948,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "473142",
@@ -10241,7 +10972,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "475534",
@@ -10264,7 +10997,11 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Sour milk, not plain milk."
+              ]
             },
             {
               "productId": "476957",
@@ -10286,7 +11023,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "477050",
@@ -10308,7 +11047,9 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "462703",
@@ -10330,7 +11071,11 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": [
+                "Lactose free but a cooking fat mix, not milk."
+              ]
             }
           ],
           "chosen": {
@@ -11066,7 +11811,11 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "473986",
@@ -11158,7 +11907,16 @@ export const scene4: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 1.21 €",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "468526",
@@ -11176,7 +11934,11 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "475908",
@@ -11194,7 +11956,11 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             }
           ],
           "beyondList": [
@@ -11357,7 +12123,25 @@ export const scene4: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 18.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "A mozzarella-fontal blend, not pure mozzarella.",
+                "10 × 2.5 kg for 180.10 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "463383",
@@ -11468,7 +12252,21 @@ export const scene4: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more."
+              "shortText": "16.50 € more.",
+              "checks": [
+                "Stock: 4,318 bags",
+                "Price 19.66 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 96.9 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 bags for 196.60 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "465174",
@@ -11627,7 +12425,24 @@ export const scene4: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more."
+              "shortText": "54.80 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 23.49 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 97.8 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 × 2.5 kg for 234.90 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "470836",
@@ -11738,7 +12553,20 @@ export const scene4: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more."
+              "shortText": "154.43 € more.",
+              "checks": [
+                "Stock: 154 pieces",
+                "Price 5.31 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk"
+              ],
+              "whyReasons": [
+                "Lactose free, claim unchecked.",
+                "63 × 400 g for 334.53 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "474642",
@@ -11897,7 +12725,16 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 36.17 €",
+                "Order cut-off 12 Nov 15:00",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "467107",
@@ -12058,7 +12895,17 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 18.29 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "463685",
@@ -12166,7 +13013,17 @@ export const scene4: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 108.09 €",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "467197",
@@ -12280,7 +13137,19 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 76.33 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 94.1 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from gluten",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
+              ]
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -12552,7 +13421,21 @@ export const scene4: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest safe option, always delivered in full.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464401",
@@ -12752,7 +13635,22 @@ export const scene4: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more."
+              "shortText": "90.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.10 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "463335",
@@ -12934,7 +13832,21 @@ export const scene4: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more."
+              "shortText": "390.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.40 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464201",
@@ -13124,7 +14036,21 @@ export const scene4: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more."
+              "shortText": "550.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.56 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464073",
@@ -13306,7 +14232,21 @@ export const scene4: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more."
+              "shortText": "630.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.64 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464398",
@@ -13488,7 +14428,21 @@ export const scene4: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more."
+              "shortText": "640.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.65 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "469287",
@@ -13676,7 +14630,19 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 27.39 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "464119",
@@ -13876,7 +14842,21 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 13.32 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "465039",
@@ -14067,7 +15047,20 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 6.86 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "476240",
@@ -14266,7 +15259,21 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 7.62 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "463038",
@@ -14447,7 +15454,19 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 31.31 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462921",
@@ -14647,7 +15666,22 @@ export const scene4: Snapshot = {
               ],
               "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
               "groupText": "Over the hard cap",
-              "groupOrder": 1
+              "groupOrder": 1,
+              "checks": [
+                "Price 10.97 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label EU organic",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Order cut-off 12 Nov 15:00 has passed.",
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462626",
@@ -14669,7 +15703,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463047",
@@ -14708,7 +15744,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463203",
@@ -14730,7 +15768,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463380",
@@ -14752,7 +15792,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463779",
@@ -14774,7 +15816,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464198",
@@ -14796,7 +15840,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464237",
@@ -14818,7 +15864,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464399",
@@ -14840,7 +15888,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464440",
@@ -14862,7 +15912,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "465149",
@@ -14884,7 +15936,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "466288",
@@ -14906,7 +15960,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469331",
@@ -14928,7 +15984,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469541",
@@ -14950,7 +16008,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "472492",
@@ -14972,7 +16032,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "473142",
@@ -14994,7 +16056,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "475534",
@@ -15017,7 +16081,11 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Sour milk, not plain milk."
+              ]
             },
             {
               "productId": "476957",
@@ -15039,7 +16107,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "477050",
@@ -15061,7 +16131,9 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "462703",
@@ -15083,7 +16155,11 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": [
+                "Lactose free but a cooking fat mix, not milk."
+              ]
             }
           ],
           "chosen": {
@@ -16195,7 +17271,11 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "473986",
@@ -16287,7 +17367,16 @@ export const scene5: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 1.21 €",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "468526",
@@ -16305,7 +17394,11 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             },
             {
               "productId": "475908",
@@ -16323,7 +17416,11 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Lists milk and has no lactose-free claim in Valio's data."
+              ]
             }
           ],
           "beyondList": [
@@ -16486,7 +17583,25 @@ export const scene5: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 18.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "A mozzarella-fontal blend, not pure mozzarella.",
+                "10 × 2.5 kg for 180.10 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "463383",
@@ -16597,7 +17712,21 @@ export const scene5: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more."
+              "shortText": "16.50 € more.",
+              "checks": [
+                "Stock: 4,318 bags",
+                "Price 19.66 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 96.9 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 bags for 196.60 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "465174",
@@ -16756,7 +17885,24 @@ export const scene5: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more."
+              "shortText": "54.80 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 23.49 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 97.8 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Lactose free and checked.",
+                "10 × 2.5 kg for 234.90 €.",
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "470836",
@@ -16867,7 +18013,20 @@ export const scene5: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more."
+              "shortText": "154.43 € more.",
+              "checks": [
+                "Stock: 154 pieces",
+                "Price 5.31 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk"
+              ],
+              "whyReasons": [
+                "Lactose free, claim unchecked.",
+                "63 × 400 g for 334.53 €.",
+                "Footprint 5.21 kg CO2e per kg, a group average."
+              ]
             },
             {
               "productId": "474642",
@@ -17026,7 +18185,16 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 36.17 €",
+                "Order cut-off 12 Nov 15:00",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "467107",
@@ -17187,7 +18355,17 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 18.29 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 5.21 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": []
             },
             {
               "productId": "463685",
@@ -17295,7 +18473,17 @@ export const scene5: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7
+              "groupOrder": 7,
+              "checks": [
+                "Stock: not deliverable",
+                "Price 108.09 €",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Lactose free and checked, but Valio gives no delivery date for it."
+              ]
             },
             {
               "productId": "467197",
@@ -17409,7 +18597,19 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 76.33 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 94.1 % of orders",
+                "Footprint 5.21 kg CO2e per kg",
+                "Allergens: milk",
+                "Free from gluten",
+                "Free from lactose"
+              ],
+              "whyReasons": [
+                "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
+              ]
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -17681,7 +18881,21 @@ export const scene5: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest safe option, always delivered in full.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.01 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464401",
@@ -17881,7 +19095,22 @@ export const scene5: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more."
+              "shortText": "90.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.10 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "463335",
@@ -18063,7 +19292,21 @@ export const scene5: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more."
+              "shortText": "390.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.40 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464201",
@@ -18253,7 +19496,21 @@ export const scene5: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more."
+              "shortText": "550.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.56 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464073",
@@ -18435,7 +19692,21 @@ export const scene5: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more."
+              "shortText": "630.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.64 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "464398",
@@ -18617,7 +19888,21 @@ export const scene5: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more."
+              "shortText": "640.00 € more.",
+              "checks": [
+                "Stock: Valio gives no real count",
+                "Price 1.65 €",
+                "Order cut-off 15 Nov 17:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+              ]
             },
             {
               "productId": "469287",
@@ -18805,7 +20090,19 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 27.39 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "464119",
@@ -19005,7 +20302,21 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 13.32 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "465039",
@@ -19196,7 +20507,20 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 6.86 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "476240",
@@ -19395,7 +20719,21 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 7.62 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Heart Symbol",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "463038",
@@ -19576,7 +20914,19 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8
+              "groupOrder": 8,
+              "checks": [
+                "Price 31.31 €",
+                "Order cut-off 12 Nov 15:00",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462921",
@@ -19776,7 +21126,22 @@ export const scene5: Snapshot = {
               ],
               "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
               "groupText": "Over the hard cap",
-              "groupOrder": 1
+              "groupOrder": 1,
+              "checks": [
+                "Price 10.97 €",
+                "Order cut-off 12 Nov 15:00",
+                "Delivered as ordered in 100 % of orders",
+                "Footprint 1.1 kg CO2e per kg",
+                "Label EU organic",
+                "Label Hyvää Suomesta",
+                "Allergens: milk",
+                "Free from lactose",
+                "Vegetarian"
+              ],
+              "whyReasons": [
+                "Order cut-off 12 Nov 15:00 has passed.",
+                "The quantity is unknown."
+              ]
             },
             {
               "productId": "462626",
@@ -19798,7 +21163,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463047",
@@ -19837,7 +21204,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463203",
@@ -19859,7 +21228,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463380",
@@ -19881,7 +21252,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "463779",
@@ -19903,7 +21276,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464198",
@@ -19925,7 +21300,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464237",
@@ -19947,7 +21324,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464399",
@@ -19969,7 +21348,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "464440",
@@ -19991,7 +21372,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "465149",
@@ -20013,7 +21396,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "466288",
@@ -20035,7 +21420,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10
+              "groupOrder": 10,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469331",
@@ -20057,7 +21444,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "469541",
@@ -20079,7 +21468,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "472492",
@@ -20101,7 +21492,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "473142",
@@ -20123,7 +21516,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "475534",
@@ -20146,7 +21541,11 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3
+              "groupOrder": 3,
+              "checks": [],
+              "whyReasons": [
+                "Sour milk, not plain milk."
+              ]
             },
             {
               "productId": "476957",
@@ -20168,7 +21567,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "477050",
@@ -20190,7 +21591,9 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": []
             },
             {
               "productId": "462703",
@@ -20212,7 +21615,11 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9
+              "groupOrder": 9,
+              "checks": [],
+              "whyReasons": [
+                "Lactose free but a cooking fat mix, not milk."
+              ]
             }
           ],
           "chosen": {

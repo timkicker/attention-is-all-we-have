@@ -160,7 +160,7 @@ test("scene 3 on screen: Simulated, and R-2 waits at 180.10", async ({ page }) =
   await page.goto("/");
   // The inbox row says why it waits; the stock-out itself is told on R-2 (asked-for).
   await needs(page, "inbox-summary-R-2", "inbox-R-2");
-  await expect(page.getByTestId("inbox-summary-R-2")).toContainText("Asks you");
+  await expect(page.getByTestId("inbox-summary-R-2")).toContainText("The swap needs you");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
   await expect(page.getByTestId("inbox-R-2")).toContainText(money("180.10"));
 });

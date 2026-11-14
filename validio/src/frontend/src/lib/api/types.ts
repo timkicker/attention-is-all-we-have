@@ -98,6 +98,10 @@ export interface RankedOption {
   groupText?: string;
   /** Turned-down options only: the heading's place, lowest first. The same heading has the same number. */
   groupOrder?: number;
+  /** The reasons for the Why fold, without the one shortText already says. */
+  whyReasons?: string[];
+  /** The facts Validio confirmed, one short fact each: "Price 1.01 €", "Free from lactose". */
+  checks?: string[];
   /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
   displayName?: string;
   /** The same as displayName. */

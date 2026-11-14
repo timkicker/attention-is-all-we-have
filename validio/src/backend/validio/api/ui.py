@@ -112,7 +112,11 @@ def inbox(ctx: CtxDep):
     for r in reversed(ctx.store.requests()):
         v = get_request(ctx, r["id"])
         sentence = v.question if v.status == "waiting" and v.question else (v.decision.sentence if v.decision else "")
-        why = display.asks_text(v.decision.sentence) if v.status == "waiting" and v.decision else None
+        why = None
+        if v.status == "waiting" and v.decision:
+            asked = asked_apart(ctx, v).asked_for
+            why = ("Out of stock (simulated). The swap needs you." if asked and "(simulated" in asked.state_text
+                   else display.asks_text(v.decision.sentence))
         out.append(InboxItem(id=v.id, created_at=v.created_at, text=v.text, status=v.status, sentence=sentence,
                              total_cents=v.total_cents, title=v.title, title_text=v.title_text, summary=why))
     return out
