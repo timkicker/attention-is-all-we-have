@@ -38,7 +38,8 @@ def app_values(embed_rate: dict | None, verda: dict | None, m_lives: dict | None
 
 def app_keys(cur) -> dict:
     cur.execute(FI_SQL)
-    vals = app_values(stat.get(cur, "embed_rate"), stat.get(cur, "verda"), stat.get(cur, "m_lives"), cur.fetchone())
+    fi = cur.fetchone()  # before stat.get, which runs its own queries on this cursor
+    vals = app_values(stat.get(cur, "embed_rate"), stat.get(cur, "verda"), stat.get(cur, "m_lives"), fi)
     for k, v in vals.items():
         stat.put(cur, k, v)
         print(f"{k}: {v}")
