@@ -12,10 +12,22 @@
     onsubmit,
     submitLabel,
     oncancel,
-  }: { value?: string; error?: string; onsubmit: () => void; submitLabel?: string; oncancel?: () => void } = $props();
+    focus = true,
+    busy = false,
+  }: {
+    value?: string;
+    error?: string;
+    onsubmit: () => void;
+    submitLabel?: string;
+    oncancel?: () => void;
+    /** Off where the code is the last field of a longer form (Agent Rules). */
+    focus?: boolean;
+    busy?: boolean;
+  } = $props();
 
   let box: HTMLElement | undefined = $state();
   $effect(() => {
+    if (!focus) return;
     box?.scrollIntoView({ block: "nearest" });
     document.getElementById("approve-code")?.focus();
   });
@@ -48,7 +60,7 @@
     />
     {#if submitLabel}
       {#if oncancel}<Button variant="outline" onclick={oncancel}>Cancel</Button>{/if}
-      <Button type="submit" data-testid="code-submit">{submitLabel}</Button>
+      <Button type="submit" data-testid="code-submit" disabled={busy}>{submitLabel}</Button>
     {/if}
   </div>
   <p class="help" id="code-help">
