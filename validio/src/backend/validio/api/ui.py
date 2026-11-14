@@ -26,7 +26,7 @@ from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from . import display
 from .accounts import request_ctx
-from .limits import client_ip
+from .limits import client_ip, secure_cookies
 from .schemas import (
     ApproveIn,
     AskedFor,
@@ -84,7 +84,7 @@ def session(ctx: CtxDep, request: Request, body: SessionIn) -> Response:
         raise HTTPException(401, "wrong kitchen token")
     r = Response(status_code=204)
     r.set_cookie(COOKIE, ctx.kitchen_token, httponly=True, samesite="strict",
-                 secure=request.url.scheme == "https", max_age=12 * 3600)
+                 secure=secure_cookies(request), max_age=12 * 3600)
     return r
 
 

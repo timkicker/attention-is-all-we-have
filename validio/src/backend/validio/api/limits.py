@@ -22,6 +22,15 @@ def client_ip(request: Request) -> str:
     return request.client.host if request.client else "?"
 
 
+def secure_cookies(request: Request) -> bool:
+    """Cookies get Secure on https, on a public deploy (VALIDIO_PUBLIC=1, where TLS ends at the proxy and the app
+    sees plain http) and behind a trusted proxy that forwards https."""
+    if request.url.scheme == "https" or os.environ.get("VALIDIO_PUBLIC") == "1":
+        return True
+    return (os.environ.get("VALIDIO_TRUST_PROXY") == "1"
+            and request.headers.get("x-forwarded-proto", "").split(",")[0].strip() == "https")
+
+
 class RateLimiter:
     """At most `limit` hits per key within `window` seconds (a sliding window)."""
 
