@@ -134,6 +134,11 @@ export function backedBy(n: number, of = 7): string {
   return `Backed by ${n} of ${of} editions`
 }
 
+/** Backed only by the offline similarity guess (fake-judge-similarity): no model read the pair. */
+export function likelyBackedBy(n: number, of = 7): string {
+  return `Likely backed by ${n} of ${of} editions (matched by shared names and numbers, no model)`
+}
+
 /** "Disputed · in 3 of 7, English removed it in 2009". */
 export function disputedRemoved(n: number, of: number, langs: string | readonly string[], year: string | number): string {
   const who = typeof langs === 'string' ? edition(langs) : editions(langs)
