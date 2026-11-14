@@ -1791,6 +1791,18 @@
             "title": "Issuer",
             "type": "string"
           },
+          "seesText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "one sentence: what the agent sees of this Spend Pass",
+            "title": "Seestext"
+          },
           "split": {
             "$ref": "#/components/schemas/SplitView"
           },

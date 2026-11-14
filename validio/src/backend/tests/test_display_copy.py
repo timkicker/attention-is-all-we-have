@@ -75,3 +75,40 @@ def test_footprint_note_is_short(client, holder):
     req = ask_milk(client, holder)
     note = client.get(f"/api/requests/{req['id']}").json()["lines"][0]["note"]
     assert len(note.split()) <= 14 and "1.1 kg CO2e per kg" in note
+
+
+def test_waiting_inbox_says_why_it_asks(client, holder):
+    _milk_and_mozzarella(client, holder)
+    item = {i["id"]: i for i in client.get("/api/inbox").json()}["R-2"]
+    assert item["status"] == "waiting"
+    assert item["summary"] == "Asks you: the swap is not on Valio's list."
+    assert item["sentence"] == "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
+
+
+def test_question_summary_keeps_its_question_mark():
+    from validio.api import display as d
+    assert d.summary("Order 10 × 2.5 kg of cheese for 180.10 €?") == "Order 10 × 2.5 kg of cheese for 180.10 €?"
+
+
+def test_chosen_swap_says_what_it_is(client, holder):
+    _milk_and_mozzarella(client, holder)
+    line = client.get("/api/requests/R-2").json()["lines"][0]
+    opts = [*line["options"], *(line.get("substitutes") or []), *(line.get("beyondList") or [])]
+    chosen = [o for o in opts if o["verdict"] == "chosen"]
+    assert [o["productId"] for o in chosen] == ["465256"]
+    assert chosen[0]["shortText"] == "Cheapest lactose-free swap, delivered by 16 Nov."
+    r1 = client.get("/api/requests/R-1").json()["lines"][0]
+    assert [o["shortText"] for o in r1["options"] if o["verdict"] == "chosen"] == [
+        "Cheapest safe option, always delivered in full."]
+
+
+def test_spend_pass_says_what_the_agent_sees(client, holder):
+    _milk_and_mozzarella(client, holder)
+    p = client.get("/api/spend-passes/M-1").json()
+    assert p["seesText"] == "The agent sees your limits and diet rules, not who approves or your preferred labels."
+
+
+def test_stange_reads_naturally():
+    from validio.text.format import short_name
+    assert short_name("Topfoods mozzarella stange sliced lactose free 400g frozen") == \
+        "Lactose-free sliced mozzarella stange 400 g"

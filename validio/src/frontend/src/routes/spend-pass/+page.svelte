@@ -77,7 +77,7 @@
       <h2 class="v-h" id="h-sees">What the agent sees</h2>
       <Section class="v-card">
         <p class="sees" data-testid="pass-approvers" id="pass-approvers">
-          Sees: {(p.disclosedText ?? p.disclosed).join(", ")}. Hidden: {(p.hiddenText ?? p.hidden).join(", ")}.
+          {p.seesText ?? `Sees: ${(p.disclosedText ?? p.disclosed).join(", ")}. Hidden: ${(p.hiddenText ?? p.hidden).join(", ")}.`}
         </p>
       </Section>
     </section>

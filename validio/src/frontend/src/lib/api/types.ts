@@ -326,6 +326,8 @@ export interface SpendPass {
   /** The same fields as a person reads them: "auto limit", "never above", "diet". */
   disclosedText?: string[];
   hiddenText?: string[];
+  /** One sentence: "The agent sees your limits and diet rules, not who approves or your preferred labels." */
+  seesText?: string;
   /** What placed orders under this Spend Pass add up to. */
   usedCents?: number;
 }
