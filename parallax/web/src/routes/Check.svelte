@@ -94,6 +94,6 @@
   .go .u { color: var(--fg2); }
   @media (max-width: 600px) {
     .go { flex-direction: column; align-items: stretch; }
-    .go .btn { justify-content: center; margin-left: 0; order: -1; width: 100%; }
+    .go .btn { justify-content: center; margin-left: 0; width: 100%; }
   }
 </style>
