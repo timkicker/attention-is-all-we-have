@@ -11,7 +11,7 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-title")).toHaveText("1,000 litres of lactose-free milk");
   await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.getByTestId("live-checked")).toContainText(/\d+\sproducts/);
+  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
   await expect(page.getByTestId("request-rule")).toContainText("auto-order");
   await expect(page.getByTestId("option-464306")).toContainText("1,010.00");
   await expect(page.getByTestId("option-464306")).toContainText("Chosen");
@@ -25,7 +25,9 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await expect(page.getByTestId("supplier-463047")).toContainText("Order all 132 in stock");
   await expect(page.getByTestId("reader-463047")).toContainText("talks to AI agents");
   await expect(page.getByTestId("option-462921")).toContainText("2,194.00");
-  await expect(page.getByTestId("option-462921")).toContainText("Blocked");
+  // Turned-down groups carry no pill: the group head says why.
+  await expect(page.getByTestId("option-462921")).toContainText("hard cap");
+  await expect(page.getByTestId("option-462921").locator(".v-pill")).toHaveCount(0);
 
   await page.getByTestId("nav-open-ledger").click();
   await expect(page.getByTestId("chain-status")).toContainText("Verified");
