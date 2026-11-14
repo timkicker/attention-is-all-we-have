@@ -23,6 +23,12 @@ const save = (name: string, f: Found) => writeFileSync(`${OUT}/${slug(name)}.jso
 async function open(page: Page, route: string, scheme: "light" | "dark") {
   await page.emulateMedia({ colorScheme: scheme });
   await page.goto(route);
+  // Every page needs a session now: the demo kitchen's copy for this browser context.
+  if (new URL(page.url()).pathname === "/login" || (await page.locator("#try-demo").count())) {
+    await page.locator("#try-demo").click();
+    await page.waitForURL((u) => u.pathname !== "/login");
+    await page.goto(route);
+  }
   // the kit switches on data-theme; the rebuilt app may follow prefers-color-scheme, both are set
   await page.evaluate((s) => document.documentElement.setAttribute("data-theme", s), scheme);
   await page.waitForLoadState("networkidle");
@@ -140,7 +146,10 @@ async function keyboard(page: Page, id: string, done: () => Promise<boolean>, fa
       await page.keyboard.press("Enter");
     }
     await page.waitForLoadState("networkidle");
-    if (problems.length === 0 && !(await done()))
+    // The write lands a moment after the page went idle (the pages poll every 2 s): ask again for up to 5 s.
+    let ok = false;
+    for (let i = 0; i < 10 && !(ok = await done()); i++) await page.waitForTimeout(500);
+    if (problems.length === 0 && !ok)
       problems.push(`Enter on ${id} did not do it (no code field the keyboard reaches, or the request failed)`);
   }
   if (problems.length) {

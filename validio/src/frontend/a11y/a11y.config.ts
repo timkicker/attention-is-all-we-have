@@ -1,5 +1,4 @@
 import { execFileSync } from "node:child_process";
-import { randomInt } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "@playwright/test";
@@ -21,11 +20,16 @@ if (!process.env.TEST_WORKER_INDEX) {
   if (busy) throw new Error(`something already answers on ${BASE}; stop it or set A11Y_PORT`);
 }
 process.env.A11Y_BASE = BASE;
-process.env.A11Y_CODE ||= String(randomInt(0, 1_000_000)).padStart(6, "0"); // the workers inherit it
+// The pages are audited in a demo copy (every page needs a session), whose approval code is the demo's.
+process.env.A11Y_CODE ||= "246810"; // the workers inherit it
 const STORE = resolve(HERE, "../../../artifacts/a11y-store");
 process.env.A11Y_OUT = resolve(HERE, "../../../artifacts/a11y");
 process.env.VALIDIO_DB = `${STORE}/validio.db`;
 process.env.VALIDIO_KEYS = `${STORE}/keys`;
+// The demo copy is taken from the local kitchen after setup.ts played the scenes into it.
+process.env.VALIDIO_TEMPLATE = STORE;
+process.env.VALIDIO_ACCOUNTS = `${STORE}-accounts`;
+process.env.A11Y_STATE = `${STORE}-session.json`;
 process.env.VALIO_MODE = "replay";
 process.env.VALIDIO_DEMO = "1";
 process.env.VALIDIO_APPROVE_CODE = process.env.A11Y_CODE;
@@ -39,10 +43,10 @@ export default defineConfig({
   fullyParallel: false,
   timeout: 120_000,
   reporter: [["list"]],
-  use: { baseURL: BASE },
+  use: { baseURL: BASE, storageState: process.env.A11Y_STATE },
   webServer: {
     command:
-      `rm -rf ${STORE} && mkdir -p ${STORE} && cd ../../backend && uv run python ../../scripts/seed_demo.py && ` +
+      `rm -rf ${STORE} ${STORE}-accounts && mkdir -p ${STORE} && cd ../../backend && uv run python ../../scripts/seed_demo.py && ` +
       `uv run uvicorn validio.api.app:app --host 127.0.0.1 --port ${PORT}`,
     url: `${BASE}/api/health`,
     reuseExistingServer: false,
