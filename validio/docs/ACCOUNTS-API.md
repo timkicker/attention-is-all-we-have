@@ -252,7 +252,8 @@ ActivityItem = {
   `blocked`. A request cleared to order alone that the agent has not confirmed yet is no item until it is.
 * `why`: "Under your 1,200.00 € limit, ordered alone", "Over your 1,200.00 € limit for ordering alone",
   "Above your 5,000.00 € limit, blocked", "You approved it", "You said no"; the Steady Order "Every Monday,
-  4 lines" (", 2 waiting for you" with flagged lines).
+  4 lines" (", 1 waiting for you" for lines that wait for the owner after a renewal, ", 1 blocked" for lines
+  blocked this week); its `totalCents` is what the ordered lines cost, null before a renewal.
 * Newest first by `at` (a request's time; the Steady Order's renewal, else its last ledger entry, else the
   start of its pass).
 
@@ -274,7 +275,8 @@ ActivityDetail = {
   checks: {label: "Product" | "Price" | "Stock" | "Allergens" | "Substitute", value: string,
            note: string | null, ok: boolean | null}[],   // per chosen product; ok null: not confirmed either way
   rule: {text: string, version: number},       // the rule that decided; the pass version in force then
-  result: {orderId: string, delivery: string | null} | null,    // a placed order
+  result: {orderId: string, orderIds: string[], delivery: string | null} | null,   // what was placed: one
+                                               // order, or the Steady Order's orders this week (orderId the first)
   approval: {orderId: string, holdUntil: string} | null,        // only while waiting
   proof: {at: string, actor: string, text: string, hash: string}[]   // the ledger entries of this item
 }

@@ -7,6 +7,7 @@ from asking import EXAMPLE, ask, connect_demo_agent
 from fastapi.testclient import TestClient
 from test_accounts import SIGNUP, account_ctx, app_env  # noqa: F401
 
+from validio.api import activity
 from validio.api.settings import DEMO_RULES
 
 CODE = "246810"
@@ -79,6 +80,8 @@ def test_detail_of_an_order_placed_alone(kitchen):
     assert d["asked"] == {"text": EXAMPLE, "agentName": "Demo agent"}
     labels = [x["label"] for x in d["checks"]]
     assert labels[:3] == ["Product", "Price", "Stock"] and "Allergens" in labels
+    for x in d["checks"]:  # a note adds to its value, it never says it again
+        assert not x["note"] or (not x["note"].lower().startswith(x["value"].lower()) and not x["note"].endswith("."))
     price = next(x for x in d["checks"] if x["label"] == "Price")
     assert price["value"].startswith("1.01 € per") and price["ok"] is True and price["note"].startswith("Valio price")
     allergens = next(x for x in d["checks"] if x["label"] == "Allergens")
@@ -90,6 +93,13 @@ def test_detail_of_an_order_placed_alone(kitchen):
     assert any(p["text"].startswith(f"Ordered {d['item']['orderId']}") for p in d["proof"])
     ledger = {e["hash"] for e in c.get("/api/ledger").json()["entries"]}
     assert all(len(p["hash"]) == 64 and p["hash"] in ledger for p in d["proof"])
+
+
+def test_a_note_never_repeats_its_value():
+    assert activity._note("Valio gives no real count", "Valio gives no real count, treated as in stock") == \
+        "Treated as in stock"
+    assert activity._note("Not on Valio's list", "Cheapest lactose-free swap.") == "Cheapest lactose-free swap"
+    assert activity._note("In stock", "In stock") is None and activity._note("x", None) is None
 
 
 def test_detail_while_waiting_then_approved(kitchen):
@@ -128,6 +138,20 @@ def test_detail_of_the_steady_order(kitchen):
     assert d["checks"] and all(x["label"] == "Product" for x in d["checks"])
     assert d["rule"]["text"].startswith("Under the Steady Order's own pass") and d["rule"]["version"] >= 1
     assert d["result"] is None and d["approval"] is None
+
+
+def test_a_renewed_steady_order_shows_its_orders_and_what_still_waits(kitchen):
+    c, *_ = kitchen
+    assert c.post("/api/steady/S-1/renew", json={"code": CODE}).status_code == 200
+    so = c.get("/api/steady/S-1").json()["lines"]
+    placed = [ln for ln in so if ln["result"] in ("renewed", "split_renewed", "accepted")]
+    waiting = sum(ln["result"] in ("waiting", "flagged") for ln in so)
+    d = c.get("/api/activity/S-1").json()
+    assert d["result"]["orderIds"] == list(dict.fromkeys(ln["orderId"] for ln in placed))
+    assert d["result"]["orderId"] == d["result"]["orderIds"][0] and d["result"]["delivery"]
+    assert d["item"]["totalCents"] == sum(ln["totalCents"] for ln in placed)  # a blocked line costs nothing
+    assert (f"{waiting} waiting for you" in d["item"]["why"]) == bool(waiting)
+    assert all(not x["note"] or not x["note"].endswith(".") for x in d["checks"])
 
 
 @pytest.mark.parametrize("bad", ["R-99", "S-9", "O-1", "nothing"])
