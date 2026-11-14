@@ -27,6 +27,7 @@
 
   let res = $state<Result<RemovedVM> | null>(null)
   let title = $state('')
+  let latest = $state<string | null>(null)
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let q = $state(router.query.get('q') ?? '')
 
@@ -74,7 +75,10 @@
   const more = $derived(res?.ok ? Math.max(0, res.data.total - visible.length) : 0)
 
   $effect(() => {
-    resolveTopic(params.qid).then((r) => (title = r.ok ? r.data.title : params.qid))
+    resolveTopic(params.qid).then((r) => {
+      title = r.ok ? r.data.title : params.qid
+      latest = r.ok ? (r.data.latest ?? null) : null
+    })
   })
 
   $effect(() => {
@@ -114,7 +118,7 @@
     <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} testid={TID.findStatement} oninput={onInput} />
     <div class="pair">
       <EditionPick value={edition} editions={res?.ok ? res.data.editions : []} onpick={(l) => router.setQuery({ edition: l, offset: null })} />
-      <AsOf />
+      <AsOf {latest} />
     </div>
   </div>
 

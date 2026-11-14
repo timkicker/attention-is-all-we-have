@@ -17,6 +17,16 @@ from api.db import connection
 QUERIES = Path(__file__).resolve().parent / "queries"
 _current: contextvars.ContextVar[dict | None] = contextvars.ContextVar("sqllog", default=None)
 LAST: dict[str, list[dict]] = {}  # panel_id -> statements of its last run
+# Panels whose statements carry what a visitor typed (a pasted answer, a question, a search, a run id). Their
+# statements go back to that visitor in the response only and are never kept for GET /api/sql/{panel_id}.
+PRIVATE_PANELS = frozenset({"check", "ask", "search", "ingest"})
+MAX_SHOWN_CHARS = 120  # longer text parameters (answers, vectors as JSON) are logged as their length only
+
+
+def remember(panel_id: str | None, statements: list[dict]) -> None:
+    """Keep the statements of a panel's last run for "Under the hood", unless the panel is private."""
+    if panel_id and panel_id not in PRIVATE_PANELS:
+        LAST[panel_id] = statements
 
 
 @cache
@@ -70,13 +80,16 @@ def _index_used(cur, text: str, params) -> str:
 
 
 def _shown_params(params) -> dict:
-    """Named parameters for the log: scalars as text, lists only as their length (they can hold hundreds of hashes)."""
+    """Named parameters for the log: scalars as text, lists only as their length (they can hold hundreds of hashes),
+    long strings only as their length (a pasted answer or a vector as JSON)."""
     if not isinstance(params, dict):
         return {}
     out: dict = {}
     for k, v in params.items():
         if isinstance(v, (list, tuple, set)):
             out[k] = {"count": len(v)}
+        elif isinstance(v, str) and len(v) > MAX_SHOWN_CHARS:
+            out[k] = {"chars": len(v)}
         elif v is None or isinstance(v, (str, int, float)):
             out[k] = v
         elif hasattr(v, "isoformat"):

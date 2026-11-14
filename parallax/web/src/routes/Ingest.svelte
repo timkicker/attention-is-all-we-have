@@ -28,6 +28,7 @@
 
   function explain(e: Failure): string {
     if (e.code === 'rate_limited') return copy.ERR.rateLimited(e.retryAfterS ?? 120)
+    if (e.code === 'too_many') return copy.ERR.tooMany(e.retryAfterS ?? 60)
     if (e.code === 'no_finnish') return copy.start.NO_FINNISH_LONG
     if (e.code === 'network') return copy.ERR.network
     if (e.status === 404) return copy.start.INGEST_NOT_FOUND

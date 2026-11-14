@@ -51,6 +51,8 @@ export interface TopicEditionRaw {
   history: 'every' | 'yearly' | 'none'
   revisions: number
   first_ts: Ts
+  /** Newest stored revision (data is not refreshed after a load). Older APIs omit it. */
+  last_ts?: Ts | null
 }
 export interface TopicRaw {
   topic_id: string
@@ -179,6 +181,8 @@ export interface CheckReq {
   text: string
   as_of?: string
   langs?: string[]
+  /** topic_id: evidence only from this topic. */
+  topic?: string
 }
 
 // GET /api/check/recorded

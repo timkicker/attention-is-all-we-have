@@ -31,6 +31,7 @@
   let loading = $state(true)
   let busy = $state(false)
   let title = $state('')
+  let latest = $state<string | null>(null)
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let q = $state(router.query.get('q') ?? '')
   /** Phone width: a list row's 3 lines hold fewer characters, so the text starts closer to its mark. */
@@ -48,6 +49,7 @@
   $effect(() => {
     resolveTopic(params.qid).then((r) => {
       if (!title) title = r.ok ? r.data.title : params.qid
+      latest = r.ok ? (r.data.latest ?? null) : null
     })
   })
 
@@ -135,7 +137,7 @@
 
   <div class="ctl">
     <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
-    <AsOf />
+    <AsOf {latest} />
   </div>
 
   {#if loading}

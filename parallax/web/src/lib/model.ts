@@ -38,6 +38,8 @@ export interface TopicRef {
   qid: string
   topicId: string
   title: string
+  /** YYYY-MM-DD of the newest stored revision: "latest" means this day, not today. Unknown = undefined or null. */
+  latest?: string | null
 }
 
 /** Shared by every topic tab. date = YYYY-MM-DD or null for today. */

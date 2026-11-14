@@ -93,3 +93,52 @@ def test_parallel_capped_at_three(monkeypatch):
 def test_no_write_actions():
     with pytest.raises(ValueError):
         wapi.get("https://fi.wikipedia.org/w/api.php", {"action": "edit"})
+
+
+def test_max_age_zero_neither_reads_nor_writes_the_cache(monkeypatch):
+    class Resp:
+        status_code = 200
+        headers: dict = {}
+
+        @staticmethod
+        def json():
+            return {"batchcomplete": True}
+
+    monkeypatch.setattr(wapi.SESSION, "get", lambda *a, **k: Resp())
+    params = {"action": "query", "list": "search", "srsearch": "never kept"}
+    wapi.get("https://example.invalid/w/api.php", params, max_age_s=0)
+    key = wapi.cache_key("https://example.invalid/w/api.php", {**params, "format": "json", "maxlag": 5})
+    assert not wapi._cache_path(key).exists()
+
+
+def test_interactive_call_does_not_sleep_on_429(monkeypatch):
+    class Resp:
+        status_code = 429
+        headers = {"Retry-After": "30"}
+
+    slept = []
+    monkeypatch.setattr(wapi.SESSION, "get", lambda *a, **k: Resp())
+    monkeypatch.setattr(wapi.time, "sleep", slept.append)
+    monkeypatch.setattr(wapi, "_cooldown_until", 0.0)
+    try:
+        wapi.get("https://example.invalid/w/api.php", {"action": "query", "x": "interactive"}, interactive=True)
+    except wapi.RateLimited:
+        pass
+    else:
+        raise AssertionError("no RateLimited")
+    finally:
+        monkeypatch.setattr(wapi, "_cooldown_until", 0.0)
+    assert slept == []
+
+
+def test_network_error_becomes_wiki_error(monkeypatch):
+    def down(*a, **k):
+        raise wapi.requests.ConnectionError("down")
+
+    monkeypatch.setattr(wapi.SESSION, "get", down)
+    try:
+        wapi.get("https://example.invalid/w/api.php", {"action": "query", "x": "down"}, interactive=True)
+    except wapi.WikiError:
+        pass
+    else:
+        raise AssertionError("no WikiError")
