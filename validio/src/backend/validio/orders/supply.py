@@ -5,6 +5,7 @@ Valio is asked only about those (and Safe Swap's few substitutes), every option 
 Best Pick ranks, Cedar decides per option. Nothing the agent says about price or trust is read.
 """
 
+import logging
 import sqlite3
 from dataclasses import dataclass
 from datetime import date
@@ -19,7 +20,7 @@ from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
 from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
-from ..valio.client import ValioUnavailable
+from ..valio.client import NotRecorded, ReplayMiss, ValioUnavailable
 from .service import (
     SEVERITY,
     IdempotencyConflict,
@@ -159,8 +160,16 @@ class SupplyService:
         need = self._need(ln, mandate, deliver_by)
         cands, dropped = screen(need, self.catalog)
         ids = [p.id for p in cands]
-        quotes = self.valio.price(ids, need.deliver_by, budget) if ids else {}
-        avail = self.orders.adjust(self.valio.availability(ids, need.deliver_by, budget)) if ids else {}
+        try:
+            quotes = self.valio.price(ids, need.deliver_by, budget) if ids else {}
+            avail = self.orders.adjust(self.valio.availability(ids, need.deliver_by, budget)) if ids else {}
+        except NotRecorded:
+            raise
+        except ReplayMiss as e:
+            logging.getLogger(__name__).warning("replay miss: %s", e)  # ids and the fix, for the developer
+            p = self.catalog.get(need.product_id) if need.product_id else None
+            what = short_ref(p.name_en) if p else need.kind.replace("_", " ") or "these products"
+            raise NotRecorded(f"Valio's answers for {what} aren't recorded for this demo. Nothing was ordered.") from e
         ranked = rank(need, cands, quotes, avail, self.now(), prefer_labels=tuple(mandate.prefer_labels or ()))
 
         carbon = {p.carbon_kg_per_kg for p in cands if p.carbon_kg_per_kg is not None}
