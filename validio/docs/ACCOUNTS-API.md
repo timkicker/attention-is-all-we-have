@@ -69,7 +69,7 @@ AgentState = {
   consent?: {name: string, keyId: string, may: string[]},                          // state "consent"
   agent?: {name: string, kind: "agent" | "mcp", keyId: string, connectedAt: string,
            lastUsedAt: string | null, passId: string, passVersion: number},        // "active" / "paused"
-  connectorUrl?: string,                    // only in the Allow answer after connect-claude, see below
+  connectorUrl?: string,                    // only in the Allow answer after connect-mcp, see below
   versions: [{version: number, at: string, why: string}]                           // newest first
 }
 ```
@@ -87,7 +87,7 @@ AgentState = {
 | GET | `/api/agent` | none | `AgentState` |
 | POST | `/api/agent/pair` | none | `AgentState` in `pairing` (a new code each time) |
 | POST | `/api/agent/demo` | none | `AgentState` in `consent`: the server's demo agent answered the code (demo copies only) |
-| POST | `/api/agent/connect-claude` | none | `AgentState` in `consent`, `consent.name` "Claude": Validio holds the agent key itself (any account, 409 while an agent is connected) |
+| POST | `/api/agent/connect-mcp` | none | `AgentState` in `consent`, `consent.name` "MCP agent": Validio holds the agent key itself (any account, 409 while an agent is connected) |
 | POST | `/api/agent/allow` | none | `AgentState` in `active`; the pass is signed again to the agent's key, version +1 |
 | POST | `/api/agent/deny` | none | `AgentState` in `none` |
 | POST | `/api/agent/pause` | `{paused: boolean}` | `AgentState` in `paused` or `active` |
@@ -109,26 +109,26 @@ AgentState = {
   `versions`. Disconnect signs M-1 again to a key nobody keeps; it never revokes, so the next agent gets
   M-1 back.
 
-### Connect Claude (or another MCP app that cannot sign)
+### Connect an MCP agent (one that cannot sign)
 
-Claude (claude.ai custom connector, Claude Desktop, Claude Code) speaks MCP over streamable HTTP but cannot
-sign a key binding. "Connect Claude" lets Validio hold the agent key for this kitchen:
+Many MCP agents (chat apps with custom connectors, coding tools, own scripts) speak MCP over streamable HTTP
+but cannot sign a key binding. "Connect an MCP agent" lets Validio hold the agent key for this kitchen:
 
-* `POST /api/agent/connect-claude`: Validio makes a fresh P-256 agent key server side and puts it on the
-  same consent screen as a paired agent, named "Claude".
+* `POST /api/agent/connect-mcp`: Validio makes a fresh P-256 agent key server side and puts it on the same
+  consent screen as a paired agent, named "MCP agent".
 * `POST /api/agent/allow` then signs M-1 again to that key (the existing path, version +1, ledger entry
-  "Connected Claude...") and makes a connector token (32 random bytes, urlsafe; only its SHA-256 is kept).
-  That one answer carries `connectorUrl: "https://<host>/mcp/c/<token>/"`. It is never shown again:
+  "Connected MCP agent...") and makes a connector token (32 random bytes, urlsafe; only its SHA-256 is
+  kept). That one answer carries `connectorUrl: "https://<host>/mcp/c/<token>/"`. It is never shown again:
   `GET /api/agent` has no `connectorUrl`, and `agent.kind` is `"mcp"` (`"agent"` for a paired or demo
   agent). Lost URL: disconnect and connect again.
 * `/mcp/c/<token>/`: the same MCP tools as `/mcp/k/<account>/`, without `spendPass`; `idempotencyKey` is
   optional. Validio presents the pass with the stored key and a fresh nonce on every call, and makes a
   random idempotency key when none is sent (each call is a new request). Rules, approval, Pause (401 with
-  one ledger entry) and the ledger naming the agent "Claude" are unchanged.
+  one ledger entry) and the ledger naming the agent "MCP agent" are unchanged.
 * Disconnect, Deny or any new connect ends the token: `/mcp/c/<token>/` answers 404, as does an unknown
   token. The host allowlist (`VALIDIO_MCP_HOSTS`, DNS rebinding protection) is the same as for `/mcp/k/`.
-* Use: Claude chat: Settings, Connectors, Add custom connector, paste the URL. Claude Code:
-  `claude mcp add --transport http validio <URL>`.
+* Use: add the URL as a remote MCP server (streamable HTTP, no OAuth) in the agent's settings, for example
+  a custom connector in a chat app or `<tool> mcp add --transport http validio <URL>` in a coding tool.
 
 Agent side (for any agent, documented in AGENTS.md as well):
 
