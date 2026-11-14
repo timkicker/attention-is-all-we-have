@@ -140,3 +140,29 @@ def test_real_engine_smoke(monkeypatch):
     body = r.json()
     assert body["engine"] == "real" and len(body["claims"]) >= 2
     assert took < 15, f"{took:.1f} s"
+
+
+def _life(h, label, born, died=None, terms=None, numbers=None):
+    v = {"label": label}
+    if terms is not None:
+        v["terms"], v["numbers"] = terms, numbers or []
+    return {"h": h, "born": born, "died": died, "verdict": v}
+
+
+def test_reworded_sentence_still_says():
+    import datetime as dt
+
+    from api.checker import label
+
+    now = dt.datetime(2026, 11, 14)
+    dead = _life("old", "same", "2005-01-01T00:00:00Z", "2025-03-01T00:00:00Z")
+    reworded = _life("new", "partial", "2025-03-01T00:00:00Z", terms=[])
+    assert label([dead, reworded], now)["label"] == "says"
+    # a live partial with a differing term (en Mainila: "staged" -> "was reported") does not say it any more
+    changed = _life("new", "partial", "2025-03-01T00:00:00Z", terms=[["staged", "reported"]])
+    assert label([dead, changed], now)["label"] == "stopped_saying"
+    # a differing number counts the same way
+    number = _life("new", "partial", "2025-03-01T00:00:00Z", terms=[], numbers=[["25,904", "26,662"]])
+    assert label([dead, number], now)["label"] == "stopped_saying"
+    # runs stored before verdicts kept terms read as before
+    assert label([dead, _life("new", "partial", "2025-03-01T00:00:00Z")], now)["label"] == "stopped_saying"
