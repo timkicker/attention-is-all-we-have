@@ -230,3 +230,49 @@ def test_context_outside_the_schema_is_a_policy_error(bad):
     c = {k: v for k, v in {**BASE.to_cedar(), **bad}.items() if v is not None}
     with pytest.raises(PolicyError, match="^cedar error on PlaceOrder: .*failed to build request"):
         _ask(load_policy(), "PlaceOrder", "P-1", "buyer-1", c)
+
+
+# second run (docs/TESTING.md, after): the blocked sentence and Cedar's own errors
+
+@pytest.mark.parametrize("kw,rules,sentence", [
+    ({"diet_grades": {LF: TrustLevel.CONTRADICTED}}, ["never-break-diet"],
+     "Blocked: a diet rule of the Spend Pass is contradicted by Valio's data."),
+    ({"total_cents": 300000, "diet_grades": {LF: TrustLevel.CONTRADICTED}}, ["never-break-diet", "never-over-hard-cap"],
+     ("Blocked: a diet rule of the Spend Pass is contradicted by Valio's data and 3,000.00 € is over the hard cap "
+      "of 2,000.00 €.")),
+    ({"total_cents": 300000, "has_delivery_line": False}, ["never-over-hard-cap"],
+     "Blocked: 3,000.00 € is over the hard cap of 2,000.00 € and Valio gives no delivery line for it."),
+    ({"sales_block": True, "has_delivery_line": False}, ["no-permit"],
+     "Blocked: no rule allows it (category outside the Spend Pass or a sales block)."),
+    ({"category": "999"}, ["no-permit"],
+     "Blocked: no rule allows it (category outside the Spend Pass or a sales block)."),
+])
+def test_blocked_sentence_names_each_cause(kw, rules, sentence):
+    # `"never-break-diet" in blocked` -> `not in`; `not line and not sales_block` -> `or`; `if not parts` -> `if parts`
+    d = decide(ctx(**kw), "P-1")
+    assert (d.outcome, d.rule_ids, d.sentence) == (Outcome.DENY, rules, sentence)
+
+
+@pytest.mark.parametrize("total", [0, 1])
+def test_zero_total_is_named_and_one_cent_is_not(total):
+    # `total <= 0` -> `< 0` / `<= 1`
+    reasons = _escalation_reasons(ctx(total_cents=total))
+    named = [r for r in reasons if r.endswith("is not a price Valio quoted")]
+    assert named == (["a total of 0.00 € is not a price Valio quoted"] if total == 0 else [])
+
+
+def test_cedar_error_with_an_allow_is_still_an_error(monkeypatch):
+    # `errors or decision not in (Allow, Deny)` -> `and`: a policy that failed to evaluate is skipped by Cedar,
+    # so a forbid that errors leaves an Allow behind
+    import cedarpy
+
+    real = cedarpy.is_authorized
+
+    def erroring(*a, **kw):
+        r = real(*a, **kw)
+        return type("R", (), {"decision": r.decision, "allowed": r.allowed,
+                              "diagnostics": type("D", (), {"errors": ["forbid failed"], "reasons": []})()})()
+
+    monkeypatch.setattr(cedarpy, "is_authorized", erroring)
+    with pytest.raises(PolicyError, match="cedar error on PlaceOrder"):
+        decide(ctx(), "P-1")

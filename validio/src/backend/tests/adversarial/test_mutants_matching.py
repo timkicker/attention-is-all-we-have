@@ -283,3 +283,28 @@ def test_safe_swap_listed_ok_stops(search):
     assert r.searched_outside is False and r.extra_ids == [] and r.best.product.id == "S1"
     assert not r.needs_person
     assert replace(r.best.product) == r.listed[0].product
+
+
+# second run (docs/TESTING.md, after)
+
+@pytest.mark.parametrize("amount,reason", [
+    (0.0, "Out of stock at Valio, 3 × 1 l needed"),
+    (1.0, "Only 1 × 1 l in stock, 3 needed"),
+])
+def test_rank_one_empty_stock_and_short_stock_sentences(amount, reason):
+    # `stock <= 0` -> `< 0` / `<= 1` / `and False`; product_qty(sales_qty, None)
+    assert rank_one(need(), prod(), quote(), avail(amount=amount), NOW).reasons == [reason]
+
+
+def test_rank_one_unknown_pack_size_is_a_reason():
+    # reasons.append(None): the rejection has no sentence
+    r = rank_one(need(), prod(name="test milk", litres=None), quote(), avail(), NOW)
+    assert r.reasons == ["Pack size unknown (unknown)"] and not r.accepted
+
+
+def test_outside_option_that_cannot_be_delivered_is_marked_not_listed():
+    # _judge(..., listed=None): the API sends "onValioList": null for a product outside the list
+    r = _swap([prod("O", claims=()), prod("X")], "O", FakeValio(undeliverable={"X"}))
+    [o] = r.outside
+    assert (o.product.id, o.verdict) == ("X", SubVerdict.UNDELIVERABLE)
+    assert o.on_valio_list is False
