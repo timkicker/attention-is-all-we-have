@@ -501,28 +501,6 @@ export interface SpendPassIn {
   code?: string;
 }
 
-/** POST /api/demo/ask: the kitchen's agent on any text. Kitchen token locally, demo token too when public. */
-export interface AskIn {
-  text: string;
-}
-
-export interface AskOut {
-  /** The request the agent made. Absent when Validio refused it, e.g. no recorded Valio answers. */
-  requestId?: string;
-  /** "Gemini gemini-3.8-flash" or "fake model (no Gemini key)". */
-  model: string;
-  /** The agent's calls and Validio's answers, as the terminal pane prints them. */
-  lines: string[];
-  /** The agent's last sentence. */
-  final: string;
-}
-
-/** POST /api/demo/stock-out body. Without a body it turns the stock-out on, as before. */
-export interface StockOutIn {
-  /** false ends the simulated stock-out of 466375. */
-  on: boolean;
-}
-
 export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;
