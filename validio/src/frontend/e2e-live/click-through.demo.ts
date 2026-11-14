@@ -95,12 +95,13 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass
   else await page.goto("/spend-pass");
   await expect(page).toHaveURL(/\/spend-pass$/);
   await expect(page.getByTestId("pass-valid-to")).toBeVisible();
-  await needs(page, "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by", "pass-valid-to", "pass-approvers");
+  await needs(page, "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by", "pass-valid-to");
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
   await expect(page.getByTestId("pass-deliver-by")).toContainText("16 Nov");
   await expect(page.getByTestId("pass-valid-to")).toContainText("17 Nov");
+  await page.locator("#pass-sees").click();
   await expect(page.getByTestId("pass-approvers")).toContainText("not approvers");
 });
 

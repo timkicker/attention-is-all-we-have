@@ -138,7 +138,7 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
     await page.getByTestId("menu-ask").click();
     await page.getByTestId("ask-input").fill("500 litres of lactose-free milk by Monday");
     await page.getByTestId("ask-send").click();
-    await expect(page.getByTestId("ask-summary")).toBeVisible();
+    await expect(page.getByTestId("ask-none")).toBeVisible();
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-ask") });
     await page.keyboard.press("Escape");
@@ -148,13 +148,13 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
     await page.getByTestId("f-auto").fill("2500");
     if (await page.getByTestId("f-code").isVisible()) await page.getByTestId("f-code").fill("246810");
     await page.getByTestId("limits-save").click();
-    await expect(page.getByTestId("limits-problem")).toBeVisible();
+    await expect(page.getByTestId("f-auto-problem")).toBeVisible();
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-limits"), fullPage: true });
 
     await stockOut(page);
     await page.locator("#page-menu").click();
-    await expect(page.getByTestId("stock-back")).toBeVisible();
+    await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "true");
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-menu") });
   });

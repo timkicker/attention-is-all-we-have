@@ -1,32 +1,65 @@
-// The ask dialog's summary: at most three short lines, built from the request
-// the agent made (read back by id), never from the agent's log.
-import type { SupplyRequest } from "./api/types";
+// The ask dialog's pieces, built from the request the agent made (read back
+// by id) and from the agent's steps, never shown raw: one inbox-style row per
+// ask, a short line when nothing was asked, and a plain log.
+import type { InboxItem, RequestStatus, SupplyRequest } from "./api/types";
 import { money } from "./format";
 
-const ENDING: Partial<Record<SupplyRequest["status"], string>> = {
-  ordered_alone: "Ordered alone",
-  ordered: "Ordered",
-  approved: "Ordered",
-  waiting: "Waits for you",
-  blocked: "Blocked",
-  rejected: "Blocked",
-};
+export interface AskRow {
+  id: string;
+  status: RequestStatus;
+  title: string;
+  end?: string;
+  sub?: string;
+}
 
-export function askSummary(r: SupplyRequest): string[] {
-  const out = [`Agent asked Validio for ${r.title ?? r.titleText ?? r.text}.`];
-  const ids = r.liveChecked?.ids;
-  if (ids) out.push(`Checked ${ids} ${ids === 1 ? "product" : "products"} live.`);
-  const head = ENDING[r.status];
-  if (!head) return out;
-  const picked = r.lines.flatMap((l) => {
-    const o = l.chosen && l.options.find((x) => x.productId === l.chosen!.productId);
-    return o ? [`${o.quantity ?? l.chosen!.salesQty} × ${o.displayName ?? o.name}, ${o.moneyText ?? money(o.totalCents)}`] : [];
-  });
-  if (head === "Blocked" || !picked.length) {
-    const said = (r.decision.summary ?? r.decision.sentence ?? "Nothing was ordered").replace(/\.?$/, ".");
-    // A sentence that already starts with the ending ("Blocked: ...") is not prefixed twice.
-    out.push(said.toLowerCase().startsWith(head.toLowerCase()) ? said : `${head}: ${said}`);
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const firstSentence = (s: string) => s.trim().split(/(?<=\.)\s/)[0];
+
+/** One row as the inbox shows it: the amount unless blocked, one reason only where the pill does not say it. */
+export function askRow(r: SupplyRequest, item?: InboxItem): AskRow {
+  const blocked = r.status === "blocked" || r.status === "rejected";
+  let sub: string | undefined;
+  if (r.status === "waiting") sub = (item?.summary ?? r.question)?.replace(/^Asks you:\s*/, "");
+  else if (blocked) sub = cap((r.decision.summary ?? r.decision.sentence ?? "").replace(/^Blocked:\s*/i, "")) || undefined;
+  return {
+    id: r.id,
+    status: r.status,
+    title: r.titleText ?? r.title ?? r.text,
+    end: blocked ? undefined : (r.moneyText ?? (r.totalCents ? money(r.totalCents) : undefined)),
+    sub,
+  };
+}
+
+/** When the agent made no request: one short line from its last words. */
+export function notRecorded(final: string): string {
+  const m = final.match(/Valio's answers for (.+?) aren't recorded for this demo/);
+  return m ? `Not recorded for this demo: ${m[1]}` : firstSentence(final).replace(/^(Not recorded for this demo: .*?)\.$/, "$1");
+}
+
+/** The agent's steps, one per line: tool names and ids stay, JSON and product numbers go. */
+export function askLog(lines: string[]): string[] {
+  const out: string[] = [];
+  for (const raw of lines) {
+    const parts = raw.split("\n").map((p) => p.trim()).filter(Boolean);
+    const head = parts[0];
+    if (!head) continue;
+    let m: RegExpMatchArray | null;
+    if ((m = head.match(/^kitchen\s+(.*)$/))) out.push(`kitchen  ${m[1]}`);
+    else if ((m = head.match(/^agent -> (\w+)\s*(.*)$/))) {
+      const [, tool, args] = m;
+      const text = args.match(/"text":\s*"([^"]*)"/)?.[1];
+      const ids = [...args.matchAll(/"([ROS]-\d+)"/g)].map((x) => x[1]);
+      const what = text ?? ids.join(", ");
+      out.push(what ? `→ ${tool}  ${what}` : `→ ${tool}`);
+    } else if ((m = head.match(/^Validio <- (\w+)/))) {
+      const body = parts[1] ?? "";
+      let said: string;
+      const thing = body.match(/^(?:request|order)\s+([ROS]-\d+):\s*(.*)$/);
+      if (thing) said = `${thing[1]} ${thing[2].replace(/\s+in \d+ calls?$/, "")}`;
+      else if (/^error:/.test(body)) said = firstSentence(body.replace(/^error:.*?\d{3}[^:]*:\s*/, ""));
+      else said = body;
+      out.push(`← ${said.replace(/\b\d{6}\b\s*/g, "").trim()}`.trimEnd());
+    } else if ((m = head.match(/^agent\s+(.*)$/))) out.push(`agent  ${m[1]}`);
   }
-  else out.push(`${head}: ${picked.join("; ")}.`);
   return out;
 }

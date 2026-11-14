@@ -87,6 +87,10 @@
   .head :global(.crumb-sep) {
     opacity: 0.5;
   }
+  /* The menu's sheet renders inside this sticky bar; lift the bar while it is open so the sheet is on top. */
+  .kopfleiste:has(:global(.dialog-backdrop)) {
+    z-index: 60;
+  }
   .kopfleiste {
     position: sticky;
     top: 0;

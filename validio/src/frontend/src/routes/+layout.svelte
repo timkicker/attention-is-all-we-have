@@ -12,12 +12,11 @@
   import { CalendarSync, ChevronRight, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { api, LIVE, needsToken } from "$lib/api/client";
   import { tokenPrompt } from "$lib/api/error";
-  import type { AskOut } from "$lib/api/types";
-  import { askSummary } from "$lib/ask";
   import { owner } from "$lib/owner.svelte";
   import { CLOCK, dayTime, nb } from "$lib/format";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
+  import VAsk from "$lib/v/VAsk.svelte";
 
   let { children } = $props();
 
@@ -47,6 +46,7 @@
 
   afterNavigate(({ to }) => {
     if (to?.url) notePage(to.url.pathname);
+    askOpen = false; // a result row was followed
   });
 
   // The rail: the window between phone and desktop, or the person folded it.
@@ -85,7 +85,8 @@
     new Promise<boolean>((resolve) => {
       answerToken?.(false);
       answerToken = resolve;
-      tokenValue = "";
+      // A wrong token stays in the field, so it can be corrected.
+      tokenValue = owner.demoToken;
       demoProblem = owner.demoToken ? "That token is not right." : "";
       then = () => {
         answerToken = null;
@@ -120,44 +121,7 @@
     askOpen = true;
   };
 
-  // "Ask as the kitchen's agent": the owner's own text goes through the same
-  // agent loop as `make agent`; the dialog shows its calls, then the request.
-  // One recorded example for each ending: ordered alone, waits for you, blocked.
-  const EXAMPLES = ["100 litres of whipping cream by Monday", "50 kg of quark by Monday, budget 100 euro", "20 kg of parmesan by Monday"];
   let askOpen = $state(false);
-  let askText = $state("");
-  let asking = $state(false);
-  let askProblem = $state("");
-  let answer = $state<AskOut | null>(null);
-  let summary = $state<string[]>([]);
-  async function sendAsk(e?: SubmitEvent) {
-    e?.preventDefault();
-    const text = askText.trim();
-    if (!text || asking) return;
-    asking = true;
-    askProblem = "";
-    answer = null;
-    summary = [];
-    try {
-      const a = await api.ask(text);
-      // The lines come from the request itself; without one, the agent's last sentence.
-      // Without a request, the first sentence of the agent's last words; the rest stays in the log.
-      const first = a.final.split(/(?<=\.)\s/)[0];
-      summary = a.requestId ? await api.request(a.requestId).then(askSummary, () => [first]) : [first];
-      answer = a;
-      bump();
-    } catch (err) {
-      if (!needsToken(err)) askProblem = err instanceof Error ? err.message : String(err);
-    } finally {
-      asking = false;
-    }
-  }
-  function closeAsk() {
-    askOpen = false;
-    answer = null;
-    summary = [];
-    askProblem = "";
-  }
   demoActions.reset = () => demo(() => api.reset(), "/");
 
   function useToken(e: SubmitEvent) {
@@ -244,52 +208,27 @@
 
 <Dialog open={tokenOpen} onClose={closeToken} labelledby="token-title" size="sm">
   <form class="token" onsubmit={useToken}>
-    <h2 id="token-title">{then || !demoProblem ? "Demo token" : "Demo control failed"}</h2>
     {#if then || !demoProblem}
-      <label for="demo-token-input">The presenter's token. Kept until you close the page.</label>
-      <Input id="demo-token-input" bind:value={tokenValue} autocomplete="off" aria-invalid={demoProblem ? true : undefined} />
+      <h2 id="token-title"><label for="demo-token-input">Demo token</label></h2>
+      <Input
+        id="demo-token-input"
+        bind:value={tokenValue}
+        autocomplete="off"
+        aria-invalid={demoProblem ? true : undefined}
+        aria-describedby={demoProblem ? "token-problem" : undefined}
+      />
+    {:else}
+      <h2 id="token-title">Demo control failed</h2>
     {/if}
-    {#if demoProblem}<p class="bad">{demoProblem}</p>{/if}
+    {#if demoProblem}<p class="bad" id="token-problem" data-testid="token-problem">{demoProblem}</p>{/if}
     <div class="token-buttons">
-      <Button variant="outline" onclick={closeToken}>Cancel</Button>
-      {#if then || !demoProblem}<Button type="submit">{then ? "Use and run" : "Use"}</Button>{/if}
+      <Button variant="ghost" onclick={closeToken}>{then || !demoProblem ? "Cancel" : "Close"}</Button>
+      {#if then || !demoProblem}<Button type="submit" data-testid="token-run">Run</Button>{/if}
     </div>
   </form>
 </Dialog>
 
-<Dialog open={askOpen} onClose={closeAsk} labelledby="ask-title" size="md">
-  <form class="token ask" onsubmit={sendAsk} data-testid="ask-dialog">
-    <h2 id="ask-title">Ask as the kitchen's agent</h2>
-    <label for="ask-input">What the kitchen needs. The agent sends it to Validio with the Spend Pass.</label>
-    <Input id="ask-input" data-testid="ask-input" bind:value={askText} maxlength={300} autocomplete="off" placeholder={EXAMPLES[0]} />
-    <p class="ex">
-      Recorded at Valio:
-      {#each EXAMPLES as x, i (x)}<button type="button" class="ex-btn" onclick={() => (askText = x)}>{x}</button>{i < EXAMPLES.length - 1 ? ", " : "."}{/each}
-    </p>
-    {#if asking}<p role="status">The agent is asking Validio…</p>{/if}
-    {#if answer}
-      <ul class="summary" data-testid="ask-summary" role="status">
-        {#each summary as l, i (i)}<li>{nb(l)}</li>{/each}
-      </ul>
-      {#if answer.lines.length}
-        <details class="fold ask-log" data-testid="ask-log">
-          <summary><ChevronRight class="chev" aria-hidden="true" />Agent log</summary>
-          <ol class="lines">
-            {#each answer.lines as l, i (i)}<li>{l}</li>{/each}
-          </ol>
-        </details>
-      {/if}
-      {#if answer.requestId}
-        <a class="open" href="/requests/{answer.requestId}" data-testid="ask-open" onclick={closeAsk}>Open {answer.requestId} ›</a>
-      {/if}
-    {/if}
-    {#if askProblem}<p class="bad" role="alert">{askProblem}</p>{/if}
-    <div class="token-buttons">
-      <Button variant="outline" onclick={closeAsk}>Close</Button>
-      <Button type="submit" data-testid="ask-send" disabled={asking || !askText.trim()}>Send</Button>
-    </div>
-  </form>
-</Dialog>
+<VAsk open={askOpen} onClose={() => (askOpen = false)} />
 
 {#if LIVE}<span hidden id="live-mode"></span>{/if}
 
@@ -500,7 +439,6 @@
     line-height: 22px;
     font-weight: 600;
   }
-  .token label,
   .token p {
     margin: 0;
     font-size: 13px;
@@ -510,54 +448,11 @@
   .token p.bad {
     color: var(--v-bad-text);
   }
-  .ask .ex {
-    font-size: 13px;
-  }
-  .ex-btn {
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--v-fg);
-    font: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    cursor: pointer;
-  }
-  .lines {
-    margin: 0;
-    padding: 8px 0 0;
-    list-style: none;
-    white-space: pre-wrap;
-    font-size: 13px;
-    line-height: 20px;
-    color: var(--v-muted);
-    max-height: 240px;
-    overflow: auto;
-    overflow-wrap: anywhere;
-  }
-  .lines li + li {
-    margin-top: 6px;
-  }
-  .summary {
-    margin: 0;
-    padding: 12px 0 0;
-    list-style: none;
-    border-top: 1px solid var(--v-line);
-    font-size: 13px;
-    line-height: 20px;
-    color: var(--v-fg);
-  }
-  .summary li + li {
-    margin-top: 4px;
-  }
-  .ask .open {
-    font-size: 13px;
-    color: var(--v-fg);
-  }
+  /* One dialog button pattern: right-aligned, ghost Cancel, primary at its natural width. */
   .token-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: flex-end;
     gap: 8px;
-    margin-top: 8px;
+    margin-top: 4px;
   }
 </style>
