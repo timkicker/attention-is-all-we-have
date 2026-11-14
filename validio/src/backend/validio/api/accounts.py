@@ -235,8 +235,10 @@ class Accounts:
             self._keep_window(c)
             self.open[account_id] = c
             while len(self.open) > MAX_OPEN:
-                _, old = self.open.popitem(last=False)
-                old.rt.close()
+                # dropped from the cache, never closed here: a request may still be working on it. Its
+                # connection closes once nothing holds the runtime; SQLite's own locking keeps two
+                # connections to one file safe meanwhile
+                self.open.popitem(last=False)
             return c
 
     WINDOW_CHECK = 3600  # seconds between two looks at the pass's validity of one open account

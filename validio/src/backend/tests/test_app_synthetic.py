@@ -168,3 +168,17 @@ def test_demo_copies_stay_under_the_cap(c, monkeypatch):
             assert fresh.post("/api/account/demo").status_code == 200
     with accounts.get_accounts()._db() as con:
         assert con.execute("select count(*) from account where is_demo = 1").fetchone()[0] == 3
+
+
+def test_an_account_dropped_from_the_cache_keeps_working_for_its_request(c, monkeypatch):
+    from validio.api import accounts
+
+    monkeypatch.setattr(accounts, "MAX_OPEN", 1)
+    assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+    held = account(c)  # a request still working on it
+    with TestClient(app) as other:
+        assert other.post("/api/account/demo").status_code == 200  # pushes `held` out of the cache
+    held.audit.append(at=held.stamp(), actor="validio", kind="decision", sentence="still open", facts=[],
+                      mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
+    assert held.audit.verify().ok
+    assert account(c).audit.list()[-1].sentence == "still open"  # a fresh runtime sees the same file
