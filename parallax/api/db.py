@@ -9,7 +9,7 @@ import pymysql
 
 from contract.db import connect
 
-_POOL_SIZE = 8
+_POOL_SIZE = 40  # one per thread of the default threadpool the sync routes run in, so no connect churn under load
 _pool: queue.LifoQueue = queue.LifoQueue(maxsize=_POOL_SIZE)
 _lock = threading.Lock()
 
