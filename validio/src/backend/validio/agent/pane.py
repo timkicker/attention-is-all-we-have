@@ -5,12 +5,25 @@ import os
 import sys
 from typing import Any
 
+from ..api import display
 from .buyer import Event
 from .tools import SUPPLIER_TEXT, untrusted_record
 
 
-def _eur(cents: int | None) -> str:
-    return "-" if cents is None else f"{cents // 100}.{cents % 100:02d} EUR"
+def _eur(cents: int | None, text: str | None = None) -> str:
+    """The amount as the web app shows it, "1,010.00 €": Validio's moneyText, or the same helper."""
+    return text or ("-" if cents is None else display.money(cents))
+
+
+def _name(o: dict) -> str:
+    """The short name the web app shows, "Lactose-free semi-skimmed milk 1 l"."""
+    return o.get("displayName") or o.get("shortName") or o.get("name", "")
+
+
+def _qty(o: dict, n=None, text: str | None = None) -> str:
+    """"1,000 × 1 l", "200 bags": Validio's qtyText, or the same helper on the raw count."""
+    n = o.get("quantity") if n is None else n
+    return text or o.get("qtyText") or display.qty(n, o.get("unit"), o.get("productId")) or ""
 
 
 class Style:
@@ -44,8 +57,8 @@ def _args(args: dict) -> str:
 def _opt(o: dict, st: Style, indent: str = "  ") -> list[str]:
     good = o.get("verdict") in ("chosen", "ranked")
     mark = st.ok(f"{o.get('verdict', ''):<15}") if good else st.bad(f"{o.get('verdict', ''):<15}")
-    amount = f"{o.get('quantity')} {o.get('unit')}  {_eur(o.get('totalCents'))}" if o.get("totalCents") else ""
-    return [f"{indent}{mark} {o['productId']} {o.get('name', '')[:42]:<42} {amount}",
+    amount = f"{_qty(o)}  {_eur(o.get('totalCents'), o.get('moneyText'))}" if o.get("totalCents") else ""
+    return [f"{indent}{mark} {o['productId']} {_name(o)[:42]:<42} {amount}",
             st.dim(f"{indent}{'':15}  {o.get('sentence', '')}")]
 
 
@@ -81,9 +94,9 @@ def _request(a: dict, st: Style) -> list[str]:
 
 
 def _order(a: dict, st: Style) -> list[str]:
-    out = [f"order {a.get('id')}: {a.get('state')}, {_eur(a.get('totalCents'))}"]
+    out = [f"order {a.get('id')}: {a.get('state')}, {_eur(a.get('totalCents'), a.get('moneyText'))}"]
     for ln in a.get("lines", []):
-        out.append(f"  {ln.get('quantity')} {ln.get('unit')} of {ln.get('productId')} {ln.get('name', '')[:46]}")
+        out.append(f"  {_qty(ln)} of {ln.get('productId')} {_name(ln)[:46]}")
     return out
 
 
@@ -98,10 +111,10 @@ def _steady(a: dict, st: Style) -> list[str]:
     for ln in a.get("lines", []):
         res = ln.get("result", "")
         mark = st.ok(f"{res:<14}") if res in ("renewed", "split_renewed", "accepted") else st.bad(f"{res:<14}")
-        qty = ln.get("thisWeekQuantity", ln.get("usualQuantity"))
+        qty = _qty(ln, ln.get("thisWeekQuantity", ln.get("usualQuantity")), ln.get("qtyText") or ln.get("usualQtyText"))
         order = f"  order {ln['orderId']}" if ln.get("orderId") else ""
-        out.append(f"  {mark} {ln['productId']} {ln.get('name', '')[:40]:<40} {qty} {ln.get('unit')}  "
-                   f"{_eur(ln.get('totalCents'))}{order}")
+        out.append(f"  {mark} {ln['productId']} {_name(ln)[:40]:<40} {qty}  "
+                   f"{_eur(ln.get('totalCents'), ln.get('moneyText'))}{order}")
         out.append(st.dim(f"  {'':14} {ln.get('sentence', '')}"))
         for f in ln.get("flags") or []:
             if f.get("sentence") and f["sentence"] not in ln.get("sentence", ""):
