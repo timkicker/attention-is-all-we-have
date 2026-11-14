@@ -158,11 +158,12 @@ class OrderService:
     def __init__(self, store: Store, catalog: Catalog, valio, audit: AuditLog,
                  clock: Callable[[], datetime], adjust: Callable[[dict], dict] | None = None,
                  max_ids: int = 40, lock: "threading.RLock | None" = None,
-                 valio_down: Callable[[], bool] | None = None):
+                 valio_down: Callable[[], bool] | None = None, stamp: Callable[[], datetime] | None = None):
         self.store, self.catalog, self.valio, self.audit = store, catalog, valio, audit
         if audit.path.resolve() == Path(store.path).resolve():
             audit.join(store.con, store.lock)  # one connection, else the ledger waits on the store's own write lock
-        self.clock = clock
+        self.clock = clock  # what the decisions run on: cut-offs, delivery dates, the pass's validity
+        self.stamp = stamp or clock  # when something happened, for the ledger and the history
         self.adjust = adjust or (lambda avail: avail)  # the demo stock-out switch
         self.valio_down = valio_down or (lambda: False)  # the demo switch "Valio not answering"
         self.max_ids = max_ids
@@ -306,7 +307,7 @@ class OrderService:
             decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by, budget_cents)
             state = STATE[decision["outcome"]]
             total = sum(ln["totalCents"] or 0 for ln in quoted)
-            now = self.clock().isoformat()
+            now = self.stamp().isoformat()
             order = self.store.new_order({
                 "requestId": request_id, "state": state, "lines": self._public(quoted), "totalCents": total,
                 "deliverBy": deliver_by.isoformat(), "decision": decision, "history": [{"state": state, "at": now}],
@@ -401,7 +402,7 @@ class OrderService:
                         plain.append(f"{cap(problems[-1])}.")
             if problems:
                 self._refuse(o, problems, plain)
-            now = self.clock().isoformat()
+            now = self.stamp().isoformat()
             o["lines"] = self._public(fresh)
             o["totalCents"] = sum(ln["totalCents"] for ln in fresh)
             o["history"] += [{"state": "approved", "at": now}, {"state": "placed", "at": now}]
@@ -426,7 +427,7 @@ class OrderService:
             if o["state"] != "waiting":
                 raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be rejected")
             o["state"] = "rejected"
-            o["history"].append({"state": "rejected", "at": self.clock().isoformat()})
+            o["history"].append({"state": "rejected", "at": self.stamp().isoformat()})
             self.store.put_order(o)
             why = f" ({reason})" if reason else ""
             self._log(o, approver, "approval",
@@ -476,5 +477,5 @@ class OrderService:
                     if f["field"] == "quantity" and hit:
                         what = "the stock" if len(o["lines"]) == 1 else f"the stock of {short_ref(ln['name'])}"
                         sentence += f" Valio gives no real count of {what}, so Validio treats it as in stock."
-        self.audit.append(at=self.clock(), actor=actor, kind=kind, sentence=sentence, facts=facts,
+        self.audit.append(at=self.stamp(), actor=actor, kind=kind, sentence=sentence, facts=facts,
                           mandate_id=m["id"], disclosed=m["disclosed"], rule_ids=rule_ids, order_id=o["id"])

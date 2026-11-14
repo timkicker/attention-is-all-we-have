@@ -93,13 +93,13 @@ def resign(ctx: Ctx, changes: dict, why: str) -> dict:
     one ledger entry by the owner. `why` names the version ("Rules changed", "Diet changed")."""
     with ctx.rt.lock:
         before = current_claims(ctx.db_path)
-        seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **changes}, why=why, at=ctx.now())
+        seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **changes}, why=why, at=ctx.stamp())
         after = current_claims(ctx.db_path)
         changed = [f"{k} {a} → {b}." for (k, a), (_, b) in zip(_said(before), _said(after), strict=True) if a != b]
         pid = seed.SPEND_PASS_ID
         sentence = (f"Owner changed Spend Pass {pid}. " + " ".join(changed) if changed
                     else f"Owner signed Spend Pass {pid} again, nothing changed.")
-        ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass", sentence=sentence,
+        ctx.audit.append(at=ctx.stamp(), actor="owner", kind="spend_pass", sentence=sentence,
                          facts=[], mandate_id=pid, disclosed={}, rule_ids=[], order_id=None)
     return after
 
