@@ -28,7 +28,8 @@ import threading
 import time
 import traceback
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures.process import BrokenProcessPool
 from pathlib import Path
 
 import numpy as np
@@ -119,7 +120,25 @@ def _q(cur, sql: str, params=()) -> list[dict]:
     return [dict(zip(cols, r, strict=False)) for r in cur.fetchall()]
 
 
+CREATE_LOCK_S = 15  # two POSTs for one new item at once: the second waits for the first, then finds its job
+
+
 def create(cur, qid: str, since: str | None = None, ent: dict | None = None, max_active: int | None = None) -> str:
+    """See _create. Holds a named lock per qid, so two requests for one new item never interleave their writes
+    (one would wipe the editions of the job the other just queued, or fail on a duplicate key)."""
+    name = f"px_create_{qid}"
+    cur.execute("SELECT GET_LOCK(%s, %s)", (name, CREATE_LOCK_S))
+    (got,) = cur.fetchone()
+    if not got:
+        raise IngestBusy(qid)
+    try:
+        return _create(cur, qid, since, ent, max_active)
+    finally:
+        cur.execute("SELECT RELEASE_LOCK(%s)", (name,))
+        cur.fetchall()
+
+
+def _create(cur, qid: str, since: str | None, ent: dict | None, max_active: int | None) -> str:
     """Queue an ingest for qid unless one exists or the item is loaded already. Returns 'existing', 'loaded' or
     'queued'. Raises UnknownItem, NoFinnish, IngestBusy when MAX_ACTIVE jobs are under way (max_active=None: no cap,
     the command line), or wapi.RateLimited when Wikidata cannot be asked now."""
@@ -338,6 +357,46 @@ def lives_of(fetched: dict):
     return walk(revs, exact=False)
 
 
+_PARSE_POOL: ProcessPoolExecutor | None = None
+_PARSE_POOL_LOCK = threading.Lock()
+
+
+def _lower_priority() -> None:
+    """Runs in the parse process: the API's requests come first on a shared CPU."""
+    try:
+        os.nice(10)
+    except OSError:
+        pass
+
+
+def _parse_pool() -> ProcessPoolExecutor:
+    global _PARSE_POOL
+    with _PARSE_POOL_LOCK:
+        if _PARSE_POOL is None:
+            import multiprocessing
+
+            # spawn, not fork: the API process has threads (uvicorn, this worker) whose locks a fork would copy held
+            ctx = multiprocessing.get_context("spawn")
+            _PARSE_POOL = ProcessPoolExecutor(1, mp_context=ctx, initializer=_lower_priority)
+        return _PARSE_POOL
+
+
+def parse_elsewhere(fetched: dict):
+    """lives_of in a separate process. Parsing every snapshot of a large article is seconds of pure Python; in the
+    API's process it would hold the GIL and slow every page while an article loads. INGEST_PARSE_PROCESS=0, or a
+    pool that cannot start, parses in this thread instead."""
+    global _PARSE_POOL
+    if os.environ.get("INGEST_PARSE_PROCESS", "1") == "0":
+        return lives_of(fetched)
+    try:
+        return _parse_pool().submit(lives_of, fetched).result()
+    except (BrokenProcessPool, OSError) as e:
+        log.warning("parse process unavailable (%s), parsing in the worker thread", type(e).__name__)
+        with _PARSE_POOL_LOCK:
+            _PARSE_POOL = None
+        return lives_of(fetched)
+
+
 def load_edition(conn, topic_id: str, fetched: dict, w, vecs: dict) -> int:
     """Page, revisions, section versions and sentence lives of one edition in one transaction."""
     lang, pid = fetched["lang"], fetched["page_id"]
@@ -542,10 +601,13 @@ class Stopped(Exception):
 
 
 class Job:
-    def __init__(self, qid: str, stop: threading.Event | None = None, echo=None) -> None:
+    def __init__(
+        self, qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+    ) -> None:
         self.qid = qid
         self.stop = stop or threading.Event()
         self.echo = echo or (lambda s: log.info(s))
+        self.on_change = on_change  # the API drops its cached answers: this job stored new data
         self.conn = connect()
         self.cur = self.conn.cursor()
         self.counter = Counter()
@@ -596,7 +658,7 @@ class Job:
         if already:  # loaded before a crash or a stop: keep the rows
             n = int(already)
         else:
-            w = lives_of(fetched)
+            w = parse_elsewhere(fetched)
             self.ed(lang, pct=40)
             texts = list({lv["h"]: lv["text"] for lv in w.lives}.items())
 
@@ -621,6 +683,12 @@ class Job:
             with self._lock:
                 matched = judge_edition(self.cur, topic_id, other, eng, self.counter)
                 gloss(self.cur, topic_id, matched, eng, self.counter)
+        if self.on_change:
+            # Before the edition reads done: a page that sees "done" and asks again must not get a cached answer.
+            try:
+                self.on_change()
+            except Exception:
+                log.warning("ingest %s: on_change failed:\n%s", self.qid, traceback.format_exc())
         self.ed(lang, state="done", pct=100, error=None, retry_at=None, seconds=round(time.time() - t, 1))
         self.job(model_calls=self.counter.calls, judge_pairs=self.counter.pairs)
         self.echo(
@@ -734,8 +802,10 @@ class Job:
                     self.echo(f"{self.qid} {lang} failed: {type(ex).__name__}: {ex}")
 
 
-def run_job(qid: str, stop: threading.Event | None = None, echo=None) -> str:
-    return Job(qid, stop, echo).run()
+def run_job(
+    qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+) -> str:
+    return Job(qid, stop, echo, on_change).run()
 
 
 # ---------------------------------------------------------------- the worker thread of the API
@@ -804,13 +874,17 @@ class Worker:
         log.error("ingest %s marked failed after %d crashes", qid, MAX_JOB_FAILURES)
 
     def _loop(self) -> None:
+        try:  # Linux: this thread only; elsewhere setpriority refuses a thread id and the thread keeps its priority
+            os.setpriority(os.PRIO_PROCESS, threading.get_native_id(), 10)
+        except (OSError, AttributeError):
+            pass
         while not self.stop.is_set():
             qid = None
             try:
                 qid = self._next()
                 if qid:
                     try:
-                        run_job(qid, self.stop)
+                        run_job(qid, self.stop, on_change=self.after_job)
                         self.failures.pop(qid, None)
                     finally:
                         if self.after_job:

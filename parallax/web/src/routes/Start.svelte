@@ -75,10 +75,14 @@
   // The wireframe shows at most four results.
   const results = $derived((found?.results ?? []).slice(0, 4))
 
+  /** A load is being started: a second click or Enter on the same pick must not post it again. */
+  let choosing = false
+
   async function choose(r: SearchResult) {
-    if (!r.href) return
+    if (!r.href || choosing) return
     if (r.status === 'new') {
-      const s = await startIngest(r.qid)
+      choosing = true
+      const s = await startIngest(r.qid).finally(() => (choosing = false))
       if (!s.ok && s.error.code === 'rate_limited') {
         failed = copy.ERR.rateLimited(s.error.retryAfterS ?? 120)
         return

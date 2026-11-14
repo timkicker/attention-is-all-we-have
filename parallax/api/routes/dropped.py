@@ -193,6 +193,12 @@ def reworded(topic: str, rows: list[dict]) -> set[tuple]:
 
 _CACHE: dict[tuple, tuple[float, list]] = {}
 CACHE_S = 300  # every topic page asks for the Removed count; the list only changes when an ingest runs
+CACHE_MAX = 64  # topic, edition and min_days come from the query string: keep the newest few only
+
+
+def clear_cache() -> None:
+    """Forget every computed list (an ingest loaded another edition)."""
+    _CACHE.clear()
 
 
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
@@ -202,6 +208,8 @@ def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
         return hit[1]
     out = _topic_rows(topic, lang, min_days)
     _CACHE[key] = (time.monotonic(), out)
+    while len(_CACHE) > CACHE_MAX:
+        _CACHE.pop(next(iter(_CACHE)))
     return out
 
 

@@ -39,6 +39,16 @@ export async function resolveTopic(api: typeof Api, qid: string): Promise<Result
   return t ? { ok: true, data: t } : { ok: false, error: { status: 404, code: 'topic_not_found', message: qid } }
 }
 
+/** Caches of the topic adapters (Differences, Removed) that hold data an ingest can change. */
+const forgetters: (() => void)[] = []
+
+/** Register a cache to drop together with the topic list (adapters call this once at module load). */
+export function onForget(f: () => void): void {
+  forgetters.push(f)
+}
+
+/** Drop the topic list and every adapter cache: an ingest stored another edition or finished. */
 export function forgetTopics(): void {
   topicsCache = null
+  for (const f of forgetters) f()
 }

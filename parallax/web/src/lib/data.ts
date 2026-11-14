@@ -6,7 +6,7 @@ import { api } from './api/client'
 import * as aCheck from './adapt/check'
 import * as aHood from './adapt/hood'
 import * as aRemoved from './adapt/removed'
-import { resolveTopic as resolveLive, type TopicCtx, type WithoutCounts } from './adapt/shared'
+import { forgetTopics, resolveTopic as resolveLive, type TopicCtx, type WithoutCounts } from './adapt/shared'
 import * as aStart from './adapt/start'
 import * as aTopic from './adapt/topic'
 import { dateState } from './date.svelte'
@@ -102,6 +102,41 @@ export async function getIngest(qid: string): Promise<Result<IngestVM>> {
 }
 
 // ---------- Topic tabs (P2, P3) ----------
+
+/** How often a topic page asks whether its article is still loading. */
+export const WATCH_MS = 5000
+
+/**
+ * While the article is still loading (the comparison opens once Finnish and one more edition are in), ask its ingest
+ * every WATCH_MS. When another edition is done, drop the cached data and call onChange so the page loads again with
+ * it. A loaded article costs one request. Returns the function that stops watching (an $effect cleanup).
+ */
+export function watchIngest(qid: string, onChange: () => void): () => void {
+  if (mock()) return () => {}
+  let stopped = false
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let done: number | null = null
+  const tick = async () => {
+    const r = await api.ingest(qid)
+    if (stopped) return
+    if (!r.ok) {
+      if (r.error.code === 'network') timer = setTimeout(tick, WATCH_MS)
+      return
+    }
+    const n = r.data.editions.filter((e) => e.state === 'done').length
+    if (done !== null && n !== done) {
+      forgetTopics()
+      onChange()
+    }
+    done = n
+    if (r.data.state === 'queued' || r.data.state === 'running' || r.data.state === 'usable') timer = setTimeout(tick, WATCH_MS)
+  }
+  tick()
+  return () => {
+    stopped = true
+    clearTimeout(timer)
+  }
+}
 
 export async function getDifferences(
   qid: string,

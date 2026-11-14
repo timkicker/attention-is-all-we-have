@@ -24,7 +24,7 @@ import type {
   StatementVM,
 } from '../model'
 import { paths } from '../router.svelte'
-import type { TopicCtx, WithoutCounts } from './shared'
+import { onForget, type TopicCtx, type WithoutCounts } from './shared'
 
 type Client = typeof Api
 
@@ -368,6 +368,11 @@ interface Loaded {
 
 const cache = new Map<string, Promise<Result<Loaded>>>()
 let topicsCache: Promise<Result<TopicsRes>> | null = null
+// An ingest that loads another edition changes both the rows and the edition start dates.
+onForget(() => {
+  cache.clear()
+  topicsCache = null
+})
 
 async function topicStarts(api: Client, topicId: string): Promise<Starts> {
   topicsCache ??= api.topics()
