@@ -142,7 +142,10 @@ but cannot sign a key binding. The pairing screen serves them too, with no extra
   (401 with one ledger entry) are unchanged. `agent.name`, the ledger's `actorText` of the agent's entries,
   Home's `agent.name` and Activity's `asked.agentName` all show that name (actor `agent:claude-code`).
 * Only the code expires after 10 minutes; the URL stays valid until Cancel, Deny, Disconnect, a new pairing
-  or another agent allowed with the code. Then `/mcp/c/<token>/` answers 404, as does an unknown token.
+  or another agent allowed with the code, or until nobody used it for 30 days (one ledger entry, the agent
+  is disconnected). Then `/mcp/c/<token>/` answers 404, as does an unknown token. The URL is a bearer
+  secret: whoever holds it orders as the kitchen's agent within the Rules, and the verification code only
+  tells the person which connection waits, not who holds the URL. Access logs show it as `/mcp/c/***/`.
   The host allowlist (`VALIDIO_MCP_HOSTS`, DNS rebinding protection) is the same as for `/mcp/k/`.
 * Use: add the URL as a remote MCP server (streamable HTTP, no OAuth) in the agent's settings, for example
   a custom connector in a chat app or `<tool> mcp add --transport http validio <URL>` in a coding tool.
