@@ -3,7 +3,7 @@ BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
 RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke mutate
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -114,3 +114,23 @@ a11y:
 video:
 	cd src/frontend && npx playwright install firefox
 	$(UV) python -W ignore ../../scripts/record_video.py
+
+# Validio on Modal (step 19). The volume holds the Valio data, never the image or git.
+MODAL := cd $(BACKEND) && uv run --extra cloud modal
+
+modal-data:
+	$(MODAL) volume create validio-data 2>/dev/null || true
+	$(MODAL) volume put --force validio-data ../../data/catalog.db /catalog.db
+	$(MODAL) volume put --force validio-data ../../data/cache/valio /cache/valio
+
+MODAL_SECRETS ?= $(HOME)/.claude/jobs/22b51af2/tmp/modal-secrets.env
+modal-secret:
+	@MODAL_SECRETS=$(MODAL_SECRETS) bash scripts/modal_secret.sh
+
+modal-deploy:
+	cd src/frontend && sh scripts/fetch-ui-kit.sh && npm ci --silent && VITE_API=live npm run build
+	$(MODAL) deploy ../cloud/app_validio.py
+	$(MAKE) modal-seed
+
+modal-seed:
+	$(MODAL) run ../cloud/app_validio.py::seed
