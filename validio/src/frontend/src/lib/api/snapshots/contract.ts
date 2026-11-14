@@ -1434,7 +1434,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
@@ -1642,7 +1642,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
@@ -1842,7 +1842,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
@@ -2050,7 +2050,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
@@ -2240,7 +2240,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
@@ -2480,7 +2480,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2521,7 +2521,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -2545,7 +2545,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2569,7 +2569,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2593,7 +2593,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2617,7 +2617,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2641,7 +2641,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2665,7 +2665,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2689,7 +2689,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2713,7 +2713,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2737,7 +2737,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -2761,7 +2761,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2785,7 +2785,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -2809,7 +2809,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2833,7 +2833,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2858,7 +2858,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
@@ -2884,7 +2884,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2908,7 +2908,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -2932,7 +2932,7 @@ export const scene1: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
@@ -4633,7 +4633,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
@@ -4841,7 +4841,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
@@ -5041,7 +5041,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
@@ -5249,7 +5249,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
@@ -5439,7 +5439,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
@@ -5679,7 +5679,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -5720,7 +5720,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -5744,7 +5744,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -5768,7 +5768,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -5792,7 +5792,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5816,7 +5816,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5840,7 +5840,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -5864,7 +5864,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5888,7 +5888,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5912,7 +5912,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5936,7 +5936,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -5960,7 +5960,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -5984,7 +5984,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -6008,7 +6008,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -6032,7 +6032,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -6057,7 +6057,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
@@ -6083,7 +6083,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -6107,7 +6107,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -6131,7 +6131,7 @@ export const scene2: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
@@ -6613,7 +6613,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -6709,7 +6709,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 1.21 €",
                 "Free from lactose"
@@ -6734,7 +6734,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -6756,7 +6756,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -7509,7 +7509,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
@@ -7676,7 +7676,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
@@ -7790,7 +7790,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 108.09 €",
                 "Free from lactose"
@@ -7911,7 +7911,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
@@ -9373,7 +9373,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
@@ -9581,7 +9581,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
@@ -9781,7 +9781,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
@@ -9989,7 +9989,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
@@ -10179,7 +10179,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
@@ -10419,7 +10419,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10460,7 +10460,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -10484,7 +10484,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10508,7 +10508,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10532,7 +10532,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10556,7 +10556,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10580,7 +10580,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10604,7 +10604,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10628,7 +10628,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10652,7 +10652,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10676,7 +10676,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -10700,7 +10700,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10724,7 +10724,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -10748,7 +10748,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10772,7 +10772,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10797,7 +10797,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
@@ -10823,7 +10823,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10847,7 +10847,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -10871,7 +10871,7 @@ export const scene3: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
@@ -11612,7 +11612,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -11708,7 +11708,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 1.21 €",
                 "Free from lactose"
@@ -11733,7 +11733,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -11755,7 +11755,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -12508,7 +12508,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
@@ -12675,7 +12675,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
@@ -12789,7 +12789,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 108.09 €",
                 "Free from lactose"
@@ -12910,7 +12910,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
@@ -14372,7 +14372,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
@@ -14580,7 +14580,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
@@ -14780,7 +14780,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
@@ -14988,7 +14988,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
@@ -15178,7 +15178,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
@@ -15418,7 +15418,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15459,7 +15459,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -15483,7 +15483,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15507,7 +15507,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15531,7 +15531,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15555,7 +15555,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15579,7 +15579,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15603,7 +15603,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15627,7 +15627,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15651,7 +15651,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15675,7 +15675,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -15699,7 +15699,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15723,7 +15723,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -15747,7 +15747,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15771,7 +15771,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15796,7 +15796,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
@@ -15822,7 +15822,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15846,7 +15846,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -15870,7 +15870,7 @@ export const scene4: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
@@ -16989,7 +16989,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -17085,7 +17085,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 1.21 €",
                 "Free from lactose"
@@ -17110,7 +17110,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -17132,7 +17132,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
@@ -17885,7 +17885,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
@@ -18052,7 +18052,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
@@ -18166,7 +18166,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "No delivery date.",
               "groupText": "No delivery date",
-              "groupOrder": 7,
+              "groupOrder": 8,
               "checks": [
                 "Price 108.09 €",
                 "Free from lactose"
@@ -18287,7 +18287,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
@@ -19749,7 +19749,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
@@ -19957,7 +19957,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
@@ -20157,7 +20157,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
@@ -20365,7 +20365,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
@@ -20555,7 +20555,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Order cut-off 12 Nov 15:00 has passed.",
               "groupText": "Order cut-off passed",
-              "groupOrder": 8,
+              "groupOrder": 9,
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
@@ -20795,7 +20795,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -20836,7 +20836,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -20860,7 +20860,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Portion packs, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -20884,7 +20884,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Café milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -20908,7 +20908,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -20932,7 +20932,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -20956,7 +20956,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -20980,7 +20980,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.2 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -21004,7 +21004,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -21028,7 +21028,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.5 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -21052,7 +21052,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "0.25 l packs, too small for 1,000 litres.",
               "groupText": "Packs too small",
-              "groupOrder": 10,
+              "groupOrder": 11,
               "checks": [],
               "whyReasons": []
             },
@@ -21076,7 +21076,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -21100,7 +21100,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": []
             },
@@ -21124,7 +21124,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -21148,7 +21148,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Coffee milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -21173,7 +21173,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Low lactose is not lactose free.",
               "groupText": "Not lactose free",
-              "groupOrder": 3,
+              "groupOrder": 2,
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
@@ -21199,7 +21199,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -21223,7 +21223,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Sour milk, not plain milk.",
               "groupText": "Not plain milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": []
             },
@@ -21247,7 +21247,7 @@ export const scene5: Snapshot = {
               ],
               "shortText": "Not milk.",
               "groupText": "Not milk",
-              "groupOrder": 9,
+              "groupOrder": 10,
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
