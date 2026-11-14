@@ -67,7 +67,11 @@ export function pickRecorded(runs: Recorded[], max = RECORDED_MAX): Recorded[] {
   const seen = new Set<string>()
   const first: Recorded[] = []
   const rest: Recorded[] = []
-  const sorted = runs.map((r, i) => ({ r, i })).sort((a, b) => rank(a.r.question) - rank(b.r.question) || a.i - b.i)
+  // The fake engine's example answer (record_checks --fixture) only stands in until real answers are recorded.
+  const fixture = (r: Recorded) => (/test fixture/i.test(r.answer_model ?? '') ? 1 : 0)
+  const sorted = runs
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) => fixture(a.r) - fixture(b.r) || rank(a.r.question) - rank(b.r.question) || a.i - b.i)
   for (const { r } of sorted) {
     const k = r.question ?? r.run_id
     if (seen.has(k)) rest.push(r)
@@ -148,7 +152,13 @@ export async function loadCheckRun(
 }
 
 export function toResult(ctx: TopicCtx, d: CheckRes): WithoutCounts<CheckResultVM> {
-  const rows = d.claims.map((c) => toCheckRow(ctx.topic.qid, c))
+  // As in wireframe 10: statements in no edition first, then disputed, then backed (most editions first).
+  const weight = { none: 0, disputed: 1, backed: 2 } as const
+  const says = (c: Claim) => Object.values(c.per_lang).filter((v) => v.label === 'says').length
+  const rows = d.claims
+    .map((c, i) => ({ row: toCheckRow(ctx.topic.qid, c), n: says(c), i }))
+    .sort((a, b) => weight[a.row.verdict] - weight[b.row.verdict] || (a.row.verdict === 'backed' ? b.n - a.n : 0) || a.i - b.i)
+    .map((x) => x.row)
   const mostBacked = d.claims.every((c) => {
     const per = Object.values(c.per_lang)
     const says = per.filter((v) => v.label === 'says').length
