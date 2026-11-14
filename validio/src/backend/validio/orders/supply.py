@@ -269,7 +269,9 @@ class SupplyService:
                 else:
                     # Cedar over the whole proposal, with totals Valio gives for the summed order
                     quoted = self.orders.quote(proposals, date.fromisoformat(req["deliverBy"]), budget=budget)
-                    decision = self.orders._decide(mandate, quoted)
+                    stated = [b["need"].budget_cents for b in built if b["need"].budget_cents]
+                    req["budgetCents"] = sum(stated) if stated else None
+                    decision = self.orders._decide(mandate, quoted, budget_cents=req["budgetCents"])
                     if missing:
                         decision = {**decision, "outcome": max(decision["outcome"], "ask_human", key=SEVERITY.get),
                                     "sentence": decision["sentence"] + f" No safe option for {', '.join(missing)}."}
@@ -284,7 +286,7 @@ class SupplyService:
                     elif decision["outcome"] == "ask_human":
                         o = self.orders.submit(mandate=mandate, lines=proposals, deliver_by=date.fromisoformat(
                             req["deliverBy"]), idempotency_key="request:" + req["id"], request_id=req["id"],
-                            actor=agent, budget=budget)
+                            actor=agent, budget=budget, budget_cents=req["budgetCents"])
                         req["orderId"] = o["id"]
                         req["status"] = "waiting"
                         req["question"] = self._question(built, o)
@@ -348,7 +350,8 @@ class SupplyService:
                 lines.append(LineIn(pid, int(qty), bool(o.get("isSubstitute")), bool(o.get("onValioList"))))
             try:
                 o = self.orders.submit(mandate=mandate, lines=lines, deliver_by=date.fromisoformat(req["deliverBy"]),
-                                       idempotency_key=idempotency_key, request_id=request_id, actor=agent)
+                                       idempotency_key=idempotency_key, request_id=request_id, actor=agent,
+                                       budget_cents=req.get("budgetCents"))
             except sqlite3.IntegrityError:  # another process placed the order for this request first
                 return self.store.order_for_request(request_id)
             req["orderId"] = o["id"]
