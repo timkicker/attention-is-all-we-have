@@ -20,6 +20,7 @@ def _life(row: dict, verdict: dict | None) -> dict:
         "died_comment": row["died_comment"],
         "time_precision": row["time_precision"],
         "verdict": match.verdict_ref(verdict),
+        "gloss": None,
     }
 
 
@@ -60,6 +61,9 @@ def timeline(lang: str, page_id: int, h: str) -> dict:
         picked = matched_lives(lang, h, rows, match.verdicts(lang, [h]))
         picked.sort(key=lambda p: (lang_order(p[0]["lang"]), p[0]["row_start"]))
         lives += [_life(row, verdict) for row, verdict in picked]
+    gl = match.glosses([(x["lang"], x["h"]) for x in lives if x["lang"] != "en"])
+    for x in lives:
+        x["gloss"] = gl.get((x["lang"], x["h"]))
     return {
         "claim": {"lang": lang, "page_id": page_id, "h": h, "text": last["text"], "section": last["section"]},
         "lives": lives,

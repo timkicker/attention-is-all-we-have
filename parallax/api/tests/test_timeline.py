@@ -86,3 +86,9 @@ def test_judged_lives_beyond_the_nearest_are_kept(client, monkeypatch):
     monkeypatch.setattr(timeline, "NEAREST", 1)
     cut = lives_of(client.get(FI_MAINILA).json(), "en")
     assert judged and judged <= {x["h"] for x in cut if x["verdict"]}
+
+
+def test_lives_carry_gloss_field(client):
+    r = client.get("/api/claim/fi/1256/8519fbaf22d33984/timeline")
+    assert r.status_code == 200
+    assert all("gloss" in x for x in r.json()["lives"])

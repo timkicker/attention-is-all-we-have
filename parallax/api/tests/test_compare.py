@@ -138,3 +138,22 @@ def test_judged_pair_below_the_nearest_five_is_matched(client):
         assert en["h"] == far["h"] and en["status"] == "matched" and en["verdict"]["label"] == "partial"
     finally:
         sqllog.run("DELETE FROM verdict WHERE prompt_version = 'test'")
+
+
+def test_h_filter_returns_one_statement(client):
+    r = client.get("/api/compare", params={"topic": "winterwar", "h": MAINILA.split(":")[2]})
+    assert r.status_code == 200
+    body = r.json()
+    assert [x["row_id"] for x in body["rows"]] == [MAINILA]
+    assert body["total_rows"] == 1
+
+
+def test_term_marks_get_english_word_when_known():
+    import re
+
+    from api.routes.compare import add_english
+
+    marks = [{"kind": "term", "this": "lavasti", "other": "reported"}, {"kind": "term", "this": "x", "other": "y"}]
+    add_english(marks, [(re.compile("lavast", re.I), "staged")])
+    assert marks[0]["this_en"] == "staged"
+    assert "this_en" not in marks[1]
