@@ -21,8 +21,10 @@ export interface MarkedText {
 export interface NotePart {
   text: string
   strong?: boolean
+  /** Between two groups: not drawn (the groups are spaced apart), read out as ", ". */
+  sep?: boolean
 }
-/** A note line under a statement, already in reading order including the " · " separators. */
+/** A note line under a statement, in reading order, groups split by sep parts. */
 export type Note = NotePart[]
 
 /** Counts shown after the tab names. null = not known yet (the tab shows no number). */
@@ -218,8 +220,8 @@ export type CheckVerdict = 'none' | 'disputed' | 'backed'
 export interface CheckRow {
   id: string
   verdict: CheckVerdict
-  /** The line above the statement, e.g. "Disputed · Swedish and Russian say otherwise". */
-  head: string
+  /** The line above the statement in parts set apart by space, e.g. ["Disputed", "Swedish and Russian say otherwise"]. */
+  head: readonly string[]
   say: string
   /** Statement page for evidence; null when no edition has it. */
   href: string | null

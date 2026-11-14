@@ -143,7 +143,7 @@
     {#if vm?.example}
       {@const ex = vm.example}
       <a class="ex" href={ex.href} data-testid={TID.startExample}>
-        <p class="t13 muted">{copy.start.exampleKicker(ex.topic.title)}</p>
+        <p class="t13 muted parts">{#each copy.start.exampleKicker(ex.topic.title) as k, i (i)}<span>{k}</span>{/each}</p>
         <p>{ex.title}</p>
         {#each ex.lines as l (l.lang)}
           <div class="line"><p class="t13 muted">{copy.edition(l.lang)}</p><p class="say"><Marked value={l.say} /></p></div>

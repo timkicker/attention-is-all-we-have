@@ -78,6 +78,8 @@ del { text-decoration-color: var(--fg2); color: var(--fg2); }
 .item .say { font: var(--w-regular) var(--fs-18) / var(--lh-18) var(--serif); }
 .item .note { margin-top: 8px; font-size: var(--fs-15); line-height: var(--lh-15); color: var(--fg2); }
 .item .note b { font-weight: var(--w-medium); color: var(--fg); }
+/* Items on one line set apart by space, never by a dot or dash; wraps item by item on a phone. */
+.parts { display: flex; flex-wrap: wrap; column-gap: 12px; row-gap: 0; }
 /* rows that open something get a chevron */
 a.item { position: relative; padding-right: 40px; }
 a.item::after { content: ""; position: absolute; right: 8px; top: 50%; width: 8px; height: 8px; border-right: 1.5px solid var(--fg3); border-top: 1.5px solid var(--fg3); transform: translateY(-50%) rotate(45deg); }
