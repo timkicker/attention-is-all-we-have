@@ -146,3 +146,25 @@ def test_changing_the_login_needs_the_password_and_is_rate_limited(c):
 
 RULES = {"aloneUpToCents": 100000, "approvalUpToCents": 200000, "substitutes": "listed", "maxExtraPct": 0,
          "perWeekCents": None}
+
+
+def test_new_kitchens_are_rate_limited_per_client(c):
+    from validio.api.limits import NEW_KITCHENS
+
+    for i in range(NEW_KITCHENS.limit):
+        with TestClient(app) as fresh:  # a new browser each time, so each asks for a new copy
+            assert fresh.post("/api/account/demo").status_code == 200, i
+    with TestClient(app) as fresh:
+        assert fresh.post("/api/account/demo").status_code == 429
+        assert fresh.post("/api/account/signup", json=SIGNUP).status_code == 429
+
+
+def test_demo_copies_stay_under_the_cap(c, monkeypatch):
+    from validio.api import accounts
+
+    monkeypatch.setattr(accounts, "MAX_DEMO_COPIES", 3)
+    for _ in range(5):
+        with TestClient(app) as fresh:
+            assert fresh.post("/api/account/demo").status_code == 200
+    with accounts.get_accounts()._db() as con:
+        assert con.execute("select count(*) from account where is_demo = 1").fetchone()[0] == 3

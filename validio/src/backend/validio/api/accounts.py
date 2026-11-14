@@ -25,7 +25,7 @@ from pydantic import Field
 
 from ..demo import seed
 from .connect import AgentState
-from .limits import client_ip
+from .limits import NEW_KITCHENS, client_ip
 from .schemas import Model
 from .state import Ctx, get_ctx
 from .steady import Runtime
@@ -36,6 +36,7 @@ DEMO_CODE = "246810"
 DEMO_NAME = "Hotel Espoo kitchen"
 DEMO_CUSTOMER = "hotel-espoo"
 DEMO_MAX_AGE = 48 * 3600
+MAX_DEMO_COPIES = 200  # demo kitchens on disk at once; the oldest goes first
 MAX_OPEN = 64
 LOGIN_TRIES, LOGIN_WINDOW = 5, 15 * 60
 
@@ -149,13 +150,18 @@ class Accounts:
             con.execute("delete from account where id = ?", (account_id,))
         shutil.rmtree(self.root / account_id, ignore_errors=True)
 
-    def sweep(self, now: float | None = None) -> list[str]:
-        """Demo copies older than 48 h go, with their sessions and files, and demo copies with the short ids of
-        before (32 bits, guessable)."""
+    def sweep(self, now: float | None = None, keep: int | None = None) -> list[str]:
+        """Demo copies older than 48 h go, with their sessions and files, demo copies with the short ids of
+        before (32 bits, guessable), and the oldest copies beyond `keep - 1`, so a new one always fits under the
+        cap on disk."""
+        keep = MAX_DEMO_COPIES if keep is None else keep
         cutoff = (now or time.time()) - DEMO_MAX_AGE
         with self._db() as con:
             old = [r[0] for r in con.execute("select id from account where is_demo = 1 and (created_at < ? or "
                                              "length(id) < 34)", (cutoff,))]
+            rest = [r[0] for r in con.execute("select id from account where is_demo = 1 order by created_at desc")
+                    if r[0] not in old]
+            old += rest[max(keep - 1, 0):]
             con.execute("delete from session where expires < ?", (now or time.time(),))
         for a in old:
             self.delete(a)
@@ -395,6 +401,7 @@ def _miss(keys: list[str]) -> None:
 
 @router.post("/signup", response_model=AccountView, status_code=201, response_model_exclude_none=True)
 def signup(request: Request, body: SignupIn):
+    NEW_KITCHENS.check(f"client:{client_ip(request)}", "new kitchens from this address")
     try:
         row = get_accounts().create(name=body.name.strip(), email=body.email.strip(), password=body.password,
                                     customer=body.customer_number, code=body.approval_code)
@@ -433,6 +440,7 @@ def demo(request: Request):
     a = session_account_id(request)
     if a is not None and acc.get(a)["is_demo"]:
         return view(acc.get(a))
+    NEW_KITCHENS.check(f"client:{client_ip(request)}", "new kitchens from this address")
     acc.sweep()
     row = acc.create(name=DEMO_NAME, email=None, password=None, customer=DEMO_CUSTOMER, code=DEMO_CODE,
                      is_demo=True)
