@@ -36,6 +36,8 @@ describe('recorded labels come from the data', () => {
     expect(pickRecorded([r('1', 'a'), r('2', 'a'), r('3', 'b')], 2).map((x) => x.run_id)).toEqual(['1', '3'])
     const qs = ['When did the Winter War end?', 'How many Finnish soldiers died in the Winter War?', 'Who fired the shots at Mainila in November 1939?']
     expect(pickRecorded(qs.map((q, i) => r(String(i), q))).map((x) => x.question)).toEqual([qs[2], qs[1], qs[0]])
+    const fx = { run_id: 'fx', question: 'What happened at Mainila?', answer_model: 'example answer (test fixture)', answer_date: null }
+    expect(pickRecorded([fx, r('9', qs[2])]).map((x) => x.run_id)).toEqual(['9', 'fx'])
   })
 })
 
@@ -64,12 +66,13 @@ describe('result', () => {
   const base = { run_id: 'r1', source: 'recorded' as const, answer_model: 'gemini-3.8-flash', answer_date: '2026-11-12', engine: 'fake' as const, sql: [] }
   it('counts and says "most" only when true', () => {
     const d = { ...base, question: 'Who fired the shots at Mainila?', text: 'Whole answer.', claims: [
-      claim(0, seven(() => 'not_found')),
+      claim(0, seven(() => 'says')),
       claim(1, seven((l) => (l === 'sv' ? 'contradicts' : 'says'))),
-      claim(2, seven(() => 'says')),
+      claim(2, seven(() => 'not_found')),
     ] }
     const r = toResult(ctx, d)
     expect(r.summary).toEqual({ total: 3, none: 1, disputed: 1, backed: 1 })
+    expect(r.rows.map((x) => x.verdict)).toEqual(['none', 'disputed', 'backed'])
     expect(r.label).toBe('Gemini on who fired the shots at Mainila')
     expect(r.answer).toBe('Whole answer.')
     expect(copy.checkSummary(r.summary, r.mostBacked)).toBe('Of 3 statements, 1 is in no edition, 1 is disputed and 1 is backed by most editions')
