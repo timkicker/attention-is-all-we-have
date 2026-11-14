@@ -134,14 +134,14 @@
 </script>
 
 {#if !o && noOrder}
-  <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${id}`, label: id }]} here="Approve" back={{ href: `/requests/${id}`, label: "Request" }} />
+  <VHead title="Approve" crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${id}`, label: id }]} here="Approve" back={{ href: `/requests/${id}`, label: "Request" }} />
   <div class="none">
     <p data-testid="approve-none">{noOrder === "blocked" || noOrder === "rejected" ? "Blocked. Nothing to approve." : "Nothing to approve yet."}</p>
     <a href="/requests/{id}" data-testid="approve-none-request">Open {id} ›</a>
   </div>
 {:else if !o}
   {#if order.error}
-    <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} />
+    <VHead title="Approve" crumbs={[{ href: "/orders", label: "Orders" }]} here="Approve" back={{ href: "/orders", label: "Orders" }} />
     <VState kind="error" title={/404|not found/i.test(order.error) ? `No request ${id}.` : "Validio is not reachable."} detail={order.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={3} />
@@ -151,7 +151,7 @@
   {@const what = doneWhat(o, placed)}
   <VHead
     title={placed ? `Ordered ${what}` : `Not ordered: ${what}`}
-    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
   >
@@ -169,7 +169,7 @@
     title={o.questionText ?? r?.question ?? `Order for ${money(o.totalCents)}?`}
     titleId="question"
     titleTestid="approve-question"
-    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
   >
