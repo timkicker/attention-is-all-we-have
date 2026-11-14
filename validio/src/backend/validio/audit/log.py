@@ -52,7 +52,24 @@ FIELDS = ("seq", "at", "actor", "kind", "sentence", "facts", "mandate_id", "disc
 
 
 def canonical(body: dict[str, Any]) -> str:
+    """The bytes the hash is taken over: JSON with keys sorted, no spaces, UTF-8 (not \\u escapes). For what an
+    entry holds (ASCII keys; strings, whole numbers, true, false, null; no floats, see `_plain`) this is exactly
+    RFC 8785 (JCS), so anyone can check the chain with a JCS library in any language."""
     return json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _plain(v: Any) -> Any:
+    """An entry without floats: JSON numbers with a fraction are written differently by different languages, so
+    a whole float becomes an int and any other float its shortest decimal string."""
+    if isinstance(v, bool) or v is None:
+        return v
+    if isinstance(v, float):
+        return int(v) if v.is_integer() else repr(v)
+    if isinstance(v, dict):
+        return {str(k): _plain(x) for k, x in v.items()}
+    if isinstance(v, (list, tuple)):
+        return [_plain(x) for x in v]
+    return v
 
 
 def entry_hash(body: dict[str, Any]) -> str:
@@ -209,7 +226,7 @@ class AuditLog:
                 "prev_hash": prev,
             }
             # round trip so the stored body is exactly what gets hashed
-            body = json.loads(canonical(body))
+            body = json.loads(canonical(_plain(body)))
             h = entry_hash(body)
             con.execute(
                 "INSERT INTO ledger (seq, order_id, body, hash) VALUES (?, ?, ?, ?)",

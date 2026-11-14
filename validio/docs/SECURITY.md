@@ -103,7 +103,7 @@ Not covered: nonces live in memory. A restart drops them, which fails closed. Ru
 
 ## Tampered ledger
 
-The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON. A head row with the entry count, the last hash and the time of the last entry moves in the same transaction as each append, so deleting the newest entries is caught as well. The kitchen's key signs that head on every append and verify checks the signature, so a rewrite of every hash and the head row is caught too. `GET /api/ledger/head` returns the signed head with the kitchen's public key, so Valio can pin it. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
+The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON: keys sorted, no spaces, UTF-8, and no floats in an entry, which makes it RFC 8785 (JCS), so Valio can check the chain with any JCS library (`audit/log.py`, `canonical`). A head row with the entry count, the last hash and the time of the last entry moves in the same transaction as each append, so deleting the newest entries is caught as well. The kitchen's key signs that head on every append and verify checks the signature, so a rewrite of every hash and the head row is caught too. `GET /api/ledger/head` returns the signed head with the kitchen's public key, so Valio can pin it. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
 
 Proof:
 
