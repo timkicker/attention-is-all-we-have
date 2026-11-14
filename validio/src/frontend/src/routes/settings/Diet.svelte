@@ -3,7 +3,6 @@
   /// again, so it asks for the approval code first.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Section } from "@arlen/ui-kit/components/ui/section";
-  import { Switch } from "@arlen/ui-kit/components/ui/switch";
   import { ApiError } from "$lib/api/client";
   import { bump } from "$lib/chrome.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
@@ -63,10 +62,11 @@
 
 <Section class="v-card">
   {#each DIETS as d (d.id)}
-    <div class="sw-line">
-      <span class="lbl" id="diet-{d.id}">{d.label}</span>
-      <span class="sw"><Switch ariaLabel={d.label} bind:value={on[d.id]} disabled={asking} /></span>
-    </div>
+    <!-- The whole row is the switch, as the stock-out row in the page menu: 56 px to tap on the phone. -->
+    <button type="button" class="sw-line" role="switch" aria-checked={on[d.id]} disabled={asking} data-testid="diet-{d.id}" onclick={() => (on[d.id] = !on[d.id])}>
+      <span class="lbl">{d.label}</span>
+      <span class="vsw" class:on={on[d.id]} aria-hidden="true"><span class="thumb"></span></span>
+    </button>
   {/each}
 </Section>
 
@@ -87,19 +87,68 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
+    width: 100%;
     min-height: 56px;
     padding: 12px 16px;
+    margin: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--v-fg);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) ease;
+  }
+  .sw-line:hover:not(:disabled) {
+    background: var(--v-tint-hover);
+  }
+  .sw-line:first-child {
+    border-start-start-radius: max(0px, calc(var(--radius-card) - 1px));
+    border-start-end-radius: max(0px, calc(var(--radius-card) - 1px));
+  }
+  .sw-line:last-child {
+    border-end-start-radius: max(0px, calc(var(--radius-card) - 1px));
+    border-end-end-radius: max(0px, calc(var(--radius-card) - 1px));
+  }
+  .sw-line:disabled {
+    cursor: default;
+  }
+  .sw-line:disabled .vsw {
+    opacity: 0.5;
   }
   .lbl {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     font-weight: 500;
   }
-  /* The kit Switch, on in Valio blue, as on the Spend Pass. */
-  .sw {
-    --color-accent: var(--valio);
-    --color-accent-foreground: var(--v-on-valio);
-    display: inline-flex;
+  /* The kit Switch's look, on in Valio blue (as VMenu's stock-out row). */
+  .vsw {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    flex-shrink: 0;
+    border-radius: var(--radius-input);
+    border: 1px solid var(--control-border);
+    background: var(--control-bg-strong);
+  }
+  .vsw .thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 14px;
+    height: 14px;
+    border-radius: max(0px, calc(var(--radius-input) - 2px));
+    background: var(--foreground);
+    box-shadow: var(--v-shadow-thumb);
+    transition: transform var(--duration-fast) ease;
+  }
+  .vsw.on {
+    background: var(--valio);
+    border-color: var(--valio);
+  }
+  .vsw.on .thumb {
+    background: var(--v-on-valio);
+    transform: translateX(14px);
   }
   .acts {
     display: flex;
