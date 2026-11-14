@@ -306,7 +306,8 @@ def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
         elif steady:
             rid = steady.group(1)
         elif e["kind"] == "request":
-            current = rid = next(asked, None)
+            tagged = next((f.get("value") for f in e.get("facts") or [] if f.get("field") == "request"), None)
+            current = rid = tagged or next(asked, None)  # entries from before the tag: in request order
         elif e["kind"] in ("spend_pass", "agent"):
             rid = e["spend_pass_id"]  # the owner's change belongs to the pass, not the request before it
         elif e["kind"] == "simulation":
