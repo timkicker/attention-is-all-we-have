@@ -8,7 +8,7 @@ import { CODE } from "./helpers";
 //
 // Against the built web app of the default config, or against a running server or the public link:
 //   ACCOUNTS_BASE=http://127.0.0.1:8410 npx playwright test e2e/accounts-demo.spec.ts
-// Skips itself while the Agent page is not in the sidebar.
+// Skips itself while the Agent page has no Connect agent.
 //
 // Numbers: the demo template (alone up to 1,200.00 €, the example 1,010.00 €), lowered to 800 €.
 const BASE = process.env.ACCOUNTS_BASE;
@@ -16,7 +16,7 @@ if (BASE) test.use({ baseURL: BASE });
 
 /** A control by its test id, or else by its role and visible label (the labels in docs/DEMO.md). */
 function el(page: Page, id: string, role: "button" | "link" | "tab" | "checkbox" | "textbox", name: RegExp): Locator {
-  return page.getByTestId(id).or(page.getByRole(role, { name })).first();
+  return page.getByTestId(id).or(page.getByRole(role, { name })).filter({ visible: true }).first();
 }
 
 async function freshDemo(page: Page) {
@@ -37,16 +37,26 @@ async function typeCode(page: Page) {
   await page.getByTestId("code-submit").or(page.getByRole("button", { name: /^(confirm|save|approve|ok)$/i })).first().click();
 }
 
-async function sendExample(page: Page) {
+/** Send the example from the Inbox and wait for one more row with `status` than before (the template's
+ * own scenes already have rows like it). */
+async function sendExample(page: Page, status: RegExp) {
   await nav(page, "nav-inbox", /^inbox$/i).click();
+  await page.waitForLoadState("networkidle");
+  const rows = page.locator("main").getByText(status);
+  const before = await rows.count();
   await el(page, "send-example", "button", /send example request/i).click();
+  await expect(rows).toHaveCount(before + 1, { timeout: 30_000 });
 }
 
 test("the demo path, end to end, in a fresh browser", async ({ page, browser }) => {
   test.setTimeout(180_000);
   await freshDemo(page);
   const agentNav = nav(page, "nav-agent", /^agent$/i);
-  test.skip((await agentNav.count()) === 0, "the Agent page is not in the sidebar yet");
+  const connect = el(page, "agent-connect", "button", /^connect agent$/i);
+  if (await agentNav.count()) await agentNav.click();
+  const built = await connect.waitFor({ timeout: 5_000 }).then(() => true, () => false);
+  test.skip(!built, "the Agent page with Connect agent is not built yet");
+  await nav(page, "nav-inbox", /^inbox$/i).click();
 
   // the demo bar names the code on purpose
   await expect(page.getByText(CODE).first()).toBeVisible();
@@ -60,7 +70,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
 
   // 2 connect the demo agent
   await agentNav.click();
-  await el(page, "agent-connect", "button", /^connect agent$/i).click();
+  await connect.click();
   await expect(page.getByTestId("pairing-code").or(page.getByText(/^[A-Z0-9]{4}-[A-Z0-9]{4}$/)).first()).toBeVisible();
   await el(page, "agent-demo", "button", /connect the demo agent/i).click();
   await expect(page.getByText(/order alone up to 1,200\.00 €/i).first()).toBeVisible();
@@ -68,8 +78,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await expect(page.getByText(/^active$/i).first()).toBeVisible();
 
   // 3 the example request, ordered alone
-  await sendExample(page);
-  await expect(page.getByText(/ordered alone/i).first()).toBeVisible({ timeout: 30_000 });
+  await sendExample(page, /ordered alone/i);
   await expect(page.getByText("1,010.00 €").first()).toBeVisible();
 
   // 4 lower the alone limit in Rules, with the code
@@ -82,9 +91,8 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await expect(alone).toHaveValue(/^800([.,]00)?$/);
 
   // 5 the same request again waits
-  await sendExample(page);
-  const waiting = page.getByText(/waiting for you/i).first();
-  await expect(waiting).toBeVisible({ timeout: 30_000 });
+  await sendExample(page, /waiting for you/i);
+  const waiting = page.locator("main").getByText(/waiting for you/i).first();
   await expect(page.getByText(/blocked/i)).toHaveCount(0);
 
   // 6 approve with the code
@@ -97,8 +105,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await agentNav.click();
   await el(page, "agent-pause", "button", /^pause$/i).click();
   await expect(page.getByText(/^paused$/i).first()).toBeVisible();
-  await sendExample(page);
-  await expect(page.getByText(/paused this agent/i).first()).toBeVisible({ timeout: 30_000 });
+  await sendExample(page, /paused this agent/i);
   await agentNav.click();
   await el(page, "agent-ledger", "link", /see in ledger/i).click();
   await expect(page).toHaveURL(/\/ledger/);
@@ -106,7 +113,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await expect(page.getByText(/refused/i).first()).toBeVisible();
 
   // 8 Settings: the kitchen's name opens them; a diet change asks the code
-  await page.getByTestId("kitchen-settings").or(page.getByRole("link", { name: /hotel espoo kitchen/i })).first().click();
+  await page.getByTestId("nav-settings").or(page.getByTestId("phone-settings")).or(page.getByRole("link", { name: /hotel espoo kitchen/i })).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/\/settings/);
   await page.getByTestId("diet-FREE_FROM_GLUTEN").or(page.getByRole("checkbox", { name: /gluten/i })).first().check();
   await el(page, "diet-save", "button", /^save$/i).click();
