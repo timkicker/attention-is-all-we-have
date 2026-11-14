@@ -2,9 +2,8 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := bench l-scale
-
-.PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load m-embed contested judge gloss checks-write dump release test-a $(A_STUBS)
+.PHONY: fetch-smoke fetch parse lives bisect embed load checks checks-write dump release test-a align m-lives \
+	m-lives-load contested m-embed judge gloss atlas sources-data gold label eval answers bench l-scale
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -46,8 +45,6 @@ release:
 test-a:
 	$(UV) run pytest pipeline/tests engine/tests eval/tests -q
 
-$(A_STUBS):
-	@echo "$@: not built yet"; exit 1
 align:
 	$(PY) -m pipeline.align --topic $(TOPIC)
 
@@ -89,4 +86,10 @@ eval:
 
 answers:
 	$(PY) -m pipeline.record_answers
+
+bench:
+	$(PY) -m pipeline.bench
+
+l-scale:
+	$(PY) -m pipeline.l_scale
 
