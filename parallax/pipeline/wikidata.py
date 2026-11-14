@@ -32,8 +32,9 @@ def _pages(lang: str, q: str, generator: str) -> list[dict]:
     return sorted(pages, key=lambda p: p.get("index", 0))
 
 
-def entities(qids: list[str]) -> dict[str, dict]:
-    """qid -> {label_en, description, titles: {lang: title}} for the seven editions (one request per 50 ids)."""
+def entities(qids: list[str], interactive: bool = True) -> dict[str, dict]:
+    """qid -> {label_en, description, titles: {lang: title}} for the seven editions (one request per 50 ids).
+    interactive=False (the command line) waits out 429s like every batch fetch (wapi.get)."""
     out: dict[str, dict] = {}
     for i in range(0, len(qids), 50):
         chunk = qids[i : i + 50]
@@ -47,7 +48,7 @@ def entities(qids: list[str]) -> dict[str, dict]:
                 "sitefilter": "|".join(f"{lang}wiki" for lang in LANGS),
             },
             max_age_s=0,  # asked while a visitor waits (search, a new ingest); sitelinks change, so never kept
-            interactive=True,
+            interactive=interactive,
         )
         for qid, ent in (body.get("entities") or {}).items():
             if "missing" in ent:
@@ -62,8 +63,8 @@ def entities(qids: list[str]) -> dict[str, dict]:
     return out
 
 
-def entity(qid: str) -> dict | None:
-    return entities([qid]).get(qid)
+def entity(qid: str, interactive: bool = True) -> dict | None:
+    return entities([qid], interactive).get(qid)
 
 
 def search(q: str) -> list[dict]:
