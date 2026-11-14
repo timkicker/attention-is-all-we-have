@@ -271,6 +271,18 @@ def checks(facts, diet: list[str] | None = None) -> list[str]:
     return out[:CHECK_MAX]
 
 
+def speed_text(elapsed_ms: int, ids: int) -> str:
+    """"Done in 3 s, 12 products checked with Valio"."""
+    secs = elapsed_ms / 1000
+    took = f"{secs:.1f} s" if secs < 10 else f"{round(secs)} s"
+    what = "1 product" if ids == 1 else f"{ids} products"
+    return f"Done in {took}, {what} checked with Valio" if ids else f"Done in {took}"
+
+
+def valio_mode_text(mode: str | None) -> str | None:
+    return {"replay": "Valio's recorded answers", "live": "Valio live", "record": "Valio live"}.get(mode or "")
+
+
 def reason_text(sentence: str | None) -> str | None:
     """Why a waiting order waits, as one line: "Over your 800.00 € limit for ordering alone."."""
     said = asks_text(sentence)

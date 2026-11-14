@@ -64,16 +64,17 @@ async def main() -> int:
     scenes = [1, 2, 3, 4, 5]
     store = ROOT / "artifacts" / "snapshots"
     store.mkdir(parents=True, exist_ok=True)
-    token, code = secrets.token_urlsafe(16), f"{secrets.randbelow(10**6):06d}"
-    proc = start_server(PORT, store, token, code)
+    code = f"{secrets.randbelow(10**6):06d}"
+    keys = Path(env().get("VALIDIO_KEYS") or ROOT / "data" / "keys")
+    proc = start_server(PORT, store, code, keys)
     OUT.mkdir(parents=True, exist_ok=True)
     try:
-        run = Run(f"http://127.0.0.1:{PORT}", store / "validio.db", Path(env().get("VALIDIO_KEYS") or ROOT / "data" / "keys"), token, code, False)
+        run = Run(f"http://127.0.0.1:{PORT}", store / "validio.db", keys, code, False)
         run.demo("reset")
         for n in scenes:
             print(f"  scene {n} OK: {await getattr(run, f'scene{n}')()}")
             text = json.dumps(collect(run), indent=2, ensure_ascii=False)
-            if SECRET.search(text) or token in text:
+            if SECRET.search(text):
                 print(f"FAILED: the scene {n} snapshot holds a pass, a key or a secret")
                 return 1
             (OUT / f"scene{n}.json").write_text(text + "\n")

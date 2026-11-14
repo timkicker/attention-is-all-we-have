@@ -701,6 +701,30 @@
             "title": "Outcome",
             "type": "string"
           },
+          "ownerText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "one plain sentence in the words of the kitchen's own limits: \"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone.\"",
+            "title": "Ownertext"
+          },
+          "reasonCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "why it ended here: auto_ok, over_alone, over_budget, swap_unlisted, diet_unchecked, stock_unconfirmed, ask_other, week_cap, hard_cap, diet, no_price, sales_block, outside_groups, none_available, blocked_other, valio_down, too_many, unreadable",
+            "title": "Reasoncode"
+          },
           "ruleIds": {
             "items": {
               "type": "string"
@@ -755,6 +779,41 @@
           "stockOut466375": {
             "title": "Stockout466375",
             "type": "boolean"
+          },
+          "valioDown": {
+            "default": false,
+            "description": "the demo switch \"Valio not answering\": every Valio read fails",
+            "title": "Valiodown",
+            "type": "boolean"
+          },
+          "valioMode": {
+            "anyOf": [
+              {
+                "enum": [
+                  "live",
+                  "record",
+                  "replay"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "replay: Valio's recorded answers, never a live call",
+            "title": "Valiomode"
+          },
+          "valioModeText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Valio's recorded answers\" or \"Valio live\"",
+            "title": "Valiomodetext"
           }
         },
         "required": [
@@ -2327,6 +2386,54 @@
             "description": "the facts Validio confirmed, one short fact each",
             "title": "Checks"
           },
+          "cutoffText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Order by Sun 15 Nov 12:00\", Valio's order cut-off",
+            "title": "Cutofftext"
+          },
+          "deliveryDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Valio's earliest delivery date, ISO",
+            "title": "Deliverydate"
+          },
+          "deliveryText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Arrives Mon 16 Nov\"",
+            "title": "Deliverytext"
+          },
+          "dietText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the diet the request needs, with how sure: \"Lactose free: Valio confirms\"",
+            "title": "Diettext"
+          },
           "displayName": {
             "anyOf": [
               {
@@ -2471,6 +2578,18 @@
             "description": "the sentence as a list, one reason each",
             "title": "Reasons"
           },
+          "reliabilityText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Delivered in full 99 of 100 times\"",
+            "title": "Reliabilitytext"
+          },
           "sentence": {
             "title": "Sentence",
             "type": "string"
@@ -2530,6 +2649,18 @@
             ],
             "title": "Unit"
           },
+          "unitPriceText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "price per litre or kilo when the pack size is known: \"1.01 € per l\"",
+            "title": "Unitpricetext"
+          },
           "verdict": {
             "enum": [
               "chosen",
@@ -2540,6 +2671,18 @@
             ],
             "title": "Verdict",
             "type": "string"
+          },
+          "whyNotText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "every other option: why not this one, one sentence",
+            "title": "Whynottext"
           },
           "whyReasons": {
             "anyOf": [
@@ -2555,6 +2698,18 @@
             ],
             "description": "the reasons without the one shortText already says",
             "title": "Whyreasons"
+          },
+          "whyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the chosen option: why it won, two short sentences",
+            "title": "Whytext"
           }
         },
         "required": [
@@ -2656,6 +2811,30 @@
               }
             ],
             "description": "what Validio would order for this line"
+          },
+          "decidedBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the Best Pick key that chose between the top two: price, delivery record, labels, footprint or only option",
+            "title": "Decidedby"
+          },
+          "decidedByText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Decided by: price.\"",
+            "title": "Decidedbytext"
           },
           "lineId": {
             "title": "Lineid",
@@ -4042,6 +4221,18 @@
             "description": "the same as title, the name types.ts already reads",
             "title": "Displayname"
           },
+          "elapsedMs": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "how long Validio took for this request, Valio included",
+            "title": "Elapsedms"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -4151,6 +4342,18 @@
             ],
             "title": "Simulated"
           },
+          "speedText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Done in 3 s, 12 products checked with Valio\"",
+            "title": "Speedtext"
+          },
           "spendPassId": {
             "title": "Spendpassid",
             "type": "string"
@@ -4229,6 +4432,35 @@
             ],
             "description": "what orders placed under the same Spend Pass before this request add up to",
             "title": "Usedbeforecents"
+          },
+          "valioMode": {
+            "anyOf": [
+              {
+                "enum": [
+                  "live",
+                  "record",
+                  "replay"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "how Valio was asked: replay means Valio's recorded answers, not a live call",
+            "title": "Valiomode"
+          },
+          "valioText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"Valio checked 10:00\", or \"Valio's recorded answers\" in replay",
+            "title": "Valiotext"
           }
         },
         "required": [

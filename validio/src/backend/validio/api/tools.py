@@ -91,7 +91,13 @@ def confirm_order(ctx: Ctx, spend_pass: str, body: ConfirmIn) -> OrderView:
 
 
 def get_order(ctx: Ctx, order_id: str) -> OrderView:
+    from ..matching.need import CLAIM_NAMES
+    from ..orders.explain import explain
+    from ..orders.supply import order_status
+
     o = ctx.orders.get(order_id)
+    diet = [CLAIM_NAMES.get(c, c) for c in o.get("requiredClaims") or (o.get("mandate") or {}).get("diet") or ()]
+    o = {**o, "decision": {**o["decision"], **explain(o["decision"], order_status(o), diet, o.get("deliverBy"))}}
     view = OrderView.model_validate(o)
     view.used_before_cents = ctx.orders.used_before(o["spendPassId"], o["history"][0]["at"], o["id"])
     return view

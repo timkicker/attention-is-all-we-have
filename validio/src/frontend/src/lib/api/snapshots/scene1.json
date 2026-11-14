@@ -239,7 +239,14 @@
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -448,7 +455,14 @@
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -639,7 +653,14 @@
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -838,7 +859,14 @@
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -1029,7 +1057,14 @@
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -1220,7 +1255,14 @@
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -1416,7 +1458,14 @@
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -1625,7 +1674,14 @@
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -1825,7 +1881,14 @@
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -2033,7 +2096,14 @@
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -2222,7 +2292,14 @@
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -2432,7 +2509,14 @@
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -2456,7 +2540,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -2497,7 +2583,9 @@
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -2521,7 +2609,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -2545,7 +2635,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -2569,7 +2661,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -2593,7 +2687,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -2617,7 +2713,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -2641,7 +2739,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -2665,7 +2765,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -2689,7 +2791,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -2713,7 +2817,9 @@
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -2737,7 +2843,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -2761,7 +2869,9 @@
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -2785,7 +2895,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -2809,7 +2921,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -2836,7 +2950,9 @@
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -2860,7 +2976,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -2884,7 +3002,9 @@
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -2910,7 +3030,9 @@
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -2919,7 +3041,9 @@
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -2928,7 +3052,9 @@
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Cleared to buy without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -2948,7 +3074,11 @@
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -2986,7 +3116,7 @@
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -3020,7 +3150,7 @@
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -3047,7 +3177,7 @@
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -3076,7 +3206,7 @@
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       }
@@ -3190,6 +3320,9 @@
   "demo": {
     "codeRequired": true,
     "stockOut466375": false,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"

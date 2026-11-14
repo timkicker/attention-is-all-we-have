@@ -23,11 +23,13 @@ from typing import Any
 from ..audit.log import NEVER_LOGGED, AuditLog
 from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
+from ..matching.need import CLAIM_NAMES as CLAIM_WORDS
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate, effective_deadline
-from ..text.format import and_list, count, product_qty, qty_of, short_name, short_ref
+from ..text.format import and_list, cap, count, product_qty, qty_of, short_name, short_ref
 from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact, stock_in_sales_units
 from ..valio.budget import CallBudget
+from ..valio.client import ValioUnavailable
 from ..valio.models import Availability
 from .store import NotFound, Store
 
@@ -62,11 +64,25 @@ def revoke_pass(store: Store, audit: AuditLog, pass_id: str, at: datetime, actor
 
 
 class ApproveRefused(OrderError):
-    """Valio's answer changed since the question was asked (HTTP 409). The order keeps waiting."""
+    """Valio's answer changed since the question was asked (HTTP 409, code "refused"). The order keeps waiting.
+    `refused_text` says it for the owner: "Valio's price went from 18.01 € to 18.60 € (+3.3 %). Not ordered."."""
+
+    def __init__(self, sentence: str, refused_text: str | None = None):
+        super().__init__(sentence)
+        self.refused_text = refused_text or "Valio's answer changed since you were asked. Not ordered."
 
 
 class ServiceClosed(Exception):
     """The demo was reset while this call waited; its store is gone (HTTP 503, send it again)."""
+
+
+def _plain_time(problem: str, deliver_by: date) -> str:
+    """A time problem of approve for the owner."""
+    if " expired at " in problem:
+        return f"Your limits ran out at {problem.split(' expired at ')[1]}."
+    if problem.endswith("is not valid yet"):
+        return "Your limits don't start yet."
+    return f"Too late for delivery on {day(deliver_by)}."
 
 
 def day(d: date | str) -> str:
@@ -141,12 +157,14 @@ def over_budget(decision: dict[str, Any], quoted: list[dict], budget_cents: int 
 class OrderService:
     def __init__(self, store: Store, catalog: Catalog, valio, audit: AuditLog,
                  clock: Callable[[], datetime], adjust: Callable[[dict], dict] | None = None,
-                 max_ids: int = 40, lock: "threading.RLock | None" = None):
+                 max_ids: int = 40, lock: "threading.RLock | None" = None,
+                 valio_down: Callable[[], bool] | None = None):
         self.store, self.catalog, self.valio, self.audit = store, catalog, valio, audit
         if audit.path.resolve() == Path(store.path).resolve():
             audit.join(store.con, store.lock)  # one connection, else the ledger waits on the store's own write lock
         self.clock = clock
         self.adjust = adjust or (lambda avail: avail)  # the demo stock-out switch
+        self.valio_down = valio_down or (lambda: False)  # the demo switch "Valio not answering"
         self.max_ids = max_ids
         self.lock = lock or threading.RLock()
         self.closed = False
@@ -158,10 +176,16 @@ class OrderService:
 
     # Valio, asked again
 
+    def check_valio(self) -> None:
+        """With the demo switch "Valio not answering" on, every Valio read fails as a real outage would."""
+        if self.valio_down():
+            raise ValioUnavailable()
+
     def quote(self, lines: list[LineIn], deliver_by: date, stock_override: dict[str, float] | None = None,
               budget: CallBudget | None = None) -> list[dict[str, Any]]:
         budget = budget or CallBudget(self.max_ids)
         ids = [ln.product_id for ln in lines]
+        self.check_valio()
         quotes = self.valio.price(ids, deliver_by, budget)
         avail = self.adjust(self.valio.availability(ids, deliver_by, budget))
         out = []
@@ -335,39 +359,54 @@ class OrderService:
             if self.store.is_revoked(mandate.id):
                 sentence = f"Approval refused: Spend Pass {mandate.id} was revoked by the kitchen."
                 self._log(o, "validio", "decision", sentence, [])
-                raise ApproveRefused(sentence)
+                raise ApproveRefused(sentence, "You withdrew these limits. Not ordered.")
             deliver_by = date.fromisoformat(o["deliverBy"])
             problems = self._time_problems(mandate, deliver_by)
+            plain: list[str] = [_plain_time(p, deliver_by) for p in problems]
             if problems:
-                self._refuse(o, problems)
+                self._refuse(o, problems, plain)
             lines = [LineIn(ln["productId"], ln["quantity"], ln["isSubstitute"], ln["onValioList"])
                      for ln in o["lines"]]
             fresh = self.quote(lines, deliver_by)
+            several = len(fresh) > 1
             for old, new in zip(o["lines"], fresh, strict=True):
+                name = short_ref(new["name"])
                 if not new["deliverable"]:
-                    problems.append(new["short"] or f"{short_ref(new['name'])} can no longer be delivered")
+                    problems.append(new["short"] or f"{name} can no longer be delivered")
+                    plain.append(f"{new['short'] or f'{name} can no longer be delivered'}.")
                 elif new["priceCents"] is None:
-                    problems.append(f"Valio has no price for {short_ref(new['name'])} any more")
+                    problems.append(f"Valio has no price for {name} any more")
+                    plain.append(f"Valio has no price for {name} any more.")
                 elif old["priceCents"] and new["priceCents"] * 10000 > old["priceCents"] * (10000 + MAX_PRICE_RISE_BP):
-                    problems.append(f"the price of {short_ref(new['name'])} rose from {eur(old['priceCents'])} "
+                    problems.append(f"the price of {name} rose from {eur(old['priceCents'])} "
                                     f"to {eur(new['priceCents'])}, more than 2 %")
+                    rise = (new["priceCents"] - old["priceCents"]) * 100 / old["priceCents"]
+                    plain.append(f"Valio's price{f' for {name}' if several else ''} went from "
+                                 f"{eur(old['priceCents'])} to {eur(new['priceCents'])} (+{rise:.1f} %).")
             if not problems:
                 # a person may lift "ask", never a block, a passed cut-off or a late delivery
                 again, per = self._judge(mandate, fresh, o.get("requiredClaims"), o.get("splitBaseCents"),
                                          deliver_by)
                 if again["outcome"] == "block":
+                    from .explain import reason
+
                     problems.append(again["sentence"])
+                    why = reason(again, [CLAIM_WORDS.get(c, c) for c in o.get("requiredClaims")
+                                         or o["mandate"].get("diet") or ()], o["deliverBy"])[1]
+                    plain.append(f"{why[:1].upper()}{why[1:]}.")
                 for _o, _d, ln, c in per:
                     a = ln["_avail"]
                     if not c.cutoff_ok:
                         when = f" ({a.closing_time:%d %b %H:%M})" if a is not None and a.closing_time else ""
                         problems.append(f"the order cut-off for {short_ref(ln['name'])} has passed{when}")
+                        plain.append(f"Too late: Valio's order cut-off for {short_ref(ln['name'])} has passed{when}.")
                     elif not c.delivery_in_time:
                         problems.append((f"Valio now delivers {short_ref(ln['name'])} on {day(ln['deliveryDate'])}, "
                                          f"after {day(deliver_by)}") if ln["deliveryDate"] else
                                         f"Valio gives no delivery date for {short_ref(ln['name'])}")
+                        plain.append(f"{cap(problems[-1])}.")
             if problems:
-                self._refuse(o, problems)
+                self._refuse(o, problems, plain)
             now = self.clock().isoformat()
             o["lines"] = self._public(fresh)
             o["totalCents"] = sum(ln["totalCents"] for ln in fresh)
@@ -381,10 +420,10 @@ class OrderService:
                 self._log(o, "validio", "order", self._placed_sentence(o, approver, verb=verb), o["decision"]["ruleIds"])
             return o
 
-    def _refuse(self, o: dict, problems: list[str]) -> None:
+    def _refuse(self, o: dict, problems: list[str], plain: list[str] | None = None) -> None:
         sentence = "Approval refused, Valio was asked again: " + and_list(problems) + "."
         self._log(o, "validio", "decision", sentence, [])
-        raise ApproveRefused(sentence)
+        raise ApproveRefused(sentence, " ".join([*(plain or []), "Not ordered."]) if plain else None)
 
     def reject(self, order_id: str, approver: str, reason: str | None = None) -> dict:
         with self.lock, self.store.tx():

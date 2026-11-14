@@ -42,6 +42,10 @@ class Spy:
     def __init__(self, inner):
         self.inner, self.calls = inner, 0
 
+    @property
+    def mode(self):
+        return getattr(self.inner, "mode", None)
+
     def price(self, *a, **kw):
         self.calls += 1
         return self.inner.price(*a, **kw)

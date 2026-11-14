@@ -102,6 +102,13 @@ class DecisionView(Model):
     rule_ids: list[str]
     sentence: str
     summary: str | None = Field(None, description="at most about 12 words for the screen, the sentence is the detail")
+    reason_code: str | None = Field(
+        None, description="why it ended here: auto_ok, over_alone, over_budget, swap_unlisted, diet_unchecked, "
+                          "stock_unconfirmed, ask_other, week_cap, hard_cap, diet, no_price, sales_block, "
+                          "outside_groups, none_available, blocked_other, valio_down, too_many, unreadable")
+    owner_text: str | None = Field(
+        None, description="one plain sentence in the words of the kitchen's own limits: "
+                          "\"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone.\"")
 
     @model_validator(mode="after")
     def _text(self):
@@ -156,6 +163,16 @@ class RankedOptionView(Model):
     group_order: int | None = Field(None, description="turned-down options only: the heading's place, lowest first")
     checks: list[str] | None = Field(None, description="the facts Validio confirmed, one short fact each")
     why_reasons: list[str] | None = Field(None, description="the reasons without the one shortText already says")
+    unit_price_text: str | None = Field(None, description="price per litre or kilo when the pack size is known: "
+                                                          "\"1.01 € per l\"")
+    delivery_date: str | None = Field(None, description="Valio's earliest delivery date, ISO")
+    delivery_text: str | None = Field(None, description="\"Arrives Mon 16 Nov\"")
+    cutoff_text: str | None = Field(None, description="\"Order by Sun 15 Nov 12:00\", Valio's order cut-off")
+    reliability_text: str | None = Field(None, description="\"Delivered in full 99 of 100 times\"")
+    diet_text: str | None = Field(None, description="the diet the request needs, with how sure: "
+                                                    "\"Lactose free: Valio confirms\"")
+    why_text: str | None = Field(None, description="the chosen option: why it won, two short sentences")
+    why_not_text: str | None = Field(None, description="every other option: why not this one, one sentence")
 
     @model_validator(mode="after")
     def _text(self):
@@ -219,6 +236,9 @@ class RequestLineView(Model):
     swap_sentence: str | None = None
     chosen: ChoiceView | None = Field(None, description="what Validio would order for this line")
     note: str | None = None
+    decided_by: str | None = Field(None, description="the Best Pick key that chose between the top two: price, "
+                                                     "delivery record, labels, footprint or only option")
+    decided_by_text: str | None = Field(None, description="\"Decided by: price.\"")
 
     @model_validator(mode="after")
     def _names(self):
@@ -231,6 +251,12 @@ class RequestLineView(Model):
                 o.short_text = d.swap_text(o.reasons or [], self.need.diet, self.need.deliver_by) or o.short_text
             o.why_reasons = d.why_reasons(o.reasons or [], o.short_text)
             o.checks = d.checks(o.facts, self.need.diet)
+            if o.verdict in d.TURNED_DOWN and o.why_not_text is None and o.group_text:
+                head = "over your never-above limit" if o.group_text == "Over the hard cap" else \
+                    o.group_text.replace("the pass's product groups", "your product groups")
+                o.why_not_text = f"Not suitable: {head[:1].lower()}{head[1:]}."
+        if self.decided_by and self.decided_by_text is None:
+            self.decided_by_text = f"Decided by: {self.decided_by}."
         return self
 
 
@@ -276,6 +302,12 @@ class SupplyRequestView(Model):
         None, description="the asked-for product's live count at Valio, for the chosen row's fold")
     lead_text: str | None = Field(
         None, description="the one muted line under the title that names a simulated stock-out")
+    elapsed_ms: int | None = Field(None, description="how long Validio took for this request, Valio included")
+    valio_mode: Literal["live", "record", "replay"] | None = Field(
+        None, description="how Valio was asked: replay means Valio's recorded answers, not a live call")
+    speed_text: str | None = Field(None, description="\"Done in 3 s, 12 products checked with Valio\"")
+    valio_text: str | None = Field(None, description="\"Valio checked 10:00\", or \"Valio's recorded answers\" "
+                                                     "in replay")
 
     @model_validator(mode="after")
     def _text(self):
@@ -289,6 +321,11 @@ class SupplyRequestView(Model):
         self.time_text = self.time_text or d.time_text(self.created_at)
         if self.live_at is None and self.live_checked and self.live_checked.calls:
             self.live_at = d.time_text(self.created_at)
+        if self.speed_text is None and self.elapsed_ms is not None:
+            self.speed_text = d.speed_text(self.elapsed_ms, self.live_checked.ids if self.live_checked else 0)
+        if self.valio_text is None and self.live_checked and self.live_checked.calls:
+            self.valio_text = ("Valio's recorded answers" if self.valio_mode == "replay"
+                               else f"Valio checked {self.live_at}")
         return self
 
 
@@ -513,6 +550,10 @@ class ResetIn(Model):
 class DemoState(Model):
     code_required: bool = Field(True, description="false when no approve code is configured")
     stock_out_466375: bool = Field(alias="stockOut466375")
+    valio_down: bool = Field(False, description="the demo switch \"Valio not answering\": every Valio read fails")
+    valio_mode: Literal["live", "record", "replay"] | None = Field(
+        None, description="replay: Valio's recorded answers, never a live call")
+    valio_mode_text: str | None = Field(None, description="\"Valio's recorded answers\" or \"Valio live\"")
     real_stock_466375: RealStock | None = Field(
         None, alias="realStock466375", description="what Valio really has of 466375, read at request time")
 

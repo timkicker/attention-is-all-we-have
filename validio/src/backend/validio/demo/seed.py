@@ -260,18 +260,43 @@ def set_stockout(path: Path | None, on: bool) -> None:
         con.close()
 
 
+VALIO_DOWN_KEY = "valio_down"
+
+
+def valio_down(path: Path | None = None) -> bool:
+    """The demo switch "Valio not answering": every Valio read fails as an outage would. Off after a reset,
+    which drops demo_state."""
+    con = sqlite3.connect(path or db_path())
+    try:
+        row = con.execute("select value from demo_state where key = ?", (VALIO_DOWN_KEY,)).fetchone()
+    except sqlite3.OperationalError:  # a store from before the seed made demo_state
+        return False
+    finally:
+        con.close()
+    return bool(row and row[0] == "1")
+
+
+def set_valio_down(path: Path | None, on: bool) -> None:
+    con = sqlite3.connect(path or db_path())
+    try:
+        con.execute("insert or replace into demo_state values (?, ?)", (VALIO_DOWN_KEY, "1" if on else "0"))
+        con.commit()
+    finally:
+        con.close()
+
+
 def real_stock(valio, day: date | None = None) -> tuple[float, str] | None:
     """What Valio answers for 466375 on the Spend Pass's delivery day, before the demo switch sets it to
     zero: (quantity, sales unit). None when Valio (or the recording) has no answer."""
     import httpx
 
     from ..valio.budget import CallBudget
-    from ..valio.client import ReplayMiss
+    from ..valio.client import ReplayMiss, ValioUnavailable
 
     day = day or date.fromisoformat(DEMO_CLAIMS["deliverBy"])
     try:
         a = valio.availability([STOCKOUT_ID], day, CallBudget()).get(STOCKOUT_ID)
-    except (ReplayMiss, httpx.HTTPError):  # no recording or a failed call: the note says "has stock"
+    except (ReplayMiss, ValioUnavailable, httpx.HTTPError):  # no recording or a failed call: the note says "has stock"
         return None
     if a is None or not a.lines or a.amount is None:
         return None

@@ -265,7 +265,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -474,7 +481,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -665,7 +679,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -864,7 +885,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -1055,7 +1083,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -1246,7 +1281,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -1442,7 +1484,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -1651,7 +1700,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -1851,7 +1907,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -2059,7 +2122,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -2248,7 +2318,14 @@ export const scene1: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -2458,7 +2535,14 @@ export const scene1: Snapshot = {
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -2482,7 +2566,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -2523,7 +2609,9 @@ export const scene1: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -2547,7 +2635,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -2571,7 +2661,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -2595,7 +2687,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -2619,7 +2713,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -2643,7 +2739,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -2667,7 +2765,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -2691,7 +2791,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -2715,7 +2817,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -2739,7 +2843,9 @@ export const scene1: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -2763,7 +2869,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -2787,7 +2895,9 @@ export const scene1: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -2811,7 +2921,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -2835,7 +2947,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -2862,7 +2976,9 @@ export const scene1: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -2886,7 +3002,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -2910,7 +3028,9 @@ export const scene1: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -2936,7 +3056,9 @@ export const scene1: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -2945,7 +3067,9 @@ export const scene1: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -2954,7 +3078,9 @@ export const scene1: Snapshot = {
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Cleared to buy without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -2974,7 +3100,11 @@ export const scene1: Snapshot = {
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -3012,7 +3142,7 @@ export const scene1: Snapshot = {
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -3046,7 +3176,7 @@ export const scene1: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -3073,7 +3203,7 @@ export const scene1: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -3102,7 +3232,7 @@ export const scene1: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       }
@@ -3216,6 +3346,9 @@ export const scene1: Snapshot = {
   "demo": {
     "codeRequired": true,
     "stockOut466375": false,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"
@@ -3464,7 +3597,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -3673,7 +3813,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -3864,7 +4011,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -4063,7 +4217,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -4254,7 +4415,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -4445,7 +4613,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -4641,7 +4816,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -4850,7 +5032,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -5050,7 +5239,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -5258,7 +5454,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -5447,7 +5650,14 @@ export const scene2: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -5657,7 +5867,14 @@ export const scene2: Snapshot = {
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -5681,7 +5898,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -5722,7 +5941,9 @@ export const scene2: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -5746,7 +5967,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -5770,7 +5993,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -5794,7 +6019,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -5818,7 +6045,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -5842,7 +6071,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -5866,7 +6097,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -5890,7 +6123,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -5914,7 +6149,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -5938,7 +6175,9 @@ export const scene2: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -5962,7 +6201,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -5986,7 +6227,9 @@ export const scene2: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -6010,7 +6253,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -6034,7 +6279,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -6061,7 +6308,9 @@ export const scene2: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -6085,7 +6334,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -6109,7 +6360,9 @@ export const scene2: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -6135,7 +6388,9 @@ export const scene2: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -6144,7 +6399,9 @@ export const scene2: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -6153,7 +6410,9 @@ export const scene2: Snapshot = {
           "auto-order"
         ],
         "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -6174,7 +6433,11 @@ export const scene2: Snapshot = {
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -6212,7 +6475,7 @@ export const scene2: Snapshot = {
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -6281,7 +6544,9 @@ export const scene2: Snapshot = {
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -6315,7 +6580,7 @@ export const scene2: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -6342,7 +6607,7 @@ export const scene2: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -6371,7 +6636,7 @@ export const scene2: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
@@ -6417,9 +6682,9 @@ export const scene2: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "displayText": "Ordered O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       }
     ],
     "chain": {
@@ -6531,6 +6796,9 @@ export const scene2: Snapshot = {
   "demo": {
     "codeRequired": true,
     "stockOut466375": false,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"
@@ -6617,7 +6885,8 @@ export const scene3: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "473986",
@@ -6716,7 +6985,9 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "468526",
@@ -6738,7 +7009,8 @@ export const scene3: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "475908",
@@ -6760,7 +7032,8 @@ export const scene3: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             }
           ],
           "beyondList": [
@@ -6936,7 +7209,8 @@ export const scene3: Snapshot = {
                 "10 × 2.5 kg for 180.10 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "463383",
@@ -7058,7 +7332,8 @@ export const scene3: Snapshot = {
                 "Lactose free and checked.",
                 "10 bags for 196.60 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 97 of 100 times"
             },
             {
               "productId": "465174",
@@ -7229,7 +7504,8 @@ export const scene3: Snapshot = {
                 "10 × 2.5 kg for 234.90 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 98 of 100 times"
             },
             {
               "productId": "470836",
@@ -7350,7 +7626,8 @@ export const scene3: Snapshot = {
                 "Lactose free, claim unchecked.",
                 "63 × 400 g for 334.53 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "474642",
@@ -7515,7 +7792,9 @@ export const scene3: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "467107",
@@ -7682,7 +7961,9 @@ export const scene3: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463685",
@@ -7797,7 +8078,9 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "467197",
@@ -7920,7 +8203,9 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 94 of 100 times",
+              "whyNotText": "Not suitable: order cut-off passed."
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -7938,7 +8223,9 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Placed order O-2."
+        "summary": "Placed order O-2.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -7979,7 +8266,11 @@ export const scene3: Snapshot = {
       "usedBeforeCents": 101000,
       "liveAt": "10:14",
       "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
-      "leadText": "Out of stock (simulated). Swap not on Valio's list."
+      "leadText": "Out of stock (simulated). Swap not on Valio's list.",
+      "elapsedMs": 26,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 10 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     },
     "R-1": {
       "id": "R-1",
@@ -8204,7 +8495,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -8413,7 +8711,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -8604,7 +8909,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -8803,7 +9115,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -8994,7 +9313,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -9185,7 +9511,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -9381,7 +9714,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -9590,7 +9930,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -9790,7 +10137,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -9998,7 +10352,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -10187,7 +10548,14 @@ export const scene3: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -10397,7 +10765,14 @@ export const scene3: Snapshot = {
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -10421,7 +10796,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -10462,7 +10839,9 @@ export const scene3: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -10486,7 +10865,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -10510,7 +10891,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -10534,7 +10917,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -10558,7 +10943,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -10582,7 +10969,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -10606,7 +10995,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -10630,7 +11021,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -10654,7 +11047,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -10678,7 +11073,9 @@ export const scene3: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -10702,7 +11099,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -10726,7 +11125,9 @@ export const scene3: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -10750,7 +11151,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -10774,7 +11177,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -10801,7 +11206,9 @@ export const scene3: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -10825,7 +11232,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -10849,7 +11258,9 @@ export const scene3: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -10875,7 +11286,9 @@ export const scene3: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -10884,7 +11297,9 @@ export const scene3: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -10893,7 +11308,9 @@ export const scene3: Snapshot = {
           "auto-order"
         ],
         "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -10914,7 +11331,11 @@ export const scene3: Snapshot = {
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -10952,7 +11373,7 @@ export const scene3: Snapshot = {
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -11029,7 +11450,9 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
-        "summary": "Spend Pass M-1 already placed 1,010.00 €."
+        "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -11098,7 +11521,9 @@ export const scene3: Snapshot = {
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -11132,7 +11557,7 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -11159,7 +11584,7 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -11188,7 +11613,7 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
@@ -11234,9 +11659,9 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "displayText": "Ordered O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -11279,7 +11704,7 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
@@ -11324,7 +11749,7 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked you: the substitute is not on Valio's list."
       },
@@ -11361,13 +11786,13 @@ export const scene3: Snapshot = {
         "requestId": "R-2",
         "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
         "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
-        "actorText": "Owner",
+        "actorText": "You",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
@@ -11412,9 +11837,9 @@ export const scene3: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
+        "displayText": "Ordered O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       }
     ],
     "chain": {
@@ -11534,6 +11959,9 @@ export const scene3: Snapshot = {
   "demo": {
     "codeRequired": true,
     "stockOut466375": true,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"
@@ -11620,7 +12048,8 @@ export const scene4: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "473986",
@@ -11719,7 +12148,9 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "468526",
@@ -11741,7 +12172,8 @@ export const scene4: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "475908",
@@ -11763,7 +12195,8 @@ export const scene4: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             }
           ],
           "beyondList": [
@@ -11939,7 +12372,8 @@ export const scene4: Snapshot = {
                 "10 × 2.5 kg for 180.10 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "463383",
@@ -12061,7 +12495,8 @@ export const scene4: Snapshot = {
                 "Lactose free and checked.",
                 "10 bags for 196.60 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 97 of 100 times"
             },
             {
               "productId": "465174",
@@ -12232,7 +12667,8 @@ export const scene4: Snapshot = {
                 "10 × 2.5 kg for 234.90 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 98 of 100 times"
             },
             {
               "productId": "470836",
@@ -12353,7 +12789,8 @@ export const scene4: Snapshot = {
                 "Lactose free, claim unchecked.",
                 "63 × 400 g for 334.53 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "474642",
@@ -12518,7 +12955,9 @@ export const scene4: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "467107",
@@ -12685,7 +13124,9 @@ export const scene4: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463685",
@@ -12800,7 +13241,9 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "467197",
@@ -12923,7 +13366,9 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 94 of 100 times",
+              "whyNotText": "Not suitable: order cut-off passed."
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -12941,7 +13386,9 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Placed order O-2."
+        "summary": "Placed order O-2.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -12982,7 +13429,11 @@ export const scene4: Snapshot = {
       "usedBeforeCents": 101000,
       "liveAt": "10:14",
       "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
-      "leadText": "Out of stock (simulated). Swap not on Valio's list."
+      "leadText": "Out of stock (simulated). Swap not on Valio's list.",
+      "elapsedMs": 26,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 10 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     },
     "R-1": {
       "id": "R-1",
@@ -13207,7 +13658,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -13416,7 +13874,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -13607,7 +14072,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -13806,7 +14278,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -13997,7 +14476,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -14188,7 +14674,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -14384,7 +14877,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -14593,7 +15093,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -14793,7 +15300,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -15001,7 +15515,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -15190,7 +15711,14 @@ export const scene4: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -15400,7 +15928,14 @@ export const scene4: Snapshot = {
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -15424,7 +15959,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -15465,7 +16002,9 @@ export const scene4: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -15489,7 +16028,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -15513,7 +16054,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -15537,7 +16080,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -15561,7 +16106,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -15585,7 +16132,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -15609,7 +16158,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -15633,7 +16184,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -15657,7 +16210,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -15681,7 +16236,9 @@ export const scene4: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -15705,7 +16262,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -15729,7 +16288,9 @@ export const scene4: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -15753,7 +16314,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -15777,7 +16340,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -15804,7 +16369,9 @@ export const scene4: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -15828,7 +16395,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -15852,7 +16421,9 @@ export const scene4: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -15878,7 +16449,9 @@ export const scene4: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -15887,7 +16460,9 @@ export const scene4: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -15896,7 +16471,9 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -15917,7 +16494,11 @@ export const scene4: Snapshot = {
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -15955,7 +16536,7 @@ export const scene4: Snapshot = {
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -16032,7 +16613,9 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
-        "summary": "Spend Pass M-1 already placed 1,010.00 €."
+        "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -16101,7 +16684,9 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -16135,7 +16720,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -16162,7 +16747,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -16191,7 +16776,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
@@ -16237,9 +16822,9 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "displayText": "Ordered O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -16282,7 +16867,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
@@ -16327,7 +16912,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked you: the substitute is not on Valio's list."
       },
@@ -16364,13 +16949,13 @@ export const scene4: Snapshot = {
         "requestId": "R-2",
         "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
         "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
-        "actorText": "Owner",
+        "actorText": "You",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
@@ -16415,9 +17000,9 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
+        "displayText": "Ordered O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 10,
@@ -16461,9 +17046,9 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
+        "displayText": "Ordered O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
       },
       {
         "seq": 11,
@@ -16520,9 +17105,9 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
+        "displayText": "Ordered O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
       },
       {
         "seq": 12,
@@ -16547,7 +17132,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30."
       },
@@ -16574,7 +17159,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio."
       },
@@ -16619,7 +17204,7 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked you: 905.31 € would take the week to 1,980.80 €, past 1,200.00 €."
       },
@@ -16656,13 +17241,13 @@ export const scene4: Snapshot = {
         "requestId": "S-1",
         "prevHash": "a4994749312841393f0bb600099ccf72cf67e445c66fe45683951c7e9e21355b",
         "hash": "b1ca87d0c7902f71db1079dcd5a2177e88cf4b05f266f2609f99958d89658a52",
-        "actorText": "Owner",
+        "actorText": "You",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Accepted 27 cartons of vegan pancake 30 g for 905.31 €."
       },
@@ -16707,9 +17292,9 @@ export const scene4: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
+        "displayText": "Ordered O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
       }
     ],
     "chain": {
@@ -16915,6 +17500,9 @@ export const scene4: Snapshot = {
   "demo": {
     "codeRequired": true,
     "stockOut466375": true,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"
@@ -17001,7 +17589,8 @@ export const scene5: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "473986",
@@ -17100,7 +17689,9 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "468526",
@@ -17122,7 +17713,8 @@ export const scene5: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "475908",
@@ -17144,7 +17736,8 @@ export const scene5: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "whyNotText": "Not suitable: not lactose free."
             }
           ],
           "beyondList": [
@@ -17320,7 +17913,8 @@ export const scene5: Snapshot = {
                 "10 × 2.5 kg for 180.10 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "463383",
@@ -17442,7 +18036,8 @@ export const scene5: Snapshot = {
                 "Lactose free and checked.",
                 "10 bags for 196.60 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 97 of 100 times"
             },
             {
               "productId": "465174",
@@ -17613,7 +18208,8 @@ export const scene5: Snapshot = {
                 "10 × 2.5 kg for 234.90 €.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 98 of 100 times"
             },
             {
               "productId": "470836",
@@ -17734,7 +18330,8 @@ export const scene5: Snapshot = {
                 "Lactose free, claim unchecked.",
                 "63 × 400 g for 334.53 €.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "reliabilityText": "Delivered in full every time"
             },
             {
               "productId": "474642",
@@ -17899,7 +18496,9 @@ export const scene5: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "467107",
@@ -18066,7 +18665,9 @@ export const scene5: Snapshot = {
                 "Order cut-off 12 Nov 15:00",
                 "Free from lactose"
               ],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463685",
@@ -18181,7 +18782,9 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: no delivery date."
             },
             {
               "productId": "467197",
@@ -18304,7 +18907,9 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079)."
-              ]
+              ],
+              "reliabilityText": "Delivered in full 94 of 100 times",
+              "whyNotText": "Not suitable: order cut-off passed."
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -18322,7 +18927,9 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Placed order O-2."
+        "summary": "Placed order O-2.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -18363,7 +18970,11 @@ export const scene5: Snapshot = {
       "usedBeforeCents": 101000,
       "liveAt": "10:14",
       "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
-      "leadText": "Out of stock (simulated). Swap not on Valio's list."
+      "leadText": "Out of stock (simulated). Swap not on Valio's list.",
+      "elapsedMs": 26,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 10 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     },
     "R-1": {
       "id": "R-1",
@@ -18588,7 +19199,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.01 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyText": "Cheapest that fits, at 1.01 € per l. The next costs 90.00 € more."
             },
             {
               "productId": "464401",
@@ -18797,7 +19415,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.10 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 90.00 € more: 1.10 € per l against 1.01 €."
             },
             {
               "productId": "463335",
@@ -18988,7 +19613,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.40 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 390.00 € more: 1.40 € per l against 1.01 €."
             },
             {
               "productId": "464201",
@@ -19187,7 +19819,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.56 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 550.00 € more: 1.56 € per l against 1.01 €."
             },
             {
               "productId": "464073",
@@ -19378,7 +20017,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.64 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 630.00 € more: 1.64 € per l against 1.01 €."
             },
             {
               "productId": "464398",
@@ -19569,7 +20215,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "unitPriceText": "1.65 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order by Sun 15 Nov 17:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Costs 640.00 € more: 1.65 € per l against 1.01 €."
             },
             {
               "productId": "469287",
@@ -19765,7 +20418,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.30 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "464119",
@@ -19974,7 +20634,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.33 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "465039",
@@ -20174,7 +20841,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.37 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "476240",
@@ -20382,7 +21056,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.52 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "463038",
@@ -20571,7 +21252,14 @@ export const scene5: Snapshot = {
               ],
               "whyReasons": [
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "1.57 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "No record yet: treated as least reliable",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: order cut-off passed."
             },
             {
               "productId": "462921",
@@ -20781,7 +21469,14 @@ export const scene5: Snapshot = {
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "unitPriceText": "2.19 € per l",
+              "deliveryDate": "2026-11-16",
+              "deliveryText": "Arrives Mon 16 Nov",
+              "cutoffText": "Order cut-off passed Thu 12 Nov 15:00",
+              "reliabilityText": "Delivered in full every time",
+              "dietText": "Lactose free: Valio confirms, ingredients agree",
+              "whyNotText": "Not suitable: over your never-above limit."
             },
             {
               "productId": "462626",
@@ -20805,7 +21500,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463047",
@@ -20846,7 +21543,9 @@ export const scene5: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "463203",
@@ -20870,7 +21569,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463380",
@@ -20894,7 +21595,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "463779",
@@ -20918,7 +21621,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 99 of 100 times",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464198",
@@ -20942,7 +21647,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464237",
@@ -20966,7 +21673,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "464399",
@@ -20990,7 +21699,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "464440",
@@ -21014,7 +21725,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "465149",
@@ -21038,7 +21751,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "466288",
@@ -21062,7 +21777,9 @@ export const scene5: Snapshot = {
               "groupText": "Packs too small",
               "groupOrder": 11,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: packs too small."
             },
             {
               "productId": "469331",
@@ -21086,7 +21803,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "469541",
@@ -21110,7 +21829,9 @@ export const scene5: Snapshot = {
               "groupText": "Not lactose free",
               "groupOrder": 2,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "472492",
@@ -21134,7 +21855,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "473142",
@@ -21158,7 +21881,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "475534",
@@ -21185,7 +21910,9 @@ export const scene5: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not lactose free."
             },
             {
               "productId": "476957",
@@ -21209,7 +21936,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full every time",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "477050",
@@ -21233,7 +21962,9 @@ export const scene5: Snapshot = {
               "groupText": "Not plain milk",
               "groupOrder": 10,
               "checks": [],
-              "whyReasons": []
+              "whyReasons": [],
+              "reliabilityText": "Delivered in full 100 of 100 times",
+              "whyNotText": "Not suitable: not plain milk."
             },
             {
               "productId": "462703",
@@ -21259,7 +21990,9 @@ export const scene5: Snapshot = {
               "checks": [],
               "whyReasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "reliabilityText": "No record yet: treated as least reliable",
+              "whyNotText": "Not suitable: not milk."
             }
           ],
           "chosen": {
@@ -21268,7 +22001,9 @@ export const scene5: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average.",
+          "decidedBy": "price",
+          "decidedByText": "Decided by: price."
         }
       ],
       "decision": {
@@ -21277,7 +22012,9 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -21298,7 +22035,11 @@ export const scene5: Snapshot = {
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0,
-      "liveAt": "10:00"
+      "liveAt": "10:00",
+      "elapsedMs": 45,
+      "valioMode": "replay",
+      "speedText": "Done in 0.0 s, 12 products checked with Valio",
+      "valioText": "Valio's recorded answers"
     }
   },
   "spendPass": {
@@ -21336,7 +22077,7 @@ export const scene5: Snapshot = {
     "disclosedText": [
       "orders alone up to",
       "diet",
-      "never above"
+      "blocked above"
     ],
     "hiddenText": [
       "who approves",
@@ -21413,7 +22154,9 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
-        "summary": "Spend Pass M-1 already placed 1,010.00 €."
+        "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+        "reasonCode": "swap_unlisted",
+        "ownerText": "Ordered after you approved. Validio asked Valio again first."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -21482,7 +22225,9 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
-        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
+        "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+        "reasonCode": "auto_ok",
+        "ownerText": "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -21516,7 +22261,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
@@ -21543,7 +22288,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
@@ -21572,7 +22317,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
@@ -21618,9 +22363,9 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "displayText": "Ordered O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -21663,7 +22408,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
@@ -21708,7 +22453,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked you: the substitute is not on Valio's list."
       },
@@ -21745,13 +22490,13 @@ export const scene5: Snapshot = {
         "requestId": "R-2",
         "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
         "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
-        "actorText": "Owner",
+        "actorText": "You",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
@@ -21796,9 +22541,9 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
+        "displayText": "Ordered O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 10,
@@ -21842,9 +22587,9 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
+        "displayText": "Ordered O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
       },
       {
         "seq": 11,
@@ -21901,9 +22646,9 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
+        "displayText": "Ordered O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
       },
       {
         "seq": 12,
@@ -21928,7 +22673,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30."
       },
@@ -21955,7 +22700,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio."
       },
@@ -22000,7 +22745,7 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Asked you: 905.31 € would take the week to 1,980.80 €, past 1,200.00 €."
       },
@@ -22037,13 +22782,13 @@ export const scene5: Snapshot = {
         "requestId": "S-1",
         "prevHash": "a4994749312841393f0bb600099ccf72cf67e445c66fe45683951c7e9e21355b",
         "hash": "b1ca87d0c7902f71db1079dcd5a2177e88cf4b05f266f2609f99958d89658a52",
-        "actorText": "Owner",
+        "actorText": "You",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
         "displayText": "Accepted 27 cartons of vegan pancake 30 g for 905.31 €."
       },
@@ -22088,9 +22833,9 @@ export const scene5: Snapshot = {
         "disclosedText": [
           "orders alone up to",
           "diet",
-          "never above"
+          "blocked above"
         ],
-        "displayText": "Placed O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
+        "displayText": "Ordered O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
       }
     ],
     "chain": {
@@ -22296,6 +23041,9 @@ export const scene5: Snapshot = {
   "demo": {
     "codeRequired": true,
     "stockOut466375": true,
+    "valioDown": false,
+    "valioMode": "replay",
+    "valioModeText": "Valio's recorded answers",
     "realStock466375": {
       "quantity": 11603.0,
       "unit": "BAG"

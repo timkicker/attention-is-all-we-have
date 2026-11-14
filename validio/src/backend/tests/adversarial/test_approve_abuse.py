@@ -1,6 +1,7 @@
 """Abuse of the approve endpoint: double approve, approve after reject, two approves at once, wrong-code
 lockout and a price that changes between the question and the approval (the re-check must fire)."""
 
+import re
 import threading
 from dataclasses import replace
 
@@ -283,3 +284,28 @@ def test_approve_after_the_spend_pass_expired(client, ctx, waiting, monkeypatch)
     monkeypatch.setenv("VALIDIO_NOW", "2026-11-17T00:00:01+02:00")  # M-1 ends 17 Nov 00:00
     r = approve(client, waiting)
     assert r.status_code == 409, r.text
+
+
+def test_409_tells_refused_from_already(client, ctx, waiting):
+    """A refused approval is never "already placed": code "refused" with the reason for the owner, and the
+    order still waits. Approving a placed order is code "already"."""
+    _reprice(ctx, factor=1.033)
+    r = approve(client, waiting)
+    assert r.status_code == 409
+    body = r.json()
+    assert body["code"] == "refused" and body["detail"].startswith("Approval refused")
+    assert re.fullmatch(r"Valio's price went from [\d,.]+ € to [\d,.]+ € \(\+3\.\d %\)\. Not ordered\.",
+                        body["refusedText"]), body["refusedText"]
+    assert client.get(f"/api/orders/{waiting}").json()["state"] == "waiting"
+    spy = ctx.rt._valio
+    spy.inner = spy.inner.inner
+    assert approve(client, waiting).status_code == 200
+    again = approve(client, waiting)
+    assert again.status_code == 409 and again.json()["code"] == "already" and "refusedText" not in again.json()
+
+
+def test_refused_after_expiry_says_so_plainly(client, ctx, waiting, monkeypatch):
+    monkeypatch.setenv("VALIDIO_NOW", "2026-11-17T00:00:01+02:00")
+    body = approve(client, waiting).json()
+    assert body["code"] == "refused" and body["refusedText"].startswith("Your limits ran out at ")
+    assert body["refusedText"].endswith("Not ordered.")
