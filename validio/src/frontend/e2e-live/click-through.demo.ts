@@ -227,13 +227,15 @@ test("scene 4: the chef renews S-1", async ({ page, request }) => {
   expect([got["464306"].result, got["464306"].thisWeekQuantity, got["464306"].totalCents]).toEqual(["renewed", 300, 30300]);
   expect([got["463968"].result, got["463968"].thisWeekQuantity, got["463968"].totalCents]).toEqual(["split_renewed", 177, 77249]);
   expect([got["471376"].result, got["471376"].thisWeekQuantity]).toEqual(["waiting", 27]);
-  expect(got["466375"].result).toBe("flagged");
+  // the scene 3 stock-out still holds: blocked up front, no "Renew anyway" (O7)
+  expect(got["466375"].result).toBe("blocked");
+  expect(got["466375"].acceptLabel).toBeUndefined();
 });
 
 test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   await page.goto("/steady/S-1");
   await needs(page, "simulated-history", "line-464306", "line-463968", "line-471376", "line-466375",
-    "accept-471376", "accept-466375");
+    "accept-471376");
   await expect(page.getByTestId("simulated-history")).toContainText(/8 weeks/);
   await expect(page.getByTestId("simulated-history")).toContainText(/simulated/i);
   const milk = page.getByTestId("line-464306");
@@ -257,7 +259,8 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   const mozz = page.getByTestId("line-466375");
   await expect(mozz).toContainText("26 %");
   await expect(mozz).toContainText("98");
-  await expect(page.getByTestId("accept-466375")).toHaveText(/Renew anyway/);
+  await expect(mozz).toContainText("none in stock at Valio");
+  await expect(page.getByTestId("accept-466375")).toHaveCount(0);
 });
 
 test("scene 4: the chef clicks Order 27 now", async ({ page, request }) => {

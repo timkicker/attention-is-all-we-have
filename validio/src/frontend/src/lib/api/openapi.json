@@ -1052,6 +1052,18 @@
             ],
             "title": "Moneytext"
           },
+          "questionText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the approve page's question, \"Order 10 × 2.5 kg of ... for 180.10 €?\"",
+            "title": "Questiontext"
+          },
           "requestId": {
             "anyOf": [
               {

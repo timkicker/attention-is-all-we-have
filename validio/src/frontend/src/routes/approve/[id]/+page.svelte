@@ -48,6 +48,7 @@
   );
 
   function question(o: Order): string {
+    if (o.questionText) return o.questionText;
     if (o.lines.length === 1) {
       const l = o.lines[0];
       return `Order ${amount(l.quantity, l.unit)} of ${nameWord(l.name)} for ${money(o.totalCents)}?`;

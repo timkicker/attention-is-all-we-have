@@ -284,6 +284,8 @@ export interface Order {
   /** The role that approved, e.g. "owner". Never a name. */
   approvedBy?: string;
   moneyText?: string;
+  /** The approve page's question: "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?" */
+  questionText?: string;
 }
 
 /**
@@ -370,7 +372,9 @@ export type SteadyLineResult =
   | "split_renewed"
   | "waiting"
   | "flagged"
-  | "accepted";
+  | "accepted"
+  /** Nothing can be ordered: a rule blocks it, or Valio has none (then no acceptLabel). */
+  | "blocked";
 
 export interface SteadyLine {
   productId: string;
