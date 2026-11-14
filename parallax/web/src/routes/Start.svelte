@@ -67,7 +67,8 @@
     timer = setTimeout(() => runSearch(value), 250)
   }
 
-  const results = $derived(found?.results ?? [])
+  // The wireframe shows at most four results.
+  const results = $derived((found?.results ?? []).slice(0, 4))
 
   async function choose(r: SearchResult) {
     if (!r.href) return
@@ -155,7 +156,7 @@
         <p class="sec">{copy.start.PREPARED_LEAD}</p>
         <nav class="topics">
           {#each vm.prepared as t (t.qid)}
-            <a href={t.href} data-testid={TID.startPrepared}><span>{t.title}</span><span class="muted num">{copy.years(t.from, t.to)}</span></a>
+            <a href={t.href} data-testid={TID.startPrepared}><span>{t.title}</span><span class="muted num">{t.from !== null ? copy.years(t.from, t.to) : 'editions' in t ? copy.start.editionCount(t.editions as number) : ''}</span></a>
           {/each}
         </nav>
       </section>
@@ -175,7 +176,7 @@
   .topics { margin-top: 8px; border-top: 1px solid var(--line); }
   .topics a { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .ex .line { margin-top: 20px; }
-  .ex .say { font: 400 var(--fs-18)/28px var(--serif); }
+  .ex .say { font: 400 var(--fs-18)/28px var(--serif); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; }
   .ex .go { display: inline-block; margin-top: 24px; font-weight: 500; }
   @media (max-width: 1000px) {
     .split { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "topics" "ex"; }
