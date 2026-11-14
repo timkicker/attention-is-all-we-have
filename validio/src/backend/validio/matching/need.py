@@ -137,14 +137,37 @@ def _product_word(t: str, cat: Catalog) -> str | None:
     return None
 
 
+# a number as people write it: 1000, 1,000, 1.000, 1 000 (thousands), 2.5 or 2,5 (decimals), 1,000.50
+NUMBER = r"(?<![\d.,])(\d{1,3}(?:(?:[ \u00a0\u202f]|,(?=\d{3}(?!\d))|\.(?=\d{3}(?!\d)))\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?)"
+
+
+def number(s: str) -> float:
+    """A written number. Spaces always group thousands. With both ',' and '.' the last one is the decimal mark.
+    One kind of mark followed by exactly three digits groups thousands ("1,000 litres", "1.000 litres");
+    otherwise it is the decimal mark ("2,5 kg", "1.5 l")."""
+    s = re.sub(r"[ \u00a0\u202f]", "", s)
+    if "," in s and "." in s:
+        dec = max(s.rfind(","), s.rfind("."))
+        return float(re.sub(r"[.,]", "", s[:dec]) + "." + s[dec + 1:])
+    for mark in (",", "."):
+        if mark in s:
+            parts = s.split(mark)
+            if len(parts) > 2 or len(parts[-1]) == 3:
+                return float("".join(parts))
+            return float(s.replace(mark, "."))
+    return float(s)
+
+
 def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
     """Deterministic parser for the demo phrasing. The agent may send typed lines instead. With a catalogue,
     any product word it has products for is a kind ("20 kg of parmesan"), not only milk, mozzarella and oat."""
     t = text.lower()
-    m = re.search(r"(\d+(?:[.,]\d+)?)\s*(" + "|".join(sorted(UNITS, key=len, reverse=True)) + r")\b", t)
+    m = re.search(NUMBER + r"\s*(" + "|".join(sorted(UNITS, key=len, reverse=True)) + r")\b", t)
     if not m:
         raise ValueError(f"no quantity in {text!r}")
-    quantity, unit = float(m.group(1).replace(",", ".")), UNITS[m.group(2)]
+    quantity, unit = number(m.group(1)), UNITS[m.group(2)]
+    if quantity <= 0:
+        raise ValueError(f"the quantity in {text!r} is not more than zero")
     if quantity.is_integer():
         quantity = int(quantity)
     kind = next((k for k in KINDS if any(w in t for w in KINDS[k].words)), None)
@@ -166,8 +189,8 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
             if re.search(rf"\bby {name}\b", t):
                 deliver_by = today + timedelta(days=(i - today.weekday() - 1) % 7 + 1)
     budget = None
-    if b := re.search(r"budget\s*(?:of\s*)?(\d+(?:[.,]\d+)?)\s*(?:€|eur|euro)", t):
-        budget = round(float(b.group(1).replace(",", ".")) * 100)
+    if b := re.search(r"budget\s*(?:of\s*)?" + NUMBER + r"\s*(?:€|eur|euro)", t):
+        budget = round(number(b.group(1)) * 100)
     return Need(kind, quantity, unit, required, excluded, deliver_by, budget, text=text)
 
 
