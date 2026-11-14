@@ -79,3 +79,17 @@ def test_statement_log_names_its_parameters(client):
         sqllog.run("SELECT h FROM claim LIMIT 1")
     assert log[0]["params"] == {"topic": "winterwar", "hs": {"count": 3}}
     assert log[1]["params"] == {}
+
+
+def test_sql_vector_runs_the_vector_search_as_of_a_day(client):
+    body = client.get("/api/sql/vector", params={"topic": "winterwar", "as_of": "2008-01-01"}).json()
+    assert body["panel_id"] == "vector"
+    (st,) = body["statements"]
+    assert "FOR SYSTEM_TIME AS OF" in st["text"] and "VEC_DISTANCE_COSINE" in st["text"]
+    assert st["params"]["as_of"] == "2008-01-01 00:00:00" and st["params"]["topic"] == "winterwar"
+    assert st["ms"] >= 0
+
+
+def test_sql_vector_unknown_topic(client):
+    r = client.get("/api/sql/vector", params={"topic": "nope"})
+    assert r.status_code == 404 and r.json()["error"]["code"] == "topic_not_found"

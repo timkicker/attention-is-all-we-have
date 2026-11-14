@@ -182,6 +182,19 @@ export function versionsOf(topics: TopicsRes | null, topicId: string): number | 
 /** HoodVM plus what the shown statement does (model.ts has no field for it yet). */
 export type HoodLiveVM = HoodVM & { queryKind: 'stored' | 'vector' }
 
+/** GET /api/sql/vector: the vector search for one day, run and timed by the API; null when it fails. */
+async function vectorStatement(topic: string, day: string | null): Promise<SqlStatement | null> {
+  try {
+    const q = new URLSearchParams({ topic, ...(day ? { as_of: day } : {}) })
+    const res = await fetch(`/api/sql/vector?${q}`, { headers: { Accept: 'application/json' } })
+    if (!res.ok) return null
+    const body = (await res.json()) as { statements?: SqlStatement[] }
+    return body.statements?.find((st) => VEC.test(st.text)) ?? null
+  } catch {
+    return null
+  }
+}
+
 export async function loadHood(api: Client, from: TopicRef | null): Promise<Result<HoodLiveVM>> {
   const [topics, stats, logged] = await Promise.all([api.topics(), api.stats(), api.sqlPanel('compare')])
   const topicsRes = topics.ok ? topics.data : null
@@ -189,7 +202,12 @@ export async function loadHood(api: Client, from: TopicRef | null): Promise<Resu
   const loggedTopic = pickQuery(statements)?.params?.topic
   const topicId =
     from?.topicId ?? (typeof loggedTopic === 'string' ? loggedTopic : null) ?? topicsRes?.topics[0]?.topic_id ?? null
-  if (!pickQuery(statements) && topicId) {
+  // The statement to show is the vector search (FOR SYSTEM_TIME AS OF + VEC_DISTANCE_COSINE). The list may have
+  // read the stored matches instead, so ask the API to run that search for the same day.
+  const day = pickQuery(statements)?.params?.day
+  const vector = topicId ? await vectorStatement(topicId, typeof day === 'string' ? day : null) : null
+  if (vector) statements = [vector]
+  else if (!pickQuery(statements) && topicId) {
     // No Differences list ran since the API started: run it once to get its statements.
     const c = await api.compare({ topic: topicId })
     if (c.ok) statements = c.data.sql
