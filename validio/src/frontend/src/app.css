@@ -136,6 +136,11 @@ h1.v-title {
   text-underline-offset: 3px;
   position: relative;
 }
+/* An underlined link: the line takes the text colour under the pointer. */
+.facts a:hover,
+.lead a:hover {
+  text-decoration-color: currentColor;
+}
 .lead {
   margin: 12px 0 0;
   max-width: 680px;
@@ -219,10 +224,24 @@ h1.v-title {
 .v-row.plain {
   grid-template-columns: 128px minmax(0, 1fr) auto;
 }
-a.v-row:hover .v-row-title {
-  text-decoration: underline;
-  text-decoration-color: var(--v-faint);
-  text-underline-offset: 3px;
+/* One hover for every row that is a link (inbox, steady list, value rows,
+   ask results, ledger entries): the kit LinkCard's wash, no underline. In a
+   card the first and last row keep the card's inner corner. */
+a.v-row,
+a.vr {
+  transition: background-color var(--duration-fast) ease;
+}
+a.v-row:hover,
+a.vr:hover {
+  background: var(--v-tint-hover);
+}
+.section-card > :is(a.v-row, a.vr):first-child {
+  border-start-start-radius: max(0px, calc(var(--radius-card) - 1px));
+  border-start-end-radius: max(0px, calc(var(--radius-card) - 1px));
+}
+.section-card > :is(a.v-row, a.vr):last-child {
+  border-end-start-radius: max(0px, calc(var(--radius-card) - 1px));
+  border-end-end-radius: max(0px, calc(var(--radius-card) - 1px));
 }
 .v-row-lead {
   align-self: start;

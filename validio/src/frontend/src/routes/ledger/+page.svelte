@@ -130,10 +130,15 @@
     line-height: var(--lh-meta);
     color: var(--v-muted);
   }
-  summary:hover .sent {
-    text-decoration: underline;
-    text-decoration-color: var(--v-faint);
-    text-underline-offset: 3px;
+  /* The row hover of a.v-row, reaching 8 px past the text on both sides. */
+  summary {
+    margin-inline: -8px;
+    padding-inline: 8px;
+    border-radius: var(--radius-button);
+    transition: background-color var(--duration-fast) ease;
+  }
+  summary:hover {
+    background: var(--v-tint-hover);
   }
   .body {
     padding: 0 0 16px 200px;
@@ -157,7 +162,7 @@
     summary {
       grid-template-columns: minmax(0, 1fr) auto;
       row-gap: 4px;
-      padding: 12px 0;
+      padding-block: 12px;
       min-height: 72px;
     }
     .ev-left {
