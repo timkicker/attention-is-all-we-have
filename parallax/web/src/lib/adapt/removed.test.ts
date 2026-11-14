@@ -62,6 +62,13 @@ describe('cutOf', () => {
     expect(mid.what).toEqual({ words: 'staged' })
     expect(mid.say.spans).toEqual([{ start: 17, end: 23 }])
   })
+  it('shows a partial cut on the English gloss, struck where the removed words are found', () => {
+    const removed = { start: 21, end: 31, words_en: 'staged' }
+    const c = cutOf({ text: 'Neuvostoliitto lavasti laukaukset', gloss: 'The Soviet Union staged the shots', removed })
+    expect(c.say.text).toBe('The Soviet Union staged the shots')
+    expect(c.say.spans).toEqual([{ start: 17, end: 23 }])
+    expect(c.what).toEqual({ words: 'staged' })
+  })
 })
 
 describe('loadRemoved', () => {
