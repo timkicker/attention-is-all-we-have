@@ -1,4 +1,4 @@
-# Parallax (working name): one event, many Wikipedias
+# Parallax: one event, many Wikipedias
 
 Plan for our MariaDB entry (c-307), rebuilt on 14 Nov 2026 after Tim's talk at the Wikipedia/MariaDB booth. Deadline Sunday 10:00. Every number was measured on Saturday; the notes behind them get added to the repo with the loader.
 
@@ -7,8 +7,8 @@ Plan for our MariaDB entry (c-307), rebuilt on 14 Nov 2026 after Tim's talk at t
 * The booth wants **cross-language comparison**: how the same topic reads in fi, sv, de, en, ru and others, which way each edition leans and how that moved over time. Their example was the Winter War.
 * They **want vector search**. Yesterday's "vector search is not being used" was a misunderstanding.
 * Tim's principle: **an assistant, never an editor.** The tool shows evidence and suggests; a person decides and edits on Wikipedia. That also fits the German AI policy of February 2026 (flagging tools allowed with human review of each suggestion, AI edits forbidden).
-* Zombie Facts stays as one feature, now across languages: a claim one edition dropped while others still state it.
-* We submit one MariaDB project (one entry per challenge). This plan replaces the Zombie Facts plan as that entry.
+* Claims one edition dropped while others still state them get their own view (Dropped here, alive there).
+* We submit one MariaDB project (one entry per challenge) and this is it. The build plan with every task is [PLAN.md](../PLAN.md).
 
 ## The product
 
@@ -16,7 +16,7 @@ Pick a topic. Parallax lines up what each language edition says, claim by claim 
 
 1. **Compare.** One row per claim, one column per edition (fi, sv, de, en, ru, et, uk). Each cell is the edition's own sentence with an English gloss or "not found". Numbers that disagree are marked (Finnish dead: 26,662 fi, 22,830 sv, 25,904 en/ru/et/uk). Loaded terms are marked (Mainila: "fabricated" fi, "staged" de, "proven Soviet provocation" sv, "false flag" en, "according to the Soviet side" ru).
 2. **Time.** A slider sets one date for all editions (`FOR SYSTEM_TIME AS OF`). The Mainila row replays live: en said "staged" until 2009, then "reported"; ru said "presumably staged" in 2009 and dropped "staged" on 9 Jul 2014 (rev 64106894).
-3. **Dropped here, alive there** (Zombie Facts reborn). Claims an edition removed while other editions still state them, sorted by how long they stood. Each shows the edit comment and the oldid.
+3. **Dropped here, alive there**. Claims an edition removed while other editions still state them, sorted by how long they stood. Each shows the edit comment and the oldid.
 4. **Sources.** Where each edition's references come from: 78 of fi's 82 ISBNs are Finnish, 51 of ru's 96 are Russian or Soviet, en has the most references (288). Shown as one bar per edition, no verdict.
 5. **For editors.** A suggestion card: "Stated in 4 editions with these sources, not found in fi." Buttons only open the section on that Wikipedia. No write API, no bot, no generated article text.
 6. **Ask.** "What did each Wikipedia say about Mainila in 2010?" The answer quotes each edition's own sentences with links, no free text of our own.
@@ -35,7 +35,7 @@ Wording rules in the whole UI: "differs", "not found in", "uses the term", "cite
 
 * **Depth:** full history of 4 topics in 7 languages from the Wikimedia API: Winter War (88 editions exist), Finnish Civil War 1918, Continuation War, Shelling of Mainila. Winter War alone: en 6,720 revisions, ru 3,885, fi 2,148, de 1,197, sv 781, uk 660, et 253.
 * **Breadth:** MariaDB's S dataset has fi, sv and en with one vector per article; 2,919 topics exist in all three. That gives an atlas: which topics each edition covers and how far apart their article vectors sit, with full depth for the 4 demo topics.
-* **Zombie depth in fi:** the M dataset (862,076 fi revisions) we already parsed stays the source for long-lived dropped claims in Finnish.
+* **Dropped claims in fi:** the M dataset (862,076 fi revisions) we already parsed stays the source for long-lived dropped claims in Finnish.
 * Rate limits: we hit HTTP 429 after about 8 fast calls. Fix: a User-Agent with our public repo URL (Wikimedia allows 200 requests a minute then; not yet tested), cache everything, fetch once.
 
 ## Side quests (one project per tech challenge; Validio already uses Modal)

@@ -601,7 +601,7 @@ Background facts for the whole track:
 
 ### B5. Dropped here, alive there (21:30 to 22:30, 60 min)
 
-- **Goal:** the Zombie Facts view across editions and the fi scale.
+- **Goal:** the Dropped here, alive there view across editions and the fi scale.
 - **Files:** `api/routes/dropped.py`, `api/queries/dropped_topic.sql`, `api/queries/dropped_fi.sql`, `api/tests/test_dropped.py`, `web/src/views/DroppedView.vue`.
 - **Steps:**
   1. Topic mode: rows of `claim FOR SYSTEM_TIME ALL` with `row_end < NOW()`, no current row with the same `(lang, page_id, h)`, lived at least `min_days`; for each, current rows of other editions with verdict `same` or `partial` (through `align` today or a live AS OF vector query). Sort by days alive.
