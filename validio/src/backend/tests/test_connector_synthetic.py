@@ -82,3 +82,15 @@ def test_a_signing_agent_cannot_pose_as_someone_else(c, syn_ctx, given, shown):
     r = c.post("/agent/v1/pair", json={"code": code, "name": given, "publicJwk": key.export_public(as_dict=True)})
     assert r.status_code == 202, r.text
     assert c.get("/api/agent").json()["consent"]["name"] == shown
+
+
+@pytest.mark.asyncio
+async def test_every_tool_says_what_it_does_to_the_world():
+    from validio.api.mcp_server import connector_server, server
+
+    for srv in (server, connector_server):
+        tools = {t.name: t.annotations for t in await srv.list_tools()}
+        assert all(a is not None for a in tools.values()), tools
+        assert tools["search_products"].read_only_hint and tools["get_order"].read_only_hint
+        assert tools["confirm_order"].destructive_hint and tools["confirm_order"].idempotent_hint
+        assert not tools["request_supply"].read_only_hint
