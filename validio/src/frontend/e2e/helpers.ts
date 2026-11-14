@@ -5,32 +5,19 @@ export async function reset(page: Page) {
   await page.locator("#demo-reset").click();
 }
 
-/** The presenter's stock-out switch, in the same menu. */
-export async function stockOut(page: Page) {
-  await page.goto("/");
-  await page.locator("#page-menu").click();
-  await page.getByTestId("stock-out").click();
-}
-
 /** From a clean state: the fixture's state and session live in localStorage. */
 export async function fresh(page: Page) {
   await page.goto("/login");
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await demoLogin(page);
-  await expect(page.locator("h1")).toHaveText("Inbox");
+  await expect(page.locator("h1")).toHaveText("Home");
 }
 
 /** The login page's first button: a copy of the demo kitchen. */
 export async function demoLogin(page: Page) {
   await page.getByTestId("try-demo").click();
   await expect(page).not.toHaveURL(/\/login/);
-}
-
-/** Type the approval code into the shared field, if the page asks for it. */
-export async function code(page: Page) {
-  await page.getByTestId("code-input").fill(CODE);
-  await page.getByTestId("code-submit").click();
 }
 
 /** The fixture plays a server with the approval code set: any 6 digits. */
@@ -44,7 +31,7 @@ export const CODE = "246810";
  */
 export async function slop(page: Page): Promise<string[]> {
   return page.evaluate(() => {
-    // The ledger's "As recorded" text is the hashed original and stays as it was written.
+    // Proof entries ([data-raw]) are the hashed originals and stay as they were written.
     const raw = [...document.querySelectorAll<HTMLElement>("[data-raw]")];
     raw.forEach((e) => (e.style.display = "none"));
     const text = document.body.innerText;
@@ -60,8 +47,7 @@ export async function slop(page: Page): Promise<string[]> {
     for (const el of document.querySelectorAll("p, li, h1, h2, h3, td, dd, span")) {
       const e = el as HTMLElement;
       if (e.children.length || !e.offsetParent) continue;
-      // The same reason on two rows of a table or an option list is two rows; the inbox list and the
-      // bar title repeat the open request as list entry and breadcrumb.
+      // The same reason on two rows of a table or a list is two rows.
       if (e.closest("table, [role=table], .rc-ev, [aria-label=Requests], [data-raw], #bar-title")) continue;
       for (const s of e.innerText.split(/(?<=[.?!])\s+/)) {
         const k = s.trim().toLowerCase();

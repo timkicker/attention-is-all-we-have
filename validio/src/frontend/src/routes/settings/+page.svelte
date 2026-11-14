@@ -9,7 +9,6 @@
   import { settingsApi, type Settings } from "$lib/settings";
   import VHead from "$lib/v/VHead.svelte";
   import VState from "$lib/v/VState.svelte";
-  import Diet from "./Diet.svelte";
   import Kitchen from "./Kitchen.svelte";
   import Login from "./Login.svelte";
   import Theme from "./Theme.svelte";
@@ -64,8 +63,6 @@
           <h2 class="v-h" id="h-{x.id}">{x.label}</h2>
           {#if x.id === "kitchen"}
             <Kitchen {s} onsaved={saved} />
-          {:else if x.id === "diet"}
-            <Diet {s} onsaved={saved} />
           {:else if x.id === "login"}
             <Login {s} demo={!!session.account?.isDemo} onsaved={saved} />
           {:else}

@@ -1,22 +1,19 @@
 <script lang="ts">
   /// halbat's page head: crumbs, h1, facts, then whatever the page puts under
-  /// them (lead, question, button). Actions and the ⋯ sit top right. On the
+  /// them (lead, question, button). Actions sit top right. On the
   /// phone a detail page gets the sticky header with the way back instead.
   import type { Snippet } from "svelte";
   import { goto } from "$app/navigation";
   import { ChevronLeft, ChevronRight } from "@lucide/svelte";
   import { cameFrom } from "@arlen/ui-kit/components/ui/page/history";
   import { chrome, setTitle } from "$lib/chrome.svelte";
-  import { session } from "$lib/owner.svelte";
   import { nb } from "$lib/format";
-  import VMenu from "./VMenu.svelte";
 
   let {
     title,
     crumbs = [],
     here = "",
     back,
-    menu = true,
     titleId,
     titleTestid,
     facts,
@@ -28,7 +25,6 @@
     /** The last crumb, this page, not a link. */
     here?: string;
     back?: { href: string; label: string };
-    menu?: boolean;
     titleId?: string;
     titleTestid?: string;
     facts?: Snippet;
@@ -41,9 +37,6 @@
     chrome.detail = !!back;
     return () => (chrome.detail = false);
   });
-  // The ⋯ holds only the demo controls: demo accounts only. On the phone a list
-  // page's ⋯ sits in the layout's header line.
-  const showMenu = $derived(menu && !!session.account?.isDemo);
 
   function goBack(e: MouseEvent) {
     if (!back) return;
@@ -59,8 +52,6 @@
       <ChevronLeft size={20} strokeWidth={1.75} aria-hidden="true" />
     </a>
     <span class="kl-name" aria-hidden="true">{back.label}</span>
-    <span class="grow"></span>
-    {#if showMenu}<VMenu />{/if}
   </div>
 {/if}
 
@@ -79,10 +70,9 @@
     {#if facts}<div class="facts">{@render facts()}</div>{/if}
     {@render children?.()}
   </div>
-  {#if actions || (showMenu && !chrome.phone)}
+  {#if actions}
     <div class="head-actions">
       {@render actions?.()}
-      {#if showMenu && !chrome.phone}<span class="head-menu"><VMenu /></span>{/if}
     </div>
   {/if}
 </header>
@@ -94,10 +84,6 @@
   }
   .head :global(.crumb-sep) {
     opacity: 0.5;
-  }
-  /* The menu's sheet renders inside this sticky bar; lift the bar while it is open so the sheet is on top. */
-  .kopfleiste:has(:global(.dialog-backdrop)) {
-    z-index: 60;
   }
   .kopfleiste {
     position: sticky;
@@ -123,13 +109,6 @@
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
-  }
-  .grow {
-    flex: 1;
-  }
-  .kopfleiste :global(.menu-btn) {
-    width: 44px;
-    height: 44px;
   }
   @media (max-width: 760px) {
     .head.list {
@@ -158,10 +137,6 @@
     }
     .head:not(.list) .head-actions :global([data-slot="button"]) {
       width: 100%;
-    }
-    .head-actions :global(.menu-btn) {
-      width: 44px;
-      height: 44px;
     }
   }
 </style>

@@ -4,32 +4,30 @@
   import { afterNavigate, goto } from "$app/navigation";
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-    import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
+  import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import * as Tooltip from "@arlen/ui-kit/components/ui/tooltip";
   import { notePage } from "@arlen/ui-kit/components/ui/page/history";
-  import { Bot, ClipboardList, Inbox, PanelLeft, ScrollText } from "@lucide/svelte";
+  import { Activity, Bot, ChevronRight, House, PanelLeft, ShieldCheck } from "@lucide/svelte";
   import { api, LIVE, needsToken } from "$lib/api/client";
   import { tokenPrompt } from "$lib/api/error";
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
-  import { bump, chrome, demoActions } from "$lib/chrome.svelte";
-  import VAsk from "$lib/v/VAsk.svelte";
+  import { bump, chrome } from "$lib/chrome.svelte";
   import VPill from "$lib/v/VPill.svelte";
-  import VMenu from "$lib/v/VMenu.svelte";
 
   let { children } = $props();
 
-  // Four places, flat. The kitchen's name at the foot (top left on the phone) opens Settings.
+  // Four places, flat. The kitchen's name at the foot (top on the phone) opens Settings.
   const PAGES = [
-    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" },
-    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/approve") || p.startsWith("/steady") },
-    { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") || p.startsWith("/spend-pass") },
-    { href: "/ledger", id: "nav-ledger", label: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
+    { href: "/", id: "nav-home", label: "Home", icon: House, match: (p: string) => p === "/" },
+    { href: "/activity", id: "nav-activity", label: "Activity", icon: Activity, match: (p: string) => p.startsWith("/activity") },
+    { href: "/rules", id: "nav-rules", label: "Rules", icon: ShieldCheck, match: (p: string) => p.startsWith("/rules") },
+    { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") },
   ];
 
   const path = $derived(page.url.pathname);
-  // The login page stands alone: no sidebar, no dock.
+  // The login page stands alone: no sidebar, no tab bar.
   const door = $derived(path === "/login");
 
   // Who is logged in, once; a 401 later (api/client.ts) clears it again.
@@ -44,13 +42,11 @@
     if (!session.account && !door) void goto("/login", { replaceState: true });
     else if (session.account && door) void goto("/", { replaceState: true });
   });
-  // The approve page has its own bottom bar: no dock under it.
-  const approve = $derived(path.startsWith("/approve"));
-  const demoBar = $derived(!!session.account?.isDemo && (approve ? !chrome.phone || chrome.asking : !(chrome.phone && chrome.detail)));
+  // The thin bar, on demo kitchens only.
+  const demoBar = $derived(!!session.account?.isDemo);
 
   afterNavigate(({ to }) => {
     if (to?.url) notePage(to.url.pathname);
-    askOpen = false; // a result row was followed
   });
 
   // The rail: the window between phone and desktop, or the person folded it.
@@ -65,23 +61,20 @@
   });
   const rail = $derived(folded || mid);
 
+  // What waits for the owner, on Home's nav item.
   let waiting = $state(0);
   const count = async () => {
     if (!session.account) return;
-    const items = await api.inbox();
-    waiting = items.filter((i) => i.status === "waiting").length;
+    waiting = (await api.home()).needsYou.length;
   };
   onMount(() => poll(count));
   $effect(() => {
     void chrome.version;
-    if (!session.account) return;
-    count().catch(() => {});
-    api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
+    if (session.account) count().catch(() => {});
   });
 
-  // Any write the server refused for want of the token (a demo switch, or
-  // every write on the public link) opens the token dialog; the client sends
-  // the write again once the presenter typed it (api/client.ts, gated).
+  // A demo Reset the server refused for want of the token (the public link)
+  // opens the token dialog; the client sends it again once it is typed (api/client.ts, gated).
   let tokenOpen = $state(false);
   let tokenValue = $state("");
   let then = $state<null | (() => void)>(null);
@@ -107,28 +100,19 @@
     answerToken = null;
   }
 
-  async function demo(fn: () => Promise<unknown>, next: string) {
+  async function reset() {
     demoProblem = "";
     try {
-      await fn();
+      await api.reset();
       bump();
-      await goto(next);
+      await goto("/");
     } catch (e) {
-      if (needsToken(e)) return; // the presenter closed the token dialog
+      if (needsToken(e)) return; // the token dialog was closed
       demoProblem = e instanceof Error ? e.message : String(e);
       then = null;
       tokenOpen = true;
     }
   }
-  // The fixture answers at once; with the backend the kitchen's agent asks again first.
-  demoActions.stockOut = () => demo(() => api.stockOut(true), "/");
-  demoActions.stockBack = () => demo(() => api.stockOut(false), page.url.pathname);
-  demoActions.ask = async () => {
-    askOpen = true;
-  };
-
-  let askOpen = $state(false);
-  demoActions.reset = () => demo(() => api.reset(), "/");
 
   function useToken(e: SubmitEvent) {
     e.preventDefault();
@@ -154,13 +138,19 @@
     <div class="wrap">{@render children()}</div>
   </main>
 {:else if session.account}
+{#if demoBar}
+  <div class="demobar" data-testid="demo-bar" id="demo-bar">
+    <span class="db-name">Demo kitchen</span>
+    <Button variant="ghost" size="sm" id="demo-reset" data-testid="demo-reset" onclick={reset}>Reset</Button>
+  </div>
+{/if}
 <div class="shell" class:rail class:phone={chrome.phone}>
   {#if !chrome.phone}
     <aside class="side">
       <div class="top">
         <span class="brand">Validio</span>
         {#if !mid}
-          <Button variant="ghost" size="icon-sm" class="fold" aria-label={folded ? "Open the sidebar" : "Fold the sidebar"} aria-pressed={folded} onclick={() => (folded = !folded)}>
+          <Button variant="ghost" size="icon-sm" class="fold" id="nav-fold" aria-label={folded ? "Open the sidebar" : "Fold the sidebar"} aria-pressed={folded} onclick={() => (folded = !folded)}>
             <PanelLeft />
           </Button>
         {/if}
@@ -190,27 +180,21 @@
       <a class="nav foot" href="/settings" id="nav-settings" data-testid="nav-settings" class:on={path.startsWith("/settings")} aria-current={path.startsWith("/settings") ? "page" : undefined}>
         <span class="tile" aria-hidden="true">{session.account.name.charAt(0)}</span>
         <span class="lbl kitchen">{session.account.name}</span>
-        {#if rail}<span class="sr-only">{session.account.name}, Settings</span>{/if}
+        <span class="sr-only">, Settings</span>
+        <ChevronRight class="lbl foot-go" size={16} strokeWidth={1.75} aria-hidden="true" />
       </a>
     </aside>
   {/if}
 
-  <main class="v-main" class:demo={demoBar}>
-    <!-- Approve keeps the bar: it shows the code that page asks for. On the phone it waits for the code step. -->
-    {#if demoBar}
-      <div class="demobar" data-testid="demo-bar" id="demo-bar">
-        <span class="db-name">Demo kitchen</span>
-        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
-      </div>
-    {/if}
-    {#if chrome.phone && !chrome.detail && !approve}
+  <main class="v-main">
+    {#if chrome.phone && !chrome.detail}
       <header class="phonebar">
         <a class="pb-name" href="/settings" id="phone-settings" data-testid="phone-settings">
           <span class="tile" aria-hidden="true">{session.account.name.charAt(0)}</span>
           <span>{session.account.name}</span>
           <span class="sr-only">, Settings</span>
         </a>
-        {#if session.account.isDemo}<VMenu />{/if}
+        <ChevronRight class="pb-go" size={16} strokeWidth={1.75} aria-hidden="true" />
       </header>
     {/if}
     <div class="wrap">
@@ -221,10 +205,10 @@
 
 {/if}
 
-{#if session.account && !door && chrome.phone && !approve}
+{#if session.account && !door && chrome.phone}
   <nav class="dock" aria-label="Main">
     {#each PAGES as p (p.href)}
-      <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+      <a href={p.href} id="{p.id}-tab" data-testid="{p.id}-tab" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
         <span class="di"><p.icon size={20} strokeWidth={1.75} aria-hidden="true" />{#if p.href === "/" && waiting > 0}<span class="db">{@render navBadge(waiting)}</span>{/if}</span>
         <span>{p.label}</span>
       </a>
@@ -244,25 +228,30 @@
         aria-describedby={demoProblem ? "token-problem" : undefined}
       />
     {:else}
-      <h2 id="token-title">Demo control failed</h2>
+      <h2 id="token-title">Reset failed</h2>
     {/if}
     {#if demoProblem}<p class="bad" id="token-problem" data-testid="token-problem">{demoProblem}</p>{/if}
     <div class="token-buttons">
-      <Button variant="ghost" onclick={closeToken}>{then || !demoProblem ? "Cancel" : "Close"}</Button>
-      {#if then || !demoProblem}<Button type="submit" data-testid="token-run">Run</Button>{/if}
+      <Button variant="ghost" id="token-cancel" onclick={closeToken}>{then || !demoProblem ? "Cancel" : "Close"}</Button>
+      {#if then || !demoProblem}<Button type="submit" id="token-run" data-testid="token-run">Run</Button>{/if}
     </div>
   </form>
 </Dialog>
 
-<VAsk open={askOpen} onClose={() => (askOpen = false)} />
-
 {#if LIVE}<span hidden id="live-mode"></span>{/if}
 
 <style>
+  /* The demo bar's height, for everything that sticks under it. */
+  :global(:root) {
+    --demo-h: 0px;
+  }
+  :global(:root:has(#demo-bar)) {
+    --demo-h: 32px;
+  }
   .shell {
     position: relative;
     display: grid;
-    grid-template-columns: 208px minmax(0, 1fr);
+    grid-template-columns: 232px minmax(0, 1fr);
     min-height: 100vh;
   }
   /* The sidebar's colour runs the whole page height, also past the sticky panel. */
@@ -270,7 +259,7 @@
     content: "";
     position: absolute;
     inset: 0 auto 0 0;
-    width: 208px;
+    width: 232px;
     background: var(--v-shell);
     border-right: 1px solid var(--v-line);
   }
@@ -288,8 +277,8 @@
   }
   .side {
     position: sticky;
-    top: 0;
-    height: 100vh;
+    top: var(--demo-h);
+    height: calc(100vh - var(--demo-h));
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -363,6 +352,9 @@
     height: 40px;
     overflow: hidden;
   }
+  .foot :global(.foot-go) {
+    margin-left: auto;
+  }
   .tile {
     display: inline-grid;
     place-items: center;
@@ -394,9 +386,6 @@
     background: var(--v-app);
     border-bottom: 1px solid var(--v-line);
   }
-  .phonebar:has(:global(.dialog-backdrop)) {
-    z-index: 60;
-  }
   .pb-name {
     display: inline-flex;
     align-items: center;
@@ -410,28 +399,33 @@
     color: var(--v-fg);
     text-decoration: none;
   }
-  .phonebar :global(.menu-btn) {
-    width: 44px;
-    height: 44px;
+  .phonebar :global(.pb-go) {
+    margin-right: 8px;
+    color: var(--v-faint);
   }
+  /* Thin, across the whole window, on demo kitchens only. */
   .demobar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 4px 24px;
-    min-height: 32px;
-    padding: 0 32px;
+    justify-content: center;
+    gap: 4px;
+    height: var(--demo-h);
+    padding: 0 16px;
+    background: var(--v-shell);
     border-bottom: 1px solid var(--v-line);
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
   }
   .db-name {
-    color: var(--v-fg);
-    font-weight: 500;
+    color: var(--v-muted);
   }
   .demobar :global([data-slot="button"]) {
-    margin-left: auto;
+    height: 24px;
+    padding: 0 8px;
   }
   .rail .brand,
   .rail .lbl {
@@ -484,31 +478,8 @@
     color: var(--v-fg);
   }
   @media (max-width: 760px) {
-    .demobar {
-      flex-wrap: nowrap;
-      gap: 16px;
-      padding: 0 4px 0 16px;
-      min-height: 44px;
-      white-space: nowrap;
-    }
-    .v-main > .phonebar ~ .wrap,
-    .v-main > .demobar ~ .wrap {
+    .v-main > .phonebar ~ .wrap {
       padding-top: 16px;
-    }
-    /* A detail page's own header follows the bar flush, as it follows the screen top. */
-    .v-main > .demobar + .wrap:has(:global(.kopfleiste)) {
-      padding-top: 8px;
-    }
-    /* The bar sticks on top and the page's own header sticks under it: nothing covers Reset. */
-    .demobar {
-      position: sticky;
-      top: 0;
-      z-index: 16;
-      height: 44px;
-      background: var(--v-app);
-    }
-    .v-main.demo {
-      --demo-h: 45px;
     }
   }
   .di {

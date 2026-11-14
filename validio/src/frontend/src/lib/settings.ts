@@ -1,8 +1,8 @@
-// Settings and the demo's example request (docs/ACCOUNTS-API.md, sections
-// Settings and Demo). `VITE_API=live` talks to the backend; the fixture keeps
+// Settings (docs/ACCOUNTS-API.md, section Settings). Diet moved into the Rules
+// in v2 (agent.ts); /api/settings/diet stays as an alias for now. `VITE_API=live` talks to the backend; the fixture keeps
 // the kitchen's settings in localStorage, as the backend would keep them.
 import { api, ApiError, LIVE } from "$lib/api/client";
-import type { AskOut, Diet, Settings } from "$lib/api/types";
+import type { Diet, Settings } from "$lib/api/types";
 import { session } from "$lib/owner.svelte";
 
 export type { Diet, Settings };
@@ -12,8 +12,6 @@ export const DIETS: { id: Diet; label: string }[] = [
   { id: "VEGAN", label: "Vegan" },
 ];
 
-/** The challenge's sentence, as the demo agent sends it. */
-export const EXAMPLE = "1000 litres of lactose-free milk by Monday, budget 1200 euro";
 
 async function call<T>(method: "GET" | "POST" | "PUT", path: string, body?: unknown): Promise<T> {
   const res = await fetch(path, {
@@ -66,7 +64,7 @@ function save(s: Settings): Settings {
   return structuredClone(s);
 }
 
-/** After a kitchen change: the sidebar's name and the Inbox checklist follow. */
+/** After a kitchen change: the sidebar's name follows. */
 export async function refreshAccount(s: Settings) {
   if (LIVE) {
     session.account = await api.account();
@@ -115,7 +113,4 @@ export const settingsApi = {
     if (!/^\d{6}$/.test(b.next)) throw new ApiError(422, "next must be 6 digits");
     await later(null);
   },
-  /** The demo agent sends the challenge's sentence. The fixture points at the recorded milk request. */
-  example: (): Promise<AskOut> =>
-    LIVE ? call("POST", "/api/demo/example") : later({ requestId: "R-1", model: "fixture", lines: [], final: "Ordered alone." }),
 };
