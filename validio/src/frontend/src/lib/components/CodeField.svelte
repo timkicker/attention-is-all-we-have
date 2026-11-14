@@ -13,6 +13,10 @@
   }: { onready?: () => void; problem?: string; action?: string; value?: string } = $props();
 
   let wrong = $state(false);
+  // The field appears because a write needs it, so the keyboard lands in it.
+  $effect(() => {
+    document.getElementById("approve-code")?.focus();
+  });
 
   // Inside another form (the approve page) this is a plain field; on its own
   // it is a form with its own button.
