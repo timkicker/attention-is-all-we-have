@@ -2748,6 +2748,18 @@
           "validTo": {
             "title": "Validto",
             "type": "string"
+          },
+          "weekCapCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the Rules' per week limit, all orders under the pass",
+            "title": "Weekcapcents"
           }
         },
         "required": [
@@ -5432,7 +5444,7 @@
     },
     "/api/spend-passes/{pass_id}": {
       "get": {
-        "description": "The Spend Pass as the agent last showed it. Fields it did not disclose stay absent.",
+        "description": "M-1 as the kitchen signed it last; any other pass as the agent last showed it. Fields it does not\ndisclose stay absent.",
         "operationId": "spend_pass_api_spend_passes__pass_id__get",
         "parameters": [
           {
