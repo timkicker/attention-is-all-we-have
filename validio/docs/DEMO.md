@@ -38,7 +38,7 @@ The point to say out loud is that the planted line would have cost 132 × 2.01 +
 
 ## Scene 3, owner approves a swap (0:45)
 
-Open the **⋯** menu at the top right and click **Simulate stock-out of 466375**. The item gets a check mark, and under **Why this product** on the mozzarella request one muted line says the stock-out is simulated and that Valio really has 11,603 bags. Then run `make agent SCENE=3`.
+Open the **⋯** menu at the top right and click **Simulate stock-out of 466375**. The item gets a check mark. Under **Why this product** on the mozzarella request one muted line says the stock-out is simulated and that Valio really has 11,603 bags. Then run `make agent SCENE=3`.
 
 Request R-2 for 200 bags of 466375 appears as "Waiting for you" at 180.10 €. Click it. What must appear:
 
@@ -58,13 +58,13 @@ Click **Steady Orders**, then "Weekly Monday order". The note at the top says th
 | 464306 milk | renewed alone, 300 packs for 303.00 € |
 | 463968 parmesan 125 g | split and renewed alone: only 137 packs in stock, so 40 blocks of 469648 (200 g) come from Valio's substitute list. 177 for 772.49 €, 18.49 € (2.5 %) more, inside the 5 % split limit |
 | 471376 vegan pancakes | waiting: 27 of 30 cartons can come, the only listed substitute 476523 contains wheat. Button **Order 27 now** |
-| 466375 mozzarella | flagged by Drift Watch: the last 2 weeks averaged 118 bags against 93.5 in the first 4, with 400 guests every week, so 26 % more per guest. Usual amount 98 bags. Button **Renew anyway** |
+| 466375 mozzarella | blocked under Not ordered, no button: "Not renewed: none in stock at Valio." The stock-out from scene 3 is still on. The row also says it is 26 % more per guest than usual and shows the 8 weeks as a small chart, 120 against a usual 98 |
 
 Click **Order 27 now**. The ledger gets the chef's order of 27 cartons.
 
 ## Scene 5, Open Ledger (1:45)
 
-Click **Open Ledger**. Every step from the scenes above is one sentence with its facts. The entry for 463047 reads "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions." At the bottom it must say that the chain is verified with the number of entries. The approver list of the Spend Pass never shows up here.
+Click **Open Ledger**. Every step from the scenes above is one sentence with its facts. The entry for 463047 reads "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions." At the top it must say that the chain is verified, with 16 entries. The simulated stock-out is one of them. The approver list of the Spend Pass never shows up here.
 
 ## Scripted recording
 
