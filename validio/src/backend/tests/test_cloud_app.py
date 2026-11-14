@@ -38,12 +38,13 @@ def test_web_function_scales_to_zero_and_stays_single():
 
 def test_fill_builds_the_template_every_demo_copy_starts_from(monkeypatch):
     # B5: the deploy plays the scenes into data/template (db and keys), never into the single kitchen's store,
-    # and leaves the demo code 246810 in it, hashed, so every demo copy answers to that code
+    # and leaves no approval code in it: the codes live in the account rows
     ns = load_as("/root/app_validio.py", local=False, monkeypatch=monkeypatch)
     assert ns["TEMPLATE_DB"] == "/app/data/template/validio.db"
     assert ns["TEMPLATE_KEYS"] == "/app/data/template/keys"
     src = APP_FILE.read_text()
     fill = src[src.index("def fill("):]
     assert '"VALIDIO_DB": TEMPLATE_DB' in fill and '"VALIDIO_KEYS": TEMPLATE_KEYS' in fill
-    assert "codes.store(Path(TEMPLATE_DB), codes.DEMO_CODE)" in fill
-    assert fill.index("ALL SCENES OK") < fill.index("codes.store(") < fill.index("data.commit()")
+    assert "codes.store" not in fill
+    assert '"--template"' in fill  # the demo Rules are saved into the template after the scenes
+    assert fill.index("ALL SCENES OK") < fill.index("data.commit()")

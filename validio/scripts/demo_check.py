@@ -309,6 +309,9 @@ async def main() -> int:
     ap.add_argument("--rounds", type=int, default=2)
     ap.add_argument("--store", help="play into this directory (validio.db and keys/), e.g. data/template, "
                                     "the filled kitchen every account is copied from")
+    ap.add_argument("--template", action="store_true",
+                    help="after the scenes, save the demo kitchen's Rules (api/settings.DEMO_RULES) with the code: "
+                         "the state every demo copy starts from")
     ap.add_argument("-v", "--verbose", action="store_true", help="print the agent's tool calls")
     args = ap.parse_args()
     scenes = [int(s) for s in args.scenes.split(",")]
@@ -330,6 +333,12 @@ async def main() -> int:
         for i in range(args.rounds):
             print(f"round {i + 1} from a reset, scenes {args.scenes}")
             await Run(base, db, keys, token, code, args.verbose).round(scenes)
+        if args.template:
+            from validio.api.settings import DEMO_RULES
+
+            r = await asyncio.to_thread(httpx.put, f"{base}/api/rules", json={**DEMO_RULES, "code": code}, timeout=30)
+            check(r.status_code == 200, f"template: Rules answered {r.status_code}: {r.text[:200]}")
+            print(f"  template Rules saved, pass version {r.json()['passVersion']}")
     except Fail as e:
         print(f"FAILED: {e}")
         return 1
@@ -337,6 +346,10 @@ async def main() -> int:
         if proc:
             proc.terminate()
             proc.wait(10)
+    if args.template and args.store:  # the demo kitchen starts with no agent: a juror connects the demo agent
+        from validio.api.connect import leave_unconnected
+
+        leave_unconnected(db)
     print("ALL SCENES OK")
     return 0
 

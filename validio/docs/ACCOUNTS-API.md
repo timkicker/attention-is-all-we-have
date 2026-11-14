@@ -121,8 +121,13 @@ local kitchen for `make agent` and the tests.
 
 ## Rules
 
-What the agent may do, in one place. Limits count across the pass's week (orders already placed under
-it add up).
+What the agent may do, in one place. With `perWeekCents` set, alone and approval count per order and the
+week counts every order placed under the pass together (over it: blocked). With `perWeekCents` null, alone
+and approval count across the pass's week (orders already placed add up), as before.
+
+The demo kitchen starts with: alone up to 1,200.00 €, approval up to 5,000.00 €, per week 8,000.00 €,
+substitutes `extra` 5 % (`api/settings.DEMO_RULES`). So the example request (1,000 l milk, 1,010.00 €) is
+ordered alone, lowering alone to 800.00 € makes the same request wait, and 246810 approves it.
 
 ```
 Rules = {
@@ -130,6 +135,7 @@ Rules = {
   approvalUpToCents: number,     // needs approval up to this, blocked above
   substitutes: "off" | "listed" | "extra",
   maxExtraPct: number,           // only with "extra": a swap may cost up to this % more (0 to 20)
+  perWeekCents: number | null,   // all orders under the pass together; null: no weekly limit (see above)
   saved: boolean,                // false until saved once: everything needs approval
   passVersion: number
 }
@@ -138,11 +144,12 @@ Rules = {
 | Method | Path | Body | Answer |
 | --- | --- | --- | --- |
 | GET | `/api/rules` | none | `Rules` |
-| PUT | `/api/rules` | `{aloneUpToCents, approvalUpToCents, substitutes, maxExtraPct, code}` | `Rules`, one new pass version, one ledger entry |
+| PUT | `/api/rules` | `{aloneUpToCents, approvalUpToCents, substitutes, maxExtraPct, perWeekCents?, code}` | `Rules`, one new pass version, one ledger entry |
 
 * `code`: the account's 6 digit approval code (also accepted as `X-Approve-Code`). 403 wrong code, 429
   after five wrong codes.
-* 422 when `aloneUpToCents > approvalUpToCents` or a value is below 0 or above 100,000.00 €.
+* 422 when `aloneUpToCents > approvalUpToCents`, `perWeekCents < approvalUpToCents`, or a value is below 0
+  or above 100,000.00 €.
 * Without a connected agent the Rules are saved and signed into the pass the next agent will get.
 
 ## Settings
@@ -161,7 +168,7 @@ Settings = {
 | PUT | `/api/settings/kitchen` | `{name, deliveryAddress}` | `Settings` (no code) |
 | PUT | `/api/settings/diet` | `{diet, code}` | `Settings`, one new pass version, one ledger entry |
 | PUT | `/api/settings/login` | `{currentPassword, email?, password?}` | `Settings`; 403 wrong current password; not on demo copies |
-| PUT | `/api/settings/approval-code` | `{current, next}` | 204; 403 wrong current code; not on demo copies |
+| PUT | `/api/settings/approval-code` | `{current, next}` | 204; 403 wrong current code; 403 on demo copies (they keep 246810) |
 
 Valio's answers are recorded for lactose free only, so the other diets save and sign but most requests
 then find nothing.
