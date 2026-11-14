@@ -11,7 +11,8 @@ export interface DemoFacts {
   enFlip: { pageId: number; h: string; before: string; after: string; beforeText: string; afterText: string; year: number }
   // the ru clause removed on 9 Jul 2014, an edition that still has it, and the last ru revision that had it
   ruDropped: { words: RegExp; date: string; alive: string; oldid: number }
-  // the Finnish scale line under Removed: how many Finnish versions the sentence lives come from
+  // the Finnish scale line (old Dropped view): how many Finnish versions the sentence lives come from. Wireframe 08
+  // has no scale line, so no screen asserts it now; kept for when a screen shows it again.
   fiVersions: number | null
 }
 
