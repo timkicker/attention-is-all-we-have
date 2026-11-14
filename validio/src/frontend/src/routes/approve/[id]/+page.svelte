@@ -11,7 +11,7 @@
   import { ApiError, api } from "$lib/api/client";
   import type { Order } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
-  import { day, money, nb } from "$lib/format";
+  import { day, hm, money, nb } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
   import { optionLine } from "$lib/v";
@@ -61,6 +61,15 @@
     if (q) return q;
     const n = x.lines[0]?.displayName ?? x.lines[0]?.name ?? "the order";
     return /^\S+ [a-z]/.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n;
+  }
+  /** The done steps with their times from the order's history, as the ledger shows them. */
+  const STEP: Record<string, string> = { waiting: "Asked you", approved: "You approved", placed: "Validio placed the order", rejected: "You rejected" };
+  function steps(x: Order, placed: boolean): { what: string; time: string }[] {
+    const want = placed ? ["waiting", "approved", "placed"] : ["waiting", "rejected"];
+    return want.map((state) => {
+      const h = x.history.find((e) => e.state === state);
+      return { what: STEP[state], time: h ? (h.timeText ?? hm(h.at)) : "" };
+    });
   }
   const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose") ?? chosenOpt?.facts.find((f) => f.field === "claim:FREE_FROM_LACTOSE"));
   const upper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -148,13 +157,9 @@
     <p class="lead">{placed ? "Price and delivery confirmed again before ordering." : "Nothing was ordered."}</p>
   </VHead>
   <ol class="steps" data-testid="order-steps" id="order-steps">
-    <li>Asked you</li>
-    {#if placed}
-      <li>You approved</li>
-      <li>Validio placed the order</li>
-    {:else}
-      <li>You rejected</li>
-    {/if}
+    {#each steps(o, placed) as st (st.what)}
+      <li><span class="t num">{st.time}</span><span>{st.what}</span></li>
+    {/each}
   </ol>
 {:else}
   <VHead
@@ -172,7 +177,7 @@
     {/snippet}
   </VHead>
 
-  <div class="blocks">
+  <div class="blocks decide">
     <div>
       <VLane name="Total" value={o.moneyText ?? money(o.totalCents)} sub={o.usedBeforeCents ? `${money(o.usedBeforeCents)} ordered before` : undefined}>
         {#snippet plot()}
@@ -251,12 +256,23 @@
     border-top: 1px solid var(--v-line);
   }
   .steps li {
+    display: grid;
+    grid-template-columns: 176px minmax(0, 1fr);
+    gap: 24px;
     padding: 12px 0;
     border-bottom: 1px solid var(--v-line);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
   }
+  .steps .t {
+    font-size: var(--fs-meta);
+    color: var(--v-muted);
+  }
   @media (max-width: 760px) {
+    .steps li {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 16px;
+    }
     .bar {
       position: fixed;
       left: 0;
@@ -270,6 +286,14 @@
     }
     .bar :global([data-slot="button"]) {
       flex: 1;
+    }
+    /* At 390×844 the whole decision, down to "Why not the others", fits above
+       the pinned bar with 16 px to spare, without scrolling. */
+    .decide {
+      margin-top: 24px;
+    }
+    .decide > :global(* + *) {
+      margin-top: 16px;
     }
   }
 </style>

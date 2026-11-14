@@ -96,7 +96,7 @@
   background: var(--v-primary-hover);
 }
 /* The kit's dark outline border (--input) is nearly the card colour (O12). */
-:root:not([data-theme="light"]) [data-slot="button"].border-border {
+:root:not([data-theme="light"]) [data-slot="button"].border-border:not(:focus-visible) {
   border-color: var(--v-ctx);
 }
 
@@ -496,6 +496,10 @@ a.v-row:hover .v-row-title {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
   text-align: right;
+}
+.ev-amt.none {
+  font-size: var(--fs-meta);
+  color: var(--v-muted);
 }
 .ev-more {
   grid-column: 2 / -1;
