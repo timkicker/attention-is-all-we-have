@@ -7,6 +7,7 @@ import { langName, shortDate } from '../langs'
 import { navigate, state } from '../state'
 import EmptyState from '../components/EmptyState.vue'
 import ClaimCell from '../components/ClaimCell.vue'
+import { addExactDates } from '../snaps'
 
 const props = defineProps<{ topics: Topic[]; debounceMs?: number }>()
 const emit = defineEmits<{ open: [lang: string, cell: Cell, row: CompareRow] }>()
@@ -44,6 +45,7 @@ async function load(offset = 0) {
       { signal: mine.signal },
     )
     data.value = body
+    addExactDates(body.rows.flatMap((r) => Object.values(r.cells)))
     rows.value = offset ? [...rows.value, ...body.rows] : body.rows
   } catch (e) {
     if (mine.signal.aborted) return
