@@ -42,9 +42,14 @@ export async function loadStart(api: Client): Promise<Result<StartVM>> {
   return { ok: true, data: { prepared, example } }
 }
 
+/** Wikidata descriptions often start lowercase; the UI writes sentence case. */
+export function capital(s: string): string {
+  return s ? s[0].toUpperCase() + s.slice(1) : s
+}
+
 export function toResult(r: SearchResultRaw): SearchResult {
   const href = r.status === 'ready' ? paths.differences(r.qid) : r.status === 'no_finnish' ? null : paths.ingest(r.qid)
-  return { qid: r.qid, title: r.title, description: r.description ?? '', status: r.status, etaS: r.eta_s, href }
+  return { qid: r.qid, title: r.title, description: capital(r.description ?? ''), status: r.status, etaS: r.eta_s, href }
 }
 
 /** GET /api/search?q. */
@@ -70,7 +75,9 @@ export function toIngest(raw: IngestRes, now: Date = new Date()): IngestVM {
   const extra = raw.editions.filter((e) => !isLang(e.lang))
   if (extra.length) console.warn('ingest: unknown editions ignored', extra.map((e) => e.lang))
   const done = raw.state === 'done'
-  const progress = done ? 100 : Math.round(editions.reduce((s, e) => s + e.pct, 0) / editions.length)
+  // Editions without an article never load, so they do not count towards the bar.
+  const live = editions.filter((e) => e.error !== 'no_article')
+  const progress = done || !live.length ? 100 : Math.round(live.reduce((s, e) => s + e.pct, 0) / live.length)
   const year = now.getUTCFullYear()
   const fromYear = year - FASTER_YEARS
   return {

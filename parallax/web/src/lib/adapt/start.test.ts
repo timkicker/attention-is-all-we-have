@@ -55,6 +55,13 @@ describe('toIngest', () => {
   })
 })
 
+describe('toIngest no_article', () => {
+  it('leaves editions without an article out of the bar', () => {
+    const eds = [ed('fi', 'done', 100), ed('sv', 'running', 50), ed('de', 'failed', 0, 'no_article'), ed('en', 'done', 100), ed('ru', 'done', 100), ed('et', 'done', 100), ed('uk', 'failed', 0, 'no_article')]
+    expect(toIngest(job({ editions: eds }), NOW).progress).toBe(90)
+  })
+})
+
 describe('search', () => {
   it('links by status', () => {
     const base = { qid: 'Q1', title: 'T', description: 'D', fi_title: null, eta_s: 360 }
@@ -62,6 +69,7 @@ describe('search', () => {
     expect(toResult({ ...base, status: 'new' }).href).toBe('/t/Q1/loading')
     expect(toResult({ ...base, status: 'loading' }).href).toBe('/t/Q1/loading')
     expect(toResult({ ...base, status: 'no_finnish' }).href).toBeNull()
+    expect(toResult({ ...base, description: 'defensive line', status: 'new' }).description).toBe('Defensive line')
   })
 
   it('does not call the API for an empty query and caps at six', async () => {

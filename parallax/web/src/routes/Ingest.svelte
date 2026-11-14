@@ -80,11 +80,17 @@
   function stateText(e: IngestEdition): string {
     if (e.state === 'done') return copy.start.DONE
     if (e.state === 'running') return copy.start.pct(e.pct)
+    if (e.error === 'no_article') return copy.start.NO_ARTICLE
     if (e.state === 'failed') return copy.start.FAILED
     return copy.start.WAITING
   }
 
-  const stuck = $derived(vm?.editions.find((e) => e.error === 'rate_limited') ?? vm?.editions.find((e) => e.state === 'failed') ?? null)
+  // The one edition worth a notice: slowed down by Wikipedia first, else a real failure (not a missing article).
+  const stuck = $derived(
+    vm?.editions.find((e) => e.error === 'rate_limited' && e.state !== 'done') ??
+      vm?.editions.find((e) => e.state === 'failed' && e.error !== 'no_article') ??
+      null,
+  )
   const retryInS = $derived(stuck?.retryAt ? Math.max(0, Math.round((Date.parse(stuck.retryAt) - now) / 1000)) : null)
 </script>
 
@@ -109,15 +115,14 @@
 
     {#if vm.state === 'failed'}
       <div class="gap"><Notice>{copy.start.INGEST_FAILED}</Notice></div>
+    {:else if stuck && vm.readyCount > 0}
+      <!-- The compare button above already opens the ready editions, so no second link here. -->
+      <div class="gap">
+        <EditionFailed lang={stuck.lang} rateLimited={stuck.error === 'rate_limited'} othersReady={vm.readyCount} openHref={null} {retryInS} />
+      </div>
     {:else if stuck}
       <div class="gap">
-        <EditionFailed
-          lang={stuck.lang}
-          rateLimited={stuck.error === 'rate_limited'}
-          othersReady={vm.readyCount}
-          openHref={vm.state === 'usable' ? vm.openHref : null}
-          {retryInS}
-        />
+        <Notice>{copy.states.editionFailed(stuck.lang, stuck.error === 'rate_limited')}{#if retryInS !== null}{copy.FOOT.sep}{copy.states.retryingIn(retryInS)}{/if}</Notice>
       </div>
     {/if}
     {#if problem}<div class="gap"><Notice>{problem}</Notice></div>{/if}
@@ -125,7 +130,7 @@
     <div class="eds">
       {#each vm.editions as e (e.lang)}
         <div data-testid={TID.ingestEdition} data-lang={e.lang} data-state={e.state}>
-          <span>{copy.edition(e.lang)}</span><span class:num={e.state === 'running'} class:muted={e.state === 'waiting' || e.state === 'failed'}
+          <span>{copy.edition(e.lang)}</span><span class:num={e.state === 'running'} class:muted={e.state === 'waiting' || e.state === 'failed' || e.error === 'no_article'}
             >{stateText(e)}</span
           >
         </div>

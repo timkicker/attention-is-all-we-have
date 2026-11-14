@@ -87,6 +87,8 @@
 
   function onKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') {
+      // A search input clears itself on Escape; here Escape only closes the results.
+      e.preventDefault()
       open = false
       return
     }
