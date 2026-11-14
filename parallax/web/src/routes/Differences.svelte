@@ -137,7 +137,7 @@
     <div class="list">
       {#each rows as r (r.id)}
         <Item href={r.href} testid={TID.diffRow}>
-          <p class="say"><Marked value={r.say} /></p>
+          <p class="say clamp3"><Marked value={r.say} /></p>
           <NoteLine parts={r.note} />
         </Item>
       {/each}
@@ -160,4 +160,5 @@
     .ctl { gap: 8px; }
     .ctl :global(.field) { min-width: 0; }
   }
+  .clamp3 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 </style>

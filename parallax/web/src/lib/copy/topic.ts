@@ -22,9 +22,9 @@ export function changedFromToAt(date: string, approx: boolean, lang: string, fro
   return approx ? `By ${line}` : line
 }
 
-/** The date part of a "When it changed" row, linked to that revision: "21 Aug 2009" or "By 31 Dec 2022". */
-export function changeDate(date: string, approx: boolean): string {
-  return approx ? `By ${fmtDate(date)}` : fmtDate(date)
+/** The date part of a "When it changed" row, linked to that revision: "21 Aug 2009" (one format for exact and yearly dates). */
+export function changeDate(date: string, _approx: boolean): string {
+  return fmtDate(date)
 }
 
 /** The rest of a "When it changed" row after its date. */
@@ -45,3 +45,7 @@ export function versionTitle(lang: string): string {
 /** Between edition names in a group label: "Finnish, Swedish and German". */
 export const LIST_SEP = ', '
 export const LIST_AND = ' and '
+
+/** Toggle on a long quote. */
+export const MORE = 'more'
+export const LESS = 'less'
