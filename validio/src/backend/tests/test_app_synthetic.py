@@ -131,10 +131,11 @@ def test_the_client_behind_a_trusted_proxy_is_the_forwarded_one(c, monkeypatch):
 
     from validio.api.limits import client_ip
 
-    r = SimpleNamespace(headers={"x-forwarded-for": "198.51.100.4, 10.0.0.1"}, client=SimpleNamespace(host="10.0.0.1"))
+    # the caller sent "203.0.113.9" itself, the proxy at 10.0.0.1 appended the address it saw
+    r = SimpleNamespace(headers={"x-forwarded-for": "203.0.113.9, 198.51.100.4"}, client=SimpleNamespace(host="10.0.0.1"))
     assert client_ip(r) == "10.0.0.1"  # never trusted without the switch
     monkeypatch.setenv("VALIDIO_TRUST_PROXY", "1")
-    assert client_ip(r) == "198.51.100.4"
+    assert client_ip(r) == "198.51.100.4"  # the right-most entry, never the one the caller wrote
 
 
 def test_changing_the_login_needs_the_password_and_is_rate_limited(c):

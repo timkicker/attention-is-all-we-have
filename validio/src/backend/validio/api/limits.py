@@ -1,8 +1,14 @@
 """Rate limits for the routes anyone can reach, and the client address they count by.
 
 In memory, per process: Modal runs one container (src/cloud/app_validio.py), so one process sees every call.
-The address is the TCP peer, or with VALIDIO_TRUST_PROXY=1 the left-most X-Forwarded-For entry, for a deploy
-behind a proxy that sets it. Never trust that header without the switch: a caller could name any address."""
+The address is the TCP peer, or with VALIDIO_TRUST_PROXY=1 the right-most X-Forwarded-For entry, for a deploy
+behind one proxy that appends the peer it saw. Only that entry is the proxy's own: everything left of it came
+from the caller, who could name any address and so get past the code lock, the login lock and the new-kitchen
+limit. Never trust the header without the switch.
+
+On Modal (src/cloud/app_validio.py) the switch stays off: Modal puts the visitor's own address into the ASGI
+scope, so request.client.host is the real client and not one shared proxy address (Modal's web endpoint docs,
+"Client IP address": request.client.host is meant for rate limits)."""
 
 import os
 import threading
@@ -16,9 +22,9 @@ from fastapi import HTTPException, Request
 def client_ip(request: Request) -> str:
     if os.environ.get("VALIDIO_TRUST_PROXY") == "1":
         fwd = request.headers.get("x-forwarded-for", "")
-        first = fwd.split(",", 1)[0].strip()
-        if first:
-            return first
+        last = fwd.rsplit(",", 1)[-1].strip()
+        if last:
+            return last
     return request.client.host if request.client else "?"
 
 
