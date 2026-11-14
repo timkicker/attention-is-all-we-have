@@ -343,9 +343,14 @@ def disconnect(ctx: Ctx, quiet: bool = False) -> None:
                         "the agent's copy is refused.")
 
 
-def check_use(ctx: Ctx, m: Mandate) -> None:
-    """Called after every verified pass. M-1 is the connected agent's: refused while paused (one ledger entry
-    per refusal), its last use noted otherwise."""
+def check_use(ctx: Ctx, m: Mandate, token: str | None = None) -> None:
+    """Called after every verified pass. On an account the pass must be the very copy it signed last: demo copies
+    share the template's kitchen key, so a signature alone does not say which kitchen it came from (each
+    signing is unique, so the issuer JWT does). M-1 is the connected agent's: refused while paused (one ledger
+    entry per refusal), its last use noted otherwise."""
+    # accounts only: the local kitchen keeps a pass valid across `make seed` (seed.reset), on purpose
+    if ctx.account is not None and token is not None and token.split("~", 1)[0] != _issued_jwt(ctx, m.id):
+        raise MandateError(f"Spend Pass {m.id} was not signed by this kitchen")
     if m.id != seed.SPEND_PASS_ID:
         return
     with ctx.rt.lock:
@@ -358,6 +363,15 @@ def check_use(ctx: Ctx, m: Mandate) -> None:
         if link.state == "active":
             link.last_used_at = ctx.now().isoformat()
             save(ctx, link)
+
+
+def _issued_jwt(ctx: Ctx, pass_id: str) -> str | None:
+    con = sqlite3.connect(ctx.db_path, timeout=10)
+    try:
+        row = con.execute("select issuance from spend_pass where id = ?", (pass_id,)).fetchone()
+    finally:
+        con.close()
+    return row[0].split("~", 1)[0] if row else None
 
 
 def demo_agent_active(ctx: Ctx) -> bool:
