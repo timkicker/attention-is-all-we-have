@@ -13,6 +13,7 @@ from validio.agent.holder import Holder
 from validio.api import tools
 from validio.api.app import app
 from validio.api.mcp_server import server
+from validio.demo import seed
 
 REASON = "Spend Pass M-1 was revoked by the kitchen"
 SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "revoke_pass.py"
@@ -94,6 +95,6 @@ def test_make_revoke_target():
 
 def test_steady_renew_under_a_revoked_pass_is_refused(ctx):
     with TestClient(app) as client:
-        assert revoke_cli("M-1") == 0
+        assert revoke_cli(seed.STEADY_PASS_ID) == 0  # Steady Orders run on their own weekly pass (review 3 M1)
         r = client.post("/api/steady/S-1/renew", headers={"X-Approve-Code": CODE})
-    assert r.status_code == 401 and r.json()["detail"] == REASON
+    assert r.status_code == 401 and r.json()["detail"] == REASON.replace("M-1", seed.STEADY_PASS_ID)

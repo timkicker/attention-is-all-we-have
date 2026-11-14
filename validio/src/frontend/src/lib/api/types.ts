@@ -338,6 +338,20 @@ export interface SteadyOrder {
   simulatedHistory: boolean;
   renewedAt?: string;
   lines: SteadyLine[];
+  /** The Steady Orders' own weekly Spend Pass; its limits hold across the orders placed under it. */
+  steadyPass?: SteadyPass;
+}
+
+export interface SteadyPass {
+  id: string;
+  /** ISO 8601, Monday 00:00 of the week. */
+  validFrom: string;
+  /** ISO 8601, the next Monday 00:00. */
+  validTo: string;
+  autoLimitCents?: number;
+  hardCapCents?: number;
+  /** What the placed orders under this pass add up to. */
+  usedCents: number;
 }
 
 export interface SteadyOrderSummary {

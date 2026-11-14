@@ -60,7 +60,8 @@ def test_every_other_line_flat():
 def test_reset_writes_kitchen_pass_and_history(db):
     con = sqlite3.connect(db)
     assert con.execute("select id from kitchen").fetchall() == [("hotel-espoo",)]
-    assert con.execute("select id, kitchen_id from spend_pass").fetchall() == [("M-1", "hotel-espoo")]
+    assert con.execute("select id, kitchen_id from spend_pass").fetchall() == [("M-1", "hotel-espoo"),
+                                                                                   (seed.STEADY_PASS_ID, "hotel-espoo")]
     assert con.execute("select count(*), sum(simulated) from past_order").fetchone() == (8, 8)
     mozz = con.execute("select sales_qty from past_line where product_id = '466375' order by delivered").fetchall()
     assert [r[0] for r in mozz] == MOZZARELLA

@@ -15,7 +15,7 @@ import json
 import re
 import threading
 from collections.abc import Callable
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, fields, replace
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -187,16 +187,22 @@ class OrderService:
             return {"outcome": "block", "ruleIds": [],
                     "sentence": f"Blocked: Valio has no price for {and_list(_names(quoted, missing))}."}, []
         total = sum(ln["totalCents"] for ln in quoted)
+        used = self.used_cents(mandate.id)
         per = []
         for ln in quoted:
             ctx = context_for(mandate, ln["_product"], ln["_avail"], total_cents=total, now=self.clock(),
                               is_substitute=ln["isSubstitute"], on_valio_list=ln["onValioList"],
                               split_base_cents=split_base_cents, required_claims=required_claims,
                               sales_qty=ln["quantity"], deliver_by=deliver_by)
+            if used:  # the limits hold for the pass, not per order; the split surcharge stays this order's own
+                ctx = replace(ctx, total_cents=used + total)
             per.append((OUTCOME[(d := decide(ctx, product_id=ln["productId"])).outcome], d, ln, ctx))
         worst = max((o for o, *_ in per), key=SEVERITY.__getitem__)
         rule_ids: list[str] = []
         sentences: list[str] = []
+        if used:
+            sentences.append(f"Spend Pass {mandate.id} already placed {eur(used)}, so this order of {eur(total)} "
+                             f"counts as {eur(used + total)}.")
         for o, d, ln, _c in per:
             if o != worst:
                 continue
@@ -209,6 +215,12 @@ class OrderService:
             if d.sentence not in sentences:
                 sentences.append(d.sentence)
         return {"outcome": worst, "ruleIds": rule_ids, "sentence": " ".join(sentences)}, per
+
+    def used_cents(self, pass_id: str) -> int:
+        """What placed orders under this Spend Pass add up to: its limits hold across them (review 3 M1).
+        A pass is only accepted inside its own validity window, so these are the orders of that window."""
+        return sum(o["totalCents"] for o in self.store.orders()
+                   if o.get("spendPassId") == pass_id and o["state"] == "placed")
 
     @staticmethod
     def _public(lines: list[dict]) -> list[dict]:

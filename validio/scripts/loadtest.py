@@ -145,7 +145,7 @@ def pct(xs: list[float], p: float) -> float:
 
 
 async def agent(i: int, rounds: int, lines: list, http, holder_for, lat: dict, errors: list) -> int:
-    holder = holder_for()
+    holder = None
     done = 0
 
     async def timed(route: str, method: str, url: str, **kw):
@@ -162,6 +162,7 @@ async def agent(i: int, rounds: int, lines: list, http, holder_for, lat: dict, e
         return {"Authorization": f"SD-JWT {holder.present(n['nonce'], n.get('iat'))}"}
 
     for k in range(rounds):
+        holder = holder_for()  # a pass per round: a Spend Pass's limits hold across its orders (review 3 M1)
         req = await timed("POST /agent/v1/requests", "POST", "/agent/v1/requests", headers=await auth(), json={
             "lines": lines, "deliverBy": "2026-11-16", "idempotencyKey": f"load-{i}-{k}"})
         if not req or req["decision"]["outcome"] != "auto_order":
@@ -210,11 +211,18 @@ def run_level(n: int, rounds: int, mix: str = "scene2") -> dict:
             except httpx.HTTPError:
                 time.sleep(0.05)
         os.environ["VALIDIO_DB"], os.environ["VALIDIO_KEYS"] = env["VALIDIO_DB"], env["VALIDIO_KEYS"]
-        from validio.agent.holder import Holder
+        from itertools import count
 
-        def holder_for():  # its own Holder per agent: the issued pass and the agent key, read once
+        from validio.agent.holder import Holder
+        from validio.demo.seed import load_or_create_key
+        from validio.policy.mandate import DEMO_CLAIMS, DEMO_SD_FIELDS, issue_mandate
+
+        seq, kitchen = count(1), load_or_create_key(tmp / "keys" / "kitchen-es256.json")
+
+        def holder_for():  # its own pass per agent round, M-1's limits, signed by the same kitchen key
             h = Holder.from_seed(lambda: "", tmp / "validio.db", tmp / "keys")
-            return Presenter(h.issuance, h.key)
+            claims = {**DEMO_CLAIMS, "jti": f"L-{next(seq)}"}
+            return Presenter(issue_mandate(claims, DEMO_SD_FIELDS, kitchen, h.key), h.key)
 
         lat: dict = defaultdict(list)
         errors: list = []
