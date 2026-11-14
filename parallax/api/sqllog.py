@@ -69,8 +69,23 @@ def _index_used(cur, text: str, params) -> str:
     return _INDEX_SEEN[text]
 
 
+def _shown_params(params) -> dict:
+    """Named parameters for the log: scalars as text, lists only as their length (they can hold hundreds of hashes)."""
+    if not isinstance(params, dict):
+        return {}
+    out: dict = {}
+    for k, v in params.items():
+        if isinstance(v, (list, tuple, set)):
+            out[k] = {"count": len(v)}
+        elif v is None or isinstance(v, (str, int, float)):
+            out[k] = v
+        elif hasattr(v, "isoformat"):
+            out[k] = v.isoformat(sep=" ") if hasattr(v, "hour") else v.isoformat()
+    return out
+
+
 def run(text: str, params=None) -> list[dict]:
-    """Execute one statement, log {text, ms, rows, index} and return the rows as dicts."""
+    """Execute one statement, log {text, ms, rows, index, params} and return the rows as dicts."""
     with connection() as conn, conn.cursor() as cur:
         t0 = time.perf_counter()
         cur.execute(text, params)
@@ -81,7 +96,9 @@ def run(text: str, params=None) -> list[dict]:
         index = _index_used(cur, text, params)
     state = _current.get()
     if state is not None:
-        state["statements"].append({"text": text, "ms": round(ms, 2), "rows": len(out), "index": index})
+        state["statements"].append(
+            {"text": text, "ms": round(ms, 2), "rows": len(out), "index": index, "params": _shown_params(params)}
+        )
     return out
 
 

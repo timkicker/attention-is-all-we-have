@@ -66,3 +66,16 @@ def test_vector_statement_reports_index(client):
         sqllog.run("SELECT h FROM claim IGNORE INDEX(emb) ORDER BY VEC_DISTANCE_COSINE(emb, %s) LIMIT 3", (row["emb"],))
     assert [s["index"] for s in log] == ["none", "emb", "none"]
     assert log[1]["rows"] == 3
+
+
+def test_statement_log_names_its_parameters(client):
+    from api import sqllog
+
+    with sqllog.capture() as log:
+        sqllog.run(
+            "SELECT h FROM claim WHERE topic_id = %(topic)s AND h IN %(hs)s LIMIT 1",
+            {"topic": "winterwar", "hs": ("a", "b", "c")},
+        )
+        sqllog.run("SELECT h FROM claim LIMIT 1")
+    assert log[0]["params"] == {"topic": "winterwar", "hs": {"count": 3}}
+    assert log[1]["params"] == {}
