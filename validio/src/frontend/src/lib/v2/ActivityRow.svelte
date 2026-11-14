@@ -22,7 +22,7 @@
 
 <a class="ar" class:no-time={!showTime} {href} id="activity-{item.id}" data-testid="activity-{item.id}" data-status={item.status}>
   {#if showTime}<span class="ar-time">{hm(item.at)}</span>{/if}
-  <span class="ar-pill"><StatusPill status={item.status} /></span>
+  <span class="ar-pill"><StatusPill item={item} /></span>
   <span class="ar-main">
     <span class="ar-title">{nb(item.title)}</span>
     <span class="ar-why">{nb(item.why)}</span>
