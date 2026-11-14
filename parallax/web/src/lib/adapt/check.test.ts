@@ -89,6 +89,11 @@ describe('row lines', () => {
     const row = toCheckRow('Q134949', claim(0, seven((l) => (l === 'et' ? 'not_found' : 'says'))))
     expect([row.verdict, row.head]).toEqual(['backed', 'Backed by 6 of 7 editions'])
   })
+  it('backed only by the similarity guess reads likely', () => {
+    const c = claim(0, seven((l) => (l === 'et' ? 'not_found' : 'says')))
+    for (const v of Object.values(c.per_lang)) for (const e of v.evidence) e.verdict = { label: 'partial', model: 'fake-judge-similarity' }
+    expect(toCheckRow('Q134949', c).head).toBe('Likely backed by 6 of 7 editions (matched by shared names and numbers, no model)')
+  })
 })
 
 describe('result', () => {
