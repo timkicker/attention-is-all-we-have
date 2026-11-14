@@ -1,146 +1,110 @@
 <script lang="ts">
-  // The authority the kitchen gave its agent, laid out as Arlen settings lays
-  // out an app's access: what it may do, the value, and whether the agent
-  // showed it to Validio. One chart: where each request fell on the scale.
+  /// The Spend Pass as a halbat record: facts, one Limits lane, a card of
+  /// value rows, and what the agent sees.
+  import { Button } from "@arlen/ui-kit/components/ui/button";
+  import * as Popover from "@arlen/ui-kit/components/ui/popover";
+  import { Section } from "@arlen/ui-kit/components/ui/section";
+  import { Info } from "@lucide/svelte";
   import { api } from "$lib/api/client";
-  import { setChrome } from "$lib/chrome.svelte";
-  import { day, dayTime, money } from "$lib/format";
+  import { CLOCK, day, money } from "$lib/format";
   import { live } from "$lib/live.svelte";
-  import Frame from "$lib/components/Frame.svelte";
-  import Pairs from "$lib/components/Pairs.svelte";
+  import VHead from "$lib/v/VHead.svelte";
+  import VLane from "$lib/v/VLane.svelte";
+  import VPill from "$lib/v/VPill.svelte";
+  import VPlotTotal from "$lib/v/VPlotTotal.svelte";
+  import VState from "$lib/v/VState.svelte";
+  import VValueRow from "$lib/v/VValueRow.svelte";
 
-  setChrome("Spend Pass");
-  // The bar says "Spend Pass", the heading says what the pass is.
   const pass = live(() => api.spendPass("M-1"));
-
-  const SUBSTITUTES: Record<string, string> = {
-    listed_and_rules_kept: "Valio's listed ones, when every rule holds",
-    none: "None",
-    any_rules_kept: "Any, when every rule holds",
-  };
-  const HIDDEN: Record<string, string> = {
-    approvers: "Who approves",
-    preferLabels: "Preferred labels",
-  };
-
-
+  const p = $derived(pass.data);
+  const used = $derived(p?.usedCents ?? 0);
+  const valid = $derived(!!p && new Date(p.validTo) > new Date(CLOCK) && new Date(p.validFrom) <= new Date(CLOCK));
+  const left = $derived(p?.autoLimitCents !== undefined ? p.autoLimitCents - used : undefined);
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 </script>
 
-<Frame title="What the agent may buy" top>
-  {#snippet head()}
-    {#if pass.data}
-      <p class="who" data-testid="pass-valid-to" id="pass-valid-to">Valid until {dayTime(pass.data.validTo)}</p>
-    {/if}
-  {/snippet}
-  {#if pass.data}
-    {@const p = pass.data}
-    {#if p.autoLimitCents !== undefined && p.hardCapCents !== undefined}
-      {@const cap = p.hardCapCents}
-      {@const top = cap * 1.15}
-      {@const at = (c: number) => `${Math.min(c / top, 1) * 100}%`}
-      <figure class="scale" id="spend-scale">
-        <div class="track" aria-hidden="true">
-          <span class="zone alone" style="width: {at(p.autoLimitCents)}"></span>
-          <span class="zone ask" style="left: {at(p.autoLimitCents)}; width: calc({at(cap)} - {at(p.autoLimitCents)})"></span>
-          <span class="zone over" style="left: {at(cap)}"></span>
-          <span class="tick" style="left: {at(p.autoLimitCents)}"></span>
-          <span class="tick cap" style="left: {at(cap)}"></span>
-        </div>
-        <figcaption class="legend">
-          <span data-testid="pass-auto" id="pass-auto">Alone up to <b class="num">{money(p.autoLimitCents)}</b></span>
-          <span data-testid="pass-cap" id="pass-cap">Asks you up to <b class="num">{money(cap)}</b></span>
-          <span>Blocked above</span>
-        </figcaption>
-      </figure>
-    {/if}
-
-    <Pairs
-      items={[
-        ...(p.diet?.length ? [{ label: "Diet", value: p.diet.map((d) => d.replaceAll("_", " ")).join(", "), id: "pass-diet" }] : []),
-        ...(p.deliverBy ? [{ label: "Delivered by", value: day(p.deliverBy), id: "pass-deliver-by" }] : []),
-        ...(p.substitutes ? [{ label: "Substitutes", value: SUBSTITUTES[p.substitutes] ?? p.substitutes.replaceAll("_", " ") }] : []),
-        { label: "Splitting a line", value: `up to ${p.split.maxExtraCostPct}\u00a0% more`, note: p.split.allowListedSubstitutes ? "with Valio's listed substitutes" : "same product only" },
-      ]}
-    />
-    {#if p.hidden.length}
-      <p class="legend-line" data-testid="pass-approvers" id="pass-approvers">
-        Hidden from Validio: {p.hidden.map((h) => (HIDDEN[h] ?? h).toLowerCase()).join(" and ")}.
-      </p>
-    {/if}
-  {:else if pass.error}
-    <p class="t-quiet">Cannot read the Spend Pass: {pass.error}</p>
+{#if !p}
+  <VHead title="Spend Pass" />
+  {#if pass.error}
+    <VState kind="error" title="Validio is not reachable." detail={pass.error} onretry={() => location.reload()} />
+  {:else}
+    <VState kind="loading" rows={3} />
   {/if}
-</Frame>
+{:else}
+  <VHead title="Spend Pass">
+    {#snippet facts()}
+      <VPill label={valid ? "Valid" : "Expired"} tone={valid ? "ok" : "neutral"} />
+      <span>Signed by you</span>
+      <span>Held by the buyer agent</span>
+      <span>{day(p.validFrom)} to <span data-testid="pass-valid-to" id="pass-valid-to">{day(p.validTo)}</span></span>
+    {/snippet}
+  </VHead>
+
+  <div class="blocks">
+    <div>
+      <VLane
+        name="Limits"
+        value="{money(used)} used"
+        sub={left === undefined ? undefined : left >= 0 ? `${money(left)} left to order alone` : "Over the alone limit, so Validio asks you"}
+      >
+        {#snippet plot()}
+          <VPlotTotal pass amount={used} auto={p.autoLimitCents} cap={p.hardCapCents} />
+        {/snippet}
+      </VLane>
+    </div>
+
+    <Section class="v-card">
+      {#if p.diet?.length}<VValueRow label="Diet" value={cap(p.diet.join(", "))} testid="pass-diet" />{/if}
+      <VValueRow label="Deliver by" value={day(p.deliverBy)} testid="pass-deliver-by" />
+      <VValueRow
+        label="Substitutes"
+        value="{p.split.allowListedSubstitutes ? "From Valio's list." : 'None.'} Up to {p.split.maxExtraCostPct} % extra in a split."
+      />
+      <VValueRow label="Product groups">
+        {p.categories.length}
+        <Popover.Root>
+          <Popover.Trigger>
+            {#snippet child({ props })}
+              <Button {...props} variant="ghost" size="icon-sm" aria-label="Which product groups" class="info-btn"><Info /></Button>
+            {/snippet}
+          </Popover.Trigger>
+          <Popover.Content class="v-pop">{p.categories.join(", ")}</Popover.Content>
+        </Popover.Root>
+      </VValueRow>
+    </Section>
+
+    <section class="sec" aria-labelledby="h-sees">
+      <h2 class="v-h" id="h-sees">What the agent sees</h2>
+      <Section class="v-card">
+        <p class="sees" data-testid="pass-approvers" id="pass-approvers">
+          Sees: {(p.disclosedText ?? p.disclosed).join(", ")}. Hidden: {(p.hiddenText ?? p.hidden).join(", ")}.
+        </p>
+      </Section>
+    </section>
+  </div>
+{/if}
 
 <style>
-  .who {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
+  .sees {
     margin: 0;
-    font-size: var(--text-sm);
-    color: var(--color-fg-secondary);
+    padding: 16px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
   }
-  .legend-line {
-    margin: 0;
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
+  :global(.info-btn) {
+    vertical-align: middle;
+    margin-left: 4px;
+    color: var(--v-faint);
   }
-  .scale {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    margin: 0;
-    padding-top: 1.4rem;
-  }
-  .track {
-    position: relative;
-    height: 0.5rem;
-    border-radius: var(--radius-full);
-    overflow: visible;
-  }
-  .zone {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-  }
-  .zone.alone {
-    left: 0;
-    border-radius: var(--radius-full) 0 0 var(--radius-full);
-    background: var(--color-fg-primary);
-  }
-  .zone.ask {
-    background: color-mix(in srgb, var(--color-fg-primary) 18%, transparent);
-  }
-  .zone.over {
-    right: 0;
-    border-radius: 0 var(--radius-full) var(--radius-full) 0;
-    background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-fg-primary) 22%, transparent) 0 2px, transparent 2px 5px);
-  }
-  .tick {
-    position: absolute;
-    top: -3px;
-    bottom: -3px;
-    width: 2px;
-    margin-left: -1px;
-    background: var(--color-fg-secondary);
-  }
-  .legend {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
-  }
-  .legend b {
-    font-weight: 500;
-    color: var(--color-fg-primary);
+  :global(.v-pop) {
+    width: 260px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
   }
   @media (max-width: 760px) {
-    .legend {
-      flex-direction: column;
-      gap: 0.15rem;
+    :global(.info-btn) {
+      width: 44px;
+      height: 44px;
     }
   }
 </style>

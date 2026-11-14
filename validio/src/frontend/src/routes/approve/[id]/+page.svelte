@@ -1,19 +1,27 @@
 <script lang="ts">
-  // The owner's one decision, made on the phone: one question, the proposal,
-  // why not the others folded, two buttons of the same weight. The approval
-  // code is asked when a button is pressed, once per visit.
+  /// The owner's one decision, on the phone: the question as the h1, the
+  /// Total lane, what is ordered instead of what, the others folded, and a
+  /// pinned bar with Reject and Approve. The code is asked only when the
+  /// server wants one.
+  import { tick } from "svelte";
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
+  import { Section } from "@arlen/ui-kit/components/ui/section";
+  import { ChevronRight } from "@lucide/svelte";
   import { ApiError, api } from "$lib/api/client";
-  import type { Order, RankedOption } from "$lib/api/types";
-  import { bump, setChrome } from "$lib/chrome.svelte";
-  import { VERDICT, amount, day, hm, look, money, nameWord, sentences, stockOutLine, time } from "$lib/format";
+  import type { Order } from "$lib/api/types";
+  import { bump } from "$lib/chrome.svelte";
+  import { day, money } from "$lib/format";
   import { live } from "$lib/live.svelte";
-  import CodeField from "$lib/components/CodeField.svelte";
-  import Frame from "$lib/components/Frame.svelte";
-  import State from "$lib/components/State.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
+  import { optionLine } from "$lib/v";
+  import VCode from "$lib/v/VCode.svelte";
+  import VHead from "$lib/v/VHead.svelte";
+  import VLane from "$lib/v/VLane.svelte";
+  import VPill from "$lib/v/VPill.svelte";
+  import VPlotTotal from "$lib/v/VPlotTotal.svelte";
+  import VState from "$lib/v/VState.svelte";
+  import VValueRow from "$lib/v/VValueRow.svelte";
 
   const id = $derived(page.params.id ?? "");
   // The phone link names the request (/approve/R-2); an order id works too.
@@ -25,212 +33,231 @@
     return api.order(r.orderId);
   });
   const req = live(() => (order.data?.requestId ? api.request(order.data.requestId) : Promise.resolve(undefined)));
+  const pass = live(() => api.spendPass("M-1"));
+  const demo = live(() => api.demoState());
 
-  $effect(() => {
-    const rid = order.data?.requestId;
-    const placed = !!done || (order.data && order.data.state !== "waiting");
-    setChrome(placed ? "Ordered" : "Approve", rid ? { href: `/requests/${rid}`, label: "Request" } : { href: "/", label: "Inbox" });
-  });
-
-  // The press that waits for the code, if the owner has not typed it yet.
-  let pending = $state<null | "approve" | "reject">(null);
+  let done = $state<Order | undefined>();
+  let step = $state<null | "approve" | "reject">(null);
+  let code = $state("");
+  let wrong = $state("");
   let busy = $state(false);
   let problem = $state("");
-  let done = $state<Order | undefined>();
 
-  const shown = $derived(done ?? order.data);
-  const chosen = $derived(new Set((shown?.lines ?? []).map((l) => l.productId)));
-  // Every option of the request that was not proposed, for "why not the others".
-  const passed = $derived(
-    (req.data?.lines ?? [])
-      .flatMap((l) => [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])])
-      .filter((o: RankedOption) => !chosen.has(o.productId)),
-  );
+  const o = $derived(done ?? order.data);
+  const r = $derived(req.data);
+  const l = $derived(o?.lines[0]);
+  const rid = $derived(o?.requestId ?? r?.id ?? id);
+  const need = $derived(r?.lines[0]);
+  const all = $derived(need ? [...need.options, ...(need.substitutes ?? []), ...(need.beyondList ?? [])] : []);
+  const askedOpt = $derived(all.find((x) => x.productId === need?.need.productId));
+  const chosenOpt = $derived(all.find((x) => x.productId === l?.productId));
+  const others = $derived(all.filter((x) => x.productId !== l?.productId && x.productId !== need?.need.productId));
+  const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose"));
+  const sim = $derived(r?.simulated?.[0]);
+  const codeRequired = $derived(!!demo.data?.codeRequired);
+  const waiting = $derived(o?.state === "waiting");
 
-  function question(o: Order): string {
-    if (o.questionText) return o.questionText;
-    if (o.lines.length === 1) {
-      const l = o.lines[0];
-      return `Order ${amount(l.quantity, l.unit)} of ${nameWord(l.name)} for ${money(o.totalCents)}?`;
-    }
-    return `Order these ${o.lines.length} lines for ${money(o.totalCents)}?`;
-  }
-
-  // One reason line: what speaks for the proposal, and when it comes.
-  const reason = $derived.by(() => {
-    const o = shown;
-    if (!o || o.lines.length !== 1) return "";
-    const l = o.lines[0];
-    const opt = (req.data?.lines ?? []).flatMap((x) => [...x.options, ...(x.substitutes ?? []), ...(x.beyondList ?? [])]).find((x) => x.productId === l.productId);
-    const why = stockOutLine(req.data) || (sentences(opt?.sentence)[0] ?? "");
-    return [why, l.deliveryDate ? `Delivery ${day(l.deliveryDate)}.` : ""].filter(Boolean).join(" ");
-  });
-
-  function outcome(o: Order): string {
-    const word = o.state === "placed" ? "Ordered" : (STEP[o.state] ?? o.state);
-    const what = o.lines.length === 1 ? ` ${amount(o.lines[0].quantity, o.lines[0].unit)} of ${nameWord(o.lines[0].name)},` : "";
-    return `${word}${what} ${money(o.totalCents)}`;
-  }
-
-  function press(kind: "approve" | "reject") {
+  async function press(kind: "approve" | "reject") {
     problem = "";
-    if (!isCode(owner.code)) {
-      pending = kind;
+    wrong = "";
+    if (codeRequired && !isCode(owner.code)) {
+      step = kind;
       return;
     }
-    void decide(kind);
+    if (kind === "reject" && step !== "reject") {
+      step = "reject";
+      await tick();
+      document.getElementById("confirm-reject")?.focus();
+      return;
+    }
+    await decide(kind);
+  }
+
+  async function submitCode() {
+    if (!step) return;
+    if (!isCode(code)) {
+      wrong = "Wrong code. Try again.";
+      return;
+    }
+    owner.code = code;
+    await decide(step);
   }
 
   async function decide(kind: "approve" | "reject") {
-    if (!shown || busy) return;
+    if (!o || busy) return;
     busy = true;
     try {
-      done = await (kind === "approve" ? api.approve(shown.id) : api.reject(shown.id));
-      pending = null;
+      done = await (kind === "approve" ? api.approve(o.id) : api.reject(o.id));
+      step = null;
       bump();
+      window.scrollTo({ top: 0 });
     } catch (e) {
       const status = e instanceof ApiError ? e.status : 0;
       if (status === 403) {
         owner.code = "";
-        pending = kind;
-      }
-      problem =
-        status === 403
-          ? "That code is not right."
-          : status === 429
-            ? "Too many tries. Wait a few minutes, then try again."
-            : status === 409
-              ? `Cannot do that now: ${e instanceof Error ? e.message : "the order changed"}.`
-            : e instanceof Error
-              ? e.message
-              : String(e);
+        wrong = "Wrong code. Try again.";
+      } else if (status === 409) {
+        problem = "Already placed. Nothing changed.";
+        step = null;
+      } else problem = e instanceof Error ? e.message : String(e);
     } finally {
       busy = false;
     }
   }
 
-  const STEP: Record<string, string> = {
-    waiting: "Waiting for you",
-    approved: "Approved",
-    placed: "Placed at Valio",
-    rejected: "Rejected",
-    blocked: "Blocked by the rules",
+  const cancel = () => {
+    step = null;
+    wrong = "";
   };
 </script>
 
-{#if order.error && !shown}
-  <Frame title="Approve" narrow><p class="t-quiet">Order {id}: {order.error}</p></Frame>
-{:else if shown && shown.state === "waiting"}
-  <Frame title={question(shown)} titleId="question" titleTestid="approve-question" narrow>
-    {#if reason}<p class="reason" id="approve-reason">{reason}</p>{/if}
-    {#if passed.length}
-      <Collapsible.Root>
-        <Collapsible.Trigger class="fold" id="fold-others">
-          <Collapsible.Chevron />
-          Why not the others ({passed.length})
-        </Collapsible.Trigger>
-        <Collapsible.Content>
-          <ul class="others">
-            {#each passed as o (o.productId)}
-              {@const v = look(VERDICT, o.verdict)}
-              <li>
-                <span class="o-name">{nameWord(o.name)}</span>
-                <State label={v.label} tone={v.tone} />
-                <span class="o-why t-quiet">{sentences(o.sentence)[0] ?? ""}</span>
-              </li>
-            {/each}
-          </ul>
-        </Collapsible.Content>
-      </Collapsible.Root>
+{#if !o}
+  {#if order.error}
+    <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} menu={false} />
+    <VState kind="error" title={/404|not found/i.test(order.error) ? `No request ${id}.` : "Validio is not reachable."} detail={order.error} onretry={() => location.reload()} />
+  {:else}
+    <VState kind="loading" rows={3} />
+  {/if}
+{:else if !waiting}
+  {@const placed = o.state === "placed" || o.state === "approved"}
+  <VHead
+    title={placed ? "Ordered" : "Not ordered"}
+    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    here="Approve"
+    back={{ href: `/requests/${rid}`, label: "Request" }}
+    menu={false}
+  >
+    {#snippet facts()}
+      <VPill label={placed ? "Placed" : "Rejected"} tone={placed ? "ok" : "bad"} />
+      <b class="num">{o.moneyText ?? money(o.totalCents)}</b>
+      {#if placed}<a href="/ledger">Order {o.id} ›</a>{/if}
+    {/snippet}
+    {#if problem}<p class="lead" role="status">{problem}</p>{/if}
+    <p class="lead">{placed ? "Price and delivery confirmed again before ordering." : "Nothing was ordered."}</p>
+  </VHead>
+  <ol class="steps" data-testid="order-steps" id="order-steps">
+    <li>Asked you</li>
+    {#if placed}
+      <li>You approved</li>
+      <li>Validio placed the order</li>
+    {:else}
+      <li>You rejected</li>
+    {/if}
+  </ol>
+{:else}
+  <VHead
+    title={o.questionText ?? r?.question ?? `Order for ${money(o.totalCents)}?`}
+    titleId="question"
+    titleTestid="approve-question"
+    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    here="Approve"
+    back={{ href: `/requests/${rid}`, label: "Request" }}
+    menu={false}
+  >
+    {#snippet facts()}
+      <span>Deliver by {day(o.deliverBy)}</span>
+      {#if l?.isSubstitute && !l.onValioList}<span>Not on Valio's list</span>{/if}
+    {/snippet}
+  </VHead>
+
+  <div class="blocks">
+    <div>
+      <VLane name="Total" value={o.moneyText ?? money(o.totalCents)} sub={o.usedBeforeCents ? `${money(o.usedBeforeCents)} ordered before` : undefined}>
+        {#snippet plot()}
+          <VPlotTotal before={o.usedBeforeCents ?? 0} amount={o.totalCents} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
+        {/snippet}
+      </VLane>
+    </div>
+
+    {#if l}
+      <Section class="v-card">
+        <VValueRow label="Product" value={l.displayName ?? l.name} sub={l.qtyText} />
+        {#if askedOpt}
+          <VValueRow label="Instead of" value="{askedOpt.displayName ?? askedOpt.name}{sim ? ', out of stock (simulated)' : ''}" />
+        {/if}
+        {#if lactose}
+          <VValueRow label="Lactose" value="{lactose.valueText ?? String(lactose.value ?? '')}{lactose.grade === 'attested' ? ', checked' : ''}" />
+        {/if}
+      </Section>
     {/if}
 
-    {#if pending}
-      <CodeField onready={() => decide(pending!)} {problem} action={pending === "approve" ? "Approve" : "Reject"} />
-    {:else if problem}
-      <p class="problem t-bad" id="approve-problem" role="alert">{problem}</p>
+    {#if others.length}
+      <details class="fold others">
+        <summary><ChevronRight class="chev" aria-hidden="true" />Why not the others <span class="num">{others.length}</span></summary>
+        <ul class="fold-body">
+          {#each others as x (x.productId)}
+            <li><b>{x.displayName ?? x.name}</b> {optionLine(x)}</li>
+          {/each}
+        </ul>
+      </details>
     {/if}
-    <div class="buttons">
-      <Button variant="outline" size="lg" id="reject" data-testid="reject" disabled={busy} onclick={() => press("reject")}>Reject</Button>
-      <Button size="lg" id="approve" data-testid="approve" disabled={busy} onclick={() => press("approve")}>Approve</Button>
+
+    {#if step && codeRequired && !isCode(owner.code)}
+      <VCode bind:value={code} error={wrong} onsubmit={submitCode} />
+    {/if}
+    {#if problem}<p class="q-sub" role="alert">{problem}</p>{/if}
+
+    <div class="bar">
+      {#if step === "reject" && !(codeRequired && !isCode(owner.code))}
+        <Button variant="outline" onclick={cancel}>Cancel</Button>
+        <Button id="confirm-reject" data-testid="code-submit" disabled={busy} onclick={() => decide("reject")}>{busy ? "Rejecting…" : "Confirm rejection"}</Button>
+      {:else if step}
+        <Button variant="outline" onclick={cancel}>Cancel</Button>
+        <Button data-testid="code-submit" id="code-submit" disabled={busy} onclick={submitCode}>
+          {busy ? (step === "approve" ? "Approving…" : "Rejecting…") : step === "approve" ? "Confirm approval" : "Confirm rejection"}
+        </Button>
+      {:else}
+        <Button variant="outline" data-testid="reject" id="reject" disabled={busy} onclick={() => press("reject")}>Reject</Button>
+        <Button data-testid="approve" id="approve" disabled={busy} onclick={() => press("approve")}>{busy ? "Approving…" : "Approve"}</Button>
+      {/if}
     </div>
-  </Frame>
-{:else if shown}
-  <Frame title={outcome(shown)} titleId="outcome" titleTestid="approve-question" narrow>
-    <p class="reason">
-      {shown.state === "placed" ? `Approved, order ${shown.id} placed at Valio ${hm(shown.history.at(-1)?.at ?? "")}.` : `Order ${shown.id}.`}
-      <a href="/ledger">See it in the ledger</a>
-    </p>
-    <!-- The steps say again what the sentence says; the record keeps them. -->
-    <ol hidden id="order-steps" data-testid="order-steps">
-      {#each shown.history as h, i (i)}
-        <li>{time(h.at)} {STEP[h.state] ?? h.state}</li>
-      {/each}
-    </ol>
-  </Frame>
+  </div>
 {/if}
 
 <style>
-  .reason {
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--color-fg-secondary);
-  }
-  :global(.fold#fold-others) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-fg-secondary);
-  }
-  .others {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    margin: 0.6rem 0 0;
+  .others .fold-body {
+    margin: 8px 0 0;
     padding: 0;
     list-style: none;
-    font-size: var(--text-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
-  .others li {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.15rem 0.75rem;
-    align-items: center;
+  .others b {
+    font-weight: 500;
+    color: var(--v-fg);
   }
-  .o-why {
-    grid-column: 1 / -1;
-    font-size: var(--text-xs);
+  .bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
   }
-  .problem {
-    margin: 0;
-    font-size: var(--text-sm);
+  .steps {
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--v-line);
   }
-  .buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+  .steps li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--v-line);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
   }
-  .reason a {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-  /* The record: time in a quiet left column, a filled mark on a lifeline,
-     the step on the right. Every step shown has happened. */
   @media (max-width: 760px) {
-    /* The two answers stay under the thumb. */
-    .buttons {
+    .bar {
       position: fixed;
-      inset-inline: 0;
+      left: 0;
+      right: 0;
       bottom: 0;
-      z-index: 10;
-      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
-      border-top: 1px solid var(--color-border);
-      background: var(--color-bg-app);
+      z-index: 20;
+      margin: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: var(--v-app);
+      border-top: 1px solid var(--v-line);
     }
-    .buttons :global(button) {
-      min-height: 44px;
+    .bar :global([data-slot="button"]) {
+      flex: 1;
     }
   }
 </style>

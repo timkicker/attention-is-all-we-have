@@ -13,14 +13,16 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.getByTestId("inbox-R-2").click();
   await expect(page.locator("#request-title")).toContainText("200 bags of");
-  await expect(page.locator("#simulated-stock-out")).toContainText("out of stock at Valio (simulated for the demo");
+  await expect(page.locator("#request-why")).toContainText("Stock-out simulated for the demo");
+  await expect(page.getByTestId("request-rule")).toContainText("ask-human");
+  // Beyond the list is open first: the chosen blend.
+  await expect(page.getByTestId("option-465256")).toContainText("180.10");
+  await expect(page.getByTestId("option-465256")).toContainText("Chosen");
+  await page.locator("#tab-list").click();
   for (const id of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${id}`)).toContainText("Blocked");
   }
   await expect(page.getByTestId("option-473986")).toContainText("Not deliverable");
-  await expect(page.getByTestId("option-465256")).toContainText("180.10");
-  await expect(page.getByTestId("option-465256")).toContainText("Chosen");
-  await expect(page.getByTestId("request-rule")).toContainText("ask-human");
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByTestId("open-approve").click();
@@ -29,13 +31,13 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   // The code is asked when the owner presses Approve; with it the order is placed.
   await expect(page.getByTestId("code-input")).toHaveCount(0);
   await page.getByTestId("approve").click();
-  await expect(page.locator("#code-help")).toContainText("Asked once per visit");
+  await expect(page.locator("#code-help")).toContainText("any 6 digits");
   await code(page);
-  await expect(page.getByTestId("order-steps")).toContainText("Placed at Valio");
+  await expect(page.getByTestId("order-steps")).toContainText("Validio placed the order");
   await expect(page.getByTestId("approve")).toHaveCount(0);
 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/ledger");
   await expect(page.getByTestId("ledger")).toContainText("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €");
-  await expect(page.getByTestId("chain-status")).toContainText("Chain verified");
+  await expect(page.getByTestId("chain-status")).toContainText("Verified");
 });
