@@ -47,6 +47,14 @@ for (const v of VIEWS) {
     await go("/requests/R-2");
     await expect(page.locator("#request-title")).toContainText("200 bags");
     await shoot("request-r2");
+    // What a 1280 × 800 screen shows first, without the full-page stitching.
+    if (v.width === 1280 && v.theme === "light") {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: `${OUT}/request-r2-viewport-1280-light.png` });
+      await page.setViewportSize({ width: v.width, height: v.height });
+    }
 
     await go("/approve/R-2");
     await expect(page.getByTestId("approve-question")).toContainText("180.10");

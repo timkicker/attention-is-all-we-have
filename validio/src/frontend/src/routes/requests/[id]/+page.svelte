@@ -44,6 +44,8 @@
   const beyond = $derived(line?.beyondList ?? []);
   const beyondPossible = $derived(beyond.filter((o) => o.verdict === "chosen" || o.verdict === "ranked"));
   const beyondDown = $derived(beyond.filter((o) => o.verdict !== "chosen" && o.verdict !== "ranked"));
+  // One name for the fold: every group here is about delivery, or it is plainly "Not orderable".
+  const downLabel = $derived(beyondDown.every((o) => /cut-off|deliver/i.test(o.groupText ?? "")) ? "Can't arrive in time" : "Not orderable");
   let tab = $state("");
   $effect(() => {
     void id;
@@ -234,7 +236,13 @@
           <ul class="rc-ev">
             {#each beyondPossible as o (o.productId)}{@render optionRow(o, rank(beyondPossible, o))}{/each}
           </ul>
-          {@render groups(beyondDown)}
+          {#if beyondDown.length}
+            <!-- The options that cannot be ordered wait behind one fold, as on Approve. -->
+            <details class="fold later" data-testid="not-orderable" id="not-orderable">
+              <summary><ChevronRight class="chev" aria-hidden="true" />{downLabel} <span class="num">{beyondDown.length}</span></summary>
+              {@render groups(beyondDown)}
+            </details>
+          {/if}
         </div>
       {:else}
         <div class="pane" role="tabpanel" id="panel-possible" aria-labelledby="tab-possible" hidden={selected !== "possible"}>
@@ -287,4 +295,5 @@
   }
   .why-h { margin-top: 8px; color: var(--v-muted); }
   .why-facts { margin: 0; padding: 0; list-style: none; }
+  .later { margin-top: 24px; }
 </style>
