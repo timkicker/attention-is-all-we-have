@@ -23,7 +23,7 @@ def test_free_text_becomes_a_request(client):  # noqa: F811
 
 
 def test_unrecorded_product_answers_cleanly(client):  # noqa: F811
-    r = ask(client, "20 kg of parmesan by Monday")
+    r = ask(client, "20 kg of salmon by Monday")  # salmon is not in any recording
     assert r.status_code == 200, r.text
     out = r.json()
     assert "requestId" not in out

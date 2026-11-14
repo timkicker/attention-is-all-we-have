@@ -139,18 +139,22 @@ class ValioClient:
             return json.loads(exact.read_text())["response"]
         key = (endpoint, requested.isoformat())
         if key not in self._index:
-            head, rows, clash = {}, {}, set()
+            heads, rows, clash = {}, {}, set()
             for f in sorted(d.glob("*.json")):
                 resp = json.loads(f.read_text())["response"]
                 head = {k: v for k, v in resp.items() if k != "products"}
                 for x in resp["products"]:
                     if rows.setdefault(x["productId"], x) != x:
                         clash.add(x["productId"])
-            self._index[key] = (head, rows, clash)
-        head, rows, clash = self._index[key]
+                    heads.setdefault(x["productId"], head)
+            self._index[key] = (heads, rows, clash)
+        heads, rows, clash = self._index[key]
         if bad := [i for i in ids if i in clash]:
             raise ReplayMiss(f"recordings disagree on {endpoint} for {bad} on {requested}, run make record")
         missing = [i for i in ids if i not in rows]
         if missing:
             raise ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record first")
+        # recordings made at different times carry different clocks: the earliest one asked counts, so a
+        # later recording of other products never moves an earlier answer's timeNow
+        head = min((heads[i] for i in ids), key=lambda h: json.dumps(h, sort_keys=True), default={})
         return {**head, "products": [rows[i] for i in ids]}
