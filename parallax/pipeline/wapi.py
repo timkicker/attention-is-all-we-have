@@ -91,9 +91,31 @@ def stats_line() -> str:
     return " ".join(f"{k}={round(v, 1) if isinstance(v, float) else v}" for k, v in STATS.items())
 
 
-def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: float = 60.0) -> dict:
-    """GET a Wikimedia URL and return its JSON, from the disk cache when present."""
+DAY_S = 86_400.0
+INTERACTIVE_TIMEOUT_S = 10.0  # a visitor is waiting: short tries, at most one short sleep on 429
+INTERACTIVE_429_TRIES = 2  # one quick retry
+INTERACTIVE_RETRY_S = 1.0  # longest sleep before it; a longer Retry-After is passed on to the visitor
+
+
+def get(
+    url: str,
+    params: dict | None = None,
+    *,
+    backoff: float = 5.0,
+    timeout: float = 60.0,
+    max_age_s: float | None = None,
+    interactive: bool = False,
+) -> dict:
+    """GET a Wikimedia URL and return its JSON, from the disk cache when present.
+
+    max_age_s: None keeps the answer forever (a revision's text never changes); a number refetches an older file
+    (revision lists, page sizes); 0 neither reads nor writes the cache (searches typed by visitors).
+    interactive: a reader waits for the answer, so a 429 or maxlag is retried once after a short sleep and then raises
+    RateLimited, and the request times out after INTERACTIVE_TIMEOUT_S. Only a real 429 with Retry-After makes
+    every caller wait (cooldown_left); a lagging replica or a single unlucky visitor does not lock out the rest."""
     params = dict(params or {})
+    if interactive:
+        timeout = min(timeout, INTERACTIVE_TIMEOUT_S)
     is_action = url.endswith("/api.php")
     if is_action:
         action = params.get("action", "query")
@@ -103,7 +125,8 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
         params.setdefault("maxlag", 5)
     key = cache_key(url, params)
     path = _cache_path(key)
-    if path.exists():
+    fresh = path.exists() and (max_age_s is None or (max_age_s > 0 and time.time() - path.stat().st_mtime < max_age_s))
+    if fresh:
         _bump("hits")
         with gzip.open(path, "rt", encoding="utf-8") as f:
             return json.load(f)
@@ -112,9 +135,18 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
     tries_429 = 0
     retries_5xx = 0
     while True:
-        with _SEM:
-            _bump("calls")
-            resp = SESSION.get(url, params=params, timeout=timeout)
+        try:
+            with _SEM:
+                _bump("calls")
+                resp = SESSION.get(url, params=params, timeout=timeout)
+        except (requests.ConnectionError, requests.Timeout) as e:
+            retries_5xx += 1
+            _bump("r5xx")
+            if interactive or retries_5xx > MAX_5XX_RETRIES:
+                raise WikiError(f"{type(e).__name__} for {url}") from e
+            time.sleep(backoff * retries_5xx)
+            _bump("wait_s", backoff * retries_5xx)
+            continue
         lagged = False
         if resp.status_code == 200 and is_action:
             try:
@@ -123,12 +155,19 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
                 raise WikiError(f"not JSON from {url}") from e
             lagged = isinstance(body.get("error"), dict) and body["error"].get("code") == "maxlag"
         if resp.status_code == 429 or lagged:
+            global _cooldown_until
             tries_429 += 1
             _bump("r429")
             ra = resp.headers.get("Retry-After")
-            sleep_s = float(ra) if ra and ra.replace(".", "", 1).isdigit() else wait
-            if tries_429 >= MAX_429_TRIES:
-                global _cooldown_until
+            told = float(ra) if ra and ra.replace(".", "", 1).isdigit() else None
+            sleep_s = told if told is not None else wait
+            if interactive:
+                if tries_429 >= INTERACTIVE_429_TRIES or (told or 0) > INTERACTIVE_RETRY_S:
+                    if resp.status_code == 429 and told is not None:
+                        _cooldown_until = max(_cooldown_until, time.monotonic() + told)
+                    raise RateLimited(f"429/maxlag {tries_429} times for {url}", sleep_s)
+                sleep_s = min(sleep_s, INTERACTIVE_RETRY_S)
+            elif tries_429 >= MAX_429_TRIES:
                 retry_after = max(sleep_s, GIVE_UP_COOLDOWN_S)
                 _cooldown_until = max(_cooldown_until, time.monotonic() + retry_after)
                 raise RateLimited(f"429/maxlag {tries_429} times for {url}", retry_after)
@@ -142,7 +181,7 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
         if resp.status_code >= 500:
             retries_5xx += 1
             _bump("r5xx")
-            if retries_5xx > MAX_5XX_RETRIES:
+            if interactive or retries_5xx > MAX_5XX_RETRIES:
                 raise WikiError(f"HTTP {resp.status_code} after {MAX_5XX_RETRIES} retries for {url}")
             time.sleep(backoff * retries_5xx)
             _bump("wait_s", backoff * retries_5xx)
@@ -152,6 +191,8 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
         body = resp.json()
         if is_action and "error" in body:
             raise WikiError(f"API error {body['error'].get('code')}: {body['error'].get('info')}")
+        if max_age_s == 0:
+            return body
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(".tmp")
         with gzip.open(tmp, "wt", encoding="utf-8") as f:
@@ -164,12 +205,12 @@ def api_url(lang: str) -> str:
     return f"https://{lang}.wikipedia.org/w/api.php"
 
 
-def query_all(lang: str, params: dict, cont_key: str = "continue"):
+def query_all(lang: str, params: dict, cont_key: str = "continue", max_age_s: float | None = None):
     """Yield every page of an Action API query, following `continue`."""
     params = {"action": "query", "formatversion": 2, **params}
     cont: dict = {}
     while True:
-        body = get(api_url(lang), {**params, **cont})
+        body = get(api_url(lang), {**params, **cont}, max_age_s=max_age_s)
         yield body
         if cont_key not in body:
             return

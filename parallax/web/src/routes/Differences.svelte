@@ -1,8 +1,9 @@
 <script lang="ts">
   // Differences tab (wf/05) and the same tab on a past date (wf/07): Finnish statements that at least one
   // other edition tells differently, differing part marked. ?q= filters, ?date= picks the date.
+  import { untrack } from 'svelte'
   import * as copy from '../lib/copy'
-  import { getCounts, getDifferences, resolveTopic } from '../lib/data'
+  import { getCounts, getDifferences, resolveTopic, watchIngest } from '../lib/data'
   import { FOCUS_AT, FOCUS_AT_PHONE, focusOn } from '../lib/adapt/topic'
   import { dateState } from '../lib/date.svelte'
   import type { DiffRow, DifferencesVM, Failure, TabCounts } from '../lib/model'
@@ -31,6 +32,11 @@
   let loading = $state(true)
   let busy = $state(false)
   let title = $state('')
+  let latest = $state<string | null>(null)
+  /** Bumped when the article, still loading, got another edition: the effects below load again. */
+  let reload = $state(0)
+  /** date|q of the list on screen: a reload for new editions keeps it visible instead of the skeleton. */
+  let shownFor = ''
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let q = $state(router.query.get('q') ?? '')
   /** Phone width: a list row's 3 lines hold fewer characters, so the text starts closer to its mark. */
@@ -45,15 +51,24 @@
 
   const qParam = $derived(router.query.get('q') ?? '')
 
+  // Only the article restarts the watch (untrack: watchIngest reads ?mock, which typing in ?q= also changes).
   $effect(() => {
+    const qid = params.qid
+    return untrack(() => watchIngest(qid, () => reload++))
+  })
+
+  $effect(() => {
+    void reload
     resolveTopic(params.qid).then((r) => {
       if (!title) title = r.ok ? r.data.title : params.qid
+      latest = r.ok ? (r.data.latest ?? null) : null
     })
   })
 
   // The tab counts load on their own (Removed can be slow); the list does not wait for them.
   $effect(() => {
     const date = dateState.value
+    void reload
     let live = true
     counts = { differences: null, removed: null }
     getCounts(params.qid, date).then((c) => {
@@ -65,12 +80,16 @@
   $effect(() => {
     const date = dateState.value
     const query = qParam
+    void reload
+    const key = `${date}|${query}`
     let live = true
-    loading = true
+    if (key !== shownFor) loading = true
     failure = null
     getDifferences(params.qid, date, { q: query, offset: 0 }).then((r) => {
       if (!live) return
       loading = false
+      shownFor = r.ok ? key : ''
+
       if (!r.ok) {
         failure = r.error
         vm = null
@@ -135,7 +154,7 @@
 
   <div class="ctl">
     <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
-    <AsOf />
+    <AsOf {latest} />
   </div>
 
   {#if loading}

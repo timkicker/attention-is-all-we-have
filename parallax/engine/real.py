@@ -9,7 +9,7 @@ from pathlib import Path
 
 from contract.engine import LABELS, Candidate, Verdict
 from engine import gemini
-from engine.embed import embed_texts, shared_store
+from engine.embed import Overlay, embed_texts, shared_store
 
 PROMPTS = Path(__file__).resolve().parent / "prompts"
 LANG_NAMES = {
@@ -64,8 +64,9 @@ class GeminiEngine:
         self.prompt_version = os.environ.get("JUDGE_PROMPT", "judge-v1")
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        # One store per process, loaded once; the API never writes shards (only the batch pipeline does).
-        return [v.tolist() for v in embed_texts(texts, shared_store())]
+        # One store per process, loaded once; texts it does not hold (a visitor's question or answer) are embedded
+        # for this call only, so the process does not grow with every request.
+        return [v.tolist() for v in embed_texts(texts, Overlay(shared_store()))]
 
     def judge(self, claim: str, claim_lang: str, candidates: list[Candidate]) -> list[Verdict]:
         if not candidates:

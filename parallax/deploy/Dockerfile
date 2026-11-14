@@ -22,4 +22,6 @@ RUN uv sync --frozen --no-dev
 COPY . .
 COPY --from=web /app/web/dist web/dist
 EXPOSE 8000
-CMD ["uv", "run", "--no-sync", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# --proxy-headers: the per-visitor limits (api/ratelimit.py) see the visitor's address from Caddy's X-Forwarded-For.
+# Only Caddy reaches this port (it is not published), and Caddy replaces any X-Forwarded-For a visitor sends.
+CMD ["uv", "run", "--no-sync", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]

@@ -8,8 +8,12 @@
   import { TID } from '../testids'
   import Icon from './Icon.svelte'
 
-  /** Quick picks, newest first; null = today. */
-  let { picks = [null, '2020-01-01', '2015-01-01', '2010-01-01', '2008-01-01'] }: { picks?: (string | null)[] } = $props()
+  /** Quick picks, newest first; null = the latest stored version. latest = YYYY-MM-DD of the newest stored revision
+   *  (the data is not refreshed after a load, so without a date the button names that day instead of "today"). */
+  let {
+    picks = [null, '2020-01-01', '2015-01-01', '2010-01-01', '2008-01-01'],
+    latest = null,
+  }: { picks?: (string | null)[]; latest?: string | null } = $props()
 
   let open = $state(false)
   let typed = $state('')
@@ -55,7 +59,7 @@
     onclick={() => {
       open = !open
       typed = dateState.value ?? ''
-    }}><Icon name="calendar" />{copy.asOf(dateState.value)}</button
+    }}><Icon name="calendar" />{copy.asOf(dateState.value, latest)}</button
   >
   {#if open}
     <div class="pop panel" role="dialog" aria-label={copy.DATE_LABEL} data-testid={TID.asOfPop}>
@@ -63,7 +67,7 @@
         {#each picks as p (p)}
           <li>
             <button type="button" class="pick" class:on={p === dateState.value} data-testid={TID.asOfPick} onclick={() => choose(p)}
-              >{p ? copy.fmtDate(p) : copy.TODAY}</button
+              >{p ? copy.fmtDate(p) : latest ? copy.asOf(null, latest) : copy.TODAY}</button
             >
           </li>
         {/each}

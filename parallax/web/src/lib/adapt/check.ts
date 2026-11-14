@@ -151,7 +151,8 @@ export async function loadCheck(api: Client, ctx: TopicCtx): Promise<Result<With
 
 /** POST /api/check -> the new run id. */
 export async function runCheck(api: Client, ctx: TopicCtx, text: string): Promise<Result<{ runId: string }>> {
-  const r = await api.check({ text, ...(ctx.date ? { as_of: ctx.date } : {}) })
+  // Evidence only from this article: other loaded articles may hold near sentences too.
+  const r = await api.check({ text, topic: ctx.topic.topicId, ...(ctx.date ? { as_of: ctx.date } : {}) })
   if (!r.ok) return r
   return { ok: true, data: { runId: r.data.run_id } }
 }

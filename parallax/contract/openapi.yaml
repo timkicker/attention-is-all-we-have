@@ -17,6 +17,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Health"}
               examples: {default: {externalValue: examples/health.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/topics:
     get:
       operationId: topics
@@ -27,6 +28,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Topics"}
               examples: {default: {externalValue: examples/topics.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/compare:
     get:
       operationId: compare
@@ -46,6 +48,7 @@ paths:
               schema: {$ref: "#/components/schemas/Compare"}
               examples: {default: {externalValue: examples/compare.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/claim/{lang}/{page_id}/{h}/timeline:
     get:
       operationId: timeline
@@ -61,6 +64,7 @@ paths:
               schema: {$ref: "#/components/schemas/Timeline"}
               examples: {default: {externalValue: examples/timeline.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/dropped:
     get:
       operationId: dropped
@@ -78,6 +82,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Dropped"}
               examples: {default: {externalValue: examples/dropped.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sources:
     get:
       operationId: sources
@@ -91,10 +96,13 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Sources"}
               examples: {default: {externalValue: examples/sources.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check:
     post:
       operationId: check
-      description: 503 embed_unavailable when the embedder for text the fixtures do not know is not answering.
+      description: >-
+        At most 20 statements of an answer are checked. 429 too_many per visitor, 503 embed_unavailable when the
+        embedder for text the fixtures do not know is not answering, 503 model_unavailable when the model fails.
       requestBody:
         required: true
         content:
@@ -105,7 +113,8 @@ paths:
               properties:
                 text: {type: string}
                 as_of: {type: string}
-                langs: {type: array, items: {type: string}}
+                langs: {type: array, maxItems: 16, items: {type: string}, description: 422 bad_lang for an edition the check does not cover}
+                topic: {type: string, description: "topic_id: evidence only from this topic (404 topic_not_found when unknown)"}
       responses:
         "200":
           description: The answer split into claims, each labelled per edition
@@ -113,8 +122,11 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check.json}}
+        "404": {$ref: "#/components/responses/Error"}
         "422": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
         "503": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check/recorded:
     get:
       operationId: checkRecorded
@@ -125,6 +137,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/CheckRecorded"}
               examples: {default: {externalValue: examples/check_recorded.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check/{run_id}:
     get:
       operationId: checkRun
@@ -139,6 +152,7 @@ paths:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check_run.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ask:
     get:
       operationId: ask
@@ -154,6 +168,8 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Ask"}
               examples: {default: {externalValue: examples/ask.json}}
+        "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/atlas:
     get:
       operationId: atlas
@@ -168,6 +184,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Atlas"}
               examples: {default: {externalValue: examples/atlas.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/stats:
     get:
       operationId: stats
@@ -178,6 +195,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Stats"}
               examples: {default: {externalValue: examples/stats.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sql/vector:
     get:
       operationId: sqlVector
@@ -194,6 +212,7 @@ paths:
               schema: {$ref: "#/components/schemas/SqlPanel"}
               examples: {default: {externalValue: examples/sql_panel.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sql/{panel_id}:
     get:
       operationId: sqlPanel
@@ -207,6 +226,7 @@ paths:
               schema: {$ref: "#/components/schemas/SqlPanel"}
               examples: {default: {externalValue: examples/sql_panel.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/search:
     get:
       operationId: search
@@ -224,6 +244,7 @@ paths:
               schema: {$ref: "#/components/schemas/Search"}
               examples: {default: {externalValue: examples/search.json}}
         "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ingest:
     post:
       operationId: ingest
@@ -249,6 +270,7 @@ paths:
               examples: {default: {externalValue: examples/ingest.json}}
         "422": {$ref: "#/components/responses/Error"}
         "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ingest/{qid}:
     get:
       operationId: ingestStatus
@@ -264,6 +286,7 @@ paths:
               schema: {$ref: "#/components/schemas/Ingest"}
               examples: {default: {externalValue: examples/ingest.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
 components:
   responses:
     Error:
@@ -286,6 +309,14 @@ components:
         ms: {type: number}
         rows: {type: integer}
         index: {type: string, enum: [emb, none]}
+        params:
+          type: object
+          description: Bound parameters; a list as its length, a long string as its length in characters
+          additionalProperties:
+            oneOf:
+              - {type: [string, number, "null"]}
+              - {type: object, required: [count], properties: {count: {type: integer}}, additionalProperties: false}
+              - {type: object, required: [chars], properties: {chars: {type: integer}}, additionalProperties: false}
     Sql: {type: array, items: {$ref: "#/components/schemas/Statement"}}
     VerdictRef:
       type: [object, "null"]
@@ -396,6 +427,9 @@ components:
                     history: {type: string, enum: [every, yearly, none]}
                     revisions: {type: integer}
                     first_ts: {$ref: "#/components/schemas/Ts"}
+                    last_ts:
+                      description: The newest stored revision. Data is not refreshed after a load, so this, not today, is what "latest" shows.
+                      $ref: "#/components/schemas/Ts"
         sql: {$ref: "#/components/schemas/Sql"}
     Cell:
       type: object

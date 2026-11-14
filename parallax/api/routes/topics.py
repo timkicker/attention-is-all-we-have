@@ -31,6 +31,7 @@ def topics() -> dict:
                 "history": r["history"],
                 "revisions": int(r["revisions"]),
                 "first_ts": iso(r["first_ts"]),
+                "last_ts": iso(r["last_ts"]),  # the newest revision stored: what "latest" shows, not today
             }
         )
     return {"topics": list(out.values())}
