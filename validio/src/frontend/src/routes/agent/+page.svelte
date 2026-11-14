@@ -34,7 +34,15 @@
     busy = true;
     problem = "";
     try {
-      ag.data = await run();
+      const next = await run();
+      ag.data = next;
+      // The Inbox checklist and the example request read the agent from the session.
+      const acc = session.account;
+      if (acc) {
+        const agent = next.state === "active" || next.state === "paused";
+        const setup = { ...acc.setup, agent, done: acc.setup.kitchen && acc.setup.rules && agent };
+        session.account = { ...acc, agent: next, setup };
+      }
       bump();
     } catch (e) {
       problem = e instanceof Error ? e.message : String(e);
@@ -118,6 +126,8 @@
       });
       owner.code = f.code;
       editing = false;
+      const acc = session.account;
+      if (acc && !acc.setup.rules) session.account = { ...acc, setup: { ...acc.setup, rules: true, done: acc.setup.kitchen && acc.setup.agent } };
       bump();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);

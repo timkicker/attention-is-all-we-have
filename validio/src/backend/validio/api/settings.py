@@ -227,6 +227,12 @@ class ApprovalCodeIn(Model):
     next: str = Field(description="the new 6 digit code")
 
 
+class LoginChangeIn(Model):
+    current_password: str = Field(max_length=200)
+    email: str | None = Field(None, min_length=3, max_length=200, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    password: str | None = Field(None, min_length=8, max_length=200)
+
+
 def _settings(ctx: Ctx) -> SettingsOut:
     path = ctx.db_path
     return SettingsOut(
@@ -274,3 +280,28 @@ def put_approval_code(ctx: CtxDep, request: Request, body: Annotated[ApprovalCod
     else:
         codes.store(ctx.db_path, body.next)  # the local kitchen of make dev and the tests
     return Response(status_code=204)
+
+
+@router.put("/settings/login", response_model=SettingsOut)
+def put_login(ctx: CtxDep, body: LoginChangeIn):
+    """A new email, a new password, or both, with the current password. Demo copies have no login."""
+    from .accounts import get_accounts, hash_secret, secret_ok
+
+    if ctx.account is None or ctx.account["is_demo"]:
+        raise HTTPException(403, "this kitchen has no login to change")
+    acc = get_accounts()
+    row = acc.get(ctx.account["id"])
+    if not secret_ok(body.current_password, row["pw_hash"]):
+        raise HTTPException(403, "wrong password")
+    fields: dict = {}
+    if body.email:
+        fields["email"] = body.email.strip().lower()
+    if body.password:
+        fields["pw_hash"] = hash_secret(body.password)
+    if fields:
+        try:
+            acc.update(row["id"], **fields)
+        except sqlite3.IntegrityError as e:
+            raise HTTPException(409, "an account with this email exists") from e
+        ctx.account.update(fields)  # the open account's row, cached with its store
+    return _settings(ctx)

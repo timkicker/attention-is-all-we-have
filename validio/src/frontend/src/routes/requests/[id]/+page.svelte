@@ -136,7 +136,7 @@
 
 {#if !r}
   {#if req.error}
-    <VHead title="Request {id}" crumbs={[{ href: "/", label: "Inbox" }]} here={id} back={{ href: "/", label: "Inbox" }} />
+    <VHead title="Request {id}" crumbs={[{ href: "/orders", label: "Orders" }]} here={id} back={{ href: "/orders", label: "Orders" }} />
     <VState kind="error" title={/404|not found/i.test(req.error) ? `No request ${id}.` : "Validio is not reachable."} detail={req.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={4} />
@@ -145,9 +145,9 @@
   <VHead
     title={r.titleText ?? r.displayName ?? r.title ?? r.text}
     titleId="request-title"
-    crumbs={[{ href: "/", label: "Inbox" }]}
+    crumbs={[{ href: "/orders", label: "Orders" }]}
     here={r.id}
-    back={{ href: "/", label: "Inbox" }}
+    back={{ href: "/orders", label: "Orders" }}
   >
     {#snippet facts()}
       <VPill label={pill.label} tone={pill.tone} testid="request-status" id="request-status" />
