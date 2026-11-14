@@ -10,6 +10,7 @@ Every state change and its ledger entry are one SQLite transaction (the ledger s
 connection), under one lock that the demo reset takes too.
 """
 
+import functools
 import hashlib
 import json
 import re
@@ -23,6 +24,7 @@ from typing import Any
 from ..audit.log import NEVER_LOGGED, AuditLog
 from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
+from ..config import strict_stock
 from ..matching.need import CLAIM_NAMES as CLAIM_WORDS
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate, effective_deadline
@@ -154,11 +156,24 @@ def over_budget(decision: dict[str, Any], quoted: list[dict], budget_cents: int 
     return {**decision, "outcome": "ask_human", "ruleIds": [r for r in rules if r != "auto-order"],
             "sentence": " ".join([*kept, f"Needs a person: {why}."]).strip()}
 
+def strict(fn):
+    """Run a decision with the service's placeholder stock rule (config.strict_stock)."""
+    @functools.wraps(fn)
+    def wrapper(self, *a, **kw):
+        svc = getattr(self, "orders", self)
+        with strict_stock(svc.strict_stock):
+            return fn(self, *a, **kw)
+    return wrapper
+
+
 class OrderService:
     def __init__(self, store: Store, catalog: Catalog, valio, audit: AuditLog,
                  clock: Callable[[], datetime], adjust: Callable[[dict], dict] | None = None,
                  max_ids: int = 40, lock: "threading.RLock | None" = None,
-                 valio_down: Callable[[], bool] | None = None, stamp: Callable[[], datetime] | None = None):
+                 valio_down: Callable[[], bool] | None = None, stamp: Callable[[], datetime] | None = None,
+                 strict_stock: bool = False):
+        """`strict_stock`: placeholder stock is no real count here (a kitchen's own account)."""
+        self.strict_stock = strict_stock
         self.store, self.catalog, self.valio, self.audit = store, catalog, valio, audit
         if audit.path.resolve() == Path(store.path).resolve():
             audit.join(store.con, store.lock)  # one connection, else the ledger waits on the store's own write lock
@@ -182,6 +197,7 @@ class OrderService:
         if self.valio_down():
             raise ValioUnavailable()
 
+    @strict
     def quote(self, lines: list[LineIn], deliver_by: date, stock_override: dict[str, float] | None = None,
               budget: CallBudget | None = None) -> list[dict[str, Any]]:
         budget = budget or CallBudget(self.max_ids)
@@ -279,6 +295,7 @@ class OrderService:
 
     # The order lifecycle
 
+    @strict
     def submit(self, *, mandate: Mandate, lines: list[LineIn], deliver_by: date, idempotency_key: str,
                request_id: str | None = None, actor: str | None = None,
                stock_override: dict[str, float] | None = None, budget: CallBudget | None = None,
@@ -355,6 +372,7 @@ class OrderService:
             return [f"the delivery date {day(deliver_by)} has passed"]
         return []
 
+    @strict
     def approve(self, order_id: str, approver: str, verb: str = "approved") -> dict:
         """`verb` is "accepted" when a chef's accept on a Steady Order line sent it: the sentences say so."""
         with self.lock:

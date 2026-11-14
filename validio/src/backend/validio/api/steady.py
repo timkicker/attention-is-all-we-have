@@ -28,7 +28,7 @@ from pydantic.alias_generators import to_camel
 
 from ..audit.log import AuditLog
 from ..catalog.store import Catalog
-from ..config import load_settings
+from ..config import load_settings, strict_stock
 from ..demo import seed
 from ..demo.clock import demo_now
 from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
@@ -274,7 +274,8 @@ class Runtime:
                                    stamp=wall if self.settings.real_time or self.real_clock else clock,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    valio_down=lambda: seed.valio_down(path),
-                                   lock=self.lock)  # one lock for every write and the demo reset
+                                   lock=self.lock,  # one lock for every write and the demo reset
+                                   strict_stock=self.real_clock)  # a kitchen's own account: real money
             self._live = _Live(token, path, store, audit, service, self.keys_dir())
         return self._live
 
@@ -489,7 +490,8 @@ def renew(order_id: str, rt: Runtime | None = None) -> SteadyOrderOut:
             return _with_pass(_view(state), live)
         now = live.service.clock()
         mandate = _pass(live.path, live.keys)
-        renewal = run(so, h, rt.catalog, rt.valio, mandate, now, stockout=seed.stockout(live.path))
+        with strict_stock(live.service.strict_stock):
+            renewal = run(so, h, rt.catalog, rt.valio, mandate, now, stockout=seed.stockout(live.path))
         pending = {ln.product_id: ln for ln in _pending(so, h).lines}
         diet = {ln.product_id: ln.diet for ln in so.lines}
         out = []
