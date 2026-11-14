@@ -32,18 +32,22 @@ make mutate MUTATE="retest NAME"    # run named mutants again after adding a tes
 
 `scripts/mutate.sh` runs mutmut 3.8.1 (pinned in the dev dependencies) with one worker in a scratch copy under
 `artifacts/mutmut/`, which is gitignored, so no `mutants/` cache ever reaches git. Set `MUTATE_HEAVY` to a wrapper
-command to queue it behind other heavy jobs. A full run of all six modules takes more than an hour with one worker, so run one module at a time
-(`MUTATE="run claims"`) and keep each run short on a shared machine.
+command to queue it behind other heavy jobs. A full run of all six modules took about 55 minutes with one worker
+(1ba7f8a), so on a shared machine run one module at a time (`MUTATE="run claims"`). mutmut copies data files such as
+`policies.cedar` into its `mutants/` folder only once; the script refreshes them on every run, because a stale policy
+makes the suite fail in the copy and mutmut stops with "failed to collect stats".
 
 Score = killed / (killed + survived + timeout). Mutants that cannot change behaviour are listed with a one-line
 reason in `scripts/mutate_equivalent.txt` and left out of the score; the raw share of all mutants killed is given
 too.
 
-### Measured so far (14 Nov 2026, before the new tests)
+### Scores
 
-The suite as of commit 161af66 (unit, scenes in the backend tests, adversarial, synthetic), without the
-`test_mutants_*.py` files. `mandate.py` is the version after the key-binding hardening (161af66); the other five did
-not change since e325d9b, where they were measured.
+Three runs, all with the same tests outside `test_mutants_*.py` (unit, scenes in the backend tests, adversarial,
+synthetic). Equivalent mutants are left out of the score; the raw column is killed / all mutants.
+
+**Before** (14 Nov 2026, without any `test_mutants_*.py`): `mandate.py` at 161af66, the other five at e325d9b.
+17 `mandate.py` mutants were not run before the run was stopped.
 
 | Module | Mutants | Killed | Survived | Equivalent | Not run | Score | Raw (killed / all) |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -55,19 +59,42 @@ not change since e325d9b, where they were measured.
 | `trust/claims.py` | 125 | 86 | 31 | 8 | 0 | 73.5 % | 68.8 % |
 | total | 1817 | 1479 | 254 | 67 | 17 | 85.3 % | 81.4 % |
 
-Since then `audit/log.py` (signed ledger head), `matching/rank.py`, `matching/substitute.py` and
-`policy/decide.py` (display sentences) changed again (as of 5ad0673), so their numbers and the mutant names in
-`scripts/mutate_equivalent.txt` describe the code as measured, not the code today; only `trust/claims.py` and
-`policy/mandate.py` are unchanged since their run.
+**After the first tests** (14 Nov 2026, main at 1ba7f8a, all six modules mutated again). The code had changed in
+the meantime (signed ledger head, display sentences, the stock-out name), so the mutant counts differ:
 
-The run was stopped to free the shared machine: 17 `mandate.py` mutants have no result, and **no module has been
-mutated again with the new tests yet**, so there is no "after" score. Reproduce the "before" numbers by moving the
-three `test_mutants_*.py` files out of the scratch copy; get the "after" numbers with
-`make mutate MUTATE="run log"` and so on, one module per run.
+| Module | Mutants | Killed | Survived | Equivalent | Score | Raw (killed / all) |
+|---|---:|---:|---:|---:|---:|---:|
+| `audit/log.py` | 507 | 433 | 31 | 43 | 93.3 % | 85.4 % |
+| `policy/mandate.py` | 499 | 469 | 11 | 19 | 97.7 % | 94.0 % |
+| `policy/decide.py` | 472 | 432 | 27 | 13 | 94.1 % | 91.5 % |
+| `matching/rank.py` | 196 | 185 | 6 | 5 | 96.9 % | 94.4 % |
+| `matching/substitute.py` | 291 | 285 | 3 | 3 | 99.0 % | 97.9 % |
+| `trust/claims.py` | 125 | 117 | 0 | 8 | 100.0 % | 93.6 % |
+| total | 2090 | 1921 | 78 | 91 | 96.1 % | 91.9 % |
+
+Most of the `log.py` survivors came from the signed head, added after the first tests were written.
+
+**After the second tests** (same code, survivors run again with the tests added for them):
+
+| Module | Mutants | Killed | Survived | Equivalent | Score | Raw (killed / all) |
+|---|---:|---:|---:|---:|---:|---:|
+| `audit/log.py` | 507 | 463 | 1 | 43 | 99.8 % | 91.3 % |
+| `policy/mandate.py` | 499 | 476 | 4 | 19 | 99.2 % | 95.4 % |
+| `policy/decide.py` | 472 | 453 | 6 | 13 | 98.7 % | 96.0 % |
+| `matching/rank.py` | 196 | 190 | 1 | 5 | 99.5 % | 96.9 % |
+| `matching/substitute.py` | 291 | 286 | 2 | 3 | 99.3 % | 98.3 % |
+| `trust/claims.py` | 125 | 117 | 0 | 8 | 100.0 % | 93.6 % |
+| total | 2090 | 1988 | 11 | 91 | 99.4 % | 95.1 % |
+
+The `log.py` row counts `__init___48` as killed: it was listed as equivalent under a stale name, the second tests
+kill it, and it was run again on its own. Mutant numbers shift whenever a function changes, so after a code change
+`scripts/mutate_equivalent.txt` has to be checked against `make mutate MUTATE="score -v"` again.
 
 ### What survived, and the tests written for it
 
-The survivors were read one by one. Those that change a decision, a grade or a check got a test:
+The survivors were read one by one. Those that change a decision, a grade or a check got a test.
+
+First tests:
 
 - `test_mutants_policy.py`: every escalation sentence alone and none at the limits (`>` against `>=` on the auto
   limit and the split limit), an undisclosed diet that would block instead of asking a person, the split in basis
@@ -82,11 +109,27 @@ The survivors were read one by one. Those that change a decision, a grade or a c
   the key binding's iat window at both ends, revocation by jti, the RFC 9901 disclosure check, and `_mandate`
   defaults that fail closed.
 
-Left alive on purpose:
+Second tests:
 
-- Text-only mutants (a sentence in capitals or with `XX` around it) where no test pins the exact wording yet.
-- `rank.x_rank_one__mutmut_62`: Best Pick treats the cut-off second as still open, Cedar as passed. Which reading is
-  right is a product question, so no test pins rank.py's side (finding G14 in the review notes).
-- `present()` with no `iat` from the caller (`x_present__mutmut_13`, `_15`) and `alg=None` in its `add_signature`
-  (`_33`, `_36`): not yet checked.
+- Ledger: a failed append leaves no transaction open (before, a `ROLLBACK` replaced by nothing went unnoticed,
+  because the next append nested into the open transaction and only that one connection saw it); a failed append
+  inside the order store's transaction keeps that transaction and drops only its own entry; a head from before the
+  signature gets its `at` and `sig` columns; a body with a field more and a recomputed hash breaks the chain there;
+  a changed head hash on a one-entry ledger points at that entry; the signed head carries `typ` and `kid`; a
+  tampered row is shown with empty values of the right type.
+- Spend Pass: an `iat` that is not a number is refused (before, it reached `iat > now` and raised a TypeError
+  instead of a refusal); the pass `iat` is accepted at exactly 60 s ahead and refused at 61 s; a pass without `jti`
+  asks revocation about the empty id; a key binding without a given `iat` is signed now.
+- Policy: Cedar errors next to an Allow are still an error (with `and` for `or`, a forbid that failed to evaluate
+  would leave an Allow behind); the blocked sentence names each cause (diet, hard cap, no delivery line, no rule);
+  a total of 0 is named, 1 cent is not.
+- Matching: the empty and the short stock sentences, an unknown pack size as a reason, and an outside option that
+  cannot be delivered marked `on_valio_list = False` instead of `None`.
 
+Left alive on purpose (the 11 survivors):
+
+- `rank.x_rank_one__mutmut_60`: Best Pick treats the cut-off second as still open, Cedar as passed. Which reading
+  is right is a product question, so no test pins rank.py's side (finding G14 in the review notes).
+- Ten text-only mutants: the `TypeError` message of `PolicyContext`, the fallback escalation sentence, the
+  "disclosure not part of the Spend Pass" message at its second raise site, and the claim list in `_kept` in
+  capitals.
