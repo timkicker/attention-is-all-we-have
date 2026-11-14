@@ -14,16 +14,14 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
-  import VAsk from "$lib/v/VAsk.svelte";
   import VPill from "$lib/v/VPill.svelte";
-  import VMenu from "$lib/v/VMenu.svelte";
 
   let { children } = $props();
 
   // Four places, flat. The kitchen's name at the foot (top left on the phone) opens Settings.
   const PAGES = [
-    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/approve") },
-    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/steady") },
+    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" },
+    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/approve") || p.startsWith("/steady") },
     { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") || p.startsWith("/spend-pass") },
     { href: "/ledger", id: "nav-ledger", label: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
   ];
@@ -46,10 +44,10 @@
   });
   // The approve page has its own bottom bar: no dock under it.
   const approve = $derived(path.startsWith("/approve"));
+  const demoBar = $derived(!!session.account?.isDemo && (approve ? !chrome.phone || chrome.asking : !(chrome.phone && chrome.detail)));
 
   afterNavigate(({ to }) => {
     if (to?.url) notePage(to.url.pathname);
-    askOpen = false; // a result row was followed
   });
 
   // The rail: the window between phone and desktop, or the person folded it.
@@ -75,7 +73,6 @@
     void chrome.version;
     if (!session.account) return;
     count().catch(() => {});
-    api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
   });
 
   // Any write the server refused for want of the token (a demo switch, or
@@ -119,14 +116,6 @@
       tokenOpen = true;
     }
   }
-  // The fixture answers at once; with the backend the kitchen's agent asks again first.
-  demoActions.stockOut = () => demo(() => api.stockOut(true), "/");
-  demoActions.stockBack = () => demo(() => api.stockOut(false), page.url.pathname);
-  demoActions.ask = async () => {
-    askOpen = true;
-  };
-
-  let askOpen = $state(false);
   demoActions.reset = () => demo(() => api.reset(), "/");
 
   function useToken(e: SubmitEvent) {
@@ -194,7 +183,14 @@
     </aside>
   {/if}
 
-  <main class="v-main">
+  <main class="v-main" class:demo={demoBar}>
+    <!-- Approve keeps the bar: it shows the code that page asks for. On the phone it waits for the code step. -->
+    {#if demoBar}
+      <div class="demobar" data-testid="demo-bar" id="demo-bar">
+        <span class="db-name">Demo kitchen</span>
+        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
+      </div>
+    {/if}
     {#if chrome.phone && !chrome.detail && !approve}
       <header class="phonebar">
         <a class="pb-name" href="/settings" id="phone-settings" data-testid="phone-settings">
@@ -202,17 +198,9 @@
           <span>{session.account.name}</span>
           <span class="sr-only">, Settings</span>
         </a>
-        {#if session.account.isDemo}<VMenu />{/if}
       </header>
     {/if}
-    {#if session.account.isDemo && !approve && !(chrome.phone && chrome.detail)}
-      <div class="demobar" data-testid="demo-bar" id="demo-bar">
-        <span class="db-name">Demo kitchen</span>
-        <span>Approval code <b class="mono" data-code>{session.account.demoCode}</b></span>
-        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
-      </div>
-    {/if}
-    <div class="wrap" class:narrow={approve}>
+    <div class="wrap">
       {@render children()}
     </div>
   </main>
@@ -252,8 +240,6 @@
     </div>
   </form>
 </Dialog>
-
-<VAsk open={askOpen} onClose={() => (askOpen = false)} />
 
 {#if LIVE}<span hidden id="live-mode"></span>{/if}
 
@@ -383,7 +369,7 @@
   }
   .phonebar {
     position: sticky;
-    top: 0;
+    top: var(--demo-h, 0px);
     z-index: 15;
     display: flex;
     align-items: center;
@@ -392,9 +378,6 @@
     padding: env(safe-area-inset-top) 8px 0;
     background: var(--v-app);
     border-bottom: 1px solid var(--v-line);
-  }
-  .phonebar:has(:global(.dialog-backdrop)) {
-    z-index: 60;
   }
   .pb-name {
     display: inline-flex;
@@ -409,10 +392,6 @@
     color: var(--v-fg);
     text-decoration: none;
   }
-  .phonebar :global(.menu-btn) {
-    width: 44px;
-    height: 44px;
-  }
   .demobar {
     display: flex;
     flex-wrap: wrap;
@@ -424,10 +403,6 @@
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
-  }
-  .demobar b {
-    color: var(--v-fg);
-    font-weight: 500;
   }
   .db-name {
     color: var(--v-fg);
@@ -497,6 +472,21 @@
     .v-main > .phonebar ~ .wrap,
     .v-main > .demobar ~ .wrap {
       padding-top: 16px;
+    }
+    /* A detail page's own header follows the bar flush, as it follows the screen top. */
+    .v-main > .demobar + .wrap:has(:global(.kopfleiste)) {
+      padding-top: 8px;
+    }
+    /* The bar sticks on top and the page's own header sticks under it: nothing covers Reset. */
+    .demobar {
+      position: sticky;
+      top: 0;
+      z-index: 16;
+      height: 44px;
+      background: var(--v-app);
+    }
+    .v-main.demo {
+      --demo-h: 45px;
     }
   }
   .di {

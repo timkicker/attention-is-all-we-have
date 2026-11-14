@@ -1,4 +1,4 @@
-import { CODE, agent, expect, fresh, pairAgent, test } from "./kitchen";
+import { CODE, agent, expect, fresh, pairAgent, stockOut, test } from "./kitchen";
 
 // The built web app and the API from one process, no Vite: the login page lets a juror into a demo copy,
 // the kitchen's agent (paired through the Agent page) places requests over MCP on the copy's own path,
@@ -28,7 +28,7 @@ test("the paired agent orders alone, the request opens from Orders", async ({ pa
   await pairAgent(kitchen, page);
   agent(kitchen, 2);
   await page.goto("/");
-  await expect(page.getByTestId("demo-bar")).toContainText(CODE);
+  await expect(page.getByTestId("demo-bar")).toContainText("Demo kitchen");
   await expect(page.locator("#inbox-R-1")).toHaveCount(0); // handled: in Orders, not the Inbox
   await page.getByTestId("nav-orders").click();
   await page.getByTestId("order-r-R-1").click();
@@ -42,9 +42,9 @@ test("the paired agent orders alone, the request opens from Orders", async ({ pa
 });
 
 test("owner approves the swap on the phone", async ({ page, kitchen }) => {
+  // The stock-out has no control in the app or the API: set in the copy's store.
+  stockOut(kitchen);
   await page.goto("/");
-  await page.getByTestId("page-menu").click();
-  await page.getByTestId("stock-out").click();
   await expect.poll(async () => (await (await page.request.get("/api/demo")).json()).stockOut466375).toBe(true);
   agent(kitchen, 3);
   await page.reload();
@@ -71,9 +71,12 @@ test("owner approves the swap on the phone", async ({ page, kitchen }) => {
 });
 
 test("Reset in the demo bar starts the copy again", async ({ page }) => {
+  // a demo copy goes back to the template: the example orders R-1 and R-2, nothing waiting, nothing newer
+  const ids = async () =>
+    ((await (await page.request.get("/api/inbox")).json()) as { id: string }[]).map((r) => r.id).sort();
   await page.goto("/");
   await page.getByTestId("demo-reset").click();
-  await expect.poll(async () => (await (await page.request.get("/api/inbox")).json()).length).toBe(0);
-  await page.goto("/orders");
-  await expect(page.getByTestId("order-r-R-1")).toHaveCount(0);
+  await expect.poll(ids).toEqual(["R-1", "R-2"]);
+  await page.goto("/");
+  await expect(page.getByText("Nothing waits for you")).toBeVisible();
 });

@@ -3,7 +3,7 @@ key; Pause refuses at verify with a ledger entry; Disconnect bumps the version a
 
 import re
 
-import pytest
+from asking import pair_demo_agent
 from jwcrypto.jwk import JWK
 from test_api import auth, client, holder  # noqa: F401
 
@@ -29,6 +29,22 @@ def pair_own_agent(client, name="Kitchen buyer"):  # noqa: F811
     r = client.post("/agent/v1/pair", json={"code": code, "name": name, "publicJwk": key.export_public(as_dict=True)})
     assert r.status_code == 202, r.text
     return key, code
+
+
+def test_a_signing_agent_gets_the_verification_code_of_the_consent_screen(client):  # noqa: F811
+    client.post("/api/agent/disconnect")
+    codes = []
+    for _ in range(2):
+        key = JWK.generate(kty="EC", crv="P-256")
+        code = client.post("/api/agent/pair").json()["pairing"]["code"]
+        r = client.post("/agent/v1/pair", json={"code": code, "name": "Kitchen buyer",
+                                                "publicJwk": key.export_public(as_dict=True)})
+        assert r.status_code == 202 and re.fullmatch(r"[A-HJKMNP-Z2-9]{3}-[A-HJKMNP-Z2-9]{3}", r.json()["verifyCode"])
+        assert client.get("/api/agent").json()["consent"]["verifyCode"] == r.json()["verifyCode"]
+        codes.append(r.json()["verifyCode"])
+        client.post("/api/agent/deny")
+        assert "consent" not in client.get("/api/agent").json()
+    assert codes[0] != codes[1]
 
 
 def test_a_seeded_kitchen_has_the_demo_agent(client):  # noqa: F811
@@ -58,7 +74,7 @@ def test_pairing_shows_a_code_and_the_urls(client):  # noqa: F811
     s = client.post("/api/agent/pair").json()
     assert s["state"] == "pairing"
     assert re.fullmatch(r"[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}", s["pairing"]["code"])
-    assert s["pairing"]["mcpUrl"].endswith("/mcp/") and s["pairing"]["apiUrl"].endswith("/agent/v1")
+    assert re.search(r"/mcp/c/[A-Za-z0-9_-]{43}/$", s["pairing"]["mcpUrl"]) and s["pairing"]["apiUrl"].endswith("/agent/v1")
     again = client.post("/api/agent/pair").json()
     assert again["pairing"]["code"] != s["pairing"]["code"]  # a new code each time
 
@@ -91,8 +107,8 @@ def test_consent_then_allow_signs_the_pass_to_the_agents_key(client, holder, ctx
     assert s["state"] == "consent"
     assert s["consent"]["name"] == "Kitchen buyer"
     assert s["consent"]["keyId"] == key.thumbprint()[:8]
-    assert s["consent"]["may"] == ["Order alone up to 1,200.00 €", "Ask you up to 2,000.00 €",
-                                   "Never above 2,000.00 €", "Substitutes up to 5 % extra"]
+    assert s["consent"]["may"] == ["Orders alone up to 1,200.00 €", "Needs approval up to 2,000.00 €",
+                                   "Blocked above 2,000.00 €", "Substitutes up to 5 % extra"]
     assert client.get("/api/rules").json()["maxExtraPct"] == 5  # the consent says what Rules say
     assert client.get("/agent/v1/pass", params={"code": code}).json() == {"status": "consent"}
 
@@ -145,7 +161,8 @@ def test_pause_needs_an_agent(client):  # noqa: F811
 
 def test_demo_agent_answers_the_code_and_gets_the_pass_back(client, ctx):  # noqa: F811
     client.post("/api/agent/disconnect")
-    s = client.post("/api/agent/demo").json()
+    pair_demo_agent(ctx)  # the demo agent's key answers the code like any signing agent
+    s = client.get("/api/agent").json()
     assert s["state"] == "consent" and s["consent"]["name"] == "Demo agent"
     s = client.post("/api/agent/allow").json()
     assert s["state"] == "active" and s["agent"]["passVersion"] == 3
@@ -182,38 +199,8 @@ def test_consent_says_the_rules_as_saved(client):  # noqa: F811
     assert r.status_code == 200, r.text
     pair_own_agent(client)
     assert client.get("/api/agent").json()["consent"]["may"] == [
-        "Order alone up to 1,000.00 €", "Ask you up to 3,000.00 €", "Never above 3,000.00 €",
-        "At most 8,000.00 € a week", "Substitutes up to 5 % extra"]
-
-
-@pytest.mark.parametrize("path", ["/api/agent/demo", "/api/demo/example"])
-def test_demo_routes_are_closed_without_demo(client, monkeypatch, path):  # noqa: F811
-    monkeypatch.setenv("VALIDIO_DEMO", "")
-    assert client.post(path).status_code == 404
-
-
-def test_example_request_goes_through_the_demo_agent(client):  # noqa: F811
-    r = client.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    out = r.json()
-    assert out["requestId"].startswith("R-")
-    req = client.get(f"/api/requests/{out['requestId']}").json()
-    assert "lactose-free milk" in req["text"]
-
-
-def test_example_needs_the_demo_agent(client):  # noqa: F811
-    client.post("/api/agent/disconnect")
-    r = client.post("/api/demo/example")
-    assert r.status_code == 409 and r.json()["detail"] == "connect the demo agent first"
-
-
-def test_example_while_paused_shows_the_refusal(client):  # noqa: F811
-    client.post("/api/agent/pause", json={"paused": True})
-    r = client.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    out = r.json()
-    assert "requestId" not in out
-    assert any("paused" in ln for ln in out["lines"])
+        "Orders alone up to 1,000.00 €", "Needs approval up to 3,000.00 €", "Blocked above 3,000.00 €",
+        "Per week up to 8,000.00 €", "Substitutes up to 5 % extra"]
 
 
 def test_a_kitchen_left_unconnected_refuses_every_pass_until_allowed(client, holder, ctx):  # noqa: F811
@@ -226,8 +213,7 @@ def test_a_kitchen_left_unconnected_refuses_every_pass_until_allowed(client, hol
     assert len(client.get("/api/ledger").json()["entries"]) == before  # quiet
     r = ask(client, holder, "unconnected")
     assert r.status_code == 401 and r.json()["detail"] == "no agent is connected to this kitchen"
-    assert client.post("/api/demo/example").status_code == 409
-    client.post("/api/agent/demo")
+    pair_demo_agent(ctx)
     assert client.post("/api/agent/allow").json()["agent"]["passVersion"] == 2
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     assert ask(client, h, "connected").status_code == 200

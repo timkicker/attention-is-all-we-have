@@ -7,8 +7,8 @@ public demo; every write still needs the token.
 Approve and reject: the 6 digit code (VALIDIO_APPROVE_CODE) as X-Approve-Code or {"code"}. The order is
 looked up first, so an unknown id answers 404 whatever the code. Five wrong codes lock that order, and five
 from one client lock that client.
-Demo switches: a logged-in demo copy (docs/ACCOUNTS-API.md), or the local kitchen with VALIDIO_DEMO=1 for a
-caller on this machine. Without a code, approve stays closed to anyone not on this machine."""
+Demo reset: a logged-in demo copy (docs/ACCOUNTS-API.md), or the local kitchen with VALIDIO_DEMO=1 for a
+caller on this machine. Nothing here orders: only an agent over MCP or the agent API does. Without a code, approve stays closed to anyone not on this machine."""
 
 import hmac
 import json
@@ -27,8 +27,6 @@ from .accounts import request_ctx
 from .schemas import (
     ApproveIn,
     AskedFor,
-    AskIn,
-    AskOut,
     DemoState,
     InboxItem,
     LedgerHeadView,
@@ -38,7 +36,6 @@ from .schemas import (
     SessionIn,
     SpendPassIn,
     SpendPassView,
-    StockOutIn,
     SupplyRequestView,
 )
 from .state import MAX_CODE_TRIES, Ctx
@@ -112,7 +109,7 @@ def _code(ctx: Ctx, request: Request, order_id: str, header: str | None, body: A
 
 
 def _demo(ctx: Ctx, request: Request) -> None:
-    """Demo controls: a demo copy's session, or the local kitchen (VALIDIO_DEMO=1) from this machine."""
+    """The demo reset: a demo copy's session, or the local kitchen (VALIDIO_DEMO=1) from this machine."""
     if ctx.account is not None:
         if not ctx.account["is_demo"]:
             raise HTTPException(404, "demo controls are only on the demo kitchen")
@@ -141,7 +138,10 @@ def inbox(ctx: CtxDep):
 
 @router.get("/requests/{request_id}", response_model=SupplyRequestView, response_model_exclude_none=True)
 def request_detail(ctx: CtxDep, request_id: str):
-    return asked_apart(ctx, get_request(ctx, request_id))
+    v = asked_apart(ctx, get_request(ctx, request_id))
+    if v.status == "waiting" and not v.lead_text and v.decision:
+        v.lead_text = display.reason_text(v.decision.sentence)  # why it waits, under the question
+    return v
 
 
 def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
@@ -263,14 +263,18 @@ def ledger(ctx: CtxDep):
                 "rule_ids": e.rule_ids, "order_id": e.order_id, "prev_hash": e.prev_hash, "hash": e.hash}
                for e in ctx.audit.list()]
     from . import display
+    from .connect import agent_names
     from .steady import _steady
 
+    names = agent_names(ctx)  # an agent's entries under the name it connected with ("Claude Code")
     titles: dict[str, tuple[str, str]] = {}  # request id: (title with the date, without)
     for e, rid in zip(entries, _request_ids(ctx, entries), strict=True):
         e["request_id"] = rid
+        if e["actor"] in names:
+            e["actor_text"] = names[e["actor"]]
         if rid and rid not in titles:
             if rid.startswith("M-"):
-                titles[rid] = ("Spend Pass", "Spend Pass")  # the page puts the id next to it
+                titles[rid] = ("Rules", "Rules")
             elif rid == "demo":
                 titles[rid] = ("Demo", "Demo")
             elif rid.startswith("R-"):
@@ -335,63 +339,6 @@ def _demo_state(ctx: Ctx, on: bool) -> DemoState:
 @router.get("/demo", response_model=DemoState, response_model_exclude_none=True)
 def demo_state(ctx: CtxDep):
     return _demo_state(ctx, ctx.stockout())
-
-
-@router.post("/demo/stock-out", response_model=DemoState, response_model_exclude_none=True)
-def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, Body()] = None):
-    """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {"on": false} ends
-    it. A change writes one simulation entry, the same state again writes none."""
-    _demo(ctx, request)
-    on = body.on if body else True
-    if ctx.stockout() != on:
-        ctx.set_stockout(on)
-    return _demo_state(ctx, on)
-
-
-@router.post("/demo/ask", response_model=AskOut, response_model_exclude_none=True)
-def demo_ask(ctx: CtxDep, request: Request, body: AskIn):
-    """The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when
-    GEMINI_API_KEY is set, the fake model otherwise. On a public read deploy only a demo copy may use it."""
-    import asyncio
-    import secrets
-
-    from ..agent.buyer import run, task_for_text
-    from ..agent.holder import Holder
-    from ..agent.llm import make_llm
-    from ..agent.pane import Style, render
-    from ..agent.port import McpPort
-    from . import tools
-    from .mcp_server import server
-
-    if ctx.public_read or ctx.account is not None:
-        _demo(ctx, request)
-    text = " ".join(body.text.split())
-    if not text:
-        raise HTTPException(422, "say what the kitchen needs, for example 500 litres of lactose-free milk by Monday")
-    holder = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
-
-    async def go():
-        # a fresh salt per press: the same text again is a new request, retries inside one run still match
-        async with McpPort(server, spend_pass=holder.presentation, salt=secrets.token_hex(8)) as port:
-            return await run(task_for_text(text), make_llm(2), port)
-
-    from .state import current
-
-    token = current.set(ctx)  # the MCP tools in this run work on this account (asyncio.run copies the context)
-    try:
-        t = asyncio.run(go())
-    finally:
-        current.reset(token)
-    plain = Style(False)
-    rid = next((e.data.get("requestId") or e.data.get("id") for e in t.events
-                if e.kind == "answer" and e.name == "request_supply" and isinstance(e.data, dict)
-                and "error" not in e.data), None)
-    lines = [render(e, plain) for e in t.events]
-    final = t.final
-    missed = next((m for ln in lines if (m := re.search(r"answers for (.+?) aren't recorded for this demo", ln))), None)
-    if rid is None and missed:  # the screen shows it as one short muted line, whatever the model said
-        final = f"Not recorded for this demo: {missed.group(1)}."
-    return AskOut(request_id=rid, model=t.model, lines=lines, final=final)
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)

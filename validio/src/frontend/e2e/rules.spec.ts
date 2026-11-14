@@ -100,7 +100,7 @@ function measure(page: Page, name: string) {
             if (a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) fail("6a", `labels overlap: "${(labels[i].l as HTMLElement).innerText}" and "${(labels[j].l as HTMLElement).innerText}"`);
           }
         const name = lane.querySelector(".rc-n")?.textContent ?? "";
-        if (/Total|Limits/.test(name) && !labels.some(({ l }) => /never above/.test(l.textContent ?? ""))) fail("6a", `${name} plot without never above`);
+        if (/Total|Limits/.test(name) && !labels.some(({ l }) => /blocked above/.test(l.textContent ?? ""))) fail("6a", `${name} plot without blocked above`);
       }
     }
     for (const x of document.querySelectorAll(".rc-xax")) if (!x.closest(".rc-lane")) fail("6", "rc-xax outside a lane");
@@ -245,7 +245,9 @@ function measure(page: Page, name: string) {
       const back = document.querySelector(".kopfleiste a");
       if (back) {
         const r = box(back);
-        if (!near(r.left, 8) || !near(r.right, 52) || !near(r.top, 0) || !near(r.bottom, 48)) fail("22", `back box ${r.left},${r.top} ${r.right},${r.bottom}`);
+        // The demo bar, where shown, sits above the header on the phone.
+        const t = document.querySelector(".demobar")?.getBoundingClientRect().bottom ?? 0;
+        if (!near(r.left, 8) || !near(r.right, 52) || !near(r.top, t) || !near(r.bottom, t + 48)) fail("22", `back box ${r.left},${r.top} ${r.right},${r.bottom}`);
       }
     }
     return out;

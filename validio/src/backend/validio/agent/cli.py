@@ -2,7 +2,8 @@
 printed for the demo's left pane.
 
 By default it talks MCP to the running Validio of `make demo` on 127.0.0.1:8410, so the web app on the
-right shows the same request. Scene 3 needs the presenter's stock-out button first. With --local (or
+right shows the same request. Scene 3 needs the simulated stock-out, which only the template build sets
+(scripts/demo_check.py, in process, no route). With --local (or
 when nothing answers on the port) it runs Validio's MCP server in process on a fresh seeded store under
 a temporary folder, and switches the simulated stock-out on itself for scene 3.
 
@@ -13,12 +14,14 @@ With --kitchen k-... it is a kitchen account's agent instead, on /mcp/k/{account
 or the public link): --pair CODE answers the pairing code the Agent page shows with the agent's own key
 (kept under --agent-keys), waits for Allow and keeps the Spend Pass; --scene then presents that pass.
 
-The model is Gemini when GEMINI_API_KEY is set, otherwise the fake twin with the same tool calls."""
+The model is Gemini when GEMINI_API_KEY is set (in validio/.env or the environment) and LLM_MODE is not fake,
+otherwise the fake twin with the same tool calls."""
 
 import argparse
 import asyncio
 import logging
 import os
+import secrets
 import sqlite3
 import sys
 import tempfile
@@ -86,6 +89,8 @@ def send_pair(http: httpx.Client, kitchen: str, code: str, keys: Path) -> str:
                                                        "publicJwk": key.export_public(as_dict=True)})
     if r.status_code != 202:
         raise SystemExit(f"pairing refused: {r.status_code} {r.text[:200]}")
+    if r.json().get("verifyCode"):
+        print(f"verification code: {r.json()['verifyCode']} (must match the code on the Agent page)", flush=True)
     return r.json()["status"]
 
 
@@ -132,7 +137,10 @@ async def _main(scene: int, base: str, force_local: bool, kitchen: str | None = 
         target, holder, label = local(scene)
     llm = make_llm(scene)
     print(f"Validio demo, scene {scene}: {SCENES[scene].title}\nmodel: {llm.name} | {label}\n", flush=True)
-    async with McpPort(target, spend_pass=holder.presentation) as port:
+    # on a kitchen account every run is a new request: without a salt the keys equal those the template was
+    # built with, so Validio would hand back the template's own R-1 instead of a new request
+    salt = secrets.token_hex(6) if kitchen else ""
+    async with McpPort(target, spend_pass=holder.presentation, salt=salt) as port:
         t = await run_scene(scene, llm, port, on_event=printer())
     path = write(t, scene, label, ARTIFACTS)
     print(f"transcript: {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}", flush=True)

@@ -1,6 +1,6 @@
 <script lang="ts">
-  /// The kitchen's one agent: connect it (pairing code, or the demo agent),
-  /// let it in on the consent card, then pause or disconnect it. Its Rules
+  /// The kitchen's one agent: connect it over MCP (or a pairing code), let it
+  /// in on the consent card once its code matches, then pause or disconnect it. Its Rules
   /// sit below in one card, edited in place and saved with the approval code.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
@@ -36,7 +36,7 @@
     try {
       const next = await run();
       ag.data = next;
-      // The Inbox checklist and the example request read the agent from the session.
+      // The Inbox checklist reads the agent from the session.
       const acc = session.account;
       if (acc) {
         const agent = next.state === "active" || next.state === "paused";
@@ -188,13 +188,14 @@
       {#if a.state === "active"}
         <VPill label="Active" tone="ok" testid="agent-state" />
       {:else if a.state === "paused"}
-        <VPill label="Paused" tone="wait" testid="agent-state" />
+        <VPill label="Paused" tone="neutral" testid="agent-state" />
       {:else}
-        <VPill label="Not connected" tone="neutral" testid="agent-state" />
+        <VPill label={a.state === "pairing" ? "Waiting for your agent" : a.state === "consent" ? "Waiting for you" : "Not connected"} tone="neutral" testid="agent-state" />
       {/if}
       {#if a.agent}
         <span data-testid="agent-name">{a.agent.name}</span>
         <span data-testid="agent-used">{a.agent.lastUsedAt ? `Used ${dayTime(a.agent.lastUsedAt)}` : "Not used yet"}</span>
+        {#if pass.data?.usedCents !== undefined}<span class="num" data-testid="agent-week">{money(pass.data.usedCents)} this week</span>{/if}
         <a href="/ledger?pass={encodeURIComponent(a.agent.passId)}" data-testid="agent-ledger" id="agent-ledger">See in ledger</a>
       {/if}
     {/snippet}
@@ -209,42 +210,43 @@
     {:else if a.state === "none"}
       <div class="row-buttons">
         <Button data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
-        {#if session.account?.isDemo}
-          <Button variant="outline" data-testid="agent-demo" disabled={busy} onclick={() => act(agentApi.demo)}>Connect the demo agent</Button>
-        {/if}
       </div>
     {:else if a.state === "pairing" && a.pairing}
       <section class="sec" aria-labelledby="h-pair">
-        <h2 class="v-h" id="h-pair">Pairing code</h2>
+        <h2 class="v-h" id="h-pair">Connect your agent</h2>
         <Section class="v-card">
           <div class="pair">
-            <span class="code mono" data-testid="pair-code" id="pair-code" data-raw>{a.pairing.code}</span>
-            {@render copy_button("code", a.pairing.code, "Copy pairing code")}
+            <code class="url big" data-testid="mcp-url" id="mcp-url">{a.pairing.mcpUrl}</code>
+            {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
           </div>
-          <VValueRow label="Valid until" value={hm(a.pairing.expiresAt)} />
+          <p class="steps" data-testid="mcp-hint">Add this URL to your agent as an MCP server. Allow appears here on its first call.</p>
         </Section>
         <details class="fold vendor">
-          <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />For your agent's vendor</summary>
+          <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />Agent without MCP</summary>
           <div class="fold-body urls">
-            <span class="url-label">MCP</span>
-            <code class="url" data-testid="mcp-url">{a.pairing.mcpUrl}</code>
-            {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
+            <span class="url-label">Code</span>
+            <code class="url" data-testid="pair-code" id="pair-code" data-raw>{a.pairing.code}</code>
+            {@render copy_button("code", a.pairing.code, "Copy pairing code")}
+            <span class="hint">Valid until {hm(a.pairing.expiresAt)}</span>
             <span class="url-label">API</span>
             <code class="url">{a.pairing.apiUrl}</code>
             {@render copy_button("api", a.pairing.apiUrl, "Copy API URL")}
           </div>
         </details>
         <div class="row-buttons">
-          {#if session.account?.isDemo}
-            <Button variant="outline" data-testid="agent-demo" disabled={busy} onclick={() => act(agentApi.demo)}>Connect the demo agent</Button>
-          {/if}
           <Button variant="ghost" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
         </div>
       </section>
     {:else if a.state === "consent" && a.consent}
       <section class="sec" aria-labelledby="h-consent" data-testid="consent">
-        <h2 class="v-h" id="h-consent">{a.consent.name}</h2>
+        <h2 class="v-h" id="h-consent">{a.consent.name} wants to order for {session.account?.name ?? "your kitchen"} within your Rules</h2>
         <Section class="v-card">
+          {#if a.consent.verifyCode}
+            <div class="verify">
+              <span class="code mono" data-testid="verify-code" id="verify-code" data-raw>{a.consent.verifyCode}</span>
+              <p class="steps" data-testid="verify-hint">Your agent shows this code too. Allow only if it matches.</p>
+            </div>
+          {/if}
           <ul class="may" aria-label="What it may do">
             {#each a.consent.may as m (m)}<li>{m}</li>{/each}
           </ul>
@@ -257,6 +259,8 @@
     {/if}
     {#if problem}<p class="problem" role="alert" data-testid="agent-problem">{problem}</p>{/if}
 
+    <!-- While an agent pairs or asks, that is the page's one job; the consent card names the Rules. -->
+    {#if a.state !== "pairing" && a.state !== "consent"}
     <section class="sec" aria-labelledby="h-rules" id="rules">
       <h2 class="v-h" id="h-rules">
         Rules
@@ -272,7 +276,7 @@
           <Section class="v-card">
             <VValueRow label="Orders alone">{@render money_field("alone", "Orders alone")}</VValueRow>
             <VValueRow label="Needs approval">{@render money_field("approval", "Needs approval")}</VValueRow>
-            <VValueRow label="Blocked" value={above ? `Above ${above}` : "—"} testid="r-blocked" />
+            <VValueRow label="Blocked above" value={above || "—"} testid="r-blocked" />
             <VValueRow label="Per week">{@render money_field("week", "Per week")}</VValueRow>
             <VValueRow label="Substitutes">
               <span class="subs">
@@ -305,18 +309,16 @@
           {#if r.saved}
             <VValueRow label="Orders alone" value="Up to {money(r.aloneUpToCents)}" testid="rules-alone" />
             <VValueRow label="Needs approval" value="Up to {money(r.approvalUpToCents)}" testid="rules-approval" />
-            <VValueRow label="Blocked" value="Above {money(r.approvalUpToCents)}" testid="rules-blocked" />
+            <VValueRow label="Blocked above" value={money(r.approvalUpToCents)} testid="rules-blocked" />
             <VValueRow label="Per week" value={r.perWeekCents == null ? "No limit" : `Up to ${money(r.perWeekCents)}`} testid="rules-week" />
             <VValueRow label="Substitutes" value={subsWord(r)} testid="rules-subs" />
-            {#if pass.data?.usedCents !== undefined}
-              <VValueRow label="Ordered" value={money(pass.data.usedCents)} testid="rules-used" />
-            {/if}
           {:else}
             <VValueRow label="Every order" value="Needs approval" testid="rules-unset" />
           {/if}
         </Section>
       {/if}
     </section>
+    {/if}
 
     {#if connected && a.agent}
       <details class="fold" data-testid="tech-fold" id="tech-fold">
@@ -380,12 +382,35 @@
     gap: 16px;
     padding: 16px;
   }
-  .pair .code {
+  .pair .big {
+    font-size: var(--fs-body);
+    line-height: 24px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .verify {
+    padding: 16px 16px 0;
+    border-bottom: 1px solid var(--v-line);
+  }
+  .verify .code {
+    display: block;
     font-size: 32px;
     line-height: 40px;
     font-weight: 600;
     letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
+  }
+  .verify .steps {
+    padding: 4px 0 16px;
+  }
+  .steps {
+    margin: 0;
+    padding: 0 16px 16px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+    overflow-wrap: anywhere;
   }
   .vendor {
     margin-top: 12px;
@@ -402,6 +427,13 @@
   }
   .url {
     font-size: var(--fs-meta);
+    overflow-wrap: anywhere;
+  }
+  .hint {
+    grid-column: 2 / -1;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
     overflow-wrap: anywhere;
   }
   .may {
@@ -515,7 +547,7 @@
     margin-top: 4px;
   }
   @media (max-width: 760px) {
-    .pair .code {
+    .verify .code {
       font-size: 28px;
       line-height: 36px;
     }
@@ -523,6 +555,9 @@
       grid-template-columns: minmax(0, 1fr) auto;
     }
     .url-label {
+      grid-column: 1 / -1;
+    }
+    .hint {
       grid-column: 1 / -1;
     }
   }

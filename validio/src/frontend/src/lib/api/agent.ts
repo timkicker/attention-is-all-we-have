@@ -47,17 +47,17 @@ const euro = (c: number) => `${(c / 100).toLocaleString("en-US", { minimumFracti
 
 /** The Rules in words, as the server writes `consent.may`. */
 export function mayWords(r: Rules): string[] {
-  if (!r.saved) return ["Ask you before every order"];
+  if (!r.saved) return ["Every order needs approval"];
   return [
-    `Order alone up to ${euro(r.aloneUpToCents)}`,
-    `Ask you up to ${euro(r.approvalUpToCents)}`,
-    `Never above ${euro(r.approvalUpToCents)}`,
-    ...(r.perWeekCents == null ? [] : [`At most ${euro(r.perWeekCents)} a week`]),
+    `Orders alone up to ${euro(r.aloneUpToCents)}`,
+    `Needs approval up to ${euro(r.approvalUpToCents)}`,
+    `Blocked above ${euro(r.approvalUpToCents)}`,
+    ...(r.perWeekCents == null ? [] : [`Per week up to ${euro(r.perWeekCents)}`]),
     r.substitutes === "off" ? "No substitutes" : r.substitutes === "listed" ? "Substitutes from Valio's list" : `Substitutes up to ${r.maxExtraPct} % extra`,
   ];
 }
 
-// A fresh demo copy: rules saved, no agent yet, so "Connect the demo agent" is the first thing on the page.
+// A fresh demo copy: rules saved, no agent yet; an MCP agent connects itself.
 function start(): Mock {
   return {
     agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
@@ -100,11 +100,31 @@ function bumpVersion(m: Mock, why: string): number {
 }
 
 const LOOK = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-function pairCode(): string {
+function randomCode(n: number): string {
   let s = "";
-  for (let i = 0; i < 8; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
-  return `${s.slice(0, 4)}-${s.slice(4)}`;
+  for (let i = 0; i < n; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
+  return `${s.slice(0, n / 2)}-${s.slice(n / 2)}`;
 }
+const pairCode = () => randomCode(8);
+
+function token(): string {
+  const b = new Uint8Array(24);
+  crypto.getRandomValues(b);
+  return Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it.
+ *  The agent gets the same verification code in its tool answer; returned here for the console. */
+export function mockMcpCall(): string | undefined {
+  const m = load();
+  if (m.agent.state !== "pairing") return;
+  const verifyCode = randomCode(6);
+  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode }, versions: m.agent.versions };
+  store(m);
+  return verifyCode;
+}
+// In the browser console of the fixture build: validioMcpCall()
+if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall = mockMcpCall;
 
 const mock = {
   async agent(): Promise<AgentState> {
@@ -117,18 +137,12 @@ const mock = {
       pairing: {
         code: pairCode(),
         expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(),
-        mcpUrl: `${HOST}/mcp/k/${ACCOUNT}/`,
+        // Any MCP agent: its first call asks for consent as "MCP agent".
+        mcpUrl: `${HOST}/mcp/c/${token()}/`,
         apiUrl: `${HOST}/agent/v1/k/${ACCOUNT}`,
       },
       versions: m.agent.versions,
     };
-    store(m);
-    return structuredClone(m.agent);
-  },
-  async demo(): Promise<AgentState> {
-    await later(300);
-    const m = load();
-    m.agent = { state: "consent", consent: { name: "Demo kitchen agent", keyId: "q3Hk7pXa", may: mayWords(m.rules) }, versions: m.agent.versions };
     store(m);
     return structuredClone(m.agent);
   },
@@ -137,7 +151,7 @@ const mock = {
     const c = m.agent.consent;
     if (m.agent.state !== "consent" || !c) throw new ApiError(409, "nothing to allow");
     m.agent = { state: "active", versions: m.agent.versions };
-    m.agent.agent = { name: c.name, keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
+    m.agent.agent = { name: c.name, kind: "agent", keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
     bumpVersion(m, "Agent connected");
     store(m);
     return structuredClone(m.agent);
@@ -190,8 +204,6 @@ const mock = {
 export const agentApi = {
   agent: (): Promise<AgentState> => (LIVE ? call("GET", "/api/agent") : mock.agent()),
   pair: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pair") : mock.pair()),
-  /** Demo copies only: the server's demo agent answers the code. */
-  demo: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/demo") : mock.demo()),
   allow: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/allow") : mock.allow()),
   deny: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/deny") : mock.deny()),
   pause: (paused: boolean): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pause", { paused }) : mock.pause(paused)),

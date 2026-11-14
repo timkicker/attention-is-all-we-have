@@ -5,6 +5,7 @@ import importlib.util
 from pathlib import Path
 
 import pytest
+from asking import stockout
 from conftest import CODE
 from fastapi.testclient import TestClient
 from mcp import Client
@@ -56,7 +57,7 @@ async def test_revoked_pass_refused_over_mcp(ctx, holder):
 
 def test_waiting_order_under_a_revoked_pass_is_not_approved(ctx, holder):
     with TestClient(app) as client:
-        client.post("/api/demo/stock-out")
+        stockout()
         req = ask(client, holder, "mozz", [{"productId": "466375", "quantity": 200, "unit": "BAG"}]).json()
         assert req["status"] == "waiting"
         assert revoke_cli("M-1") == 0

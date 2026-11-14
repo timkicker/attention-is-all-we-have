@@ -506,23 +506,8 @@ class SpendPassIn(Model):
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
 
-class StockOutIn(Model):
-    on: bool = Field(True, description="true simulates the stock-out of 466375, false ends it")
-
-
 class ResetIn(Model):
     fresh: bool = Field(False, description="a demo copy: the plain seed instead of the played template, no agent")
-
-
-class AskIn(Model):
-    text: str = Field(min_length=1, max_length=300, description="what the kitchen asks its agent for")
-
-
-class AskOut(Model):
-    request_id: str | None = Field(None, description="the request the agent made, absent when Validio refused it")
-    model: str = Field(description="\"Gemini gemini-3.8-flash\" or \"fake model (no Gemini key)\"")
-    lines: list[str] = Field(description="the agent's calls and Validio's answers, as the terminal pane prints them")
-    final: str = Field(description="the agent's last sentence")
 
 
 class DemoState(Model):

@@ -198,3 +198,55 @@ def test_fake_names_the_cause_when_request_supply_fails(n):
     final = llm.step(history).text
     assert final is not None and "run make record first" in final
     assert "None" not in final
+
+
+def _no_model_env(monkeypatch):
+    for k in ("GEMINI_API_KEY", "GEMINI_MODEL", "LLM_MODE"):
+        monkeypatch.delenv(k, raising=False)
+
+
+def test_make_llm_reads_the_key_from_dot_env(tmp_path, monkeypatch):
+    # make agent and the server read validio/.env, so a key there turns the agent into Gemini
+    from validio.agent.llm import make_llm
+
+    _no_model_env(monkeypatch)
+    env = tmp_path / ".env"
+    env.write_text("GEMINI_API_KEY=not-a-key   # from .env\nGEMINI_MODEL=gemini-2.5-flash\nLLM_MODE=gemini\n")
+    llm = make_llm(2, env)
+    assert isinstance(llm, GeminiLLM) and llm.name == "Gemini gemini-2.5-flash"
+    env.write_text("GEMINI_API_KEY=not-a-key\n")  # LLM_MODE unset: the key alone decides, as before
+    assert isinstance(make_llm(2, env), GeminiLLM)
+
+
+def test_make_llm_keeps_the_twin_when_asked_or_without_a_key(tmp_path, monkeypatch):
+    from validio.agent.llm import make_llm
+
+    _no_model_env(monkeypatch)
+    env = tmp_path / ".env"
+    env.write_text("GEMINI_API_KEY=not-a-key\nLLM_MODE=fake\n")
+    assert isinstance(make_llm(2, env), FakeLLM)
+    env.write_text("GEMINI_API_KEY=\nLLM_MODE=gemini\n")
+    assert isinstance(make_llm(2, env), FakeLLM)
+    assert isinstance(make_llm(2, tmp_path / "missing.env"), FakeLLM)
+
+
+def test_make_llm_environment_wins_over_dot_env(tmp_path, monkeypatch):
+    # an empty key in the environment keeps the twin although .env has one (tests and the video rely on it)
+    from validio.agent.llm import make_llm
+
+    _no_model_env(monkeypatch)
+    env = tmp_path / ".env"
+    env.write_text("GEMINI_API_KEY=not-a-key\nLLM_MODE=gemini\n")
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    assert isinstance(make_llm(2, env), FakeLLM)
+    monkeypatch.setenv("GEMINI_API_KEY", "not-a-key")
+    monkeypatch.setenv("LLM_MODE", "fake")
+    assert isinstance(make_llm(2, env), FakeLLM)
+
+
+def test_tests_run_the_fake_model_by_default():
+    # conftest sets LLM_MODE=fake so a developer's .env key never makes the suite call Gemini
+    from validio.agent.llm import make_llm
+
+    assert os.environ["LLM_MODE"] == "fake"
+    assert isinstance(make_llm(2), FakeLLM)

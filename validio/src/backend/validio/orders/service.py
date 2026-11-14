@@ -98,7 +98,7 @@ def mandate_dict(m: Mandate) -> dict[str, Any]:
 
 def mandate_from(d: dict[str, Any]) -> Mandate:
     d = dict(d)
-    for k in ("categories", "diet", "prefer_labels"):
+    for k in ("categories", "diet", "prefer_labels", "never_contains"):
         if d.get(k) is not None:
             d[k] = tuple(d[k])
     return Mandate(**{f.name: d.get(f.name) for f in fields(Mandate)})
