@@ -20,6 +20,7 @@ export interface Answers {
 export const answers: Answers = {
  "demo": [
   {
+   "codeRequired": true,
    "realStock466375": {
     "quantity": 11603.0,
     "unit": "BAG"
@@ -27,6 +28,7 @@ export const answers: Answers = {
    "stockOut466375": false
   },
   {
+   "codeRequired": true,
    "realStock466375": {
     "quantity": 11603.0,
     "unit": "BAG"
@@ -38,64 +40,99 @@ export const answers: Answers = {
   [
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
+    "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+    "moneyText": "1,010.00 €",
+    "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
     "status": "ordered_alone",
+    "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    "timeText": "10:00",
+    "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "totalCents": 101000
    }
   ],
   [
    {
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "createdAt": "2026-11-14T10:14:00+02:00",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
-    "sentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+    "moneyText": "180.10 €",
+    "sentence": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "status": "waiting",
-    "text": "200 BAG of 466375",
+    "summary": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?.",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    },
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
+    "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+    "moneyText": "1,010.00 €",
+    "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
     "status": "ordered_alone",
+    "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    "timeText": "10:00",
+    "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "totalCents": 101000
    }
   ],
   [
    {
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "createdAt": "2026-11-14T10:14:00+02:00",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
-    "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+    "moneyText": "180.10 €",
+    "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
     "status": "ordered",
-    "text": "200 BAG of 466375",
+    "summary": "Placed order O-2.",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    },
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
+    "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+    "moneyText": "1,010.00 €",
+    "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
     "status": "ordered_alone",
+    "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    "timeText": "10:00",
+    "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "totalCents": 101000
    }
   ],
   [
    {
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "createdAt": "2026-11-14T10:14:00+02:00",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
-    "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+    "moneyText": "180.10 €",
+    "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
     "status": "rejected",
-    "text": "200 BAG of 466375",
+    "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    },
    {
     "createdAt": "2026-11-14T10:00:00+02:00",
+    "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "id": "R-1",
-    "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+    "moneyText": "1,010.00 €",
+    "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
     "status": "ordered_alone",
+    "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    "timeText": "10:00",
+    "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "totalCents": 101000
    }
   ]
@@ -109,11 +146,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -122,51 +165,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -174,7 +241,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -182,19 +249,21 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     }
    ]
   },
@@ -206,11 +275,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -219,51 +294,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -271,7 +370,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -279,27 +378,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -307,7 +414,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -315,27 +422,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
+     "hash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 5,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:11"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -350,7 +465,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "3.77 EUR"
+       "value": "3.77 €"
       },
       {
        "field": "quantity",
@@ -364,326 +479,73 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "6.40 EUR"
+       "value": "6.40 €"
       }
      ],
-     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
+     "hash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
+     "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
      "seq": 6,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:14"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
+     "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "kind": "decision",
-     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
+     "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 7,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:16"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
+     "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
      "kind": "decision",
-     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
+     "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
      "seq": 8,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 10,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
-     "kind": "order",
-     "orderId": "O-2",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 5,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
-     "kind": "decision",
-     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
-     "kind": "decision",
-     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "27 KI"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "33.53 EUR"
-      }
-     ],
-     "hash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
-     "kind": "approval",
-     "orderId": "O-4",
-     "prevHash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 10,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:19"
     }
    ]
   },
@@ -695,11 +557,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -708,51 +576,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -760,7 +652,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -768,27 +660,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -796,7 +696,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -804,27 +704,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
+     "hash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 5,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:11"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -839,7 +747,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "3.77 EUR"
+       "value": "3.77 €"
       },
       {
        "field": "quantity",
@@ -853,384 +761,87 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "6.40 EUR"
+       "value": "6.40 €"
       }
      ],
-     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
+     "hash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
+     "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
      "seq": 6,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:14"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
+     "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "kind": "decision",
-     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
+     "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 7,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:16"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
+     "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
      "kind": "decision",
-     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
+     "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
      "seq": 8,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:19"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "11603 BAG"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "1.16 EUR"
-      }
-     ],
-     "hash": "b119b9bfe8e31f24754c5415395a42df606c6679545880df334099886a3bb00c",
-     "kind": "decision",
-     "orderId": "O-4",
-     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Needs a person: a diet rule cannot be checked.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
+     "disclosedText": [
+      "auto limit",
       "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "11603 BAG"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "1.16 EUR"
-      }
-     ],
-     "hash": "31098d59fc74a6a33168cce714b288dccbf44999353fe529a8c115c0db9b06c8",
-     "kind": "approval",
-     "orderId": "O-4",
-     "prevHash": "b119b9bfe8e31f24754c5415395a42df606c6679545880df334099886a3bb00c",
-     "ruleIds": [],
-     "sentence": "Chef approved 98 BAG of 466375 for 113.68 EUR.",
-     "seq": 10,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "11603 BAG"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "1.16 EUR"
-      }
-     ],
-     "hash": "23ebcc71cc6a73764bd25d9e8e6cd6b28368a39452039a353f4ca71093c22474",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "31098d59fc74a6a33168cce714b288dccbf44999353fe529a8c115c0db9b06c8",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Placed order O-4: 98 BAG of 466375 Gran Castelli mozzarella 125g lactose free for 113.68 EUR after the chef approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 13,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
-     "kind": "order",
-     "orderId": "O-2",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 5,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "91d6caf560605d09e5036bb8d3beb1d59c940276ee1dcda5abbb9b1f128ea912",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
-     "kind": "decision",
-     "prevHash": "1ba87b4ad0b3d22037f0dcc36113f7194bb93393ddcda0382abea063252566c1",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
-     "kind": "decision",
-     "prevHash": "0db32ed0555a771e3ab23490802fc037ed30b60c02562389ce32899e2e0f97e6",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
+      "never above"
      ],
      "facts": [
       {
@@ -1245,45 +856,485 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "33.53 EUR"
+       "value": "33.53 €"
       }
      ],
-     "hash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
+     "hash": "de6b67f523c329bb5c4eb7620ee37ddd12756929b7e5d9e6991022578a167b8d",
+     "kind": "decision",
+     "orderId": "O-4",
+     "prevHash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
+     "seq": 9,
+     "spendPassId": "S-1-W46",
+     "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "61b0f3a5269c0e867fb486651a24cfe817f1829432be01c9f2fa36365709cf5e",
+     "kind": "approval",
+     "orderId": "O-4",
+     "prevHash": "de6b67f523c329bb5c4eb7620ee37ddd12756929b7e5d9e6991022578a167b8d",
+     "ruleIds": [],
+     "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "timeText": "10:25"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "7490f12937460252eb172723a383d3f7450820591af635d5941cebfb0c37682f",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "e75ed203721b4613e8d88ae488e1b931e308493deecc7f669df89849b45d16d3",
+     "prevHash": "61b0f3a5269c0e867fb486651a24cfe817f1829432be01c9f2fa36365709cf5e",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-4: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Placed order O-4.",
+     "timeText": "10:28"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 11,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 9,
-     "spendPassId": "M-1"
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
+     "kind": "order",
+     "orderId": "O-2",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 5,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "137 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "3.77 €"
+      },
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "318 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "6.40 €"
+      }
+     ],
+     "hash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
+     "kind": "order",
+     "orderId": "O-3",
+     "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 6,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
-     "hash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
+     "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
+     "kind": "decision",
+     "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 7,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
+     "kind": "decision",
+     "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
+     "seq": 8,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "11603 BAG"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "1.16 €"
+      }
+     ],
+     "hash": "dd182c140fa87ccc3ebb28d6d59035bd1b974acd334ba0994b96f0b4462e92b5",
+     "kind": "decision",
+     "orderId": "O-4",
+     "prevHash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 113.68 € counts as 1,189.17 €. Needs a person: a diet rule cannot be checked.",
+     "seq": 9,
+     "spendPassId": "S-1-W46",
+     "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "11603 BAG"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "1.16 €"
+      }
+     ],
+     "hash": "5d6868987d19aeff9aa0fab7d429bc6ed5694574b3a7967948739a8c26b01231",
      "kind": "approval",
      "orderId": "O-4",
-     "prevHash": "05f8b423d233abff3f265b117a8fcf85e900d83bc7bec0373633cc19f49819e1",
+     "prevHash": "dd182c140fa87ccc3ebb28d6d59035bd1b974acd334ba0994b96f0b4462e92b5",
      "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+     "sentence": "Owner accepted 98 bags of lactose-free mozzarella 125 g for 113.68 €.",
      "seq": 10,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Owner accepted 98 bags of lactose-free mozzarella 125 g for 113.68 €.",
+     "timeText": "10:25"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1298,87 +1349,21 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "1.16 EUR"
+       "value": "1.16 €"
       }
      ],
-     "hash": "361af6b88b475e09ad74a060564c39b0431f26cd1a8e912d9d761472ca08e40c",
-     "kind": "decision",
-     "orderId": "O-5",
-     "prevHash": "69f500bce064c7aa0d3c1cdcd43ca55546e18a1f326333e28afab81ae97e453e",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Needs a person: a diet rule cannot be checked.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "11603 BAG"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "1.16 EUR"
-      }
-     ],
-     "hash": "56011e6287bb63d2017f924a0238c8e158ee85e8cc18ca1c3ece45b7e911eac4",
-     "kind": "approval",
-     "orderId": "O-5",
-     "prevHash": "361af6b88b475e09ad74a060564c39b0431f26cd1a8e912d9d761472ca08e40c",
-     "ruleIds": [],
-     "sentence": "Chef approved 98 BAG of 466375 for 113.68 EUR.",
-     "seq": 12,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "11603 BAG"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "1.16 EUR"
-      }
-     ],
-     "hash": "e23b6a92c5ed8e6678d42050ddad6e8412f1b2867694514e145753dba7776f10",
+     "hash": "e820b1b82854784281b5ca95d46cd4f9970166b766738c529f21fec521c08c92",
      "kind": "order",
-     "orderId": "O-5",
-     "prevHash": "56011e6287bb63d2017f924a0238c8e158ee85e8cc18ca1c3ece45b7e911eac4",
+     "orderId": "O-4",
+     "prevHash": "5d6868987d19aeff9aa0fab7d429bc6ed5694574b3a7967948739a8c26b01231",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-5: 98 BAG of 466375 Gran Castelli mozzarella 125g lactose free for 113.68 EUR after the chef approved. Valio was asked again: every line can be delivered and no price rose more than 2 %.",
-     "seq": 13,
-     "spendPassId": "M-1"
+     "sentence": "Placed order O-4: 98 bags of lactose-free mozzarella 125 g for 113.68 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Placed order O-4.",
+     "timeText": "10:28"
     }
    ]
   },
@@ -1390,11 +1375,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -1403,51 +1394,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1455,7 +1470,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -1463,56 +1478,76 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     },
     {
      "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [],
+     "disclosedText": [],
      "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1520,26 +1555,28 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "18.01 EUR"
+       "value": "18.01 €"
       }
      ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
      "seq": 7,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
     }
    ]
   },
@@ -1551,11 +1588,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -1564,51 +1607,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1616,7 +1683,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -1624,56 +1691,76 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     },
     {
      "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [],
+     "disclosedText": [],
      "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1681,34 +1768,42 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "18.01 EUR"
+       "value": "18.01 €"
       }
      ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
      "seq": 7,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1716,7 +1811,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -1724,27 +1819,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
+     "hash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 8,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:19"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -1759,7 +1862,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "3.77 EUR"
+       "value": "3.77 €"
       },
       {
        "field": "quantity",
@@ -1773,1881 +1876,71 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "6.40 EUR"
+       "value": "6.40 €"
       }
      ],
-     "hash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
+     "hash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
+     "prevHash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
      "seq": 9,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:23"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
+     "hash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "kind": "decision",
-     "prevHash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
+     "prevHash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 10,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:25"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
-     "facts": [],
-     "hash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
-     "kind": "decision",
-     "prevHash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
-     "ruleIds": [
-      "ask-human"
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
+     "facts": [],
+     "hash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
+     "kind": "decision",
+     "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 11,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 13,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "59069e4eaea47b0cb19301ae7852c40adb777e9c878da21ede16422764cd8268",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
-     "kind": "decision",
-     "prevHash": "c2fa9c0f6e1e52890ecf41d400d75f5042801172f1d0d4e09139de68938e0aa7",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 10,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
-     "kind": "decision",
-     "prevHash": "6c550bbc33a9427b997694691b35ebd021ef18457dc44f698faf8cbcfe7fe31e",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "27 KI"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "33.53 EUR"
-      }
-     ],
-     "hash": "a8697bf48fde00a2ffb74b9f6d94c2325f3ad7355b53d0310421ac84861474b6",
-     "kind": "order",
-     "orderId": "O-5",
-     "prevHash": "932cc614d9236e68d494cb8fc46074fc7982ea05924e3a3384a207bf18315676",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 12,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "0976fec43ee0e73465b909e9efcfdd46748cb8d78fdd0acbbdf3be95e545f81c",
-     "kind": "approval",
-     "orderId": "O-5",
-     "prevHash": "a8697bf48fde00a2ffb74b9f6d94c2325f3ad7355b53d0310421ac84861474b6",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 13,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 9,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-     "kind": "order",
-     "orderId": "O-2",
-     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 13,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-     "kind": "order",
-     "orderId": "O-2",
-     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 10,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-     "kind": "decision",
-     "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 12,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
-     "kind": "decision",
-     "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
-     "seq": 13,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 15,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-     "kind": "order",
-     "orderId": "O-2",
-     "prevHash": "8ea3bd423cc8ee650d76ad2cbe20757b448cdecf56d350059c0ae8dad0da7d2e",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "7c4bb8f21b20b79f5360b216c4824e1d3f51f3fb0c9a368c20c2bf11cfb8f039",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 10,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "72771728adc343667ff6d28c858721de80b60a7a24b423f1049616578b49372f",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-     "kind": "decision",
-     "prevHash": "796e3706f9bc3b642343d28bd555a25791bdc5781efeb1f863c2384c954aa381",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 12,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
-     "kind": "decision",
-     "prevHash": "78d8db29840e7b898648588666899aae4fb2b329ece1df3e69bbcc6c4a016288",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
-     "seq": 13,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "27 KI"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "33.53 EUR"
-      }
-     ],
-     "hash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
-     "kind": "order",
-     "orderId": "O-5",
-     "prevHash": "2b22b4d252272d133d2bd71abfdee0affe02e4301944ae65d169bca3e7a3da8a",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 14,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "0b94caf24df18e69eb68db0459b1e73e3a9e02578f1c7c15adf9420520be293f",
-     "kind": "approval",
-     "orderId": "O-5",
-     "prevHash": "c68e88e455d19dd41ec58be949c904a43187a8cf94534cec25cc1d27492dec93",
-     "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-     "seq": 15,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 8,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    }
-   ]
-  },
-  {
-   "chain": {
-    "count": 12,
-    "ok": true
-   },
-   "entries": [
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "kind": "request",
-     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
-     "ruleIds": [],
-     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
-     "seq": 1,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "kind": "decision",
-     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-     "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
-     "seq": 2,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
-     "seq": 3,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "kind": "order",
-     "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 4,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [],
-     "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
-     "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
-    },
-    {
-     "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
-     "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
-     "seq": 6,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "kind": "decision",
-     "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
-     "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
-     "seq": 8,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested_until",
-       "note": "until 2026-12-31",
-       "source": "Valio price API",
-       "until": "2026-12-31",
-       "value": "1.01 EUR"
-      }
-     ],
-     "hash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
-     "kind": "order",
-     "orderId": "O-3",
-     "prevHash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 9,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "137 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "3.77 EUR"
-      },
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Stock at Valio",
-       "source": "Valio availability API",
-       "value": "318 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "6.40 EUR"
-      }
-     ],
-     "hash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
-     "kind": "order",
-     "orderId": "O-4",
-     "prevHash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
-     "ruleIds": [
-      "auto-order"
-     ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 10,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
-     "kind": "decision",
-     "prevHash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
-     "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 11,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [],
-     "hash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
-     "kind": "decision",
-     "prevHash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
-     "seq": 12,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:28"
     }
    ]
   },
@@ -3659,11 +1952,17 @@ export const answers: Answers = {
    "entries": [
     {
      "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
@@ -3672,51 +1971,75 @@ export const answers: Answers = {
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "ruleIds": [],
-     "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
-     "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
      "seq": 3,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -3724,7 +2047,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -3732,56 +2055,76 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "kind": "order",
      "orderId": "O-1",
-     "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
      "seq": 4,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
     },
     {
      "actor": "presenter",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [],
+     "disclosedText": [],
      "facts": [],
-     "hash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
-     "prevHash": "0778ef0181679459ada8cd8e54f7906b9c9d6da07bfbb64e508450c1bb4f4acd",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
      "ruleIds": [],
-     "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
-     "seq": 5
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
     },
     {
      "actor": "agent:buyer-1",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
-     "prevHash": "446acbeb1af17f13c68675de17f5cc02b01d4da4d7c9a0303e8d3ec372ddb760",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "ruleIds": [],
-     "sentence": "The agent asked for 200 BAG of 466375.",
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -3789,67 +2132,42 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "18.01 EUR"
+       "value": "18.01 €"
       }
      ],
-     "hash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "d5c3a622211a4f021031b3c91a065c8009aeb87bebe158d4f5c1a2658c31c1a1",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
      "seq": 7,
-     "spendPassId": "M-1"
-    },
-    {
-     "actor": "owner",
-     "at": "2026-11-14T10:00:00+02:00",
-     "disclosed": [
-      "autoLimitCents",
-      "diet",
-      "hardCapCents"
-     ],
-     "facts": [
-      {
-       "field": "quantity",
-       "grade": "attested",
-       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
-       "source": "Valio availability API",
-       "value": "1e+10 ST"
-      },
-      {
-       "field": "price",
-       "grade": "attested",
-       "note": "catalog price, no end date",
-       "source": "Valio price API",
-       "value": "18.01 EUR"
-      }
-     ],
-     "hash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
-     "kind": "approval",
-     "orderId": "O-2",
-     "prevHash": "2144949703a81a0e99a4a841a63d3baed85c44959da05d2ef30e8d91d6ed897a",
-     "ruleIds": [],
-     "sentence": "Owner rejected 10 ST of 465256. Nothing was ordered.",
-     "seq": 8,
-     "spendPassId": "M-1"
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -3857,7 +2175,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
        "source": "Valio availability API",
-       "value": "1e+10 ST"
+       "value": "9999999999 ST"
       },
       {
        "field": "price",
@@ -3865,27 +2183,35 @@ export const answers: Answers = {
        "note": "until 2026-12-31",
        "source": "Valio price API",
        "until": "2026-12-31",
-       "value": "1.01 EUR"
+       "value": "1.01 €"
       }
      ],
-     "hash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
+     "hash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "39c510bb7e63fd9f106756a5b1f589ca6a3ff01cdf1587f72101f82239ea5a75",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
-     "seq": 9,
-     "spendPassId": "M-1"
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 8,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:19"
     },
     {
      "actor": "validio:steady-order",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -3900,7 +2226,7 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "3.77 EUR"
+       "value": "3.77 €"
       },
       {
        "field": "quantity",
@@ -3914,63 +2240,85 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "6.40 EUR"
+       "value": "6.40 €"
       }
      ],
-     "hash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
+     "hash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "75f49f2fc58bba67f905e0031c1fd6052019d2cc747be7affbf1bc589173c94b",
+     "prevHash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
-     "seq": 10,
-     "spendPassId": "M-1"
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 9,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:23"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
+     "hash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "kind": "decision",
-     "prevHash": "08c86dc466092bf7fe1db82b1f44fb0773bab6f80b831f1dce57fa1b98f8f4c2",
+     "prevHash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
-     "seq": 11,
-     "spendPassId": "M-1"
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:25"
     },
     {
      "actor": "validio",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [],
-     "hash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
+     "hash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
      "kind": "decision",
-     "prevHash": "3cefd348b2cdaa069dbb325d43adce7c5e752f47ee801a990cc17b013257e0be",
-     "ruleIds": [
-      "ask-human"
-     ],
-     "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
-     "seq": 12,
-     "spendPassId": "M-1"
+     "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:28"
     },
     {
-     "actor": "kitchen:chef",
-     "at": "2026-11-14T10:00:00+02:00",
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:30:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
      ],
      "facts": [
       {
@@ -3985,37 +2333,2616 @@ export const answers: Answers = {
        "grade": "attested",
        "note": "catalog price, no end date",
        "source": "Valio price API",
-       "value": "33.53 EUR"
+       "value": "33.53 €"
       }
      ],
-     "hash": "33ac34bb40a2b868c8a861394cfc5981fcace13492cf699ac75b8c01fb680ebb",
-     "kind": "order",
+     "hash": "00c4319ecbabddbdb27a841b0af3b98063c8f5bd5b9bf7b8d69fc526a807faad",
+     "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "b017266f0cafa08c755c147fd0edae2f63e04d0a4e7ad40663999264bff26039",
+     "prevHash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
      "ruleIds": [
-      "auto-order"
+      "ask-human"
      ],
-     "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
-     "seq": 13,
-     "spendPassId": "M-1"
+     "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
+     "seq": 12,
+     "spendPassId": "S-1-W46",
+     "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
+     "timeText": "10:30"
     },
     {
-     "actor": "kitchen:chef",
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:33:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "9b13005a4367e80bd32edeecb3fbd9c3350f78e494ff9793aebea084199db0d6",
+     "kind": "approval",
+     "orderId": "O-5",
+     "prevHash": "00c4319ecbabddbdb27a841b0af3b98063c8f5bd5b9bf7b8d69fc526a807faad",
+     "ruleIds": [],
+     "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "seq": 13,
+     "spendPassId": "S-1-W46",
+     "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "timeText": "10:33"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:37:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "eaade2822d26ae95d4212eec64110b026d7eaf3d0fbb7244c3cd423260b87822",
+     "kind": "order",
+     "orderId": "O-5",
+     "prevHash": "9b13005a4367e80bd32edeecb3fbd9c3350f78e494ff9793aebea084199db0d6",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+     "seq": 14,
+     "spendPassId": "S-1-W46",
+     "summary": "Placed order O-5.",
+     "timeText": "10:37"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 9,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
      "at": "2026-11-14T10:00:00+02:00",
      "disclosed": [
       "autoLimitCents",
       "diet",
       "hardCapCents"
      ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
      "facts": [],
-     "hash": "292f2bb0c7574c31f068d17ff99305aa72afb43e0ba0fd331140ecee6432f462",
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "kind": "order",
+     "orderId": "O-2",
+     "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 9,
+     "spendPassId": "M-1",
+     "summary": "Placed order O-2.",
+     "timeText": "10:23"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 13,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "kind": "order",
+     "orderId": "O-2",
+     "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 9,
+     "spendPassId": "M-1",
+     "summary": "Placed order O-2.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "kind": "order",
+     "orderId": "O-3",
+     "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:25"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "137 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "3.77 €"
+      },
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "318 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "6.40 €"
+      }
+     ],
+     "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "kind": "order",
+     "orderId": "O-4",
+     "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:28"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:30:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "kind": "decision",
+     "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 12,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:30"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:33:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "kind": "decision",
+     "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "seq": 13,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:33"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 16,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "kind": "order",
+     "orderId": "O-2",
+     "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 9,
+     "spendPassId": "M-1",
+     "summary": "Placed order O-2.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "kind": "order",
+     "orderId": "O-3",
+     "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:25"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "137 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "3.77 €"
+      },
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "318 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "6.40 €"
+      }
+     ],
+     "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "kind": "order",
+     "orderId": "O-4",
+     "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:28"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:30:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "kind": "decision",
+     "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 12,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:30"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:33:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "kind": "decision",
+     "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "seq": 13,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:33"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:37:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
+     "kind": "decision",
+     "orderId": "O-5",
+     "prevHash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
+     "seq": 14,
+     "spendPassId": "S-1-W46",
+     "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
+     "timeText": "10:37"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:39:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "33ac34bb40a2b868c8a861394cfc5981fcace13492cf699ac75b8c01fb680ebb",
+     "prevHash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
      "ruleIds": [],
-     "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+     "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "seq": 15,
+     "spendPassId": "S-1-W46",
+     "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "timeText": "10:39"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:42:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "1bd58cda0771187276956583c60dc7ed50c03947eabeedc550e6ecb39a671664",
+     "kind": "order",
+     "orderId": "O-5",
+     "prevHash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+     "seq": 16,
+     "spendPassId": "S-1-W46",
+     "summary": "Placed order O-5.",
+     "timeText": "10:42"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 8,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese.",
+     "timeText": "10:19"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 12,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "kind": "order",
+     "orderId": "O-3",
+     "prevHash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 9,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "137 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "3.77 €"
+      },
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "318 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "6.40 €"
+      }
+     ],
+     "hash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "kind": "order",
+     "orderId": "O-4",
+     "prevHash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:25"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "kind": "decision",
+     "prevHash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:28"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:30:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "kind": "decision",
+     "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "seq": 12,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:30"
+    }
+   ]
+  },
+  {
+   "chain": {
+    "count": 15,
+    "ok": true
+   },
+   "entries": [
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:00:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "kind": "request",
+     "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "ruleIds": [],
+     "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "seq": 1,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
+     "timeText": "10:00"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:02:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "kind": "decision",
+     "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "ruleIds": [],
+     "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+     "seq": 2,
+     "spendPassId": "M-1",
+     "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
+     "timeText": "10:02"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:05:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "kind": "decision",
+     "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "seq": 3,
+     "spendPassId": "M-1",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
+     "timeText": "10:05"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:09:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "kind": "order",
+     "orderId": "O-1",
+     "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 4,
+     "spendPassId": "M-1",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+     "timeText": "10:09"
+    },
+    {
+     "actor": "presenter",
+     "actorText": "Demo",
+     "at": "2026-11-14T10:11:00+02:00",
+     "disclosed": [],
+     "disclosedText": [],
+     "facts": [],
+     "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "kind": "simulation",
+     "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "ruleIds": [],
+     "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
+     "seq": 5,
+     "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
+     "timeText": "10:11"
+    },
+    {
+     "actor": "agent:buyer-1",
+     "actorText": "Agent",
+     "at": "2026-11-14T10:14:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "kind": "request",
+     "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "ruleIds": [],
+     "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "seq": 6,
+     "spendPassId": "M-1",
+     "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:14"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:16:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "kind": "decision",
+     "orderId": "O-2",
+     "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "seq": 7,
+     "spendPassId": "M-1",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €.",
+     "timeText": "10:16"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:19:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "18.01 €"
+      }
+     ],
+     "hash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "kind": "approval",
+     "orderId": "O-2",
+     "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "ruleIds": [],
+     "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
+     "seq": 8,
+     "spendPassId": "M-1",
+     "summary": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese.",
+     "timeText": "10:19"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:23:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+       "source": "Valio availability API",
+       "value": "9999999999 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested_until",
+       "note": "until 2026-12-31",
+       "source": "Valio price API",
+       "until": "2026-12-31",
+       "value": "1.01 €"
+      }
+     ],
+     "hash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "kind": "order",
+     "orderId": "O-3",
+     "prevHash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "seq": 9,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+     "timeText": "10:23"
+    },
+    {
+     "actor": "validio:steady-order",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:25:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "137 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "3.77 €"
+      },
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "318 ST"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "6.40 €"
+      }
+     ],
+     "hash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "kind": "order",
+     "orderId": "O-4",
+     "prevHash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "ruleIds": [
+      "auto-order"
+     ],
+     "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+     "seq": 10,
+     "spendPassId": "S-1-W46",
+     "summary": "Ordered 137 × 125 g of parmesan reggiano.",
+     "timeText": "10:25"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:28:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "kind": "decision",
+     "prevHash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+     "seq": 11,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
+     "timeText": "10:28"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:30:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [],
+     "hash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "kind": "decision",
+     "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "ruleIds": [],
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "seq": 12,
+     "spendPassId": "S-1-W46",
+     "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
+     "timeText": "10:30"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:33:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "fff0ed46a02dabcf6be63a2313c5f1f1ce7973212d1b97a3e7e9e6c22c268448",
+     "kind": "decision",
+     "orderId": "O-5",
+     "prevHash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
+     "seq": 13,
+     "spendPassId": "S-1-W46",
+     "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
+     "timeText": "10:33"
+    },
+    {
+     "actor": "owner",
+     "actorText": "Owner",
+     "at": "2026-11-14T10:37:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "20ea724efed82415e188efb5a1a1a55fab98a3897c657d3100ada7a6272cf1f8",
+     "kind": "approval",
+     "orderId": "O-5",
+     "prevHash": "fff0ed46a02dabcf6be63a2313c5f1f1ce7973212d1b97a3e7e9e6c22c268448",
+     "ruleIds": [],
+     "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 14,
-     "spendPassId": "M-1"
+     "spendPassId": "S-1-W46",
+     "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+     "timeText": "10:37"
+    },
+    {
+     "actor": "validio",
+     "actorText": "Validio",
+     "at": "2026-11-14T10:39:00+02:00",
+     "disclosed": [
+      "autoLimitCents",
+      "diet",
+      "hardCapCents"
+     ],
+     "disclosedText": [
+      "auto limit",
+      "diet",
+      "never above"
+     ],
+     "facts": [
+      {
+       "field": "quantity",
+       "grade": "attested",
+       "note": "Stock at Valio",
+       "source": "Valio availability API",
+       "value": "27 KI"
+      },
+      {
+       "field": "price",
+       "grade": "attested",
+       "note": "catalog price, no end date",
+       "source": "Valio price API",
+       "value": "33.53 €"
+      }
+     ],
+     "hash": "173310f887f8b26c406597845be5a603ded53a8612326e4b27b8fd0b9ae69d94",
+     "kind": "order",
+     "orderId": "O-5",
+     "prevHash": "20ea724efed82415e188efb5a1a1a55fab98a3897c657d3100ada7a6272cf1f8",
+     "ruleIds": [
+      "ask-human"
+     ],
+     "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+     "seq": 15,
+     "spendPassId": "S-1-W46",
+     "summary": "Placed order O-5.",
+     "timeText": "10:39"
     }
    ]
   }
@@ -4028,13 +4955,15 @@ export const answers: Answers = {
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+     "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
+     "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €."
     },
     "deliverBy": "2026-11-16",
     "history": [
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "placed"
+      "at": "2026-11-14T10:09:00+02:00",
+      "state": "placed",
+      "timeText": "10:09"
      }
     ],
     "id": "O-1",
@@ -4042,34 +4971,46 @@ export const answers: Answers = {
      {
       "deliverable": true,
       "deliveryDate": "2026-11-16",
+      "deliveryText": "delivery Mon 16 Nov",
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "facts": [
        {
         "field": "quantity",
         "grade": "attested",
         "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+        "noteText": "Valio gives no real count, treated as in stock",
         "source": "Valio availability API",
-        "value": "1e+10 ST"
+        "value": "9999999999 ST",
+        "valueText": "Valio gives no real count"
        },
        {
         "field": "price",
         "grade": "attested_until",
         "note": "until 2026-12-31",
+        "noteText": "until 31 Dec 2026",
         "source": "Valio price API",
         "until": "2026-12-31",
-        "value": "1.01 EUR"
+        "value": "1.01 €",
+        "valueText": "1.01 €"
        }
       ],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
       "isSubstitute": false,
+      "moneyText": "1,010.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "onValioList": false,
       "priceCents": 101,
       "priceValidTo": "2026-12-31",
       "productId": "464306",
+      "qtyText": "1,000 × 1 l",
       "quantity": 1000,
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "totalCents": 101000,
       "unit": "ST"
      }
     ],
+    "moneyText": "1,010.00 €",
+    "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?",
     "requestId": "R-1",
     "spendPassId": "M-1",
     "state": "placed",
@@ -4083,13 +5024,15 @@ export const answers: Answers = {
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €."
     },
     "deliverBy": "2026-11-16",
     "history": [
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "waiting"
+      "at": "2026-11-14T10:16:00+02:00",
+      "state": "waiting",
+      "timeText": "10:16"
      }
     ],
     "id": "O-2",
@@ -4097,32 +5040,44 @@ export const answers: Answers = {
      {
       "deliverable": true,
       "deliveryDate": "2026-11-16",
+      "deliveryText": "delivery Mon 16 Nov",
+      "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "facts": [
        {
         "field": "quantity",
         "grade": "attested",
         "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+        "noteText": "Valio gives no real count, treated as in stock",
         "source": "Valio availability API",
-        "value": "1e+10 ST"
+        "value": "9999999999 ST",
+        "valueText": "Valio gives no real count"
        },
        {
         "field": "price",
         "grade": "attested",
         "note": "catalog price, no end date",
+        "noteText": "catalog price, no end date",
         "source": "Valio price API",
-        "value": "18.01 EUR"
+        "value": "18.01 €",
+        "valueText": "18.01 €"
        }
       ],
+      "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
       "isSubstitute": true,
+      "moneyText": "180.10 €",
       "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
       "onValioList": false,
       "priceCents": 1801,
       "productId": "465256",
+      "qtyText": "10 × 2.5 kg",
       "quantity": 10,
+      "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "totalCents": 18010,
       "unit": "ST"
      }
     ],
+    "moneyText": "180.10 €",
+    "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "waiting",
@@ -4135,21 +5090,25 @@ export const answers: Answers = {
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €."
     },
     "deliverBy": "2026-11-16",
     "history": [
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "waiting"
+      "at": "2026-11-14T10:16:00+02:00",
+      "state": "waiting",
+      "timeText": "10:16"
      },
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "approved"
+      "at": "2026-11-14T10:19:00+02:00",
+      "state": "approved",
+      "timeText": "10:19"
      },
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "placed"
+      "at": "2026-11-14T10:19:00+02:00",
+      "state": "placed",
+      "timeText": "10:19"
      }
     ],
     "id": "O-2",
@@ -4157,32 +5116,44 @@ export const answers: Answers = {
      {
       "deliverable": true,
       "deliveryDate": "2026-11-16",
+      "deliveryText": "delivery Mon 16 Nov",
+      "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "facts": [
        {
         "field": "quantity",
         "grade": "attested",
         "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+        "noteText": "Valio gives no real count, treated as in stock",
         "source": "Valio availability API",
-        "value": "1e+10 ST"
+        "value": "9999999999 ST",
+        "valueText": "Valio gives no real count"
        },
        {
         "field": "price",
         "grade": "attested",
         "note": "catalog price, no end date",
+        "noteText": "catalog price, no end date",
         "source": "Valio price API",
-        "value": "18.01 EUR"
+        "value": "18.01 €",
+        "valueText": "18.01 €"
        }
       ],
+      "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
       "isSubstitute": true,
+      "moneyText": "180.10 €",
       "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
       "onValioList": false,
       "priceCents": 1801,
       "productId": "465256",
+      "qtyText": "10 × 2.5 kg",
       "quantity": 10,
+      "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "totalCents": 18010,
       "unit": "ST"
      }
     ],
+    "moneyText": "180.10 €",
+    "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "placed",
@@ -4194,17 +5165,20 @@ export const answers: Answers = {
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €."
     },
     "deliverBy": "2026-11-16",
     "history": [
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "waiting"
+      "at": "2026-11-14T10:16:00+02:00",
+      "state": "waiting",
+      "timeText": "10:16"
      },
      {
-      "at": "2026-11-14T10:00:00+02:00",
-      "state": "rejected"
+      "at": "2026-11-14T10:19:00+02:00",
+      "state": "rejected",
+      "timeText": "10:19"
      }
     ],
     "id": "O-2",
@@ -4212,32 +5186,44 @@ export const answers: Answers = {
      {
       "deliverable": true,
       "deliveryDate": "2026-11-16",
+      "deliveryText": "delivery Mon 16 Nov",
+      "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "facts": [
        {
         "field": "quantity",
         "grade": "attested",
         "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+        "noteText": "Valio gives no real count, treated as in stock",
         "source": "Valio availability API",
-        "value": "1e+10 ST"
+        "value": "9999999999 ST",
+        "valueText": "Valio gives no real count"
        },
        {
         "field": "price",
         "grade": "attested",
         "note": "catalog price, no end date",
+        "noteText": "catalog price, no end date",
         "source": "Valio price API",
-        "value": "18.01 EUR"
+        "value": "18.01 €",
+        "valueText": "18.01 €"
        }
       ],
+      "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
       "isSubstitute": true,
+      "moneyText": "180.10 €",
       "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
       "onValioList": false,
       "priceCents": 1801,
       "productId": "465256",
+      "qtyText": "10 × 2.5 kg",
       "quantity": 10,
+      "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
       "totalCents": 18010,
       "unit": "ST"
      }
     ],
+    "moneyText": "180.10 €",
+    "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "rejected",
@@ -4249,15 +5235,18 @@ export const answers: Answers = {
   "R-1": [
    {
     "agent": "agent:buyer-1",
+    "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "createdAt": "2026-11-14T10:00:00+02:00",
     "decision": {
      "outcome": "auto_order",
      "ruleIds": [
       "auto-order"
      ],
-     "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
+     "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
     },
     "deliverBy": "2026-11-16",
+    "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "id": "R-1",
     "lines": [
      {
@@ -4270,9 +5259,11 @@ export const answers: Answers = {
       "lineId": "L-1",
       "need": {
        "deliverBy": "2026-11-16",
+       "deliverByText": "Mon 16 Nov",
        "diet": [
         "lactose free"
        ],
+       "qtyText": "1,000 litres",
        "quantity": 1000.0,
        "unit": "L",
        "what": "milk"
@@ -4280,141 +5271,186 @@ export const answers: Answers = {
       "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice.",
       "options": [
        {
+        "displayName": "Arki lactose-free semi-skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "1.01 EUR"
+          "value": "1.01 €",
+          "valueText": "1.01 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a refreshing and good lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a tasty lactose-free alternative for the whole family. It has a fat content of 1.5%. All Valio Eila® products are suitable for a lactose-free diet."
+          "value": "Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a refreshing and good lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a tasty lactose-free alternative for the whole family. It has a fat content of 1.5%. All Valio Eila® products are suitable for a lactose-free diet.",
+          "valueText": "Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a refreshing and good lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® semi-skimmed milk drink is a tasty lactose-free alternative for the whole family. It has a fat content of 1.5%. All Valio Eila® products are suitable for a lactose-free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,010.00 €",
         "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
         "productId": "464306",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 1,
-        "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Cheapest safe option and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+        ],
+        "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+        "shortName": "Arki lactose-free semi-skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -4425,148 +5461,195 @@ export const answers: Answers = {
         "verdict": "chosen"
        },
        {
+        "displayName": "Arki lactose-free skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "1.10 EUR"
+          "value": "1.10 €",
+          "valueText": "1.10 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:FINNISH_HEART_SYMBOL",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Heart Symbol"
+          "value": "Heart Symbol",
+          "valueText": "Heart Symbol"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_FAT"
+          "value": "FREE_FROM_FAT",
+          "valueText": "free from fat"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a refreshing lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a tasty lactose-free alternative for the whole family. All Valio Eila® products are suitable for a lactose-free diet."
+          "value": "Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a refreshing lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a tasty lactose-free alternative for the whole family. All Valio Eila® products are suitable for a lactose-free diet.",
+          "valueText": "Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a refreshing lactose-free milk drink made from fresh Finnish milk. It is suitable as a drink with meals, for cooking and with coffee. Valio Hyvä suomalainen Arki® Eila® skimmed milk drink is a tasty lactose-free alternative for the whole family. All Valio Eila® products are suitable for a lactose-free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,100.00 €",
         "name": "Valio Hyvä suomalainen Arki® Eila® skimmed milk drink 1 l lactose free",
         "productId": "464401",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 2,
-        "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
+        ],
+        "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
+        "shortName": "Arki lactose-free skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -4577,134 +5660,177 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "1.40 EUR"
+          "value": "1.40 €",
+          "valueText": "1.40 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® lactose-free milk drink 3% tastes like soft, smooth milk without any sweetness. This slightly fattier lactose-free milk drink is particularly suitable for cooking and baking, as well as with cocoa, coffee or tea. All Valio Eila® products are suitable for a lactose-free diet."
+          "value": "Valio Eila® lactose-free milk drink 3% tastes like soft, smooth milk without any sweetness. This slightly fattier lactose-free milk drink is particularly suitable for cooking and baking, as well as with cocoa, coffee or tea. All Valio Eila® products are suitable for a lactose-free diet.",
+          "valueText": "Valio Eila® lactose-free milk drink 3% tastes like soft, smooth milk without any sweetness. This slightly fattier lactose-free milk drink is particularly suitable for cooking and baking, as well as with cocoa, coffee or tea. All Valio Eila® products are suitable for a lactose-free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,400.00 €",
         "name": "Valio Eila® 3 % milk drink 1 l lactose free",
         "productId": "463335",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 3,
-        "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+        ],
+        "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+        "shortName": "Lactose-free milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -4715,140 +5841,185 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.56 EUR"
+          "value": "1.56 €",
+          "valueText": "1.56 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose free semi-skimmed milk UHT is a milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
+          "value": "Lactose free semi-skimmed milk UHT is a milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet.",
+          "valueText": "Lactose free semi-skimmed milk UHT is a milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK and vitamin D."
+          "value": "MILK and vitamin D.",
+          "valueText": "MILK and vitamin D."
          }
         ],
+        "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
         "isSubstitute": false,
+        "moneyText": "1,560.00 €",
         "name": "Valio semi skimmed milk 1 l lactose free UHT",
         "productId": "464201",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 4,
-        "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+        ],
+        "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+        "shortName": "Lactose-free semi-skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -4859,134 +6030,177 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free whole milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "1.64 EUR"
+          "value": "1.64 €",
+          "valueText": "1.64 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose free whole milk UHT is a soft and rich milk drink that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
+          "value": "Lactose free whole milk UHT is a soft and rich milk drink that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet.",
+          "valueText": "Lactose free whole milk UHT is a soft and rich milk drink that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK and vitamin D."
+          "value": "MILK and vitamin D.",
+          "valueText": "MILK and vitamin D."
          }
         ],
+        "fullName": "Valio whole milk 1 l lactose free UHT",
         "isSubstitute": false,
+        "moneyText": "1,640.00 €",
         "name": "Valio whole milk 1 l lactose free UHT",
         "productId": "464073",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 5,
-        "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+        ],
+        "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+        "shortName": "Lactose-free whole milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -4997,134 +6211,177 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "1.65 EUR"
+          "value": "1.65 €",
+          "valueText": "1.65 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® lactose-free semi-skimmed milk drink UHT is suitable for dining, cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio Eila® products are suitable for a lactose-free diet."
+          "value": "Valio Eila® lactose-free semi-skimmed milk drink UHT is suitable for dining, cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio Eila® products are suitable for a lactose-free diet.",
+          "valueText": "Valio Eila® lactose-free semi-skimmed milk drink UHT is suitable for dining, cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio Eila® products are suitable for a lactose-free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK and vitamin D."
+          "value": "MILK and vitamin D.",
+          "valueText": "MILK and vitamin D."
          }
         ],
+        "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
         "isSubstitute": false,
+        "moneyText": "1,650.00 €",
         "name": "Valio Eila® semi skimmed milk drink 1 l UHT lactose free",
         "productId": "464398",
+        "qtyText": "1,000 × 1 l",
         "quantity": 1000,
         "rank": 6,
-        "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+        "reasons": [
+         "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
+        ],
+        "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+        "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5135,137 +6392,181 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 1.75 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "27.39 EUR"
+          "value": "27.39 €",
+          "valueText": "27.39 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
+          "value": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243).",
+          "valueText": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,314.72 €",
         "name": "Valio Eila® semi skimmed milk drink 1,75 l lactose free",
         "productId": "469287",
+        "qtyText": "48 cartons",
         "quantity": 48,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
+        "shortName": "Lactose-free semi-skimmed milk 1.75 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5276,146 +6577,193 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "13.32 EUR"
+          "value": "13.32 €",
+          "valueText": "13.32 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:FINNISH_HEART_SYMBOL",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Heart Symbol"
+          "value": "Heart Symbol",
+          "valueText": "Heart Symbol"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_FAT"
+          "value": "FREE_FROM_FAT",
+          "valueText": "free from fat"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose free skimmed milk UHT is a healthy milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
+          "value": "Lactose free skimmed milk UHT is a healthy milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet.",
+          "valueText": "Lactose free skimmed milk UHT is a healthy milk that has many uses. It can be enjoyed with food or used in cooking and baking. UHT-treated milk has been ultra-heat treated for two seconds at a temperature of at least +135°C. Thanks to the heat treatment, the product keeps for a long time at room temperature when unopened, and it is handy to have at a cottage, on a boat or as coffee milk on a trip. Valio UHT milks are suitable for a lactose free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK and vitamin D."
+          "value": "MILK and vitamin D.",
+          "valueText": "MILK and vitamin D."
          }
         ],
+        "fullName": "Valio skimmed milk 1 l lactose free UHT",
         "isSubstitute": false,
+        "moneyText": "1,332.00 €",
         "name": "Valio skimmed milk 1 l lactose free UHT",
         "productId": "464119",
+        "qtyText": "100 cartons",
         "quantity": 100,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
+        "shortName": "Lactose-free skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5426,139 +6774,184 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Eila lactose-free semi-skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested_until",
           "note": "until 2026-12-31",
+          "noteText": "until 31 Dec 2026",
           "source": "Valio price API",
           "until": "2026-12-31",
-          "value": "6.86 EUR"
+          "value": "6.86 €",
+          "valueText": "6.86 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
+          "value": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243).",
+          "valueText": "Valio Eila® lactose-free semi-skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,372.00 €",
         "name": "Valio Eila® semi skimmed milk drink 1 l lactose free",
         "productId": "465039",
+        "qtyText": "200 cartons",
         "quantity": 200,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
+        "shortName": "Eila lactose-free semi-skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5569,145 +6962,192 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Eila lactose-free skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "7.62 EUR"
+          "value": "7.62 €",
+          "valueText": "7.62 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:FINNISH_HEART_SYMBOL",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Heart Symbol"
+          "value": "Heart Symbol",
+          "valueText": "Heart Symbol"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_FAT"
+          "value": "FREE_FROM_FAT",
+          "valueText": "free from fat"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® lactose-free skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
+          "value": "Valio Eila® lactose-free skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243).",
+          "valueText": "Valio Eila® lactose-free skimmed milk drink tastes like ordinary fresh milk without any sweetness. Valio Eila® milk drinks were chosen as the best in a taste test*. Enjoy with food or use in cooking and baking. All Valio Eila® products are suitable for a lactose-free diet. Lactose has been removed with Valio’s patented technology. *Product test of lactose-free milk drinks, Makery Oy (4/2018, n=243)."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
         "isSubstitute": false,
+        "moneyText": "1,524.00 €",
         "name": "Valio Eila® skimmed milk drink 1 l lactose free",
         "productId": "476240",
+        "qtyText": "200 cartons",
         "quantity": 200,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
+        "shortName": "Eila lactose-free skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5718,280 +7158,371 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 10 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "31.31 EUR"
+          "value": "31.31 €",
+          "valueText": "31.31 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, vitamin D."
+          "value": "MILK, vitamin D.",
+          "valueText": "MILK, vitamin D."
          }
         ],
+        "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
         "isSubstitute": false,
+        "moneyText": "1,565.50 €",
         "name": "Valio Eila® semi skimmed milk drink 10 l novobox lactose free",
         "productId": "463038",
+        "qtyText": "50 cartons",
         "quantity": 50,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
+        "shortName": "Lactose-free semi-skimmed milk 10 l",
         "totalCents": 156550,
         "unit": "KI",
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free organic semi-skimmed milk 1 l",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "10.97 EUR"
+          "value": "10.97 €",
+          "valueText": "10.97 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "1.1 kg CO2e per kg"
+          "value": "1.1 kg CO2e per kg",
+          "valueText": "1.1 kg CO2e per kg"
          },
          {
           "field": "label:EU_ORGANIC_FARMING",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "EU organic"
+          "value": "EU organic",
+          "valueText": "EU organic"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_ADDITIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_ADDITIVES"
+          "value": "FREE_FROM_ADDITIVES",
+          "valueText": "free from additives"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:LOW_FAT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_FAT"
+          "value": "LOW_FAT",
+          "valueText": "low fat"
          },
          {
           "field": "claim:LOW_SODIUM_SALT",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "LOW_SODIUM_SALT"
+          "value": "LOW_SODIUM_SALT",
+          "valueText": "low sodium salt"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio Eila® Luomu™ organic semi-skimmed milk drink has the fresh taste of ordinary milk, without any sweetness. The organic milk used for producing the lactose-free organic milk drink comes from farms where cows can move, eat and rest freely at their own pace in a free-stall barn. The cows also spend the entire summer on the pasture. Enjoy it as a meal-time drink or use it in cooking and baking. Valio Luomu™ is a sustainable choice that contributes to biodiversity. Check out the other Valio Luomu™ products as well. All Valio Eila® products are suitable for a lactose-free diet."
+          "value": "Valio Eila® Luomu™ organic semi-skimmed milk drink has the fresh taste of ordinary milk, without any sweetness. The organic milk used for producing the lactose-free organic milk drink comes from farms where cows can move, eat and rest freely at their own pace in a free-stall barn. The cows also spend the entire summer on the pasture. Enjoy it as a meal-time drink or use it in cooking and baking. Valio Luomu™ is a sustainable choice that contributes to biodiversity. Check out the other Valio Luomu™ products as well. All Valio Eila® products are suitable for a lactose-free diet.",
+          "valueText": "Valio Eila® Luomu™ organic semi-skimmed milk drink has the fresh taste of ordinary milk, without any sweetness. The organic milk used for producing the lactose-free organic milk drink comes from farms where cows can move, eat and rest freely at their own pace in a free-stall barn. The cows also spend the entire summer on the pasture. Enjoy it as a meal-time drink or use it in cooking and baking. Valio Luomu™ is a sustainable choice that contributes to biodiversity. Check out the other Valio Luomu™ products as well. All Valio Eila® products are suitable for a lactose-free diet."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Finnish organic homogenised MILK."
+          "value": "Finnish organic homogenised MILK.",
+          "valueText": "Finnish organic homogenised MILK."
          }
         ],
+        "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
         "isSubstitute": false,
+        "moneyText": "2,194.00 €",
         "name": "Valio Eila®  Luomu™ semi skimmed milk drink 1 l lactose free, organic",
         "productId": "462921",
+        "qtyText": "200 cartons",
         "quantity": 200,
-        "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed.",
+         "The quantity is unknown.",
+         "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
+        ],
+        "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
+        "shortName": "Lactose-free organic semi-skimmed milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6002,11 +7533,17 @@ export const answers: Answers = {
         "verdict": "blocked"
        },
        {
+        "displayName": "Lactose-free coffee milk 5 dl",
         "facts": [],
+        "fullName": "Valio coffee milk 5 dl lactose free",
         "isSubstitute": false,
         "name": "Valio coffee milk 5 dl lactose free",
         "productId": "462626",
+        "reasons": [
+         "Coffee milk, not plain milk."
+        ],
         "sentence": "Coffee milk, not plain milk.",
+        "shortName": "Lactose-free coffee milk 5 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6015,11 +7552,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Low-lactose whole milk 1 l",
         "facts": [],
+        "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
         "isSubstitute": false,
         "name": "Arla Whole milk 1 L Suomesta low lactose Uht",
         "productId": "463047",
+        "reasons": [
+         "Low lactose is not lactose free."
+        ],
         "sentence": "Low lactose is not lactose free.",
+        "shortName": "Low-lactose whole milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": true,
@@ -6045,11 +7588,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free portion milk 100 x 2 cl",
         "facts": [],
+        "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
         "isSubstitute": false,
         "name": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
         "productId": "463203",
+        "reasons": [
+         "Portion packs, not plain milk."
+        ],
         "sentence": "Portion packs, not plain milk.",
+        "shortName": "Lactose-free portion milk 100 x 2 cl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6058,11 +7607,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free cafè milk 1 l",
         "facts": [],
+        "fullName": "Arla Cafè milk 1 l UHT lactose free",
         "isSubstitute": false,
         "name": "Arla Cafè milk 1 L UHT lactose free",
         "productId": "463380",
+        "reasons": [
+         "Café milk, not plain milk."
+        ],
         "sentence": "Café milk, not plain milk.",
+        "shortName": "Lactose-free cafè milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6071,11 +7626,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
         "facts": [],
+        "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
         "isSubstitute": false,
         "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
         "productId": "463779",
-        "sentence": "0.25 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.25 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.25 l packs, too small for 1,000 litres.",
+        "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6084,11 +7645,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 5 dl",
         "facts": [],
+        "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
         "isSubstitute": false,
         "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
         "productId": "464198",
-        "sentence": "0.5 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.5 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.5 l packs, too small for 1,000 litres.",
+        "shortName": "Lactose-free semi-skimmed milk 5 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6097,11 +7664,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free coffee milk 1 l",
         "facts": [],
+        "fullName": "Valio coffee milk 1 l lactose free UHT",
         "isSubstitute": false,
         "name": "Valio coffee milk 1 l lactose free UHT",
         "productId": "464237",
+        "reasons": [
+         "Coffee milk, not plain milk."
+        ],
         "sentence": "Coffee milk, not plain milk.",
+        "shortName": "Lactose-free coffee milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6110,11 +7683,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
         "facts": [],
+        "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
         "isSubstitute": false,
         "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
         "productId": "464399",
-        "sentence": "0.2 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.2 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.2 l packs, too small for 1,000 litres.",
+        "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6123,11 +7702,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 0.5 l",
         "facts": [],
+        "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
         "isSubstitute": false,
         "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
         "productId": "464440",
-        "sentence": "0.5 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.5 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.5 l packs, too small for 1,000 litres.",
+        "shortName": "Lactose-free semi-skimmed milk 0.5 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6136,11 +7721,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free low fat milk 6 × 5 dl",
         "facts": [],
+        "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
         "isSubstitute": false,
         "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
         "productId": "465149",
-        "sentence": "0.5 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.5 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.5 l packs, too small for 1,000 litres.",
+        "shortName": "Lactose-free low fat milk 6 × 5 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6149,11 +7740,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
         "facts": [],
+        "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
         "isSubstitute": false,
         "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
         "productId": "466288",
-        "sentence": "0.25 l packs, too small for 1000 litres.",
+        "reasons": [
+         "0.25 l packs, too small for 1,000 litres."
+        ],
+        "sentence": "0.25 l packs, too small for 1,000 litres.",
+        "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6162,11 +7759,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
         "facts": [],
+        "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
         "isSubstitute": false,
         "name": "5 x Arla Acidofilus-Bifidus sour milk 1 L lactose free fatfree Suomi",
         "productId": "469331",
+        "reasons": [
+         "Sour milk, not plain milk."
+        ],
         "sentence": "Sour milk, not plain milk.",
+        "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6175,11 +7778,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
         "facts": [],
+        "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
         "isSubstitute": false,
         "name": "12 x Arla Semi skimmed milk 1 L Suomi low lactose UHT",
         "productId": "469541",
+        "reasons": [
+         "Low lactose is not lactose free."
+        ],
         "sentence": "Low lactose is not lactose free.",
+        "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6188,11 +7797,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free skimmed sour milk 5 kg",
         "facts": [],
+        "fullName": "Valio skimmed sour milk 5 kg lactose free",
         "isSubstitute": false,
         "name": "Valio skimmed sour milk 5 kg lactose free",
         "productId": "472492",
+        "reasons": [
+         "Sour milk, not plain milk."
+        ],
         "sentence": "Sour milk, not plain milk.",
+        "shortName": "Lactose-free skimmed sour milk 5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6201,11 +7816,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free coffee milk vanilla 1 l",
         "facts": [],
+        "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
         "isSubstitute": false,
         "name": "Valio coffee milk drink vanilla 1 l lactose free UHT",
         "productId": "473142",
+        "reasons": [
+         "Coffee milk, not plain milk."
+        ],
         "sentence": "Coffee milk, not plain milk.",
+        "shortName": "Lactose-free coffee milk vanilla 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6214,11 +7835,18 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Skimmed sour milk 1 l",
         "facts": [],
+        "fullName": "Valio skimmed sour milk 1 l Hyla",
         "isSubstitute": false,
         "name": "Valio skimmed sour milk 1 l HYLA®",
         "productId": "475534",
-        "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+        "reasons": [
+         "Sour milk, not plain milk.",
+         "Low lactose is not lactose free."
+        ],
+        "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
+        "shortName": "Skimmed sour milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6227,11 +7855,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free AB sour milk 1 l",
         "facts": [],
+        "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
         "isSubstitute": false,
         "name": "Valio Gefilus® AB sour milk 1% 1 l lactose free",
         "productId": "476957",
+        "reasons": [
+         "Sour milk, not plain milk."
+        ],
         "sentence": "Sour milk, not plain milk.",
+        "shortName": "Lactose-free AB sour milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6240,11 +7874,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free skimmed sour milk 1 l",
         "facts": [],
+        "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
         "isSubstitute": false,
         "name": "Valio Eila® skimmed sour milk 1 l lactose free",
         "productId": "477050",
+        "reasons": [
+         "Sour milk, not plain milk."
+        ],
         "sentence": "Sour milk, not plain milk.",
+        "shortName": "Lactose-free skimmed sour milk 1 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6253,11 +7893,17 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free ruoka milk vegetable 10 l",
         "facts": [],
+        "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
         "isSubstitute": false,
         "name": "Arla Ruoka 10 L 15% lactose free based on milk vegetable mix UHT",
         "productId": "462703",
+        "reasons": [
+         "Lactose free but a cooking fat mix, not milk."
+        ],
         "sentence": "Lactose free but a cooking fat mix, not milk.",
+        "shortName": "Lactose-free ruoka milk vegetable 10 l",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6279,220 +7925,297 @@ export const answers: Answers = {
       1
      ]
     },
+    "moneyText": "1,010.00 €",
     "orderId": "O-1",
     "requestId": "R-1",
     "spendPassId": "M-1",
     "status": "ordered_alone",
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    "timeText": "10:00",
+    "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
     "totalCents": 101000
    }
   ],
   "R-2": [
    {
     "agent": "agent:buyer-1",
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "agentText": "200 bags of lactose-free mozzarella 125 g",
+    "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {
      "outcome": "ask_human",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €."
     },
     "deliverBy": "2026-11-16",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
     "lines": [
      {
       "beyondList": [
        {
+        "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.01 EUR"
+          "value": "18.01 €",
+          "valueText": "18.01 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
+          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460).",
+          "valueText": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
          }
         ],
+        "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "180.10 €",
         "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465256",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
         "rank": 1,
-        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "A mozzarella-fontal blend, not pure mozzarella.",
+         "10 × 2.5 kg for 180.10 €.",
+         "Cheapest safe option and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
        },
        {
+        "displayName": "Lactose-free mozzarella grated 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "4318 BAG"
+          "value": "4318 BAG",
+          "valueText": "4,318 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "19.66 EUR"
+          "value": "19.66 €",
+          "valueText": "19.66 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.969"
+          "value": "0.969",
+          "valueText": "96.9 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Delicious grated mozzarella cheese from France."
+          "value": "Delicious grated mozzarella cheese from France.",
+          "valueText": "Delicious grated mozzarella cheese from France."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
+          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour.",
+          "valueText": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
          }
         ],
+        "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
         "isSubstitute": true,
+        "moneyText": "196.60 €",
         "name": "Maestrella Mozzarella grated 21% 2,5kg lactose free",
         "onValioList": false,
         "productId": "463383",
+        "qtyText": "10 bags",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 bags for 196.60 €.",
+         "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella grated 2.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6503,194 +8226,264 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "23.49 EUR"
+          "value": "23.49 €",
+          "valueText": "23.49 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.978"
+          "value": "0.978",
+          "valueText": "97.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "234.90 €",
         "name": "Valio mozzarella e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465174",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 × 2.5 kg for 234.90 €.",
+         "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella crumbled cheese 2.5 kg",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free mozzarella stange sliced 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "154 ST"
+          "value": "154 ST",
+          "valueText": "154 pieces"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "5.31 EUR"
+          "value": "5.31 €",
+          "valueText": "5.31 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
+          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen.",
+          "valueText": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
+          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet",
+          "valueText": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
          }
         ],
+        "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
         "isSubstitute": true,
+        "moneyText": "334.53 €",
         "name": "Topfoods mozzarella stange sliced lactose free 400g frozen",
         "onValioList": false,
         "productId": "470836",
+        "qtyText": "63 × 400 g",
         "quantity": 63,
-        "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free, claim unchecked.",
+         "63 × 400 g for 334.53 €.",
+         "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella stange sliced 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6701,116 +8494,152 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella grated 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "36.17 EUR"
+          "value": "36.17 €",
+          "valueText": "36.17 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 400 g grated",
         "isSubstitute": true,
+        "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
         "onValioList": false,
         "productId": "474642",
+        "qtyText": "8 cartons",
         "quantity": 8,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6821,117 +8650,154 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Mozzarella grated 150 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.29 EUR"
+          "value": "18.29 €",
+          "valueText": "18.29 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 150 g grated",
         "isSubstitute": true,
+        "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
         "onValioList": false,
         "productId": "467107",
+        "qtyText": "17 cartons",
         "quantity": 17,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 150 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6942,76 +8808,101 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "108.09 EUR"
+          "value": "108.09 €",
+          "valueText": "108.09 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
+          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty.",
+          "valueText": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
+          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)",
+          "valueText": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
          }
         ],
+        "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "isSubstitute": true,
+        "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "onValioList": false,
         "productId": "463685",
+        "qtyText": "5 cartons",
         "quantity": 5,
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7022,82 +8913,109 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "76.33 EUR"
+          "value": "76.33 €",
+          "valueText": "76.33 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.941"
+          "value": "0.941",
+          "valueText": "94.1 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_GLUTEN",
           "grade": "consistent",
           "note": "no gluten cereal listed",
+          "noteText": "no gluten cereal listed",
           "source": "Valio product data",
-          "value": "FREE_FROM_GLUTEN"
+          "value": "FREE_FROM_GLUTEN",
+          "valueText": "free from gluten"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
+          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need.",
+          "valueText": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
+          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid",
+          "valueText": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
          }
         ],
+        "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
         "productId": "467197",
-        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+        "reasons": [
+         "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
+        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7115,85 +9033,113 @@ export const answers: Answers = {
       "lineId": "L-1",
       "need": {
        "deliverBy": "2026-11-16",
+       "deliverByText": "Mon 16 Nov",
        "diet": [
         "lactose free"
        ],
        "productId": "466375",
+       "qtyText": "200 bags",
        "quantity": 200.0,
        "unit": "PCS",
        "what": "mozzarella"
       },
       "options": [
        {
+        "displayName": "Lactose-free mozzarella 125 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "0 BAG"
+          "value": "0 BAG",
+          "valueText": "0 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.16 EUR"
+          "value": "1.16 €",
+          "valueText": "1.16 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.948"
+          "value": "0.948",
+          "valueText": "94.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "3.9 kg CO2e per kg"
+          "value": "3.9 kg CO2e per kg",
+          "valueText": "3.9 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
+          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
+          "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
          }
         ],
+        "fullName": "Gran Castelli mozzarella 125 g lactose free",
         "isSubstitute": false,
+        "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
         "productId": "466375",
+        "qtyText": "200 bags",
         "quantity": 200,
-        "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "reasons": [
+         "Out of stock at Valio, 200 bags needed.",
+         "Lactose free claim unchecked: claims lactose free but gives no lactose value."
+        ],
+        "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "shortName": "Lactose-free mozzarella 125 g",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -7201,76 +9147,102 @@ export const answers: Answers = {
       ],
       "substitutes": [
        {
+        "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
+        "fullName": "Pasta Filata Mozzarella 125 g",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
         "productId": "466151",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Pasta filata mozzarella 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Lactose-free mozzarella 100 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.21 EUR"
+          "value": "1.21 €",
+          "valueText": "1.21 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
+          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes",
+          "valueText": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
+          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives.",
+          "valueText": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
          }
         ],
+        "fullName": "Galbani Mozzarella Lactose free 100 g",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
         "productId": "473986",
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free mozzarella 100 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7279,26 +9251,38 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
         "productId": "468526",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella bufala cheese buffalo 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Mozzarella 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella 125 g",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
         "productId": "475908",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella 125 g",
         "verdict": "blocked"
        }
       ],
-      "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
-      "text": "200 BAG of 466375"
+      "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
+      "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
     "liveChecked": {
@@ -7317,225 +9301,302 @@ export const answers: Answers = {
       1
      ]
     },
+    "moneyText": "180.10 €",
     "orderId": "O-2",
-    "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+    "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
-      "what": "stock-out of 466375"
+      "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags.",
+      "what": "stock-out of lactose-free mozzarella 125 g"
      }
     ],
     "spendPassId": "M-1",
     "status": "waiting",
-    "text": "200 BAG of 466375",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    },
    {
     "agent": "agent:buyer-1",
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "agentText": "200 bags of lactose-free mozzarella 125 g",
+    "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {
      "outcome": "ask_human",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line can be delivered and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+     "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
+     "summary": "Placed order O-2."
     },
     "deliverBy": "2026-11-16",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
     "lines": [
      {
       "beyondList": [
        {
+        "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.01 EUR"
+          "value": "18.01 €",
+          "valueText": "18.01 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
+          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460).",
+          "valueText": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
          }
         ],
+        "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "180.10 €",
         "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465256",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
         "rank": 1,
-        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "A mozzarella-fontal blend, not pure mozzarella.",
+         "10 × 2.5 kg for 180.10 €.",
+         "Cheapest safe option and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
        },
        {
+        "displayName": "Lactose-free mozzarella grated 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "4318 BAG"
+          "value": "4318 BAG",
+          "valueText": "4,318 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "19.66 EUR"
+          "value": "19.66 €",
+          "valueText": "19.66 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.969"
+          "value": "0.969",
+          "valueText": "96.9 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Delicious grated mozzarella cheese from France."
+          "value": "Delicious grated mozzarella cheese from France.",
+          "valueText": "Delicious grated mozzarella cheese from France."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
+          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour.",
+          "valueText": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
          }
         ],
+        "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
         "isSubstitute": true,
+        "moneyText": "196.60 €",
         "name": "Maestrella Mozzarella grated 21% 2,5kg lactose free",
         "onValioList": false,
         "productId": "463383",
+        "qtyText": "10 bags",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 bags for 196.60 €.",
+         "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella grated 2.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7546,194 +9607,264 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "23.49 EUR"
+          "value": "23.49 €",
+          "valueText": "23.49 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.978"
+          "value": "0.978",
+          "valueText": "97.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "234.90 €",
         "name": "Valio mozzarella e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465174",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 × 2.5 kg for 234.90 €.",
+         "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella crumbled cheese 2.5 kg",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free mozzarella stange sliced 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "154 ST"
+          "value": "154 ST",
+          "valueText": "154 pieces"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "5.31 EUR"
+          "value": "5.31 €",
+          "valueText": "5.31 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
+          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen.",
+          "valueText": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
+          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet",
+          "valueText": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
          }
         ],
+        "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
         "isSubstitute": true,
+        "moneyText": "334.53 €",
         "name": "Topfoods mozzarella stange sliced lactose free 400g frozen",
         "onValioList": false,
         "productId": "470836",
+        "qtyText": "63 × 400 g",
         "quantity": 63,
-        "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free, claim unchecked.",
+         "63 × 400 g for 334.53 €.",
+         "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella stange sliced 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7744,116 +9875,152 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella grated 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "36.17 EUR"
+          "value": "36.17 €",
+          "valueText": "36.17 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 400 g grated",
         "isSubstitute": true,
+        "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
         "onValioList": false,
         "productId": "474642",
+        "qtyText": "8 cartons",
         "quantity": 8,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7864,117 +10031,154 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Mozzarella grated 150 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.29 EUR"
+          "value": "18.29 €",
+          "valueText": "18.29 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 150 g grated",
         "isSubstitute": true,
+        "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
         "onValioList": false,
         "productId": "467107",
+        "qtyText": "17 cartons",
         "quantity": 17,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 150 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7985,76 +10189,101 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "108.09 EUR"
+          "value": "108.09 €",
+          "valueText": "108.09 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
+          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty.",
+          "valueText": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
+          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)",
+          "valueText": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
          }
         ],
+        "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "isSubstitute": true,
+        "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "onValioList": false,
         "productId": "463685",
+        "qtyText": "5 cartons",
         "quantity": 5,
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8065,82 +10294,109 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "76.33 EUR"
+          "value": "76.33 €",
+          "valueText": "76.33 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.941"
+          "value": "0.941",
+          "valueText": "94.1 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_GLUTEN",
           "grade": "consistent",
           "note": "no gluten cereal listed",
+          "noteText": "no gluten cereal listed",
           "source": "Valio product data",
-          "value": "FREE_FROM_GLUTEN"
+          "value": "FREE_FROM_GLUTEN",
+          "valueText": "free from gluten"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
+          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need.",
+          "valueText": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
+          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid",
+          "valueText": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
          }
         ],
+        "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
         "productId": "467197",
-        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+        "reasons": [
+         "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
+        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8158,85 +10414,113 @@ export const answers: Answers = {
       "lineId": "L-1",
       "need": {
        "deliverBy": "2026-11-16",
+       "deliverByText": "Mon 16 Nov",
        "diet": [
         "lactose free"
        ],
        "productId": "466375",
+       "qtyText": "200 bags",
        "quantity": 200.0,
        "unit": "PCS",
        "what": "mozzarella"
       },
       "options": [
        {
+        "displayName": "Lactose-free mozzarella 125 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "0 BAG"
+          "value": "0 BAG",
+          "valueText": "0 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.16 EUR"
+          "value": "1.16 €",
+          "valueText": "1.16 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.948"
+          "value": "0.948",
+          "valueText": "94.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "3.9 kg CO2e per kg"
+          "value": "3.9 kg CO2e per kg",
+          "valueText": "3.9 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
+          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
+          "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
          }
         ],
+        "fullName": "Gran Castelli mozzarella 125 g lactose free",
         "isSubstitute": false,
+        "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
         "productId": "466375",
+        "qtyText": "200 bags",
         "quantity": 200,
-        "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "reasons": [
+         "Out of stock at Valio, 200 bags needed.",
+         "Lactose free claim unchecked: claims lactose free but gives no lactose value."
+        ],
+        "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "shortName": "Lactose-free mozzarella 125 g",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -8244,76 +10528,102 @@ export const answers: Answers = {
       ],
       "substitutes": [
        {
+        "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
+        "fullName": "Pasta Filata Mozzarella 125 g",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
         "productId": "466151",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Pasta filata mozzarella 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Lactose-free mozzarella 100 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.21 EUR"
+          "value": "1.21 €",
+          "valueText": "1.21 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
+          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes",
+          "valueText": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
+          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives.",
+          "valueText": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
          }
         ],
+        "fullName": "Galbani Mozzarella Lactose free 100 g",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
         "productId": "473986",
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free mozzarella 100 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8322,26 +10632,38 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
         "productId": "468526",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella bufala cheese buffalo 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Mozzarella 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella 125 g",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
         "productId": "475908",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella 125 g",
         "verdict": "blocked"
        }
       ],
-      "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
-      "text": "200 BAG of 466375"
+      "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
+      "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
     "liveChecked": {
@@ -8360,225 +10682,302 @@ export const answers: Answers = {
       1
      ]
     },
+    "moneyText": "180.10 €",
     "orderId": "O-2",
-    "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+    "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
-      "what": "stock-out of 466375"
+      "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags.",
+      "what": "stock-out of lactose-free mozzarella 125 g"
      }
     ],
     "spendPassId": "M-1",
     "status": "ordered",
-    "text": "200 BAG of 466375",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    },
    {
     "agent": "agent:buyer-1",
-    "createdAt": "2026-11-14T10:00:00+02:00",
+    "agentText": "200 bags of lactose-free mozzarella 125 g",
+    "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {
      "outcome": "ask_human",
      "ruleIds": [
       "ask-human"
      ],
-     "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+     "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
+     "summary": "Spend Pass M-1 already placed 1,010.00 €."
     },
     "deliverBy": "2026-11-16",
+    "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
     "lines": [
      {
       "beyondList": [
        {
+        "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.01 EUR"
+          "value": "18.01 €",
+          "valueText": "18.01 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
+          "value": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460).",
+          "valueText": "CHEESE (pasteurised MILK, MILK protein, salt, starter culture) and anticaking agent (E460)."
          }
         ],
+        "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "180.10 €",
         "name": "Valio mozzarella-fontal e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465256",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
         "rank": 1,
-        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "A mozzarella-fontal blend, not pure mozzarella.",
+         "10 × 2.5 kg for 180.10 €.",
+         "Cheapest safe option and Valio delivered it as ordered every time in its records.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
        },
        {
+        "displayName": "Lactose-free mozzarella grated 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "4318 BAG"
+          "value": "4318 BAG",
+          "valueText": "4,318 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "19.66 EUR"
+          "value": "19.66 €",
+          "valueText": "19.66 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.969"
+          "value": "0.969",
+          "valueText": "96.9 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Delicious grated mozzarella cheese from France."
+          "value": "Delicious grated mozzarella cheese from France.",
+          "valueText": "Delicious grated mozzarella cheese from France."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
+          "value": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour.",
+          "valueText": "Mozzarella (pasteurized cow's MILK (country of origin: France), salt, lactic acid bacteria, coagulants), anti-caking agents: potato flour."
          }
         ],
+        "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
         "isSubstitute": true,
+        "moneyText": "196.60 €",
         "name": "Maestrella Mozzarella grated 21% 2,5kg lactose free",
         "onValioList": false,
         "productId": "463383",
+        "qtyText": "10 bags",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 bags for 196.60 €.",
+         "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella grated 2.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8589,194 +10988,264 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio reports 9999999999, a placeholder, not a real count; treated as in stock",
+          "noteText": "Valio gives no real count, treated as in stock",
           "source": "Valio availability API",
-          "value": "1e+10 ST"
+          "value": "9999999999 ST",
+          "valueText": "Valio gives no real count"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "23.49 EUR"
+          "value": "23.49 €",
+          "valueText": "23.49 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.978"
+          "value": "0.978",
+          "valueText": "97.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
         "isSubstitute": true,
+        "moneyText": "234.90 €",
         "name": "Valio mozzarella e2,5 kg crumbled cheese",
         "onValioList": false,
         "productId": "465174",
+        "qtyText": "10 × 2.5 kg",
         "quantity": 10,
-        "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free and checked.",
+         "10 × 2.5 kg for 234.90 €.",
+         "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
+         "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Mozzarella crumbled cheese 2.5 kg",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
        },
        {
+        "displayName": "Lactose-free mozzarella stange sliced 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "154 ST"
+          "value": "154 ST",
+          "valueText": "154 pieces"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "5.31 EUR"
+          "value": "5.31 €",
+          "valueText": "5.31 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "1"
+          "value": "1",
+          "valueText": "100 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
+          "value": "Ready-made sliced ​​lactose-free mozzarella stick as frozen.",
+          "valueText": "Ready-made sliced ​​lactose-free mozzarella stick as frozen."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
+          "value": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet",
+          "valueText": "MILK (99,8%) (Switzerland), salt, Acidifier: Citric acid (E 330), Lactase, Microbial rennet"
          }
         ],
+        "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
         "isSubstitute": true,
+        "moneyText": "334.53 €",
         "name": "Topfoods mozzarella stange sliced lactose free 400g frozen",
         "onValioList": false,
         "productId": "470836",
+        "qtyText": "63 × 400 g",
         "quantity": 63,
-        "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+        "reasons": [
+         "Lactose free, claim unchecked.",
+         "63 × 400 g for 334.53 €.",
+         "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
+         "Footprint 5.21 kg CO2e per kg, a group average."
+        ],
+        "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
+        "shortName": "Lactose-free mozzarella stange sliced 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8787,116 +11256,152 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
+        "displayName": "Mozzarella grated 400 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "36.17 EUR"
+          "value": "36.17 €",
+          "valueText": "36.17 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 400 g grated",
         "isSubstitute": true,
+        "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
         "onValioList": false,
         "productId": "474642",
+        "qtyText": "8 cartons",
         "quantity": 8,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 400 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8907,117 +11412,154 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Mozzarella grated 150 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "18.29 EUR"
+          "value": "18.29 €",
+          "valueText": "18.29 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "label:GOODS_FROM_FINLAND_BLUE_SWAN",
           "grade": "attested",
           "note": "",
+          "noteText": "",
           "source": "Valio product data",
-          "value": "Hyvää Suomesta"
+          "value": "Hyvää Suomesta",
+          "valueText": "Hyvää Suomesta"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_COLOURING_AGENTS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_COLOURING_AGENTS"
+          "value": "FREE_FROM_COLOURING_AGENTS",
+          "valueText": "free from colouring agents"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "claim:FREE_FROM_SWEETENERS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_SWEETENERS"
+          "value": "FREE_FROM_SWEETENERS",
+          "valueText": "free from sweeteners"
          },
          {
           "field": "claim:NO_ADDED_SUGARS",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "NO_ADDED_SUGARS"
+          "value": "NO_ADDED_SUGARS",
+          "valueText": "no added sugars"
          },
          {
           "field": "claim:VEGETARIAN",
           "grade": "consistent",
           "note": "no animal ingredient listed",
+          "noteText": "no animal ingredient listed",
           "source": "Valio product data",
-          "value": "VEGETARIAN"
+          "value": "VEGETARIAN",
+          "valueText": "vegetarian"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
+          "value": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier.",
+          "valueText": "Valio mozzarella grated cheese is a good choice when you want a deliciously stretchy result in your pizza, rarebits or baked dishes. It browns beautifully in the oven and makes food richer and juicier."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
+          "value": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture.",
+          "valueText": "Pasteurised MILK, MILK protein, salt, anticaking agent (E460) and starter culture."
          }
         ],
+        "fullName": "Valio mozzarella 150 g grated",
         "isSubstitute": true,
+        "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
         "onValioList": false,
         "productId": "467107",
+        "qtyText": "17 cartons",
         "quantity": 17,
+        "reasons": [
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Mozzarella grated 150 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9028,76 +11570,101 @@ export const answers: Answers = {
         "verdict": "rejected"
        },
        {
+        "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "108.09 EUR"
+          "value": "108.09 €",
+          "valueText": "108.09 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "claim:FREE_FROM_PRESERVATIVES",
           "grade": "unchecked",
           "note": "nothing in the data to check it against",
+          "noteText": "nothing in the data to check it against",
           "source": "Valio product data",
-          "value": "FREE_FROM_PRESERVATIVES"
+          "value": "FREE_FROM_PRESERVATIVES",
+          "valueText": "free from preservatives"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
+          "value": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty.",
+          "valueText": "Aromatic grated cheese for all cooking. Contains edam, emmental and mozzarella. Melt and brown well. Highly salty."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
+          "value": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)",
+          "valueText": "Pasteurized MILK , salt, sourdough, rennet, acidity regulator (cellulose)"
          }
         ],
+        "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "isSubstitute": true,
+        "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
         "onValioList": false,
         "productId": "463685",
+        "qtyText": "5 cartons",
         "quantity": 5,
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9108,82 +11675,109 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "unknown",
           "note": "Terminal: Valio reports 999999 KI, the goods sit at the supplier",
-          "source": "Valio availability API"
+          "noteText": "The goods sit at the supplier",
+          "source": "Valio availability API",
+          "valueText": "Valio does not confirm its stock"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "76.33 EUR"
+          "value": "76.33 €",
+          "valueText": "76.33 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-12T15:00:00+02:00"
+          "value": "2026-11-12T15:00:00+02:00",
+          "valueText": "12 Nov 15:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.941"
+          "value": "0.941",
+          "valueText": "94.1 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "5.21 kg CO2e per kg"
+          "value": "5.21 kg CO2e per kg",
+          "valueText": "5.21 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_GLUTEN",
           "grade": "consistent",
           "note": "no gluten cereal listed",
+          "noteText": "no gluten cereal listed",
           "source": "Valio product data",
-          "value": "FREE_FROM_GLUTEN"
+          "value": "FREE_FROM_GLUTEN",
+          "valueText": "free from gluten"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0 g per 100 g",
+          "noteText": "lactose 0 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
+          "value": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need.",
+          "valueText": "Lactose-free loose frozen mozzarella pearl. It's easy to melt just the amount you need."
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
+          "value": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid",
+          "valueText": "MILK, salt, lactase, microbiological rennet, acidity regulator: citric acid"
          }
         ],
+        "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
         "productId": "467197",
-        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+        "reasons": [
+         "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
+         "Order cut-off 12 Nov 15:00 has passed."
+        ],
+        "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
+        "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9201,85 +11795,113 @@ export const answers: Answers = {
       "lineId": "L-1",
       "need": {
        "deliverBy": "2026-11-16",
+       "deliverByText": "Mon 16 Nov",
        "diet": [
         "lactose free"
        ],
        "productId": "466375",
+       "qtyText": "200 bags",
        "quantity": 200.0,
        "unit": "PCS",
        "what": "mozzarella"
       },
       "options": [
        {
+        "displayName": "Lactose-free mozzarella 125 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Stock at Valio",
+          "noteText": "Stock at Valio",
           "source": "Valio availability API",
-          "value": "0 BAG"
+          "value": "0 BAG",
+          "valueText": "0 bags"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.16 EUR"
+          "value": "1.16 €",
+          "valueText": "1.16 €"
          },
          {
           "field": "cutoff",
           "grade": "attested",
           "note": "order cut-off",
+          "noteText": "order cut-off",
           "source": "Valio availability API",
-          "value": "2026-11-15T17:00:00+02:00"
+          "value": "2026-11-15T17:00:00+02:00",
+          "valueText": "15 Nov 17:00"
          },
          {
           "field": "reliability",
           "grade": "attested",
           "note": "share delivered as ordered",
+          "noteText": "share delivered as ordered",
           "source": "Valio delivery reliability file",
-          "value": "0.948"
+          "value": "0.948",
+          "valueText": "94.8 % of orders"
          },
          {
           "field": "carbon",
           "grade": "attested",
           "note": "group average for its product group",
+          "noteText": "group average for its product group",
           "source": "Valio carbon footprint file",
-          "value": "3.9 kg CO2e per kg"
+          "value": "3.9 kg CO2e per kg",
+          "valueText": "3.9 kg CO2e per kg"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "unchecked",
           "note": "claims lactose free but gives no lactose value",
+          "noteText": "claims lactose free but gives no lactose value",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
+          "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
+          "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g."
          }
         ],
+        "fullName": "Gran Castelli mozzarella 125 g lactose free",
         "isSubstitute": false,
+        "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
         "productId": "466375",
+        "qtyText": "200 bags",
         "quantity": 200,
-        "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "reasons": [
+         "Out of stock at Valio, 200 bags needed.",
+         "Lactose free claim unchecked: claims lactose free but gives no lactose value."
+        ],
+        "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+        "shortName": "Lactose-free mozzarella 125 g",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -9287,76 +11909,102 @@ export const answers: Answers = {
       ],
       "substitutes": [
        {
+        "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
+        "fullName": "Pasta Filata Mozzarella 125 g",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
         "productId": "466151",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Pasta filata mozzarella 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Lactose-free mozzarella 100 g",
         "facts": [
          {
           "field": "quantity",
           "grade": "attested",
           "note": "Valio gives no delivery line",
+          "noteText": "Valio gives no delivery line",
           "source": "Valio availability API",
-          "value": "not deliverable"
+          "value": "not deliverable",
+          "valueText": "not deliverable"
          },
          {
           "field": "price",
           "grade": "attested",
           "note": "catalog price, no end date",
+          "noteText": "catalog price, no end date",
           "source": "Valio price API",
-          "value": "1.21 EUR"
+          "value": "1.21 €",
+          "valueText": "1.21 €"
          },
          {
           "field": "reliability",
           "grade": "missing",
           "note": "no delivery record",
+          "noteText": "no delivery record",
           "source": "Valio delivery reliability file"
          },
          {
           "field": "carbon",
           "grade": "missing",
           "note": "no value",
+          "noteText": "no value",
           "source": "Valio carbon footprint file"
          },
          {
           "field": "allergens",
           "grade": "attested",
           "note": "may contain: none",
+          "noteText": "may contain: none",
           "source": "Valio product data",
-          "value": "AM"
+          "value": "AM",
+          "valueText": "milk"
          },
          {
           "field": "claim:FREE_FROM_LACTOSE",
           "grade": "consistent",
           "note": "lactose 0.01 g per 100 g",
+          "noteText": "lactose 0.01 g per 100 g",
           "source": "Valio product data",
-          "value": "FREE_FROM_LACTOSE"
+          "value": "FREE_FROM_LACTOSE",
+          "valueText": "free from lactose"
          },
          {
           "field": "description",
           "grade": "untrusted",
           "note": "never used for a decision",
+          "noteText": "never used for a decision",
           "source": "supplier text",
-          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
+          "value": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes",
+          "valueText": "Mozzarella is a traditional fresh cheese from Italian cuisine. Fresh mozzarella is stored in salt water to retain the freshness. This fresh mozzarella is lactose-free. The taste is mild and milky. The texture is soft. The cheese is suitable for both cold and warm dishes. Mozzarella is used, for example, in the classic caprese salad with tomatoes, fresh basil and virgin olive oil. It is perfect for salads, sandwiches, pizza and baked dishes"
          },
          {
           "field": "key_ingredients",
           "grade": "untrusted",
           "note": "read only to find contradictions",
+          "noteText": "read only to find contradictions",
           "source": "supplier text",
-          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
+          "value": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives.",
+          "valueText": "Lactose free pasteurised MILK, salt, rennet, lactic cultures, acidity regulator: citric acid. This product contains glucose and galactose coming from the lactose enzymaticreduction. Does not contain preservatives."
          }
         ],
+        "fullName": "Galbani Mozzarella Lactose free 100 g",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
         "productId": "473986",
+        "reasons": [
+         "Lactose free and checked, but Valio gives no delivery date for it."
+        ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
+        "shortName": "Lactose-free mozzarella 100 g",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9365,26 +12013,38 @@ export const answers: Answers = {
         "verdict": "not_deliverable"
        },
        {
+        "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
         "productId": "468526",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella bufala cheese buffalo 125 g",
         "verdict": "blocked"
        },
        {
+        "displayName": "Mozzarella 125 g",
         "facts": [],
+        "fullName": "Castelli mozzarella 125 g",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
         "productId": "475908",
+        "reasons": [
+         "Lists milk and has no lactose-free claim in Valio's data."
+        ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
+        "shortName": "Mozzarella 125 g",
         "verdict": "blocked"
        }
       ],
-      "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
-      "text": "200 BAG of 466375"
+      "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
+      "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
     "liveChecked": {
@@ -9403,18 +12063,21 @@ export const answers: Answers = {
       1
      ]
     },
+    "moneyText": "180.10 €",
     "orderId": "O-2",
-    "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+    "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "requestId": "R-2",
     "simulated": [
      {
-      "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero.",
-      "what": "stock-out of 466375"
+      "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags.",
+      "what": "stock-out of lactose-free mozzarella 125 g"
      }
     ],
     "spendPassId": "M-1",
     "status": "rejected",
-    "text": "200 BAG of 466375",
+    "text": "200 bags of lactose-free mozzarella 125 g",
+    "timeText": "10:14",
+    "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "totalCents": 18010
    }
   ]
@@ -9437,10 +12100,19 @@ export const answers: Answers = {
      "diet",
      "hardCapCents"
     ],
+    "disclosedText": [
+     "auto limit",
+     "diet",
+     "never above"
+    ],
     "hardCapCents": 200000,
     "hidden": [
      "approvers",
      "preferLabels"
+    ],
+    "hiddenText": [
+     "approvers",
+     "prefer labels"
     ],
     "holder": "agent:buyer-1",
     "id": "M-1",
@@ -9450,6 +12122,49 @@ export const answers: Answers = {
      "maxExtraCostPct": 5.0
     },
     "substitutes": "listed_and_rules_kept",
+    "usedCents": 101000,
+    "validFrom": "2026-11-14T10:00:00+02:00",
+    "validTo": "2026-11-17T00:00:00+02:00"
+   },
+   {
+    "autoLimitCents": 120000,
+    "categories": [
+     "104",
+     "106",
+     "418"
+    ],
+    "deliverBy": "2026-11-16",
+    "diet": [
+     "lactose free"
+    ],
+    "disclosed": [
+     "autoLimitCents",
+     "diet",
+     "hardCapCents"
+    ],
+    "disclosedText": [
+     "auto limit",
+     "diet",
+     "never above"
+    ],
+    "hardCapCents": 200000,
+    "hidden": [
+     "approvers",
+     "preferLabels"
+    ],
+    "hiddenText": [
+     "approvers",
+     "prefer labels"
+    ],
+    "holder": "agent:buyer-1",
+    "id": "M-1",
+    "issuer": "kitchen:hotel-espoo",
+    "split": {
+     "allowListedSubstitutes": true,
+     "maxExtraCostPct": 5.0
+    },
+    "substitutes": "listed_and_rules_kept",
+    "usedCents": 119010,
     "validFrom": "2026-11-14T10:00:00+02:00",
     "validTo": "2026-11-17T00:00:00+02:00"
    }
@@ -9462,34 +12177,48 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "productId": "464306",
       "result": "pending",
-      "sentence": "Usual amount.",
-      "unit": "packs",
+      "sentence": "",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
       "productId": "463968",
       "result": "pending",
-      "sentence": "Usual amount.",
-      "unit": "packs",
+      "sentence": "",
+      "shortName": "Parmesan reggiano 125 g",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
+      "displayName": "Vegan pancake 30 g",
       "flags": [],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "productId": "471376",
       "result": "pending",
-      "sentence": "Usual amount.",
+      "sentence": "",
+      "shortName": "Vegan pancake 30 g",
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -9504,12 +12233,24 @@ export const answers: Answers = {
       "productId": "466375",
       "result": "pending",
       "sentence": "Median of the last 8 weeks.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
     "simulatedHistory": true,
+    "state": "not_renewed",
+    "stateText": "Not renewed this week",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 0,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    },
@@ -9518,82 +12259,111 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "orderId": "O-2",
       "productId": "464306",
+      "qtyText": "300 × 1 l",
       "result": "renewed",
       "ruleIds": [
        "auto-order"
       ],
       "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "thisWeekQuantity": 300,
       "totalCents": 30300,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [
        {
         "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
        }
       ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
       "orderId": "O-3",
       "productId": "463968",
+      "qtyText": "177 × 125 g",
       "result": "split_renewed",
       "ruleIds": [
        "auto-order"
       ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
       "split": {
        "extraCostCents": 1849,
        "extraCostPct": 2.5,
        "parts": [
         {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
          "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
          "onValioList": false,
          "productId": "463968",
+         "qtyText": "137 × 125 g",
          "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
          "totalCents": 51649,
-         "unit": "packs"
+         "unit": "pieces"
         },
         {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
          "name": "Castelli parmigiano reggiano 200g block",
          "onValioList": true,
          "productId": "469648",
+         "qtyText": "40 × 200 g",
          "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
          "totalCents": 25600,
-         "unit": "packs"
+         "unit": "pieces"
         }
        ],
        "totalCents": 77249
       },
       "thisWeekQuantity": 177,
       "totalCents": 77249,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
       "acceptLabel": "Order 27 now",
+      "displayName": "Vegan pancake 30 g",
       "flags": [
        {
         "kind": "stock_below",
         "sentence": "Only 27 cartons in stock, the usual line is 30."
        }
       ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "productId": "471376",
+      "qtyText": "27 cartons",
       "result": "waiting",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
       "acceptLabel": "Renew anyway",
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [
        {
         "kind": "per_guest_up",
@@ -9601,6 +12371,7 @@ export const answers: Answers = {
         "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
        }
       ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -9611,22 +12382,36 @@ export const answers: Answers = {
        116,
        120
       ],
+      "moneyText": "113.68 €",
       "name": "Gran Castelli mozzarella 125g lactose free",
       "productId": "466375",
+      "qtyText": "98 bags",
       "result": "flagged",
       "ruleIds": [
        "ask-human"
       ],
-      "sentence": "Waits for you because of the flag below.",
+      "sentence": "Waits for you: 26 % more per guest than usual.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:11:00+02:00",
     "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:11",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 107549,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    },
@@ -9635,82 +12420,111 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "orderId": "O-2",
       "productId": "464306",
+      "qtyText": "300 × 1 l",
       "result": "renewed",
       "ruleIds": [
        "auto-order"
       ],
       "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "thisWeekQuantity": 300,
       "totalCents": 30300,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [
        {
         "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
        }
       ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
       "orderId": "O-3",
       "productId": "463968",
+      "qtyText": "177 × 125 g",
       "result": "split_renewed",
       "ruleIds": [
        "auto-order"
       ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
       "split": {
        "extraCostCents": 1849,
        "extraCostPct": 2.5,
        "parts": [
         {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
          "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
          "onValioList": false,
          "productId": "463968",
+         "qtyText": "137 × 125 g",
          "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
          "totalCents": 51649,
-         "unit": "packs"
+         "unit": "pieces"
         },
         {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
          "name": "Castelli parmigiano reggiano 200g block",
          "onValioList": true,
          "productId": "469648",
+         "qtyText": "40 × 200 g",
          "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
          "totalCents": 25600,
-         "unit": "packs"
+         "unit": "pieces"
         }
        ],
        "totalCents": 77249
       },
       "thisWeekQuantity": 177,
       "totalCents": 77249,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
+      "displayName": "Vegan pancake 30 g",
       "flags": [
        {
         "kind": "stock_below",
         "sentence": "Only 27 cartons in stock, the usual line is 30."
        }
       ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "orderId": "O-4",
       "productId": "471376",
+      "qtyText": "27 cartons",
       "result": "accepted",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
       "acceptLabel": "Renew anyway",
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [
        {
         "kind": "per_guest_up",
@@ -9718,6 +12532,7 @@ export const answers: Answers = {
         "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
        }
       ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -9728,22 +12543,36 @@ export const answers: Answers = {
        116,
        120
       ],
+      "moneyText": "113.68 €",
       "name": "Gran Castelli mozzarella 125g lactose free",
       "productId": "466375",
+      "qtyText": "98 bags",
       "result": "flagged",
       "ruleIds": [
        "ask-human"
       ],
-      "sentence": "Waits for you because of the flag below.",
+      "sentence": "Waits for you: 26 % more per guest than usual.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:11:00+02:00",
     "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:11",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 198080,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    },
@@ -9752,81 +12581,110 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "orderId": "O-2",
       "productId": "464306",
+      "qtyText": "300 × 1 l",
       "result": "renewed",
       "ruleIds": [
        "auto-order"
       ],
       "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "thisWeekQuantity": 300,
       "totalCents": 30300,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [
        {
         "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
        }
       ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
       "orderId": "O-3",
       "productId": "463968",
+      "qtyText": "177 × 125 g",
       "result": "split_renewed",
       "ruleIds": [
        "auto-order"
       ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
       "split": {
        "extraCostCents": 1849,
        "extraCostPct": 2.5,
        "parts": [
         {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
          "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
          "onValioList": false,
          "productId": "463968",
+         "qtyText": "137 × 125 g",
          "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
          "totalCents": 51649,
-         "unit": "packs"
+         "unit": "pieces"
         },
         {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
          "name": "Castelli parmigiano reggiano 200g block",
          "onValioList": true,
          "productId": "469648",
+         "qtyText": "40 × 200 g",
          "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
          "totalCents": 25600,
-         "unit": "packs"
+         "unit": "pieces"
         }
        ],
        "totalCents": 77249
       },
       "thisWeekQuantity": 177,
       "totalCents": 77249,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
       "acceptLabel": "Order 27 now",
+      "displayName": "Vegan pancake 30 g",
       "flags": [
        {
         "kind": "stock_below",
         "sentence": "Only 27 cartons in stock, the usual line is 30."
        }
       ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "productId": "471376",
+      "qtyText": "27 cartons",
       "result": "waiting",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [
        {
         "kind": "per_guest_up",
@@ -9834,6 +12692,7 @@ export const answers: Answers = {
         "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
        }
       ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -9844,23 +12703,37 @@ export const answers: Answers = {
        116,
        120
       ],
+      "moneyText": "113.68 €",
       "name": "Gran Castelli mozzarella 125g lactose free",
       "orderId": "O-4",
       "productId": "466375",
+      "qtyText": "98 bags",
       "result": "accepted",
       "ruleIds": [
        "ask-human"
       ],
-      "sentence": "Waits for you because of the flag below.",
+      "sentence": "Waits for you: 26 % more per guest than usual.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:11:00+02:00",
     "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:11",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 118917,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    },
@@ -9869,210 +12742,122 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
-      "orderId": "O-2",
+      "orderId": "O-3",
       "productId": "464306",
+      "qtyText": "300 × 1 l",
       "result": "renewed",
       "ruleIds": [
        "auto-order"
       ],
       "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "thisWeekQuantity": 300,
       "totalCents": 30300,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [
        {
         "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
        }
       ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
-      "orderId": "O-3",
+      "orderId": "O-4",
       "productId": "463968",
+      "qtyText": "177 × 125 g",
       "result": "split_renewed",
       "ruleIds": [
        "auto-order"
       ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
       "split": {
        "extraCostCents": 1849,
        "extraCostPct": 2.5,
        "parts": [
         {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
          "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
          "onValioList": false,
          "productId": "463968",
+         "qtyText": "137 × 125 g",
          "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
          "totalCents": 51649,
-         "unit": "packs"
+         "unit": "pieces"
         },
         {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
          "name": "Castelli parmigiano reggiano 200g block",
          "onValioList": true,
          "productId": "469648",
+         "qtyText": "40 × 200 g",
          "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
          "totalCents": 25600,
-         "unit": "packs"
+         "unit": "pieces"
         }
        ],
        "totalCents": 77249
       },
       "thisWeekQuantity": 177,
       "totalCents": 77249,
-      "unit": "packs",
-      "usualQuantity": 200
-     },
-     {
-      "flags": [
-       {
-        "kind": "stock_below",
-        "sentence": "Only 27 cartons in stock, the usual line is 30."
-       }
-      ],
-      "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
-      "orderId": "O-4",
-      "productId": "471376",
-      "result": "accepted",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-      "thisWeekQuantity": 27,
-      "totalCents": 90531,
-      "unit": "cartons",
-      "usualQuantity": 30
-     },
-     {
-      "flags": [
-       {
-        "kind": "per_guest_up",
-        "pct": 26,
-        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
-       }
-      ],
-      "history": [
-       92,
-       92,
-       94,
-       96,
-       100,
-       108,
-       116,
-       120
-      ],
-      "name": "Gran Castelli mozzarella 125g lactose free",
-      "orderId": "O-5",
-      "productId": "466375",
-      "result": "accepted",
-      "ruleIds": [
-       "ask-human"
-      ],
-      "sentence": "Waits for you because of the flag below.",
-      "thisWeekQuantity": 98,
-      "totalCents": 11368,
-      "unit": "bags",
-      "usualQuantity": 98
-     }
-    ],
-    "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
-    "simulatedHistory": true,
-    "weekday": "Monday",
-    "weeksLearned": 8
-   },
-   {
-    "guestsPerWeek": 400,
-    "id": "S-1",
-    "lines": [
-     {
-      "flags": [],
-      "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
-      "orderId": "O-3",
-      "productId": "464306",
-      "result": "renewed",
-      "ruleIds": [
-       "auto-order"
-      ],
-      "sentence": "Same as usual.",
-      "thisWeekQuantity": 300,
-      "totalCents": 30300,
-      "unit": "packs",
-      "usualQuantity": 300
-     },
-     {
-      "flags": [
-       {
-        "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
-       }
-      ],
-      "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
-      "orderId": "O-4",
-      "productId": "463968",
-      "result": "split_renewed",
-      "ruleIds": [
-       "auto-order"
-      ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
-      "split": {
-       "extraCostCents": 1849,
-       "extraCostPct": 2.5,
-       "parts": [
-        {
-         "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
-         "onValioList": false,
-         "productId": "463968",
-         "quantity": 137,
-         "totalCents": 51649,
-         "unit": "packs"
-        },
-        {
-         "name": "Castelli parmigiano reggiano 200g block",
-         "onValioList": true,
-         "productId": "469648",
-         "quantity": 40,
-         "totalCents": 25600,
-         "unit": "packs"
-        }
-       ],
-       "totalCents": 77249
-      },
-      "thisWeekQuantity": 177,
-      "totalCents": 77249,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
       "acceptLabel": "Order 27 now",
+      "displayName": "Vegan pancake 30 g",
       "flags": [
        {
         "kind": "stock_below",
         "sentence": "Only 27 cartons in stock, the usual line is 30."
        }
       ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "productId": "471376",
+      "qtyText": "27 cartons",
       "result": "waiting",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
-      "acceptLabel": "Renew anyway",
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [
        {
         "kind": "per_guest_up",
         "pct": 26,
-        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
        },
        {
         "kind": "stock_below",
-        "sentence": "Only 0 bags in stock, the usual line is 98."
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
        }
       ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -10083,22 +12868,33 @@ export const answers: Answers = {
        116,
        120
       ],
+      "moneyText": "113.68 €",
       "name": "Gran Castelli mozzarella 125g lactose free",
       "productId": "466375",
-      "result": "flagged",
-      "ruleIds": [
-       "ask-human"
-      ],
-      "sentence": "Waits for you because of the flag below.",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:19:00+02:00",
     "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:19",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 107549,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    },
@@ -10107,93 +12903,122 @@ export const answers: Answers = {
     "id": "S-1",
     "lines": [
      {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
       "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
       "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
       "orderId": "O-3",
       "productId": "464306",
+      "qtyText": "300 × 1 l",
       "result": "renewed",
       "ruleIds": [
        "auto-order"
       ],
       "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
       "thisWeekQuantity": 300,
       "totalCents": 30300,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
       "usualQuantity": 300
      },
      {
+      "displayName": "Parmesan reggiano 125 g",
       "flags": [
        {
         "kind": "stock_below",
-        "sentence": "Only 137 packs in stock, the usual line is 200."
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
        }
       ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
       "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
       "orderId": "O-4",
       "productId": "463968",
+      "qtyText": "177 × 125 g",
       "result": "split_renewed",
       "ruleIds": [
        "auto-order"
       ],
-      "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
       "split": {
        "extraCostCents": 1849,
        "extraCostPct": 2.5,
        "parts": [
         {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
          "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
          "onValioList": false,
          "productId": "463968",
+         "qtyText": "137 × 125 g",
          "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
          "totalCents": 51649,
-         "unit": "packs"
+         "unit": "pieces"
         },
         {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
          "name": "Castelli parmigiano reggiano 200g block",
          "onValioList": true,
          "productId": "469648",
+         "qtyText": "40 × 200 g",
          "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
          "totalCents": 25600,
-         "unit": "packs"
+         "unit": "pieces"
         }
        ],
        "totalCents": 77249
       },
       "thisWeekQuantity": 177,
       "totalCents": 77249,
-      "unit": "packs",
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
       "usualQuantity": 200
      },
      {
+      "displayName": "Vegan pancake 30 g",
       "flags": [
        {
         "kind": "stock_below",
         "sentence": "Only 27 cartons in stock, the usual line is 30."
        }
       ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
       "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
       "orderId": "O-5",
       "productId": "471376",
+      "qtyText": "27 cartons",
       "result": "accepted",
-      "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
+      "usualQtyText": "30 cartons",
       "usualQuantity": 30
      },
      {
-      "acceptLabel": "Renew anyway",
+      "displayName": "Lactose-free mozzarella 125 g",
       "flags": [
        {
         "kind": "per_guest_up",
         "pct": 26,
-        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?"
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
        },
        {
         "kind": "stock_below",
-        "sentence": "Only 0 bags in stock, the usual line is 98."
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
        }
       ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
       "history": [
        92,
        92,
@@ -10204,22 +13029,677 @@ export const answers: Answers = {
        116,
        120
       ],
+      "moneyText": "113.68 €",
       "name": "Gran Castelli mozzarella 125g lactose free",
       "productId": "466375",
-      "result": "flagged",
-      "ruleIds": [
-       "ask-human"
-      ],
-      "sentence": "Waits for you because of the flag below.",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
+      "usualQtyText": "98 bags",
       "usualQuantity": 98
      }
     ],
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:19:00+02:00",
     "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:19",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 198080,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
+    "weekday": "Monday",
+    "weeksLearned": 8
+   },
+   {
+    "guestsPerWeek": 400,
+    "id": "S-1",
+    "lines": [
+     {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
+      "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
+      "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
+      "orderId": "O-3",
+      "productId": "464306",
+      "qtyText": "300 × 1 l",
+      "result": "renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
+      "thisWeekQuantity": 300,
+      "totalCents": 30300,
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
+      "usualQuantity": 300
+     },
+     {
+      "displayName": "Parmesan reggiano 125 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+       }
+      ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
+      "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+      "orderId": "O-4",
+      "productId": "463968",
+      "qtyText": "177 × 125 g",
+      "result": "split_renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
+      "split": {
+       "extraCostCents": 1849,
+       "extraCostPct": 2.5,
+       "parts": [
+        {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
+         "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+         "onValioList": false,
+         "productId": "463968",
+         "qtyText": "137 × 125 g",
+         "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
+         "totalCents": 51649,
+         "unit": "pieces"
+        },
+        {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
+         "name": "Castelli parmigiano reggiano 200g block",
+         "onValioList": true,
+         "productId": "469648",
+         "qtyText": "40 × 200 g",
+         "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
+         "totalCents": 25600,
+         "unit": "pieces"
+        }
+       ],
+       "totalCents": 77249
+      },
+      "thisWeekQuantity": 177,
+      "totalCents": 77249,
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
+      "usualQuantity": 200
+     },
+     {
+      "acceptLabel": "Order 27 now",
+      "displayName": "Vegan pancake 30 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 27 cartons in stock, the usual line is 30."
+       }
+      ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
+      "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
+      "productId": "471376",
+      "qtyText": "27 cartons",
+      "result": "waiting",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
+      "thisWeekQuantity": 27,
+      "totalCents": 90531,
+      "unit": "cartons",
+      "usualQtyText": "30 cartons",
+      "usualQuantity": 30
+     },
+     {
+      "displayName": "Lactose-free mozzarella 125 g",
+      "flags": [
+       {
+        "kind": "per_guest_up",
+        "pct": 26,
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
+       },
+       {
+        "kind": "stock_below",
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
+       }
+      ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
+      "history": [
+       92,
+       92,
+       94,
+       96,
+       100,
+       108,
+       116,
+       120
+      ],
+      "moneyText": "113.68 €",
+      "name": "Gran Castelli mozzarella 125g lactose free",
+      "productId": "466375",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
+      "thisWeekQuantity": 98,
+      "totalCents": 11368,
+      "unit": "bags",
+      "usualQtyText": "98 bags",
+      "usualQuantity": 98
+     }
+    ],
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:25:00+02:00",
+    "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:25",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 107549,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
+    "weekday": "Monday",
+    "weeksLearned": 8
+   },
+   {
+    "guestsPerWeek": 400,
+    "id": "S-1",
+    "lines": [
+     {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
+      "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
+      "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
+      "orderId": "O-3",
+      "productId": "464306",
+      "qtyText": "300 × 1 l",
+      "result": "renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
+      "thisWeekQuantity": 300,
+      "totalCents": 30300,
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
+      "usualQuantity": 300
+     },
+     {
+      "displayName": "Parmesan reggiano 125 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+       }
+      ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
+      "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+      "orderId": "O-4",
+      "productId": "463968",
+      "qtyText": "177 × 125 g",
+      "result": "split_renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
+      "split": {
+       "extraCostCents": 1849,
+       "extraCostPct": 2.5,
+       "parts": [
+        {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
+         "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+         "onValioList": false,
+         "productId": "463968",
+         "qtyText": "137 × 125 g",
+         "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
+         "totalCents": 51649,
+         "unit": "pieces"
+        },
+        {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
+         "name": "Castelli parmigiano reggiano 200g block",
+         "onValioList": true,
+         "productId": "469648",
+         "qtyText": "40 × 200 g",
+         "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
+         "totalCents": 25600,
+         "unit": "pieces"
+        }
+       ],
+       "totalCents": 77249
+      },
+      "thisWeekQuantity": 177,
+      "totalCents": 77249,
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
+      "usualQuantity": 200
+     },
+     {
+      "displayName": "Vegan pancake 30 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 27 cartons in stock, the usual line is 30."
+       }
+      ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
+      "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
+      "orderId": "O-5",
+      "productId": "471376",
+      "qtyText": "27 cartons",
+      "result": "accepted",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
+      "thisWeekQuantity": 27,
+      "totalCents": 90531,
+      "unit": "cartons",
+      "usualQtyText": "30 cartons",
+      "usualQuantity": 30
+     },
+     {
+      "displayName": "Lactose-free mozzarella 125 g",
+      "flags": [
+       {
+        "kind": "per_guest_up",
+        "pct": 26,
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
+       },
+       {
+        "kind": "stock_below",
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
+       }
+      ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
+      "history": [
+       92,
+       92,
+       94,
+       96,
+       100,
+       108,
+       116,
+       120
+      ],
+      "moneyText": "113.68 €",
+      "name": "Gran Castelli mozzarella 125g lactose free",
+      "productId": "466375",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
+      "thisWeekQuantity": 98,
+      "totalCents": 11368,
+      "unit": "bags",
+      "usualQtyText": "98 bags",
+      "usualQuantity": 98
+     }
+    ],
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:25:00+02:00",
+    "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:25",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 198080,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
+    "weekday": "Monday",
+    "weeksLearned": 8
+   },
+   {
+    "guestsPerWeek": 400,
+    "id": "S-1",
+    "lines": [
+     {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
+      "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
+      "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
+      "orderId": "O-3",
+      "productId": "464306",
+      "qtyText": "300 × 1 l",
+      "result": "renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
+      "thisWeekQuantity": 300,
+      "totalCents": 30300,
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
+      "usualQuantity": 300
+     },
+     {
+      "displayName": "Parmesan reggiano 125 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+       }
+      ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
+      "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+      "orderId": "O-4",
+      "productId": "463968",
+      "qtyText": "177 × 125 g",
+      "result": "split_renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
+      "split": {
+       "extraCostCents": 1849,
+       "extraCostPct": 2.5,
+       "parts": [
+        {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
+         "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+         "onValioList": false,
+         "productId": "463968",
+         "qtyText": "137 × 125 g",
+         "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
+         "totalCents": 51649,
+         "unit": "pieces"
+        },
+        {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
+         "name": "Castelli parmigiano reggiano 200g block",
+         "onValioList": true,
+         "productId": "469648",
+         "qtyText": "40 × 200 g",
+         "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
+         "totalCents": 25600,
+         "unit": "pieces"
+        }
+       ],
+       "totalCents": 77249
+      },
+      "thisWeekQuantity": 177,
+      "totalCents": 77249,
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
+      "usualQuantity": 200
+     },
+     {
+      "acceptLabel": "Order 27 now",
+      "displayName": "Vegan pancake 30 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 27 cartons in stock, the usual line is 30."
+       }
+      ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
+      "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
+      "productId": "471376",
+      "qtyText": "27 cartons",
+      "result": "waiting",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
+      "thisWeekQuantity": 27,
+      "totalCents": 90531,
+      "unit": "cartons",
+      "usualQtyText": "30 cartons",
+      "usualQuantity": 30
+     },
+     {
+      "displayName": "Lactose-free mozzarella 125 g",
+      "flags": [
+       {
+        "kind": "per_guest_up",
+        "pct": 26,
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
+       },
+       {
+        "kind": "stock_below",
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
+       }
+      ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
+      "history": [
+       92,
+       92,
+       94,
+       96,
+       100,
+       108,
+       116,
+       120
+      ],
+      "moneyText": "113.68 €",
+      "name": "Gran Castelli mozzarella 125g lactose free",
+      "productId": "466375",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
+      "thisWeekQuantity": 98,
+      "totalCents": 11368,
+      "unit": "bags",
+      "usualQtyText": "98 bags",
+      "usualQuantity": 98
+     }
+    ],
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:23:00+02:00",
+    "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:23",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 107549,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
+    "weekday": "Monday",
+    "weeksLearned": 8
+   },
+   {
+    "guestsPerWeek": 400,
+    "id": "S-1",
+    "lines": [
+     {
+      "displayName": "Lactose-free semi-skimmed milk 1 l",
+      "flags": [],
+      "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+      "moneyText": "303.00 €",
+      "name": "Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free",
+      "orderId": "O-3",
+      "productId": "464306",
+      "qtyText": "300 × 1 l",
+      "result": "renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Same as usual.",
+      "shortName": "Lactose-free semi-skimmed milk 1 l",
+      "thisWeekQuantity": 300,
+      "totalCents": 30300,
+      "unit": "pieces",
+      "usualQtyText": "300 × 1 l",
+      "usualQuantity": 300
+     },
+     {
+      "displayName": "Parmesan reggiano 125 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+       }
+      ],
+      "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+      "moneyText": "772.49 €",
+      "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+      "orderId": "O-4",
+      "productId": "463968",
+      "qtyText": "177 × 125 g",
+      "result": "split_renewed",
+      "ruleIds": [
+       "auto-order"
+      ],
+      "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+      "shortName": "Parmesan reggiano 125 g",
+      "split": {
+       "extraCostCents": 1849,
+       "extraCostPct": 2.5,
+       "parts": [
+        {
+         "displayName": "Parmesan reggiano 125 g",
+         "fullName": "Castelli Parmesan Reggiano 125 g PDO",
+         "moneyText": "516.49 €",
+         "name": "CASTELLI PARMESAN REGGIANO 125G PDO",
+         "onValioList": false,
+         "productId": "463968",
+         "qtyText": "137 × 125 g",
+         "quantity": 137,
+         "shortName": "Parmesan reggiano 125 g",
+         "totalCents": 51649,
+         "unit": "pieces"
+        },
+        {
+         "displayName": "Parmigiano reggiano block 200 g",
+         "fullName": "Castelli parmigiano reggiano 200 g block",
+         "moneyText": "256.00 €",
+         "name": "Castelli parmigiano reggiano 200g block",
+         "onValioList": true,
+         "productId": "469648",
+         "qtyText": "40 × 200 g",
+         "quantity": 40,
+         "shortName": "Parmigiano reggiano block 200 g",
+         "totalCents": 25600,
+         "unit": "pieces"
+        }
+       ],
+       "totalCents": 77249
+      },
+      "thisWeekQuantity": 177,
+      "totalCents": 77249,
+      "unit": "pieces",
+      "usualQtyText": "200 × 125 g",
+      "usualQuantity": 200
+     },
+     {
+      "displayName": "Vegan pancake 30 g",
+      "flags": [
+       {
+        "kind": "stock_below",
+        "sentence": "Only 27 cartons in stock, the usual line is 30."
+       }
+      ],
+      "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
+      "moneyText": "905.31 €",
+      "name": "Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen",
+      "orderId": "O-5",
+      "productId": "471376",
+      "qtyText": "27 cartons",
+      "result": "accepted",
+      "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+      "shortName": "Vegan pancake 30 g",
+      "thisWeekQuantity": 27,
+      "totalCents": 90531,
+      "unit": "cartons",
+      "usualQtyText": "30 cartons",
+      "usualQuantity": 30
+     },
+     {
+      "displayName": "Lactose-free mozzarella 125 g",
+      "flags": [
+       {
+        "kind": "per_guest_up",
+        "pct": 26,
+        "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest)."
+       },
+       {
+        "kind": "stock_below",
+        "sentence": "Out of stock at Valio, the usual line is 98 bags."
+       }
+      ],
+      "fullName": "Gran Castelli mozzarella 125 g lactose free",
+      "history": [
+       92,
+       92,
+       94,
+       96,
+       100,
+       108,
+       116,
+       120
+      ],
+      "moneyText": "113.68 €",
+      "name": "Gran Castelli mozzarella 125g lactose free",
+      "productId": "466375",
+      "qtyText": "98 bags",
+      "result": "blocked",
+      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "shortName": "Lactose-free mozzarella 125 g",
+      "thisWeekQuantity": 98,
+      "totalCents": 11368,
+      "unit": "bags",
+      "usualQtyText": "98 bags",
+      "usualQuantity": 98
+     }
+    ],
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:23:00+02:00",
+    "simulatedHistory": true,
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:23",
+    "steadyPass": {
+     "autoLimitCents": 120000,
+     "hardCapCents": 200000,
+     "id": "S-1-W46",
+     "usedCents": 198080,
+     "validFrom": "2026-11-09T00:00:00+02:00",
+     "validTo": "2026-11-16T00:00:00+02:00"
+    },
     "weekday": "Monday",
     "weeksLearned": 8
    }
@@ -10232,6 +13712,8 @@ export const answers: Answers = {
     "id": "S-1",
     "lineCount": 4,
     "name": "Weekly Monday order",
+    "state": "not_renewed",
+    "stateText": "Not renewed this week",
     "weekday": "Monday"
    }
   ],
@@ -10241,7 +13723,9 @@ export const answers: Answers = {
     "id": "S-1",
     "lineCount": 4,
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:11:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:11",
     "weekday": "Monday"
    }
   ],
@@ -10251,17 +13735,81 @@ export const answers: Answers = {
     "id": "S-1",
     "lineCount": 4,
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:11:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:11",
     "weekday": "Monday"
    }
   ],
   [
    {
-    "flagCount": 1,
+    "flagCount": 3,
     "id": "S-1",
     "lineCount": 4,
     "name": "Weekly Monday order",
-    "renewedAt": "2026-11-14T10:00:00+02:00",
+    "renewedAt": "2026-11-14T10:19:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:19",
+    "weekday": "Monday"
+   }
+  ],
+  [
+   {
+    "flagCount": 2,
+    "id": "S-1",
+    "lineCount": 4,
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:19:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:19",
+    "weekday": "Monday"
+   }
+  ],
+  [
+   {
+    "flagCount": 3,
+    "id": "S-1",
+    "lineCount": 4,
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:25:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:25",
+    "weekday": "Monday"
+   }
+  ],
+  [
+   {
+    "flagCount": 2,
+    "id": "S-1",
+    "lineCount": 4,
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:25:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:25",
+    "weekday": "Monday"
+   }
+  ],
+  [
+   {
+    "flagCount": 3,
+    "id": "S-1",
+    "lineCount": 4,
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:23:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:23",
+    "weekday": "Monday"
+   }
+  ],
+  [
+   {
+    "flagCount": 2,
+    "id": "S-1",
+    "lineCount": 4,
+    "name": "Weekly Monday order",
+    "renewedAt": "2026-11-14T10:23:00+02:00",
+    "state": "renewed",
+    "stateText": "Renewed Sat 14 Nov, 10:23",
     "weekday": "Monday"
    }
   ]
@@ -10278,16 +13826,6 @@ export const states: Record<string, Record<string, number>> = {
   "/api/spend-passes/M-1": 0,
   "/api/steady": 2,
   "/api/steady/S-1": 2
- },
- "none-both": {
-  "/api/demo": 0,
-  "/api/inbox": 0,
-  "/api/ledger": 4,
-  "/api/orders/O-1": 0,
-  "/api/requests/R-1": 0,
-  "/api/spend-passes/M-1": 0,
-  "/api/steady": 3,
-  "/api/steady/S-1": 4
  },
  "none-mozzarella": {
   "/api/demo": 0,
@@ -10322,16 +13860,28 @@ export const states: Record<string, Record<string, number>> = {
  "placed-accepted": {
   "/api/demo": 1,
   "/api/inbox": 2,
-  "/api/ledger": 10,
+  "/api/ledger": 9,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 1,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 1,
-  "/api/spend-passes/M-1": 0,
-  "/api/steady": 2,
-  "/api/steady/S-1": 6
+  "/api/spend-passes/M-1": 1,
+  "/api/steady": 6,
+  "/api/steady/S-1": 7
  },
  "placed-pending": {
+  "/api/demo": 1,
+  "/api/inbox": 2,
+  "/api/ledger": 7,
+  "/api/orders/O-1": 0,
+  "/api/orders/O-2": 1,
+  "/api/requests/R-1": 0,
+  "/api/requests/R-2": 1,
+  "/api/spend-passes/M-1": 1,
+  "/api/steady": 0,
+  "/api/steady/S-1": 0
+ },
+ "placed-renewed": {
   "/api/demo": 1,
   "/api/inbox": 2,
   "/api/ledger": 8,
@@ -10339,38 +13889,26 @@ export const states: Record<string, Record<string, number>> = {
   "/api/orders/O-2": 1,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 1,
-  "/api/spend-passes/M-1": 0,
-  "/api/steady": 0,
-  "/api/steady/S-1": 0
- },
- "placed-renewed": {
-  "/api/demo": 1,
-  "/api/inbox": 2,
-  "/api/ledger": 9,
-  "/api/orders/O-1": 0,
-  "/api/orders/O-2": 1,
-  "/api/requests/R-1": 0,
-  "/api/requests/R-2": 1,
-  "/api/spend-passes/M-1": 0,
-  "/api/steady": 1,
-  "/api/steady/S-1": 5
+  "/api/spend-passes/M-1": 1,
+  "/api/steady": 5,
+  "/api/steady/S-1": 6
  },
  "rejected-accepted": {
   "/api/demo": 1,
   "/api/inbox": 3,
-  "/api/ledger": 13,
+  "/api/ledger": 12,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 2,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 2,
   "/api/spend-passes/M-1": 0,
-  "/api/steady": 2,
-  "/api/steady/S-1": 6
+  "/api/steady": 8,
+  "/api/steady/S-1": 9
  },
  "rejected-pending": {
   "/api/demo": 1,
   "/api/inbox": 3,
-  "/api/ledger": 11,
+  "/api/ledger": 10,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 2,
   "/api/requests/R-1": 0,
@@ -10382,31 +13920,31 @@ export const states: Record<string, Record<string, number>> = {
  "rejected-renewed": {
   "/api/demo": 1,
   "/api/inbox": 3,
-  "/api/ledger": 12,
+  "/api/ledger": 11,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 2,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 2,
   "/api/spend-passes/M-1": 0,
-  "/api/steady": 1,
-  "/api/steady/S-1": 5
+  "/api/steady": 7,
+  "/api/steady/S-1": 8
  },
  "waiting-accepted": {
   "/api/demo": 1,
   "/api/inbox": 1,
-  "/api/ledger": 7,
+  "/api/ledger": 6,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 0,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 0,
   "/api/spend-passes/M-1": 0,
-  "/api/steady": 2,
-  "/api/steady/S-1": 6
+  "/api/steady": 4,
+  "/api/steady/S-1": 5
  },
  "waiting-pending": {
   "/api/demo": 1,
   "/api/inbox": 1,
-  "/api/ledger": 5,
+  "/api/ledger": 4,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 0,
   "/api/requests/R-1": 0,
@@ -10418,23 +13956,24 @@ export const states: Record<string, Record<string, number>> = {
  "waiting-renewed": {
   "/api/demo": 1,
   "/api/inbox": 1,
-  "/api/ledger": 6,
+  "/api/ledger": 5,
   "/api/orders/O-1": 0,
   "/api/orders/O-2": 0,
   "/api/requests/R-1": 0,
   "/api/requests/R-2": 0,
   "/api/spend-passes/M-1": 0,
-  "/api/steady": 1,
-  "/api/steady/S-1": 5
+  "/api/steady": 3,
+  "/api/steady/S-1": 4
  }
 };
 
 /** States the real backend refused to reach, with its answer. */
 export const refused: Record<string, string> = {
- "placed-both": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed.",
- "placed-mozzarella": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed.",
- "rejected-both": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed.",
- "rejected-mozzarella": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed.",
- "waiting-both": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed.",
- "waiting-mozzarella": "Approval refused, Valio was asked again: Only 0 BAG of 466375 in stock, 98 needed."
+ "none-both": "Spend Pass S-1-W46 already placed 1,980.80 €, so this order of 113.68 € counts as 2,094.48 €. Blocked: 2,094.48 € is over the hard cap of 2,000.00 €.",
+ "placed-both": "Line 466375 is blocked, only a waiting or flagged line can be accepted.",
+ "placed-mozzarella": "Line 466375 is blocked, only a waiting or flagged line can be accepted.",
+ "rejected-both": "Line 466375 is blocked, only a waiting or flagged line can be accepted.",
+ "rejected-mozzarella": "Line 466375 is blocked, only a waiting or flagged line can be accepted.",
+ "waiting-both": "Line 466375 is blocked, only a waiting or flagged line can be accepted.",
+ "waiting-mozzarella": "Line 466375 is blocked, only a waiting or flagged line can be accepted."
 };

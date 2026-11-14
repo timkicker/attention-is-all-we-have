@@ -128,27 +128,23 @@ def test_renew_and_accept_need_the_approve_code(client):
     assert len(store.orders()) == 2
 
 
-def test_refused_accept_leaves_one_decision_and_no_hidden_order(client):
-    # review 3 M5 probe: stock-out, renew, accept the mozzarella three times. Each try wrote "Chef accepted"
-    # with no order id before anything was decided, and O-3 stayed waiting where no page showed it
+def test_out_of_stock_drift_line_is_blocked_up_front(client):
+    # O7: "Renew anyway" on a line Valio has none of was only ever refused. The renew line says both facts
+    # at once and offers no button; the drift numbers stay for the sparkline
     seed.set_stockout(seed.db_path(), True)
-    client.post("/api/steady/S-1/renew", headers=CHEF)
+    mozz = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["466375"]
+    assert mozz["result"] == "blocked" and "acceptLabel" not in mozz
+    assert mozz["sentence"] == "Not renewed: 26 % more per guest than usual and none in stock at Valio."
+    assert {f["kind"] for f in mozz["flags"]} >= {"per_guest_up", "stock_below"}
+    assert mozz["history"]
+    assert not any("Renew anyway" in f["sentence"] for f in mozz["flags"])
     log = AuditLog(seed.db_path())
     before = len(log.list())
-    r = client.post("/api/steady/S-1/lines/466375/accept", headers=CHEF)
-    assert r.status_code == 409 and "Approval refused" in r.json()["detail"]
-    after_first = log.list()[before:]
-    assert all(e.order_id for e in after_first)
-    assert not [e for e in after_first if e.actor == "owner"]  # the owner's acceptance never came true
     store = Store(seed.db_path())
-    assert [o["state"] for o in store.orders() if o["lines"][0]["productId"] == "466375"] == ["rejected"]
-    mozz = lines(client.get("/api/steady/S-1").json())["466375"]
-    assert mozz["result"] == "blocked" and "Approval refused" in mozz["sentence"] and "acceptLabel" not in mozz
-
-    for _ in range(2):  # a retry decides nothing new
+    for _ in range(2):  # nothing to accept, nothing ordered, nothing logged
         assert client.post("/api/steady/S-1/lines/466375/accept", headers=CHEF).status_code == 409
-    assert len(log.list()) == before + len(after_first)
-    assert not [o for o in store.orders() if o["state"] == "waiting"]
+    assert len(log.list()) == before
+    assert not [o for o in store.orders() if o["lines"][0]["productId"] == "466375"]
 
 
 def test_accepted_line_has_one_approval_tied_to_its_order(client):

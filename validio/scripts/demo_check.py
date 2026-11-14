@@ -218,15 +218,18 @@ class Run:
               and parm["split"]["extraCostPct"] == 2.5, f"scene 4: parmesan {parm['result']} {parm.get('totalCents')}")
         check((pan["result"], pan["thisWeekQuantity"]) == ("waiting", 27) and "wheat" in pan["sentence"],
               f"scene 4: pancakes {pan['result']} {pan['sentence']}")
-        check(mozz["result"] == "flagged" and ("per_guest_up", 26) in [(f["kind"], f.get("pct")) for f in mozz["flags"]],
-              f"scene 4: mozzarella {mozz['result']} {mozz['flags']}")
+        # the scene 3 stock-out still holds: both facts up front, no "Renew anyway", the drift numbers kept
+        check(mozz["result"] == "blocked" and "acceptLabel" not in mozz
+              and mozz["sentence"] == "Not renewed: 26 % more per guest than usual and none in stock at Valio."
+              and ("per_guest_up", 26) in [(f["kind"], f.get("pct")) for f in mozz["flags"]],
+              f"scene 4: mozzarella {mozz['result']} {mozz['sentence']} {mozz['flags']}")
         if self.code:
             r = self.http.post("/api/steady/S-1/lines/471376/accept")
             check(r.status_code == 403, f"scene 4: accept without the code answered {r.status_code}")
         acc = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/lines/471376/accept", headers=chef)["lines"]}
         check(acc["471376"]["result"] == "accepted", f"scene 4: pancakes after accept {acc['471376']['result']}")
         return "milk renewed alone, parmesan split 177 for 772.49 € (2.5 % more), pancakes waited and the owner " \
-               "ordered 27, mozzarella flagged 26 % more per guest"
+               "ordered 27, mozzarella blocked: 26 % more per guest and none in stock"
 
     async def scene5(self):
         led = self.get("/api/ledger")

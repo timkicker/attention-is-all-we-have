@@ -4228,7 +4228,8 @@
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
-      "moneyText": "180.10 €"
+      "moneyText": "180.10 €",
+      "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
       "id": "O-1",
@@ -4294,7 +4295,8 @@
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
-      "moneyText": "1,010.00 €"
+      "moneyText": "1,010.00 €",
+      "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
   "ledger": {

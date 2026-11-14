@@ -341,10 +341,17 @@ class OrderView(Model):
     deliver_by: str
     approved_by: str | None = None
     money_text: str | None = None
+    question_text: str | None = Field(None, description="the approve page's question, \"Order 10 × 2.5 kg of ... for 180.10 €?\"")
 
     @model_validator(mode="after")
     def _text(self):
-        self.money_text = self.money_text or _d().money(self.total_cents)
+        d = _d()
+        self.money_text = self.money_text or d.money(self.total_cents)
+        if self.question_text is None:
+            from ..text.format import qty_of
+            what = (qty_of(self.lines[0].quantity, d.product(self.lines[0].product_id), self.lines[0].unit,
+                           self.lines[0].name) if len(self.lines) == 1 else f"these {len(self.lines)} lines")
+            self.question_text = f"Order {what} for {self.money_text}?"
         return self
 
 

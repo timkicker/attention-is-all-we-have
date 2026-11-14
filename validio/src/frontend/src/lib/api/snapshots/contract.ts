@@ -5803,7 +5803,8 @@ export const scene2: Snapshot = {
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
-      "moneyText": "1,010.00 €"
+      "moneyText": "1,010.00 €",
+      "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
   "ledger": {
@@ -10270,7 +10271,8 @@ export const scene3: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
-      "moneyText": "180.10 €"
+      "moneyText": "180.10 €",
+      "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
       "id": "O-1",
@@ -10336,7 +10338,8 @@ export const scene3: Snapshot = {
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
-      "moneyText": "1,010.00 €"
+      "moneyText": "1,010.00 €",
+      "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
   "ledger": {
@@ -14971,7 +14974,8 @@ export const scene4: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
-      "moneyText": "180.10 €"
+      "moneyText": "180.10 €",
+      "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
       "id": "O-1",
@@ -15037,7 +15041,8 @@ export const scene4: Snapshot = {
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
-      "moneyText": "1,010.00 €"
+      "moneyText": "1,010.00 €",
+      "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
   "ledger": {
@@ -15462,7 +15467,7 @@ export const scene4: Snapshot = {
         "at": "2026-11-14T10:33:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Out of stock at Valio, the usual line is 98 bags.",
+        "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
         "facts": [],
         "spendPassId": "S-1-W46",
         "disclosed": [
@@ -15470,11 +15475,9 @@ export const scene4: Snapshot = {
           "diet",
           "hardCapCents"
         ],
-        "ruleIds": [
-          "ask-human"
-        ],
+        "ruleIds": [],
         "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
-        "hash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
+        "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -15516,8 +15519,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
-        "hash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
+        "prevHash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+        "hash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
@@ -15557,8 +15560,8 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
-        "hash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "prevHash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
+        "hash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
         "actorText": "Owner",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -15600,8 +15603,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
-        "hash": "7b20696a46b72734b6d7f987b627b025660598033014f9ce6931e8b39b700416",
+        "prevHash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
+        "hash": "1bd58cda0771187276956583c60dc7ed50c03947eabeedc550e6ecb39a671664",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
@@ -15749,12 +15752,12 @@ export const scene4: Snapshot = {
           "usualQuantity": 98,
           "thisWeekQuantity": 98,
           "totalCents": 11368,
-          "result": "flagged",
-          "sentence": "Waits for you: 26 % more per guest than usual.",
+          "result": "blocked",
+          "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
           "flags": [
             {
               "kind": "per_guest_up",
-              "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
+              "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest).",
               "pct": 26
             },
             {
@@ -15762,7 +15765,6 @@ export const scene4: Snapshot = {
               "sentence": "Out of stock at Valio, the usual line is 98 bags."
             }
           ],
-          "acceptLabel": "Renew anyway",
           "history": [
             92,
             92,
@@ -15772,9 +15774,6 @@ export const scene4: Snapshot = {
             108,
             116,
             120
-          ],
-          "ruleIds": [
-            "ask-human"
           ],
           "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
@@ -20036,7 +20035,8 @@ export const scene5: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
-      "moneyText": "180.10 €"
+      "moneyText": "180.10 €",
+      "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
       "id": "O-1",
@@ -20102,7 +20102,8 @@ export const scene5: Snapshot = {
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
-      "moneyText": "1,010.00 €"
+      "moneyText": "1,010.00 €",
+      "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
   "ledger": {
@@ -20527,7 +20528,7 @@ export const scene5: Snapshot = {
         "at": "2026-11-14T10:33:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Out of stock at Valio, the usual line is 98 bags.",
+        "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
         "facts": [],
         "spendPassId": "S-1-W46",
         "disclosed": [
@@ -20535,11 +20536,9 @@ export const scene5: Snapshot = {
           "diet",
           "hardCapCents"
         ],
-        "ruleIds": [
-          "ask-human"
-        ],
+        "ruleIds": [],
         "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
-        "hash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
+        "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -20581,8 +20580,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
-        "hash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
+        "prevHash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+        "hash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
@@ -20622,8 +20621,8 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
-        "hash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "prevHash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
+        "hash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
         "actorText": "Owner",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -20665,8 +20664,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
-        "hash": "7b20696a46b72734b6d7f987b627b025660598033014f9ce6931e8b39b700416",
+        "prevHash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
+        "hash": "1bd58cda0771187276956583c60dc7ed50c03947eabeedc550e6ecb39a671664",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
@@ -20814,12 +20813,12 @@ export const scene5: Snapshot = {
           "usualQuantity": 98,
           "thisWeekQuantity": 98,
           "totalCents": 11368,
-          "result": "flagged",
-          "sentence": "Waits for you: 26 % more per guest than usual.",
+          "result": "blocked",
+          "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
           "flags": [
             {
               "kind": "per_guest_up",
-              "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway?",
+              "sentence": "The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest).",
               "pct": 26
             },
             {
@@ -20827,7 +20826,6 @@ export const scene5: Snapshot = {
               "sentence": "Out of stock at Valio, the usual line is 98 bags."
             }
           ],
-          "acceptLabel": "Renew anyway",
           "history": [
             92,
             92,
@@ -20837,9 +20835,6 @@ export const scene5: Snapshot = {
             108,
             116,
             120
-          ],
-          "ruleIds": [
-            "ask-human"
           ],
           "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
