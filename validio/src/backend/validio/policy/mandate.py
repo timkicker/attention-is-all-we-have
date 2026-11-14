@@ -75,8 +75,8 @@ class Mandate:
     diet: tuple[str, ...] | None
     prefer_labels: tuple[str, ...] | None
     disclosed: dict[str, Any]  # only the selectively disclosable fields the agent showed
-    # the Rules' per week limit: when set, the two limits above hold per order and this one for every order
-    # placed under the pass together; when absent (the seeded pass), both limits hold for the pass as a whole
+    # the Rules' per week limit, every order placed under the pass together; the two limits above always hold
+    # per order. Absent (the seeded pass): no weekly limit
     week_cap_cents: int | None = None
     # the Rules' "never" allergens, words of NEVER_ALLERGENS: a product that lists one is blocked, one without
     # allergen data or that may contain one waits for a person. A word not in NEVER_ALLERGENS fails closed

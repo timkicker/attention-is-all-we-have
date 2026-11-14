@@ -166,9 +166,8 @@ gets a 401.
 
 ## Rules
 
-What the agent may do, in one place. With `perWeekCents` set, alone and approval count per order and the
-week counts every order placed under the pass together (over it: blocked). With `perWeekCents` null, alone
-and approval count across the pass's week (orders already placed add up), as before.
+What the agent may do, in one place. Alone and approval always count per order. With `perWeekCents` set,
+the week counts every order placed under the pass together (over it: blocked); null means no weekly limit.
 
 The demo kitchen starts with: alone up to 1,200.00 €, approval up to 5,000.00 €, per week 8,000.00 €,
 substitutes `extra` 5 % (`api/settings.DEMO_RULES`). So the example request (1,000 l milk, 1,010.00 €) is

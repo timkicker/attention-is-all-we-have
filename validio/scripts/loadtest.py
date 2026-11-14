@@ -162,7 +162,7 @@ async def agent(i: int, rounds: int, lines: list, http, holder_for, lat: dict, e
         return {"Authorization": f"SD-JWT {holder.present(n['nonce'], n.get('iat'))}"}
 
     for k in range(rounds):
-        holder = holder_for()  # a pass per round: a Spend Pass's limits hold across its orders (review 3 M1)
+        holder = holder_for()  # a pass per round: its per week limit counts every order placed under it
         req = await timed("POST /agent/v1/requests", "POST", "/agent/v1/requests", headers=await auth(), json={
             "lines": lines, "deliverBy": "2026-11-16", "idempotencyKey": f"load-{i}-{k}"})
         if not req or req["decision"]["outcome"] != "auto_order":

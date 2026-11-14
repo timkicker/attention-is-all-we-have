@@ -294,8 +294,8 @@ def test_the_week_blocks_what_would_go_over(client, ctx):  # noqa: F811
     assert "over the weekly limit of 5,000.00 €" in req["decision"]["sentence"]
 
 
-def test_without_a_weekly_limit_the_old_rule_holds(client, ctx):  # noqa: F811
+def test_without_a_weekly_limit_each_order_is_judged_alone_too(client, ctx):  # noqa: F811
     _first, o1 = _place_milk(client, ctx, "x1")
     assert o1["state"] == "placed"
     second = ask(client, fresh(client, ctx), "1000 litres of lactose-free milk by Monday", "x2").json()
-    assert second["decision"]["outcome"] != "auto_order"  # 2,020.00 € counted against the pass's limits
+    assert second["decision"]["outcome"] == "auto_order", second["decision"]  # the Rules' limits are per order
