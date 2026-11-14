@@ -27,7 +27,7 @@ export function changeDate(date: string, _approx: boolean): string {
   return fmtDate(date)
 }
 
-/** The rest of a "When it changed" row, set apart from its date by space. */
+/** The line under the date of a "When it changed" row. */
 export function changeRest(lang: string, from: string, to: string): string {
   return `${edition(lang)} changed “${from}” to “${to}”`
 }
