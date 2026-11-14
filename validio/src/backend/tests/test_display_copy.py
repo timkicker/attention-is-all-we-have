@@ -81,7 +81,7 @@ def test_waiting_inbox_says_why_it_asks(client, holder):
     _milk_and_mozzarella(client, holder)
     item = {i["id"]: i for i in client.get("/api/inbox").json()}["R-2"]
     assert item["status"] == "waiting"
-    assert item["summary"] == "Asks you: the swap is not on Valio's list."
+    assert item["summary"] == "Out of stock (simulated). The swap needs you."
     assert item["sentence"] == "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
 
 
@@ -112,3 +112,44 @@ def test_stange_reads_naturally():
     from validio.text.format import short_name
     assert short_name("Topfoods mozzarella stange sliced lactose free 400g frozen") == \
         "Lactose-free sliced mozzarella stange 400 g"
+
+
+def test_waiting_without_a_stock_out_says_why_it_asks():
+    from validio.api import display as d
+    s = ("Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. "
+         "Needs a person: the substitute is not on Valio's list.")
+    assert d.asks_text(s) == "Asks you: the swap is not on Valio's list."
+
+
+def test_checked_facts_as_a_list(client, holder):
+    ask_milk(client, holder)
+    line = client.get("/api/requests/R-1").json()["lines"][0]
+    milk = next(o for o in line["options"] if o["productId"] == "464306")
+    assert milk["checks"] == [
+        "Stock: Valio gives no real count", "Price 1.01 €", "Order cut-off 15 Nov 17:00",
+        "Delivered as ordered in 100 % of orders", "Footprint 1.1 kg CO2e per kg", "Label Hyvää Suomesta",
+        "Allergens: milk", "Free from lactose", "Vegetarian"]
+
+
+def test_why_reasons_leave_out_the_short_text(client, holder):
+    ask_milk(client, holder)
+    line = client.get("/api/requests/R-1").json()["lines"][0]
+    by_id = {o["productId"]: o for o in line["options"]}
+    milk, dearer = by_id["464306"], by_id["464401"]
+    assert milk["whyReasons"] == [r for r in milk["reasons"] if "Cheapest safe option" not in r]
+    assert len(milk["whyReasons"]) == len(milk["reasons"]) - 1
+    assert not any("more than the cheapest" in r for r in dearer["whyReasons"])
+    assert len(dearer["whyReasons"]) == len(dearer["reasons"]) - 1
+    down = [o for o in line["options"] if o.get("groupText")]
+    for o in down:
+        short = o["shortText"].rstrip(".")
+        assert not any(r.rstrip(".") == short for r in o["whyReasons"])
+
+
+def test_why_reasons_unit():
+    from validio.api import display as d
+    reasons = ["Not lactose free.", "Lists milk."]
+    assert d.why_reasons(reasons, "Not lactose free.") == ["Lists milk."]
+    assert d.why_reasons(["Order cut-off 12 Nov 15:00 has passed."], "Order cut-off 12 Nov 15:00 has passed.") == []
+    assert d.why_reasons(["A.", "1,400.00 € is over the hard cap of 1,200.00 €."],
+                         "1,400.00 € is over the 1,200.00 € hard cap.") == ["A."]
