@@ -50,7 +50,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("path", nargs="?", default="contract/fixtures/answers.json")
     ap.add_argument("--fixture", action="store_true", help="record the fake engine's example answer")
+    ap.add_argument("--if-empty", action="store_true", help="do nothing when a recorded answer exists (make demo)")
     args = ap.parse_args()
+    if args.if_empty and sqllog.run_file("check_recorded"):
+        print("recorded answers exist, nothing to record")
+        return 0
     if args.fixture:
         answers = fixture_answers()
     else:
