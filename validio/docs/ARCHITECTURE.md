@@ -50,7 +50,7 @@ The presenter first switches on the simulated stock-out of 466375 in the web app
 
 ## What can be replaced
 
-**The agent's model.** `make_llm` in `agent/llm.py` picks Gemini when `GEMINI_API_KEY` is set (`GEMINI_MODEL`, default gemini-2.5-flash) and a deterministic twin otherwise. Both make the same tool calls (`test_agent.py::test_gemini_buyer_scene2_three_runs_same_order`). Any MCP client works, because Validio never trusts what the model says. Swapping the model changes how a request is worded, not what gets ordered.
+**The agent's model.** `make_llm` in `agent/llm.py` picks Gemini when `GEMINI_API_KEY` is set (`GEMINI_MODEL`, default gemini-3.8-flash) and a deterministic twin otherwise. Both make the same tool calls (`test_agent.py::test_gemini_buyer_scene2_three_runs_same_order`). Any MCP client works, because Validio never trusts what the model says. Swapping the model changes how a request is worded, not what gets ordered.
 
 **The reader.** The fake reader in `reader/fake.py` is the default. With `READER_MODE=modal`, `reader/remote.py` calls Gemma 4 26B served by vLLM on Modal (`src/cloud/gemma_app.py`). It is not deployed tonight, because Modal's GPUs need a payment method on the workspace. Any reader that answers the fixed shape in `reader/schema.py` fits. A reader that fails falls back to the fake one with a note in the ledger. No deciding module imports the reader (`test_reader.py::test_deciding_code_never_imports_reader`).
 
