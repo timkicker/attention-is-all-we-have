@@ -20,7 +20,7 @@ web-build:
 test-web:
 	cd web && npm test
 
-# Check every answer of contract/fixtures/answers.json once with ENGINE (real after M2) and store it as recorded.
+# Check every answer of contract/fixtures/answers.json once with ENGINE and store it as recorded (again: replaces).
 # RECORD_ARGS=--fixture records the fake engine's example answer instead.
 record-checks:
 	$(UV) run python -m api.record_checks $(RECORD_ARGS)
@@ -31,10 +31,10 @@ record-checks:
 e2e: web-build
 	cd e2e && npx playwright test --workers 2 --grep-invert @demo
 
-# The demo on the loaded seed: build the web app, record the example answers once, serve on API_PORT.
-# Without contract/fixtures/answers.json (A15) the fake engine's example answer is recorded.
+# The demo on the loaded seed: build the web app, check the AI answers of contract/fixtures/answers.json once with
+# the real engine (GEMINI_API_KEY in .env) unless the database holds recorded answers, serve on API_PORT.
 demo: web-build
-	$(UV) run python -m api.record_checks --if-empty $(if $(wildcard contract/fixtures/answers.json),,--fixture)
+	ENGINE=real $(UV) run python -m api.record_checks --if-empty
 	$(UV) run uvicorn api.main:app --host 127.0.0.1 --port $(API_PORT)
 
 # Walk the demo script (PLAN section 0) against make demo, or against BASE_URL=https://... for a deployed instance.
