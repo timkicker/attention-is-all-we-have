@@ -1,0 +1,157 @@
+{
+ "run_id": "rec000000001",
+ "source": "recorded",
+ "answer_model": "example-model",
+ "answer_date": "2026-11-14",
+ "engine": "fake",
+ "claims": [
+  {
+   "idx": 0,
+   "text": "The Shelling of Mainila on 26 November 1939 was staged by the Soviet Union to justify the invasion of Finland.",
+   "per_lang": {
+    "en": {
+     "label": "stopped_saying",
+     "evidence": [
+      {
+       "lang": "en",
+       "page_id": 33924,
+       "h": "7aee25bc3466a2fc",
+       "text": "On November 26 the Soviets staged the Shelling of Mainila , an incident in which Soviet artillery shelled areas near the Russian village of Mainila, then announced that a Finnish artillery attack had killed Soviet troops.",
+       "born": "2005-12-30T07:19:35Z",
+       "died": "2009-12-31T20:28:48Z",
+       "died_rev": 335165674,
+       "died_comment": null,
+       "dist": 0.0,
+       "verdict": {
+        "label": "same",
+        "model": "fake-judge",
+        "prompt_version": "judge-v1"
+       },
+       "oldid_url": "https://en.wikipedia.org/w/index.php?oldid=33225464"
+      }
+     ]
+    },
+    "fi": {
+     "label": "says",
+     "evidence": [
+      {
+       "lang": "fi",
+       "page_id": 1256,
+       "h": "8519fbaf22d33984",
+       "text": "Neuvostoliitto lavasti 26. marraskuuta 1939 Mainilan laukaukset , joilla se perusteli sotaa puolustuksellisena toimenpiteenä.",
+       "born": "2026-11-13T10:39:22Z",
+       "died": null,
+       "died_rev": null,
+       "died_comment": null,
+       "dist": 0.27,
+       "verdict": {
+        "label": "same",
+        "model": "fake-judge",
+        "prompt_version": "judge-v1"
+       },
+       "oldid_url": "https://fi.wikipedia.org/w/index.php?oldid=24373824"
+      }
+     ]
+    },
+    "de": {
+     "label": "says",
+     "evidence": [
+      {
+       "lang": "de",
+       "page_id": 51245,
+       "h": "176471723f110570",
+       "text": "Am 26. November inszenierte die Rote Armee im Dorf Mainila ( russisch Майнило ) einen Grenzzwischenfall, bei dem angeblich sowjetische Truppen von finnischer Artillerie beschossen worden seien ( Mainila-Zwischenfall ).",
+       "born": "2013-12-31T09:20:48Z",
+       "died": null,
+       "died_rev": null,
+       "died_comment": null,
+       "dist": 0.25,
+       "verdict": {
+        "label": "same",
+        "model": "fake-judge",
+        "prompt_version": "judge-v1"
+       },
+       "oldid_url": "https://de.wikipedia.org/w/index.php?oldid=125967039"
+      }
+     ]
+    },
+    "et": {
+     "label": "not_found",
+     "evidence": []
+    }
+   }
+  },
+  {
+   "idx": 1,
+   "text": "According to the Soviet report, four Soviet soldiers were killed in the incident.",
+   "per_lang": {
+    "sv": {
+     "label": "says",
+     "evidence": [
+      {
+       "lang": "sv",
+       "page_id": 23612,
+       "h": "a37b690a0d1e8d7f",
+       "text": "Den 26 november vid byn Mainila på den ryska sidan bredvid gränsen, inträffade en incident där enligt den officiella sovjetrapporten fyra sovjetsoldater dödades av artillerield.",
+       "born": "2009-12-18T09:53:31Z",
+       "died": null,
+       "died_rev": null,
+       "died_comment": null,
+       "dist": 0.0,
+       "verdict": {
+        "label": "same",
+        "model": "fake-judge",
+        "prompt_version": "judge-v1"
+       },
+       "oldid_url": "https://sv.wikipedia.org/w/index.php?oldid=10703574"
+      }
+     ]
+    },
+    "et": {
+     "label": "not_found",
+     "evidence": []
+    }
+   }
+  },
+  {
+   "idx": 2,
+   "text": "Finnish artillery could not reach the village of Mainila.",
+   "per_lang": {
+    "sv": {
+     "label": "says",
+     "evidence": [
+      {
+       "lang": "sv",
+       "page_id": 23612,
+       "h": "fafe6f169258cd13",
+       "text": "Det har i efterhand kunnat bevisas att incidenten var en sovjetisk provokation, då bland annat inget finländskt artilleri kunde nå Mainila och sovjetiska fångar under fortsättningskriget kunde ge viktiga detaljer om hur intermezzot orkestrerats på den sovjetiska sidan.",
+       "born": "2017-12-06T15:25:40Z",
+       "died": null,
+       "died_rev": null,
+       "died_comment": null,
+       "dist": 0.0,
+       "verdict": {
+        "label": "same",
+        "model": "fake-judge",
+        "prompt_version": "judge-v1"
+       },
+       "oldid_url": "https://sv.wikipedia.org/w/index.php?oldid=42191553"
+      }
+     ]
+    },
+    "en": {
+     "label": "not_found",
+     "evidence": []
+    }
+   }
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT lang, h, text, VEC_DISTANCE_COSINE(emb, %s) AS dist FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %s WHERE lang = %s ORDER BY dist LIMIT 3",
+   "ms": 1.2,
+   "rows": 18,
+   "index": "emb"
+  }
+ ]
+}

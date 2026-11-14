@@ -1,0 +1,11 @@
+{
+ "panel_id": "compare",
+ "statements": [
+  {
+   "text": "SELECT b.lang, b.h, b.text, VEC_DISTANCE_COSINE(b.emb, a.emb) AS dist FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %s a JOIN claim FOR SYSTEM_TIME AS OF TIMESTAMP %s b ON b.lang = %s WHERE a.lang = 'fi' AND a.h = %s ORDER BY dist LIMIT 3",
+   "ms": 1.4,
+   "rows": 15,
+   "index": "emb"
+  }
+ ]
+}

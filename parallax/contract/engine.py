@@ -2,7 +2,8 @@
 """The engine interface every track codes against, the deterministic fake engine and get_engine().
 
 ENGINE=fake needs no network: it answers from contract/fixtures/engine/*.json and falls back to
-deterministic rules. ENGINE=real loads engine.real.RealEngine, which Track A builds.
+deterministic rules. ENGINE=real loads engine.real.GeminiEngine, which Track A builds (judge, split and gloss on
+gemini-3.8-flash with GEMINI_API_KEY). The interface itself names no model or vendor.
 """
 
 import base64
@@ -151,12 +152,12 @@ class FakeEngine:
 
 
 def get_engine() -> Engine:
-    """ENGINE=fake -> FakeEngine(); ENGINE=real -> engine.real.RealEngine()."""
+    """ENGINE=fake -> FakeEngine(); ENGINE=real -> engine.real.GeminiEngine()."""
     kind = os.environ.get("ENGINE", "fake")
     if kind == "fake":
         return FakeEngine()
     if kind == "real":
-        from engine.real import RealEngine  # built by Track A
+        from engine.real import GeminiEngine  # built by Track A
 
-        return RealEngine()
+        return GeminiEngine()
     raise ValueError(f"ENGINE must be fake or real, not {kind!r}")

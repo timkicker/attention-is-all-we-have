@@ -1,0 +1,64 @@
+{
+ "total": 1,
+ "rows": [
+  {
+   "lang": "ru",
+   "page_id": 33700,
+   "title": "Советско-финляндская война (1939—1940)",
+   "h": "ac5853856a89a0eb",
+   "text": "В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнила , инсценированный советской стороной — что также подтверждается соответствующими распоряжениями Маннергейма, уверенного в неизбежности советской провокации и потому предварительно отведшего войска от границы на расстояние, исключающее возникновение недоразумений.",
+   "gloss": "On the same day an artillery shelling of USSR territory took place near the settlement of Mainila, staged by the Soviet side, which is also confirmed by the corresponding orders of Mannerheim, who was sure a Soviet provocation would come and had therefore pulled his troops back from the border beforehand to a distance that ruled out misunderstandings.",
+   "born": "2013-12-30T18:13:32Z",
+   "died": "2017-12-23T09:24:26Z",
+   "died_rev": 89813748,
+   "died_comment": null,
+   "days": 1454,
+   "reason": "none",
+   "alive_in": [
+    {
+     "lang": "fi",
+     "h": "8519fbaf22d33984",
+     "text": "Neuvostoliitto lavasti 26. marraskuuta 1939 Mainilan laukaukset , joilla se perusteli sotaa puolustuksellisena toimenpiteenä.",
+     "verdict": null,
+     "oldid_url": "https://fi.wikipedia.org/w/index.php?oldid=24373824"
+    },
+    {
+     "lang": "de",
+     "h": "176471723f110570",
+     "text": "Am 26. November inszenierte die Rote Armee im Dorf Mainila ( russisch Майнило ) einen Grenzzwischenfall, bei dem angeblich sowjetische Truppen von finnischer Artillerie beschossen worden seien ( Mainila-Zwischenfall ).",
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "oldid_url": "https://de.wikipedia.org/w/index.php?oldid=125967039"
+    },
+    {
+     "lang": "sv",
+     "h": "fafe6f169258cd13",
+     "text": "Det har i efterhand kunnat bevisas att incidenten var en sovjetisk provokation, då bland annat inget finländskt artilleri kunde nå Mainila och sovjetiska fångar under fortsättningskriget kunde ge viktiga detaljer om hur intermezzot orkestrerats på den sovjetiska sidan.",
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "oldid_url": "https://sv.wikipedia.org/w/index.php?oldid=42191553"
+    }
+   ]
+  }
+ ],
+ "scale": {
+  "fi_lives": 0,
+  "fi_dead": 0,
+  "fi_dead_1y": 0,
+  "fi_revisions": 0
+ },
+ "sql": [
+  {
+   "text": "SELECT lang, h, text, row_start, row_end FROM claim FOR SYSTEM_TIME ALL WHERE row_end < NOW() AND DATEDIFF(row_end, row_start) >= %s",
+   "ms": 2.1,
+   "rows": 38,
+   "index": "none"
+  }
+ ]
+}

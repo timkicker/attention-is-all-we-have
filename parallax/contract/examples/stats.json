@@ -1,0 +1,15 @@
+{
+ "stats": {
+  "claim_rows": 413,
+  "claim_distinct_h": 402,
+  "vectors": 413
+ },
+ "sql": [
+  {
+   "text": "SELECT k, v FROM stat",
+   "ms": 0.2,
+   "rows": 3,
+   "index": "none"
+  }
+ ]
+}

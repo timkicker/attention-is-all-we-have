@@ -1,0 +1,44 @@
+{
+ "q": "Who fired the shots at Mainila?",
+ "as_of": "2026-11-14T00:00:00Z",
+ "quotes": {
+  "fi": [
+   {
+    "text": "Neuvostoliitto lavasti 26. marraskuuta 1939 Mainilan laukaukset , joilla se perusteli sotaa puolustuksellisena toimenpiteenä.",
+    "gloss": "The Soviet Union staged the Mainila shots on 26 November 1939, with which it justified the war as a defensive measure.",
+    "dist": 0.31,
+    "born": "2026-11-13T10:39:22Z",
+    "died": null,
+    "oldid_url": "https://fi.wikipedia.org/w/index.php?oldid=24373824"
+   }
+  ],
+  "en": [
+   {
+    "text": "On 26 November 1939, an incident was reported near the Soviet village of Mainila , near the border with Finland.",
+    "gloss": null,
+    "dist": 0.28,
+    "born": "2026-11-07T19:50:21Z",
+    "died": null,
+    "oldid_url": "https://en.wikipedia.org/w/index.php?oldid=1384334162"
+   }
+  ],
+  "ru": [
+   {
+    "text": "В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнила .",
+    "gloss": "On the same day an artillery shelling of USSR territory took place near the settlement of Mainila.",
+    "dist": 0.33,
+    "born": "2017-12-23T09:24:26Z",
+    "died": null,
+    "oldid_url": "https://ru.wikipedia.org/w/index.php?oldid=89813748"
+   }
+  ]
+ },
+ "sql": [
+  {
+   "text": "SELECT lang, h, text, VEC_DISTANCE_COSINE(emb, %s) AS dist FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %s ORDER BY dist LIMIT 21",
+   "ms": 1.8,
+   "rows": 21,
+   "index": "emb"
+  }
+ ]
+}

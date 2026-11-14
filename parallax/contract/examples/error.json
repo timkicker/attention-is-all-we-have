@@ -1,0 +1,6 @@
+{
+ "error": {
+  "code": "topic_not_found",
+  "message": "No topic with id 'nope'."
+ }
+}
