@@ -58,13 +58,13 @@ Click **Steady orders**, then "Weekly Monday order" (400 guests a week, 4 lines)
 | Lactose-free semi-skimmed milk 1 l | renewed, 300 × 1 l for 303.00 € |
 | Parmesan reggiano 125 g | renewed, "137 from this product, 40 from a swap." 177 × 125 g for 772.49 € |
 | Vegan pancake 30 g | open as "Short": "Only 27 cartons in stock, the usual line is 30." 905.31 € with **Why no substitute** and the button **Order 27 now** |
-| Lactose-free mozzarella 125 g | blocked under **Not ordered**, no button: "Not renewed: none in stock at Valio. Also 26 % more per guest than usual." The stock-out from scene 3 is still on. A small chart shows the 8 weeks, 120 bags against a usual 98 |
+| Lactose-free mozzarella 125 g | blocked under **Not ordered**, no button: "None in stock at Valio." The stock-out from scene 3 is still on. A small chart shows the 8 weeks, 120 bags against a usual 98 |
 
 Click **Order 27 now**. The pancakes move to **Ordered** as "Accepted" and the total at the top goes from 1,075.49 € to 1,980.80 €.
 
 ## Scene 5, ledger (1:45)
 
-Click **Ledger**. At the top it must say "Verified" with 16 entries and "Every entry signs the one before it". The simulated stock-out is one of them. Entries are grouped by request and every step from the scenes above is one sentence. The one for the planted text reads "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents." Scene 3 left "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €." by the owner and "Placed O-2" right after it. Scene 4 ends with the owner's "Accepted 27 cartons of vegan pancake 30 g for 905.31 €." The approver list of the Spend Pass never shows up here.
+Click **Ledger**. At the top it must say "Verified" with 16 entries. The simulated stock-out is one of them. Entries are grouped by request and every step from the scenes above is one sentence. The one for the planted text reads "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents." Scene 3 left "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €." by the owner and "Placed O-2" right after it. Scene 4 ends with the owner's "Accepted 27 cartons of vegan pancake 30 g for 905.31 €." The approver list of the Spend Pass never shows up here.
 
 ## Scripted recording
 
