@@ -90,6 +90,24 @@ def test_record_if_empty_leaves_existing_runs(client, monkeypatch, capsys):
     assert "nothing to record" in capsys.readouterr().out
 
 
+def test_record_tries_a_failed_answer_again(client, monkeypatch, capsys):
+    from api import record_checks
+
+    real, calls = record_checks.record, []
+
+    def flaky(a):
+        calls.append(a)
+        if len(calls) == 1:
+            raise ValueError("answer was not JSON twice")
+        return real(a)
+
+    monkeypatch.setattr("sys.argv", ["record_checks", "--fixture"])
+    monkeypatch.setattr(record_checks, "record", flaky)
+    assert record_checks.main() == 0
+    assert len(calls) == len(record_checks.fixture_answers()) + 1
+    assert "attempt 1 failed" in capsys.readouterr().err
+
+
 def test_unknown_run_is_404(client):
     r = client.get("/api/check/zzzzzzzzzzzz")
     assert r.status_code == 404 and r.json()["error"]["code"] == "run_not_found"
