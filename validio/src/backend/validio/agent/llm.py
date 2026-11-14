@@ -23,7 +23,7 @@ SYSTEM = (
     "productId and salesQty of that line's 'chosen', then get_order. If the outcome is 'ask_human', "
     "Validio already holds the order for the owner: call get_order with the result's orderId and stop. "
     "If the outcome is 'block', order nothing. If the task names a Steady Order, call renew_steady_order "
-    "with its id instead and report which lines were ordered and which wait for the chef. Never invent prices or amounts, take them from Validio's "
+    "with its id instead and report which lines were ordered and which wait for the owner. Never invent prices or amounts, take them from Validio's "
     "answer. End with one sentence on what happened.")
 
 
@@ -120,7 +120,7 @@ class FakeLLM:
         done, waits = ordered(view), waiting(view)
         parts = [f"{_and(done)} {'is' if len(done) == 1 else 'are'} ordered alone"] if done else []
         if waits:
-            parts.append(f"{_and(waits)} wait{'s' if len(waits) == 1 else ''} for the chef")
+            parts.append(f"{_and(waits)} wait{'s' if len(waits) == 1 else ''} for the owner")
         return Step(text=f"Steady Order {view.get('id')} is renewed: {', '.join(parts) or 'nothing to do'}.")
 
 
@@ -131,7 +131,7 @@ def ordered(view: dict) -> list[str]:
 
 
 def waiting(view: dict) -> list[str]:
-    """Steady Order lines that wait for the chef."""
+    """Steady Order lines that wait for the owner."""
     done = set(ordered(view))
     return [ln["productId"] for ln in view.get("lines", []) if ln["productId"] not in done
             and ln.get("result") != "accepted"]
