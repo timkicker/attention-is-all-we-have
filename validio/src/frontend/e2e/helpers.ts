@@ -1,9 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 
-/** Start over lives in the page menu behind the "⋯" in the top bar. */
+/** Reset sits in the demo bar. */
 export async function reset(page: Page) {
-  await page.locator("#page-menu").click();
-  await page.locator("#menu-reset").click();
+  await page.locator("#demo-reset").click();
 }
 
 /** The presenter's stock-out switch, in the same menu. */
@@ -19,7 +18,7 @@ export async function fresh(page: Page) {
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await demoLogin(page);
-  await expect(page.getByTestId("inbox-R-1")).toBeVisible();
+  await expect(page.locator("h1")).toHaveText("Inbox");
 }
 
 /** The login page's first button: a copy of the demo kitchen. */

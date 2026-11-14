@@ -28,7 +28,7 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await expect(page.getByTestId("option-462921")).toContainText("hard cap");
   await expect(page.getByTestId("option-462921").locator(".v-pill")).toHaveCount(0);
 
-  await page.getByTestId("nav-open-ledger").click();
+  await page.getByTestId("nav-ledger").click();
   await expect(page.getByTestId("chain-status")).toContainText("Verified");
   await expect(page.getByTestId("ledger")).toContainText("Ignored the description of low-lactose whole milk 1 l");
   await expect(page.getByTestId("ledger")).not.toContainText("owner:anna");
