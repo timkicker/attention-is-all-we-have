@@ -248,7 +248,7 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
   if (missing.length) parts.push([{ text: copy.notIn(missing) }])
   if (same.length) {
     const rest = counted.length - differs.length - missing.length
-    parts.push([{ text: same.length === rest ? copy.sameInOthers(same.length) : copy.sameIn(same) }])
+    parts.push([{ text: same.length === rest ? copy.sameInOthers(same.length) : copy.topic.sameInLangs(same) }])
   }
 
   return {
@@ -256,7 +256,7 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
     lang: anchor as Lang,
     pageId: a.page_id,
     h: a.h,
-    say: { text, spans: spansFor(text, marks) },
+    say: focusOn({ text, spans: spansFor(text, marks) }),
     original: a.text ?? '',
     note: copy.note(...parts),
     differs,
@@ -269,6 +269,25 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
 /** Infobox rows read "losses1: 25,904 fallen"; the field name is not part of what the edition says. */
 export function readable(text: string, section: string): string {
   return tidy(section === '[infobox]' ? text.replace(/^[\p{L}_ ]{1,30}\d*:\s+/u, '') : text)
+}
+
+/** Marks past this many characters would fall under the 3-line clamp of a list row. */
+const FOCUS_AT = 200
+
+/**
+ * When the first mark starts past FOCUS_AT, start the text a little before it with "…" so the mark stays visible
+ * under the row clamp. The full text stays on the statement page.
+ */
+export function focusOn(say: MarkedText): MarkedText {
+  const first = say.spans[0]?.start ?? 0
+  if (first <= FOCUS_AT) return say
+  let at = say.text.lastIndexOf(' ', first - 60)
+  if (at < 0) at = first - 60
+  const cut = at + 1
+  return {
+    text: `…${say.text.slice(cut)}`,
+    spans: say.spans.map((sp) => ({ start: sp.start - cut + 1, end: sp.end - cut + 1 })),
+  }
 }
 
 /** Wiki text leftovers: HTML entities, the "<...>" cut marker, doubled quote marks, runs of spaces. */
@@ -493,6 +512,9 @@ export function cleanComment(c: string | null): string | null {
   return s || null
 }
 
+/** Quote marks at the ends of a cut quote (the row adds its own “ ”). */
+const unquote = (t: string) => t.replace(/^["“”«»„']+|["“”«»„']+(?=…?$)/g, '')
+
 /** One edit from /api/claim/.../timeline `edits`: a sentence and the one that replaced it in one revision. */
 export interface EditRaw {
   lang: string
@@ -531,7 +553,7 @@ export function changesOf(edits: EditRaw[], terms: string[] = []): StatementChan
     if (!e.paired && (e.near === null || e.near > NEAR)) continue
     const english = e.lang === 'en' || !!(e.from_gloss && e.to_gloss)
     const useGloss = e.lang !== 'en' && english
-    const diff = changedWords(useGloss ? e.from_gloss! : e.from_text, useGloss ? e.to_gloss! : e.to_text)
+    const diff = changedWords(tidy(useGloss ? e.from_gloss! : e.from_text), tidy(useGloss ? e.to_gloss! : e.to_text))
     if (!diff || diff.size < MIN_WORDS) continue
     const key = `${e.lang}|${diff.from}|${diff.to}`
     if (seen.has(key)) continue
@@ -541,8 +563,8 @@ export function changesOf(edits: EditRaw[], terms: string[] = []): StatementChan
     out.push({
       date: e.date.slice(0, 10),
       lang: e.lang,
-      from: diff.from,
-      to: diff.to,
+      from: unquote(diff.from),
+      to: unquote(diff.to),
       comment: cleanComment(e.comment),
       url: oldid(e.lang, e.rev),
       approx: e.time_precision === 'snapshot',

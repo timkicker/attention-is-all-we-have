@@ -124,7 +124,7 @@
   {/if}
 
   <div class="ctl">
-    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
+    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
     <AsOf />
   </div>
 

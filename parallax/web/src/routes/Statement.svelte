@@ -38,6 +38,25 @@
   const open = $derived(vm?.open ?? [])
   /** Groups whose long quote is shown in full. */
   let openQ = $state(new Set<number>())
+  /** Groups whose quote is cut by the clamp (measured, so it holds at every width). */
+  let cut = $state(new Set<number>())
+  const overflow = (i: number) => (el: HTMLElement) => {
+    const check = () => {
+      const over = el.scrollHeight > el.clientHeight + 1
+      if (over !== cut.has(i)) {
+        const n = new Set(cut)
+        if (over) n.add(i)
+        else n.delete(i)
+        cut = n
+      }
+    }
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    check()
+    return () => ro.disconnect()
+  }
+  let allChanges = $state(false)
+  const SHOWN = 3
   const toggle = (i: number) => {
     const n = new Set(openQ)
     if (n.has(i)) n.delete(i)
@@ -76,8 +95,8 @@
             {/each}
           {:else}
             <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}</p>
-            <p class="say" class:clamp={!openQ.has(i)}><Marked value={g.say} /></p>
-            {#if g.say.text.length > 260}
+            <p class="say" class:clamp={!openQ.has(i)} {@attach overflow(i)}><Marked value={g.say} /></p>
+            {#if cut.has(i) || openQ.has(i)}
               <button class="more sec u" type="button" aria-expanded={openQ.has(i)} onclick={() => toggle(i)}>{openQ.has(i) ? copy.topic.LESS : copy.topic.MORE}</button>
             {/if}
           {/if}
@@ -94,7 +113,7 @@
     <section class="changed">
       <h2>{copy.topic.WHEN_IT_CHANGED}</h2>
       <div class="list">
-        {#each vm.changes as c, i (i)}
+        {#each allChanges ? vm.changes : vm.changes.slice(0, SHOWN) as c, i (i)}
           <div class="item" data-testid={TID.changeRow}>
             <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}{changeRest(c)}</p>
             {#if c.comment}<p class="t13 muted one-line" title={c.comment}>{copy.editComment(c.comment)}</p>{/if}
@@ -103,6 +122,10 @@
           <div class="item"><p class="muted">{copy.topic.NO_CHANGES}</p></div>
         {/each}
       </div>
+      {#if !allChanges && vm.changes.length > SHOWN}
+        <button class="more sec u" type="button" onclick={() => (allChanges = true)}>{copy.topic.showAllChanges(vm.changes.length)}</button>
+      {/if}
+
     </section>
   {:else if failure}
     <ErrorLine {failure} />
