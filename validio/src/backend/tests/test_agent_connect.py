@@ -3,7 +3,7 @@ key; Pause refuses at verify with a ledger entry; Disconnect bumps the version a
 
 import re
 
-import pytest
+from asking import pair_demo_agent
 from jwcrypto.jwk import JWK
 from test_api import auth, client, holder  # noqa: F401
 
@@ -145,7 +145,8 @@ def test_pause_needs_an_agent(client):  # noqa: F811
 
 def test_demo_agent_answers_the_code_and_gets_the_pass_back(client, ctx):  # noqa: F811
     client.post("/api/agent/disconnect")
-    s = client.post("/api/agent/demo").json()
+    pair_demo_agent(ctx)  # the demo agent's key answers the code like any signing agent
+    s = client.get("/api/agent").json()
     assert s["state"] == "consent" and s["consent"]["name"] == "Demo agent"
     s = client.post("/api/agent/allow").json()
     assert s["state"] == "active" and s["agent"]["passVersion"] == 3
@@ -186,36 +187,6 @@ def test_consent_says_the_rules_as_saved(client):  # noqa: F811
         "Per week up to 8,000.00 €", "Substitutes up to 5 % extra"]
 
 
-@pytest.mark.parametrize("path", ["/api/agent/demo", "/api/demo/example"])
-def test_demo_routes_are_closed_without_demo(client, monkeypatch, path):  # noqa: F811
-    monkeypatch.setenv("VALIDIO_DEMO", "")
-    assert client.post(path).status_code == 404
-
-
-def test_example_request_goes_through_the_demo_agent(client):  # noqa: F811
-    r = client.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    out = r.json()
-    assert out["requestId"].startswith("R-")
-    req = client.get(f"/api/requests/{out['requestId']}").json()
-    assert "lactose-free milk" in req["text"]
-
-
-def test_example_needs_the_demo_agent(client):  # noqa: F811
-    client.post("/api/agent/disconnect")
-    r = client.post("/api/demo/example")
-    assert r.status_code == 409 and r.json()["detail"] == "connect the demo agent first"
-
-
-def test_example_while_paused_shows_the_refusal(client):  # noqa: F811
-    client.post("/api/agent/pause", json={"paused": True})
-    r = client.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    out = r.json()
-    assert "requestId" not in out
-    assert any("paused" in ln for ln in out["lines"])
-
-
 def test_a_kitchen_left_unconnected_refuses_every_pass_until_allowed(client, holder, ctx):  # noqa: F811
     from validio.api import connect
 
@@ -226,8 +197,7 @@ def test_a_kitchen_left_unconnected_refuses_every_pass_until_allowed(client, hol
     assert len(client.get("/api/ledger").json()["entries"]) == before  # quiet
     r = ask(client, holder, "unconnected")
     assert r.status_code == 401 and r.json()["detail"] == "no agent is connected to this kitchen"
-    assert client.post("/api/demo/example").status_code == 409
-    client.post("/api/agent/demo")
+    pair_demo_agent(ctx)
     assert client.post("/api/agent/allow").json()["agent"]["passVersion"] == 2
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     assert ask(client, h, "connected").status_code == 200
