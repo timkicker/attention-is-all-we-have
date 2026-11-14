@@ -56,7 +56,10 @@
   // The lactose fact: a measured value when Valio gives one, else its lactose-free claim.
   /** The done heading names the product: "10 × 2.5 kg of mozzarella-fontal
    *  crumbled cheese", from the question, or the line's name. */
-  function doneWhat(x: Order): string {
+  function doneWhat(x: Order, placed = true): string {
+    // Not ordered: the product's display name alone, so the title stays on one line.
+    const d = x.lines[0]?.displayName;
+    if (!placed && d) return d.length > 1 && d[1] === d[1].toLowerCase() ? d.charAt(0).toLowerCase() + d.slice(1) : d;
     const q = /^Order (.+?) for .+\?$/.exec(x.questionText ?? "")?.[1];
     if (q) return q;
     const n = x.lines[0]?.displayName ?? x.lines[0]?.name ?? "the order";
@@ -140,7 +143,7 @@
   {/if}
 {:else if !waiting}
   {@const placed = o.state === "placed" || o.state === "approved"}
-  {@const what = doneWhat(o)}
+  {@const what = doneWhat(o, placed)}
   <VHead
     title={placed ? `Ordered ${what}` : `Not ordered: ${what}`}
     crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
