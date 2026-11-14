@@ -15,6 +15,7 @@ import hashlib
 import json
 import sqlite3
 import threading
+import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -236,7 +237,21 @@ class AuditLog:
                 ).fetchall()
         return [_entry(b, h) for b, h in rows]
 
+    VERIFY_FOR = 10.0  # seconds a verify result stands while this connection wrote nothing
+
     def verify(self) -> VerifyResult:
+        """The whole chain, checked again after any write here and at least every VERIFY_FOR seconds, so a row
+        changed by hand in the file shows within seconds even while nothing is appended."""
+        with self._lock:
+            key = (id(self._con), self._con.total_changes)
+            cached = getattr(self, "_verified", None)
+            if cached and cached[0] == key and time.monotonic() - cached[1] < self.VERIFY_FOR:
+                return cached[2]
+            result = self._verify()
+            self._verified = (key, time.monotonic(), result)
+            return result
+
+    def _verify(self) -> VerifyResult:
         prev = GENESIS
         count = 0
         expected_seq = 1

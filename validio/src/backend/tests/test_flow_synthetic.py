@@ -117,3 +117,27 @@ def test_an_error_before_any_decision_leaves_no_request_and_frees_the_key(c, hol
     assert len(syn_ctx.audit.list()) == entries and syn_ctx.store.requests() == []
     assert ask(c, holder, 100, "no-day")["decision"]["outcome"] == "auto_order"  # the key is free again
     assert syn_ctx.audit.verify().ok
+
+
+def test_cached_request_views_follow_every_write(c, holder):
+    req = ask(c, holder, 1500, "cache")
+    rid, oid = req["requestId"], req["orderId"]
+    assert c.get(f"/api/requests/{rid}").json()["status"] == "waiting"
+    assert c.get(f"/api/requests/{rid}").json()["status"] == "waiting"  # served from the cache
+    inbox = c.get("/api/inbox").json()
+    assert any(i["id"] == rid and i["status"] == "waiting" for i in inbox)
+    c.post(f"/api/orders/{oid}/approve", headers={"X-Approve-Code": CODE})
+    assert c.get(f"/api/requests/{rid}").json()["status"] == "ordered"
+    assert any(i["id"] == rid and i["status"] == "ordered" for i in c.get("/api/inbox").json())
+    # a caller trimming its copy never changes what the next caller gets
+    from validio.api.tools import get_request
+
+    a = get_request(_ctx(), rid)
+    a.lines[0].options.clear()
+    assert get_request(_ctx(), rid).lines[0].options
+
+
+def _ctx():
+    from validio.api.state import get_ctx
+
+    return get_ctx()
