@@ -22,6 +22,7 @@ ROUTES = {
     "/api/ask": "get",
     "/api/atlas": "get",
     "/api/stats": "get",
+    "/api/sql/vector": "get",
     "/api/sql/{panel_id}": "get",
     "/api/search": "get",
     "/api/ingest": "post",
