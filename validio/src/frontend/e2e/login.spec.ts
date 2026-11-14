@@ -8,17 +8,17 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("a page without a session goes to the login page", async ({ page }) => {
-  await page.goto("/ledger");
+  await page.goto("/activity");
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByTestId("try-demo")).toBeVisible();
 });
 
-test("the demo kitchen opens the inbox and stays after a reload", async ({ page }) => {
+test("the demo kitchen opens Home and stays after a reload", async ({ page }) => {
   await demoLogin(page);
-  await expect(page.locator("h1")).toHaveText("Inbox");
+  await expect(page.locator("h1")).toHaveText("Home");
   await expect(page.getByTestId("demo-bar")).toContainText("Demo kitchen");
   await page.reload();
-  await expect(page.locator("h1")).toHaveText("Inbox");
+  await expect(page.locator("h1")).toHaveText("Home");
   await page.goto("/login");
   await expect(page).not.toHaveURL(/\/login/);
 });

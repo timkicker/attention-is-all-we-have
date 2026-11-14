@@ -130,6 +130,12 @@
       },
       "ActivityItem": {
         "properties": {
+          "approvedByYou": {
+            "default": false,
+            "description": "ordered because the owner approved it, not alone",
+            "title": "Approvedbyyou",
+            "type": "boolean"
+          },
           "at": {
             "title": "At",
             "type": "string"
@@ -627,6 +633,18 @@
       },
       "Consent": {
         "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "when the agent's first call came",
+            "title": "At"
+          },
           "keyId": {
             "title": "Keyid",
             "type": "string"
@@ -2928,6 +2946,14 @@
           "orderId": {
             "title": "Orderid",
             "type": "string"
+          },
+          "orderIds": {
+            "description": "every order placed: one for a request, one per renewed line for the Steady Order",
+            "items": {
+              "type": "string"
+            },
+            "title": "Orderids",
+            "type": "array"
           }
         },
         "required": [

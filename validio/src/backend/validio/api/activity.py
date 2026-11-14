@@ -14,6 +14,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import Field
 
 from ..demo import seed
 from ..matching.need import CLAIM_NAMES
@@ -42,6 +43,7 @@ class ActivityItem(Model):
     total_cents: int | None
     at: str
     order_id: str | None
+    approved_by_you: bool = Field(False, description="ordered because the owner approved it, not alone")
 
 
 class Counts(Model):
@@ -77,6 +79,8 @@ class RuleUsed(Model):
 class Result(Model):
     order_id: str
     delivery: str | None
+    order_ids: list[str] = Field(default_factory=list, description="every order placed: one for a request, one per "
+                                 "renewed line for the Steady Order")
 
 
 class Approval(Model):
@@ -175,7 +179,8 @@ def _request_item(ctx: Ctx, v: SupplyRequestView) -> ActivityItem | None:
     if status is None:
         return None
     return ActivityItem(id=v.id, kind="request", status=status, title=v.title_text or v.title or v.id,
-                        why=_why(ctx, v), total_cents=v.total_cents, at=v.created_at, order_id=v.order_id)
+                        why=_why(ctx, v), total_cents=v.total_cents, at=v.created_at, order_id=v.order_id,
+                        approved_by_you=v.status in ("approved", "ordered"))
 
 
 def _fact(o: RankedOptionView, field: str):
@@ -222,7 +227,18 @@ def _checks(v: SupplyRequestView) -> list[Check]:
         if o.is_substitute:
             out.append(Check(label="Substitute", value="On Valio's list" if o.on_valio_list else "Not on Valio's list",
                              note=o.short_text, ok=bool(o.on_valio_list)))
-    return out
+    return [c.model_copy(update={"note": _note(c.value, c.note)}) for c in out]
+
+
+def _note(value: str, note: str | None) -> str | None:
+    """The note as one plain line under its value: no full stop, and not the value said again ("Valio gives no
+    real count" over "Valio gives no real count, treated as in stock" reads "Treated as in stock")."""
+    if not note:
+        return None
+    note = note.strip().rstrip(".")
+    if note.lower().startswith(value.lower()):
+        note = note[len(value):].lstrip(" ,;:")
+    return cap(note) if note else None
 
 
 def _per(o: RankedOptionView) -> str:
@@ -280,7 +296,7 @@ def _request_detail(ctx: Ctx, rid: str) -> ActivityDetail:
         o = get_order(ctx, v.order_id)
         if o.state == "placed":
             result = Result(order_id=o.id, delivery=min((ln.delivery_date for ln in o.lines if ln.delivery_date),
-                                                        default=None))
+                                                        default=None), order_ids=[o.id])
         elif o.state == "waiting":
             approval = Approval(order_id=o.id, hold_until=_hold_until(ctx, v))
     return ActivityDetail(
@@ -312,16 +328,26 @@ def _standing_at(ctx: Ctx, so) -> str:
     return datetime.fromtimestamp(m.not_before, ctx.now().tzinfo).isoformat()
 
 
-def _standing_item(ctx: Ctx, so, total_cents: int | None = None) -> ActivityItem:
-    lines = f"{so.line_count} line{'s' if so.line_count != 1 else ''}"
-    flags = f", {so.flag_count} waiting for you" if so.flag_count else ""
-    return ActivityItem(id=so.id, kind="standing", status="standing", title=so.name,
-                        why=f"Every {so.weekday}, {lines}{flags}", total_cents=total_cents,
-                        at=_standing_at(ctx, so), order_id=None)
-
-
 LINE_OK = {"renewed": True, "split_renewed": True, "accepted": True, "waiting": None, "flagged": None,
            "blocked": False}
+ORDERED_LINE = frozenset(k for k, v in LINE_OK.items() if v)
+
+
+def _standing_item(ctx: Ctx, request: Request, so) -> ActivityItem:
+    """One line for the Steady Order: its lines, how many wait for the owner and how many were blocked this
+    week, and what the ordered lines cost (none before it was renewed)."""
+    from .steady import steady_order
+
+    full = steady_order(request, so.id)
+    lines = f"{so.line_count} line{'s' if so.line_count != 1 else ''}"
+    waiting = sum(1 for ln in full.lines if LINE_OK.get(ln.result, None) is None)
+    blocked = sum(1 for ln in full.lines if ln.result == "blocked")
+    flags = (f", {waiting} waiting for you" if waiting and full.renewed_at else "") + \
+        (f", {blocked} blocked" if blocked else "")
+    ordered = [ln.total_cents for ln in full.lines if ln.result in ORDERED_LINE and ln.total_cents is not None]
+    return ActivityItem(id=so.id, kind="standing", status="standing", title=so.name,
+                        why=f"Every {so.weekday}, {lines}{flags}", total_cents=sum(ordered) if ordered else None,
+                        at=_standing_at(ctx, so), order_id=None)
 
 
 def _standing_detail(ctx: Ctx, request: Request, sid: str) -> ActivityDetail:
@@ -331,10 +357,12 @@ def _standing_detail(ctx: Ctx, request: Request, sid: str) -> ActivityDetail:
     if so is None:
         raise HTTPException(404, f"no Steady Order {sid}")
     full = steady_order(request, sid)
-    renewed = [ln.total_cents for ln in full.lines if ln.total_cents is not None]
-    item = _standing_item(ctx, so, sum(renewed) if renewed else None)
-    checks = [Check(label="Product", value=display_name(ln.name), note=_line_note(ln), ok=LINE_OK.get(ln.result))
-              for ln in full.lines]
+    item = _standing_item(ctx, request, so)
+    ids = list(dict.fromkeys(ln.order_id for ln in full.lines if ln.result in ORDERED_LINE and ln.order_id))
+    days = [ln.delivery_date for oid in ids for ln in get_order(ctx, oid).lines if ln.delivery_date]
+    result = Result(order_id=ids[0], order_ids=ids, delivery=min(days, default=None)) if ids else None
+    checks = [Check(label="Product", value=(v := display_name(ln.name)), note=_note(v, _line_note(ln)),
+                    ok=LINE_OK.get(ln.result)) for ln in full.lines]
     sp = full.steady_pass
     limits = (f"Under the Steady Order's own pass: alone up to {money(sp.auto_limit_cents)}, blocked above "
               f"{money(sp.hard_cap_cents)}." if sp and sp.auto_limit_cents is not None and sp.hard_cap_cents is not None
@@ -343,7 +371,7 @@ def _standing_detail(ctx: Ctx, request: Request, sid: str) -> ActivityDetail:
     return ActivityDetail(
         item=item, asked=Asked(text=f"{full.name}: the usual lines every {full.weekday}{weeks}.", agent_name="Validio"),
         checks=checks, rule=RuleUsed(text=limits, version=seed.pass_version(ctx.db_path, seed.STEADY_PASS_ID)),
-        result=None, approval=None, proof=_proof(ctx, sid))
+        result=result, approval=None, proof=_proof(ctx, sid))
 
 
 def _line_note(ln) -> str | None:
@@ -358,7 +386,7 @@ def _line_note(ln) -> str | None:
 def items(ctx: Ctx, request: Request) -> list[ActivityItem]:
     """Every item, newest first."""
     out = [it for r in ctx.store.requests() if (it := _request_item(ctx, get_request(ctx, r["id"]))) is not None]
-    out += [_standing_item(ctx, so) for so in _standing(request)]
+    out += [_standing_item(ctx, request, so) for so in _standing(request)]
 
     def key(it: ActivityItem):
         n = re.search(r"\d+$", it.id)

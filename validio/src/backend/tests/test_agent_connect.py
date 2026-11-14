@@ -2,6 +2,7 @@
 key; Pause refuses at verify with a ledger entry; Disconnect bumps the version and never revokes."""
 
 import re
+from datetime import datetime
 
 from asking import pair_demo_agent
 from jwcrypto.jwk import JWK
@@ -40,7 +41,9 @@ def test_a_signing_agent_gets_the_verification_code_of_the_consent_screen(client
         r = client.post("/agent/v1/pair", json={"code": code, "name": "Kitchen buyer",
                                                 "publicJwk": key.export_public(as_dict=True)})
         assert r.status_code == 202 and re.fullmatch(r"[A-HJKMNP-Z2-9]{3}-[A-HJKMNP-Z2-9]{3}", r.json()["verifyCode"])
-        assert client.get("/api/agent").json()["consent"]["verifyCode"] == r.json()["verifyCode"]
+        consent = client.get("/api/agent").json()["consent"]
+        assert consent["verifyCode"] == r.json()["verifyCode"]
+        assert datetime.fromisoformat(consent["at"]).tzinfo is not None  # when the agent's first call came
         codes.append(r.json()["verifyCode"])
         client.post("/api/agent/deny")
         assert "consent" not in client.get("/api/agent").json()

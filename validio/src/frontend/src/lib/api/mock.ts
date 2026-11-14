@@ -1,85 +1,304 @@
-// The web app without a backend. Every answer here is one the real backend
-// gave, recorded by scripts/snapshots.py into snapshots/states.ts; nothing is
-// invented. The owner's controls only move between recorded states:
-//
-//   mozzarella request: none -> (stock-out, seeded by the tests) waiting -> placed | rejected
-//   steady order:       pending -> (renew) renewed -> accepted | mozzarella | both
-//
-// The state lives in localStorage so a reload keeps it, as the backend would.
+// The web app without a backend: the v2 contract (UI-V2-API.md) played in this
+// browser. The demo kitchen holds the sample day of the wireframes; a kitchen
+// made here starts empty. Approving or rejecting R-4 is kept in localStorage,
+// so a reload keeps it, as the backend would; Reset goes back to the start.
+// Agent and Rules are played in agent.ts, Settings in settings.ts.
 
-import { money } from "$lib/format";
-import { answers, refused, states } from "./snapshots/states";
+import { agentApi } from "./agent";
 import { ApiError } from "./error";
 import type {
   Account,
+  ActivityDetail,
+  ActivityFilter,
+  ActivityItem,
+  ActivityList,
   DemoState,
-  InboxItem,
-  Ledger,
+  HomeOut,
   LoginIn,
   Order,
-  SpendPass,
-  SpendPassIn,
-  SteadyOrder,
   SignupIn,
-  SteadyOrderSummary,
-  SupplyRequest,
 } from "./types";
 
-type Moz = "none" | "waiting" | "placed" | "rejected";
-type Steady = "pending" | "renewed" | "accepted" | "mozzarella" | "both";
-interface State {
-  moz: Moz;
-  steady: Steady;
-  /** The limits the owner signed in this browser, laid over the recorded pass. */
-  pass?: Pick<SpendPassIn, "autoLimitCents" | "hardCapCents" | "diet" | "deliverBy" | "substitutes">;
-}
+// The demo copy's history names its agent "Agent", as the server's does.
+const AGENT = "Agent";
 
-const KEY = "validio-mock-v2";
-const START: State = { moz: "none", steady: "pending" };
-const PANCAKES = "471376";
-const MOZZARELLA = "466375";
+const copy = <T>(v: T): T => structuredClone(v);
 
-let memory: State = { ...START };
+// ---------- the demo kitchen's day ----------
 
-function load(): State {
+/** Who answered R-4 in this browser. */
+type R4 = "waiting" | "approved" | "rejected";
+const KEY = "validio-mock-v2-r4";
+let r4Memory: R4 = "waiting";
+
+function r4(): R4 {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const s = JSON.parse(raw) as State;
-      if (states[`${s.moz}-${s.steady}`]) return s;
-    }
+    const v = localStorage.getItem(KEY);
+    if (v === "approved" || v === "rejected" || v === "waiting") return v;
   } catch {
-    // no storage in this browser: keep the state in memory
+    // no storage: memory only
   }
-  return memory;
+  return r4Memory;
 }
-
-function save(s: State): void {
-  memory = s;
+function setR4(v: R4): void {
+  r4Memory = v;
   try {
-    localStorage.setItem(KEY, JSON.stringify(s));
+    localStorage.setItem(KEY, v);
   } catch {
-    // see load()
+    // see r4()
   }
 }
 
-function pick(s: State): Record<string, number> {
-  return states[`${s.moz}-${s.steady}`];
+interface Entry {
+  item: ActivityItem;
+  detail: Omit<ActivityDetail, "item">;
 }
 
-function copy<T>(v: T): T {
-  return structuredClone(v);
+const h = (n: number) => `${n.toString(16).padStart(8, "0")}c41e9a07b2d58f3e61a0d4c97b2e5f18a3d6c0b94e7f21a5d8c3b6e09f42a7d1`.slice(0, 64);
+
+const RULE_V = 2;
+
+function day(): Entry[] {
+  const answer = r4();
+  const r4item: ActivityItem = {
+    id: "R-4",
+    kind: "request",
+    status: answer === "approved" ? "ordered" : answer === "rejected" ? "blocked" : "waiting",
+    title: "1,500 litres of lactose-free milk",
+    why:
+      answer === "approved"
+        ? "You approved it"
+        : answer === "rejected"
+          ? "You said no"
+          : "Over your 1,200.00 € limit for ordering alone",
+    totalCents: 151500,
+    at: "2026-11-14T11:05:00+02:00",
+    orderId: "O-7",
+    approvedByYou: answer === "approved",
+  };
+  const r4proof = [
+    { at: "2026-11-14T11:05:02+02:00", actor: AGENT, text: "Asked for 1,500 litres of lactose-free milk", hash: h(41) },
+    { at: "2026-11-14T11:05:04+02:00", actor: "Validio", text: "Waiting for you: over 1,200.00 €, under 5,000.00 €", hash: h(42) },
+    ...(answer === "waiting"
+      ? []
+      : [{ at: "2026-11-14T11:20:00+02:00", actor: "You", text: answer === "approved" ? "Approved, order O-7 placed" : "Rejected", hash: h(43) }]),
+  ];
+  return [
+    {
+      item: r4item,
+      detail: {
+        asked: { text: "Order 1,500 litres of lactose-free semi-skimmed milk for Monday.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Valio Eila lactose-free semi-skimmed milk 1 l", note: null, ok: null },
+          { label: "Price", value: "1.01 € per litre", note: "Valio price today", ok: true },
+          { label: "Stock", value: "In stock, delivery Mon 16 Nov", note: null, ok: true },
+          { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
+        ],
+        rule:
+          answer === "approved"
+            ? { text: "Over your 1,200.00 € limit for ordering alone. You approved it.", version: RULE_V }
+            : answer === "rejected"
+              ? { text: "You said no.", version: RULE_V }
+              : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V },
+        result: answer === "approved" ? { orderId: "O-7", orderIds: ["O-7"], delivery: "2026-11-16" } : null,
+        approval: answer === "waiting" ? { orderId: "O-7", holdUntil: "2026-11-14T15:00:00+02:00" } : null,
+        proof: r4proof,
+      },
+    },
+    {
+      item: {
+        id: "R-3",
+        kind: "request",
+        status: "blocked",
+        title: "Hazelnut praline filling 5 kg",
+        why: "Contains hazelnut. Your rules say no nuts.",
+        totalCents: 21240,
+        at: "2026-11-14T10:58:00+02:00",
+        orderId: null,
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Order 5 kg of hazelnut praline filling for the dessert menu.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Hazelnut praline filling 5 kg", note: null, ok: null },
+          { label: "Price", value: "212.40 €", note: "Valio price today", ok: true },
+          { label: "Stock", value: "In stock", note: null, ok: true },
+          { label: "Allergens", value: "Contains hazelnut", note: "Your rules say no nuts", ok: false },
+        ],
+        rule: { text: "Your rules say no nuts, so it is blocked.", version: RULE_V },
+        result: null,
+        approval: null,
+        proof: [
+          { at: "2026-11-14T10:58:01+02:00", actor: AGENT, text: "Asked for 5 kg of hazelnut praline filling", hash: h(31) },
+          { at: "2026-11-14T10:58:03+02:00", actor: "Validio", text: "Blocked: contains hazelnut", hash: h(32) },
+        ],
+      },
+    },
+    {
+      item: {
+        id: "R-2",
+        kind: "request",
+        status: "ordered",
+        title: "10 × 2.5 kg mozzarella-fontal crumbled cheese",
+        why: "Substitute for lactose-free mozzarella 125 g, out of stock",
+        totalCents: 18010,
+        at: "2026-11-14T10:51:00+02:00",
+        orderId: "O-6",
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Order 25 kg of lactose-free mozzarella for Monday.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Lactose-free mozzarella 125 g", note: null, ok: null },
+          { label: "Stock", value: "Out of stock", note: "Valio stock today", ok: false },
+          { label: "Substitute", value: "Mozzarella-fontal crumbled cheese 2.5 kg", note: "On Valio's substitute list", ok: true },
+          { label: "Price", value: "7.20 € per kg", note: "4 % above the original", ok: true },
+          { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
+        ],
+        rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        result: { orderId: "O-6", orderIds: ["O-6"], delivery: "2026-11-16" },
+        approval: null,
+        proof: [
+          { at: "2026-11-14T10:51:01+02:00", actor: AGENT, text: "Asked for 25 kg of lactose-free mozzarella", hash: h(21) },
+          { at: "2026-11-14T10:51:03+02:00", actor: "Validio", text: "Out of stock, substitute from Valio's list", hash: h(22) },
+          { at: "2026-11-14T10:51:05+02:00", actor: "Validio", text: "Ordered alone, order O-6", hash: h(23) },
+        ],
+      },
+    },
+    {
+      item: {
+        id: "R-1",
+        kind: "request",
+        status: "ordered",
+        title: "1,000 litres of lactose-free milk",
+        why: "Under your 1,200.00 € limit",
+        totalCents: 101000,
+        at: "2026-11-14T10:14:00+02:00",
+        orderId: "O-5",
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Order 1,000 litres of lactose-free semi-skimmed milk for Monday.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Valio Eila lactose-free semi-skimmed milk 1 l", note: null, ok: null },
+          { label: "Price", value: "1.01 € per litre", note: "Valio price today", ok: true },
+          { label: "Stock", value: "In stock, delivery Mon 16 Nov", note: null, ok: true },
+          { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
+        ],
+        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        result: { orderId: "O-5", orderIds: ["O-5"], delivery: "2026-11-16" },
+        approval: null,
+        proof: [
+          { at: "2026-11-14T10:14:01+02:00", actor: AGENT, text: "Asked for 1,000 litres of lactose-free milk", hash: h(11) },
+          { at: "2026-11-14T10:14:03+02:00", actor: "Validio", text: "Ordered alone, order O-5", hash: h(12) },
+        ],
+      },
+    },
+    {
+      item: {
+        id: "S-1",
+        kind: "standing",
+        status: "standing",
+        title: "Weekly Monday order, 4 lines",
+        why: "Next run Mon 17 Nov, ordered alone if under your limits",
+        totalCents: 198080,
+        at: "2026-11-13T09:00:00+02:00",
+        orderId: null,
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Every Monday: milk, butter, cream and eggs for the week.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "4 lines: milk, butter, cream, eggs", note: null, ok: null },
+          { label: "Price", value: "1,980.80 € a week", note: "Valio prices on Thu 13 Nov", ok: true },
+          { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
+        ],
+        rule: { text: "Each run is checked again; ordered alone if under your limits.", version: RULE_V },
+        result: null,
+        approval: null,
+        proof: [
+          { at: "2026-11-13T09:00:01+02:00", actor: AGENT, text: "Set up the weekly Monday order", hash: h(5) },
+          { at: "2026-11-13T09:00:03+02:00", actor: "Validio", text: "Standing order S-1 saved under rules v2", hash: h(6) },
+        ],
+      },
+    },
+    {
+      item: {
+        id: "R-0",
+        kind: "request",
+        status: "ordered",
+        title: "40 kg unsalted butter",
+        why: "Under your 1,200.00 € limit",
+        totalCents: 38600,
+        at: "2026-11-07T14:32:00+02:00",
+        orderId: "O-4",
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Order 40 kg of unsalted butter.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Valio unsalted butter 500 g", note: null, ok: null },
+          { label: "Price", value: "9.65 € per kg", note: "Valio price on Fri 7 Nov", ok: true },
+          { label: "Stock", value: "In stock, delivery Mon 9 Nov", note: null, ok: true },
+          { label: "Allergens", value: "Contains milk, no nuts", note: null, ok: true },
+        ],
+        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        result: { orderId: "O-4", orderIds: ["O-4"], delivery: "2026-11-09" },
+        approval: null,
+        proof: [
+          { at: "2026-11-07T14:32:01+02:00", actor: AGENT, text: "Asked for 40 kg of unsalted butter", hash: h(1) },
+          { at: "2026-11-07T14:32:03+02:00", actor: "Validio", text: "Ordered alone, order O-4", hash: h(2) },
+        ],
+      },
+    },
+  ];
 }
 
-function notFound(what: string): never {
-  throw new ApiError(404, `${what} not found`);
+/** The demo kitchen has its day; a kitchen made in this browser has nothing yet. */
+function entries(): Entry[] {
+  const a = read<Account | null>(SESSION, sessionMemory);
+  return a?.isDemo ? day() : [];
 }
 
-/** The recorded answer at `path` for the current state, from `list`. */
-function at<T>(path: string, list: T[] | undefined): T {
-  const i = pick(load())[path];
-  if (i === undefined || !list) notFound(path);
-  return copy(list[i]);
+const later = <T>(v: T, ms = 120) => new Promise<T>((r) => setTimeout(() => r(v), ms));
+
+export async function home(): Promise<HomeOut> {
+  signedIn();
+  const list = entries().map((e) => e.item);
+  const [agent, rules] = await Promise.all([agentApi.agent(), agentApi.rules()]);
+  // This week: Mon 9 Nov 00:00 Helsinki on, ordered only.
+  const usedCents = list
+    .filter((i) => i.status === "ordered" && i.at >= "2026-11-09")
+    .reduce((n, i) => n + (i.totalCents ?? 0), 0);
+  const connected = agent.state === "active" || agent.state === "paused";
+  return later({
+    agent: {
+      state: agent.state,
+      name: agent.agent?.name ?? agent.consent?.name ?? null,
+      lastUsedAt: agent.agent?.lastUsedAt ?? null,
+    },
+    week: { usedCents, capCents: rules.perWeekCents },
+    setup: { rulesSaved: rules.saved, agentConnected: connected, firstOrder: list.some((i) => i.kind === "request") },
+    needsYou: list.filter((i) => i.status === "waiting"),
+    latest: list.slice(0, 5),
+  });
+}
+
+export async function activity(status: ActivityFilter = "all"): Promise<ActivityList> {
+  signedIn();
+  const list = entries().map((e) => e.item);
+  const n = (s: ActivityFilter) => (s === "all" ? list.length : list.filter((i) => i.status === s).length);
+  return later({
+    items: status === "all" ? list : list.filter((i) => i.status === status),
+    counts: { all: n("all"), ordered: n("ordered"), waiting: n("waiting"), blocked: n("blocked"), standing: n("standing") },
+  });
+}
+
+export async function activityItem(id: string): Promise<ActivityDetail> {
+  signedIn();
+  const e = entries().find((x) => x.item.id === id);
+  if (!e) throw new ApiError(404, `${id} not found`);
+  return later(copy({ item: e.item, ...e.detail }));
 }
 
 /** The fixture plays a server with the approval code set: any 6 digits pass. */
@@ -87,39 +306,35 @@ function checkCode(code: string): void {
   if (!/^\d{6}$/.test(code)) throw new ApiError(403, "wrong or missing approval code");
 }
 
-export async function inbox(): Promise<InboxItem[]> {
-  return at("/api/inbox", answers.inbox);
-}
-
-export async function request(id: string): Promise<SupplyRequest> {
-  return at(`/api/requests/${id}`, answers.requests[id]);
-}
-
-const DIET: Record<string, string> = { FREE_FROM_LACTOSE: "lactose free", FREE_FROM_GLUTEN: "gluten free", VEGAN: "vegan" };
-
-export async function spendPass(id: string): Promise<SpendPass> {
-  const p = at(`/api/spend-passes/${id}`, answers.spendPass[id]);
-  const o = load().pass;
-  if (!o) return p;
+function order(id: string): Order {
+  const state = r4() === "approved" ? "placed" : r4() === "rejected" ? "rejected" : "waiting";
   return {
-    ...p,
-    autoLimitCents: o.autoLimitCents,
-    hardCapCents: o.hardCapCents,
-    diet: o.diet.map((d) => DIET[d] ?? d),
-    deliverBy: o.deliverBy,
-    substitutes: o.substitutes ? p.substitutes : "never",
-    split: { ...p.split, allowListedSubstitutes: o.substitutes },
+    id,
+    requestId: "R-4",
+    state,
+    lines: [],
+    totalCents: 151500,
+    history: [{ state: "waiting", at: "2026-11-14T11:05:04+02:00" }],
+    decision: { outcome: "ask_human", ruleIds: ["approval_up_to"], sentence: "Over your 1,200.00 € limit for ordering alone" },
+    spendPassId: "M-1",
+    deliverBy: "2026-11-16",
   };
 }
 
-/** Signing again: the fixture keeps the new limits for the Spend Pass page; recorded decisions stay as they were. */
-export async function signPass(body: SpendPassIn, code: string): Promise<SpendPass> {
-  checkCode(body.code ?? code);
-  if (body.autoLimitCents > body.hardCapCents) throw new ApiError(422, `alone up to ${money(body.autoLimitCents)} is above never above ${money(body.hardCapCents)}`);
-  const { autoLimitCents, hardCapCents, diet, deliverBy, substitutes } = body;
-  save({ ...load(), pass: { autoLimitCents, hardCapCents, diet, deliverBy, substitutes } });
-  return spendPass("M-1");
+async function decide(id: string, to: R4): Promise<Order> {
+  // Only R-4's order O-7 waits for the owner in the demo day.
+  if (id !== "O-7" || !entries().length) throw new ApiError(404, `order ${id} not found`);
+  if (r4() !== "waiting") throw new ApiError(409, `order ${id} is ${order(id).state}, not waiting`);
+  setR4(to);
+  return later(order(id));
 }
+
+export async function approve(id: string, code: string): Promise<Order> {
+  checkCode(code);
+  return decide(id, "approved");
+}
+
+export const reject = (id: string): Promise<Order> => decide(id, "rejected");
 
 /** A test sets localStorage "validio-mock-public" to a token: every write then needs it, as on the public link. */
 export async function publicGate(token: string): Promise<void> {
@@ -132,70 +347,10 @@ export async function publicGate(token: string): Promise<void> {
   if (want && token !== want) throw new ApiError(401, "wrong or missing kitchen token");
 }
 
-export async function order(id: string): Promise<Order> {
-  return at(`/api/orders/${id}`, answers.orders[id]);
-}
-
-async function decide(id: string, code: string, to: "placed" | "rejected"): Promise<Order> {
-  const s = load();
-  const current = await order(id);
-  checkCode(code);
-  if (current.state !== "waiting") throw new ApiError(409, `order ${id} is ${current.state}, not waiting`);
-  // Only the mozzarella order ever waits for the owner in the demo.
-  save({ ...s, moz: to });
-  return order(id);
-}
-
-export const approve = (id: string, code: string) => decide(id, code, "placed");
-export const reject = (id: string, code: string) => decide(id, code, "rejected");
-
-export async function ledger(): Promise<Ledger> {
-  return at("/api/ledger", answers.ledger);
-}
-
-export async function steadyList(): Promise<SteadyOrderSummary[]> {
-  return at("/api/steady", answers.steadyList);
-}
-
-export async function steadyOrder(id: string): Promise<SteadyOrder> {
-  return at(`/api/steady/${id}`, answers.steady[id]);
-}
-
-export async function renew(id: string, code: string): Promise<SteadyOrder> {
-  const s = load();
-  await steadyOrder(id);
-  checkCode(code);
-  if (s.steady !== "pending") throw new ApiError(409, "this week's order is already renewed");
-  save({ ...s, steady: "renewed" });
-  return steadyOrder(id);
-}
-
-export async function acceptLine(id: string, productId: string, code: string): Promise<SteadyOrder> {
-  const s = load();
-  await steadyOrder(id);
-  checkCode(code);
-  const both = (s.steady === "accepted" && productId === MOZZARELLA) || (s.steady === "mozzarella" && productId === PANCAKES);
-  const next: Steady | undefined = both
-    ? "both"
-    : s.steady === "renewed" && productId === PANCAKES
-      ? "accepted"
-      : s.steady === "renewed" && productId === MOZZARELLA
-        ? "mozzarella"
-        : undefined;
-  if (!next) throw new ApiError(409, `line ${productId} is not waiting`);
-  const key = `${s.moz}-${next}`;
-  if (refused[key]) throw new ApiError(409, refused[key]);
-  save({ ...s, steady: next });
-  return steadyOrder(id);
-}
-
-export async function demoState(): Promise<DemoState> {
-  return at("/api/demo", answers.demo);
-}
-
 export async function reset(): Promise<DemoState> {
-  save({ ...START });
-  return demoState();
+  setR4("waiting");
+  agentApi.resetMock();
+  return { stockOut466375: false, codeRequired: true };
 }
 
 // ---------- accounts ----------
@@ -239,24 +394,16 @@ function enter(a: Account): Account {
   return copy(a);
 }
 
-/** The agent as the Agent page's fixture (api/agent.ts) holds it, so a reload keeps the checklist right. */
-function withAgent(a: Account): Account {
-  const m = read<{ agent?: Account["agent"] } | null>("validio-agent-mock-v1", null);
-  if (!m?.agent) return a;
-  const on = m.agent.state === "active" || m.agent.state === "paused";
-  return { ...a, agent: m.agent, setup: { ...a.setup, agent: on, done: a.setup.kitchen && a.setup.rules && on } };
-}
-
 export async function account(): Promise<Account> {
-  return withAgent(copy(signedIn()));
+  return copy(signedIn());
 }
 
-/** The demo kitchen as a fresh copy: rules saved, no agent connected yet. */
+/** The demo kitchen as a fresh copy, as POST /api/account/demo answers: rules saved, no agent (agent.ts plays it). */
 const DEMO_ACCOUNT: Account = {
   id: "k-demo",
   name: "Hotel Espoo kitchen",
   email: null,
-  customerNumber: "",
+  customerNumber: "hotel-espoo",
   deliveryAddress: "",
   isDemo: true,
   demoCode: DEMO_CODE,
