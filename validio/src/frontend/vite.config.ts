@@ -8,6 +8,6 @@ export default defineConfig({
     fs: { allow: ["."] },
     warmup: { clientFiles: ["./src/**/*.svelte"] },
     // In live mode the dev server hands /api to the backend on 8410.
-    proxy: { "/api": "http://127.0.0.1:8410", "/agent": "http://127.0.0.1:8410" },
+    proxy: { "/api": "http://127.0.0.1:8410", "/agent/v1": "http://127.0.0.1:8410" },
   },
 });
