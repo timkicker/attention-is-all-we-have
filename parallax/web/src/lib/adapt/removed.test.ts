@@ -82,7 +82,7 @@ describe('loadRemoved', () => {
     expect(r.data.total).toBe(230)
     expect(r.data.rows).toHaveLength(PAGE)
     expect(r.data.more).toBe(230 - PAGE)
-    expect(noteText(r.data.rows[0].note)).toBe('Swedish removed all of it on 3 Mar 2021 · still in Finnish and German')
+    expect(noteText(r.data.rows[0].note)).toBe('Swedish removed all of it on 3 Mar 2021, still in Finnish and German')
     expect(r.data.rows[0].href).toBe('/t/Q134949/s/sv/1/h0')
     const next = await loadRemoved(api, ctx(), { q: '', offset: PAGE, edition: null })
     expect(next.ok && next.data.rows.length).toBe(2 * PAGE)

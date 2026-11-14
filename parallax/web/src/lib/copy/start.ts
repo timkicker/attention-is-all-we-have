@@ -10,9 +10,9 @@ export const SEARCH_PLACEHOLDER = 'Search any Wikipedia article'
 export const SEARCH_LABEL = 'Search any Wikipedia article'
 export const PREPARED_LEAD = 'Or open a prepared article'
 export const EXAMPLE = 'Example'
-/** "Example · Winter War". */
-export function exampleKicker(topic: string): string {
-  return `${EXAMPLE} · ${topic}`
+/** ["Example", "Winter War"]: two parts set apart by space. */
+export function exampleKicker(topic: string): string[] {
+  return [EXAMPLE, topic]
 }
 export const OPEN_EXAMPLE = 'Open this comparison →'
 /** What the live example statement is about. Written by hand for the known example statement (adapt/start.ts EXAMPLE_STATEMENT). */

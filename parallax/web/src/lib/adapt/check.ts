@@ -1,8 +1,8 @@
 // Check an AI answer: raw API -> view model. Owner: P3.
 // Per statement the API labels every edition: says, stopped_saying, contradicts or not_found.
 // The row line follows from those labels, most cautious first:
-//   some edition contradicts it            -> Disputed · <those editions> say otherwise
-//   else some edition stopped saying it    -> Disputed · in <says> of <all>, <edition> removed it in <year>
+//   some edition contradicts it            -> Disputed, <those editions> say otherwise
+//   else some edition stopped saying it    -> Disputed, in <says> of <all>, <edition> removed it in <year>
 //   else some edition says it              -> Backed by <says> of <all> editions
 //                                             (Likely backed by ..., when only the similarity guess matched it)
 //   else                                   -> In no edition
@@ -114,7 +114,7 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
     contradicts[0]?.[1].evidence[0]
 
   let verdict: CheckVerdict
-  let head: string
+  let head: readonly string[]
   if (contradicts.length) {
     verdict = 'disputed'
     head = disputedOtherwise(contradicts.map(([l]) => l))
@@ -130,10 +130,10 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
   } else if (says.length) {
     verdict = 'backed'
     const guessed = says.every(([, v]) => v.evidence.every((e) => e.verdict?.model === GUESS_MODEL))
-    head = guessed ? likelyBackedBy(says.length, all) : backedBy(says.length, all)
+    head = [guessed ? likelyBackedBy(says.length, all) : backedBy(says.length, all)]
   } else {
     verdict = 'none'
-    head = IN_NO_EDITION
+    head = [IN_NO_EDITION]
   }
   return { id: String(c.idx), verdict, head, say: c.text, href: verdict === 'none' ? null : evidenceHref(qid, ev) }
 }

@@ -16,7 +16,7 @@ export const UP_TO = 'up to'
 export const OVER = 'over'
 export const PERCENT = ' percent'
 
-/** "31 Dec 2022 · ..." for an exact date, "By 31 Dec 2022 · ..." when only a yearly copy dates it. */
+/** "31 Dec 2022, ..." for an exact date, "By 31 Dec 2022, ..." when only a yearly copy dates it. */
 export function changedFromToAt(date: string, approx: boolean, lang: string, from: string, to: string): string {
   const line = changedFromTo(date, lang, from, to)
   return approx ? `By ${line}` : line
@@ -27,14 +27,14 @@ export function changeDate(date: string, _approx: boolean): string {
   return fmtDate(date)
 }
 
-/** The rest of a "When it changed" row after its date. */
+/** The rest of a "When it changed" row, set apart from its date by space. */
 export function changeRest(lang: string, from: string, to: string): string {
-  return ` · ${edition(lang)} changed “${from}” to “${to}”`
+  return `${edition(lang)} changed “${from}” to “${to}”`
 }
 
-/** The rest of the row for a removal: " · Russian removed it". */
+/** The rest of the row for a removal: "Russian removed it". */
 export function removedRest(lang: string): string {
-  return ` · ${edition(lang)} removed it`
+  return `${edition(lang)} removed it`
 }
 
 /** Title of the edition label link. */
@@ -72,3 +72,7 @@ export function oneStatementIn(topic: string, editionCount: number): string {
 
 /** Next to an edition whose difference has no words to mark. */
 export const SAYS_DIFFERENTLY = 'says it differently'
+/** After the edition names of a group: "says it differently" / "say it differently". */
+export function saysItDifferently(n: number): string {
+  return n === 1 ? SAYS_DIFFERENTLY : 'say it differently'
+}

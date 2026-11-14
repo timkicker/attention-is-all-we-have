@@ -55,7 +55,7 @@ describe('analyse', () => {
     expect(a.say.spans.map((s) => a.say.text.slice(s.start, s.end))).toEqual(['staged', '26,662'])
   })
   it('writes the note in reading order, never naming an edition that has no article', () => {
-    expect(noteText(a.note)).toBe('Swedish says 22,830 · English says it differently · same in German · not in Russian · English changed it in 2009')
+    expect(noteText(a.note)).toBe('Swedish says 22,830, English says it differently, same in German, not in Russian, English changed it in 2009')
   })
   it('drops rows where no edition differs', () => {
     const calm: Row = { ...row, cells: { fi: row.cells.fi, de: row.cells.de } }
