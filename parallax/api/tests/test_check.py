@@ -80,6 +80,16 @@ def test_recorded_runs(client):
     assert replay["source"] == "recorded" and labels(replay, 0)["en"] == "stopped_saying"
 
 
+def test_record_if_empty_leaves_existing_runs(client, monkeypatch, capsys):
+    from api import record_checks
+
+    record_checks.record(record_checks.fixture_answers()[0])
+    monkeypatch.setattr("sys.argv", ["record_checks", "--if-empty", "--fixture"])
+    monkeypatch.setattr(record_checks, "record", lambda a: pytest.fail("recorded although runs exist"))
+    assert record_checks.main() == 0
+    assert "nothing to record" in capsys.readouterr().out
+
+
 def test_unknown_run_is_404(client):
     r = client.get("/api/check/zzzzzzzzzzzz")
     assert r.status_code == 404 and r.json()["error"]["code"] == "run_not_found"
