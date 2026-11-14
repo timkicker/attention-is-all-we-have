@@ -43,9 +43,8 @@ def test_one_ledger_entry_by_the_owner(client):  # noqa: F811
     entries = client.get("/api/ledger").json()["entries"]
     mine = [e for e in entries if e["actor"] == "owner"]
     assert len(mine) == 1
-    assert mine[0]["sentence"] == ("Owner changed the limits of Spend Pass M-1: alone up to 1,600.00 €, "
-                                   "never above 2,500.00 €, lactose free, delivered by 16 Nov, substitutes from "
-                                   "Valio's list.")
+    assert mine[0]["sentence"] == ("Owner changed Spend Pass M-1. Alone up to 1,200.00 € → 1,600.00 €. "
+                                   "Never above 2,000.00 € → 2,500.00 €.")
     led = client.get("/api/ledger").json()
     assert led["chain"]["ok"]
 
@@ -55,10 +54,21 @@ def test_the_limits_entry_is_whole_and_filed_under_the_pass(client, holder):  # 
     assert sign(client).status_code == 200
     led = client.get("/api/ledger").json()
     e = next(e for e in led["entries"] if e["kind"] == "spend_pass")
-    assert e["displayText"] == ("Changed the limits of Spend Pass M-1: alone up to 1,600.00 €, never above "
-                                "2,500.00 €, lactose free, delivered by 16 Nov, substitutes from Valio's list.")
+    assert e["displayText"] == "Alone up to 1,200.00 € → 1,600.00 €. Never above 2,000.00 € → 2,500.00 €."
     assert e["requestId"] == "M-1"
-    assert {"requestId": "M-1", "titleText": "Spend Pass M-1"} in led["groups"]
+    assert {"requestId": "M-1", "titleText": "Spend Pass"} in led["groups"]  # the head reads "Spend Pass M-1"
+
+
+def test_only_what_changed_is_named(client):  # noqa: F811
+    assert sign(client, {**NEW, "autoLimitCents": 130000, "hardCapCents": 200000, "diet": [],
+                         "substitutes": False}).status_code == 200
+    e = next(e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass")
+    assert e["displayText"] == ("Alone up to 1,200.00 € → 1,300.00 €. Diet lactose free → none. "
+                                "Substitutes from Valio's list → none alone.")
+    assert sign(client, {**NEW, "autoLimitCents": 130000, "hardCapCents": 200000, "diet": [],
+                         "substitutes": False}).status_code == 200
+    last = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass"][-1]
+    assert last["displayText"] == "Signed again, nothing changed."
 
 
 def test_the_weeks_spend_carries_over(client, holder, ctx):  # noqa: F811

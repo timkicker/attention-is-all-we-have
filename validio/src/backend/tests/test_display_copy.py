@@ -28,6 +28,7 @@ def test_title_text_has_no_date(client, holder):
         "R-1": "1,000 litres of lactose-free milk", "R-2": "200 bags of lactose-free mozzarella 125 g"}
     heads = client.get("/api/ledger").json()["groups"]
     assert heads == [{"requestId": "R-1", "titleText": "1,000 litres of lactose-free milk"},
+                     {"requestId": "demo", "titleText": "Demo"},
                      {"requestId": "R-2", "titleText": "200 bags of lactose-free mozzarella 125 g"}]
 
 

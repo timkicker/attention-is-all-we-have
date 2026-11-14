@@ -1624,7 +1624,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -1708,6 +1708,10 @@ export const answers: Answers = {
     {
      "requestId": "R-1",
      "titleText": "1,000 litres of lactose-free milk"
+    },
+    {
+     "requestId": "demo",
+     "titleText": "Demo"
     },
     {
      "requestId": "R-2",
@@ -1861,7 +1865,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2106,6 +2110,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     },
@@ -2261,7 +2269,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2639,6 +2647,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     },
@@ -2794,7 +2806,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2968,6 +2980,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     }
@@ -3119,7 +3135,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -3452,6 +3468,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     },
@@ -3607,7 +3627,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -4073,6 +4093,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     },
@@ -4228,7 +4252,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -4355,6 +4379,10 @@ export const answers: Answers = {
     {
      "requestId": "R-1",
      "titleText": "1,000 litres of lactose-free milk"
+    },
+    {
+     "requestId": "demo",
+     "titleText": "Demo"
     },
     {
      "requestId": "R-2",
@@ -4508,7 +4536,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -4796,6 +4824,10 @@ export const answers: Answers = {
      "titleText": "1,000 litres of lactose-free milk"
     },
     {
+     "requestId": "demo",
+     "titleText": "Demo"
+    },
+    {
      "requestId": "R-2",
      "titleText": "200 bags of lactose-free mozzarella 125 g"
     },
@@ -4951,7 +4983,7 @@ export const answers: Answers = {
      "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
      "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
-     "requestId": "R-2",
+     "requestId": "demo",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -5370,6 +5402,10 @@ export const answers: Answers = {
     {
      "requestId": "R-1",
      "titleText": "1,000 litres of lactose-free milk"
+    },
+    {
+     "requestId": "demo",
+     "titleText": "Demo"
     },
     {
      "requestId": "R-2",

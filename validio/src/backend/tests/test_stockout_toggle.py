@@ -27,3 +27,12 @@ def test_same_state_twice_writes_nothing(client):  # noqa: F811
     client.post("/api/demo/stock-out", headers=H, json={"on": True})
     client.post("/api/demo/stock-out", headers=H, json={"on": True})
     assert len(sims(client)) == 1
+
+
+def test_stock_out_entries_are_the_demos_own_group(client):  # noqa: F811
+    client.post("/api/demo/ask", json={"text": "500 litres of lactose-free milk by Monday"})
+    client.post("/api/demo/stock-out", headers=H, json={"on": True})
+    client.post("/api/demo/stock-out", headers=H, json={"on": False})
+    led = client.get("/api/ledger").json()
+    assert {e["requestId"] for e in led["entries"] if e["kind"] == "simulation"} == {"demo"}
+    assert {"requestId": "demo", "titleText": "Demo"} in led["groups"]
