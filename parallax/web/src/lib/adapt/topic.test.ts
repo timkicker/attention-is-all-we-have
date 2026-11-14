@@ -83,7 +83,7 @@ describe('changes', () => {
     expect(cleanComment('/* Shelling */ rewrote it')).toBe('rewrote it')
     expect(cleanComment('/* Shelling */')).toBeNull()
   })
-  it('keeps close edits of three words or more, number changes first, at most five', () => {
+  it('keeps close edits of three words or more, picks the top five and shows them newest first', () => {
     const e = (o: Partial<EditRaw>): EditRaw => ({
       lang: 'en', rev: 1, date: '2009-08-21T18:00:56Z', time_precision: 'exact', from_text: '', to_text: '',
       from_gloss: null, to_gloss: null, comment: null, near: 0.3, paired: false, ...o,
@@ -96,6 +96,10 @@ describe('changes', () => {
       e({ from_text: 'about 25 000 men were killed', to_text: 'about 26 662 men died', date: '2015-01-01T00:00:00Z', time_precision: 'snapshot' }),
     ])
     expect(out.map((c) => c.from)).toEqual(['25 000 men were killed', 'the Soviets staged the shelling of Mainila.'])
+    expect(out.map((c) => c.date)).toEqual(['2015-01-01', '2009-08-21'])
+    const older = e({ from_text: 'about 25 000 men', to_text: 'about 26 662 men in all', date: '2001-01-01T00:00:00Z' })
+    const newer = e({ from_text: 'the war began in winter', to_text: 'the war started in the cold winter', date: '2020-01-01T00:00:00Z' })
+    expect(changesOf([older, newer]).map((c) => c.date)).toEqual(['2020-01-01', '2001-01-01'])
     expect(out[0].approx).toBe(true)
     expect(out[1]).toMatchObject({ date: '2009-08-21', to: 'a border incident near the village of Mainila occurred.', comment: 'rewrote it', approx: false })
   })
