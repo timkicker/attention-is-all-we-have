@@ -5,11 +5,37 @@ export async function reset(page: Page) {
   await page.locator("#demo-reset").click();
 }
 
-/** The presenter's stock-out switch, in the same menu. */
+/**
+ * The recorded stock-out: the kitchen's agent swapped the mozzarella and R-2
+ * waits for the owner. No control in the app does this (an agent orders over
+ * MCP); the test seeds the fixture's state the way that run left it.
+ */
 export async function stockOut(page: Page) {
   await page.goto("/");
-  await page.locator("#page-menu").click();
-  await page.getByTestId("stock-out").click();
+  await page.evaluate(() => {
+    const k = "validio-mock-v2";
+    const s = JSON.parse(localStorage.getItem(k) ?? '{"moz":"none","steady":"pending"}');
+    if (s.moz === "none") {
+      // An accepted mozzarella line cannot stay accepted once the stock is gone.
+      s.steady = s.steady === "mozzarella" ? "renewed" : s.steady === "both" ? "accepted" : s.steady;
+      s.moz = "waiting";
+    }
+    localStorage.setItem(k, JSON.stringify(s));
+  });
+  await page.reload();
+  await expect(page.locator("h1")).toHaveText("Inbox");
+}
+
+/** An MCP agent's first call (the fixture's window.validioMcpCall), its code checked, then Allow. */
+export async function connectAgent(page: Page, path = "/agent") {
+  await page.goto(path);
+  await page.getByTestId("agent-connect").click();
+  await expect(page.getByTestId("agent-state")).toHaveText("Waiting for your agent");
+  const told = await page.evaluate(() => (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall());
+  expect(told).toMatch(/^[A-Z2-9]{3}-[A-Z2-9]{3}$/);
+  await expect(page.getByTestId("verify-code")).toHaveText(told!, { timeout: 5000 });
+  await page.getByTestId("consent-allow").click();
+  await expect(page.getByTestId("agent-state")).toHaveText("Active");
 }
 
 /** From a clean state: the fixture's state and session live in localStorage. */
