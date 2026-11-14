@@ -18,13 +18,15 @@
   --v-fg: var(--color-fg-primary);
   --v-muted: var(--color-fg-secondary);
   --v-ctx: var(--color-border-strong);
-  --v-faint: #85858e;
+  /* The text colours hold 4.5:1 on a row under the pointer (--v-tint-hover over
+     a card), not only at rest: a hovered row is the one being read. */
+  --v-faint: #8f8f98;
   --v-line: #1f1f22;
   --v-ok: #8fb38a;
   --v-bad: #e5686c;
   --v-ok-text: var(--v-ok);
-  --v-bad-text: var(--v-bad);
-  --v-wait-text: var(--valio-ink);
+  --v-bad-text: #ef7d81;
+  --v-wait-text: #22aee6;
   --v-on-valio: #ffffff;
   --v-shadow-thumb: 0 1px 2px rgba(0, 0, 0, 0.3);
 
@@ -80,6 +82,7 @@
   --v-bad: #c2393e;
   --v-ok-text: color-mix(in srgb, var(--v-ok) 72%, #000);
   --v-bad-text: color-mix(in srgb, var(--v-bad) 72%, #000);
+  --v-wait-text: var(--valio-ink);
   --color-error: var(--v-bad);
   --color-success: var(--v-ok);
 }
