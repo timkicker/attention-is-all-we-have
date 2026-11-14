@@ -90,11 +90,9 @@ def session(ctx: CtxDep, request: Request, body: SessionIn) -> Response:
 
 def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: ApproveIn | None) -> None:
     """The approval code, for an order or a Steady Order button (`key`). Five wrong codes lock that key,
-    five from one client lock the client. The kitchen's own code (api/codes.py) wins over VALIDIO_APPROVE_CODE."""
-    from . import codes
-
-    own = codes.stored(ctx.db_path)
-    if not own and not ctx.has_code:
+    five from one client lock the client. Which code counts is `ctx.code_ok`: the account's own, 246810 on a
+    demo copy, VALIDIO_APPROVE_CODE for the local kitchen."""
+    if not ctx.has_code:
         if ctx.is_local(_host(request)):
             return
         raise HTTPException(403, "this server has no VALIDIO_APPROVE_CODE, so approval is closed")
@@ -102,7 +100,7 @@ def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: A
     if any(ctx.code_tries.get(k, 0) >= MAX_CODE_TRIES for k in keys):
         raise HTTPException(429, "too many wrong codes, approval is locked")
     given = header or (body.code if body else None)
-    if not (codes.matches(own, given) if own else ctx.code_ok(given)):
+    if not ctx.code_ok(given):
         for k in keys:
             ctx.code_tries[k] = ctx.code_tries.get(k, 0) + 1
         raise HTTPException(403, "wrong or missing approval code")

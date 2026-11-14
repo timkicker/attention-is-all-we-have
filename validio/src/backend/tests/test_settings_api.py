@@ -25,7 +25,7 @@ def fresh(client, ctx):  # noqa: F811
 def test_rules_read_the_seeded_pass(client):  # noqa: F811
     r = client.get("/api/rules").json()
     assert r == {"aloneUpToCents": 120000, "approvalUpToCents": 200000, "substitutes": "extra", "maxExtraPct": 5,
-                 "saved": True, "passVersion": 1}
+                 "perWeekCents": None, "saved": True, "passVersion": 1}
 
 
 def test_rules_save_signs_a_new_version_that_decides(client, holder, ctx):  # noqa: F811
@@ -33,7 +33,7 @@ def test_rules_save_signs_a_new_version_that_decides(client, holder, ctx):  # no
         == "ask_human"
     r = put_rules(client)
     assert r.status_code == 200, r.text
-    assert r.json() == {**{k: v for k, v in RULES.items()}, "saved": True, "passVersion": 2}
+    assert r.json() == {**RULES, "perWeekCents": None, "saved": True, "passVersion": 2}
     assert client.get("/api/rules").json()["passVersion"] == 2
     after = ask(client, fresh(client, ctx), "1500 litres of lactose-free milk by Monday", "b").json()
     assert after["decision"]["outcome"] == "auto_order", after["decision"]
@@ -172,3 +172,128 @@ def test_the_code_is_stored_hashed(client, ctx):  # noqa: F811
     con.close()
     assert not any("135790" in v for v in values)
     assert any(v.startswith("scrypt$") for v in values)
+
+
+# per account: Rules, Diet and the code work on the logged-in kitchen's own store
+
+SIGNUP = {"name": "Kitchen A", "email": "a@example.org", "password": "correct horse",
+          "customerNumber": "123456", "approvalCode": "135790"}
+
+
+def _accounts(ctx, tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from validio.api import accounts as acc_mod
+    from validio.api.app import app
+
+    monkeypatch.setenv("VALIDIO_ACCOUNTS", str(tmp_path / "accounts"))
+    monkeypatch.setenv("VALIDIO_TEMPLATE", str(tmp_path / "template"))
+    acc_mod._tries.clear()
+    return TestClient(app, client=("203.0.113.9", 50000))  # not on this machine: only the session opens /api
+
+
+def test_rules_and_diet_sign_the_accounts_own_pass(ctx, tmp_path, monkeypatch):
+    with _accounts(ctx, tmp_path, monkeypatch) as c:
+        assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+        assert c.get("/api/rules").json()["saved"] is False
+        assert put_rules(c).status_code == 403  # the server's code is not this kitchen's
+        r = put_rules(c, code="135790")
+        assert r.status_code == 200, r.text
+        assert r.json()["saved"] is True and r.json()["passVersion"] == 2
+        assert c.get("/api/account").json()["setup"]["rules"] is True
+        d = c.put("/api/settings/diet", json={"diet": ["VEGAN"], "code": "135790"})
+        assert d.status_code == 200 and d.json()["diet"] == ["VEGAN"]
+        s = c.get("/api/settings").json()
+        assert s["kitchen"]["customerNumber"] == "123456" and s["login"]["email"] == "a@example.org"
+    assert client_rules_local(ctx)["passVersion"] == 1  # the local kitchen did not move
+
+
+def client_rules_local(ctx):
+    from fastapi.testclient import TestClient
+
+    from validio.api.app import app
+
+    with TestClient(app) as c:
+        return c.get("/api/rules").json()
+
+
+def test_kitchen_save_shows_on_the_account(ctx, tmp_path, monkeypatch):
+    with _accounts(ctx, tmp_path, monkeypatch) as c:
+        c.post("/api/account/signup", json=SIGNUP)
+        r = c.put("/api/settings/kitchen", json={"name": "Kitchen B", "deliveryAddress": "Tie 1, Espoo"})
+        assert r.status_code == 200
+        a = c.get("/api/account").json()
+        assert (a["name"], a["deliveryAddress"], a["setup"]["kitchen"]) == ("Kitchen B", "Tie 1, Espoo", True)
+
+
+def test_changing_the_code_works_for_approvals_too(ctx, tmp_path, monkeypatch):
+    with _accounts(ctx, tmp_path, monkeypatch) as c:
+        c.post("/api/account/signup", json=SIGNUP)
+        assert c.put("/api/settings/approval-code", json={"current": "135790", "next": "975310"}).status_code == 204
+        assert put_rules(c, code="135790").status_code == 403
+        assert put_rules(c, code="975310").status_code == 200
+        assert c.post("/api/steady/S-1/renew", json={"code": "975310"}).status_code == 200
+
+
+def test_demo_copy_answers_to_246810_and_keeps_it(ctx, tmp_path, monkeypatch):
+    with _accounts(ctx, tmp_path, monkeypatch) as c:
+        a = c.post("/api/account/demo").json()
+        assert a["demoCode"] == "246810"
+        assert put_rules(c, code="246810").status_code == 200
+        r = c.put("/api/settings/approval-code", json={"current": "246810", "next": "975310"})
+        assert r.status_code == 403
+        assert put_rules(c, code="246810").status_code == 200
+
+
+def test_246810_is_not_a_signed_up_kitchens_code(ctx, tmp_path, monkeypatch):
+    with _accounts(ctx, tmp_path, monkeypatch) as c:
+        c.post("/api/account/signup", json=SIGNUP)
+        assert put_rules(c, code="246810").status_code == 403
+
+
+# per week: with a weekly limit on the pass, alone and approval count per order and the week counts all orders
+
+WEEKLY = {**RULES, "aloneUpToCents": 120000, "approvalUpToCents": 500000, "perWeekCents": 800000}
+
+
+def _place_milk(client, ctx, key):  # noqa: F811
+    h = fresh(client, ctx)
+    req = ask(client, h, "1000 litres of lactose-free milk by Monday", key).json()
+    o = client.post("/agent/v1/orders", headers=auth(h), json={
+        "requestId": req["id"], "idempotencyKey": key + "-o", "choice": [{"productId": "464306", "salesQty": 1000}]})
+    return req, o.json()
+
+
+def test_rules_carry_a_weekly_limit(client):  # noqa: F811
+    assert client.get("/api/rules").json()["perWeekCents"] is None  # the seeded pass has none
+    r = put_rules(client, WEEKLY)
+    assert r.status_code == 200, r.text
+    assert r.json()["perWeekCents"] == 800000
+    e = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass"][-1]
+    assert "Per week none → 8,000.00 €." in e["sentence"]
+    assert put_rules(client, {**WEEKLY, "perWeekCents": 400000}).status_code == 422  # below the approval limit
+
+
+def test_with_a_weekly_limit_each_order_is_judged_alone(client, ctx):  # noqa: F811
+    assert put_rules(client, WEEKLY).status_code == 200
+    first, o1 = _place_milk(client, ctx, "w1")
+    assert first["decision"]["outcome"] == "auto_order" and o1["state"] == "placed", o1
+    second, o2 = _place_milk(client, ctx, "w2")  # 2,020.00 € placed this week, still alone per order
+    assert second["decision"]["outcome"] == "auto_order", second["decision"]
+    assert o2["state"] == "placed", o2
+
+
+def test_the_week_blocks_what_would_go_over(client, ctx):  # noqa: F811
+    assert put_rules(client, {**WEEKLY, "perWeekCents": 500000}).status_code == 200
+    for k in ("a", "b", "c", "d"):
+        assert _place_milk(client, ctx, k)[1]["state"] == "placed"
+    req = ask(client, fresh(client, ctx), "1000 litres of lactose-free milk by Monday", "e").json()
+    assert req["decision"]["outcome"] == "block", req["decision"]
+    assert "over the weekly limit of 5,000.00 €" in req["decision"]["sentence"]
+
+
+def test_without_a_weekly_limit_the_old_rule_holds(client, ctx):  # noqa: F811
+    _first, o1 = _place_milk(client, ctx, "x1")
+    assert o1["state"] == "placed"
+    second = ask(client, fresh(client, ctx), "1000 litres of lactose-free milk by Monday", "x2").json()
+    assert second["decision"]["outcome"] != "auto_order"  # 2,020.00 € counted against the pass's limits

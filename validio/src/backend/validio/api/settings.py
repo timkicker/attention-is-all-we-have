@@ -5,7 +5,7 @@ PUT  /api/rules                  one Save, one code, one new pass version, one l
 GET  /api/settings               kitchen, diet, login
 PUT  /api/settings/kitchen       name and delivery address, no code; the customer number stays read only
 PUT  /api/settings/diet          like Rules: the code, then M-1 signed again
-PUT  /api/settings/approval-code the account's own code, stored hashed
+PUT  /api/settings/approval-code the account's own code, stored hashed in its row; not on a demo copy
 
 Rules and Diet reach Cedar only through the pass, so both go through `resign`: the claims M-1 carries now,
 the change on top, `seed.sign_again`, one ledger entry naming what changed. A Save that leaves out a field
@@ -36,6 +36,10 @@ CtxDep = Annotated[Ctx, Depends(request_ctx)]
 MAX_CENTS = 10_000_000  # 100,000.00 €
 DIETS = Literal["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN", "VEGAN"]
 DEFAULT_NAME = "Hotel Espoo kitchen"
+# the demo kitchen's saved Rules (the template, after the five scenes): O-1 and O-2 already used 1,190.10 € of
+# the pass, so alone and approval count per order and only the week counts them all
+DEMO_RULES = {"aloneUpToCents": 120000, "approvalUpToCents": 500000, "substitutes": "extra", "maxExtraPct": 5,
+              "perWeekCents": 800000}
 
 
 def _kitchen_gate(request: Request, ctx: CtxDep) -> None:
@@ -76,7 +80,8 @@ def _said(c: dict) -> list[tuple[str, str]]:
             ("Diet", " and ".join(CLAIM_NAMES.get(x, x) for x in sorted(c.get("diet") or ())) or "none"),
             ("Delivered by", f"{d.day} {d:%b}"),
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none alone"),
-            ("Extra for a split", f"up to {pct:g} %" if pct else "none")]
+            ("Extra for a split", f"up to {pct:g} %" if pct else "none"),
+            ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none")]
 
 
 def resign(ctx: Ctx, changes: dict, why: str) -> dict:
@@ -127,6 +132,7 @@ class RulesOut(Model):
     approval_up_to_cents: int
     substitutes: Literal["off", "listed", "extra"]
     max_extra_pct: int
+    per_week_cents: int | None
     saved: bool
     pass_version: int
 
@@ -137,6 +143,9 @@ class RulesIn(Model):
     substitutes: Literal["off", "listed", "extra"] = Field(description="off, Valio's list, or Valio's list "
                                                            "with a split that may cost up to maxExtraPct more")
     max_extra_pct: int = Field(0, ge=0, le=20, description="only with substitutes 'extra'")
+    per_week_cents: int | None = Field(None, ge=0, le=MAX_CENTS, description="all orders under the pass together; "
+                                       "with it the two limits above hold per order. null: no weekly limit, the two "
+                                       "limits hold for the pass as a whole")
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
 
@@ -146,7 +155,7 @@ def _rules(ctx: Ctx) -> RulesOut:
     pct = round(float(split.get("maxExtraCostPct", 0)))
     subs = "off" if c.get("substitutes") != SUBSTITUTES_LISTED else "extra" if pct else "listed"
     return RulesOut(alone_up_to_cents=c["autoLimitCents"], approval_up_to_cents=c["hardCapCents"], substitutes=subs,
-                    max_extra_pct=pct if subs == "extra" else 0, saved=rules_saved(ctx.db_path),
+                    max_extra_pct=pct if subs == "extra" else 0, per_week_cents=c.get("weekCapCents"), saved=rules_saved(ctx.db_path),
                     pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID))
 
 
@@ -163,11 +172,15 @@ def put_rules(ctx: CtxDep, request: Request, body: RulesIn,
     if body.alone_up_to_cents > body.approval_up_to_cents:
         raise HTTPException(422, f"alone up to {money(body.alone_up_to_cents)} is above the approval limit "
                                  f"{money(body.approval_up_to_cents)}")
+    if body.per_week_cents is not None and body.per_week_cents < body.approval_up_to_cents:
+        raise HTTPException(422, f"per week {money(body.per_week_cents)} is below the approval limit "
+                                 f"{money(body.approval_up_to_cents)}")
     check_code(ctx, request, "rules", x_approve_code, body)
     pct = body.max_extra_pct if body.substitutes == "extra" else 0
     resign(ctx, {"autoLimitCents": body.alone_up_to_cents, "hardCapCents": body.approval_up_to_cents,
                  "substitutes": "never" if body.substitutes == "off" else SUBSTITUTES_LISTED,
-                 "split": {"maxExtraCostPct": pct, "allowListedSubstitutes": body.substitutes != "off"}},
+                 "split": {"maxExtraCostPct": pct, "allowListedSubstitutes": body.substitutes != "off"},
+                 "weekCapCents": body.per_week_cents},
            "Rules changed")
     _put(ctx.db_path, {"rules_saved": "1"})
     return _rules(ctx)
@@ -249,8 +262,15 @@ def put_approval_code(ctx: CtxDep, request: Request, body: Annotated[ApprovalCod
     from .schemas import ApproveIn
     from .ui import check_code
 
+    if ctx.account is not None and ctx.account["is_demo"]:
+        raise HTTPException(403, "the demo kitchen keeps the demo code")
     check_code(ctx, request, "approval-code", None, ApproveIn(code=body.current))
     if not re.fullmatch(r"\d{6}", body.next):
         raise HTTPException(422, "next must be 6 digits")
-    codes.store(ctx.db_path, body.next)
+    if ctx.account is not None:
+        from .accounts import get_accounts, hash_secret
+
+        get_accounts().update(ctx.account["id"], code_hash=hash_secret(body.next))
+    else:
+        codes.store(ctx.db_path, body.next)  # the local kitchen of make dev and the tests
     return Response(status_code=204)

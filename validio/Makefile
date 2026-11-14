@@ -79,7 +79,7 @@ demo-check:
 # The filled demo kitchen every account is copied from (docs/ACCOUNTS-API.md): the five scenes, one round,
 # into data/template/. Without it a new account starts from a plain seed.
 template:
-	$(UV) python -W ignore ../../scripts/demo_check.py --rounds 1 --store $(abspath data/template)
+	$(UV) python -W ignore ../../scripts/demo_check.py --rounds 1 --template --store $(abspath data/template)
 
 # Backend on 127.0.0.1:8410 plus the web app's dev server on 127.0.0.1:5410 with VITE_API=live
 # (Vite hands /api and /agent to the backend). The web client sends no approve code or demo token

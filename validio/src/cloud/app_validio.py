@@ -14,7 +14,7 @@ Run from validio/:
   make modal-deploy    build the web app, deploy, then reset the demo state in the volume
   make modal-seed      reset the demo state in the volume again
   make modal-fill      play the five demo scenes into data/template in the volume: the filled demo kitchen every
-                       demo copy is made from (db and keys), its approval code the demo code 246810, hashed
+                       account is copied from (db and keys); the approval codes live in accounts.db
 Stop:  modal app stop validio-web
 """
 
@@ -100,14 +100,15 @@ def seed() -> str:
 def fill() -> str:
     """demo_check's five scenes, one round from a reset, against the template in the volume: the app runs in
     this container on 127.0.0.1 (no public gate here, no secret) with the template as its store, the scenes go
-    through its API and MCP, then the demo code goes in and the volume is committed. Every demo copy is made
-    from this template. Run it while no web container is up, so none holds an older copy."""
+    through its API and MCP, then the demo Rules are saved (--template), the agent is left unconnected and the
+    volume is committed. Every account is copied from this template. Run it while no web container is up, so
+    none holds an older copy."""
     import os
     import secrets
     import subprocess
     import sys
 
-    from validio.api import codes, connect
+    from validio.api import connect
     from validio.demo import seed as demo_seed
 
     demo_seed.reset(Path(TEMPLATE_DB), Path(TEMPLATE_KEYS))
@@ -130,14 +131,13 @@ def fill() -> str:
             except httpx.HTTPError:
                 time.sleep(0.2)
         run = subprocess.run([sys.executable, f"{REMOTE}/scripts/demo_check.py", "--base", f"http://127.0.0.1:{port}",
-                              "--rounds", "1"], env=env, capture_output=True, text=True, timeout=500, check=False)
+                              "--rounds", "1", "--template"], env=env, capture_output=True, text=True, timeout=500, check=False)
     finally:
         server.terminate()
         server.wait(10)
     out = run.stdout + run.stderr
     if run.returncode != 0 or "ALL SCENES OK" not in out:
         raise RuntimeError(f"demo scenes failed, volume not committed:\n{out[-3000:]}")
-    codes.store(Path(TEMPLATE_DB), codes.DEMO_CODE)  # after the scenes, which ran on their throwaway code
     connect.leave_unconnected(Path(TEMPLATE_DB))  # a juror connects the demo agent first
     data.commit()
     return out

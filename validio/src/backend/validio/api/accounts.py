@@ -120,13 +120,11 @@ class Accounts:
 
     def create(self, *, name: str, email: str | None, password: str | None, customer: str, code: str,
                is_demo: bool = False) -> dict:
-        from . import codes
         from .settings import _put
 
         account_id = f"k-{secrets.token_hex(4)}"
         self._copy_store(account_id)
         db, _keys = self.paths(account_id)
-        codes.store(db, code)  # the kitchen's own code lives in its store (api/codes.py), Settings changes it there
         _put(db, {"kitchen_name": name} | ({} if is_demo else {"rules_saved": "0"}))
         try:
             with self._db() as con:
