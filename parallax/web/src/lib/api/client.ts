@@ -67,7 +67,7 @@ async function call<T>(path: string, init?: RequestInit & { json?: unknown }): P
 export const api = {
   health: () => call<HealthRes>('/api/health'),
   topics: () => call<TopicsRes>('/api/topics'),
-  compare: (q: { topic: string; as_of?: string; anchor?: string; langs?: string; section?: string; offset?: number; limit?: number }) =>
+  compare: (q: { topic: string; as_of?: string; anchor?: string; h?: string; langs?: string; section?: string; offset?: number; limit?: number }) =>
     call<CompareRes>(`/api/compare${qs(q)}`),
   timeline: (lang: string, pageId: number | string, h: string) =>
     call<TimelineRes>(`/api/claim/${encodeURIComponent(lang)}/${encodeURIComponent(String(pageId))}/${encodeURIComponent(h)}/timeline`),

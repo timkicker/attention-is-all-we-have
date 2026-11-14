@@ -133,8 +133,14 @@ export function backedBy(n: number, of = 7): string {
 }
 
 /** "Disputed · in 3 of 7, English removed it in 2009". */
-export function disputedRemoved(n: number, of: number, lang: string, year: string | number): string {
-  return `${DISPUTED} · in ${n} of ${of}, ${edition(lang)} removed it in ${year}`
+export function disputedRemoved(n: number, of: number, langs: string | readonly string[], year: string | number): string {
+  const who = typeof langs === 'string' ? edition(langs) : editions(langs)
+  return `${DISPUTED} · in ${n} of ${of}, ${who} removed it in ${year}`
+}
+
+/** "Not compared yet in Russian and Estonian": a close sentence exists, but nobody compared it with this one. */
+export function notCompared(langs: readonly string[]): string {
+  return `Not compared yet in ${editions(langs)}`
 }
 
 /** "Disputed · Swedish and Russian say otherwise". */
@@ -142,13 +148,16 @@ export function disputedOtherwise(langs: readonly string[]): string {
   return `${DISPUTED} · ${editions(langs)} ${says(langs.length)} otherwise`
 }
 
-/** "Of 6 statements, 1 is in no edition, 2 are disputed and 3 are backed by most editions". */
-export function checkSummary(s: { total: number; none: number; disputed: number; backed: number }): string {
+/**
+ * "Of 6 statements, 1 is in no edition, 2 are disputed and 3 are backed by most editions".
+ * most=false says "backed by at least one edition", for when some backed statement has only a minority behind it.
+ */
+export function checkSummary(s: { total: number; none: number; disputed: number; backed: number }, most = true): string {
   const be = (n: number) => (n === 1 ? 'is' : 'are')
   const parts: string[] = []
   if (s.none) parts.push(`${s.none} ${be(s.none)} in no edition`)
   if (s.disputed) parts.push(`${s.disputed} ${be(s.disputed)} disputed`)
-  if (s.backed) parts.push(`${s.backed} ${be(s.backed)} backed by most editions`)
+  if (s.backed) parts.push(`${s.backed} ${be(s.backed)} backed by ${most ? 'most editions' : 'at least one edition'}`)
   const noun = s.total === 1 ? 'statement' : 'statements'
   return `Of ${s.total} ${noun}, ${joinNames(parts)}`
 }

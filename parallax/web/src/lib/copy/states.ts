@@ -14,9 +14,10 @@ export const CLEAR_SEARCH = 'Clear search'
 export function editionFailed(lang: string, rateLimited: boolean): string {
   return rateLimited ? `${edition(lang)} could not load. Wikipedia asked us to slow down` : `${edition(lang)} could not load`
 }
-/** "The other six are ready". */
+/** "The other six are ready"; "None of the others is ready yet" for 0. */
 export function othersReady(n: number): string {
-  return `The other ${numWord(n)} are ready`
+  if (n === 0) return 'None of the others is ready yet'
+  return n === 1 ? 'The other one is ready' : `The other ${numWord(n)} are ready`
 }
 export const OPEN_THEM = 'Open them'
 /** "Retrying in 2 min". */
