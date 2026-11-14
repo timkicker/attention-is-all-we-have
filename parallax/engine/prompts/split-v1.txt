@@ -1,0 +1,2 @@
+Split the answer below into atomic factual claims. Each claim states one fact, has at most about 20 words, keeps names, dates and numbers exactly as written, and stays in the answer's own language. Leave out opinions, hedges and filler. Do not add facts.
+Answer only with JSON: {"claims":["...","..."]}
