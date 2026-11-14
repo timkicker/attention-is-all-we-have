@@ -13,7 +13,7 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { Activity, Bot, House, ShieldCheck } from "@lucide/svelte";
+  import { Activity, Bot, ChevronDown, House, ShieldCheck } from "@lucide/svelte";
 
   let { children } = $props();
 
@@ -151,11 +151,13 @@
           {/each}
         </nav>
         <a class="kitchen" href="/settings" id="nav-settings" data-testid="nav-settings" class:on={path.startsWith("/settings")} aria-current={path.startsWith("/settings") ? "page" : undefined}>
+          <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
           <span class="k-name">{session.account.name}</span>
           <span class="sr-only">, Settings</span>
         </a>
       {:else}
         <a class="kitchen" href="/settings" id="phone-settings" data-testid="phone-settings" aria-current={path.startsWith("/settings") ? "page" : undefined}>
+          <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
           <span class="k-name">{session.account.name}</span>
           <span class="sr-only">, Settings</span>
         </a>
@@ -261,6 +263,11 @@
     z-index: 30;
     background: var(--valio-band);
     color: var(--valio-band-fg);
+  }
+  .kitchen :global(.k-chev) {
+    flex: none;
+    margin-right: -2px;
+    opacity: 0.85;
   }
   .topnav :global(.nav-icon) {
     flex: none;
