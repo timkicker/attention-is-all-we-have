@@ -28,9 +28,8 @@
     {#if chain}
       <span class="chain" data-testid="chain-status" id="chain-status">
         <VPill label={chain.ok ? "Verified" : `Broken at ${chain.brokenAt}`} tone={chain.ok ? "ok" : "bad"} />
-        <span class="num">{chain.count} entries</span>
+        <span class="num" title="Every entry signs the one before it">{chain.count} entries</span>
       </span>
-      <span>Every entry signs the one before it</span>
     {/if}
   {/snippet}
 </VHead>

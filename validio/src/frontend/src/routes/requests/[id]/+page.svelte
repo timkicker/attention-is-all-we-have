@@ -1,6 +1,6 @@
 <script lang="ts">
   /// A request as a halbat record: crumbs, h1, facts, the lead (or the
-  /// question), two lanes with plots, a card of value rows, then tabs of option rows.
+  /// question), two lanes with plots, the ignored line, then tabs of option rows.
   import { tick } from "svelte";
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
@@ -18,7 +18,6 @@
   import VPlotTotal from "$lib/v/VPlotTotal.svelte";
   import VState from "$lib/v/VState.svelte";
   import VTabs from "$lib/v/VTabs.svelte";
-  import VValueRow from "$lib/v/VValueRow.svelte";
 
   const id = $derived(page.params.id ?? "");
   const req = live(() => api.request(id));
@@ -37,7 +36,6 @@
   const sim = $derived(r?.simulated?.[0]);
   const planted = $derived(all.find((o) => o.supplierText?.planted || o.supplierText?.reader?.flags.some((f) => f.code === "addresses_agents")));
   const pill = $derived(requestPill(r?.status));
-  const rule = $derived(r?.decision.ruleIds[0]);
 
   // Without a swap: Possible and Turned down. With a swap: Valio's list and Beyond the list.
   const valioList = $derived(line ? [...line.options, ...(line.substitutes ?? [])] : []);
@@ -69,25 +67,19 @@
     if (!planted) return;
     tab = swap ? (beyond.includes(planted) ? "beyond" : "list") : "down";
     await tick();
-    document.getElementById(`supplier-${planted.productId}`)?.scrollIntoView({ block: "center" });
+    const el = document.getElementById(`supplier-${planted.productId}`) as HTMLDetailsElement | null;
+    if (el) el.open = true;
+    el?.scrollIntoView({ block: "center" });
   }
   const rank = (list: RankedOption[], o: RankedOption) => String(list.indexOf(o) + 1);
 
   const rejected = $derived(r?.status === "rejected");
-  /** The fold's reasons: the API leaves out the one shortText already says. */
-  const whyLines = (o: RankedOption): string[] => o.whyReasons ?? o.reasons ?? [o.sentence];
-  // The owner's states carry the rule in the chosen row's fold, not in the head.
-  const ruleInFold = $derived(["waiting", "ordered", "approved", "rejected"].includes(r?.status ?? ""));
-  const priced = $derived(prices.length);
-  // "Lactose-free mozzarella 125 g is out of stock (simulated)." from askedFor.
-  const askedLine = $derived.by(() => {
-    const a = r?.askedFor;
-    if (!a) return "";
-    const demo = /for this demo|simulated/i.test(a.stateText);
-    const state = demo ? "out of stock" : a.stateText.replace(/\s*\(.*\)\s*$/, "").replace(/ at Valio$/i, "");
-    const simulated = demo ? " (simulated)" : "";
-    return `${a.displayName} is ${state.charAt(0).toLowerCase()}${state.slice(1)}${simulated}.`;
-  });
+  // When Validio read Valio live: the API's liveAt, else the request's own time.
+  const liveTime = $derived(r?.liveAt ?? r?.timeText);
+  // The asked-for product's live count goes into the chosen row's fold, once.
+  const liveCount = $derived(r?.liveCountText);
+  /** A ranked row's short text is its price over the chosen one ("+90.00 €"): it goes to the amount column. */
+  const over = (o: RankedOption): string | undefined => (o.shortText?.startsWith("+") ? o.shortText : undefined);
 </script>
 
 {#snippet optionRow(o: RankedOption, left: string | null, grouped = false)}
@@ -103,37 +95,33 @@
     <span class="ev-left">{#if p}<VPill label={p.label} tone={p.tone} />{:else if left}{left}{/if}</span>
     <span class="ev-main">
       <span class="ev-name">{nb(o.displayName ?? o.name)}</span>
-      <span class="ev-sub">{optionLine(o)}</span>
+      {#if !over(o)}<span class="ev-sub">{optionLine(o)}</span>{/if}
       {#if o.verdict === "chosen"}
         <details class="fold">
           <summary data-testid="why-{o.productId}"><ChevronRight class="chev" aria-hidden="true" />Why this product</summary>
-          <div class="fold-body" data-testid="why-body-{o.productId}">
-            <p>{o.fullName ?? o.name}, product {o.productId}.</p>
-            {#each whyLines(o) as why (why)}<p>{nb(why)}</p>{/each}
-            {#if o.checks?.length}
-              <p class="why-h">Checked</p>
-              <ul class="why-facts" data-testid="why-checked-{o.productId}">
-                {#each o.checks as f (f)}<li>{nb(f)}</li>{/each}
-              </ul>
-            {/if}
-            {#if ruleInFold}<p data-testid="request-rule" id="request-rule">Rule: {rule}</p>{/if}
-          </div>
+          <ul class="fold-body why-facts" data-testid="why-body-{o.productId}">
+            {#each o.checks ?? [] as f (f)}<li data-testid="why-check">{nb(f)}</li>{/each}
+            {#if liveCount}<li data-testid="asked-for" id="asked-for">{nb(liveCount)}</li>{/if}
+          </ul>
         </details>
       {/if}
       {#if o.supplierText && (o.supplierText.planted || o.supplierText.reader)}
-        <span class="rc-diff" data-testid="supplier-{o.productId}" id="supplier-{o.productId}">
-          <span class="top">
-            <span>{o.supplierText.planted ? "Planted by the team for the demo." : "Written by the supplier."}</span>
-            <VPill label="Untrusted" tone="neutral" />
+        <details class="fold" data-testid="supplier-{o.productId}" id="supplier-{o.productId}">
+          <summary><ChevronRight class="chev" aria-hidden="true" />{o.supplierText.planted ? "Written to steer AI agents" : "Written by the supplier"}</summary>
+          <span class="fold-body rc-diff">
+            <span class="top">
+              <span>{o.supplierText.planted ? "Planted by the team for the demo." : "Written by the supplier."}</span>
+              <VPill label="Untrusted" tone="neutral" />
+            </span>
+            <q class="quote">{o.supplierText.text}</q>
+            {#if o.supplierText.reader}
+              <span class="reader" data-testid="reader-{o.productId}" id="reader-{o.productId}">{nb(o.supplierText.reader.summary)}</span>
+            {/if}
           </span>
-          <q class="quote">{o.supplierText.text}</q>
-          {#if o.supplierText.reader}
-            <span class="reader" data-testid="reader-{o.productId}" id="reader-{o.productId}">{nb(o.supplierText.reader.summary)}</span>
-          {/if}
-        </span>
+        </details>
       {/if}
     </span>
-    <span class="ev-amt" class:none={!amt}>{amt || "No price"}</span>
+    <span class="ev-amt" class:none={!amt}>{amt || "No price"}{#if over(o)}<span class="ev-over num">{over(o)}</span>{/if}</span>
   </li>
 {/snippet}
 
@@ -165,14 +153,12 @@
       <VPill label={pill.label} tone={pill.tone} testid="request-status" id="request-status" />
       <b class="num">{r.moneyText ?? money(r.totalCents)}</b>
       <span>Deliver by {day(r.deliverBy)}</span>
-      {#if r.orderId && r.status !== "waiting" && r.status !== "rejected"}<a href="/ledger">Order {r.orderId} ›</a>{/if}
+      {#if liveTime}<span data-testid="live-checked" id="live-checked">Live {liveTime}</span>{/if}
     {/snippet}
     {#if r.status === "waiting"}
       <p class="question">{nb(r.question)}</p>
-      <p class="q-sub" id="request-why">
-        {#if r.askedFor}{nb(askedLine)}{:else if sim}{nb(sim.sentence)}{/if}
-        {#if chosen?.isSubstitute && !chosen.onValioList}The swap is not on Valio's list.{/if}
-      </p>
+      <!-- The one place on the page that names the stock-out. -->
+      <p class="q-sub" id="request-why">{nb(r.leadText ?? "")}</p>
       <div class="head-btn">
         <Button href="/approve/{r.id}" data-testid="open-approve" id="open-approve">Open approval</Button>
       </div>
@@ -182,11 +168,6 @@
     {:else if r.status === "rejected"}
       <p class="question">You rejected it.</p>
       <p class="q-sub">Nothing was ordered.</p>
-    {:else}
-      <p class="lead" id="decision-sentence">
-        {nb(r.decision.summary ?? r.decision.sentence)}
-        <span class="rule" data-testid="request-rule" id="request-rule">Rule: {rule}</span>
-      </p>
     {/if}
   </VHead>
 
@@ -202,7 +183,7 @@
           <VPlotTotal before={r.usedBeforeCents ?? 0} amount={rejected ? 0 : (r.totalCents ?? 0)} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
         {/snippet}
       </VLane>
-      <VLane name="Options" testid="lane-options" value={String(counted.length)} sub="{priced} with a price, {counted.length - priced} without">
+      <VLane name="Options" testid="lane-options" value={String(counted.length)}>
         {#snippet plot()}
           <VPlotOptions
             {prices}
@@ -214,16 +195,11 @@
       </VLane>
     </div>
 
-    <Section class="v-card">
-      {#if r.askedFor}
-        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={r.askedFor.stateText} testid="asked-for" />
-      {/if}
-      <VValueRow label="Checked live" value="Read live from Valio at {r.timeText ?? '10:00'}" sub="Stock, price and delivery" testid="live-checked" />
-      {#if planted}
-        <VValueRow label="Ignored" value="Written to steer AI agents" sub={planted.supplierText?.planted ? "Planted by the team for the demo." : undefined} href="#supplier-{planted.productId}" onclick={toIgnored} testid="ignored-note" />
-      {/if}
-    </Section>
+    {#if planted}
+      <a class="ignored" href="#supplier-{planted.productId}" onclick={toIgnored} data-testid="ignored-note" id="ignored-note">1 ignored: written to steer AI agents ›</a>
+    {/if}
 
+    {#snippet optionTabs()}
     <div class="tabbed">
       <VTabs {tabs} bind:selected={() => selected, (v) => (tab = v)} label="Options" />
       {#if swap}
@@ -249,13 +225,22 @@
           <ul class="rc-ev">
             {#each possible as o (o.productId)}{@render optionRow(o, rank(possible, o))}{/each}
           </ul>
-          {#if line?.note}<p class="cap note">{nb(line.note)}</p>{/if}
         </div>
         <div class="pane" role="tabpanel" id="panel-down" aria-labelledby="tab-down" hidden={selected !== "down"}>
           {@render groups(down)}
         </div>
       {/if}
     </div>
+    {/snippet}
+    {#if rejected}
+      <!-- Nothing was ordered: the options wait behind one fold. -->
+      <details class="fold" data-testid="options-fold" id="options-fold">
+        <summary><ChevronRight class="chev" aria-hidden="true" />Options <span class="num">{counted.length}</span></summary>
+        {@render optionTabs()}
+      </details>
+    {:else}
+      {@render optionTabs()}
+    {/if}
   </div>
 {/if}
 
@@ -284,16 +269,15 @@
   .reader {
     color: var(--v-muted);
   }
-  .note {
-    margin: 12px 0 0;
-  }
   .pane > .rc-ev:first-child > :global(li:first-child) {
     padding-top: 0;
   }
   .pane :global(.day:first-child) {
     padding-top: 0;
   }
-  .why-h { margin-top: 8px; color: var(--v-muted); }
-  .why-facts { margin: 0; padding: 0; list-style: none; }
+  .why-facts { margin: 0; list-style: none; }
+  .ev-over { display: block; font-size: var(--fs-meta); color: var(--v-muted); }
+  .ignored { color: var(--v-muted); text-decoration: none; }
+  .ignored:hover { color: var(--v-fg); }
   .later { margin-top: 24px; }
 </style>

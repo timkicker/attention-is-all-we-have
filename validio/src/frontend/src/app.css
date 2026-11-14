@@ -410,6 +410,8 @@ a.v-row:hover .v-row-title {
   column-gap: 24px;
   align-items: center;
   border-top: 1px solid var(--v-line);
+  /* 80 px inside the rules, with or without a sub line. */
+  box-sizing: content-box;
   min-height: 80px;
 }
 .rc-lane:last-of-type {

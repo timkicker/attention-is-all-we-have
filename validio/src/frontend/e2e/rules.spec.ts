@@ -203,7 +203,10 @@ function measure(page: Page, name: string) {
     // 14b. A number never parts from its unit, a day never from its month (halbat's NB rule).
     const NBU = /\d (?:g|kg|l|ml|litres?|cartons?|bags?|packs?|boxes|pieces?|guests|weeks?|€|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b|\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d|\d ×|× \d/g;
     for (const m of text.matchAll(NBU)) fail("14b", `breakable space in "${text.slice(Math.max(0, m.index! - 12), m.index! + 12).replace(/\s+/g, " ")}"`);
-    if ((text.match(/out of stock/gi) ?? []).length > 1) fail("14", `"Out of stock" ${(text.match(/out of stock/gi) ?? []).length} times`);
+    // The stock-out is named once per page, in whatever words.
+    // The ledger is a log: it lists every event as it happened, so it is left out.
+    const outs = location.pathname.startsWith("/ledger") ? [] : (text.match(/out of stock|stock-out|none in stock/gi) ?? []);
+    if (outs.length > 1) fail("14", `the stock-out named ${outs.length} times: ${outs.join(", ")}`);
 
     // 15. Nav names.
     for (const a of document.querySelectorAll("nav a[id^=nav-]")) {
@@ -290,7 +293,7 @@ for (const v of VIEWS) {
       await check("approve code");
       await page.getByTestId("code-input").fill("246810");
       await page.keyboard.press("Enter");
-      await expect(page.getByTestId("order-steps")).toBeVisible();
+      await expect(page.getByTestId("order-done")).toBeVisible();
       await check("approve done");
       await go("/requests/R-2");
       await expect(page.getByTestId("request-status")).toContainText("Ordered");
@@ -398,7 +401,6 @@ test("options lane, tabs and approve agree on the count", async ({ page }) => {
   await page.goto("/requests/R-2");
   const lane = Number(await page.getByTestId("lane-options").locator(".rc-v").innerText());
   const tabs = (await page.getByRole("tab").locator("em").allInnerTexts()).map(Number);
-  await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
   // Every option row counts, the ones behind the "Can't arrive in time" fold too.
   await expect(page.getByTestId("not-orderable")).not.toHaveAttribute("open");
   const rows = await page.locator('[role="tabpanel"] [data-testid^="option-"]').count();
@@ -410,18 +412,17 @@ test("options lane, tabs and approve agree on the count", async ({ page }) => {
   expect(others + 1).toBe(lane);
 });
 
-// The Options strip draws one dot per priced option, and its sub says how many that is.
+// The Options strip draws one dot per priced option row.
 test("options dots match the priced count", async ({ page }) => {
   await fresh(page);
   for (const [path, before] of [["/requests/R-1", false], ["/requests/R-2", true]] as const) {
     if (before) await stockOut(page);
     await page.goto(path);
     const lane = page.getByTestId("lane-options");
-    const sub = await lane.locator(".rc-s").innerText();
-    const m = /^(\d+) with a price, (\d+) without$/.exec(sub.replace(/\s+/g, " "));
-    expect(m, sub).not.toBeNull();
-    await expect(lane.locator("[data-dot]")).toHaveCount(Number(m![1]));
-    expect(Number(m![1]) + Number(m![2])).toBe(Number(await lane.locator(".rc-v").innerText()));
+    await expect(lane.locator(".rc-s")).toHaveCount(0);
+    const amounts = await page.locator('[role="tabpanel"] [data-testid^="option-"] .ev-amt').allTextContents();
+    expect(amounts.length).toBe(Number(await lane.locator(".rc-v").innerText()));
+    await expect(lane.locator("[data-dot]")).toHaveCount(amounts.filter((t) => !t.startsWith("No price")).length);
   }
 });
 
@@ -471,7 +472,7 @@ test("phone bars never cover the page end", async ({ page }) => {
   await page.getByTestId("approve").click();
   await check("approve code");
   await code(page);
-  await expect(page.getByTestId("order-steps")).toBeVisible();
+  await expect(page.getByTestId("order-done")).toBeVisible();
   await check("approve done");
   await page.goto("/steady");
   await check("steady list");
@@ -488,20 +489,63 @@ test("phone bars never cover the page end", async ({ page }) => {
   expect(problems, problems.join("\n")).toEqual([]);
 });
 
-// The chosen option's "Why this product" opens with one click and gives the API's reasons in full.
-test("chosen milk has a why fold with the full reasons", async ({ page }) => {
+// The chosen option's "Why this product" opens with one click: at most five
+// short facts, one per line, and on R-2 the asked-for product's live count.
+test("chosen rows have a short why fold", async ({ page }) => {
   await fresh(page);
   await page.goto("/requests/R-1");
   await page.getByTestId("why-464306").click();
   const body = page.getByTestId("why-body-464306");
   await expect(body).toBeVisible();
-  // One reason per line; the one the row's short text already says is left out.
-  await expect(body.locator("p", { hasText: "Has the Hyvää Suomesta label, which your Spend Pass does not ask for." })).toHaveCount(1);
-  await expect(body).not.toContainText("Cheapest safe option and Valio delivered");
-  // One confirmed fact per line, each from its own field.
-  const facts = page.getByTestId("why-checked-464306").locator("li");
-  expect(await facts.count()).toBeGreaterThan(3);
-  for (const t of await facts.allInnerTexts()) expect(t, t).not.toContain(",");
+  const lines = await body.locator("li").allInnerTexts();
+  expect(lines.length).toBeGreaterThan(0);
+  expect(lines.length).toBeLessThanOrEqual(5);
+  for (const t of lines) expect(t, t).not.toMatch(/CO2|product \d{6}/);
+  await stockOut(page);
+  await page.goto("/requests/R-2");
+  await page.getByTestId("why-465256").click();
+  const r2 = await page.getByTestId("why-body-465256").locator("li").allInnerTexts();
+  expect(r2.length).toBeLessThanOrEqual(5);
+  await expect(page.getByTestId("why-body-465256")).toContainText("11,603");
+});
+
+// Round D: no value card on a request page, in every state.
+test("request pages carry no value card", async ({ page }) => {
+  await fresh(page);
+  await page.goto("/requests/R-1");
+  await expect(page.getByTestId("lane-options")).toBeVisible();
+  await expect(page.locator("main .v-card")).toHaveCount(0);
+  await stockOut(page);
+  await page.goto("/requests/R-2");
+  await expect(page.getByTestId("lane-options")).toBeVisible();
+  await expect(page.locator("main .v-card")).toHaveCount(0);
+  await page.goto("/approve/R-2");
+  await page.getByTestId("reject").click();
+  await code(page);
+  await expect(page.locator("#order-done")).toContainText("Nothing was ordered");
+  await page.goto("/requests/R-2");
+  await expect(page.getByTestId("options-fold")).not.toHaveAttribute("open");
+  await expect(page.locator("main .v-card")).toHaveCount(0);
+});
+
+// Honesty rule: wherever a simulated fact is on screen, the word "simulated" is visible there too.
+test("simulated facts say so on screen", async ({ page }) => {
+  const visible = () =>
+    page.evaluate(() => {
+      const hide = [...document.querySelectorAll("details:not([open]) > :not(summary), [hidden]")] as HTMLElement[];
+      hide.forEach((e) => (e.style.display = "none"));
+      const t = document.querySelector("main")!.innerText;
+      hide.forEach((e) => (e.style.display = ""));
+      return t;
+    });
+  await fresh(page);
+  await stockOut(page);
+  for (const path of ["/", "/requests/R-2", "/approve/R-2", "/steady/S-1"]) {
+    await page.goto(path);
+    await page.waitForTimeout(300);
+    const t = await visible();
+    expect(/simulated/i.test(t), `${path}: no "simulated" on screen`).toBe(true);
+  }
 });
 
 // Rejected: the Total lane is the proposal, and nothing is added to the plot.
@@ -512,7 +556,7 @@ test("rejected request shows the proposal, not a spend", async ({ page }) => {
   await page.goto("/approve/R-2");
   await page.getByTestId("reject").click();
   await code(page);
-  await expect(page.locator("#order-steps")).toContainText("You rejected");
+  await expect(page.locator("#order-done")).toContainText("Nothing was ordered");
   // The title stays on one line at 1280.
   const h1 = page.locator("h1");
   await expect(h1).toHaveText(/^Not ordered:\smozzarella-fontal/);

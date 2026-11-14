@@ -20,7 +20,8 @@ test("scene 4: steady order renews with flags", async ({ page }) => {
   await expect(page.getByTestId("line-463968")).toContainText("2.5 %");
   await expect(page.getByTestId("accept-471376")).toHaveText(/Order 27 now/);
   await expect(page.getByTestId("line-471376")).toContainText(/wheat as contained/i);
-  await expect(page.getByTestId("line-466375")).toContainText("26 % more per guest");
+  await expect(page.getByTestId("line-466375")).toContainText("None in stock at Valio.");
+  await expect(page.getByTestId("line-466375")).not.toContainText("26 %");
   await expect(page.getByTestId("line-466375").getByRole("img")).toBeVisible();
   await expect(page.getByTestId("accept-466375")).toHaveCount(0);
 

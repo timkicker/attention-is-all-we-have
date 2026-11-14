@@ -10,13 +10,12 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await page.getByTestId("inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-title")).toHaveText("1,000 litres of lactose-free milk");
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
-  await expect(page.getByTestId("request-rule")).toContainText("auto-order");
+  await expect(page.getByTestId("request-status")).toContainText("Ordered alone");
+  await expect(page.getByTestId("live-checked")).toHaveText(/^Live\s\d\d:\d\d$/);
   await expect(page.getByTestId("option-464306")).toContainText("1,010.00");
   await expect(page.getByTestId("option-464306")).toContainText("Chosen");
 
-  // The ignored supplier text: one value row that opens the turned-down tab at it.
+  // The ignored supplier text: one line that opens the turned-down tab and the text's fold.
   await expect(page.getByTestId("option-462921")).toBeHidden();
   await expect(page.getByTestId("ignored-note")).toContainText("steer AI agents");
   await page.getByTestId("ignored-note").click();

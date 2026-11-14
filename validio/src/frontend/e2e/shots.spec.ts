@@ -32,7 +32,7 @@ for (const v of VIEWS) {
     await shoot("inbox");
 
     await go("/requests/R-1");
-    await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l");
+    await expect(page.getByTestId("request-status")).toContainText("Ordered alone");
     await shoot("request-r1");
     if (v.width === 390) {
       await page.getByTestId("why-464306").click();
@@ -74,7 +74,7 @@ for (const v of VIEWS) {
     await shoot("approve-code");
     if (v.width === 390) await page.screenshot({ path: `${OUT}/approve-code-viewport-${v.width}-${v.theme}.png` });
     await code(page);
-    await expect(page.locator("#order-steps")).toContainText("Validio placed the order");
+    await expect(page.locator("#order-done")).toContainText("confirmed again");
     await shoot("approve-done");
 
     await go("/steady");
@@ -85,7 +85,7 @@ for (const v of VIEWS) {
     await shoot("steady-before");
     await page.getByTestId("renew").click();
     await code(page);
-    await expect(page.locator("#line-466375")).toContainText("26 %");
+    await expect(page.locator("#line-466375")).toContainText("None in stock");
     await shoot("steady-renewed");
     if (v.width === 390) {
       await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
@@ -118,7 +118,7 @@ for (const v of VIEWS) {
     await go("/approve/R-2");
     await page.getByTestId("reject").click();
     await code(page);
-    await expect(page.locator("#order-steps")).toContainText("You rejected");
+    await expect(page.locator("#order-done")).toContainText("Nothing was ordered");
     await shoot("approve-rejected");
     await go("/requests/R-2");
     await expect(page.getByTestId("request-status")).toContainText("Rejected");

@@ -115,8 +115,7 @@
     {#snippet facts()}
       {#if !pending && s.steadyPass}<span><b class="num">{money(s.steadyPass.usedCents)}</b> ordered</span>{/if}
       <span>{s.guestsPerWeek} guests a week</span>
-      {#if pending}<span>{s.lines.length} lines</span>{/if}
-      {#if s.simulatedHistory}<span data-testid="simulated-history" id="simulated-history">History of {s.weeksLearned} weeks, simulated</span>{/if}
+      {#if s.simulatedHistory}<span data-testid="simulated-history" id="simulated-history">{s.weeksLearned} weeks, simulated</span>{/if}
     {/snippet}
   </VHead>
   <div class="renew-code">{@render codeFor("renew")}</div>
@@ -139,7 +138,7 @@
           <Section class="v-card">
             {#each open as l (l.productId)}
               <div class="line" data-testid="line-{l.productId}" id="line-{l.productId}">
-                <VStatusRow pill={pillOf(l)} title={l.displayName ?? l.name} sub={l.flags[0]?.sentence ?? l.sentence}>
+                <VStatusRow pill={pillOf(l)} title={l.displayName ?? l.name} sub={l.shortText ?? l.flags[0]?.sentence ?? l.sentence}>
                   {#snippet middle()}
                     {#if l.history?.length}<VSpark values={l.history} usual={l.usualQuantity} unit={l.unit} />{/if}
                   {/snippet}
@@ -164,11 +163,10 @@
           <Section class="v-card">
             {#each notOrdered as l (l.productId)}
               <div class="line" data-testid="line-{l.productId}" id="line-{l.productId}">
-                <VStatusRow pill={pillOf(l)} title={l.displayName ?? l.name} sub={l.sentence}>
+                <VStatusRow pill={pillOf(l)} title={l.displayName ?? l.name} sub={l.shortText ?? l.sentence}>
                   {#snippet middle()}
                     {#if l.history?.length}<VSpark values={l.history} usual={l.usualQuantity} unit={l.unit} />{/if}
                   {/snippet}
-                  {#snippet more()}<span class="v-row-sub">Order it from Valio directly or wait for next Monday.</span>{/snippet}
                   {#snippet right()}<span class="act"></span>{/snippet}
                 </VStatusRow>
               </div>

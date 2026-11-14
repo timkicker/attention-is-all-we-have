@@ -11,7 +11,7 @@
   import { ApiError, api } from "$lib/api/client";
   import type { Order } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
-  import { day, hm, money, nb } from "$lib/format";
+  import { day, money, nb } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
   import { optionLine } from "$lib/v";
@@ -64,15 +64,6 @@
     if (q) return q;
     const n = x.lines[0]?.displayName ?? x.lines[0]?.name ?? "the order";
     return /^\S+ [a-z]/.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n;
-  }
-  /** The done steps with their times from the order's history, as the ledger shows them. */
-  const STEP: Record<string, string> = { waiting: "Asked you", approved: "You approved", placed: "Validio placed the order", rejected: "You rejected" };
-  function steps(x: Order, placed: boolean): { what: string; time: string }[] {
-    const want = placed ? ["waiting", "approved", "placed"] : ["waiting", "rejected"];
-    return want.map((state) => {
-      const h = x.history.find((e) => e.state === state);
-      return { what: STEP[state], time: h ? (h.timeText ?? hm(h.at)) : "" };
-    });
   }
   const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose") ?? chosenOpt?.facts.find((f) => f.field === "claim:FREE_FROM_LACTOSE"));
   const upper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -157,13 +148,9 @@
       {#if placed}<a href="/ledger">Order {o.id} ›</a>{/if}
     {/snippet}
     {#if problem}<p class="lead" role="status">{problem}</p>{/if}
-    <p class="lead">{placed ? "Price and delivery confirmed again before ordering." : "Nothing was ordered."}</p>
+    <!-- The steps live in the ledger; the done page says the outcome once. -->
+    <p class="lead" data-testid="order-done" id="order-done">{placed ? "Price and delivery confirmed again before ordering." : "Nothing was ordered."}</p>
   </VHead>
-  <ol class="steps" data-testid="order-steps" id="order-steps">
-    {#each steps(o, placed) as st (st.what)}
-      <li><span class="t num">{st.time}</span><span>{st.what}</span></li>
-    {/each}
-  </ol>
 {:else}
   <VHead
     title={o.questionText ?? r?.question ?? `Order for ${money(o.totalCents)}?`}
@@ -252,30 +239,7 @@
     gap: 8px;
     margin-top: 24px;
   }
-  .steps {
-    margin: 32px 0 0;
-    padding: 0;
-    list-style: none;
-    border-top: 1px solid var(--v-line);
-  }
-  .steps li {
-    display: grid;
-    grid-template-columns: 176px minmax(0, 1fr);
-    gap: 24px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--v-line);
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
-  .steps .t {
-    font-size: var(--fs-meta);
-    color: var(--v-muted);
-  }
   @media (max-width: 760px) {
-    .steps li {
-      grid-template-columns: 48px minmax(0, 1fr);
-      gap: 16px;
-    }
     .bar {
       position: fixed;
       left: 0;
