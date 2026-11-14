@@ -126,3 +126,36 @@ for (const v of VIEWS) {
     expect(problems, problems.join("\n")).toEqual([]);
   });
 }
+
+// The play controls: the ask dialog, the limits form with its inline answer, the menu while the stock is out.
+for (const v of [VIEWS[0], VIEWS[2]]) {
+  test(`play views, ${v.width} ${v.theme}`, async ({ page }) => {
+    await page.emulateMedia({ colorScheme: v.theme });
+    await page.setViewportSize({ width: v.width, height: v.height });
+    const at = (name: string) => `${OUT}/${name}-${v.width}-${v.theme}.png`;
+    await fresh(page);
+    await page.locator("#page-menu").click();
+    await page.getByTestId("menu-ask").click();
+    await page.getByTestId("ask-input").fill("500 litres of lactose-free milk by Monday");
+    await page.getByTestId("ask-send").click();
+    await expect(page.getByTestId("ask-final")).toBeVisible();
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: at("play-ask") });
+    await page.keyboard.press("Escape");
+
+    await page.goto("/spend-pass");
+    await page.getByTestId("change-limits").click();
+    await page.getByTestId("f-auto").fill("2500");
+    if (await page.getByTestId("f-code").isVisible()) await page.getByTestId("f-code").fill("246810");
+    await page.getByTestId("limits-save").click();
+    await expect(page.getByTestId("limits-problem")).toBeVisible();
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: at("play-limits"), fullPage: true });
+
+    await stockOut(page);
+    await page.locator("#page-menu").click();
+    await expect(page.getByTestId("stock-back")).toBeVisible();
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: at("play-menu") });
+  });
+}

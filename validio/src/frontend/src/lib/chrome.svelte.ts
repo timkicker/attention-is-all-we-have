@@ -23,7 +23,14 @@ export function bump() {
 }
 
 /** The presenter's demo switches, set by the layout (which owns the token dialog). */
-export const demoActions: { stockOut: () => Promise<void>; reset: () => Promise<void> } = {
+export const demoActions: {
+  stockOut: () => Promise<void>;
+  stockBack: () => Promise<void>;
+  reset: () => Promise<void>;
+  ask: () => Promise<void>;
+} = {
   stockOut: async () => {},
+  stockBack: async () => {},
   reset: async () => {},
+  ask: async () => {},
 };

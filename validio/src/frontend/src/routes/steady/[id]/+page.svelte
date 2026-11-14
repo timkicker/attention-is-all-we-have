@@ -49,7 +49,15 @@
         owner.code = "";
         wrong = "Wrong code. Try again.";
         asking = { key, label, run };
-      } else problem = e instanceof Error ? e.message : String(e);
+      } else {
+        problem = e instanceof Error ? e.message : String(e);
+        // Refused (say the line changed meanwhile): show the order as it is now.
+        try {
+          steady.data = await api.steadyOrder(id);
+        } catch {
+          /* the poll tries again */
+        }
+      }
     } finally {
       busy = "";
     }
