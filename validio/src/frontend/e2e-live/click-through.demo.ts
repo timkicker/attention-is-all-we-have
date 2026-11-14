@@ -118,7 +118,7 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
     "option-463335", "option-462921", "option-462703", "option-463047", "supplier-463047", "reader-463047");
   await expect(page.getByTestId("request-status")).toContainText("Ordered alone");
   await expect(page.getByTestId("request-rule")).toContainText("auto-order");
-  await expect(page.getByTestId("live-checked")).toContainText("12 products");
+  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
   const milk = page.getByTestId("option-464306");
   await expect(milk).toContainText(money("1,010.00"));
   await expect(milk).toContainText("Cheapest safe option");
@@ -158,9 +158,9 @@ test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", as
 
 test("scene 3 on screen: Simulated, and R-2 waits at 180.10", async ({ page }) => {
   await page.goto("/");
-  await needs(page, "stock-out-note", "inbox-R-2");
-  await expect(page.getByTestId("stock-out-note")).toContainText(/simulated/i);
-  await expect(page.getByTestId("stock-out-note")).toContainText("11,603");
+  // The inbox row says why it waits; the stock-out itself is told on R-2 (asked-for).
+  await needs(page, "inbox-summary-R-2", "inbox-R-2");
+  await expect(page.getByTestId("inbox-summary-R-2")).toContainText("Asks you");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
   await expect(page.getByTestId("inbox-R-2")).toContainText(money("180.10"));
 });
@@ -190,7 +190,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   await expect(page.getByTestId("option-463383")).toContainText(money("196.60"));
   await expect(page.getByTestId("option-465174")).toContainText(money("234.90"));
   await expect(page.getByTestId("request-rule")).toContainText("ask-human");
-  await expect(page.getByTestId("live-checked")).toContainText("10 products");
+  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
 });
 
 test("scene 3: the owner approves O-2 on the phone with the code", async ({ page, request }) => {

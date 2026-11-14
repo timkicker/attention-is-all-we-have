@@ -8,12 +8,12 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   await fresh(page);
   await stockOut(page);
   await page.goto("/");
-  await expect(page.getByTestId("stock-out-note")).toContainText("Valio has 11,603 bags");
+  await expect(page.getByTestId("inbox-summary-R-2")).toContainText("Asks you");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
 
   await page.getByTestId("inbox-R-2").click();
   await expect(page.locator("#request-title")).toContainText("200 bags of");
-  await expect(page.locator("#request-why")).toHaveText("Not on Valio's substitute list. Rule: ask-human");
+  await expect(page.locator("#request-why")).toHaveText("Lactose-free mozzarella 125\u00a0g is out of stock (simulated). The swap is not on Valio's list.");
   await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
   await expect(page.getByTestId("asked-for")).toContainText("Valio really has 11,603 bags");
   await expect(page.getByTestId("request-rule")).toContainText("ask-human");

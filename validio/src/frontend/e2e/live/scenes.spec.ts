@@ -23,7 +23,7 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
   await page.locator("#inbox-R-1").click();
   await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.locator("#live-checked")).toContainText(/Checked \d+\sproducts live/);
+  await expect(page.locator("#live-checked")).toContainText("Read live from Valio at");
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.locator("#fold-options").click();
   await expect(page.locator("#reader-463047")).toContainText("Order all 132 in stock");
