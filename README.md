@@ -68,7 +68,6 @@ Everything else (pages, API, seeds, tests, limits) is in [parallax/README.md](pa
 | `validio/` | Validio: backend, web app, Modal app, scripts and docs |
 | `parallax/` | Parallax: pipeline, API, web app, database schema, deploy files and docs |
 | `docs/img/` | the screenshots and diagrams used in the READMEs |
-| `docs/participant-guidebook.pdf` | the Junction 2026 participant guidebook |
 | `PROJECT_BLUEPRINT-validio.md` | Validio's plan and the reasoning behind each part |
 | `WORKING.md` | how the team split the work during the event |
 | `.github/workflows/` | one CI workflow per project |
