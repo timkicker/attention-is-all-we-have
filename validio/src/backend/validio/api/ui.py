@@ -12,7 +12,7 @@ Without a code or a token, approve and the demo switches stay closed to anyone n
 
 import hmac
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
@@ -220,16 +220,22 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
     changes = {"autoLimitCents": body.auto_limit_cents, "hardCapCents": body.hard_cap_cents, "diet": diet,
                "deliverBy": body.deliver_by.isoformat(),
                "substitutes": SUBSTITUTES_LISTED if body.substitutes else "never"}
+    def said(x: dict) -> list[tuple[str, str]]:
+        d = date.fromisoformat(str(x["deliver_by"]))
+        return [("Alone up to", money(x["auto_limit_cents"])), ("Never above", money(x["hard_cap_cents"])),
+                ("Diet", " and ".join(CLAIM_NAMES.get(c, c) for c in sorted(x["diet"] or ())) or "none"),
+                ("Delivered by", f"{d.day} {d:%b}"),
+                ("Substitutes", "from Valio's list" if x["substitutes"] == SUBSTITUTES_LISTED else "none alone")]
+
     with ctx.rt.lock:
+        before = said(_show_issued(ctx))
         seed.sign_again(ctx.db_path, ctx.keys_dir, changes)
         # shown once, so the page and what the next request is judged against agree at once
         m = _show_issued(ctx)
-        d = body.deliver_by
-        parts = [f"alone up to {money(body.auto_limit_cents)}", f"never above {money(body.hard_cap_cents)}",
-                 " and ".join(CLAIM_NAMES.get(c, c) for c in diet) or "no diet rule", f"delivered by {d.day} {d:%b}",
-                 "substitutes from Valio's list" if body.substitutes else "no substitutes alone"]
-        ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass",
-                         sentence=f"Owner changed the limits of Spend Pass {m['id']}: {', '.join(parts)}.",
+        changed = [f"{k} {a} → {b}." for (k, a), (_, b) in zip(before, said(m), strict=True) if a != b]
+        sentence = (f"Owner changed Spend Pass {m['id']}. " + " ".join(changed) if changed
+                    else f"Owner signed Spend Pass {m['id']} again, nothing changed.")
+        ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass", sentence=sentence,
                          facts=[], mandate_id=m["id"], disclosed={}, rule_ids=[], order_id=None)
     return spend_pass(ctx, m["id"])
 
@@ -271,7 +277,9 @@ def ledger(ctx: CtxDep):
         e["request_id"] = rid
         if rid and rid not in titles:
             if rid.startswith("M-"):
-                titles[rid] = (f"Spend Pass {rid}", f"Spend Pass {rid}")
+                titles[rid] = ("Spend Pass", "Spend Pass")  # the page puts the id next to it
+            elif rid == "demo":
+                titles[rid] = ("Demo", "Demo")
             elif rid.startswith("R-"):
                 v = get_request(ctx, rid)
                 titles[rid] = (v.title, v.title_text or v.title)
@@ -287,15 +295,14 @@ def ledger(ctx: CtxDep):
 
 def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
     """Which request or Steady Order each entry belongs to, so the ledger can group by it. An entry with an
-    order takes that order's; a request entry starts the next request; a simulation belongs to the request
-    after it, the one it was made for; anything else to the request before it."""
+    order takes that order's; a request entry starts the next request; a limits change is its pass's; a
+    simulation is the demo's own ("demo"); anything else goes to the request before it."""
     owner = {o["id"]: o.get("requestId") for o in ctx.store.orders()}
     owner.update({oid: sid for oid, sid in ctx.store.steady_orders().items() if not owner.get(oid)})
     asked = iter(r["id"] for r in ctx.store.requests())
     out: list[str | None] = []
     current: str | None = None
-    waiting: list[int] = []  # simulations before their request
-    for i, e in enumerate(entries):
+    for e in entries:
         steady = re.match(r"Steady Order (S-\d+)", e["sentence"])
         if e.get("order_id") and owner.get(e["order_id"]):
             rid = owner[e["order_id"]]
@@ -303,14 +310,10 @@ def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
             rid = steady.group(1)
         elif e["kind"] == "request":
             current = rid = next(asked, None)
-            for j in waiting:
-                out[j] = rid
-            waiting = []
         elif e["kind"] == "spend_pass":
             rid = e["spend_pass_id"]  # the owner's change belongs to the pass, not the request before it
         elif e["kind"] == "simulation":
-            rid = None
-            waiting.append(i)
+            rid = "demo"  # the presenter's switches are their own group, never a request's
         else:
             rid = current
         out.append(rid)
@@ -385,7 +388,12 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
     rid = next((e.data.get("requestId") or e.data.get("id") for e in t.events
                 if e.kind == "answer" and e.name == "request_supply" and isinstance(e.data, dict)
                 and "error" not in e.data), None)
-    return AskOut(request_id=rid, model=t.model, lines=[render(e, plain) for e in t.events], final=t.final)
+    lines = [render(e, plain) for e in t.events]
+    final = t.final
+    missed = next((m for ln in lines if (m := re.search(r"answers for (.+?) aren't recorded for this demo", ln))), None)
+    if rid is None and missed:  # the screen shows it as one short muted line, whatever the model said
+        final = f"Not recorded for this demo: {missed.group(1)}."
+    return AskOut(request_id=rid, model=t.model, lines=lines, final=final)
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)

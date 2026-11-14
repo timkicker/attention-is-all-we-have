@@ -332,5 +332,5 @@ def test_ledger_entries_name_their_request(client, holder):
     ask_mozzarella(client, holder)
     got = [(e["kind"], e.get("requestId")) for e in client.get("/api/ledger").json()["entries"]]
     assert got[:4] == [("request", "R-1"), ("decision", "R-1"), ("decision", "R-1"), ("order", "R-1")]
-    assert ("simulation", "R-2") in got  # the stock-out belongs to the request it was made for
-    assert all(r in ("R-1", "R-2") for _, r in got)
+    assert ("simulation", "demo") in got  # the stock-out is the demo's own group, not a request's
+    assert all(r in ("R-1", "R-2", "demo") for _, r in got)
