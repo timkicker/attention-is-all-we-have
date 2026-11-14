@@ -110,13 +110,13 @@
 
 {#if !s}
   {#if steady.error}
-    <VHead title="Steady order" crumbs={[{ href: "/steady", label: "Steady orders" }]} here={id} back={{ href: "/steady", label: "Steady orders" }} />
+    <VHead title="Steady order" crumbs={[{ href: "/orders", label: "Orders" }]} here={id} back={{ href: "/orders", label: "Orders" }} />
     <VState kind="error" title={/404|not found/i.test(steady.error) ? `No Steady Order ${id}.` : "Validio is not reachable."} detail={steady.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={4} />
   {/if}
 {:else}
-  <VHead title={s.name} crumbs={[{ href: "/steady", label: "Steady orders" }]} here={s.id} back={{ href: "/steady", label: "Steady orders" }}>
+  <VHead title={s.name} crumbs={[{ href: "/orders", label: "Orders" }]} here={s.id} back={{ href: "/orders", label: "Orders" }}>
     {#snippet actions()}
       {#if pending}
         <Button data-testid="renew" id="renew" disabled={!!busy} onclick={() => write("renew", "Renew now", () => api.renew(id))}>Renew now</Button>
@@ -177,7 +177,7 @@
                   {#snippet middle()}
                     {#if l.history?.length}<VSpark values={l.history} usual={l.usualQuantity} unit={l.unit} />{/if}
                   {/snippet}
-                  {#snippet right()}<span class="act"></span>{/snippet}
+                  {#snippet right()}<span class="amt num"></span><span class="act"></span>{/snippet}
                 </VStatusRow>
               </div>
             {/each}
@@ -235,6 +235,18 @@
   }
   .line :global(.v-row-mid) {
     margin-right: 24px;
+  }
+  /* Spark, quantity and amount keep one column each across all cards, also
+     on a line that has no amount. */
+  @media (min-width: 761px) {
+    .line :global(.v-row-mid) {
+      width: 136px;
+    }
+    .amt {
+      display: inline-block;
+      min-width: 96px;
+      text-align: right;
+    }
   }
   @media (max-width: 760px) {
     .act {
