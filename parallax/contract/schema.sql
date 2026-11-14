@@ -151,3 +151,39 @@ CREATE TABLE gold_pair (
 CREATE TABLE stat (                                       -- numbers for the scale line and the docs
   k VARCHAR(64) NOT NULL PRIMARY KEY, v JSON NOT NULL, computed_at DATETIME(6) NOT NULL
 );
+
+CREATE TABLE ingest_job (                                 -- one "any article" ingest per Wikidata item (pipeline/job.py)
+  qid         VARCHAR(16)  NOT NULL PRIMARY KEY,
+  topic_id    VARCHAR(32)  NOT NULL,                      -- lowercase qid, e.g. 'q155093'
+  title       VARCHAR(255) NOT NULL,                      -- English title
+  state       ENUM('queued','running','usable','done','failed') NOT NULL,
+  since       DATE         NULL,                          -- history only from this date on
+  error       VARCHAR(255) NULL,
+  model_calls INT UNSIGNED NOT NULL DEFAULT 0,            -- judge and gloss calls of this job
+  judge_pairs INT UNSIGNED NOT NULL DEFAULT 0,
+  eta_s       INT UNSIGNED NULL,                          -- estimate at creation
+  created_at  DATETIME(6)  NOT NULL,
+  started_at  DATETIME(6)  NULL,
+  usable_at   DATETIME(6)  NULL,
+  done_at     DATETIME(6)  NULL,
+  updated_at  DATETIME(6)  NOT NULL,
+  KEY (state, created_at)
+);
+
+CREATE TABLE ingest_edition (                             -- progress of one edition of an ingest job
+  qid        VARCHAR(16)  NOT NULL,
+  lang       VARCHAR(8)   NOT NULL,
+  title      VARCHAR(255) NULL,                           -- NULL: no article in this edition
+  page_id    INT UNSIGNED NULL,
+  state      ENUM('waiting','running','done','failed') NOT NULL DEFAULT 'waiting',
+  pct        TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  error      VARCHAR(64)  NULL,                           -- rate_limited, no_article, or an error class
+  retry_at   DATETIME     NULL,                           -- UTC, set while Wikipedia asked us to wait
+  tries      TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  length     INT UNSIGNED NULL,                           -- bytes of the current revision
+  revisions  INT UNSIGNED NULL,
+  snapshots  INT UNSIGNED NULL,
+  statements INT UNSIGNED NULL,                           -- sentence lives loaded
+  seconds    FLOAT        NULL,
+  PRIMARY KEY (qid, lang)
+);
