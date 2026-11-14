@@ -43,6 +43,7 @@ from .service import (
     _hash,
     fact_dict,
     mandate_dict,
+    strict,
 )
 from .store import NotFound
 
@@ -330,6 +331,7 @@ class SupplyService:
 
     # the two agent calls
 
+    @strict
     def request_supply(self, *, mandate: Mandate, lines: list[LineRequest], deliver_by: date | None,
                        idempotency_key: str, agent: str | None = None, text: str | None = None) -> dict:
         if not lines:
@@ -472,6 +474,7 @@ class SupplyService:
         """Only the question: why it waits is the swap sentence and the decision, shown next to it."""
         return f"Order {self.orders._parts(order, ids=False)} for {money(order['totalCents'])}?"
 
+    @strict
     def confirm_order(self, *, mandate: Mandate, request_id: str, choice: list[tuple[str, int]],
                       idempotency_key: str, agent: str | None = None) -> dict:
         """One request gives at most one order: the whole call runs under the service lock, and the store
