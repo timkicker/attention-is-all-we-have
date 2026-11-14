@@ -232,7 +232,7 @@ def agent_names(ctx: Ctx) -> dict[str, str]:
 
 
 def _entry(ctx: Ctx, sentence: str, actor: str = "owner") -> None:
-    ctx.audit.append(at=ctx.now(), actor=actor, kind="agent", sentence=sentence, facts=[],
+    ctx.audit.append(at=ctx.stamp(), actor=actor, kind="agent", sentence=sentence, facts=[],
                      mandate_id=seed.SPEND_PASS_ID, disclosed={}, rule_ids=[], order_id=None)
 
 
@@ -267,7 +267,7 @@ def may(ctx: Ctx) -> list[str]:
     if not rules_saved(ctx.db_path):
         return ["Every order needs approval"]
     c = current_claims(ctx.db_path)
-    out = [f"Orders alone up to {money(c['autoLimitCents'])}", f"Needs approval up to {money(c['hardCapCents'])}",
+    out = [f"Orders alone up to {money(c['autoLimitCents'])}", f"Waiting for you up to {money(c['hardCapCents'])}",
            f"Blocked above {money(c['hardCapCents'])}"]
     if c.get("weekCapCents") is not None:
         out.append(f"Per week up to {money(c['weekCapCents'])}")
@@ -364,7 +364,7 @@ def agent_pair(ctx: Ctx, body: PairIn) -> str:
         link.state, link.code_status = "consent", "consent"
         link.pending_name, link.pending_jwk = name, key.export_public()
         link.verify_code = verify_code()
-        link.consent_at = ctx.now().isoformat()
+        link.consent_at = ctx.stamp().isoformat()
         save(ctx, link)
     return link.verify_code
 
@@ -390,9 +390,9 @@ def allow(ctx: Ctx) -> None:
         demo = key.thumbprint() == demo_key(ctx).thumbprint()
         sub = DEMO_CLAIMS["sub"] if demo else "agent:" + ("".join(ch if ch.isalnum() else "-" for ch in
                                                                    link.pending_name.lower()).strip("-") or "agent")
-        seed.sign_again(ctx.db_path, ctx.keys_dir, {"sub": sub}, agent_pub=key, why="Agent connected", at=ctx.now())
+        seed.sign_again(ctx.db_path, ctx.keys_dir, {"sub": sub}, agent_pub=key, why="Agent connected", at=ctx.stamp())
         ver = seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID)
-        link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.now().isoformat(),
+        link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.stamp().isoformat(),
                     code=link.code, code_expires=link.code_expires, code_status="allowed")
         save(ctx, link)
         _remember_name(ctx, sub, link.name)
@@ -433,7 +433,7 @@ def disconnect(ctx: Ctx, quiet: bool = False) -> None:
         link = load(ctx)
         nobody = JWK.generate(kty="EC", crv="P-256")
         seed.sign_again(ctx.db_path, ctx.keys_dir, {}, agent_pub=JWK.from_json(nobody.export_public()),
-                        why="Agent disconnected", at=ctx.now())
+                        why="Agent disconnected", at=ctx.stamp())
         save(ctx, Link("none"))
         drop_connector(ctx)
         if not quiet and link.state in ("active", "paused"):
@@ -460,7 +460,7 @@ def check_use(ctx: Ctx, m: Mandate, token: str | None = None) -> None:
             _entry(ctx, f"Refused {link.name}: {PAUSED}.", actor="validio:gate")
             raise MandateError(PAUSED)
         if link.state == "active":
-            link.last_used_at = ctx.now().isoformat()
+            link.last_used_at = ctx.stamp().isoformat()
             save(ctx, link)
 
 
@@ -591,7 +591,7 @@ def connector_ctx(token: str | None, touch: bool = False, name: str | None = Non
                 link.pending_name = clean_name(name)
                 link.pending_jwk = JWK.from_json(held[0]).export_public()
                 link.verify_code = verify_code()  # new for this connection, shown in the agent and on the page
-                link.consent_at = ctx.now().isoformat()
+                link.consent_at = ctx.stamp().isoformat()
                 save(ctx, link)
             elif (link.state == "consent" and link.pending_name == MCP_NAME
                   and link.pending_jwk == JWK.from_json(held[0]).export_public()):
