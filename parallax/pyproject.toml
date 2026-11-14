@@ -1,0 +1,42 @@
+[project]
+name = "parallax"
+version = "0.1.0"
+description = "What seven Wikipedia editions say about one topic, claim by claim and on any date"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "pymysql",
+  "numpy",
+  "pyarrow",
+  "mwparserfromhell",
+  "requests",
+  "openai",
+  "pyyaml",
+  "pytest",
+  "httpx",
+  "ruff",
+  "jsonschema",
+]
+
+[project.optional-dependencies]
+gpu = ["sentence-transformers", "torch"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests", "pipeline/tests", "api/tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["data", "web", "*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/build_engine_fixtures.py" = ["E501"]
