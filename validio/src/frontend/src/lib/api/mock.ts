@@ -7,14 +7,17 @@
 //
 // The state lives in localStorage so a reload keeps it, as the backend would.
 
+import { money } from "$lib/format";
 import { answers, refused, states } from "./snapshots/states";
 import { ApiError } from "./error";
 import type {
+  AskOut,
   DemoState,
   InboxItem,
   Ledger,
   Order,
   SpendPass,
+  SpendPassIn,
   SteadyOrder,
   SteadyOrderSummary,
   SupplyRequest,
@@ -25,6 +28,10 @@ type Steady = "pending" | "renewed" | "accepted" | "mozzarella" | "both";
 interface State {
   moz: Moz;
   steady: Steady;
+  /** The stock-out ended again; the recorded answers stay where they were. */
+  back?: boolean;
+  /** The limits the owner signed in this browser, laid over the recorded pass. */
+  pass?: Pick<SpendPassIn, "autoLimitCents" | "hardCapCents" | "diet" | "deliverBy" | "substitutes">;
 }
 
 const KEY = "validio-mock-v2";
@@ -88,8 +95,36 @@ export async function request(id: string): Promise<SupplyRequest> {
   return at(`/api/requests/${id}`, answers.requests[id]);
 }
 
+const DIET: Record<string, string> = { FREE_FROM_LACTOSE: "lactose free", FREE_FROM_GLUTEN: "gluten free", VEGAN: "vegan" };
+
 export async function spendPass(id: string): Promise<SpendPass> {
-  return at(`/api/spend-passes/${id}`, answers.spendPass[id]);
+  const p = at(`/api/spend-passes/${id}`, answers.spendPass[id]);
+  const o = load().pass;
+  if (!o) return p;
+  return {
+    ...p,
+    autoLimitCents: o.autoLimitCents,
+    hardCapCents: o.hardCapCents,
+    diet: o.diet.map((d) => DIET[d] ?? d),
+    deliverBy: o.deliverBy,
+    substitutes: o.substitutes ? p.substitutes : "never",
+    split: { ...p.split, allowListedSubstitutes: o.substitutes },
+  };
+}
+
+/** Signing again: the fixture keeps the new limits for the Spend Pass page; recorded decisions stay as they were. */
+export async function signPass(body: SpendPassIn, code: string): Promise<SpendPass> {
+  checkCode(body.code ?? code);
+  if (body.autoLimitCents > body.hardCapCents) throw new ApiError(422, `alone up to ${money(body.autoLimitCents)} is above never above ${money(body.hardCapCents)}`);
+  const { autoLimitCents, hardCapCents, diet, deliverBy, substitutes } = body;
+  save({ ...load(), pass: { autoLimitCents, hardCapCents, diet, deliverBy, substitutes } });
+  return spendPass("M-1");
+}
+
+/** No agent runs without the backend: the fixture says so instead of inventing an answer. */
+export async function ask(text: string): Promise<AskOut> {
+  if (!text.trim()) throw new ApiError(422, "say what the kitchen needs");
+  return { model: "none", lines: [], final: "This build has no backend, so no agent can ask. Start it with make demo to try your own text." };
 }
 
 export async function order(id: string): Promise<Order> {
@@ -150,19 +185,26 @@ export async function acceptLine(id: string, productId: string, code: string): P
 }
 
 export async function demoState(): Promise<DemoState> {
-  return at("/api/demo", answers.demo);
+  const d = at("/api/demo", answers.demo);
+  return load().back ? { ...d, stockOut466375: false } : d;
 }
 
 /**
  * The stock-out switch. With the backend the kitchen's agent then asks again;
  * the fixture jumps to the answer that run gave: the request waits for the owner.
  */
-export async function stockOut(): Promise<DemoState> {
+export async function stockOut(on = true): Promise<DemoState> {
   const s = load();
+  if (!on) {
+    // Ending it: the mozzarella request keeps the state it reached.
+    if (s.moz !== "none") save({ ...s, back: true });
+    return demoState();
+  }
+  if (s.back) save({ ...s, back: false });
   if (s.moz === "none") {
     // An accepted mozzarella line cannot stay accepted once the stock is gone.
     const steady: Steady = s.steady === "mozzarella" ? "renewed" : s.steady === "both" ? "accepted" : s.steady;
-    save({ moz: "waiting", steady });
+    save({ ...load(), moz: "waiting", steady });
   }
   return demoState();
 }

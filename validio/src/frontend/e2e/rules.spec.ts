@@ -172,6 +172,8 @@ function measure(page: Page, name: string) {
         if (prop === "outline-color" && cs.outlineStyle === "none") continue;
         if (prop === "stroke" && cs.stroke === "none") continue;
         if (accent.has(val) && !allowed(e, prop)) fail("11", `${label(e)} ${prop} is the accent`);
+        // A pattern fill is url("#id"); the digits of a generated id are no colour.
+        if (val.startsWith("url(")) continue;
         const [r, g, b, a = 1] = rgb(val);
         if (a > 0 && r !== undefined) {
           const mx = Math.max(r, g, b) / 255, mn = Math.min(r, g, b) / 255, l = (mx + mn) / 2, d = mx - mn;
