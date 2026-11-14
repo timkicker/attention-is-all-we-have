@@ -80,9 +80,6 @@ body {
   margin: 0 auto;
   padding: 24px 32px 80px;
 }
-.wrap.narrow > * {
-  max-width: 680px;
-}
 .crumbs {
   display: flex;
   align-items: center;

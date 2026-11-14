@@ -22,8 +22,8 @@
 
   // Four places, flat. The kitchen's name at the foot (top left on the phone) opens Settings.
   const PAGES = [
-    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/approve") },
-    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/steady") },
+    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" },
+    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/approve") || p.startsWith("/steady") },
     { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") || p.startsWith("/spend-pass") },
     { href: "/ledger", id: "nav-ledger", label: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
   ];
@@ -46,6 +46,7 @@
   });
   // The approve page has its own bottom bar: no dock under it.
   const approve = $derived(path.startsWith("/approve"));
+  const demoBar = $derived(!!session.account?.isDemo && (approve ? !chrome.phone || chrome.asking : !(chrome.phone && chrome.detail)));
 
   afterNavigate(({ to }) => {
     if (to?.url) notePage(to.url.pathname);
@@ -194,7 +195,15 @@
     </aside>
   {/if}
 
-  <main class="v-main">
+  <main class="v-main" class:demo={demoBar}>
+    <!-- Approve keeps the bar: it shows the code that page asks for. On the phone it waits for the code step. -->
+    {#if demoBar}
+      <div class="demobar" data-testid="demo-bar" id="demo-bar">
+        <span class="db-name">Demo kitchen</span>
+        <span>Approval code <b class="mono" data-code>{session.account.demoCode}</b></span>
+        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
+      </div>
+    {/if}
     {#if chrome.phone && !chrome.detail && !approve}
       <header class="phonebar">
         <a class="pb-name" href="/settings" id="phone-settings" data-testid="phone-settings">
@@ -205,14 +214,7 @@
         {#if session.account.isDemo}<VMenu />{/if}
       </header>
     {/if}
-    {#if session.account.isDemo && !approve && !(chrome.phone && chrome.detail)}
-      <div class="demobar" data-testid="demo-bar" id="demo-bar">
-        <span class="db-name">Demo kitchen</span>
-        <span>Approval code <b class="mono" data-code>{session.account.demoCode}</b></span>
-        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
-      </div>
-    {/if}
-    <div class="wrap" class:narrow={approve}>
+    <div class="wrap">
       {@render children()}
     </div>
   </main>
@@ -383,7 +385,7 @@
   }
   .phonebar {
     position: sticky;
-    top: 0;
+    top: var(--demo-h, 0px);
     z-index: 15;
     display: flex;
     align-items: center;
@@ -497,6 +499,21 @@
     .v-main > .phonebar ~ .wrap,
     .v-main > .demobar ~ .wrap {
       padding-top: 16px;
+    }
+    /* A detail page's own header follows the bar flush, as it follows the screen top. */
+    .v-main > .demobar + .wrap:has(:global(.kopfleiste)) {
+      padding-top: 8px;
+    }
+    /* The bar sticks on top and the page's own header sticks under it: nothing covers Reset. */
+    .demobar {
+      position: sticky;
+      top: 0;
+      z-index: 16;
+      height: 44px;
+      background: var(--v-app);
+    }
+    .v-main.demo {
+      --demo-h: 45px;
     }
   }
   .di {
