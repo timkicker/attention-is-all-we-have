@@ -157,9 +157,10 @@ def _create(cur, qid: str, since: str | None, ent: dict | None, max_active: int 
         if int(active["n"]) >= max_active:
             raise IngestBusy(qid)
     if ent is None:
-        if wapi.cooldown_left() > 0:
+        visitor = max_active is not None  # the API caps jobs; the command line has no cap and waits out a 429
+        if visitor and wapi.cooldown_left() > 0:
             raise wapi.RateLimited("cooling down", wapi.cooldown_left())
-        ent = wikidata.entity(qid)
+        ent = wikidata.entity(qid, interactive=visitor)
     if not ent:
         raise UnknownItem(qid)
     titles = ent["titles"]
