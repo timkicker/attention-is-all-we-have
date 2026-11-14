@@ -37,6 +37,8 @@ export function left(etaS: number): string {
 export const DONE = 'Done'
 export const WAITING = 'Waiting'
 export const FAILED = 'Could not load'
+/** An edition that has no article on this topic. */
+export const NO_ARTICLE = 'No article'
 /** "91%". */
 export function pct(n: number): string {
   return `${fmtNum(Math.round(n))}%`
