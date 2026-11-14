@@ -109,8 +109,9 @@ async function reveal(id, loc) {
     const mark = await loc.evaluate((e, n) => {
       const h = e.closest("[hidden]");
       if (!h) return null;
+      // a fold's content names its trigger by aria-controls; a hidden option opens with "Show all"
       const t = (h.id && document.querySelector(`[aria-controls="${CSS.escape(h.id)}"]`)) ||
-        h.parentElement?.querySelector('[aria-expanded="false"]');
+        (h.matches('[id^="option-"]') && document.querySelector('#fold-options[aria-expanded="false"]'));
       if (!t) return null;
       t.setAttribute("data-video-reveal", String(n));
       return String(n);
@@ -205,7 +206,7 @@ async function agent(n) {
     const s = lines.shift();
     const cls = classOf(s);
     await page.evaluate(([h, c]) => window.line(h, c), [esc(s), cls]);
-    await sleep(cls === "agent" || cls === "validio" || cls === "kitchen" ? 180 : 35);
+    await sleep(cls === "agent" || cls === "validio" || cls === "kitchen" ? 130 : 30);
   }
   const code = await exit;
   if (code !== 0) throw new Error(`make agent SCENE=${n} exited ${code}`);
@@ -218,76 +219,72 @@ async function phone(on) {
 }
 
 const SCENES = {
-  // Shot 1: the agent's request, then the Spend Pass card
+  // Shot 1: the agent's request, then the Spend Pass facts on the inbox
   1: async () => {
     await agent(1);
-    await settle();
+    await go("/");
     await point("inbox-R-1", 1);
     await point("spend-pass", 0.5);
-    await point("pass-auto", 1.5);
-    await point("pass-cap", 1.5);
+    await point("pass-auto", 2);
+    await point("pass-cap", 2);
   },
   // Shot 2: ordered alone, the ranking and the planted line
   2: async () => {
     await agent(2);
-    await go("/");
+    await click("nav-inbox");
     await click("inbox-R-1");
     await point("request-status", 1);
     await point("live-checked", 1);
     await point("option-464306", 2);
     await point("option-464401", 1.2);
+    await click("ignored-note"); // opens Turned down and scrolls to the planted line
     await point("option-462921", 1.5);
     await point("supplier-463047", 2);
     await point("reader-463047", 2);
   },
-  // Shot 3: simulated stock-out, the swap waits, the owner approves on the phone
+  // Shot 3: simulated stock-out from the page menu, the swap waits, the owner approves on the phone
   3: async () => {
     await go("/");
+    await click("page-menu");
     await act("stock-out", async () => (await api("/api/demo")).stockOut466375 === true,
       () => api("/api/demo/stock-out", { method: "POST" }));
-    await point("stock-out-note", 1);
     await agent(3);
     await go("/");
+    await point("inbox-summary-R-2", 1); // "Asks you: ..."
     await click("inbox-R-2");
-    for (const p of ["466151", "473986", "468526", "475908"]) await point(`option-${p}`, 0.4);
-    await point("option-465256", 2);
-    const order = (await api("/api/requests/R-2")).orderId;
-    const opened = await click("open-approve");
-    const at = new URL(frame().url()).pathname;
-    if (!opened || (at !== `/approve/${order}` && !(await find("approve")))) {
-      report.fallbacks.push(`open-approve (led to ${at})`);
-      if (STRICT) throw new Error(`open-approve led to ${at}, not /approve/${order}`);
-      console.log(`  fallback: open-approve led to ${at}, going to /approve/${order}`);
-      await go(`/approve/${order}`);
-    }
+    await point("asked-for", 1); // 466375 itself: 0 in stock, 200 needed
+    await point("option-465256", 2); // R-2 opens on Beyond the list
+    await click("tab-list");
+    for (const p of ["466151", "473986"]) await point(`option-${p}`, 0.6); // blocked on milk, no delivery date
+    await click("open-approve");
     await phone(true);
-    await point("approve-question", 1.6);
+    await point("approve-question", 1.2);
+    const order = (await api("/api/requests/R-2")).orderId;
     await act("approve", async () => (await api(`/api/orders/${order}`)).state === "placed",
       () => api(`/api/orders/${order}/approve`, chef));
-    await point("order-steps", 2);
+    await point("order-steps", 1.5);
     await phone(false);
   },
-  // Shot 4: the Steady Order renews, the parmesan splits, the pancakes wait, the mozzarella is flagged
+  // Shot 4: the Steady Order renews, the parmesan splits, the pancakes wait, the mozzarella is held
   4: async () => {
-    await go("/");
-    if (!(await click("nav-steady-orders")) || !(await click("steady-S-1"))) await go("/steady/S-1");
-    await point("simulated-history", 2);
+    await click("nav-steady-orders");
+    if (!(await click("steady-S-1"))) await go("/steady/S-1");
     await act("renew", async () => !!(await api("/api/steady/S-1")).renewedAt,
       () => api("/api/steady/S-1/renew", chef));
-    await point("line-464306", 2);
-    await point("line-463968", 3);
-    await point("line-471376", 2.5);
-    await point("line-466375", 3);
+    await point("line-464306", 1.5);
+    await point("line-463968", 2.5);
+    await point("line-471376", 2);
+    await point("line-466375", 2);
     const accepted = async () => (await api("/api/steady/S-1")).lines.find((l) => l.productId === "471376").result === "accepted";
     await act("accept-471376", accepted, () => api("/api/steady/S-1/lines/471376/accept", chef));
-    await point("line-471376", 1.5);
+    await point("simulated-history", 1.5);
   },
-  // Shot 5: the Open Ledger with its verified chain
+  // Shot 5: the Ledger with its verified chain
   5: async () => {
-    if (!(await click("nav-open-ledger"))) await go("/ledger");
+    await click("nav-open-ledger");
     await point("chain-status", 2.5);
-    const led = await find("ledger");
-    if (led) {
+    if (await find("ledger")) {
+      await click("ledger-entry", 1.5);
       await cursorTo(TERM + 640, 900);
       for (let i = 0; i < 3; i++) {
         await frame().evaluate(() => window.scrollBy({ top: 260, behavior: "smooth" }));
