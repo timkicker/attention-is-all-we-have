@@ -15530,9 +15530,9 @@ export const scene4: Snapshot = {
       {
         "seq": 15,
         "at": "2026-11-14T10:39:00+02:00",
-        "actor": "kitchen:chef",
+        "actor": "owner",
         "kind": "approval",
-        "sentence": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+        "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "facts": [
           {
             "field": "quantity",
@@ -15558,10 +15558,10 @@ export const scene4: Snapshot = {
         "ruleIds": [],
         "orderId": "O-5",
         "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
-        "hash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
-        "actorText": "Chef",
+        "hash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "actorText": "Owner",
         "timeText": "10:39",
-        "summary": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+        "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
           "auto limit",
           "diet",
@@ -15573,7 +15573,7 @@ export const scene4: Snapshot = {
         "at": "2026-11-14T10:42:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the chef accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+        "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
         "facts": [
           {
             "field": "quantity",
@@ -15600,8 +15600,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
-        "hash": "15118eea940afd5418e420b0403e586724eee0b067729b88efdbea95bbe49627",
+        "prevHash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "hash": "7b20696a46b72734b6d7f987b627b025660598033014f9ce6931e8b39b700416",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
@@ -20595,9 +20595,9 @@ export const scene5: Snapshot = {
       {
         "seq": 15,
         "at": "2026-11-14T10:39:00+02:00",
-        "actor": "kitchen:chef",
+        "actor": "owner",
         "kind": "approval",
-        "sentence": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+        "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "facts": [
           {
             "field": "quantity",
@@ -20623,10 +20623,10 @@ export const scene5: Snapshot = {
         "ruleIds": [],
         "orderId": "O-5",
         "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
-        "hash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
-        "actorText": "Chef",
+        "hash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "actorText": "Owner",
         "timeText": "10:39",
-        "summary": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
+        "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
           "auto limit",
           "diet",
@@ -20638,7 +20638,7 @@ export const scene5: Snapshot = {
         "at": "2026-11-14T10:42:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the chef accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+        "sentence": "Placed order O-5: 27 cartons of vegan pancake 30 g for 905.31 € after the owner accepted. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
         "facts": [
           {
             "field": "quantity",
@@ -20665,8 +20665,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
-        "hash": "15118eea940afd5418e420b0403e586724eee0b067729b88efdbea95bbe49627",
+        "prevHash": "663bbb547a018699418bd1c2a2345d165b86e1f4541625b8cdf02f8c8686e190",
+        "hash": "7b20696a46b72734b6d7f987b627b025660598033014f9ce6931e8b39b700416",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",

@@ -139,7 +139,7 @@ def test_refused_accept_leaves_one_decision_and_no_hidden_order(client):
     assert r.status_code == 409 and "Approval refused" in r.json()["detail"]
     after_first = log.list()[before:]
     assert all(e.order_id for e in after_first)
-    assert not [e for e in after_first if e.actor == "kitchen:chef"]  # the chef's acceptance never came true
+    assert not [e for e in after_first if e.actor == "owner"]  # the owner's acceptance never came true
     store = Store(seed.db_path())
     assert [o["state"] for o in store.orders() if o["lines"][0]["productId"] == "466375"] == ["rejected"]
     mozz = lines(client.get("/api/steady/S-1").json())["466375"]
@@ -169,7 +169,7 @@ def test_order_after_an_accept_says_who_accepted(client):
     client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
     orders = [e.sentence for e in log.list()[before:] if e.kind == "order"]
     assert len(orders) == 1
-    assert "after the chef accepted" in orders[0]
+    assert "after the owner accepted" in orders[0]
     assert "without a" not in orders[0]
     assert "471376" not in orders[0]
 
@@ -216,3 +216,27 @@ def test_order_the_split_orders_the_split_shown(client, monkeypatch):
     assert got["result"] == "accepted" and order["state"] == "placed"
     assert [(ln["productId"], ln["quantity"]) for ln in order["lines"]] == shown
     assert order["splitBaseCents"] == parm["split"]["totalCents"] - parm["split"]["extraCostCents"]
+
+
+@pytest.mark.parametrize("second_answer_waits", [False, True])
+def test_accept_writes_the_owner_approval_before_its_order(client, monkeypatch, second_answer_waits):
+    # O5: the ledger reads cause, then effect. The person who accepts is the owner, as on every approve
+    from validio.orders.service import OrderService
+
+    real = OrderService._decide
+
+    def decide(self, mandate, quoted, *a, **kw):
+        if second_answer_waits:
+            return {"outcome": "ask_human", "ruleIds": [], "sentence": "Valio's second answer needs a person."}
+        return {**real(self, mandate, quoted, *a, **kw), "outcome": "auto_order"} \
+            if quoted[0]["productId"] == "471376" else real(self, mandate, quoted, *a, **kw)
+
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    log = AuditLog(seed.db_path())
+    before = len(log.list())
+    monkeypatch.setattr(OrderService, "_decide", decide)
+    client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
+    new = [e for e in log.list()[before:] if e.kind in ("approval", "order")]
+    assert [e.kind for e in new] == ["approval", "order"], [(e.kind, e.sentence) for e in new]
+    assert new[0].actor == "owner" and new[0].sentence.startswith("Owner accepted 27 cartons")
+    assert log.verify().ok

@@ -334,7 +334,7 @@ export interface LedgerEntry {
   orderId?: string;
   prevHash: string;
   hash: string;
-  /** "Validio", "Owner", "Chef", "Demo" */
+  /** "Validio", "Owner", "Agent", "Demo" */
   actorText?: string;
   /** "10:04" on the demo clock. */
   timeText?: string;
