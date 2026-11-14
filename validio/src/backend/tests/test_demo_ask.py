@@ -1,7 +1,6 @@
 """POST /api/demo/ask: the kitchen's agent inside the server, on any text. The fake model without a key,
 Gemini with one. Locally the kitchen gate is enough; with VALIDIO_PUBLIC_READ=1 the demo token too."""
 
-from conftest import TOKEN
 from test_api import client  # noqa: F401
 
 
@@ -36,10 +35,18 @@ def test_empty_text_is_refused(client):  # noqa: F811
     assert ask(client, "  ").status_code == 422
 
 
-def test_public_read_needs_the_demo_token(client, monkeypatch):  # noqa: F811
+def test_public_read_keeps_ask_to_this_machine(client, monkeypatch):  # noqa: F811
+    from fastapi.testclient import TestClient
+
+    from validio.api.app import app
+
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
-    assert ask(client, "500 litres of lactose-free milk by Monday").status_code == 403
-    r = ask(client, "500 litres of lactose-free milk by Monday", **{"X-Demo-Token": TOKEN})
+    monkeypatch.setenv("VALIDIO_KITCHEN_TOKEN", "kt")
+    with TestClient(app, client=("203.0.113.7", 50000), headers={"X-Kitchen-Token": "kt"}) as remote:
+        r = remote.post("/api/demo/ask", json={"text": "500 litres of lactose-free milk by Monday"},
+                        headers={"X-Demo-Token": "anything"})
+        assert r.status_code == 403  # no token opens it any more: a demo copy's session does
+    r = ask(client, "500 litres of lactose-free milk by Monday")
     assert r.status_code == 200, r.text
 
 

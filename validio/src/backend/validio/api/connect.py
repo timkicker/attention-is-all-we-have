@@ -431,7 +431,7 @@ def web_router() -> APIRouter:
             raise HTTPException(404, "demo controls are off")
         if not demo_agent_active(ctx):
             raise HTTPException(409, "connect the demo agent first")
-        return ui.demo_ask(ctx, request, AskIn(text=EXAMPLE), x_demo_token=getattr(ctx, "demo_token", None) or None)
+        return ui.demo_ask(ctx, request, AskIn(text=EXAMPLE))
 
     return r
 

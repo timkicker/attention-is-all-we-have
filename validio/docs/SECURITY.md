@@ -118,7 +118,7 @@ Not covered: the kitchen's key sits in `data/keys/` on the same machine. Someone
 
 ## Approve abuse
 
-Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes lock that order, and five from one client lock that client (`api/state.py`). Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The limits of a Spend Pass hold across its placed orders, not per order; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. With `VALIDIO_DEMO_TOKEN` set, the demo switches need that token.
+Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes lock that order, and five from one client lock that client (`api/state.py`). Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The limits of a Spend Pass hold across its placed orders, not per order; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. The demo switches answer a demo copy's session (docs/ACCOUNTS-API.md) and callers on this machine, nobody else.
 
 Proof:
 
@@ -128,7 +128,7 @@ Proof:
 - `test_orders.py::test_approve_requotes_and_refuses_price_rise`
 - `test_orders.py::test_approve_keeps_the_line_diet`
 - `test_standing.py::test_accept_refuses_a_line_that_renewed_alone`
-- `test_api.py::test_demo_controls_need_token`
+- `test_api.py::test_demo_controls_answer_this_machine_and_nobody_else`
 - `test_review3.py::test_h1_wrong_codes_count_per_client_across_orders`
 - `test_review3.py::test_h3_approve_refuses_after_cutoff_or_expiry`
 - `test_orders.py::test_approve_counts_what_was_placed_meanwhile`
@@ -136,7 +136,7 @@ Proof:
 
 Not covered. This is the weakest part:
 
-- The code is off by default (`VALIDIO_APPROVE_CODE` empty). `make demo` runs without it. Without a code, approve is open only to callers on the same machine; `VALIDIO_PUBLIC=1` refuses to start without the code, `VALIDIO_KITCHEN_TOKEN` and `VALIDIO_DEMO_TOKEN`.
+- The code is off by default (`VALIDIO_APPROVE_CODE` empty). `make demo` runs without it. Without a code, approve is open only to callers on the same machine; `VALIDIO_PUBLIC=1` refuses to start without the code and `VALIDIO_KITCHEN_TOKEN`.
 - There is one shared code and no named approver. Every approval is logged as "owner".
 - The try counter lives in memory, so a restart resets it.
 - The agent's read routes (`GET /agent/v1/requests/{id}`, `GET /agent/v1/orders/{id}`, MCP `get_request` and `get_order`) need no Spend Pass: whoever knows an id can read that request or order.

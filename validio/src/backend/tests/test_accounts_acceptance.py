@@ -54,8 +54,7 @@ def world(tmp_path_factory, catalog):
     env_fix = {"VALIDIO_DEMO": "1", "VALIO_MODE": "replay", "GEMINI_API_KEY": "", "VALIDIO_APPROVE_CODE": CODE,
                "VALIDIO_DB": str(tmp / "local" / "validio.db"), "VALIDIO_KEYS": str(tmp / "local" / "keys"),
                "VALIDIO_ACCOUNTS": str(tmp / "accounts"), "VALIDIO_TEMPLATE": str(template)}
-    blank = ("VALIDIO_PUBLIC", "VALIDIO_PUBLIC_READ", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS",
-             "VALIDIO_DEMO_TOKEN")
+    blank = ("VALIDIO_PUBLIC", "VALIDIO_PUBLIC_READ", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS")
     mp = pytest.MonkeyPatch()
     for k, v in env_fix.items():
         mp.setenv(k, v)
