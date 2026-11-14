@@ -1,6 +1,6 @@
 import pytest
 
-from api import sqllog
+from api import cache, sqllog
 from api.tests.conftest import schema_errors
 
 MAINILA = "fi:1256:8519fbaf22d33984"
@@ -133,6 +133,7 @@ def test_judged_pair_below_the_nearest_five_is_matched(client):
         " UTC_TIMESTAMP(6))",
         (a["h"], far["h"]),
     )
+    cache.clear()  # the verdict was written past the API; ingest and POST /api/check clear the cache themselves
     try:
         en = row(client.get("/api/compare", params=params).json(), row_id)["cells"]["en"]
         assert en["h"] == far["h"] and en["status"] == "matched" and en["verdict"]["label"] == "partial"
