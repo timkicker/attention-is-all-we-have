@@ -62,7 +62,8 @@ export function mayWords(r: Rules): string[] {
 
 const DIET_OPTIONS: RulesDiet["options"] = {
   mustBe: ["lactose-free", "gluten-free", "vegan"],
-  never: ["nuts", "peanuts", "gluten", "milk", "egg", "fish", "shellfish", "soy", "sesame"],
+  // As the server lists them (settings.py, NEVER_ALLERGENS): the EU's fourteen allergens.
+  never: ["milk", "eggs", "gluten", "nuts", "peanuts", "soy", "fish", "crustaceans", "molluscs", "sesame", "celery", "mustard", "lupin", "sulphites"],
 };
 
 // The demo kitchen: rules saved (version 4) and Claude Code connected, as on the
@@ -223,7 +224,9 @@ const mock = {
     await later(200);
     const m = load();
     if (m.wrong >= 5) throw new ApiError(429, "too many wrong codes, wait 15 minutes");
-    if (!CODE.test(body.code)) {
+    // A demo kitchen takes its demo code only, as the server does; a kitchen made here any 6 digits.
+    const demoCode = session.account?.demoCode;
+    if (!CODE.test(body.code) || (demoCode && body.code !== demoCode)) {
       m.wrong += 1;
       store(m);
       throw new ApiError(403, "wrong approval code");
@@ -232,6 +235,10 @@ const mock = {
     if ([body.aloneUpToCents, body.approvalUpToCents].some((c) => !(c >= 0) || c > max)) throw new ApiError(422, "an amount is out of range");
     if (body.aloneUpToCents > body.approvalUpToCents) throw new ApiError(422, "orders alone must not be above needs approval");
     if (body.perWeekCents != null && body.perWeekCents < body.approvalUpToCents) throw new ApiError(422, "per week is below needs approval");
+    if (body.diet) {
+      const bad = [...body.diet.mustBe.filter((w) => !DIET_OPTIONS.mustBe.includes(w)), ...body.diet.never.filter((w) => !DIET_OPTIONS.never.includes(w))];
+      if (bad.length) throw new ApiError(422, `unknown diet word ${bad.map((w) => `'${w}'`).join(", ")}`);
+    }
     m.wrong = 0;
     const diet = body.diet ? { ...body.diet, options: m.rules.diet?.options ?? DIET_OPTIONS } : m.rules.diet;
     m.rules = { ...m.rules, ...body, diet, saved: true };

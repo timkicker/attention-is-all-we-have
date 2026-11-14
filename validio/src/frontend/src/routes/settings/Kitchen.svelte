@@ -1,94 +1,79 @@
 <script lang="ts">
-  /// Kitchen: name and delivery address, edited in place. The customer
-  /// number is Valio's and stays as typed at sign-up.
-  import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Section } from "@arlen/ui-kit/components/ui/section";
+  /// Kitchen: the name and the delivery address change in place; the Valio
+  /// customer number stays as typed at sign-up.
   import { ApiError } from "$lib/api/client";
   import { bump } from "$lib/chrome.svelte";
+  import { ListSection } from "$lib/v2";
   import { refreshAccount, settingsApi, type Settings } from "$lib/settings";
-  import VValueRow from "$lib/v/VValueRow.svelte";
   import VField from "$lib/v/VField.svelte";
+  import EditRow from "./EditRow.svelte";
+  import Form from "./Form.svelte";
 
   let { s, onsaved }: { s: Settings; onsaved: (s: Settings) => void } = $props();
 
-  let editing = $state(false);
-  let saving = $state(false);
-  const f = $state({ name: "", address: "" });
-  let bad = $state<{ name?: string; form?: string }>({});
+  type Key = "name" | "address";
+  let open = $state<Key | null>(null);
+  let done = $state<Key | null>(null);
+  let busy = $state(false);
+  let text = $state("");
+  let problem = $state("");
+  let formProblem = $state("");
 
-  $effect(() => {
-    if (f.name.trim() && bad.name) bad = { ...bad, name: undefined };
-  });
-  function edit() {
-    f.name = s.kitchen.name;
-    f.address = s.kitchen.deliveryAddress;
-    bad = {};
-    editing = true;
+  function change(k: Key) {
+    open = k;
+    done = null;
+    text = k === "name" ? s.kitchen.name : s.kitchen.deliveryAddress;
+    problem = formProblem = "";
   }
-  async function save(e: SubmitEvent) {
-    e.preventDefault();
-    if (!f.name.trim()) {
-      bad = { name: "Type a name." };
+  $effect(() => {
+    if (text.trim() && problem) problem = "";
+  });
+  async function save() {
+    if (!open || busy) return;
+    const k = open;
+    if (k === "name" && !text.trim()) {
+      problem = "Type a name.";
+      document.getElementById("f-kitchen-name")?.focus();
       return;
     }
-    saving = true;
+    busy = true;
     try {
-      const next = await settingsApi.kitchen({ name: f.name, deliveryAddress: f.address });
+      const next = await settingsApi.kitchen({
+        name: k === "name" ? text : s.kitchen.name,
+        deliveryAddress: k === "address" ? text : s.kitchen.deliveryAddress,
+      });
       onsaved(next);
       await refreshAccount(next).catch(() => {});
-      editing = false;
       bump();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      bad = err instanceof ApiError && /name/i.test(msg) ? { name: "Type a name." } : { form: msg };
+      open = null;
+      done = k;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (e instanceof ApiError && e.status === 422 && k === "name") problem = "Type a name.";
+      else formProblem = msg;
     } finally {
-      saving = false;
+      busy = false;
     }
   }
 </script>
 
-{#if editing}
-  <form class="edit" onsubmit={save} novalidate data-testid="kitchen-form">
-    <Section class="v-card">
-      <div class="in"><VField id="f-kitchen-name" label="Name" bind:value={f.name} problem={bad.name} autocomplete="organization" /></div>
-      <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "Not set"} />
-      <div class="in"><VField id="f-kitchen-address" label="Delivery address" bind:value={f.address} autocomplete="street-address" /></div>
-    </Section>
-    {#if bad.form}<p class="problem" role="alert">{bad.form}</p>{/if}
-    <div class="acts">
-      <Button type="submit" data-testid="kitchen-save" disabled={saving}>Save</Button>
-      <Button variant="ghost" onclick={() => (editing = false)}>Cancel</Button>
-    </div>
-  </form>
-{:else}
-  <Section class="v-card">
-    <VValueRow label="Name" value={s.kitchen.name} testid="kitchen-name" />
-    <VValueRow label="Valio customer number" value={s.kitchen.customerNumber || "Not set"} testid="kitchen-customer" />
-    <VValueRow label="Delivery address" value={s.kitchen.deliveryAddress || "Not set"} testid="kitchen-address" />
-  </Section>
-  <div class="acts"><Button variant="outline" data-testid="kitchen-edit" onclick={edit}>Edit</Button></div>
-{/if}
-
-<style>
-  .edit {
-    display: flex;
-    flex-direction: column;
-  }
-  .in {
-    padding: 12px 16px;
-  }
-  .in :global(.vf) {
-    max-width: 360px;
-  }
-  .acts {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-  }
-  .problem {
-    margin: 12px 0 0;
-    font-size: var(--fs-meta);
-    line-height: var(--lh-meta);
-    color: var(--v-bad-text);
-  }
-</style>
+<ListSection id="kitchen" title="Kitchen">
+  <EditRow id="kitchen-name" label="Name" value={s.kitchen.name} description={done === "name" ? "Saved" : undefined} open={open === "name"} onchange={() => change("name")}>
+    <Form id="kitchen-name" problem={formProblem} {busy} onsave={save} oncancel={() => (open = null)}>
+      <VField id="f-kitchen-name" label="Kitchen name" bind:value={text} {problem} autocomplete="organization" />
+    </Form>
+  </EditRow>
+  <EditRow id="kitchen-customer" label="Valio customer number" value={s.kitchen.customerNumber || "Not set"} />
+  <EditRow
+    id="kitchen-address"
+    label="Delivery address"
+    value={s.kitchen.deliveryAddress || "Not set"}
+    description={done === "address" ? "Saved" : undefined}
+    open={open === "address"}
+    onchange={() => change("address")}
+  >
+    <Form id="kitchen-address" problem={formProblem} {busy} onsave={save} oncancel={() => (open = null)}>
+      <VField id="f-kitchen-address" label="Delivery address" bind:value={text} autocomplete="street-address" />
+    </Form>
+  </EditRow>
+</ListSection>

@@ -1,15 +1,7 @@
-// The Settings sections, in the order of the list. Log out is the last item
-// of the list and no page of its own.
+// Log out: the session ends on the server, then the login page.
 import { goto } from "$app/navigation";
 import { api } from "$lib/api/client";
 import { session } from "$lib/owner.svelte";
-
-export const SECTIONS = [
-  { id: "kitchen", label: "Kitchen" },
-  { id: "login", label: "Login and approval code" },
-  { id: "theme", label: "Theme" },
-] as const;
-export type SectionId = (typeof SECTIONS)[number]["id"];
 
 export async function logOut() {
   try {
