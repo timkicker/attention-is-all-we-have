@@ -116,7 +116,7 @@ export interface RankedOption {
   reasons?: string[];
   /** Price per litre or kilo when the pack size is known: "1.01 € per l". */
   unitPriceText?: string;
-  /** Valio's earliest delivery date, ISO. */
+  /** The day the order arrives, ISO: the day asked for, or Valio's first day with stock when that is later. */
   deliveryDate?: string;
   /** "Arrives Mon 16 Nov". */
   deliveryText?: string;

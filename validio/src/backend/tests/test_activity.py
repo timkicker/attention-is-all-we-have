@@ -205,3 +205,55 @@ def test_a_price_without_end_date_says_price_once():
     from validio.text.format import fact_text
 
     assert fact_text("price", "18.01 €", "catalog price, no end date") == ("18.01 €", "no end date")
+
+
+
+def order_over_mcp(k, text: str, deliver_by: str) -> tuple[dict, dict]:
+    """request_supply and confirm_order as a real agent calls them, with its own delivery day (the fake model
+    always asks for Monday). Returns both tool results."""
+    import asyncio
+    import json
+
+    from mcp import Client
+
+    from validio.agent.holder import Holder
+    from validio.api import tools
+    from validio.api.mcp_server import server
+    from validio.api.state import current
+
+    holder = Holder.from_seed(lambda: tools.nonce(k), k.db_path, k.keys_dir)
+
+    async def go():
+        async with Client(server) as c:
+            r = await c.call_tool("request_supply", {"spendPass": holder.presentation(), "lines": [{"text": text}],
+                                                     "idempotencyKey": "tue-1", "deliverBy": deliver_by})
+            assert not r.is_error, r.content
+            req = r.structured_content or json.loads(r.content[0].text)
+            choice = [ln["chosen"] for ln in req["lines"]]
+            r = await c.call_tool("confirm_order", {"spendPass": holder.presentation(), "requestId": req["requestId"],
+                                                    "choice": choice, "idempotencyKey": "tue-2"})
+            assert not r.is_error, r.content
+            return req, r.structured_content or json.loads(r.content[0].text)
+
+    token = current.set(k)
+    try:
+        return asyncio.run(go())
+    finally:
+        current.reset(token)
+
+
+def test_a_tuesday_order_is_delivered_on_tuesday(kitchen):
+    """Valio's availableDate is its first day with the stock (Mon 16 Nov for every recorded day), not the
+    delivery: an order for Tuesday arrives Tuesday, in the tool result, the order and the Activity detail."""
+    c, k, *_ = kitchen
+    lower_alone(c, 120000)
+    out, _ = order_over_mcp(k, "1000 litres of lactose-free milk", "2026-11-17")
+    line = out["lines"][0]
+    chosen = next(o for o in line["options"] if o["productId"] == line["chosen"]["productId"])
+    assert (chosen["deliveryDate"], chosen["deliveryText"]) == ("2026-11-17", "Arrives Tue 17 Nov")
+    d = c.get(f"/api/activity/{out['requestId']}").json()
+    assert d["item"]["status"] == "ordered", d["item"]
+    assert d["result"]["delivery"] == "2026-11-17"
+    order = c.get(f"/api/orders/{d['item']['orderId']}").json()
+    assert order["deliverBy"] == "2026-11-17"
+    assert [(ln["deliveryDate"], ln["deliveryText"]) for ln in order["lines"]] == [("2026-11-17", "delivery Tue 17 Nov")]

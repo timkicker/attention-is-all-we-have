@@ -2425,7 +2425,7 @@
                 "type": "null"
               }
             ],
-            "description": "Valio's earliest delivery date, ISO",
+            "description": "the day the order arrives, ISO: the day asked for, or Valio's first day with stock when that is later",
             "title": "Deliverydate"
           },
           "deliveryText": {

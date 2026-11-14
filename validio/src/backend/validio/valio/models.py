@@ -58,6 +58,11 @@ class Availability:
     def deliverable(self) -> bool:
         return bool(self.lines) and not self.sales_block and not any(ln.sales_block for ln in self.lines)
 
+    def delivery_on(self, requested: date) -> date | None:
+        """The day an order for `requested` arrives. availableDate is Valio's first day with the stock, which can
+        be earlier than the day asked for: the order still comes on that day, or on the first day when later."""
+        return max(requested, self.lines[0].available) if self.lines else None
+
     @property
     def amount(self) -> float | None:
         return self.lines[0].amount if self.lines else None

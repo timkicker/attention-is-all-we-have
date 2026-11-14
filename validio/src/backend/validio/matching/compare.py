@@ -3,7 +3,7 @@ cut-off, how often Valio delivered it in full and how sure the diet is. Plus why
 each other one did not, from the same Best Pick keys rank.py sorts by. Only reads what Valio already
 answered and the static catalog: no extra call."""
 
-from datetime import datetime
+from datetime import date, datetime
 
 from ..catalog.model import Product
 from ..text.format import money
@@ -36,8 +36,9 @@ def unit_price_text(cents: float | None, unit: str) -> str | None:
     return f"{money(round(cents))} per {'l' if unit == 'L' else 'kg'}"
 
 
-def delivery_text(a: Availability | None) -> str | None:
-    return f"Arrives {_day(a.lines[0].available)}" if a is not None and a.lines else None
+def delivery_text(a: Availability | None, requested: date) -> str | None:
+    when = a.delivery_on(requested) if a is not None else None
+    return f"Arrives {_day(when)}" if when else None
 
 
 def cutoff_text(a: Availability | None, now: datetime) -> str | None:
