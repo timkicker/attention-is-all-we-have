@@ -10,6 +10,10 @@ services:
   ollama:
     image: ollama/ollama:0.12.6
     restart: unless-stopped
+    # Two of the box's four vCPUs: embedding a new article is a little slower, but the site stays quick meanwhile.
+    cpus: "2"
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"
     volumes:
       - ollama:/root/.ollama
 volumes:

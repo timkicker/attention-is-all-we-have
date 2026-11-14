@@ -24,6 +24,12 @@ logging.basicConfig(
 log = logging.getLogger("parallax.api")
 
 
+def data_changed() -> None:
+    """An ingest stored another edition or finished: drop every cached answer computed from the old data."""
+    cache.clear()
+    dropped.clear_cache()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     from pipeline import job
@@ -33,7 +39,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logging.getLogger("parallax").warning("ingest tables not ensured: %s", e)
     if os.environ.get("INGEST_WORKER", "1") != "0":
-        ingest.WORKER = job.Worker(after_job=cache.clear)
+        ingest.WORKER = job.Worker(after_job=data_changed)
         ingest.WORKER.start()
     yield
     if ingest.WORKER:

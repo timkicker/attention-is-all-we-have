@@ -7,7 +7,7 @@ import type { DroppedRowRaw } from '../api/types'
 import { excerpt, note, noteText, quote, removedNote, stillIn } from '../copy'
 import { LANGS, type Lang, type MarkedText, type RemovedRow, type RemovedVM, type Result } from '../model'
 import { paths } from '../router.svelte'
-import type { TopicCtx, WithoutCounts } from './shared'
+import { onForget, type TopicCtx, type WithoutCounts } from './shared'
 
 type Client = typeof Api
 
@@ -43,10 +43,11 @@ function allRows(api: Client, topicId: string): Promise<Result<DroppedRowRaw[]>>
   return p
 }
 
-/** Test hook. */
+/** Drops the loaded lists (tests; and through forgetTopics() when an ingest loaded more). */
 export function forgetRemoved(): void {
   cache.clear()
 }
+onForget(forgetRemoved)
 
 const isLang = (x: string): x is Lang => (LANGS as readonly string[]).includes(x)
 
