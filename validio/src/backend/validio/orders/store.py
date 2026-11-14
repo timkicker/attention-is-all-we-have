@@ -2,6 +2,7 @@
 demo seed writes). Each record is one JSON document, ids count up from a reset (R-1, O-1, ...)."""
 
 import contextlib
+import itertools
 import json
 import sqlite3
 import threading
@@ -25,9 +26,13 @@ class NotFound(LookupError):
     """No request or order with this id (HTTP 404). A bare KeyError is a bug, never a 404."""
 
 
+_SERIALS = itertools.count(1)
+
+
 class Store:
     def __init__(self, path: Path | str):
         self.path = Path(path)
+        self.serial = next(_SERIALS)  # unique in the process for the store's life, never reused (unlike id())
         self.path.parent.mkdir(parents=True, exist_ok=True)
         # timeout: a second connection to the same file (an account's runtime dropped from the cache while a
         # request still uses it) waits for the other's write instead of failing at once
