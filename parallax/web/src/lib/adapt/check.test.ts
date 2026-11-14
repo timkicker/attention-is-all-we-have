@@ -68,13 +68,13 @@ describe('row lines', () => {
   it('removed by one edition', () => {
     const labels = seven((l) => (['fi', 'de', 'uk'].includes(l) ? 'says' : l === 'en' ? 'stopped_saying' : 'not_found'))
     const row = toCheckRow('Q134949', claim(0, labels, { en: '2009-12-31T20:28:48Z' }))
-    expect([row.verdict, row.head]).toEqual(['disputed', 'Disputed · in 3 of 7, English removed it in 2009'])
+    expect([row.verdict, row.head]).toEqual(['disputed', 'Disputed · in 3 of 7 · English removed it in 2009'])
     expect(row.href).toBe('/t/Q134949/s/fi/7/h-fi')
   })
   it('removed by more than two editions, in at most half', () => {
     const labels = seven((l) => (['fi', 'de'].includes(l) ? 'says' : ['en', 'sv', 'et'].includes(l) ? 'stopped_saying' : 'not_found'))
     const died = { en: '2009-12-31T20:28:48Z', sv: '2012-01-01T00:00:00Z', et: '2015-01-01T00:00:00Z' }
-    expect(toCheckRow('Q134949', claim(0, labels, died)).head).toBe('Disputed · in 2 of 7, removed in 3 editions')
+    expect(toCheckRow('Q134949', claim(0, labels, died)).head).toBe('Disputed · in 2 of 7 · 3 editions removed it')
   })
   it('removed by one but still in most editions is backed', () => {
     const labels = seven((l) => (l === 'en' ? 'stopped_saying' : l === 'et' ? 'not_found' : 'says'))
@@ -101,7 +101,7 @@ describe('result', () => {
     ] }
     const r = toResult(ctx, d)
     expect(r.summary).toEqual({ total: 3, none: 1, disputed: 1, backed: 1 })
-    expect(r.rows.map((x) => x.verdict)).toEqual(['none', 'disputed', 'backed'])
+    expect(r.rows.map((x) => x.verdict)).toEqual(['disputed', 'none', 'backed'])
     expect(r.label).toBe('Gemini on Mainila')
     expect(r.answer).toBe('Whole answer.')
     expect(copy.checkSummary(r.summary, r.mostBacked)).toBe('Of 3 statements, 1 is in no edition, 1 is disputed and 1 is backed by most editions')

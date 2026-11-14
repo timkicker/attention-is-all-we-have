@@ -3,11 +3,16 @@
 // Recorded-answer labels ("... on Mainila") are data from the API, never written here.
 
 import { fmtDate } from '../format'
-import { DISPUTED, fmtNum } from './shared'
+import { DISPUTED, editions, fmtNum } from './shared'
 
-/** "Disputed · in 2 of 7, removed in 4 editions" (more than two editions removed it). */
+/** "Disputed · in 3 of 7 · English removed it in 2009" (one or two editions removed it). */
+export function disputedRemovedBy(n: number, of: number, langs: readonly string[], year: string): string {
+  return `${DISPUTED} · in ${n} of ${of} · ${editions(langs)} removed it in ${year}`
+}
+
+/** "Disputed · in 3 of 7 · 4 editions removed it" (more than two editions removed it). */
 export function disputedRemovedIn(n: number, of: number, removedIn: number): string {
-  return `${DISPUTED} · in ${n} of ${of}, removed in ${fmtNum(removedIn)} editions`
+  return `${DISPUTED} · in ${n} of ${of} · ${fmtNum(removedIn)} editions removed it`
 }
 
 /** Short topic phrases for the recorded questions (a label stays under 30 characters): "Gemini on Mainila". */
