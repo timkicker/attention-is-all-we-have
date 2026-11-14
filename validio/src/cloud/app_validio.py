@@ -5,13 +5,15 @@ the Modal Volume `validio-data` and a volume commit after every write. The catal
 Valio answers sit in the same volume, never in the image or in git. The app's own gate does the rest:
 VALIDIO_PUBLIC=1 makes it refuse to start without the 6 digit approve code, the kitchen token and the demo
 token, all from the Modal secret `validio-web` (VALIDIO_PUBLIC, VALIDIO_DEMO, VALIDIO_APPROVE_CODE,
-VALIDIO_KITCHEN_TOKEN, VALIDIO_DEMO_TOKEN, VALIDIO_MCP_HOSTS), never in git.
+VALIDIO_KITCHEN_TOKEN, VALIDIO_DEMO_TOKEN, VALIDIO_MCP_HOSTS, VALIDIO_PUBLIC_READ), never in git.
+VALIDIO_PUBLIC_READ=1 lets a visitor read without the kitchen token; every write stays behind the gates.
 
 Run from validio/:
   make modal-data      upload data/catalog.db and data/cache/valio to the volume (once, or after make record)
   make modal-secret    create the secret from MODAL_SECRETS (a 600 file, written with fresh values if missing)
   make modal-deploy    build the web app, deploy, then reset the demo state in the volume
   make modal-seed      reset the demo state in the volume again
+  make modal-fill      play the five demo scenes into the volume, so a visitor finds the demo, not an empty store
 Stop:  modal app stop validio-web
 """
 
@@ -54,6 +56,7 @@ if LOCAL:  # the files ride along at deploy time; in the container they are alre
         image.add_local_dir(ROOT / "src" / "backend" / "validio", f"{REMOTE}/src/backend/validio",
                             ignore=["**/__pycache__", "**/*.pyc"])
         .add_local_dir(ROOT / "src" / "frontend" / "build", f"{REMOTE}/src/frontend/build")
+        .add_local_file(ROOT / "scripts" / "demo_check.py", f"{REMOTE}/scripts/demo_check.py")
     )
 
 data = modal.Volume.from_name("validio-data", create_if_missing=True)
@@ -88,3 +91,45 @@ def seed() -> str:
     path = demo_seed.reset()
     data.commit()
     return f"seeded {path}"
+
+
+@app.function(image=image, volumes={DATA: data}, timeout=600)
+def fill() -> str:
+    """demo_check's five scenes, one round from a reset, against the store in the volume: the app runs in
+    this container on 127.0.0.1 (no public gate here, no secret), the scenes go through its API and MCP,
+    then the volume is committed. Run it while no web container is up, so none holds an older copy."""
+    import os
+    import secrets
+    import subprocess
+    import sys
+
+    from validio.demo import seed as demo_seed
+
+    demo_seed.reset()
+    port = "8419"
+    # a throwaway code and demo token that live only in this container, so the scenes check the gates too
+    env = {**os.environ, "VALIDIO_PUBLIC": "", "VALIDIO_KITCHEN_TOKEN": "",
+           "VALIDIO_APPROVE_CODE": f"{secrets.randbelow(10**6):06d}", "VALIDIO_DEMO_TOKEN": secrets.token_urlsafe(16)}
+    server = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
+                               "--port", port], cwd=f"{REMOTE}/src/backend", env=env)
+    try:
+        import time
+
+        import httpx
+
+        for _ in range(150):
+            try:
+                if httpx.get(f"http://127.0.0.1:{port}/api/health", timeout=1).status_code == 200:
+                    break
+            except httpx.HTTPError:
+                time.sleep(0.2)
+        run = subprocess.run([sys.executable, f"{REMOTE}/scripts/demo_check.py", "--base", f"http://127.0.0.1:{port}",
+                              "--rounds", "1"], env=env, capture_output=True, text=True, timeout=500, check=False)
+    finally:
+        server.terminate()
+        server.wait(10)
+    out = run.stdout + run.stderr
+    if run.returncode != 0 or "ALL SCENES OK" not in out:
+        raise RuntimeError(f"demo scenes failed, volume not committed:\n{out[-3000:]}")
+    data.commit()
+    return out

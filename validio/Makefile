@@ -1,9 +1,10 @@
 # Validio. Every command runs from validio/.
 BACKEND := src/backend
 UV := cd $(BACKEND) && uv run
-RAW ?= $(HOME)/.claude/jobs/22b51af2/tmp/ch/vportal
+# the raw Valio export (fetch_data.py --from-dir); set RAW=... to point elsewhere
+RAW ?= data/raw
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check demo-web demo-smoke e2e-live a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed modal-fill
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -12,7 +13,7 @@ setup:
 	$(MAKE) data index
 
 data:
-	$(UV) python ../../scripts/fetch_data.py --from-dir $(RAW)
+	$(UV) python ../../scripts/fetch_data.py --from-dir $(abspath $(RAW))
 
 index:
 	$(UV) python ../../scripts/index_catalog.py
@@ -115,7 +116,8 @@ video:
 	cd src/frontend && npx playwright install firefox
 	$(UV) python -W ignore ../../scripts/record_video.py
 
-# Validio on Modal (step 19). The volume holds the Valio data, never the image or git.
+# Validio on Modal (step 19). The volume holds the Valio data, never the image or git. Seed and fill call
+# the deployed functions; fill runs before the first visit, so no web container holds an older store.
 MODAL := cd $(BACKEND) && uv run --extra cloud modal
 
 modal-data:
@@ -123,14 +125,18 @@ modal-data:
 	$(MODAL) volume put --force validio-data ../../data/catalog.db /catalog.db
 	$(MODAL) volume put --force validio-data ../../data/cache/valio /cache/valio
 
-MODAL_SECRETS ?= $(HOME)/.claude/jobs/22b51af2/tmp/modal-secrets.env
+# the env file behind the secret: gitignored, mode 600
+MODAL_SECRETS ?= .modal-secrets.env
 modal-secret:
-	@MODAL_SECRETS=$(MODAL_SECRETS) bash scripts/modal_secret.sh
+	@MODAL_SECRETS=$(abspath $(MODAL_SECRETS)) bash scripts/modal_secret.sh
 
 modal-deploy:
 	cd src/frontend && sh scripts/fetch-ui-kit.sh && npm ci --silent && VITE_API=live npm run build
 	$(MODAL) deploy ../cloud/app_validio.py
-	$(MAKE) modal-seed
+	$(MAKE) modal-fill
 
 modal-seed:
-	$(MODAL) run ../cloud/app_validio.py::seed
+	cd $(BACKEND) && uv run --extra cloud python -c "import modal; print(modal.Function.from_name('validio-web', 'seed').remote())"
+
+modal-fill:
+	cd $(BACKEND) && uv run --extra cloud python -c "import modal; print(modal.Function.from_name('validio-web', 'fill').remote())"
