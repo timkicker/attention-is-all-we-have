@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { analyse, changedWords, changesOf, cleanComment, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { analyse, changedWords, changesOf, cleanComment, headingOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -72,29 +72,40 @@ describe('analyse', () => {
 
 describe('changes', () => {
   it('reports the changed words and ignores punctuation-only edits', () => {
-    expect(changedWords('the Soviets staged the shelling', 'an incident was reported near')).toEqual({
+    expect(changedWords('the Soviets staged the shelling', 'an incident was reported near')).toMatchObject({
       from: 'the Soviets staged the shelling',
       to: 'an incident was reported near',
     })
-    expect(changedWords('close to the border', 'near the border')).toEqual({ from: 'close to', to: 'near' })
+    expect(changedWords('close to the border', 'near the border')).toEqual({ from: 'close to', to: 'near', size: 2 })
     expect(changedWords('«Майнільський', 'Майнільський')).toBeNull()
   })
   it('cleans section markers from edit comments', () => {
     expect(cleanComment('/* Shelling */ rewrote it')).toBe('rewrote it')
     expect(cleanComment('/* Shelling */')).toBeNull()
   })
-  it('walks back from a paired sentence through the versions it replaced', () => {
-    const life = (o: Partial<Life>): Life => ({
-      lang: 'en', page_id: 1, h: 'x', text: '', born: null, died: null, born_rev: 0, died_rev: null,
-      died_comment: null, time_precision: 'exact', verdict: null, ...o,
-    }) as Life
-    const lives = [
-      life({ lang: 'fi', h: 'a', text: 'Finnish', born_rev: 1 }),
-      life({ h: 'b', text: 'a border incident was reported near the village', born_rev: 10, died_rev: 20, died_comment: 'tidy' }),
-      life({ h: 'c', text: 'an incident was reported near the Soviet village', born: '2017-12-29T00:00:00Z', born_rev: 20, verdict: { label: 'partial' } }),
-    ]
-    const out = changesOf(lives, 'fi')
-    expect(out).toHaveLength(1)
-    expect(out[0]).toMatchObject({ date: '2017-12-29', lang: 'en', from: 'a border incident was reported near the', to: 'an incident was reported near the Soviet', comment: 'tidy' })
+  it('keeps close edits of three words or more, number changes first, at most five', () => {
+    const e = (o: Partial<EditRaw>): EditRaw => ({
+      lang: 'en', rev: 1, date: '2009-08-21T18:00:56Z', time_precision: 'exact', from_text: '', to_text: '',
+      from_gloss: null, to_gloss: null, comment: null, near: 0.3, paired: false, ...o,
+    })
+    const out = changesOf([
+      e({ from_text: 'On 26 November, the Soviets staged the shelling of Mainila.', to_text: 'On 26 November, a border incident near the village of Mainila occurred.', comment: '/* Background */ rewrote it', rev: 309285088 }),
+      e({ from_text: '«Майнільський', to_text: 'Майнільський', lang: 'uk' }),
+      e({ from_text: 'close to the border', to_text: 'near the border' }),
+      e({ from_text: 'The League expelled them', to_text: 'The League of Nations expelled the Soviet Union', near: 0.45 }),
+      e({ from_text: 'about 25 000 men were killed', to_text: 'about 26 662 men died', date: '2015-01-01T00:00:00Z', time_precision: 'snapshot' }),
+    ])
+    expect(out.map((c) => c.from)).toEqual(['25 000 men were killed', 'the Soviets staged the shelling of Mainila.'])
+    expect(out[0].approx).toBe(true)
+    expect(out[1]).toMatchObject({ date: '2009-08-21', to: 'a border incident near the village of Mainila occurred.', comment: 'rewrote it', approx: false })
+  })
+  it('makes headings that end at a clause, never with an ellipsis', () => {
+    expect(headingOf('On 26 November 1939, the Soviet Union staged the Shelling of Mainila, with which it justified the war.')).toBe(
+      'On 26 November 1939, the Soviet Union staged the Shelling of Mainila',
+    )
+    expect(headingOf('The struggle ended in heavy losses for the Red Army.')).toBe('The struggle ended in heavy losses for the Red Army')
+    const long = 'word '.repeat(40).trim()
+    expect(headingOf(long).length).toBeLessThan(100)
+    expect(headingOf(long)).not.toMatch(/…/)
   })
 })
