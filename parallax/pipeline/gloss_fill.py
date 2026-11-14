@@ -181,6 +181,8 @@ def dump(topic: str, path: str) -> None:
     cur.execute(
         "SELECT g.lang, g.h, g.text_en, g.model FROM gloss g WHERE EXISTS "
         "(SELECT 1 FROM claim FOR SYSTEM_TIME ALL c WHERE c.topic_id=%s AND c.lang=g.lang AND c.h=g.h) "
+        # the removed words of partial cuts are glossed under their own hash, which no claim has
+        "OR NOT EXISTS (SELECT 1 FROM claim FOR SYSTEM_TIME ALL c WHERE c.lang=g.lang AND c.h=g.h) "
         "ORDER BY g.lang, g.h",
         (topic,),
     )
