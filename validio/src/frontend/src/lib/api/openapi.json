@@ -1737,6 +1737,33 @@
         "title": "PauseIn",
         "type": "object"
       },
+      "PhoneLinkIn": {
+        "properties": {
+          "path": {
+            "default": "/",
+            "description": "where the phone lands",
+            "maxLength": 200,
+            "pattern": "^(/[A-Za-z0-9_-]+)*/?$",
+            "title": "Path",
+            "type": "string"
+          }
+        },
+        "title": "PhoneLinkIn",
+        "type": "object"
+      },
+      "PhoneLinkOut": {
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "PhoneLinkOut",
+        "type": "object"
+      },
       "ProductSummary": {
         "properties": {
           "allergensContains": {
@@ -4194,6 +4221,48 @@
           }
         },
         "summary": "Logout",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/account/phone-link": {
+      "post": {
+        "description": "A one-time link, valid 10 minutes, that logs a phone into this account and opens `path`.",
+        "operationId": "phone_link_api_account_phone_link_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PhoneLinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhoneLinkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Phone Link",
         "tags": [
           "account"
         ]

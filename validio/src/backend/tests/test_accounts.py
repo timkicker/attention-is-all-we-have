@@ -226,3 +226,22 @@ def test_settings_work_on_the_account(app_env, ctx):
         assert a["name"] == "Kitchen A2" and a["deliveryAddress"] == "Main street 1"
         assert a["setup"]["kitchen"] is True and a["setup"]["rules"] is False
         assert two.get("/api/settings").json()["kitchen"]["name"] == "Hotel Espoo kitchen"
+
+
+def test_phone_link_opens_the_same_account_once(app_env):
+    with client(app_env) as laptop:
+        a = laptop.post("/api/account/demo").json()
+        url = laptop.post("/api/account/phone-link", json={"path": "/approve/R-2"}).json()["url"]
+        assert "/api/account/open/" in url
+    path = url[url.index("/api/"):]
+    with client(app_env) as phone:
+        r = phone.get(path, follow_redirects=False)
+        assert r.status_code == 303 and r.headers["location"] == "/approve/R-2"
+        assert phone.get("/api/account").json()["id"] == a["id"]
+    with client(app_env) as other:
+        assert other.get(path, follow_redirects=False).status_code == 404  # used once
+        assert other.post("/api/account/phone-link", json={"path": "/"}).status_code == 401
+    with client(app_env) as c:
+        c.post("/api/account/demo")
+        for bad in ("https://evil.example", "//evil", "/a//b"):
+            assert c.post("/api/account/phone-link", json={"path": bad}).status_code == 422
