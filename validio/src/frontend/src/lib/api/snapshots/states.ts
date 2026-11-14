@@ -8672,7 +8672,7 @@ export const answers: Answers = {
     "askedFor": {
      "displayName": "Lactose-free mozzarella 125 g",
      "productId": "466375",
-     "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+     "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
     },
     "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {
@@ -10111,7 +10111,7 @@ export const answers: Answers = {
     "askedFor": {
      "displayName": "Lactose-free mozzarella 125 g",
      "productId": "466375",
-     "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+     "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
     },
     "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {
@@ -11550,7 +11550,7 @@ export const answers: Answers = {
     "askedFor": {
      "displayName": "Lactose-free mozzarella 125 g",
      "productId": "466375",
-     "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+     "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
     },
     "createdAt": "2026-11-14T10:14:00+02:00",
     "decision": {

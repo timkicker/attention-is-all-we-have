@@ -115,7 +115,7 @@ def inbox(ctx: CtxDep):
         why = None
         if v.status == "waiting" and v.decision:
             asked = asked_apart(ctx, v).asked_for
-            why = ("Out of stock (simulated). The swap needs you." if asked and "(simulated" in asked.state_text
+            why = ("Out of stock (simulated). The swap needs you." if asked and asked.state_text.startswith("Simulated stock-out")
                    else display.asks_text(v.decision.sentence))
         out.append(InboxItem(id=v.id, created_at=v.created_at, text=v.text, status=v.status, sentence=sentence,
                              total_cents=v.total_cents, title=v.title, title_text=v.title_text, summary=why))
@@ -147,7 +147,7 @@ def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
         state = hit.group_text or "Turned down"
         if pid == STOCKOUT_ID and ctx.stockout():
             real = ctx.real_stock()
-            state = "Out of stock at Valio (simulated" + (f", Valio really has {qty_text(*real)})" if real else ")")
+            state = "Simulated stock-out for this demo." + (f" Valio's live count is {qty_text(*real)}." if real else "")
         v.asked_for = AskedFor(product_id=pid, display_name=hit.short_name or hit.name, state_text=state)
         break
     return v

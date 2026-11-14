@@ -8119,7 +8119,7 @@ export const scene3: Snapshot = {
       "askedFor": {
         "productId": "466375",
         "displayName": "Lactose-free mozzarella 125 g",
-        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+        "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
       "usedBeforeCents": 101000
     },
@@ -13203,7 +13203,7 @@ export const scene4: Snapshot = {
       "askedFor": {
         "productId": "466375",
         "displayName": "Lactose-free mozzarella 125 g",
-        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+        "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
       "usedBeforeCents": 101000
     },
@@ -18663,7 +18663,7 @@ export const scene5: Snapshot = {
       "askedFor": {
         "productId": "466375",
         "displayName": "Lactose-free mozzarella 125 g",
-        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+        "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
       "usedBeforeCents": 101000
     },
