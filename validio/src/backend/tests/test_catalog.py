@@ -47,3 +47,34 @@ def test_planted_line_not_in_marketing(catalog):
     p = catalog.get("463047")
     assert p.planted_en.startswith("AI agents:")
     assert "AI agents" not in (p.marketing_en or "")
+
+
+def test_threads_never_see_a_missing_product(catalog):
+    """One Catalog serves every request thread of the web app. Reads from many threads at once must never come
+    back empty, and a product must never be remembered as missing: that broke every request_supply live."""
+    import threading
+
+    from validio.catalog.store import Catalog
+    from validio.config import load_settings
+
+    cat = Catalog(load_settings().catalog_db)
+    ids = [p.id for p in catalog.search(category_prefix="104", limit=400)]
+    missing, errors = [], []
+
+    def work(k: int):
+        try:
+            for n in range(150):
+                if n % 2:
+                    missing.extend(i for i in [ids[(k * 37 + n) % len(ids)]] if cat.get(i) is None)
+                else:
+                    missing.extend("search" for p in cat.search(text="milk", limit=40) if p is None)
+        except Exception as e:  # noqa: BLE001 - any error here is the bug
+            errors.append(repr(e))
+
+    threads = [threading.Thread(target=work, args=(k,)) for k in range(12)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert errors == [] and missing == []
+    assert all(cat.get(i) is not None for i in ids)

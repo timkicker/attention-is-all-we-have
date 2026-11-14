@@ -2,6 +2,7 @@
 
 import re
 import sqlite3
+import threading
 from pathlib import Path
 
 from .model import Product
@@ -11,9 +12,21 @@ class Catalog:
     def __init__(self, path: Path):
         if not Path(path).is_file():
             raise FileNotFoundError(f"{path} missing, run make data index")
-        self.con = sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=False)
-        self.con.row_factory = sqlite3.Row
+        self.path = Path(path)
+        # one read-only connection per thread: the web app shares this Catalog across its request threads, and
+        # one sqlite3 connection used by two threads at once returns empty or mixed rows, so a product that
+        # exists came back missing and stayed missing in the cache
+        self._local = threading.local()
         self._cache: dict[str, Product | None] = {}
+
+    @property
+    def con(self) -> sqlite3.Connection:
+        con = getattr(self._local, "con", None)
+        if con is None:
+            con = sqlite3.connect(f"file:{self.path}?mode=ro", uri=True)
+            con.row_factory = sqlite3.Row
+            self._local.con = con
+        return con
 
     def _all(self, sql: str, *args) -> list[sqlite3.Row]:
         return self.con.execute(sql, args).fetchall()
