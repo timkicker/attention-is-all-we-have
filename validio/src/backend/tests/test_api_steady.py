@@ -236,3 +236,10 @@ def test_accept_writes_the_owner_approval_before_its_order(client, monkeypatch, 
     assert [e.kind for e in new] == ["approval", "order"], [(e.kind, e.sentence) for e in new]
     assert new[0].actor == "owner" and new[0].sentence.startswith("Owner accepted 27 cartons")
     assert log.verify().ok
+
+
+def test_steady_ledger_entries_name_the_steady_order(client):
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
+    entries = client.get("/api/ledger").json()["entries"]
+    assert entries and {e.get("requestId") for e in entries} == {"S-1"}

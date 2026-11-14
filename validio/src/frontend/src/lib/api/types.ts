@@ -92,6 +92,12 @@ export interface RankedOption {
   /** True when the option replaces the product the request named. */
   isSubstitute?: boolean;
   supplierText?: SupplierText;
+  /** At most about eight words: "90.00 € more.", "Cheapest safe option, always delivered in full." */
+  shortText?: string;
+  /** Turned-down options only (rejected, blocked, not_deliverable): "Order cut-off passed", "Not lactose free". */
+  groupText?: string;
+  /** Turned-down options only: the heading's place, lowest first. The same heading has the same number. */
+  groupOrder?: number;
   /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
   displayName?: string;
   /** The same as displayName. */
@@ -348,6 +354,8 @@ export interface LedgerEntry {
   summary?: string;
   /** `disclosed` as a person reads it. */
   disclosedText?: string[];
+  /** The request or Steady Order the entry belongs to: "R-1", "R-2", "S-1". A simulation takes the request it was made for. */
+  requestId?: string;
 }
 
 export interface ChainStatus {
