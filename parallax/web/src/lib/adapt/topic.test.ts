@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { agrees, comparable, analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -133,5 +133,13 @@ describe('changes', () => {
     })
     const out = rank([r('box', 4, true, 6), r('list', 3, false, 6), r('plain', 0, false, 6), r('losses', 1, false, 3), r('mainila', 1, false, 5)])
     expect(out.map((x) => x.id)).toEqual(['mainila', 'losses', 'box', 'list', 'plain'])
+  })
+  it('treats rounded numbers as agreeing and different-scale numbers as not comparable', () => {
+    expect(agrees({ this: '48,745', other: 'about 48,000' })).toBe(true)
+    expect(agrees({ this: '264,908', other: '265,000' })).toBe(true)
+    expect(agrees({ this: '25,904', other: '22,830' })).toBe(false)
+    expect(comparable({ this: '48,745', other: 'up to 422' })).toBe(false)
+    expect(comparable({ this: '200,000', other: '722' })).toBe(false)
+    expect(comparable({ this: '25,904', other: '22,830' })).toBe(true)
   })
 })
