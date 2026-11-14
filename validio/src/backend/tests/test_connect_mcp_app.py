@@ -90,6 +90,32 @@ def test_tools_wait_for_allow(kitchens):
     assert demo.get("/api/inbox").json() == []
 
 
+def test_connection_status_gives_the_code_while_consent_waits(kitchens):
+    """"Give me the code": a fresh connection asks the tool, gets the code the Agent page shows, and the same
+    tool says active or paused once the kitchen decided."""
+    demo, _, agent, _, _ = kitchens
+    token = start_pairing(demo)
+    m = Mcp(agent, f"/mcp/c/{token}/")
+    res = m.call("connection_status", {})
+    assert not res.get("isError"), res
+    code = demo.get("/api/agent").json()["consent"]["verifyCode"]
+    st = res["structuredContent"]
+    assert st["state"] == "waiting_for_allow" and st["verifyCode"] == code
+    assert code in st["say"] and "Agent page" in st["say"]
+    demo.post("/api/agent/allow")
+    st = m.call("connection_status", {})["structuredContent"]
+    assert st["state"] == "active" and "verifyCode" not in st and "say" in st
+    demo.post("/api/agent/pause", json={"paused": True})
+    st = m.call("connection_status", {})["structuredContent"]
+    assert st["state"] == "paused" and "paused" in st["say"]
+
+
+def test_the_instructions_name_the_verify_code(kitchens):
+    from validio.api.mcp_server import INSTRUCTIONS
+
+    assert "connection_status" in INSTRUCTIONS and "verification code" in INSTRUCTIONS
+
+
 def test_token_is_kept_as_a_hash_after_allow_and_ends_on_disconnect(kitchens):
     demo, _, agent, a, _ = kitchens
     token = connect_app(demo, agent)
