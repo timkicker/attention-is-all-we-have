@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Locator } from '@playwright/test'
 import { QID, TID, TOPIC, copy, expectFooter, path } from './support'
 
 // Screens 01 and 02. Search asks Wikidata live, so /api/search is answered here in the contract's shape:
@@ -15,7 +15,8 @@ test('start shows the search field, the example and the prepared articles', asyn
   await page.goto(path.start)
   await expect(page).toHaveTitle(/Parallax/)
   await expect(page.getByTestId(TID.barLogo)).toHaveText(copy.WORDMARK)
-  await expect(page.getByTestId(TID.barLink)).toHaveText(copy.UNDER_THE_HOOD)
+  // wireframe 01: nothing on the right of the bar, Under the hood sits in the footer
+  await expect(page.getByTestId(TID.footHood)).toHaveText(copy.UNDER_THE_HOOD)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(copy.start.HERO)
   await expect(page.getByTestId(TID.startSearch)).toBeVisible()
   await expect(page.getByTestId(TID.startPrepared).filter({ hasText: TOPIC })).toBeVisible()
@@ -27,8 +28,8 @@ test('the example opens the Winter War comparison', async ({ page }) => {
   const open = page.getByTestId(TID.startExampleOpen)
   await expect(open).toHaveText(copy.start.OPEN_EXAMPLE)
   await open.click()
-  await expect(page).toHaveURL(new RegExp(`/t/${QID}$`))
-  await expect(page.getByTestId(TID.topicTitle)).toHaveText(TOPIC)
+  // the example leads into the topic (its Mainila statement or the Differences tab)
+  await expect(page).toHaveURL(new RegExp(`/t/${QID}(/s/fi/\\d+/[0-9a-f]{16})?$`))
 })
 
 test('search lists results with their status and links each to its page', async ({ page }) => {
@@ -47,15 +48,20 @@ test('search lists results with their status and links each to its page', async 
   const none = rows.filter({ hasText: 'Mannerheim Example' })
   await expect(none).toHaveAttribute('data-status', 'no_finnish')
   await expect(none).toContainText(copy.start.NO_FINNISH)
-  await expect(none.getByRole('link')).toHaveCount(0)
+  expect(await linkOf(none)).toBeNull()
 
-  await expect(fresh.getByRole('link').first()).toHaveAttribute('href', /\/t\/Q152786\/loading/)
-  await ready.getByRole('link').first().click()
+  expect(await linkOf(fresh)).toMatch(/\/t\/Q152786\/loading/)
+  await ready.click()
   await expect(page).toHaveURL(new RegExp(`/t/${QID}$`))
 })
 
-test('the bar link opens Under the hood', async ({ page }) => {
+test('the footer link opens Under the hood', async ({ page }) => {
   await page.goto(path.start)
-  await page.getByTestId(TID.barLink).click()
+  await page.getByTestId(TID.footHood).click()
   await expect(page).toHaveURL(/\/hood/)
 })
+
+// A result row is a link itself or holds one; null when it links nowhere.
+async function linkOf(row: Locator): Promise<string | null> {
+  return row.evaluate((e) => (e.closest('a') ?? e.querySelector('a'))?.getAttribute('href') ?? null)
+}
