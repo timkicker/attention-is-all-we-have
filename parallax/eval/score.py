@@ -3,6 +3,7 @@ recall (R@1, R@5, R@10 of the gold `same` partner among exact nearest neighbours
 stat key judge_eval."""
 
 import json
+import os
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -50,6 +51,17 @@ def judge_report(gold: list[dict], predicted: dict[tuple, str]) -> dict:
         "per_lang": {k: agreement(v) for k, v in sorted(by_lang.items())},
         "confusion": dict(confusion.most_common()),
     }
+
+
+def headline(judge: dict[str, dict], default: str) -> dict:
+    """The one agreement number the app shows (Check and Under the hood read accuracy, kappa and n at the top of
+    stat judge_eval): the prompt version the app judges with, else the best measured one."""
+    have = {pv: r for pv, r in judge.items() if r.get("accuracy") is not None}
+    if not have:
+        return {}
+    pv = default if default in have else max(have, key=lambda k: (have[k]["accuracy"], have[k]["pairs"]))
+    r = have[pv]
+    return {"accuracy": r["accuracy"], "kappa": r["kappa"], "n": r["pairs"], "prompt_version": pv, "model": r["model"]}
 
 
 def load_gold(path: Path = GOLD) -> list[dict]:
@@ -145,6 +157,8 @@ def main() -> None:
         ranks.append(hs.index(g["b_h"]) + 1 if g["b_h"] in hs else None)
     report["alignment"] = {"same_pairs": len(ranks), **recall_at(ranks)}
     print(f"alignment over {len(ranks)} gold same pairs: {report['alignment']}")
+    report = {**headline(report["judge"], os.environ.get("JUDGE_PROMPT", "judge-v1")), **report}
+    print(f"headline: {report.get('prompt_version')} accuracy={report.get('accuracy')} n={report.get('n')}")
     REPORT.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     stat.put(cur, "judge_eval", report)
 
