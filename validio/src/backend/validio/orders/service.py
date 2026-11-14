@@ -284,7 +284,8 @@ class OrderService:
                stock_override: dict[str, float] | None = None, budget: CallBudget | None = None,
                required_claims: tuple[str, ...] | list[str] | None = None,
                split_base_cents: int | None = None, accepted_by: str | None = None,
-               accept_note: str | None = None, budget_cents: int | None = None) -> dict:
+               accept_note: str | None = None, budget_cents: int | None = None,
+               quoted: list[dict] | None = None) -> dict:
         """`required_claims` is the line's own diet (a Steady Order line), None means the Spend Pass diet.
         `split_base_cents` marks the order as a split and is what the wanted amount alone would cost.
         `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without asking you".
@@ -295,14 +296,25 @@ class OrderService:
                                      for ln in lines], "deliverBy": deliver_by.isoformat(),
                            "requestId": request_id, "requiredClaims": required_claims,
                            "splitBaseCents": split_base_cents})
+
+        def seen_before() -> dict | None:
+            seen = self.store.idem_get(mandate.id, idempotency_key)
+            if seen and seen[0] != body_hash:
+                raise IdempotencyConflict("this idempotency key was used for another order")
+            return self.get(seen[1]) if seen else None
+
+        with self.lock:
+            self.check_open()
+            if (done := seen_before()) is not None:
+                return done
+        # Valio is asked without the lock, so the kitchen's other calls never wait on Valio; `quoted` is an
+        # answer the caller just had from Valio for these very lines
+        if quoted is None:
+            quoted = self.quote(lines, deliver_by, stock_override, budget)
         with self.lock, self.store.tx():
             self.check_open()
-            seen = self.store.idem_get(mandate.id, idempotency_key)
-            if seen:
-                if seen[0] != body_hash:
-                    raise IdempotencyConflict("this idempotency key was used for another order")
-                return self.get(seen[1])
-            quoted = self.quote(lines, deliver_by, stock_override, budget)
+            if (done := seen_before()) is not None:  # the same key finished meanwhile
+                return done
             claims = None if required_claims is None else list(required_claims)
             decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by, budget_cents)
             state = STATE[decision["outcome"]]
@@ -347,22 +359,17 @@ class OrderService:
         """`verb` is "accepted" when a chef's accept on a Steady Order line sent it: the sentences say so."""
         with self.lock:
             self.check_open()
-            o = self.get(order_id)
-            if o["state"] != "waiting":
-                raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be approved")
-            mandate = mandate_from(o["mandate"])
-            if self.store.is_revoked(mandate.id):
-                sentence = f"Approval refused: Spend Pass {mandate.id} was revoked by the kitchen."
-                self._log(o, "validio", "decision", sentence, [])
-                raise ApproveRefused(sentence, "You withdrew these limits. Not ordered.")
-            deliver_by = date.fromisoformat(o["deliverBy"])
-            problems = self._time_problems(mandate, deliver_by)
-            plain: list[str] = [_plain_time(p, deliver_by) for p in problems]
-            if problems:
-                self._refuse(o, problems, plain)
+            o, mandate, deliver_by = self._approvable(order_id)
             lines = [LineIn(ln["productId"], ln["quantity"], ln["isSubstitute"], ln["onValioList"])
                      for ln in o["lines"]]
-            fresh = self.quote(lines, deliver_by)
+        # Valio is asked again without the lock; then everything is checked again under it, so a second approve,
+        # a reject or a revocation that came meanwhile wins
+        fresh = self.quote(lines, deliver_by)
+        with self.lock:
+            self.check_open()
+            o, mandate, deliver_by = self._approvable(order_id)
+            problems: list[str] = []
+            plain: list[str] = []
             several = len(fresh) > 1
             for old, new in zip(o["lines"], fresh, strict=True):
                 name = short_ref(new["name"])
@@ -414,6 +421,21 @@ class OrderService:
                           f"{self._parts(o)} for {eur(o['totalCents'])}.", [])
                 self._log(o, "validio", "order", self._placed_sentence(o, approver, verb=verb), o["decision"]["ruleIds"])
             return o
+
+    def _approvable(self, order_id: str) -> tuple[dict, Mandate, date]:
+        """The waiting order with its pass and day, or the refusal: not waiting, the pass revoked or out of time."""
+        o = self.get(order_id)
+        if o["state"] != "waiting":
+            raise OrderStateError(f"order {order_id} is {o['state']}, only a waiting order can be approved")
+        mandate = mandate_from(o["mandate"])
+        if self.store.is_revoked(mandate.id):
+            sentence = f"Approval refused: Spend Pass {mandate.id} was revoked by the kitchen."
+            self._log(o, "validio", "decision", sentence, [])
+            raise ApproveRefused(sentence, "You withdrew these limits. Not ordered.")
+        deliver_by = date.fromisoformat(o["deliverBy"])
+        if problems := self._time_problems(mandate, deliver_by):
+            self._refuse(o, problems, [_plain_time(p, deliver_by) for p in problems])
+        return o, mandate, deliver_by
 
     def _refuse(self, o: dict, problems: list[str], plain: list[str] | None = None) -> None:
         sentence = "Approval refused, Valio was asked again: " + and_list(problems) + "."

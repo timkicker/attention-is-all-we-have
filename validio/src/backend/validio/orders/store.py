@@ -112,7 +112,8 @@ class Store:
         return json.loads(row[0]) if row else None
 
     def order_for_request(self, rid: str) -> dict[str, Any] | None:
-        row = self._con.execute("select body from supply_order where request_id = ?", (rid,)).fetchone()
+        with self._lock:
+            row = self._con.execute("select body from supply_order where request_id = ?", (rid,)).fetchone()
         return json.loads(row[0]) if row else None
 
     def orders(self) -> list[dict[str, Any]]:
@@ -135,6 +136,15 @@ class Store:
     def idem_put(self, scope: str, key: str, body_hash: str, ref: str) -> None:
         with self._lock:
             self._con.execute("insert into idempotency values (?, ?, ?, ?)", (scope, key, body_hash, ref))
+
+    def idem_delete(self, scope: str, key: str) -> None:
+        with self._lock:
+            self._con.execute("delete from idempotency where scope = ? and key = ?", (scope, key))
+
+    def drop_request(self, rid: str) -> None:
+        """Forget a request that never got past its start (an error before any decision)."""
+        with self._lock:
+            self._con.execute("delete from supply_request where id = ?", (rid,))
 
     def remember_pass(self, pass_id: str, body: dict[str, Any]) -> None:
         with self._lock:

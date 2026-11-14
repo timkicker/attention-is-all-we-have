@@ -7,6 +7,7 @@ replay  answers only from cache_dir and never opens a connection
 
 import hashlib
 import json
+import threading
 import time
 from datetime import date
 from pathlib import Path
@@ -17,6 +18,7 @@ from .budget import CallBudget
 from .models import Availability, Quote
 
 MAX_PER_CALL = 1000  # Valio rejects longer lists with 422
+TIMEOUT_S = 15.0  # one read; asked twice at most, so a request waits at most about 30 s on Valio
 TEST_API_HOST = "junction26.valioaimo.fi"  # Valio's test API. The real webshop is never called.
 
 
@@ -116,6 +118,8 @@ class ValioClient:
         self.chunk = min(chunk, MAX_PER_CALL)
         self._api_key = api_key
         self._http = http
+        self._pool: httpx.Client | None = None  # one client for every call: kept-alive TLS connections
+        self._pool_lock = threading.Lock()
         self.backoff = backoff
         self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
 
@@ -172,17 +176,13 @@ class ValioClient:
 
     def _call_once(self, endpoint: str, requested: date, ids: list[str]) -> dict:
         body = {"customer": self.customer, "requestedDate": requested.isoformat(), "products": ids}
-        http = self._http or httpx.Client(timeout=30)
-        try:
-            req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
-                                     headers={"X-API-Key": self._api_key})
-            checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
-            r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
-            r.raise_for_status()
-            resp = r.json()
-        finally:
-            if self._http is None:
-                http.close()
+        http = self._http or self._client()
+        req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
+                                 headers={"X-API-Key": self._api_key})
+        checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
+        r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
+        r.raise_for_status()
+        resp = r.json()
         if self.mode == "record":
             d = self.cache_dir / endpoint / requested.isoformat()
             d.mkdir(parents=True, exist_ok=True)
@@ -190,6 +190,14 @@ class ValioClient:
                 {"endpoint": endpoint, "requestedDate": requested.isoformat(), "ids": sorted(ids),
                  "response": resp}, indent=1, ensure_ascii=False))
         return resp
+
+    def _client(self) -> httpx.Client:
+        """The pooled client, made on first use; httpx.Client is safe to share between threads."""
+        with self._pool_lock:
+            if self._pool is None:
+                self._pool = httpx.Client(timeout=httpx.Timeout(TIMEOUT_S, connect=5.0),
+                                          limits=httpx.Limits(max_connections=20, max_keepalive_connections=10))
+            return self._pool
 
     def _replay(self, endpoint: str, requested: date, ids: list[str]) -> dict:
         d = self.cache_dir / endpoint / requested.isoformat()
