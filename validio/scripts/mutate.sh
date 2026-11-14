@@ -41,6 +41,12 @@ sync() {
   # mutmut maps tests to functions once and keeps the map; a function added since then would get no tests,
   # so every run maps again (one traced pass of the suite)
   rm -f "$work/mutants/mutmut-stats.json"
+  # mutmut copies data files (policies.cedar, schemas) into mutants/ once and never again, so a policy change
+  # would leave the suite failing in the copy; refresh them, the .py files mutmut regenerates itself
+  if [ -d "$work/mutants/validio" ]; then
+    rsync -a --exclude '*.py' --exclude '*.meta' --exclude '*.spans' --exclude __pycache__ \
+      "$work/validio/" "$work/mutants/validio/"
+  fi
 }
 
 mut() { (cd "$work" && $heavy "$bin/mutmut" "$@"); }
