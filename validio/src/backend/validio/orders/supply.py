@@ -286,8 +286,8 @@ class SupplyService:
             a = avail.get(r.product.id)
             unit[id(r)] = compare.unit_price_text(compare.unit_price_cents(need, r, quotes.get(r.product.id)),
                                                   need.unit)
-            extra = {"unitPriceText": unit[id(r)], "deliveryText": compare.delivery_text(a),
-                     "deliveryDate": a.lines[0].available.isoformat() if a is not None and a.lines else None,
+            extra = {"unitPriceText": unit[id(r)], "deliveryText": compare.delivery_text(a, need.deliver_by),
+                     "deliveryDate": a.delivery_on(need.deliver_by).isoformat() if a is not None and a.lines else None,
                      "cutoffText": compare.cutoff_text(a, now),
                      "dietText": compare.diet_text(r.product, need.required_claims)}
             o.update({k: v for k, v in extra.items() if v is not None})

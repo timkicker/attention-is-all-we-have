@@ -205,7 +205,7 @@ class OrderService:
                 "productId": p.id, "name": p.name_en, "quantity": int(ln.sales_qty), "unit": p.sales_unit,
                 "priceCents": price, "totalCents": None if price is None else price * int(ln.sales_qty),
                 "priceValidTo": q.valid_to.isoformat() if q and q.valid_to else None,
-                "deliveryDate": a.lines[0].available.isoformat() if a and a.lines else None,
+                "deliveryDate": a.delivery_on(deliver_by).isoformat() if a and a.lines else None,
                 "deliverable": bool(a and a.deliverable) and not short,
                 "short": _short(p, stock, ln.sales_qty) if short else None,
                 "isSubstitute": ln.is_substitute, "onValioList": ln.on_valio_list,
