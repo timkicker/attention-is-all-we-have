@@ -13,7 +13,9 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.getByTestId("inbox-R-2").click();
   await expect(page.locator("#request-title")).toContainText("200 bags of");
-  await expect(page.locator("#request-why")).toContainText("Stock-out simulated for the demo");
+  await expect(page.locator("#request-why")).toHaveText("Not on Valio's substitute list. Rule: ask-human");
+  await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
+  await expect(page.getByTestId("asked-for")).toContainText("Valio really has 11,603 bags");
   await expect(page.getByTestId("request-rule")).toContainText("ask-human");
   // Beyond the list is open first: the chosen blend.
   await expect(page.getByTestId("option-465256")).toContainText("180.10");
@@ -26,7 +28,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByTestId("open-approve").click();
-  await expect(page.getByTestId("approve-question")).toHaveText(/^Order 10 × 2\.5\skg of mozzarella-fontal crumbled cheese for 180\.10\s€\?$/);
+  await expect(page.getByTestId("approve-question")).toHaveText(/^Order 10\s×\s2\.5\skg of mozzarella-fontal crumbled cheese for 180\.10\s€\?$/);
 
   // The code is asked when the owner presses Approve; with it the order is placed.
   await expect(page.getByTestId("code-input")).toHaveCount(0);

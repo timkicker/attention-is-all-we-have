@@ -5,6 +5,7 @@
   import { api } from "$lib/api/client";
   import { live } from "$lib/live.svelte";
   import { ACTOR, ledgerGroups } from "$lib/v";
+  import { nb } from "$lib/format";
   import VHead from "$lib/v/VHead.svelte";
   import VPill from "$lib/v/VPill.svelte";
   import VState from "$lib/v/VState.svelte";
@@ -14,7 +15,10 @@
   const steady = live(() => api.steadyList());
 
   const titleOf = (id: string) =>
-    inbox.data?.find((i) => i.id === id)?.displayName ?? steady.data?.find((s) => s.id === id)?.name ?? "Other entries";
+    ledger.data?.groups?.find((g) => g.requestId === id)?.titleText ??
+    inbox.data?.find((i) => i.id === id)?.displayName ??
+    steady.data?.find((s) => s.id === id)?.name ??
+    "Other entries";
   const groups = $derived(ledgerGroups(ledger.data?.entries ?? []));
   const chain = $derived(ledger.data?.chain);
 </script>
@@ -41,18 +45,18 @@
   {:else}
     <div data-testid="ledger" id="ledger">
       {#each groups as g (g.id)}
-        <div class="day"><b>{titleOf(g.id)}</b><span>{g.id}</span></div>
+        <div class="day"><b>{nb(titleOf(g.id))}</b><span>{g.id}</span></div>
         <ul class="rc-ev led">
           {#each g.entries as e (e.seq)}
             <li data-testid="ledger-entry" class:broken={chain && !chain.ok && chain.brokenAt === e.seq}>
               <details>
                 <summary>
-                  <span class="ev-left"><span class="t num">{e.timeText}</span><span class="who">{ACTOR[e.kind] ?? e.actorText ?? e.actor}</span></span>
+                  <span class="ev-left"><span class="t num">{nb(e.timeText)}</span><span class="who">{ACTOR[e.kind] ?? e.actorText ?? e.actor}</span></span>
                   <span class="ev-main">
-                    <span class="sent">{e.summary ?? e.sentence}</span>
+                    <span class="sent">{nb(e.displayText ?? e.summary ?? e.sentence)}</span>
                     {#if chain && !chain.ok && chain.brokenAt === e.seq}<span class="ev-sub">Hash does not match the entry before.</span>{/if}
                   </span>
-                  <span class="oid num">{e.orderId ?? ""}</span>
+                  <span class="oid num">{e.kind === "order" && e.orderId && !(e.displayText ?? "").includes(e.orderId) ? e.orderId : ""}</span>
                 </summary>
                 <div class="body" data-raw>
                   <p>{e.sentence}</p>

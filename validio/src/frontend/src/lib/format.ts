@@ -8,8 +8,29 @@ export const money = (cents: number | undefined): string =>
 
 const HELSINKI = "Europe/Helsinki";
 
+const NB = "\u00a0";
+const MONTH = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|February|March|April|June|July|August|September|October|November|December";
+const WEEKDAY = "Mon|Tue|Wed|Thu|Fri|Sat|Sun|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday";
+const UNIT = "g|kg|l|ml|cl|dl|%|€|litres?|cartons?|bags?|packs?|boxes|box|pieces?|guests|weeks?|days?|entries|products|cm|mm";
+const NB_RULES: [RegExp, string][] = [
+  [new RegExp(`(\\d) (?=(?:${UNIT})(?![\\p{L}\\d]))`, "gu"), `$1${NB}`],
+  [new RegExp(`(\\d) (?=(?:${MONTH})\\b)`, "g"), `$1${NB}`],
+  [new RegExp(`\\b(${WEEKDAY}),? (?=\\d)`, "g"), `$1${NB}`],
+  [/(\d) × (?=\d)/g, `$1${NB}×${NB}`],
+];
+/** halbat's NB rule: a number never parts from its unit, a day never from its
+ *  month, and "10 × 2.5 kg" stays one piece. Applied to every display text. */
+export function nb(s: string): string;
+export function nb(s: string | undefined): string | undefined;
+export function nb(s: string | undefined): string | undefined {
+  if (!s) return s;
+  let out = s;
+  for (const [re, to] of NB_RULES) out = out.replace(re, to);
+  return out;
+}
+
 export const day = (iso: string): string =>
-  new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: HELSINKI }).format(new Date(iso));
+  nb(new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: HELSINKI }).format(new Date(iso)));
 
 export const time = (iso: string): string =>
   new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
@@ -19,7 +40,7 @@ export const hm = (iso: string): string =>
   new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
 
 export const dayTime = (iso: string): string =>
-  new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: HELSINKI }).format(new Date(iso));
+  nb(new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: HELSINKI }).format(new Date(iso)));
 
 /** How a state is shown. ok and bad are the kit's success and error text,
  *  act is the accent mark with plain text, quiet is secondary text. Nothing is
@@ -140,12 +161,14 @@ const CAPS_RUN = /\b[A-ZÄÖÅ][A-ZÄÖÅ-]{2,}(?:\s+[A-ZÄÖÅ0-9][A-ZÄÖÅ0-9
  *  sentence case, a space before g, kg and l. The catalogue name itself stays
  *  in the facts. */
 export function nameWord(n: string): string {
-  return n
-    .replaceAll(/[®™]/g, "")
-    .replaceAll(CAPS_RUN, (run) => (run.length <= 3 ? run : run.charAt(0) + run.slice(1).toLowerCase()))
-    .replaceAll(/(\d)(g|kg|l)\b/g, "$1 $2")
-    .replaceAll(/\s{2,}/g, " ")
-    .trim();
+  return nb(
+    n
+      .replaceAll(/[®™]/g, "")
+      .replaceAll(CAPS_RUN, (run) => (run.length <= 3 ? run : run.charAt(0) + run.slice(1).toLowerCase()))
+      .replaceAll(/(\d)(g|kg|l)\b/g, "$1 $2")
+      .replaceAll(/\s{2,}/g, " ")
+      .trim(),
+  );
 }
 
 /** A backend sentence in display words: unit codes as unit words, amounts in
@@ -180,11 +203,13 @@ export function sentences(s: string | undefined): string[] {
  *  a unit code and a product number ("200 BAG of 466375"); then the product's
  *  name from the options stands in for the number. */
 export function requestTitle(r: {
+  titleText?: string;
   displayName?: string;
   text: string;
   lines?: { options?: { productId: string; name: string }[] }[];
 }): string {
-  if (r.displayName) return r.displayName;
+  const named = r.titleText ?? r.displayName;
+  if (named) return nb(named);
   const m = /^(\d+) ([A-Za-z]+) of (\d{6})$/.exec(r.text.trim());
   if (m) {
     const o = (r.lines ?? []).flatMap((l) => l.options ?? []).find((x) => x.productId === m[3]);
@@ -237,5 +262,5 @@ export function nextOn(weekday: string, from: string = CLOCK): string {
   if (want < 0) return weekday;
   const step = ((want - d.getUTCDay() + 7) % 7) || 7;
   const next = new Date(d.getTime() + step * 86400000);
-  return new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: HELSINKI }).format(next).replace(",", "");
+  return new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: HELSINKI }).format(next).replace(",", "").replace(/(\S+) (\d+) (\S+)/, `$1${NB}$2${NB}$3`);
 }

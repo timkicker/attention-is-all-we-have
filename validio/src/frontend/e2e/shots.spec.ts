@@ -35,6 +35,9 @@ for (const v of VIEWS) {
     await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l");
     await shoot("request-r1");
     await stockOut(page);
+    await go("/");
+    await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
+    await shoot("inbox-waiting");
     await go("/requests/R-2");
     await expect(page.locator("#request-title")).toContainText("200 bags");
     await shoot("request-r2");
@@ -42,7 +45,17 @@ for (const v of VIEWS) {
     await go("/approve/R-2");
     await expect(page.getByTestId("approve-question")).toContainText("180.10");
     await shoot("approve");
+    if (v.width === 1280) {
+      // The focus mark: a keyboard Tab, then the outline button.
+      await page.keyboard.press("Tab");
+      await page.getByTestId("reject").focus();
+      await expect(page.getByTestId("reject")).toBeFocused();
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: `${OUT}/focus-${v.width}-${v.theme}.png` });
+    }
     await page.getByTestId("approve").click();
+    await expect(page.getByTestId("code-input")).toBeFocused();
+    await shoot("approve-code");
     await code(page);
     await expect(page.locator("#order-steps")).toContainText("Validio placed the order");
     await shoot("approve-done");
@@ -65,6 +78,18 @@ for (const v of VIEWS) {
     await go("/ledger");
     await expect(page.locator("#chain-status")).toContainText("Verified");
     await shoot("ledger");
+
+    // The other ending: the owner rejects R-2.
+    await fresh(page);
+    await stockOut(page);
+    await go("/approve/R-2");
+    await page.getByTestId("reject").click();
+    await code(page);
+    await expect(page.locator("#order-steps")).toContainText("You rejected");
+    await shoot("approve-rejected");
+    await go("/requests/R-2");
+    await expect(page.getByTestId("request-status")).toContainText("Rejected");
+    await shoot("request-rejected");
     expect(problems, problems.join("\n")).toEqual([]);
   });
 }

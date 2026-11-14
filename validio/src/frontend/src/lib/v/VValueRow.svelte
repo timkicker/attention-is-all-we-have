@@ -3,6 +3,7 @@
   /// column, a muted sub under it. A row with `href` or `onclick` is one link.
   import type { Snippet } from "svelte";
   import { ChevronRight } from "@lucide/svelte";
+  import { nb } from "$lib/format";
 
   let {
     label,
@@ -26,8 +27,8 @@
 {#snippet body()}
   <span class="vr-label">{label}</span>
   <span class="vr-val">
-    <span class="vr-value" data-value>{#if children}{@render children()}{:else}{value}{/if}</span>
-    {#if sub}<span class="vr-sub">{sub}</span>{/if}
+    <span class="vr-value" data-value>{#if children}{@render children()}{:else}{nb(value)}{/if}</span>
+    {#if sub}<span class="vr-sub">{nb(sub)}</span>{/if}
   </span>
   {#if href || onclick}<ChevronRight class="vr-go" aria-hidden="true" size={16} strokeWidth={1.75} />{/if}
 {/snippet}
@@ -48,8 +49,9 @@
     color: inherit;
     text-decoration: none;
   }
+  /* The same size as a lane's label above it (.rc-n). */
   .vr-label {
-    font-size: var(--fs-body);
+    font-size: var(--fs-meta);
     line-height: var(--lh-body);
     color: var(--v-fg);
   }
@@ -64,7 +66,6 @@
     line-height: var(--lh-body);
     font-weight: 500;
     color: var(--v-fg);
-    font-variant-numeric: tabular-nums;
   }
   .vr-sub {
     font-size: var(--fs-meta);

@@ -57,7 +57,7 @@
                 testid="inbox-{i.id}"
                 id="inbox-{i.id}"
                 pill={requestPill(i.status)}
-                title={i.displayName ?? i.title ?? i.text}
+                title={i.titleText ?? i.displayName ?? i.title ?? i.text}
                 sub={simulated(i.id)}
                 subTestid={simulated(i.id) ? "stock-out-note" : undefined}
                 end={i.moneyText ?? money(i.totalCents)}

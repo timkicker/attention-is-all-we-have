@@ -1,7 +1,7 @@
 // Words and groupings the plan-v2 pages share. Where the backend writes a
 // display field it wins; the pattern fallbacks below bridge until it does.
 import type { LedgerEntry, LedgerKind, RankedOption, RequestStatus, SteadyLine, SteadyOrder } from "./api/types";
-import { money } from "./format";
+import { money, nb } from "./format";
 
 export type PillTone = "ok" | "wait" | "bad" | "neutral";
 export interface Pill {
@@ -37,7 +37,7 @@ export function optionPill(o: RankedOption): Pill | null {
 }
 
 /** The short line under an option's name: the backend writes it. */
-export const optionLine = (o: RankedOption): string => o.shortText ?? o.sentence;
+export const optionLine = (o: RankedOption): string => nb(o.shortText ?? o.sentence);
 
 /** Turned-down options under the backend's headings, by groupOrder, then groupText. */
 export function turnedDownGroups(list: RankedOption[]): { name: string; items: RankedOption[] }[] {
