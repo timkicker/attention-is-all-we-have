@@ -19,7 +19,8 @@ import type {
   SignupIn,
 } from "./types";
 
-const AGENT = "Claude Code";
+// The demo copy's history names its agent "Agent", as the server's does.
+const AGENT = "Agent";
 
 const copy = <T>(v: T): T => structuredClone(v);
 
@@ -55,7 +56,7 @@ interface Entry {
 
 const h = (n: number) => `${n.toString(16).padStart(8, "0")}c41e9a07b2d58f3e61a0d4c97b2e5f18a3d6c0b94e7f21a5d8c3b6e09f42a7d1`.slice(0, 64);
 
-const RULE_V = 4;
+const RULE_V = 2;
 
 function day(): Entry[] {
   const answer = r4();
@@ -66,13 +67,14 @@ function day(): Entry[] {
     title: "1,500 litres of lactose-free milk",
     why:
       answer === "approved"
-        ? "You approved it, over your 1,200.00 € limit for ordering alone"
+        ? "You approved it"
         : answer === "rejected"
-          ? "You rejected it"
+          ? "You said no"
           : "Over your 1,200.00 € limit for ordering alone",
     totalCents: 151500,
     at: "2026-11-14T11:05:00+02:00",
     orderId: "O-7",
+    approvedByYou: answer === "approved",
   };
   const r4proof = [
     { at: "2026-11-14T11:05:02+02:00", actor: AGENT, text: "Asked for 1,500 litres of lactose-free milk", hash: h(41) },
@@ -93,9 +95,11 @@ function day(): Entry[] {
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
         rule:
-          answer === "rejected"
-            ? { text: "Over your 1,200.00 € limit, you rejected it.", version: RULE_V }
-            : { text: "Over your 1,200.00 € limit for ordering alone, so it waits for you.", version: RULE_V },
+          answer === "approved"
+            ? { text: "Over your 1,200.00 € limit for ordering alone. You approved it.", version: RULE_V }
+            : answer === "rejected"
+              ? { text: "You said no.", version: RULE_V }
+              : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V },
         result: answer === "approved" ? { orderId: "O-7", delivery: "2026-11-16" } : null,
         approval: answer === "waiting" ? { orderId: "O-7", holdUntil: "2026-11-14T15:00:00+02:00" } : null,
         proof: r4proof,
@@ -111,6 +115,7 @@ function day(): Entry[] {
         totalCents: 21240,
         at: "2026-11-14T10:58:00+02:00",
         orderId: null,
+        approvedByYou: false,
       },
       detail: {
         asked: { text: "Order 5 kg of hazelnut praline filling for the dessert menu.", agentName: AGENT },
@@ -139,6 +144,7 @@ function day(): Entry[] {
         totalCents: 18010,
         at: "2026-11-14T10:51:00+02:00",
         orderId: "O-6",
+        approvedByYou: false,
       },
       detail: {
         asked: { text: "Order 25 kg of lactose-free mozzarella for Monday.", agentName: AGENT },
@@ -169,6 +175,7 @@ function day(): Entry[] {
         totalCents: 101000,
         at: "2026-11-14T10:14:00+02:00",
         orderId: "O-5",
+        approvedByYou: false,
       },
       detail: {
         asked: { text: "Order 1,000 litres of lactose-free semi-skimmed milk for Monday.", agentName: AGENT },
@@ -197,6 +204,7 @@ function day(): Entry[] {
         totalCents: 198080,
         at: "2026-11-13T09:00:00+02:00",
         orderId: null,
+        approvedByYou: false,
       },
       detail: {
         asked: { text: "Every Monday: milk, butter, cream and eggs for the week.", agentName: AGENT },
@@ -210,7 +218,7 @@ function day(): Entry[] {
         approval: null,
         proof: [
           { at: "2026-11-13T09:00:01+02:00", actor: AGENT, text: "Set up the weekly Monday order", hash: h(5) },
-          { at: "2026-11-13T09:00:03+02:00", actor: "Validio", text: "Standing order S-1 saved under rules v4", hash: h(6) },
+          { at: "2026-11-13T09:00:03+02:00", actor: "Validio", text: "Standing order S-1 saved under rules v2", hash: h(6) },
         ],
       },
     },
@@ -224,6 +232,7 @@ function day(): Entry[] {
         totalCents: 38600,
         at: "2026-11-07T14:32:00+02:00",
         orderId: "O-4",
+        approvedByYou: false,
       },
       detail: {
         asked: { text: "Order 40 kg of unsalted butter.", agentName: AGENT },
@@ -389,17 +398,17 @@ export async function account(): Promise<Account> {
   return copy(signedIn());
 }
 
-/** The demo kitchen as a fresh copy: rules saved, Claude Code connected (agent.ts plays it). */
+/** The demo kitchen as a fresh copy, as POST /api/account/demo answers: rules saved, no agent (agent.ts plays it). */
 const DEMO_ACCOUNT: Account = {
   id: "k-demo",
   name: "Hotel Espoo kitchen",
   email: null,
-  customerNumber: "",
+  customerNumber: "hotel-espoo",
   deliveryAddress: "",
   isDemo: true,
   demoCode: DEMO_CODE,
-  setup: { kitchen: true, rules: true, agent: true, done: true },
-  agent: { state: "active", versions: [] },
+  setup: { kitchen: true, rules: true, agent: false, done: false },
+  agent: { state: "none", versions: [] },
   createdAt: "2026-11-14T10:00:00+02:00",
 };
 

@@ -94,7 +94,7 @@
 
 {#snippet facts()}
   {#if d}
-    <StatusPill status={d.item.status} testid="detail-status" />
+    <StatusPill item={d.item} testid="detail-status" />
     {#if d.item.totalCents != null}<b class="num" data-testid="detail-total">{nb(money(d.item.totalCents))}</b>{/if}
     <span>{dayTime(d.item.at)}</span>
   {/if}

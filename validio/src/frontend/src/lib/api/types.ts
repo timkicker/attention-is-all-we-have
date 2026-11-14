@@ -533,8 +533,8 @@ export interface Account {
 export interface AgentState {
   state: "none" | "pairing" | "consent" | "active" | "paused";
   pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
-  /** verifyCode: "XXX-XXX", the same code the MCP agent gets in its tool answer. */
-  consent?: { name: string; keyId: string; may: string[]; verifyCode: string };
+  /** verifyCode: "XXX-XXX", the same code the MCP agent gets in its tool answer; at: when its first call came. */
+  consent?: { name: string; keyId: string; may: string[]; verifyCode: string; at: string | null };
   agent?: { name: string; kind: "agent" | "mcp"; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
   /** Newest first. */
   versions: { version: number; at: string; why: string }[];
@@ -602,6 +602,8 @@ export interface ActivityItem {
   totalCents: number | null;
   at: string;
   orderId: string | null;
+  /** Ordered because the owner approved it, not alone. */
+  approvedByYou: boolean;
 }
 
 /** GET /api/home */
