@@ -11,7 +11,7 @@
   import { Notice } from "@arlen/ui-kit/components/ui/notice";
   import { ChevronRight, X } from "@lucide/svelte";
   import { api, needsToken } from "$lib/api/client";
-  import { askLog, askRow, notRecorded, type AskRow } from "$lib/ask";
+  import { askLog, askRow, notRecorded, type AskRow, type AskStep } from "$lib/ask";
   import { bump, chrome } from "$lib/chrome.svelte";
   import { requestPill } from "$lib/v";
   import VStatusRow from "./VStatusRow.svelte";
@@ -32,7 +32,7 @@
 
   let text = $state("");
   let entries = $state<Entry[]>([]);
-  let log = $state<string[]>([]);
+  let log = $state<AskStep[]>([]); // the latest ask only
   let problem = $state("");
   let next = 0;
   const busy = $derived(entries.some((e) => e.kind === "working"));
@@ -47,7 +47,7 @@
     const put = (e: Entry | null) => (entries = entries.flatMap((x) => (x.key === key ? (e ? [e] : []) : [x])));
     try {
       const a = await api.ask(t);
-      log = [...log, ...askLog(a.lines)];
+      log = askLog(a.lines);
       if (a.requestId) {
         const [r, inbox] = await Promise.all([api.request(a.requestId), api.inbox().catch(() => [])]);
         put({ key, kind: "row", row: askRow(r, inbox.find((i) => i.id === r.id)) });
@@ -109,7 +109,7 @@
       <details class="fold log" data-testid="ask-log">
         <summary><ChevronRight class="chev" aria-hidden="true" />Agent log</summary>
         <ol>
-          {#each log as l, i (i)}<li>{l}</li>{/each}
+          {#each log as l, i (i)}<li><span class="who">{l.who}</span><span>{l.what}</span></li>{/each}
         </ol>
       </details>
     {/if}
@@ -158,22 +158,37 @@
     margin: 4px 0 0;
     padding: 0;
     list-style: none;
-    max-height: 216px;
+    max-height: 264px;
     overflow-y: auto;
     border-top: 1px solid var(--v-line);
   }
   .results li {
     border-bottom: 1px solid var(--v-line);
   }
-  .results :global(.v-row),
-  .results :global(a) {
+  /* The phone's row at every width: the pill above the title, flush with the input. */
+  .results :global(.v-row) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 4px;
+    padding-inline: 0;
     border-radius: 0;
+  }
+  .results :global(.v-row-lead) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .results :global(.v-row-end) {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .results :global(.v-row-main) {
+    grid-row: 2;
+    grid-column: 1 / -1;
   }
   .none {
     margin: 0;
     padding: 12px 0;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
+    font-size: 13px;
+    line-height: 20px;
     color: var(--v-muted);
   }
   .log ol {
@@ -184,12 +199,20 @@
     overflow: auto;
     border-top: 1px solid var(--v-line);
     border-bottom: 1px solid var(--v-line);
-    font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--v-fg);
+  }
+  .log li {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 8px;
+  }
+  .log li + li {
+    margin-top: 2px;
+  }
+  .log .who {
     color: var(--v-muted);
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
   }
   :global(.dialog-card:has(.ask)) {
     max-width: 520px;

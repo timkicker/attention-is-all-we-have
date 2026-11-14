@@ -7,7 +7,7 @@
   import { Switch } from "@arlen/ui-kit/components/ui/switch";
   import { Info } from "@lucide/svelte";
   import { Input } from "@arlen/ui-kit/components/ui/input";
-  import { api, ApiError, needsToken } from "$lib/api/client";
+  import { api, ApiError, LIVE, needsToken } from "$lib/api/client";
   import type { SpendPassIn } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
@@ -180,25 +180,32 @@
           </VValueRow>
         </Section>
         {#if bad.form}<p class="problem" role="alert" data-testid="limits-problem">{bad.form}</p>{/if}
-        <div class="form-buttons">
-          <Button variant="outline" onclick={() => (editing = false)}>Cancel</Button>
-          <Button type="submit" data-testid="limits-save" disabled={saving}>Sign again</Button>
-          {#if codeRequired}
-            <span class="code">
+        <!-- The field before the action, labelled as on the approve page: code, Sign again, Cancel. -->
+        <div class="sign" class:bad={!!bad.code}>
+          {#if codeRequired}<label for="f-code">Approval code</label>{/if}
+          <div class="form-buttons">
+            {#if codeRequired}
               <Input
                 id="f-code"
                 data-testid="f-code"
-                aria-label="Approval code"
-                placeholder="Approval code"
+                class="code mono"
                 inputmode="numeric"
                 maxlength={6}
                 bind:value={f.code}
                 autocomplete="one-time-code"
                 aria-invalid={bad.code ? true : undefined}
-                aria-describedby={bad.code ? "f-code-problem" : undefined}
+                aria-describedby="f-code-help"
               />
-              {#if bad.code}<span class="problem" id="f-code-problem" data-testid="f-code-problem" role="alert">{bad.code}</span>{/if}
-            </span>
+            {/if}
+            <Button type="submit" data-testid="limits-save" disabled={saving}>Sign again</Button>
+            <Button variant="ghost" data-testid="limits-cancel" id="limits-cancel" onclick={() => (editing = false)}>Cancel</Button>
+          </div>
+          {#if codeRequired}
+            {#if bad.code}
+              <p class="help" id="f-code-help" data-testid="f-code-problem" role="alert">{bad.code}</p>
+            {:else}
+              <p class="help" id="f-code-help">{LIVE ? "The 6-digit code you set for approvals." : "Demo: any 6 digits"}</p>
+            {/if}
           {/if}
         </div>
       </form>
@@ -266,8 +273,7 @@
     color: var(--v-muted);
     pointer-events: none;
   }
-  .money .problem,
-  .code .problem {
+  .money .problem {
     white-space: nowrap;
   }
   /* The kit Switch, on in Valio blue: its accent comes from the nearest wrapper. */
@@ -290,11 +296,33 @@
     align-items: flex-start;
     gap: 8px;
   }
-  .code {
+  /* As VCode on the approve page: the same label, field, help line and control height. */
+  .sign {
+    --height-control: 44px;
+    --height-control-prominent: 44px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    width: 140px;
+  }
+  .sign label {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  .sign :global(.code) {
+    max-width: 160px;
+    font-size: 16px;
+    line-height: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+  .help {
+    margin: 0;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--v-muted);
+  }
+  .sign.bad .help {
+    color: var(--v-bad-text);
   }
   :global(.info-btn) {
     vertical-align: middle;

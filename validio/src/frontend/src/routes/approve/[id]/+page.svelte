@@ -25,11 +25,17 @@
 
   const id = $derived(page.params.id ?? "");
   // The phone link names the request (/approve/R-2); an order id works too.
+  // A request without an order (blocked, or still working) has nothing to approve: a plain state, not an error.
+  let noOrder = $state<string | null>(null);
   const order = live(async () => {
     const key = id;
+    noOrder = null;
     if (!key.startsWith("R-")) return api.order(key);
     const r = await api.request(key);
-    if (!r.orderId) throw new Error("this request has no order to approve");
+    if (!r.orderId) {
+      noOrder = r.status;
+      return undefined;
+    }
     return api.order(r.orderId);
   });
   const req = live(() => (order.data?.requestId ? api.request(order.data.requestId) : Promise.resolve(undefined)));
@@ -127,7 +133,13 @@
   };
 </script>
 
-{#if !o}
+{#if !o && noOrder}
+  <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${id}`, label: id }]} here="Approve" back={{ href: `/requests/${id}`, label: "Request" }} />
+  <div class="none">
+    <p data-testid="approve-none">{noOrder === "blocked" || noOrder === "rejected" ? "Blocked. Nothing to approve." : "Nothing to approve yet."}</p>
+    <a href="/requests/{id}" data-testid="approve-none-request">Open {id} ›</a>
+  </div>
+{:else if !o}
   {#if order.error}
     <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} />
     <VState kind="error" title={/404|not found/i.test(order.error) ? `No request ${id}.` : "Validio is not reachable."} detail={order.error} onretry={() => location.reload()} />
@@ -222,6 +234,19 @@
 {/if}
 
 <style>
+  .none {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  .none p {
+    margin: 0;
+  }
+  .none a {
+    color: var(--v-fg);
+  }
   .others .fold-body {
     margin: 8px 0 0;
     padding: 0;
