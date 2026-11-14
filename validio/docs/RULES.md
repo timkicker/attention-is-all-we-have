@@ -24,8 +24,8 @@ Money is in whole cents. Percentages are in basis points, so 5 % is 500.
 | `totalCents` | the total of the order | Valio's net price times the amount, recomputed by Validio |
 | `autoLimitCents` | how much the agent may spend alone | Spend Pass, 0 when not shown |
 | `hardCapCents` | the most anyone may spend, approval included | Spend Pass, 0 when not shown |
-| `dietContradicted` | a required diet claim is disproved by another field | Fact Grade of the claim check |
-| `dietUnchecked` | a required diet claim is neither attested nor consistent | Fact Grade of the claim check, true when the Spend Pass hides the diet |
+| `dietContradicted` | a required diet claim is disproved by another field, or Valio lists an allergen the Rules say never | Fact Grade of the claim check; Valio's allergen data against the pass's `neverContains` |
+| `dietUnchecked` | a required diet claim is neither attested nor consistent, or a "never" allergen cannot be ruled out | Fact Grade of the claim check, true when the Spend Pass hides the diet; true when the product may contain a "never" allergen, has no allergen data, or the pass names an allergen word Validio does not know |
 | `quantityAttested` | Valio gives a real stock number | availability answer (999999 from a Terminal product does not count) |
 | `quantityCovers` | the attested stock covers the amount ordered | availability answer, converted to the sales unit |
 | `deliveryInTime` | the earliest delivery is on or before the deadline | availability answer and the earlier of the signed deadline and the request |
