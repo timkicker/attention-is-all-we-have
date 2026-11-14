@@ -11,7 +11,12 @@ MATCHED = ("same", "partial", "contradicts")  # the judge says both sentences ar
 
 
 def candidates(anchor: str, hs: list[str], langs: list[str], as_of: dt.datetime, topic: str) -> dict:
-    """{src_h: {lang: [candidate rows by rank]}} from table align when it holds that date, else one exact query."""
+    """{src_h: {lang: [candidate rows by distance]}}: the nearest 5 per edition and every row the judge paired.
+
+    The nearest come from table align when it holds that date, else from one exact query. A judged pair can rank
+    below 5 (fi Mainila and the en "border incident was reported" sentence of 2009 to 2015), so the rows alive at
+    the instant that the judge paired with the claim are added at their distance.
+    """
     out: dict[str, dict[str, list[dict]]] = {}
     if not hs or not langs:
         return out
@@ -25,8 +30,16 @@ def candidates(anchor: str, hs: list[str], langs: list[str], as_of: dt.datetime,
     }
     (cached,) = sqllog.run_file("compare_align_dates", params)
     rows = sqllog.run_file("compare_align" if cached["n"] else "compare_match", params)
+    seen = {(r["src_h"], r["lang"], r["h"]) for r in rows}
+    for r in sqllog.run_file("compare_judged", params):
+        if (r["src_h"], r["lang"], r["h"]) not in seen:
+            seen.add((r["src_h"], r["lang"], r["h"]))
+            rows.append(r | {"paired_only": True})
     for r in rows:
         out.setdefault(r["src_h"], {}).setdefault(r["lang"], []).append(r)
+    for per in out.values():
+        for rows_of_lang in per.values():
+            rows_of_lang.sort(key=lambda r: r["dist"])
     return out
 
 
@@ -70,7 +83,7 @@ def pick(cands: list[dict], judged: dict, src_h: str, top: int = 5) -> tuple[str
     """(status, row, verdict). Best ranked candidate the judge pairs with the claim; else the nearest unjudged one.
 
     `cands` is sorted by distance. A verdict counts wherever its candidate ranks (the judge read both sentences);
-    an unjudged candidate only counts within the first `top`.
+    an unjudged candidate only counts within the first `top` nearest (rows added only for a verdict do not count).
     """
     if not cands:
         return "not_found", None, None
@@ -78,7 +91,7 @@ def pick(cands: list[dict], judged: dict, src_h: str, top: int = 5) -> tuple[str
         v = judged.get((src_h, c["lang"], c["h"]))
         if v and v["label"] in MATCHED:
             return "matched", c, v
-    for c in cands[:top]:
+    for c in [c for c in cands if not c.get("paired_only")][:top]:
         if (src_h, c["lang"], c["h"]) not in judged:
             return "candidate", c, None
     return "not_found", None, None
