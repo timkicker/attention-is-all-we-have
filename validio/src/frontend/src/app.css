@@ -1,6 +1,7 @@
 @import "../vendor/arlen-ui-kit/src/app.css";
 @import "../vendor/arlen-ui-kit/src/lib/theme-light.css";
 @import "@fontsource-variable/figtree/index.css";
+@import "@fontsource/pacifico/400.css";
 @import "./lib/tokens.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
