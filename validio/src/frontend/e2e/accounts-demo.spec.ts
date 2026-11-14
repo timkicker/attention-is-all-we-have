@@ -100,7 +100,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await el(page, "open-approve", "link", /open approval/i).click();
   await el(page, "approve", "button", /^approve$/i).click();
   // every approval asks for the code, also when Rules took it this visit; the demo bar shows it here
-  await expect(page.getByTestId("demo-bar")).toContainText("246810");
+  await expect(page.locator("#code-help")).toContainText("246810");
   await expect(page.getByTestId("approve-why")).toHaveText(/over your 800\.00\s€ limit for ordering alone/i);
   await expect(page.getByTestId("code-input")).toBeVisible();
   await typeCode(page);

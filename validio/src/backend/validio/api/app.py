@@ -24,7 +24,7 @@ from validio.valio.client import ReplayMiss, ValioUnavailable
 from . import accounts, agent_v1, connect, settings, ui
 from .accounts import get_accounts
 from .agent_v1 import ACCOUNT_ID
-from .mcp_server import ACCOUNT
+from .mcp_server import ACCOUNT, CONNECTOR, connector_server
 from .mcp_server import server as mcp_server
 from .state import get_ctx
 
@@ -37,6 +37,7 @@ class McpMount:
 
     def __init__(self):
         self.app = None
+        self.connector = None  # /mcp/c/{token}/, its own MCP server: no spendPass, Validio signs
 
     async def __call__(self, scope, receive, send):
         if self.app is None:
@@ -44,7 +45,19 @@ class McpMount:
         if scope["type"] == "http":
             scope = dict(scope)
             scope.pop(ACCOUNT, None)
+            scope.pop(CONNECTOR, None)
             path = scope["path"][len(scope.get("root_path", "")):]
+            c = re.match(r"/c/([^/]*)(?=/|$)", path)
+            if c:  # /mcp/c/{token}/: only while the kitchen keeps that connection, else 404 like an unknown kitchen
+                from .connect import connector_ctx
+
+                if connector_ctx(c.group(1), touch=True) is None:
+                    await JSONResponse({"detail": "no such connector"}, status_code=404)(scope, receive, send)
+                    return
+                scope["root_path"] = scope.get("root_path", "") + c.group(0)
+                scope[CONNECTOR] = c.group(1)
+                await self.connector(scope, receive, send)
+                return
             k = re.match(r"/k/([^/]*)(?=/|$)", path)
             if k:  # /mcp/k/{account}/: the same MCP server, the account on the scope for the tools to read
                 account = k.group(1)
@@ -76,9 +89,12 @@ async def lifespan(_app: FastAPI):
     ctx = get_ctx()
     if missing := ctx.startup_problems():
         raise RuntimeError(f"VALIDIO_PUBLIC=1 needs {', '.join(missing)}; refusing to start open")
+    security = mcp_security(ctx.mcp_hosts)
     mcp_app.app = mcp_server.streamable_http_app(streamable_http_path="/", host="127.0.0.1",
-                                                 transport_security=mcp_security(ctx.mcp_hosts))
-    async with mcp_server.session_manager.run():
+                                                 transport_security=security)
+    mcp_app.connector = connector_server.streamable_http_app(streamable_http_path="/", host="127.0.0.1",
+                                                             transport_security=security)
+    async with mcp_server.session_manager.run(), connector_server.session_manager.run():
         yield
 
 

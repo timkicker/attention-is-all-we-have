@@ -67,15 +67,17 @@ AgentState = {
   state: "none" | "pairing" | "consent" | "active" | "paused",
   pairing?: {code: string, expiresAt: string, mcpUrl: string, apiUrl: string},   // state "pairing"
   consent?: {name: string, keyId: string, may: string[]},                          // state "consent"
-  agent?: {name: string, keyId: string, connectedAt: string, lastUsedAt: string | null,
-           passId: string, passVersion: number},                                   // "active" / "paused"
+  agent?: {name: string, kind: "agent" | "mcp", keyId: string, connectedAt: string,
+           lastUsedAt: string | null, passId: string, passVersion: number},        // "active" / "paused"
   versions: [{version: number, at: string, why: string}]                           // newest first
 }
 ```
 
 * `code`: 8 characters, letters and digits without look-alikes (`7KQ4-M2XD` shown with a dash, sent
   either way), valid 10 minutes.
-* `mcpUrl`: `https://<host>/mcp/k/<accountId>/`; `apiUrl`: `https://<host>/agent/v1/k/<accountId>`.
+* `mcpUrl`: `https://<host>/mcp/c/<token>/`, the connector for any MCP agent (see below);
+  `apiUrl`: `https://<host>/agent/v1/k/<accountId>`. Signing agents (the CLI) keep using the code and
+  `/mcp/k/<accountId>/`.
 * `may`: the Rules in words, e.g. `["Order alone up to 1,200.00 €", "Ask you up to 2,000.00 €",
   "Never above 2,000.00 €", "Substitutes from Valio's list"]`.
 * `keyId`: the JWK thumbprint of the agent's key, first 8 characters, for the Technical fold.
@@ -106,6 +108,30 @@ AgentState = {
 * Every version, its time and `why` is kept in the kitchen's store (`pass_version`), newest first in
   `versions`. Disconnect signs M-1 again to a key nobody keeps; it never revokes, so the next agent gets
   M-1 back.
+
+### Any MCP agent: the connector URL
+
+Many MCP agents (chat apps with custom connectors, coding tools, own scripts) speak MCP over streamable HTTP
+but cannot sign a key binding. The pairing screen serves them too, with no extra step:
+
+* `POST /api/agent/pair` also makes a fresh P-256 agent key that Validio holds for this kitchen, and a
+  connector token (32 random bytes, urlsafe). `pairing.mcpUrl` is `https://<host>/mcp/c/<token>/`. The token
+  is kept in clear only while pairing waits (so a reload still shows the URL); from Allow on only its SHA-256
+  is kept.
+* The first MCP request on that URL while pairing waits moves the kitchen to `consent` with
+  `consent.name` "MCP agent". Until Allow every tool answers "Waiting for the kitchen to press Allow in
+  Validio".
+* Allow signs M-1 again to the held key (version +1, ledger entry "Connected MCP agent..."); `agent.kind` is
+  `"mcp"` (`"agent"` for an agent with its own key, which pairs with the code as before).
+* From then on `/mcp/c/<token>/` offers the same MCP tools as `/mcp/k/<account>/`, without `spendPass`;
+  `idempotencyKey` is optional. Validio presents the pass with the held key and a fresh nonce on every call,
+  and makes a random idempotency key when none is sent (each call is a new request). Rules, approval, Pause
+  (401 with one ledger entry) and the ledger naming the agent "MCP agent" are unchanged.
+* Only the code expires after 10 minutes; the URL stays valid until Cancel, Deny, Disconnect, a new pairing
+  or another agent allowed with the code. Then `/mcp/c/<token>/` answers 404, as does an unknown token.
+  The host allowlist (`VALIDIO_MCP_HOSTS`, DNS rebinding protection) is the same as for `/mcp/k/`.
+* Use: add the URL as a remote MCP server (streamable HTTP, no OAuth) in the agent's settings, for example
+  a custom connector in a chat app or `<tool> mcp add --transport http validio <URL>` in a coding tool.
 
 Agent side (for any agent, documented in AGENTS.md as well):
 

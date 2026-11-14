@@ -200,7 +200,6 @@
     {#if demoBar}
       <div class="demobar" data-testid="demo-bar" id="demo-bar">
         <span class="db-name">Demo kitchen</span>
-        <span>Approval code <b class="mono" data-code>{session.account.demoCode}</b></span>
         <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
       </div>
     {/if}
@@ -426,10 +425,6 @@
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
-  }
-  .demobar b {
-    color: var(--v-fg);
-    font-weight: 500;
   }
   .db-name {
     color: var(--v-fg);

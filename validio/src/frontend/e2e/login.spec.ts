@@ -16,7 +16,7 @@ test("a page without a session goes to the login page", async ({ page }) => {
 test("the demo kitchen opens the inbox and stays after a reload", async ({ page }) => {
   await demoLogin(page);
   await expect(page.locator("h1")).toHaveText("Inbox");
-  await expect(page.getByTestId("demo-bar")).toContainText("246810");
+  await expect(page.getByTestId("demo-bar")).toContainText("Demo kitchen");
   await page.reload();
   await expect(page.locator("h1")).toHaveText("Inbox");
   await page.goto("/login");
