@@ -88,10 +88,10 @@ def test_pairing_through_the_kitchen_path(kitchens):
 # MCP over streamable HTTP, raw JSON-RPC
 
 
-def _init(i):
+def _init(i, name="test"):
     return {"jsonrpc": "2.0", "id": i, "method": "initialize",
             "params": {"protocolVersion": "2025-06-18", "capabilities": {},
-                       "clientInfo": {"name": "test", "version": "1"}}}
+                       "clientInfo": {"name": name, "version": "1"}}}
 
 
 def _answer(r) -> dict:
@@ -103,9 +103,9 @@ def _answer(r) -> dict:
 
 
 class Mcp:
-    def __init__(self, http, path):
+    def __init__(self, http, path, name="test"):
         self.http, self.path, self.n = http, path, 1
-        r = http.post(path, headers=MCP_HEADERS, json=_init(1))
+        r = http.post(path, headers=MCP_HEADERS, json=_init(1, name))
         _answer(r)
         self.headers = {**MCP_HEADERS, "mcp-session-id": r.headers.get("mcp-session-id", ""),
                         "mcp-protocol-version": "2025-06-18"}
