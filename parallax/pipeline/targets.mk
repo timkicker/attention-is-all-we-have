@@ -2,9 +2,9 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := align judge gloss eval m-lives contested atlas bench sources-data l-scale
+A_STUBS := judge gloss eval atlas bench sources-data l-scale
 
-.PHONY: fetch-smoke fetch parse lives bisect embed load checks checks-write dump release test-a $(A_STUBS)
+.PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load contested checks-write dump release test-a $(A_STUBS)
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -48,3 +48,15 @@ test-a:
 
 $(A_STUBS):
 	@echo "$@: not built yet"; exit 1
+align:
+	$(PY) -m pipeline.align --topic $(TOPIC)
+
+m-lives:
+	$(PY) -m pipeline.m_lives
+
+m-lives-load:
+	$(PY) -m pipeline.m_lives --skip-parse
+
+contested:
+	$(PY) -m pipeline.contested
+
