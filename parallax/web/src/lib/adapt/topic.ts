@@ -458,7 +458,7 @@ export const MAX_CHANGES = 5
 /**
  * "When it changed": edits close to the statement that change at least MIN_WORDS words, English when both
  * versions have a gloss. Readable (English) edits first, then changes of a number or a marked term, then the most changed words; at most
- * MAX_CHANGES.
+ * MAX_CHANGES, shown newest first.
  */
 export function changesOf(edits: EditRaw[], terms: string[] = []): StatementChange[] {
   const has = (t: string, w: string) => t.toLowerCase().includes(w.toLowerCase())
@@ -491,6 +491,7 @@ export function changesOf(edits: EditRaw[], terms: string[] = []): StatementChan
   return out
     .sort((x, y) => y.score - x.score || (x.date < y.date ? 1 : -1))
     .slice(0, MAX_CHANGES)
+    .sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
     .map(({ score: _score, ...c }) => c)
 }
 
