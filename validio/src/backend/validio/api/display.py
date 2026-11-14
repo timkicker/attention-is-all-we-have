@@ -315,7 +315,9 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
         return _end(f"Asked for {what}" + (f", budget {money(round(float(budget.group(1).replace(',', '')) * 100))}"
                                            if budget else ""))
     if kind == "spend_pass":  # one whole sentence: every limit counts, none may be cut
-        return _end(re.sub(r"^Owner changed", "Changed", s))
+        if re.match(r"Owner signed Spend Pass \S+ again, nothing changed", s):
+            return "Signed again, nothing changed."
+        return re.sub(r"^Owner changed Spend Pass \S+\. ", "", s)  # only what changed, field by field
     steady = re.match(r"Steady Order S-\d+, (.+?): (.+)$", s)
     if steady:
         what, rest = steady.groups()
