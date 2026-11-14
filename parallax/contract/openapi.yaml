@@ -17,6 +17,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Health"}
               examples: {default: {externalValue: examples/health.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/topics:
     get:
       operationId: topics
@@ -27,6 +28,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Topics"}
               examples: {default: {externalValue: examples/topics.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/compare:
     get:
       operationId: compare
@@ -46,6 +48,7 @@ paths:
               schema: {$ref: "#/components/schemas/Compare"}
               examples: {default: {externalValue: examples/compare.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/claim/{lang}/{page_id}/{h}/timeline:
     get:
       operationId: timeline
@@ -61,6 +64,7 @@ paths:
               schema: {$ref: "#/components/schemas/Timeline"}
               examples: {default: {externalValue: examples/timeline.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/dropped:
     get:
       operationId: dropped
@@ -78,6 +82,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Dropped"}
               examples: {default: {externalValue: examples/dropped.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sources:
     get:
       operationId: sources
@@ -91,6 +96,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Sources"}
               examples: {default: {externalValue: examples/sources.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check:
     post:
       operationId: check
@@ -120,6 +126,7 @@ paths:
         "422": {$ref: "#/components/responses/Error"}
         "429": {$ref: "#/components/responses/Error"}
         "503": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check/recorded:
     get:
       operationId: checkRecorded
@@ -130,6 +137,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/CheckRecorded"}
               examples: {default: {externalValue: examples/check_recorded.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/check/{run_id}:
     get:
       operationId: checkRun
@@ -144,6 +152,7 @@ paths:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check_run.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ask:
     get:
       operationId: ask
@@ -159,6 +168,8 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Ask"}
               examples: {default: {externalValue: examples/ask.json}}
+        "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/atlas:
     get:
       operationId: atlas
@@ -173,6 +184,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Atlas"}
               examples: {default: {externalValue: examples/atlas.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/stats:
     get:
       operationId: stats
@@ -183,6 +195,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Stats"}
               examples: {default: {externalValue: examples/stats.json}}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sql/vector:
     get:
       operationId: sqlVector
@@ -199,6 +212,7 @@ paths:
               schema: {$ref: "#/components/schemas/SqlPanel"}
               examples: {default: {externalValue: examples/sql_panel.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/sql/{panel_id}:
     get:
       operationId: sqlPanel
@@ -212,6 +226,7 @@ paths:
               schema: {$ref: "#/components/schemas/SqlPanel"}
               examples: {default: {externalValue: examples/sql_panel.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/search:
     get:
       operationId: search
@@ -229,6 +244,7 @@ paths:
               schema: {$ref: "#/components/schemas/Search"}
               examples: {default: {externalValue: examples/search.json}}
         "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ingest:
     post:
       operationId: ingest
@@ -254,6 +270,7 @@ paths:
               examples: {default: {externalValue: examples/ingest.json}}
         "422": {$ref: "#/components/responses/Error"}
         "429": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
   /api/ingest/{qid}:
     get:
       operationId: ingestStatus
@@ -269,6 +286,7 @@ paths:
               schema: {$ref: "#/components/schemas/Ingest"}
               examples: {default: {externalValue: examples/ingest.json}}
         "404": {$ref: "#/components/responses/Error"}
+        "500": {$ref: "#/components/responses/Error"}
 components:
   responses:
     Error:
@@ -291,6 +309,14 @@ components:
         ms: {type: number}
         rows: {type: integer}
         index: {type: string, enum: [emb, none]}
+        params:
+          type: object
+          description: Bound parameters; a list as its length, a long string as its length in characters
+          additionalProperties:
+            oneOf:
+              - {type: [string, number, "null"]}
+              - {type: object, required: [count], properties: {count: {type: integer}}, additionalProperties: false}
+              - {type: object, required: [chars], properties: {chars: {type: integer}}, additionalProperties: false}
     Sql: {type: array, items: {$ref: "#/components/schemas/Statement"}}
     VerdictRef:
       type: [object, "null"]
