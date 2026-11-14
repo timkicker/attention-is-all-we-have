@@ -510,6 +510,10 @@ class StockOutIn(Model):
     on: bool = Field(True, description="true simulates the stock-out of 466375, false ends it")
 
 
+class ResetIn(Model):
+    fresh: bool = Field(False, description="a demo copy: the plain seed instead of the played template, no agent")
+
+
 class AskIn(Model):
     text: str = Field(min_length=1, max_length=300, description="what the kitchen asks its agent for")
 
