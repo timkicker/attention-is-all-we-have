@@ -1,3 +1,4 @@
+import re
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, Request
@@ -21,6 +22,9 @@ from validio.valio.budget import CallBudgetExceeded
 from validio.valio.client import ReplayMiss, ValioUnavailable
 
 from . import accounts, agent_v1, connect, settings, ui
+from .accounts import get_accounts
+from .agent_v1 import ACCOUNT_ID
+from .mcp_server import ACCOUNT
 from .mcp_server import server as mcp_server
 from .state import get_ctx
 
@@ -37,6 +41,18 @@ class McpMount:
     async def __call__(self, scope, receive, send):
         if self.app is None:
             raise RuntimeError("MCP is not started")
+        if scope["type"] == "http":
+            scope = dict(scope)
+            scope.pop(ACCOUNT, None)
+            path = scope["path"][len(scope.get("root_path", "")):]
+            k = re.match(r"/k/([^/]*)(?=/|$)", path)
+            if k:  # /mcp/k/{account}/: the same MCP server, the account on the scope for the tools to read
+                account = k.group(1)
+                if not ACCOUNT_ID.fullmatch(account) or get_accounts().get(account) is None:
+                    await JSONResponse({"detail": f"no kitchen {account}"}, status_code=404)(scope, receive, send)
+                    return
+                scope["root_path"] = scope.get("root_path", "") + k.group(0)
+                scope[ACCOUNT] = account
         await self.app(scope, receive, send)
 
 
@@ -78,6 +94,7 @@ def health() -> dict[str, str]:
 
 
 app.include_router(agent_v1.router)
+app.include_router(agent_v1.account_router)
 app.include_router(ui.router)
 app.include_router(settings.router)
 app.include_router(ui.session_router)
