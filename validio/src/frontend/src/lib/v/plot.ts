@@ -48,7 +48,15 @@ export function place(wants: Want[], width: number): Placed[] {
     left = Math.max(0, Math.min(width - tw, left));
     const tries = rows === 1 ? [0] : [w.row ?? 0, 1 - (w.row ?? 0)];
     for (const row of tries) {
-      const clash = out.some((p) => p.top === 40 + row * 16 && left < p.left + p.width + 8 && p.left < left + tw + 8);
+      const top = 40 + row * 16;
+      const hits = (l: number) => out.find((p) => p.top === top && l < p.left + p.width + 8 && p.left < l + tw + 8);
+      // A label that would touch a placed one slides left of it, if it still
+      // covers its anchor's side of the plot; it is dropped only when that fails.
+      const hit = hits(left);
+      if (hit && hit.left - tw - 8 >= 0 && !hits(hit.left - tw - 8) && hit.left - 8 >= w.x - tw) {
+        left = hit.left - tw - 8;
+      }
+      const clash = !!hits(left);
       if (!clash) {
         const right = align === "right" || left + tw >= width - 1 ? Math.max(0, width - left - tw) : undefined;
         out.push({ ...w, left, top: 40 + row * 16, width: tw, right });

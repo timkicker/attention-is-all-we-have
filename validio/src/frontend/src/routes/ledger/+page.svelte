@@ -22,8 +22,10 @@
 <VHead title="Ledger">
   {#snippet facts()}
     {#if chain}
-      <VPill label={chain.ok ? "Verified" : `Broken at ${chain.brokenAt}`} tone={chain.ok ? "ok" : "bad"} testid="chain-status" id="chain-status" />
-      <span class="num">{chain.count} entries</span>
+      <span class="chain" data-testid="chain-status" id="chain-status">
+        <VPill label={chain.ok ? "Verified" : `Broken at ${chain.brokenAt}`} tone={chain.ok ? "ok" : "bad"} />
+        <span class="num">{chain.count} entries</span>
+      </span>
       <span>Every entry signs the one before it</span>
     {/if}
   {/snippet}
@@ -70,6 +72,11 @@
 </div>
 
 <style>
+  .chain {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+  }
   .led > li {
     display: block;
     padding: 0;

@@ -52,7 +52,9 @@
   const askedOpt = $derived(all.find((x) => x.productId === need?.need.productId));
   const chosenOpt = $derived(all.find((x) => x.productId === l?.productId));
   const others = $derived(all.filter((x) => x.productId !== l?.productId && x.productId !== need?.need.productId));
-  const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose"));
+  // The lactose fact: a measured value when Valio gives one, else its lactose-free claim.
+  const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose") ?? chosenOpt?.facts.find((f) => f.field === "claim:FREE_FROM_LACTOSE"));
+  const upper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
   const sim = $derived(r?.simulated?.[0]);
   const codeRequired = $derived(!!demo.data?.codeRequired);
   const waiting = $derived(o?.state === "waiting");
@@ -176,7 +178,7 @@
           <VValueRow label="Instead of" value="{askedOpt.displayName ?? askedOpt.name}{sim ? ', out of stock (simulated)' : ''}" />
         {/if}
         {#if lactose}
-          <VValueRow label="Lactose" value="{lactose.valueText ?? String(lactose.value ?? '')}{lactose.grade === 'attested' ? ', checked' : ''}" />
+          <VValueRow label="Lactose" value="{upper(lactose.valueText ?? String(lactose.value ?? ''))}{lactose.grade === 'attested' || lactose.grade === 'consistent' ? ', checked' : ''}" />
         {/if}
       </Section>
     {/if}
