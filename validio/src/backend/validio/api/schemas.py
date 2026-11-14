@@ -494,6 +494,17 @@ class LedgerHeadView(Model):
     signature_ok: bool
 
 
+class AskIn(Model):
+    text: str = Field(min_length=1, max_length=300, description="what the kitchen asks its agent for")
+
+
+class AskOut(Model):
+    request_id: str | None = Field(None, description="the request the agent made, absent when Validio refused it")
+    model: str = Field(description="\"Gemini gemini-3.8-flash\" or \"fake model (no Gemini key)\"")
+    lines: list[str] = Field(description="the agent's calls and Validio's answers, as the terminal pane prints them")
+    final: str = Field(description="the agent's last sentence")
+
+
 class DemoState(Model):
     code_required: bool = Field(True, description="false when no approve code is configured")
     stock_out_466375: bool = Field(alias="stockOut466375")

@@ -156,8 +156,8 @@ def test_m2_duplicate_products_refused(client, holder):
 
 
 def test_m3_failed_request_is_blocked_with_a_decision(client, holder):
-    body = {"lines": [{"text": "1000 litres of lactose-free milk"}, {"text": "50 kg of butter"}],
-            "deliverBy": "2026-11-16", "idempotencyKey": "butter"}
+    body = {"lines": [{"text": "1000 litres of lactose-free milk"}, {"text": "50 kg of unobtainium"}],
+            "deliverBy": "2026-11-16", "idempotencyKey": "unobtainium"}
     r = client.post("/agent/v1/requests", headers=auth(holder), json=body)
     assert r.status_code == 200, r.text
     req = r.json()
