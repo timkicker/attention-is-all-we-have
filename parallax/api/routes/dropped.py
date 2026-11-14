@@ -2,6 +2,7 @@
 
 import json
 import re
+import time
 
 from fastapi import APIRouter, Query
 
@@ -190,15 +191,27 @@ def reworded(topic: str, rows: list[dict]) -> set[tuple]:
     return near - set(cuts)
 
 
+_CACHE: dict[tuple, tuple[float, list]] = {}
+CACHE_S = 300  # every topic page asks for the Removed count; the list only changes when an ingest runs
+
+
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
+    key = (topic, lang, min_days)
+    hit = _CACHE.get(key)
+    if hit and time.monotonic() - hit[0] < CACHE_S:
+        return hit[1]
+    out = _topic_rows(topic, lang, min_days)
+    _CACHE[key] = (time.monotonic(), out)
+    return out
+
+
+def _topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
     lives = sqllog.run_file("dropped_topic", {"topic": topic, "lang": lang, "min_days": min_days})
     latest: dict[tuple, dict] = {}
     for r in lives:  # a sentence can be dropped twice; show its last life
         k = (r["lang"], r["page_id"], r["h"])
         if k not in latest or r["row_end"] > latest[k]["row_end"]:
             latest[k] = r
-    gone = reworded(topic, list(latest.values()))
-    latest = {k: r for k, r in latest.items() if k not in gone}
     pairs = _pairs()
     wanted = {o[1] for r in latest.values() for p in pairs.get((r["lang"], r["h"]), {}) for o in [p, *pairs.get(p, {})]}
     alive = {}
@@ -210,7 +223,9 @@ def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
         found = alive_in(r, pairs, alive)
         if found:
             out.append((r, found))
-    return out
+    # the vector check only for the rows still listed (a few hundred, not every dropped life)
+    gone = reworded(topic, [r for r, _ in out])
+    return [(r, found) for r, found in out if (r["lang"], r["page_id"], r["h"]) not in gone]
 
 
 @router.get("/api/dropped")
