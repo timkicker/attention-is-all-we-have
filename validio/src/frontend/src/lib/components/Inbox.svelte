@@ -4,8 +4,6 @@
   /// owner opens, else the newest, so the pane is never empty. On the phone
   /// one of the two at a time. Demo switches live in the bar's ⋯ menu.
   import { api } from "$lib/api/client";
-  import { chrome } from "$lib/chrome.svelte";
-  import { requestTitle } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import InboxList from "./InboxList.svelte";
   import RequestPane from "./RequestPane.svelte";
@@ -17,9 +15,6 @@
     selected ?? (inbox.data ?? []).find((i) => i.status === "waiting")?.id ?? inbox.data?.[0]?.id,
   );
   const req = live(() => (open ? api.request(open) : Promise.resolve(undefined)));
-  $effect(() => {
-    if (selected && req.data?.id === selected) chrome.title = requestTitle(req.data);
-  });
   const pass = live(() => api.spendPass("M-1"));
   let paneEl = $state<HTMLElement | undefined>();
   // A newly opened request starts at its top, as a mail does.
@@ -33,8 +28,7 @@
 <div class="split" class:has={!!selected}>
   <div class="col">
     <div class="col-head">
-      {#if waiting}<span class="count num">{waiting} waiting for you</span>
-      {:else}<span class="count num">{inbox.data?.length ?? 0} {inbox.data?.length === 1 ? "request" : "requests"}</span>{/if}
+      <span class="count num">{waiting ? `${waiting} waiting for you` : "Nothing waiting for you"}</span>
     </div>
     {#if inbox.error && !inbox.data}
       <p class="msg">Cannot reach Validio: {inbox.error}</p>

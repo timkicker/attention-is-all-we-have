@@ -1,9 +1,12 @@
 <script lang="ts">
-  // One steady order: the lines that need the owner on top, each with one
-  // sentence and one button; the rest as plain rows whose reasons fold.
+  // One steady order in one kit Section: the lines that need the owner first,
+  // each with one conclusion and one button; then the plain lines with their
+  // state. Reasons, figures and the drift chart fold under each line.
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
+  import { Row } from "@arlen/ui-kit/components/ui/row";
+  import { Section } from "@arlen/ui-kit/components/ui/section";
   import { ApiError, api } from "$lib/api/client";
   import { owner } from "$lib/owner.svelte";
   import CodeField from "$lib/components/CodeField.svelte";
@@ -69,6 +72,17 @@
     const flag = sentences(l.flags[0]?.sentence)[0];
     return prose((own && !/flag below/i.test(own) ? own : flag ?? own) ?? "");
   };
+  // One conclusion per line that waits, and what its button does.
+  const conclusion = (l: SteadyLine) => {
+    const up = l.flags.find((f) => f.kind === "per_guest_up");
+    if (up && up.pct !== undefined) {
+      const does = l.thisWeekQuantity !== undefined ? ` ${acceptLabel(l)} orders the usual ${amount(l.thisWeekQuantity, l.unit)}.` : "";
+      return `Use per guest went up ${up.pct} % in two weeks.${does}`;
+    }
+    const broke = /would break a rule: ([^:;.]+)/.exec(l.sentence)?.[1];
+    const own = firstOf(l).replace(/\.$/, "");
+    return broke ? `${own}; the only substitute is ${broke.toLowerCase()}.` : firstOf(l);
+  };
   const waiting = $derived((s?.lines ?? []).filter(asks).length);
 </script>
 
@@ -95,13 +109,11 @@
       <p class="t-bad problem" role="alert">{problem}</p>
     {/if}
 
-    {#if needsYou.length}
-      <ul class="asks" aria-label="Lines that need you">
-        {#each needsYou as l (l.productId)}
-          <li class="ask" data-testid="line-{l.productId}" id="line-{l.productId}">
-            <p class="ask-name">{nameWord(l.name)} <span class="t-quiet num">{figures(l)}</span></p>
-            <p class="ask-why">{firstOf(l)}</p>
-            <div>
+    <Section>
+      {#each needsYou as l (l.productId)}
+        <div class="line" data-testid="line-{l.productId}" id="line-{l.productId}">
+          <Row label={nameWord(l.name)} description={conclusion(l)}>
+            {#snippet control()}
               <Button
                 variant="outline"
                 id="accept-{l.productId}"
@@ -111,33 +123,26 @@
               >
                 {acceptLabel(l)}
               </Button>
-            </div>
-            {@render fold(l, true)}
-          </li>
-        {/each}
-      </ul>
-    {/if}
-
-    <ul class="rows" aria-label="Lines">
+            {/snippet}
+            {#snippet below()}{@render fold(l)}{/snippet}
+          </Row>
+        </div>
+      {/each}
       {#each rest as l (l.productId)}
         {@const r = look(LINE_RESULT, l.result)}
-        <li data-testid="line-{l.productId}" id="line-{l.productId}">
-          <Collapsible.Root>
-            <Collapsible.Trigger class="row">
-              <span class="name">{nameWord(l.name)}</span>
-              <span class="qty num">{figures(l)}</span>
-              <span class="state">{l.result === "pending" ? "" : r.label}</span>
-              <Collapsible.Chevron />
-            </Collapsible.Trigger>
-            {@render body(l, false)}
-          </Collapsible.Root>
-        </li>
+        <div class="line" data-testid="line-{l.productId}" id="line-{l.productId}">
+          <Row label={nameWord(l.name)} description={figures(l)}>
+            {#snippet control()}<span class="state">{l.result === "pending" ? "" : r.label}</span>{/snippet}
+            {#snippet below()}{@render fold(l)}{/snippet}
+          </Row>
+        </div>
       {/each}
-    </ul>
+    </Section>
 
     {#if s.simulatedHistory}
-      <p class="foot t-quiet" id="simulated-history" data-testid="simulated-history">
-        The {s.weeksLearned} weeks of history behind this order are simulated for the demo.
+      <!-- The demo notice itself lives in the ⋯ menu. -->
+      <p hidden id="simulated-history" data-testid="simulated-history">
+        Simulated history: the {s.weeksLearned} weeks behind this order are simulated for the demo.
       </p>
     {/if}
   </Frame>
@@ -147,18 +152,18 @@
   </Frame>
 {/if}
 
-{#snippet fold(l: SteadyLine, first: boolean)}
+{#snippet fold(l: SteadyLine)}
   <Collapsible.Root>
     <Collapsible.Trigger class="more-btn">
       <Collapsible.Chevron />
       Details
     </Collapsible.Trigger>
-    {@render body(l, first)}
+    {@render body(l)}
   </Collapsible.Root>
 {/snippet}
 
-{#snippet body(l: SteadyLine, first: boolean)}
-  {@const shown = first ? firstOf(l) : ""}
+{#snippet body(l: SteadyLine)}
+  {@const shown = asks(l) ? conclusion(l) : ""}
   {@const said = sentences(l.sentence).filter((t) => !/^usual amount\.?$/i.test(t) && !/^median of/i.test(t) && prose(t) !== shown)}
   {@const flags = l.flags.filter((f) => !l.sentence.includes(f.sentence)).flatMap((f) => sentences(f.sentence)).filter((t) => prose(t) !== shown)}
   {@const chart = l.history && l.history.length > 1 && l.flags.some((f) => f.kind === "per_guest_up")}
@@ -189,6 +194,7 @@
         {#if chart && l.history}
           <Drift history={l.history} usual={l.usualQuantity} unit={l.unit} id="drift-{l.productId}" />
         {/if}
+        {#if asks(l)}<p class="why num">{figures(l)}</p>{/if}
         <p class="pid"><span class="mono">{l.productId}</span>{#if l.orderId}<span>order <a href="/ledger">{l.orderId}</a></span>{/if}</p>
       </div>
     {/snippet}
@@ -212,71 +218,18 @@
     margin: 0;
     font-size: var(--text-sm);
   }
-  .asks,
-  .rows {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .asks {
-    gap: 1.5rem;
-  }
-  .ask {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .ask-name {
-    margin: 0;
-    font-size: var(--text-base);
-    font-weight: 500;
-  }
-  .ask-why {
-    margin: 0;
-    max-width: 60ch;
-    font-size: var(--text-sm);
-    color: var(--color-fg-secondary);
-  }
-  .ask :global(.more-btn) {
+  .line :global(.more-btn) {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    min-height: 2rem;
+    min-height: 1.75rem;
     font-size: var(--text-xs);
     color: var(--color-fg-secondary);
-  }
-  .rows li + li {
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
-  }
-  .rows :global(.row) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto 9rem 1rem;
-    gap: 1rem;
-    align-items: baseline;
-    width: 100%;
-    padding: 0.55rem 0.35rem;
-    border-radius: var(--radius-input);
-    text-align: start;
-  }
-  .rows :global(.row:hover) {
-    background: color-mix(in srgb, var(--color-fg-primary) 5%, transparent);
-  }
-  .name {
-    font-size: var(--text-sm);
-    font-weight: 500;
-  }
-  .qty {
-    font-size: var(--text-sm);
-    white-space: nowrap;
   }
   .state {
     font-size: var(--text-sm);
     color: var(--color-fg-secondary);
-  }
-  .rows :global(.kit-chevron) {
-    align-self: center;
+    white-space: nowrap;
   }
   .below {
     display: flex;
@@ -324,26 +277,9 @@
     text-align: end;
     white-space: nowrap;
   }
-  .foot {
-    margin: 0;
-    font-size: var(--text-xs);
-  }
   @media (max-width: 760px) {
-    .rows :global(.row) {
-      grid-template-columns: minmax(0, 1fr) 1rem;
-      gap: 0.1rem 0.75rem;
-    }
-    .qty,
-    .state {
-      grid-column: 1;
-      font-size: var(--text-xs);
-    }
-    .rows :global(.kit-chevron) {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    .ask :global(button) {
-      width: 100%;
+    .line :global(.row-main) {
+      flex-wrap: wrap;
     }
   }
 </style>

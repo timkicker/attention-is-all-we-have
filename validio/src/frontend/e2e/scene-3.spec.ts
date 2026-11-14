@@ -13,7 +13,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.getByTestId("inbox-R-2").click();
   await expect(page.locator("#request-title")).toContainText("200 bags of");
-  await expect(page.locator("#simulated-stock-out")).toContainText("Simulated stock-out");
+  await expect(page.locator("#simulated-stock-out")).toContainText("out of stock at Valio (simulated for the demo");
   for (const id of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${id}`)).toContainText("Blocked");
   }

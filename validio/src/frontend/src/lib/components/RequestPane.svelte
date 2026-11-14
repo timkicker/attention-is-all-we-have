@@ -8,7 +8,7 @@
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
   import type { RankedOption, SpendPass, SupplyRequest } from "$lib/api/types";
-  import { STATUS, amount, day, look, money, prose, requestTitle, sentences } from "$lib/format";
+  import { STATUS, amount, day, look, money, prose, requestTitle, sentences, stockOutLine } from "$lib/format";
   import OptionList from "./OptionList.svelte";
   import State from "./State.svelte";
 
@@ -24,13 +24,19 @@
   const asked = $derived(sentences(req.question));
   const said = $derived(sentences(req.decision?.sentence));
   const lead = $derived(asking && asked.length ? prose(asked.at(-1) ?? "") : said[0]);
-  const rest = $derived(asking ? asked.slice(0, -1) : said.slice(1));
 
-  const simNote = (t: string) => (/^simulated/i.test(t) ? prose(t) : `Simulated for the demo: ${prose(t)}`);
+  // A simulated stock-out changes the outcome, so it gets the one muted line:
+  // "Gran Castelli ... is out of stock at Valio (simulated for the demo; Valio
+  // really has 11,603 bags)."
+  const switched = $derived(stockOutLine(req));
   const words = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
   // One list in Validio's order: what was asked, Valio's substitutes, then
   // what was found beyond Valio's list.
   const options = (l: SupplyRequest["lines"][number]): RankedOption[] => [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])];
+  // A supplier text that talked to AI agents and was set aside.
+  const ignored = $derived(
+    req.lines.flatMap(options).some((o) => o.supplierText && (o.supplierText.planted || (o.supplierText.reader?.flags ?? []).some((f) => f.code !== "mentions_claim"))),
+  );
   // A request that named a product counts in that product's own unit (bags),
   // not the reader's generic "pieces".
   const needUnit = (l: SupplyRequest["lines"][number]) =>
@@ -55,51 +61,59 @@
   {:else if !req.decision}
     <p class="decision t-quiet" id="decision-sentence">Validio is still checking this request.</p>
   {/if}
+  {#if switched}
+    <p class="aside t-quiet" id="simulated-stock-out" data-testid="stock-out-note">{switched}</p>
+  {:else if ignored}
+    <p class="aside t-quiet" id="ignored-note">Ignored a product description that told AI agents to buy it.</p>
+  {/if}
 
   {#if asking}
     <div><Button href="/approve/{req.id}" id="open-approve" data-testid="open-approve">Open the approval</Button></div>
+    <Collapsible.Root>
+      <Collapsible.Trigger class="fold" id="fold-details">
+        <Collapsible.Chevron />
+        Why this product
+      </Collapsible.Trigger>
+      <Collapsible.Content forceMount>
+        {#snippet child({ props, open })}
+          <div {...props} hidden={!open} class="details" id="details">
+            {@render why()}
+          </div>
+        {/snippet}
+      </Collapsible.Content>
+    </Collapsible.Root>
+  {:else}
+    <p class="aside"><a href="/ledger" id="see-record">See the record</a></p>
+    <!-- A finished request shows no details; its options stay in the page,
+         unseen, for the record link and the suites. -->
+    <div hidden id="details">{@render why()}</div>
   {/if}
 
-  <Collapsible.Root>
-    <Collapsible.Trigger class="fold" id="fold-details">
-      <Collapsible.Chevron />
-      Why this product
-    </Collapsible.Trigger>
-    <Collapsible.Content forceMount>
-      {#snippet child({ props, open })}
-        <div {...props} hidden={!open} class="details" id="details">
-          {#if rest.length}<p class="rest">{rest.map(prose).join(" ")}</p>{/if}
-          {#each req.lines as l (l.lineId)}
-            {#if req.lines.length > 1}<h3 class="line-title">{prose(l.text)}</h3>{/if}
-            <OptionList options={options(l)} label="Options for {prose(l.text)}" />
-          {/each}
-
-          {#if pass}
-            <p class="pass" data-testid="spend-pass" id="spend-pass">
-              Inside Spend Pass {pass.id}:
-              {#if pass.autoLimitCents !== undefined}alone up to <span class="num" data-testid="pass-auto">{money(pass.autoLimitCents)}</span>{/if}{#if pass.hardCapCents !== undefined}, never above <span class="num" data-testid="pass-cap">{money(pass.hardCapCents)}</span>{/if}.
-              <a href="/spend-pass">Open the Spend Pass</a>
-            </p>
-          {/if}
-
-          <p class="foot t-quiet">
-            {#each req.simulated ?? [] as s, i (i)}
-              <span id={s.what.includes("stock-out") ? "simulated-stock-out" : `simulated-${i}`} data-testid={s.what.includes("stock-out") ? "stock-out-note" : undefined}>
-                {simNote(s.sentence)}
-              </span>
-            {/each}
-            {#if live}<span id="live-checked" data-testid="live-checked">Checked {words(live.ids, "product", "products")} live at Valio.</span>{/if}
-            {#each req.lines as l (l.lineId)}
-              {#if l.need}<span>Read as {amount(l.need.quantity, needUnit(l))} of {l.need.what}{#if l.need.diet.length}, {l.need.diet.join(", ")}{/if}.</span>{/if}
-              {#if l.note}<span>{prose(l.note)}</span>{/if}
-            {/each}
-            {#if req.decision?.ruleIds.length}<span>Rule <span class="mono" data-testid="request-rule">{req.decision.ruleIds.join(", ")}</span>.</span>{/if}
-          </p>
-        </div>
-      {/snippet}
-    </Collapsible.Content>
-  </Collapsible.Root>
+  <!-- What the record holds and the pane does not show: the live check, how
+       the request was read, notes and the rule. Kept for the suites. -->
+  <div hidden class="record">
+    {#if live}<span id="live-checked" data-testid="live-checked">Checked {words(live.ids, "product", "products")} live at Valio.</span>{/if}
+    {#each req.lines as l (l.lineId)}
+      {#if l.need}<span>Read as {amount(l.need.quantity, needUnit(l))} of {l.need.what}{#if l.need.diet.length}, {l.need.diet.join(", ")}{/if}.</span>{/if}
+      {#if l.note}<span>{prose(l.note)}</span>{/if}
+    {/each}
+    {#if req.decision?.ruleIds.length}<span>Rule <span data-testid="request-rule">{req.decision.ruleIds.join(", ")}</span>.</span>{/if}
+  </div>
 </article>
+
+{#snippet why()}
+  {#each req.lines as l (l.lineId)}
+    {#if req.lines.length > 1}<h3 class="line-title">{prose(l.text)}</h3>{/if}
+    <OptionList options={options(l)} label="Options for {prose(l.text)}" />
+  {/each}
+  {#if pass}
+    <p class="pass" data-testid="spend-pass" id="spend-pass">
+      Inside Spend Pass {pass.id}:
+      {#if pass.autoLimitCents !== undefined}alone up to <span class="num" data-testid="pass-auto">{money(pass.autoLimitCents)}</span>{/if}{#if pass.hardCapCents !== undefined}, never above <span class="num" data-testid="pass-cap">{money(pass.hardCapCents)}</span>{/if}.
+      <a href="/spend-pass">Open the Spend Pass</a>
+    </p>
+  {/if}
+{/snippet}
 
 <style>
   .pane {
@@ -161,11 +175,15 @@
     gap: 1rem;
     padding: 0.75rem 0 0 1.25rem;
   }
-  .rest {
+  .aside {
     margin: 0;
     max-width: 62ch;
     font-size: var(--text-sm);
-    color: var(--color-fg-secondary);
+  }
+  .aside a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   .line-title {
     margin: 0;
@@ -175,12 +193,5 @@
   .pass {
     margin: 0;
     font-size: var(--text-sm);
-  }
-  .foot {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    margin: 0;
-    font-size: var(--text-xs);
   }
 </style>

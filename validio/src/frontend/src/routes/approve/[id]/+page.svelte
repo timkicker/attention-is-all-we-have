@@ -5,11 +5,10 @@
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
-  import { Check } from "@lucide/svelte";
   import { ApiError, api } from "$lib/api/client";
   import type { Order, RankedOption } from "$lib/api/types";
   import { bump, setChrome } from "$lib/chrome.svelte";
-  import { VERDICT, amount, day, hm, look, money, nameWord, sentences, time } from "$lib/format";
+  import { VERDICT, amount, day, hm, look, money, nameWord, sentences, stockOutLine, time } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import CodeField from "$lib/components/CodeField.svelte";
   import Frame from "$lib/components/Frame.svelte";
@@ -62,7 +61,7 @@
     if (!o || o.lines.length !== 1) return "";
     const l = o.lines[0];
     const opt = (req.data?.lines ?? []).flatMap((x) => [...x.options, ...(x.substitutes ?? []), ...(x.beyondList ?? [])]).find((x) => x.productId === l.productId);
-    const why = sentences(opt?.sentence)[0] ?? "";
+    const why = stockOutLine(req.data) || (sentences(opt?.sentence)[0] ?? "");
     return [why, l.deliveryDate ? `Delivery ${day(l.deliveryDate)}.` : ""].filter(Boolean).join(" ");
   });
 
@@ -160,25 +159,12 @@
       {shown.state === "placed" ? `Approved, order ${shown.id} placed at Valio ${hm(shown.history.at(-1)?.at ?? "")}.` : `Order ${shown.id}.`}
       <a href="/ledger">See it in the ledger</a>
     </p>
-    <Collapsible.Root>
-      <Collapsible.Trigger class="fold" id="fold-steps">
-        <Collapsible.Chevron />
-        Steps
-      </Collapsible.Trigger>
-      <Collapsible.Content forceMount>
-        {#snippet child({ props, open })}
-          <ol {...props} hidden={!open} class="steps" id="order-steps" data-testid="order-steps">
-            {#each shown.history as h, i (i)}
-              <li>
-                <span class="when num">{time(h.at)}</span>
-                <span class="mark" class:end={h.state === "rejected" || h.state === "blocked"} aria-hidden="true"><Check size={11} strokeWidth={3} /></span>
-                <span class="what">{STEP[h.state] ?? h.state}</span>
-              </li>
-            {/each}
-          </ol>
-        {/snippet}
-      </Collapsible.Content>
-    </Collapsible.Root>
+    <!-- The steps say again what the sentence says; the record keeps them. -->
+    <ol hidden id="order-steps" data-testid="order-steps">
+      {#each shown.history as h, i (i)}
+        <li>{time(h.at)} {STEP[h.state] ?? h.state}</li>
+      {/each}
+    </ol>
   </Frame>
 {/if}
 
@@ -188,7 +174,7 @@
     font-size: var(--text-sm);
     color: var(--color-fg-secondary);
   }
-  :global(.fold:is(#fold-others, #fold-steps)) {
+  :global(.fold#fold-others) {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
@@ -231,47 +217,6 @@
   }
   /* The record: time in a quiet left column, a filled mark on a lifeline,
      the step on the right. Every step shown has happened. */
-  .steps {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    padding: 0.5rem 0 0;
-    list-style: none;
-    font-size: var(--text-sm);
-  }
-  .steps li {
-    position: relative;
-    display: grid;
-    grid-template-columns: 5.5rem 1rem 1fr;
-    align-items: center;
-    gap: 0.75rem;
-    padding-block: 0.45rem;
-  }
-  .steps li + li::before {
-    content: "";
-    position: absolute;
-    top: -0.45rem;
-    height: 0.9rem;
-    left: calc(5.5rem + 0.75rem + 0.5rem - 0.5px);
-    width: 1px;
-    background: var(--color-border);
-  }
-  .when {
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
-  }
-  .mark {
-    display: grid;
-    place-items: center;
-    width: 1rem;
-    height: 1rem;
-    border-radius: var(--radius-full);
-    background: var(--color-fg-primary);
-    color: var(--color-bg-app);
-  }
-  .mark.end {
-    background: var(--color-fg-secondary);
-  }
   @media (max-width: 760px) {
     /* The two answers stay under the thumb. */
     .buttons {
