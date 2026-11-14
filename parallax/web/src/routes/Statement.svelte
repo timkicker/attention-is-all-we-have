@@ -31,13 +31,20 @@
   })
 
   /** Original wording per edition: marked when the adapter sent marks, else the plain text. */
-  function originals(g: StatementVM['groups'][number]): { lang: Lang; say: MarkedText }[] {
+  function originals(g: StatementVM['groups'][number]): { lang: Lang; say: MarkedText; url: string | null }[] {
     if (g.marked.length) return g.marked
-    return g.originals.map((o) => ({ lang: o.lang, say: { text: o.text, spans: [] } }))
+    return g.originals.map((o) => ({ lang: o.lang, say: { text: o.text, spans: [] }, url: o.url }))
   }
   const open = $derived(vm?.open ?? [])
-  const changeLine = (c: StatementVM['changes'][number]) =>
-    copy.topic.changedFromToAt(c.date, c.approx, c.lang, c.from, c.to)
+  const changeRest = (c: StatementVM['changes'][number]) =>
+    c.to ? copy.topic.changeRest(c.lang, c.from, c.to) : copy.topic.removedRest(c.lang)
+  /** Each edition of a group with the revision its wording is from. */
+  const versions = (g: StatementVM['groups'][number]) =>
+    g.langs.map((l) => ({ lang: l, url: g.originals.find((o) => o.lang === l)?.url ?? null }))
+  const sep = (i: number, n: number) => (i === n - 1 ? '' : i === n - 2 ? copy.topic.LIST_AND : copy.topic.LIST_SEP)
+  // Test ids of the revision links on this page (not in the shared TID list).
+  const VERSION = 'statement-version'
+  const CHANGE_VERSION = 'change-version'
 </script>
 
 <Bar right="change" />
@@ -55,12 +62,12 @@
           {#if original}
             {#each originals(g) as o (o.lang)}
               <div class="one">
-                <p class="ed">{copy.edition(o.lang)}</p>
+                <p class="ed">{#if o.url}<a class="v" href={o.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(o.lang)} data-testid={VERSION}>{copy.edition(o.lang)}</a>{:else}{copy.edition(o.lang)}{/if}</p>
                 <p class="say">{#if o.say.text}<Marked value={o.say} />{/if}</p>
               </div>
             {/each}
           {:else}
-            <p class="ed">{copy.editions(g.langs)}</p>
+            <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}</p>
             <p class="say"><Marked value={g.say} /></p>
           {/if}
         </div>
@@ -78,7 +85,7 @@
       <div class="list">
         {#each vm.changes as c, i (i)}
           <div class="item" data-testid={TID.changeRow}>
-            <p>{changeLine(c)}</p>
+            <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}{changeRest(c)}</p>
             {#if c.comment}<p class="t13 muted">{copy.editComment(c.comment)}</p>{/if}
           </div>
         {:else}
@@ -102,6 +109,8 @@
   .ed { display: inline-block; font-weight: var(--w-medium); }
   .item .say { margin-top: 4px; }
   .one + .one { margin-top: 16px; }
+  .v { color: inherit; text-decoration: none; }
+  .v:hover, .v:focus-visible { text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
   .changed { margin-top: 64px; }
   .changed .item { padding: 16px 0; }
 </style>
