@@ -173,6 +173,8 @@ export interface Analysed {
   differs: Lang[]
   contradicts: number
   newest: string
+  /** From the infobox (a field, not a sentence): ranked after the sentences. */
+  infobox: boolean
 }
 
 /** Edition start dates from /api/topics, YYYY-MM-DD per lang. */
@@ -228,6 +230,7 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
     differs,
     contradicts: differs.filter((l) => row.cells[l].verdict?.label === 'contradicts').length,
     newest: differs.map((l) => row.cells[l].born ?? '').sort().pop() ?? '',
+    infobox: row.section === '[infobox]' || /^[\p{L}_ ]{1,30}\d*:\s+/u.test(a.text ?? ''),
   }
 }
 
@@ -243,14 +246,15 @@ function addDays(day: string, n: number): string {
 }
 
 /**
- * Statements whose differing part is marked in the text come first (the reader sees what differs), then the
- * rest; within each, most editions differing first, then most contradicting, then the newest wording.
+ * Sentences whose differing part is marked come first (the reader sees what differs); then marked infobox fields
+ * and lists with more than two marks (hard to read as a first impression); then the rest. Within each, most
+ * editions differing first, then most contradicting, then the newest wording.
  */
 export function rank(rows: Analysed[]): Analysed[] {
-  const marked = (x: Analysed) => (x.say.spans.length ? 1 : 0)
+  const tier = (x: Analysed) => (!x.say.spans.length ? 0 : x.infobox || x.say.spans.length > 2 ? 1 : 2)
   return [...rows].sort(
     (x, y) =>
-      marked(y) - marked(x) ||
+      tier(y) - tier(x) ||
       y.differs.length - x.differs.length ||
       y.contradicts - x.contradicts ||
       (x.newest < y.newest ? 1 : x.newest > y.newest ? -1 : 0),
