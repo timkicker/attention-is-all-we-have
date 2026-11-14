@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from contextlib import asynccontextmanager
 
@@ -70,6 +71,21 @@ class McpMount:
                 scope[ACCOUNT] = account
         await self.app(scope, receive, send)
 
+
+class RedactConnector(logging.Filter):
+    """Access log lines never carry a connector token: /mcp/c/<token>/ is logged as /mcp/c/***/."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.args, tuple):
+            record.args = tuple(CONNECTOR_PATH.sub(r"\1***", a) if isinstance(a, str) else a for a in record.args)
+        if isinstance(record.msg, str):
+            record.msg = CONNECTOR_PATH.sub(r"\1***", record.msg)
+        return True
+
+
+CONNECTOR_PATH = re.compile(r"(/mcp/c/)[^/\s?\"]+")
+for _name in ("uvicorn.access", "uvicorn.error", "httpx"):
+    logging.getLogger(_name).addFilter(RedactConnector())
 
 mcp_app = McpMount()
 MAX_PEEK = 1 << 20  # a body larger than this is passed on unread for the name
