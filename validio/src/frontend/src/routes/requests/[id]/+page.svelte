@@ -9,7 +9,7 @@
   import { api } from "$lib/api/client";
   import type { RankedOption } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
-  import { day, fieldWord, money, nb, valueWord } from "$lib/format";
+  import { day, money, nb } from "$lib/format";
   import { optionLine, optionPill, requestPill, turnedDownGroups } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import VLane from "$lib/v/VLane.svelte";
@@ -72,20 +72,8 @@
   const rank = (list: RankedOption[], o: RankedOption) => String(list.indexOf(o) + 1);
 
   const rejected = $derived(r?.status === "rejected");
-  // The facts Validio confirmed, for the chosen row's fold.
-  const CHECKED = new Set(["attested", "attested_until", "consistent"]);
-  /** One line per confirmed fact, each from its own API field. */
-  function checkedFacts(o: RankedOption): string[] {
-    return o.facts
-      .filter((x) => CHECKED.has(x.grade) && !/^(description|key_ingredients)$/.test(x.field) && (x.valueText ?? x.value) != null)
-      .map((x) => `${fieldWord(x.field)}: ${x.valueText ?? valueWord(x.field, x.value)}`);
-  }
-  /** The API's reasons, one per line, without the one the row's short text already says. */
-  function whyLines(o: RankedOption): string[] {
-    const all = o.reasons?.length ? o.reasons : [o.sentence];
-    const head = (t: string) => t.toLowerCase().replace(/[^a-z ]/g, "").split(" ").slice(0, 3).join(" ");
-    return o.shortText ? all.filter((t) => head(t) !== head(o.shortText!)) : all;
-  }
+  /** The fold's reasons: the API leaves out the one shortText already says. */
+  const whyLines = (o: RankedOption): string[] => o.whyReasons ?? o.reasons ?? [o.sentence];
   // The owner's states carry the rule in the chosen row's fold, not in the head.
   const ruleInFold = $derived(["waiting", "ordered", "approved", "rejected"].includes(r?.status ?? ""));
   const priced = $derived(prices.length);
@@ -120,10 +108,10 @@
           <div class="fold-body" data-testid="why-body-{o.productId}">
             <p>{o.fullName ?? o.name}, product {o.productId}.</p>
             {#each whyLines(o) as why (why)}<p>{nb(why)}</p>{/each}
-            {#if checkedFacts(o).length}
+            {#if o.checks?.length}
               <p class="why-h">Checked</p>
               <ul class="why-facts" data-testid="why-checked-{o.productId}">
-                {#each checkedFacts(o) as f (f)}<li>{nb(f)}</li>{/each}
+                {#each o.checks as f (f)}<li>{nb(f)}</li>{/each}
               </ul>
             {/if}
             {#if ruleInFold}<p data-testid="request-rule" id="request-rule">Rule: {rule}</p>{/if}
