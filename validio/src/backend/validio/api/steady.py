@@ -37,7 +37,7 @@ from ..standing.drift import unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
-from ..text.format import money, product_qty, qty_of, short_name
+from ..text.format import display_name, money, product_qty, qty_of, short_name
 from ..text.format import unit_word as fmt_unit_word
 from ..valio.client import ValioClient
 from .schemas import ApproveIn
@@ -82,12 +82,15 @@ class SplitPartOut(Camel):
     total_cents: int
     on_valio_list: bool
 
+    display_name: str | None = None
     short_name: str | None = None
+    full_name: str | None = None
     qty_text: str | None = None
     money_text: str | None = None
 
     def _texts(self) -> dict:
-        return {"short_name": short_name(self.name), "qty_text": _qty(self.quantity, self.product_id),
+        return {"display_name": short_name(self.name), "short_name": short_name(self.name),
+                "full_name": display_name(self.name), "qty_text": _qty(self.quantity, self.product_id),
                 "money_text": money(self.total_cents)}
 
 
@@ -114,13 +117,16 @@ class SteadyLineOut(Camel):
     order_id: str | None = None
     rule_ids: list[str] | None = None
 
+    display_name: str | None = None
     short_name: str | None = None
+    full_name: str | None = None
     usual_qty_text: str | None = None
     qty_text: str | None = None
     money_text: str | None = None
 
     def _texts(self) -> dict:
-        return {"short_name": short_name(self.name), "usual_qty_text": _qty(self.usual_quantity, self.product_id),
+        return {"display_name": short_name(self.name), "short_name": short_name(self.name),
+                "full_name": display_name(self.name), "usual_qty_text": _qty(self.usual_quantity, self.product_id),
                 "qty_text": None if self.this_week_quantity is None else _qty(self.this_week_quantity, self.product_id),
                 "money_text": None if self.total_cents is None else money(self.total_cents)}
 
