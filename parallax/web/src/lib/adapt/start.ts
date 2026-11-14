@@ -1,7 +1,6 @@
 // Start page, search and ingest: raw API -> view model. Owner: P1.
 import type { api as Api } from '../api/client'
 import type { CellRaw, CompareRes, IngestRes, SearchResultRaw, TopicsRes } from '../api/types'
-import { excerpt } from '../copy/shared'
 import { exampleTitle } from '../copy/start'
 import {
   LANGS,
@@ -29,12 +28,17 @@ export const EXAMPLE_STATEMENT = { lang: 'fi', pageId: 1256, h: 'abe24bc5f22fda0
 /** "Faster" offers the last five years; the API gives no estimate for it, so it is a fixed guess. */
 const FASTER_YEARS = 5
 const FASTER_ETA_S = 60
+/** With this little left, offering a faster load makes no sense. */
+const FASTER_HIDE_S = 120
 
-export function toPrepared(raw: TopicsRes): StartVM['prepared'] {
+/** PreparedTopic plus the edition count, shown when no year span is known. Remove once model.ts carries it. */
+export type PreparedWithCount = StartVM['prepared'][number] & { editions: number }
+
+export function toPrepared(raw: TopicsRes): PreparedWithCount[] {
   // The topics list carries no year span, so years stay empty in live mode.
   return raw.topics
     .filter((t) => t.wikidata_id)
-    .map((t) => ({ qid: t.wikidata_id, title: t.label_en, from: null, to: null, href: paths.differences(t.wikidata_id) }))
+    .map((t) => ({ qid: t.wikidata_id, title: t.label_en, from: null, to: null, editions: t.editions.length, href: paths.differences(t.wikidata_id) }))
 }
 
 /** Prepared topics (from /api/topics) and the example block. */
@@ -53,7 +57,8 @@ export async function loadStart(api: Client): Promise<Result<StartVM>> {
 
 /** At most this many other editions next to the Finnish line, as in the wireframe. */
 const EXAMPLE_OTHERS = 3
-const EXAMPLE_MAX = 160
+/** A part before an elision shorter than this is not a usable quote; long quotes are clamped in CSS. */
+const EXAMPLE_MIN = 40
 
 function englishOf(lang: string, cell: CellRaw): string | null {
   return cell.gloss ?? (lang === 'en' ? cell.text : null)
@@ -94,7 +99,7 @@ export function toExample(raw: CompareRes, topic: TopicRef): StartVM['example'] 
     if (lines.length < EXAMPLE_OTHERS) {
       // A gloss can hold an elision marker "<…>"; the example shows only the part before it.
       const cut = text.split('<…>')[0].trim()
-      const shown = cut.length < text.length ? `${excerpt(cut, EXAMPLE_MAX).replace(/[\s.,;:…]+$/, '')}…` : excerpt(text, EXAMPLE_MAX)
+      const shown = cut.length >= EXAMPLE_MIN ? cut : text
       lines.push({ lang, say: markIn(shown, terms.map((m) => m.other)) })
     }
   }
@@ -102,7 +107,7 @@ export function toExample(raw: CompareRes, topic: TopicRef): StartVM['example'] 
   return {
     topic,
     title: exampleTitle(lines.length + 1),
-    lines: [{ lang: raw.anchor as Lang, say: markIn(excerpt(fiText, EXAMPLE_MAX), [...fiTerms]) }, ...lines],
+    lines: [{ lang: raw.anchor as Lang, say: markIn(fiText, [...fiTerms]) }, ...lines],
     href: paths.statement(topic.qid, raw.anchor, fi.page_id, fi.h),
   }
 }
@@ -154,7 +159,7 @@ export function toIngest(raw: IngestRes, now: Date = new Date()): IngestVM {
     editions,
     readyCount: editions.filter((e) => e.state === 'done').length,
     openHref: raw.state === 'usable' || done ? paths.differences(raw.qid) : null,
-    faster: raw.since || done || raw.state === 'failed' ? null : { fromYear, toYear: year, since: `${fromYear}-01-01`, etaS: FASTER_ETA_S },
+    faster: raw.since || done || raw.state === 'failed' || (raw.eta_s !== null && raw.eta_s <= FASTER_HIDE_S) ? null : { fromYear, toYear: year, since: `${fromYear}-01-01`, etaS: FASTER_ETA_S },
   }
 }
 

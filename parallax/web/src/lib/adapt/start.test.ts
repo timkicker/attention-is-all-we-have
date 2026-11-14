@@ -34,6 +34,11 @@ describe('toIngest', () => {
     expect(vm.faster).toEqual({ fromYear: 2021, toYear: 2026, since: '2021-01-01', etaS: 60 })
   })
 
+  it('hides the faster offer with two minutes or less left', () => {
+    expect(toIngest(job({ eta_s: 120 }), NOW).faster).toBeNull()
+    expect(toIngest(job({ eta_s: 121 }), NOW).faster).not.toBeNull()
+  })
+
   it('opens the comparison once usable', () => {
     const vm = toIngest(job({ state: 'usable' }), NOW)
     expect(vm.openHref).toBe('/t/Q152786')
@@ -114,13 +119,13 @@ describe('loadStart', () => {
     const r = await loadStart(client([topic('Q134949', 'Winter War'), topic('Q152786', 'Mannerheim')], { ok: true, data: FULL }))
     expect(r.ok).toBe(true)
     if (!r.ok) return
-    expect(r.data.prepared.map((p) => [p.title, p.from, p.href])).toEqual([
-      ['Winter War', null, '/t/Q134949'],
-      ['Mannerheim', null, '/t/Q152786'],
+    expect(r.data.prepared.map((p) => [p.title, p.from, p.href, 'editions' in p ? p.editions : null])).toEqual([
+      ['Winter War', null, '/t/Q134949', 0],
+      ['Mannerheim', null, '/t/Q152786', 0],
     ])
     const ex = r.data.example!
     expect(ex.href).toBe('/t/Q134949/s/fi/1256/abe24bc5f22fda02')
-    expect(ex.title).toBe('How four editions tell one statement')
+    expect(ex.title).toBe('How four editions tell the Mainila shots')
     expect(ex.lines.map((l) => l.lang)).toEqual(['fi', 'sv', 'en', 'ru'])
     const markedWords = ex.lines.map((l) => l.say.spans.map((s) => l.say.text.slice(s.start, s.end)))
     expect(markedWords).toEqual([['staged'], [], ['was reported'], []])
