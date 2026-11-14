@@ -16,7 +16,7 @@ from typing import Any
 
 from ..catalog.model import Product
 from ..matching import compare
-from ..matching.need import CLAIM_NAMES, KINDS, Need, Ranked, parse_need, screen
+from ..matching.need import CLAIM_NAMES, KINDS, Need, Ranked, parse_need, screen, starts_word
 from ..matching.rank import rank
 from ..matching.reasons import carbon_sentence, option_sentence
 from ..matching.substitute import SubOption, SubVerdict, safe_swap
@@ -105,7 +105,7 @@ def _sentence(r: Ranked, carbon: str | None = None) -> str:
 
 def _kind_of(p: Product) -> str | None:
     name = (p.name_en or "").lower()
-    return next((k for k, v in KINDS.items() if any(w in name for w in v.words)), None)
+    return next((k for k, v in KINDS.items() if any(starts_word(w, name) for w in v.words)), None)
 
 
 class SupplyService:

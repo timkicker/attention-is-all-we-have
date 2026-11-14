@@ -32,3 +32,16 @@ def test_decimal_comma_stays_a_decimal():
 def test_zero_quantity_is_refused(text):
     with pytest.raises(ValueError, match="not more than zero"):
         parse_need(text, SAT)
+
+
+@pytest.mark.parametrize("text, kind", [
+    ("20 kg of goat cheese", None), ("10 boxes of coated fries", None),
+    ("100 litres of oat drink", "oat_drink"), ("100 litres of oats drink", "oat_drink"),
+    ("100 litres of lactose-free milk", "milk"), ("5 kg of mozzarella", "mozzarella"),
+])
+def test_a_kind_word_counts_only_at_a_word_start(text, kind):
+    if kind is None:  # without a catalogue no other kind is known: never the oat drink
+        with pytest.raises(ValueError, match="no known product kind"):
+            parse_need(text, SAT)
+    else:
+        assert parse_need(text, SAT).kind == kind
