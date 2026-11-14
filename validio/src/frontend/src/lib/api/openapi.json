@@ -19,6 +19,29 @@
         "title": "ApproveIn",
         "type": "object"
       },
+      "AskedFor": {
+        "properties": {
+          "displayName": {
+            "title": "Displayname",
+            "type": "string"
+          },
+          "productId": {
+            "title": "Productid",
+            "type": "string"
+          },
+          "stateText": {
+            "title": "Statetext",
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "displayName",
+          "stateText"
+        ],
+        "title": "AskedFor",
+        "type": "object"
+      },
       "ChainStatus": {
         "properties": {
           "brokenAt": {
@@ -483,6 +506,17 @@
             ],
             "title": "Title"
           },
+          "titleText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Titletext"
+          },
           "totalCents": {
             "anyOf": [
               {
@@ -546,6 +580,18 @@
               }
             ],
             "title": "Disclosedtext"
+          },
+          "displayText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "one short sentence with a verb, no actor, for the row",
+            "title": "Displaytext"
           },
           "facts": {
             "items": {
@@ -654,6 +700,24 @@
         "title": "LedgerEntryView",
         "type": "object"
       },
+      "LedgerGroup": {
+        "properties": {
+          "requestId": {
+            "title": "Requestid",
+            "type": "string"
+          },
+          "titleText": {
+            "title": "Titletext",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requestId",
+          "titleText"
+        ],
+        "title": "LedgerGroup",
+        "type": "object"
+      },
       "LedgerHeadView": {
         "description": "The Open Ledger head as the kitchen signed it. Valio can pin it and later check that the ledger it is\nshown still ends here or grew from here.",
         "properties": {
@@ -722,6 +786,15 @@
               "$ref": "#/components/schemas/LedgerEntryView"
             },
             "title": "Entries",
+            "type": "array"
+          },
+          "groups": {
+            "default": [],
+            "description": "one head per request or Steady Order, in ledger order",
+            "items": {
+              "$ref": "#/components/schemas/LedgerGroup"
+            },
+            "title": "Groups",
             "type": "array"
           }
         },
@@ -2461,6 +2534,17 @@
             "description": "what the agent sent, as it sent it",
             "title": "Agenttext"
           },
+          "askedFor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AskedFor"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the product the request named, kept out of the options"
+          },
           "createdAt": {
             "title": "Createdat",
             "type": "string"
@@ -2614,6 +2698,18 @@
             ],
             "description": "from the parsed need, never the agent's own words",
             "title": "Title"
+          },
+          "titleText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the title without the date: \"200 bags of ...\"",
+            "title": "Titletext"
           },
           "totalCents": {
             "anyOf": [

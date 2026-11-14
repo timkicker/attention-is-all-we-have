@@ -244,7 +244,7 @@ class OrderService:
                accept_note: str | None = None) -> dict:
         """`required_claims` is the line's own diet (a Steady Order line), None means the Spend Pass diet.
         `split_base_cents` marks the order as a split and is what the wanted amount alone would cost.
-        `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without a person".
+        `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without asking you".
         `accept_note` is that person's approval sentence, written just before the order entry it caused."""
         if not lines:
             raise OrderError("an order needs at least one line")
@@ -401,7 +401,7 @@ class OrderService:
                                  mandate_id=m["id"], auto_limit_cents=m["auto_limit_cents"])
         names = self._parts(o)
         if approver is None:
-            return f"Ordered {names} for {eur(o['totalCents'])} without a person. Inside Spend Pass {m['id']}."
+            return f"Ordered {names} for {eur(o['totalCents'])} without asking you. Inside Spend Pass {m['id']}."
         role = approver.split(":")[-1]  # the role only, never the approver list of the Spend Pass
         return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the {role} {verb}. "
                 f"Valio was asked again: every line is delivered by {day(o['deliverBy'])}, before its order "

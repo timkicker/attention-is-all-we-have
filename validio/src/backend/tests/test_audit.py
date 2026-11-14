@@ -148,7 +148,7 @@ def test_sentence_scene2_exact():
         auto_limit_cents=120000,
     )
     assert s == (
-        "Ordered 1,000 pieces of Valio Arki Eila 1 l for 1,010.00 € without a person. "
+        "Ordered 1,000 pieces of Valio Arki Eila 1 l for 1,010.00 € without asking you. "
         "Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. "
         "Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €."
     )
