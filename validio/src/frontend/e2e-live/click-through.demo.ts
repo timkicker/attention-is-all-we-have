@@ -271,7 +271,7 @@ test("scene 4: the chef clicks Order 27 now", async ({ page, request }) => {
   expect([order.state, order.lines.map((l: { productId: string; quantity: number }) => [l.productId, l.quantity])])
     .toEqual(["placed", [["471376", 27]]]);
   const led = (await json(request, "/api/ledger")).entries.filter((e: { orderId?: string }) => e.orderId === pan.orderId);
-  expect(led.some((e: { kind: string; actor: string }) => e.kind === "approval" && e.actor === "kitchen:chef")).toBe(true);
+  expect(led.some((e: { kind: string; actor: string }) => e.kind === "approval" && e.actor === "owner")).toBe(true);
 });
 
 test("scene 4 on screen: the pancakes line is accepted", async ({ page }) => {
