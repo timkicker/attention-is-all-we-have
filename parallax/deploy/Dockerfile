@@ -10,6 +10,7 @@ RUN npm run kit
 # Only the sources, never the host's node_modules, vendor or dist.
 COPY web/index.html web/vite.config.ts web/tsconfig.json web/svelte.config.js ./
 COPY web/src/ ./src/
+COPY web/public/ ./public/
 COPY web/tests/ ./tests/
 RUN npm run build
 
