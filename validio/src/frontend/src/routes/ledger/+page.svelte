@@ -2,9 +2,12 @@
   /// The open ledger as halbat's feed: entries in chain order under the
   /// request or steady order they belong to. Each entry is a closed fold
   /// holding the backend's sentence, the rules, the disclosed fields and the hashes.
+  import { page } from "$app/state";
+  import { replaceState } from "$app/navigation";
+  import { Chip } from "@arlen/ui-kit/components/ui/chip";
   import { api } from "$lib/api/client";
   import { live } from "$lib/live.svelte";
-  import { ACTOR, ledgerGroups } from "$lib/v";
+  import { ACTOR, agentEntries, ledgerGroups } from "$lib/v";
   import { nb } from "$lib/format";
   import VHead from "$lib/v/VHead.svelte";
   import VPill from "$lib/v/VPill.svelte";
@@ -19,7 +22,26 @@
     inbox.data?.find((i) => i.id === id)?.displayName ??
     steady.data?.find((s) => s.id === id)?.name ??
     "Other entries";
-  const groups = $derived(ledgerGroups(ledger.data?.entries ?? []));
+  // "See in ledger" on the Agent page lands here with ?pass=<passId>: the agent's entries only. Read from
+  // the address each time, so the sidebar's plain /ledger shows everything again.
+  const passId = $derived(page.url.searchParams.get("pass"));
+  let chips = $state(false);
+  // The chips switch here; replaceState keeps the address in step but does not change page.url.
+  let onlyPass = $state(false);
+  $effect(() => {
+    onlyPass = !!passId;
+    if (passId) chips = true;
+  });
+  function pick(only: boolean) {
+    onlyPass = only;
+    const url = new URL(page.url);
+    if (only) url.searchParams.set("pass", passId ?? "M-1");
+    else url.searchParams.delete("pass");
+    replaceState(url, {});
+  }
+  const all = $derived(ledger.data?.entries ?? []);
+  const entries = $derived(onlyPass ? agentEntries(all) : all);
+  const groups = $derived(ledgerGroups(entries));
   const chain = $derived(ledger.data?.chain);
 </script>
 
@@ -28,7 +50,7 @@
     {#if chain}
       <span class="chain" data-testid="chain-status" id="chain-status">
         <VPill label={chain.ok ? "Verified" : `Broken at ${chain.brokenAt}`} tone={chain.ok ? "ok" : "bad"} />
-        <span class="num" title="Every entry signs the one before it">{chain.count} entries</span>
+        <span class="num" data-testid="ledger-count" title="Every entry signs the one before it">{entries.length} entries</span>
       </span>
     {/if}
   {/snippet}
@@ -39,13 +61,20 @@
     <VState kind="error" title="Validio is not reachable." detail={ledger.error} onretry={() => location.reload()} />
   {:else if !ledger.loaded}
     <VState kind="loading" rows={4} />
-  {:else if !groups.length}
+  {:else if !ledger.data?.entries?.length}
     <VState kind="empty" title="Nothing recorded yet." />
   {:else}
+    {#if chips}
+      <div class="chips" role="group" aria-label="Show">
+        <Chip id="ledger-all" label="All" pressed={!onlyPass} onclick={() => pick(false)} />
+        <Chip id="ledger-agent" label="Agent" pressed={onlyPass} onclick={() => pick(true)} />
+      </div>
+    {/if}
+    {#if !groups.length}<VState kind="empty" title="None." />{/if}
     <div data-testid="ledger" id="ledger">
       {#each groups as g (g.id)}
-        <!-- The id once after the title ("Spend Pass M-1"); the demo's own group has no id to show. -->
-        <div class="day" data-testid="ledger-group-{g.id}"><b>{nb(titleOf(g.id))}</b>{#if g.id !== "demo" && !titleOf(g.id).endsWith(g.id)}<span>{g.id}</span>{/if}</div>
+        <!-- A request's or steady order's id once after its title; the Rules and the demo's own group have none. -->
+        <div class="day" data-testid="ledger-group-{g.id}"><b>{nb(titleOf(g.id))}</b>{#if /^[RS]-/.test(g.id) && !titleOf(g.id).endsWith(g.id)}<span>{g.id}</span>{/if}</div>
         <ul class="rc-ev led">
           {#each g.entries as e (e.seq)}
             <li data-testid="ledger-entry" class:broken={chain && !chain.ok && chain.brokenAt === e.seq}>
@@ -76,6 +105,19 @@
 </div>
 
 <style>
+  .chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .chips :global(.chip) {
+    height: 28px;
+  }
+  @media (max-width: 760px) {
+    .chips :global(.chip) {
+      height: 44px;
+    }
+  }
   .chain {
     display: inline-flex;
     align-items: center;

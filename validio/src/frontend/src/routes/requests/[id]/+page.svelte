@@ -10,7 +10,7 @@
   import type { RankedOption } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
   import { day, money, nb } from "$lib/format";
-  import { optionLine, optionPill, requestPill, turnedDownGroups } from "$lib/v";
+  import { optionLine, optionPill, requestPill, turnedDownGroups, weekLine } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import VLane from "$lib/v/VLane.svelte";
   import VPill from "$lib/v/VPill.svelte";
@@ -136,7 +136,7 @@
 
 {#if !r}
   {#if req.error}
-    <VHead title="Request {id}" crumbs={[{ href: "/", label: "Inbox" }]} here={id} back={{ href: "/", label: "Inbox" }} />
+    <VHead title="Request {id}" crumbs={[{ href: "/orders", label: "Orders" }]} here={id} back={{ href: "/orders", label: "Orders" }} />
     <VState kind="error" title={/404|not found/i.test(req.error) ? `No request ${id}.` : "Validio is not reachable."} detail={req.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={4} />
@@ -145,9 +145,9 @@
   <VHead
     title={r.titleText ?? r.displayName ?? r.title ?? r.text}
     titleId="request-title"
-    crumbs={[{ href: "/", label: "Inbox" }]}
+    crumbs={[{ href: "/orders", label: "Orders" }]}
     here={r.id}
-    back={{ href: "/", label: "Inbox" }}
+    back={{ href: "/orders", label: "Orders" }}
   >
     {#snippet facts()}
       <VPill label={pill.label} tone={pill.tone} testid="request-status" id="request-status" />
@@ -163,7 +163,7 @@
         <Button href="/approve/{r.id}" data-testid="open-approve" id="open-approve">Open approval</Button>
       </div>
     {:else if r.status === "ordered" || r.status === "approved"}
-      <p class="question">Placed after you approved.</p>
+      <p class="question">Ordered after you approved.</p>
       <p class="q-sub">Price and delivery confirmed again.</p>
     {:else if r.status === "rejected"}
       <p class="question">You rejected it.</p>
@@ -177,10 +177,10 @@
         name={rejected ? "Proposed" : "Total"}
         testid="lane-total"
         value={r.moneyText ?? money(r.totalCents)}
-        sub={rejected ? "Nothing added" : r.usedBeforeCents ? `${money(r.usedBeforeCents)} ordered before` : undefined}
+        sub={rejected ? "Nothing added" : weekLine((r.usedBeforeCents ?? 0) + (r.totalCents ?? 0), pass.data?.weekCapCents)}
       >
         {#snippet plot()}
-          <VPlotTotal before={r.usedBeforeCents ?? 0} amount={rejected ? 0 : (r.totalCents ?? 0)} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
+          <VPlotTotal amount={rejected ? 0 : (r.totalCents ?? 0)} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
         {/snippet}
       </VLane>
       <VLane name="Options" testid="lane-options" value={String(counted.length)}>

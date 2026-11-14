@@ -202,12 +202,29 @@ def urls(ctx: Ctx, request: Request | None) -> tuple[str, str]:
 
 
 def may(ctx: Ctx) -> list[str]:
-    """The pass's limits in words, for the consent screen."""
-    c = seed.issued_claims(seed.issuance(ctx.db_path))
-    out = [f"Order alone up to {money(c['autoLimitCents'])}", f"Ask you up to {money(c['hardCapCents'])}",
-           f"Never above {money(c['hardCapCents'])}"]
-    out.append("Substitutes from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "No substitutes alone")
+    """The pass's limits in words for the consent screen, said as the Rules say them."""
+    from .settings import current_claims, rules_saved  # settings reaches the agent link through the pass
+
+    if not rules_saved(ctx.db_path):
+        return ["Every order needs approval"]
+    c = current_claims(ctx.db_path)
+    out = [f"Orders alone up to {money(c['autoLimitCents'])}", f"Needs approval up to {money(c['hardCapCents'])}",
+           f"Blocked above {money(c['hardCapCents'])}"]
+    if c.get("weekCapCents") is not None:
+        out.append(f"Per week up to {money(c['weekCapCents'])}")
+    pct = round(float((c.get("split") or {}).get("maxExtraCostPct", 0)))
+    if c.get("substitutes") != SUBSTITUTES_LISTED:
+        out.append("No substitutes")
+    else:
+        out.append(f"Substitutes up to {pct} % extra" if pct else "Substitutes from Valio's list")
     return out
+
+
+def last_used(ctx: Ctx, link: Link) -> str | None:
+    """The agent's last entry in the ledger (what it asked for, under its own name), so the Agent page and the
+    ledger tell the same time; the last verified call when the ledger has none of it yet."""
+    mine = [e.at for e in ctx.audit.list() if link.sub and e.actor == link.sub]
+    return max(mine, key=datetime.fromisoformat) if mine else link.last_used_at
 
 
 def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> AgentState:
@@ -222,7 +239,7 @@ def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> 
         out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx))
     if link.state in ("active", "paused"):
         out.agent = AgentInfo(name=link.name, key_id=link.key_id, connected_at=link.connected_at,
-                              last_used_at=link.last_used_at, pass_id=seed.SPEND_PASS_ID,
+                              last_used_at=last_used(ctx, link), pass_id=seed.SPEND_PASS_ID,
                               pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID))
     return out
 
