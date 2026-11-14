@@ -255,7 +255,7 @@ def test_steady_orders_placed_alone_are_placed_by_validio(client):
     client.post("/api/steady/S-1/renew", headers=CHEF)
     alone = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "order"]
     assert alone and all(e["actor"] == "validio" for e in alone)
-    assert alone[0]["displayText"].startswith("Placed O-")
+    assert alone[0]["displayText"].startswith("Ordered O-")
     assert alone[0]["displayText"].endswith("for 303.00 € without asking you.")
 
 

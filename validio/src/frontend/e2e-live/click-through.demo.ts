@@ -1,5 +1,5 @@
 import type { APIRequestContext, Page } from "@playwright/test";
-import { CODE, agent, expect, fresh, pairAgent, test } from "./kitchen";
+import { CODE, agent, expect, fresh, pairAgent, stockOut, test } from "./kitchen";
 
 // The 10:00 click-through of docs/DEMO.md against the live backend, scene by scene, with the numbers
 // the page must show, on a demo copy started from the plain seed with the CLI agent paired (kitchen.ts). Every screen check finds its element by data-testid (list in testids.md, sent
@@ -139,11 +139,10 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
 
 // Scene 3, owner approves a swap
 
-test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ page, request, kitchen }) => {
-  await page.goto("/");
-  await page.locator("#page-menu").click(); // the switch sits in the bar's demo menu
-  await act(page, "stock-out", async () => (await json(request, "/api/demo")).stockOut466375 === true,
-    async () => { expect((await request.post("/api/demo/stock-out")).status()).toBe(200); });
+test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ request, kitchen }) => {
+  // The stock-out has no control in the app or the API: set in the copy's store.
+  stockOut(kitchen);
+  expect((await json(request, "/api/demo")).stockOut466375).toBe(true);
   agent(kitchen, 3);
   const r2 = await json(request, "/api/requests/R-2");
   expect([r2.status, r2.totalCents, r2.orderId]).toEqual(["waiting", 18010, "O-2"]);

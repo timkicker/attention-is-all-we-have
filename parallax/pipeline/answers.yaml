@@ -1,0 +1,8 @@
+# Questions for the recorded AI answers in Check (A15). Asked once, stored with model and date.
+models: [gemini-3.8-flash, gemma-4-31b-it]
+questions:
+  - Who fired the shots at Mainila in November 1939?
+  - How many Finnish soldiers died in the Winter War?
+  - How much territory did Finland cede to the Soviet Union after the Winter War?
+  - When did the Winter War end?
+  - What was the Terijoki government?

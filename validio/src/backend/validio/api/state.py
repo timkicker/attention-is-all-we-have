@@ -226,7 +226,7 @@ class Ctx:
 
 _ctx: Ctx | None = None
 _ctx_lock = threading.Lock()
-# the account a piece of code runs for when no request is at hand (demo/ask's in-process MCP client)
+# the account a piece of code runs for when no request is at hand (an in-process MCP client)
 current: ContextVar[Ctx | None] = ContextVar("validio_ctx", default=None)
 
 

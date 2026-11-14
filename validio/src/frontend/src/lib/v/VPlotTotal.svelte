@@ -26,9 +26,9 @@
     if (!width) return [];
     const w: Want[] = [];
     if (cap !== undefined)
-      w.push({ text: `${money(cap)} never above`, x: x(cap), align: "right", row: 1, keep: true, testid: pass ? "pass-cap" : undefined });
+      w.push({ text: `${money(cap)} blocked above`, x: x(cap), align: "right", row: 1, keep: true, testid: pass ? "pass-cap" : undefined });
     if (auto !== undefined)
-      w.push({ text: `${money(auto)} alone`, x: x(auto), align: narrow ? "left" : "center", row: 0, testid: pass ? "pass-auto" : undefined });
+      w.push({ text: `${money(auto)} orders alone`, x: x(auto), align: narrow ? "left" : "center", row: 0, testid: pass ? "pass-auto" : undefined });
     return place(w, width);
   });
 
@@ -36,7 +36,7 @@
     [
       pass ? `${money(amount)} used` : before ? `${money(before)} ordered before, this order ${money(amount)}` : `This order ${money(amount)}`,
       auto !== undefined ? `orders alone up to ${money(auto)}` : "",
-      cap !== undefined ? `never above ${money(cap)}` : "",
+      cap !== undefined ? `blocked above ${money(cap)}` : "",
     ]
       .filter(Boolean)
       .join(", ") + ".",
