@@ -98,7 +98,8 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await waiting.click();
   await el(page, "open-approve", "link", /open approval/i).click();
   await el(page, "approve", "button", /^approve$/i).click();
-  await typeCode(page);
+  // the code typed for Rules can still be in memory this visit; then Approve asks none
+  if (await page.getByTestId("code-input").isVisible({ timeout: 2_000 }).catch(() => false)) await typeCode(page);
   await expect(page.getByText(/^(placed|ordered)$/i).filter({ visible: true }).first()).toBeVisible({ timeout: 30_000 });
 
   // 7 pause, send again, the refusal stands in the ledger
