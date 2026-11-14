@@ -12,6 +12,7 @@ import DroppedView from './views/DroppedView.vue'
 import CheckView from './views/CheckView.vue'
 import HoodView from './views/HoodView.vue'
 import SourcesView from './views/SourcesView.vue'
+import AskView from './views/AskView.vue'
 import SqlPanel from './components/SqlPanel.vue'
 import TimelineDrawer from './components/TimelineDrawer.vue'
 
@@ -97,6 +98,7 @@ const today = new Date().toISOString().slice(0, 10)
             <DroppedView v-else-if="v.name === 'dropped'" :topics="topics" />
             <CheckView v-else-if="v.name === 'check'" />
             <SourcesView v-else-if="v.name === 'sources'" />
+            <AskView v-else-if="v.name === 'ask'" />
             <HoodView v-else-if="v.name === 'hood'" />
             <PendingView v-else :label="v.label" :detail="PENDING[v.name]" />
             <SqlPanel
