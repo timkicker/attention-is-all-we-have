@@ -312,6 +312,8 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
         what = title or re.sub(r"^The agent asked for |\.$", "", _first(s))
         return _end(f"Asked for {what}" + (f", budget {money(round(float(budget.group(1).replace(',', '')) * 100))}"
                                            if budget else ""))
+    if kind == "spend_pass":  # one whole sentence: every limit counts, none may be cut
+        return _end(re.sub(r"^Owner changed", "Changed", s))
     steady = re.match(r"Steady Order S-\d+, (.+?): (.+)$", s)
     if steady:
         what, rest = steady.groups()
