@@ -53,7 +53,7 @@ def test_glosses_are_attached(today):
 
 def test_one_statement_with_as_of_and_vector_distance(today):
     texts = [s["text"] for s in today["sql"]]
-    (stmt,) = [t for t in texts if "VEC_DISTANCE_COSINE" in t]
+    (stmt,) = [t for t in texts if "VEC_DISTANCE_COSINE" in t and "PARTITION BY a.h" in t]
     assert "FOR SYSTEM_TIME AS OF" in stmt and "IGNORE INDEX (emb)" in stmt
     assert all(s["index"] == "none" for s in today["sql"])
 
@@ -102,9 +102,39 @@ def test_align_cache_is_read_for_its_date(client):
             "/api/compare", params={"topic": "winterwar", "as_of": "2026-11-14", "section": MAINILA_SECTION}
         ).json()
         assert any("FROM align" in s["text"] for s in body["sql"])
-        assert not any("VEC_DISTANCE_COSINE" in s["text"] for s in body["sql"])
+        assert not any("PARTITION BY a.h" in s["text"] for s in body["sql"])  # no nearest search
         cells = row(body, MAINILA)["cells"]
         assert cells["en"]["h"] == "a3b291dafd10d41b" and cells["en"]["dist"] == 0.2
-        assert cells["de"]["status"] == "not_found"
+        # de has no cached candidate; only the sentence the judge paired with Mainila is left
+        assert cells["de"]["status"] == "matched" and cells["de"]["verdict"]["label"] in ("same", "partial")
     finally:
         sqllog.run("DELETE FROM align")
+
+
+def test_judged_pair_below_the_nearest_five_is_matched(client):
+    # v4: fi Mainila and the en "border incident was reported" sentence of 2009 to 2015 were judged partial,
+    # but the en sentence ranked below 5 by distance, so the cell read not_found. Here: an fi claim the judge
+    # has not paired with en, and the en claim farthest from it.
+    (a,) = sqllog.run(
+        "SELECT page_id, h, section FROM claim WHERE topic_id = 'winterwar' AND lang = 'fi' AND h NOT IN"
+        " (SELECT a_h FROM verdict WHERE b_lang = 'en' UNION SELECT b_h FROM verdict WHERE a_lang = 'en')"
+        " ORDER BY h LIMIT 1"
+    )
+    (far,) = sqllog.run(
+        "SELECT b.h FROM claim AS a JOIN claim AS b IGNORE INDEX (emb) ON b.topic_id = a.topic_id AND b.lang = 'en'"
+        " WHERE a.lang = 'fi' AND a.h = %s ORDER BY VEC_DISTANCE_COSINE(b.emb, a.emb) DESC LIMIT 1",
+        (a["h"],),
+    )
+    params = {"topic": "winterwar", "section": a["section"], "limit": 200}
+    row_id = f"fi:{a['page_id']}:{a['h']}"
+    assert row(client.get("/api/compare", params=params).json(), row_id)["cells"]["en"]["h"] != far["h"]
+    sqllog.run(
+        "INSERT INTO verdict VALUES ('fi', %s, 'en', %s, 'test', 'partial', NULL, NULL, 'test', NULL,"
+        " UTC_TIMESTAMP(6))",
+        (a["h"], far["h"]),
+    )
+    try:
+        en = row(client.get("/api/compare", params=params).json(), row_id)["cells"]["en"]
+        assert en["h"] == far["h"] and en["status"] == "matched" and en["verdict"]["label"] == "partial"
+    finally:
+        sqllog.run("DELETE FROM verdict WHERE prompt_version = 'test'")
