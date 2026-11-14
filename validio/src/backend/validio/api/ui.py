@@ -263,11 +263,15 @@ def ledger(ctx: CtxDep):
                 "rule_ids": e.rule_ids, "order_id": e.order_id, "prev_hash": e.prev_hash, "hash": e.hash}
                for e in ctx.audit.list()]
     from . import display
+    from .connect import agent_names
     from .steady import _steady
 
+    names = agent_names(ctx)  # an agent's entries under the name it connected with ("Claude Code")
     titles: dict[str, tuple[str, str]] = {}  # request id: (title with the date, without)
     for e, rid in zip(entries, _request_ids(ctx, entries), strict=True):
         e["request_id"] = rid
+        if e["actor"] in names:
+            e["actor_text"] = names[e["actor"]]
         if rid and rid not in titles:
             if rid.startswith("M-"):
                 titles[rid] = ("Rules", "Rules")

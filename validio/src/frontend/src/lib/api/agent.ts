@@ -66,8 +66,8 @@ const DIET_OPTIONS: RulesDiet["options"] = {
   never: ["milk", "eggs", "gluten", "nuts", "peanuts", "soy", "fish", "crustaceans", "molluscs", "sesame", "celery", "mustard", "lupin", "sulphites"],
 };
 
-// The demo kitchen: rules saved (version 4) and Claude Code connected, as on the
-// wireframes. A kitchen made here: nothing saved, no agent.
+// A fresh demo copy as the server makes it: rules saved (api/settings.DEMO_RULES), no
+// agent yet; an MCP agent connects itself. A kitchen made here: nothing saved, no agent.
 function start(): Mock {
   if (!session.account?.isDemo)
     return {
@@ -76,27 +76,16 @@ function start(): Mock {
       wrong: 0,
     };
   return {
-    agent: {
-      state: "active",
-      agent: { name: "Claude Code", kind: "mcp", keyId: "m4Rt8Kpz", connectedAt: "2026-11-14T09:40:00+02:00", lastUsedAt: "2026-11-14T11:05:00+02:00", passId: "M-1", passVersion: 4 },
-      versions: [
-        { version: 4, at: "2026-11-14T09:40:00+02:00", why: "Agent connected" },
-        { version: 3, at: "2026-11-14T09:30:00+02:00", why: "Rules changed" },
-        { version: 2, at: "2026-11-14T09:20:00+02:00", why: "Rules changed" },
-        { version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" },
-      ],
-    },
-    // "Your agent orders alone up to 1,200 €, asks you up to 5,000 €, never above. At most 8,000 € a week.
-    //  Lactose-free, no nuts. Substitutes from Valio's list, up to 10 % extra."
+    agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
     rules: {
       aloneUpToCents: 120000,
       approvalUpToCents: 500000,
       perWeekCents: 800000,
       substitutes: "extra",
-      maxExtraPct: 10,
+      maxExtraPct: 5,
       saved: true,
-      passVersion: 4,
-      diet: { mustBe: ["lactose-free"], never: ["nuts"], options: DIET_OPTIONS },
+      passVersion: 1,
+      diet: { mustBe: [], never: [], options: DIET_OPTIONS },
     },
     wrong: 0,
   };
@@ -135,11 +124,12 @@ function bumpVersion(m: Mock, why: string): number {
 }
 
 const LOOK = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-function pairCode(): string {
+function randomCode(n: number): string {
   let s = "";
-  for (let i = 0; i < 8; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
-  return `${s.slice(0, 4)}-${s.slice(4)}`;
+  for (let i = 0; i < n; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
+  return `${s.slice(0, n / 2)}-${s.slice(n / 2)}`;
 }
+const pairCode = () => randomCode(8);
 
 function token(): string {
   const b = new Uint8Array(24);
@@ -147,14 +137,15 @@ function token(): string {
   return Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
 }
 
-/** Fixture only: Claude Code made its first call on the pairing URL, as the server then shows it. */
-export function mockMcpCall(): void {
+/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it.
+ *  The agent gets the same verification code in its tool answer; returned here for the console. */
+export function mockMcpCall(): string | undefined {
   const m = load();
   if (m.agent.state !== "pairing") return;
-  // `at`: when the call came, which the contract does not carry yet (see consentAt).
-  const consent = { name: "Claude Code", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode: "K7P-3QX", at: now() };
-  m.agent = { state: "consent", consent, versions: m.agent.versions };
+  const verifyCode = randomCode(6);
+  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode, at: now() }, versions: m.agent.versions };
   store(m);
+  return verifyCode;
 }
 
 // When each consent was first seen on this page, for a server that does not say.
@@ -178,7 +169,7 @@ export function resetMock(): void {
   }
 }
 // In the browser console of the fixture build: validioMcpCall()
-if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => void }).validioMcpCall = mockMcpCall;
+if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall = mockMcpCall;
 
 const mock = {
   async agent(): Promise<AgentState> {

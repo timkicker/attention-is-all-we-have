@@ -37,7 +37,6 @@
     chrome.detail = !!back;
     return () => (chrome.detail = false);
   });
-
   function goBack(e: MouseEvent) {
     if (!back) return;
     e.preventDefault();
@@ -72,7 +71,7 @@
   </div>
   {#if actions}
     <div class="head-actions">
-      {@render actions?.()}
+      {@render actions()}
     </div>
   {/if}
 </header>

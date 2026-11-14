@@ -1,10 +1,10 @@
 """Rules and Settings for the web app (docs/ACCOUNTS-API.md, sections Rules and Settings).
 
-GET  /api/rules                  what the agent may do, read from Spend Pass M-1 as last signed
-PUT  /api/rules                  one Save, one code, one new pass version, one ledger entry
+GET  /api/rules                  what the agent may do, read from Spend Pass M-1 as last signed, the diet included
+PUT  /api/rules                  money, substitutes and diet: one Save, one code, one new pass version, one entry
 GET  /api/settings               kitchen, diet, login
 PUT  /api/settings/kitchen       name and delivery address, no code; the customer number stays read only
-PUT  /api/settings/diet          like Rules: the code, then M-1 signed again
+PUT  /api/settings/diet          like Rules: the code, then M-1 signed again (kept for the first web app)
 PUT  /api/settings/approval-code the account's own code, stored hashed in its row; not on a demo copy
 
 Rules and Diet reach Cedar only through the pass, so both go through `resign`: the claims M-1 carries now,
@@ -25,7 +25,7 @@ from pydantic import Field, field_validator
 
 from ..demo import seed
 from ..matching.need import CLAIM_NAMES
-from ..policy.mandate import SUBSTITUTES_LISTED
+from ..policy.mandate import NEVER_ALLERGENS, SUBSTITUTES_LISTED
 from ..text.format import money
 from . import codes
 from .accounts import request_ctx
@@ -35,6 +35,9 @@ from .state import Ctx
 CtxDep = Annotated[Ctx, Depends(request_ctx)]
 MAX_CENTS = 10_000_000  # 100,000.00 €
 DIETS = Literal["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN", "VEGAN"]
+# the Rules' diet in words: what every line must be, and the allergens it must never contain
+MUST_BE = {"lactose-free": "FREE_FROM_LACTOSE", "gluten-free": "FREE_FROM_GLUTEN", "vegan": "VEGAN"}
+NEVER = tuple(NEVER_ALLERGENS)
 DEFAULT_NAME = "Hotel Espoo kitchen"
 # the demo kitchen's saved Rules (the template, after the five scenes): O-1 and O-2 already used 1,190.10 € of
 # the pass, so alone and approval count per order and only the week counts them all
@@ -81,7 +84,8 @@ def _said(c: dict) -> list[tuple[str, str]]:
             ("Delivered by", f"{d.day} {d:%b}"),
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none alone"),
             ("Extra for a split", f"up to {pct:g} %" if pct else "none"),
-            ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none")]
+            ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none"),
+            ("Never contains", " and ".join(sorted(c.get("neverContains") or ())) or "nothing ruled out")]
 
 
 def resign(ctx: Ctx, changes: dict, why: str) -> dict:
@@ -127,6 +131,20 @@ def rules_saved(path: Path) -> bool:
 
 # Rules
 
+class DietOptions(Model):
+    must_be: list[str]
+    never: list[str]
+
+
+class DietRules(Model):
+    must_be: list[str] = Field(description="every line must be all of these: " + ", ".join(MUST_BE))
+    never: list[str] = Field(description="no line may contain any of these: " + ", ".join(NEVER))
+
+
+class DietOut(DietRules):
+    options: DietOptions
+
+
 class RulesOut(Model):
     alone_up_to_cents: int
     approval_up_to_cents: int
@@ -135,6 +153,7 @@ class RulesOut(Model):
     per_week_cents: int | None
     saved: bool
     pass_version: int
+    diet: DietOut
 
 
 class RulesIn(Model):
@@ -146,7 +165,24 @@ class RulesIn(Model):
     per_week_cents: int | None = Field(None, ge=0, le=MAX_CENTS, description="all orders under the pass together; "
                                        "with it the two limits above hold per order. null: no weekly limit, the two "
                                        "limits hold for the pass as a whole")
+    diet: DietRules | None = Field(None, description="left out: the diet stays as it is")
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
+
+
+def diet_out(c: dict) -> DietOut:
+    words = {v: k for k, v in MUST_BE.items()}
+    return DietOut(must_be=sorted(words.get(x, x) for x in c.get("diet") or ()),
+                   never=sorted(c.get("neverContains") or ()),
+                   options=DietOptions(must_be=list(MUST_BE), never=list(NEVER)))
+
+
+def diet_claims(d: DietRules) -> dict:
+    """The diet in words as the pass's claims; 422 for a word Validio does not know."""
+    bad = [w for w in d.must_be if w not in MUST_BE] + [w for w in d.never if w not in NEVER_ALLERGENS]
+    if bad:
+        raise HTTPException(422, f"unknown diet word {', '.join(repr(w) for w in bad)}; mustBe takes "
+                                 f"{', '.join(MUST_BE)}, never takes {', '.join(NEVER)}")
+    return {"diet": sorted({MUST_BE[w] for w in d.must_be}), "neverContains": sorted(set(d.never))}
 
 
 def _rules(ctx: Ctx) -> RulesOut:
@@ -156,7 +192,7 @@ def _rules(ctx: Ctx) -> RulesOut:
     subs = "off" if c.get("substitutes") != SUBSTITUTES_LISTED else "extra" if pct else "listed"
     return RulesOut(alone_up_to_cents=c["autoLimitCents"], approval_up_to_cents=c["hardCapCents"], substitutes=subs,
                     max_extra_pct=pct if subs == "extra" else 0, per_week_cents=c.get("weekCapCents"), saved=rules_saved(ctx.db_path),
-                    pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID))
+                    pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID), diet=diet_out(c))
 
 
 @router.get("/rules", response_model=RulesOut)
@@ -175,12 +211,13 @@ def put_rules(ctx: CtxDep, request: Request, body: RulesIn,
     if body.per_week_cents is not None and body.per_week_cents < body.approval_up_to_cents:
         raise HTTPException(422, f"per week {money(body.per_week_cents)} is below the approval limit "
                                  f"{money(body.approval_up_to_cents)}")
+    diet = diet_claims(body.diet) if body.diet is not None else {}
     check_code(ctx, request, "rules", x_approve_code, body)
     pct = body.max_extra_pct if body.substitutes == "extra" else 0
     resign(ctx, {"autoLimitCents": body.alone_up_to_cents, "hardCapCents": body.approval_up_to_cents,
                  "substitutes": "never" if body.substitutes == "off" else SUBSTITUTES_LISTED,
                  "split": {"maxExtraCostPct": pct, "allowListedSubstitutes": body.substitutes != "off"},
-                 "weekCapCents": body.per_week_cents},
+                 "weekCapCents": body.per_week_cents, **diet},
            "Rules changed")
     _put(ctx.db_path, {"rules_saved": "1"})
     return _rules(ctx)

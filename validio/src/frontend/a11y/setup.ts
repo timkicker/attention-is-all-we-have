@@ -16,7 +16,9 @@ export default async function setup() {
   if (!(await post("/api/demo/reset")).ok) throw new Error("reset failed");
   agent(1);
   agent(2);
-  if (!(await post("/api/demo/stock-out")).ok) throw new Error("stock-out failed");
+  // The stock-out has no route: set in the local kitchen's store, as scripts/demo_check.py does.
+  execFileSync("uv", ["run", "python", "-W", "ignore", "-c", "from validio.api.state import get_ctx; get_ctx().set_stockout(True)"],
+    { cwd: "../backend", env: process.env, stdio: "pipe" });
   agent(3);
   // One demo copy of that state for every test, so the keyboard steps and the "after" scans share it.
   const r = await post("/api/account/demo");
