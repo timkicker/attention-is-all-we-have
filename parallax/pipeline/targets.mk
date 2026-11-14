@@ -2,9 +2,9 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := judge gloss eval atlas bench sources-data l-scale
+A_STUBS := eval atlas bench sources-data l-scale
 
-.PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load contested checks-write dump release test-a $(A_STUBS)
+.PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load m-embed contested judge gloss checks-write dump release test-a $(A_STUBS)
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -59,4 +59,14 @@ m-lives-load:
 
 contested:
 	$(PY) -m pipeline.contested
+
+m-embed:
+	$(PY) -m pipeline.m_embed --pages 100
+
+SCOPE ?= demo
+judge:
+	$(PY) -m pipeline.judge --topic $(TOPIC) --scope $(SCOPE)
+
+gloss:
+	$(PY) -m pipeline.gloss --topic $(TOPIC)
 
