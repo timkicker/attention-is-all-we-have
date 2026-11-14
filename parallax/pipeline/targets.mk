@@ -1,7 +1,17 @@
-# Track A targets (data and engine). Owned by Track A; each stub is replaced when the step is built.
-A_TARGETS := fetch-smoke fetch parse lives bisect embed load checks align judge gloss eval m-lives atlas \
-	sources-data dump release test-a
+# Track A targets (data and engine). Owned by Track A.
+TOPIC ?= winterwar
+PY := $(UV) run python
 
-.PHONY: $(A_TARGETS)
-$(A_TARGETS):
+A_STUBS := fetch parse lives bisect embed load checks align judge gloss eval m-lives contested atlas bench \
+	sources-data l-scale dump release
+
+.PHONY: fetch-smoke test-a $(A_STUBS)
+
+fetch-smoke:
+	$(PY) -m pipeline.wapi
+
+test-a:
+	$(UV) run pytest pipeline/tests engine/tests eval/tests -q
+
+$(A_STUBS):
 	@echo "$@: not built yet"; exit 1
