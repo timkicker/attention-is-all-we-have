@@ -101,7 +101,7 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass
   await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
   await expect(page.getByTestId("pass-deliver-by")).toContainText("16 Nov");
   await expect(page.getByTestId("pass-valid-to")).toContainText("17 Nov");
-  await expect(page.getByTestId("pass-approvers")).toContainText("not who approves");
+  await expect(page.getByTestId("pass-approvers")).toContainText("not approvers");
 });
 
 // Scene 2, ordered alone
@@ -119,11 +119,10 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
   await needs(page, "inbox-R-1");
   await page.getByTestId("inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
-  await needs(page, "request-status", "request-rule", "live-checked", "option-464306", "option-464401",
+  await needs(page, "request-status", "live-checked", "option-464306", "option-464401",
     "option-463335", "option-462921", "option-462703", "option-463047", "supplier-463047", "reader-463047");
   await expect(page.getByTestId("request-status")).toContainText("Ordered alone");
-  await expect(page.getByTestId("request-rule")).toContainText("auto-order");
-  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
+  await expect(page.getByTestId("live-checked")).toHaveText(/^Live\s\d\d:\d\d$/);
   const milk = page.getByTestId("option-464306");
   await expect(milk).toContainText(money("1,010.00"));
   await expect(milk).toContainText("Cheapest, always delivered in full");
@@ -163,7 +162,7 @@ test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", as
 
 test("scene 3 on screen: Simulated, and R-2 waits at 180.10", async ({ page }) => {
   await page.goto("/");
-  // The inbox row says why it waits; the stock-out itself is told on R-2 (asked-for).
+  // The inbox row says why it waits; R-2's lead names the stock-out once.
   await needs(page, "inbox-summary-R-2", "inbox-R-2");
   await expect(page.getByTestId("inbox-summary-R-2")).toContainText("The swap needs you");
   await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
@@ -179,7 +178,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   await page.goto("/requests/R-2");
   const subs = ["466151", "473986", "468526", "475908"];
   const beyond = ["465256", "463383", "465174"];
-  await needs(page, "request-rule", "live-checked", ...[...subs, ...beyond].map((p) => `option-${p}`));
+  await needs(page, "live-checked", ...[...subs, ...beyond].map((p) => `option-${p}`));
   await expect(page.getByTestId("option-466375")).toHaveCount(0);
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
@@ -191,11 +190,11 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
     .evaluateAll((els) => els.map((e) => e.getAttribute("data-testid")));
   expect(order).toEqual(subs.concat(beyond).map((p) => `option-${p}`));
   await expect(page.getByTestId("option-465256")).toContainText(money("180.10"));
-  await expect(page.getByTestId("option-465256")).toContainText("mozzarella-fontal blend, not pure mozzarella");
+  await expect(page.getByTestId("option-465256")).toContainText("Cheapest lactose-free swap");
   await expect(page.getByTestId("option-463383")).toContainText(money("196.60"));
   await expect(page.getByTestId("option-465174")).toContainText(money("234.90"));
-  await expect(page.getByTestId("request-rule")).toContainText("ask-human");
-  await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
+  await expect(page.getByTestId("live-checked")).toHaveText(/^Live\s\d\d:\d\d$/);
+  await expect(page.locator("#request-why")).toContainText("(simulated)");
 });
 
 test("scene 3: the owner approves O-2 on the phone with the code", async ({ page, request }) => {
@@ -219,12 +218,11 @@ test("scene 3 on screen: the phone page says placed", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/approve/R-2");
   // Plan v2 §4.3: the done view's h1 is "Ordered" plus the product, and the amount sits in its facts.
-  await needs(page, "order-steps");
+  await needs(page, "order-done");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^Ordered .*mozzarella-fontal/i);
   await expect(page.locator("main .facts")).toContainText(money("180.10"));
-  await expect(page.getByTestId("order-steps")).toContainText(/asked you/i);
-  await expect(page.getByTestId("order-steps")).toContainText(/approved/i);
-  await expect(page.getByTestId("order-steps")).toContainText(/placed/i);
+  // The steps live in the ledger; the done page says the outcome once.
+  await expect(page.getByTestId("order-done")).toContainText("confirmed again");
 });
 
 // Scene 4, Steady Order
@@ -277,9 +275,10 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   await expect(pan).toContainText("wheat");
   await expect(page.getByTestId("accept-471376")).toHaveText(/Order 27 now/);
   const mozz = page.getByTestId("line-466375");
-  await expect(mozz).toContainText("26 %");
+  // Round D: one short line, the chart keeps 120 against the usual 98.
   await expect(mozz).toContainText("98");
-  await expect(mozz).toContainText("Not renewed: none in stock at Valio. Also 26 % more per guest than usual.");
+  await expect(mozz).toContainText("None in stock at Valio.");
+  await expect(mozz).not.toContainText("26 %");
   await expect(page.getByTestId("accept-466375")).toHaveCount(0);
 });
 

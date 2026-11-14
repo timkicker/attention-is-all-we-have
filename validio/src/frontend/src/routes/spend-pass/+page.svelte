@@ -1,6 +1,6 @@
 <script lang="ts">
   /// The Spend Pass as a halbat record: facts, one Limits lane, a card of
-  /// value rows, and what the agent sees.
+  /// value rows; what the agent sees is one item in the facts line.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Popover from "@arlen/ui-kit/components/ui/popover";
   import { Section } from "@arlen/ui-kit/components/ui/section";
@@ -35,7 +35,7 @@
     {#snippet facts()}
       <VPill label={valid ? "Valid" : "Expired"} tone={valid ? "ok" : "neutral"} />
       <span>Signed by you</span>
-      <span>Held by the buyer agent</span>
+      <span data-testid="pass-approvers" id="pass-approvers">Agent sees limits and diet, not approvers</span>
       <span>{day(p.validFrom)} to <span data-testid="pass-valid-to" id="pass-valid-to">{day(p.validTo)}</span></span>
     {/snippet}
   </VHead>
@@ -58,7 +58,7 @@
       <VValueRow label="Deliver by" value={day(p.deliverBy)} testid="pass-deliver-by" />
       <VValueRow
         label="Substitutes"
-        value="{p.split.allowListedSubstitutes ? "From Valio's list." : 'None.'} Up to {p.split.maxExtraCostPct} % extra in a split."
+        value="{p.split.allowListedSubstitutes ? "From Valio's list" : 'None'}, up to {p.split.maxExtraCostPct} % extra"
       />
       <VValueRow label="Product groups">
         {p.categories.length}
@@ -72,25 +72,10 @@
         </Popover.Root>
       </VValueRow>
     </Section>
-
-    <section class="sec" aria-labelledby="h-sees">
-      <h2 class="v-h" id="h-sees">What the agent sees</h2>
-      <Section class="v-card">
-        <p class="sees" data-testid="pass-approvers" id="pass-approvers">
-          {p.seesText ?? `Sees: ${(p.disclosedText ?? p.disclosed).join(", ")}. Hidden: ${(p.hiddenText ?? p.hidden).join(", ")}.`}
-        </p>
-      </Section>
-    </section>
   </div>
 {/if}
 
 <style>
-  .sees {
-    margin: 0;
-    padding: 16px;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-  }
   :global(.info-btn) {
     vertical-align: middle;
     margin-left: 4px;
