@@ -5,7 +5,6 @@ import { api, lastSql, type Statement, type Topic } from './api'
 import { navigate, state, VIEWS, type ViewName } from './state'
 import Footer from './components/Footer.vue'
 import Wordmark from './components/Wordmark.vue'
-import PendingView from './views/PendingView.vue'
 import CompareView from './views/CompareView.vue'
 import TimeView from './views/TimeView.vue'
 import DroppedView from './views/DroppedView.vue'
@@ -13,19 +12,9 @@ import CheckView from './views/CheckView.vue'
 import HoodView from './views/HoodView.vue'
 import SourcesView from './views/SourcesView.vue'
 import AskView from './views/AskView.vue'
+import AtlasView from './views/AtlasView.vue'
 import SqlPanel from './components/SqlPanel.vue'
 import TimelineDrawer from './components/TimelineDrawer.vue'
-
-const PENDING: Record<ViewName, string> = {
-  compare: 'One row per claim of the anchor edition, one column per edition, cut at the chosen date.',
-  time: 'Lives of each claim per edition, from the revision that added it to the one that removed it.',
-  dropped: 'Claims one edition removed while other editions still state them.',
-  check: 'Paste an answer, see per edition whether Wikipedia says it, stopped saying it or does not state it.',
-  sources: 'What each edition cites, counted by ISBN group and web domain.',
-  ask: 'Quotes from every edition for a question, without generated prose.',
-  atlas: 'Topics covered in Finnish, Swedish and English and how far apart the editions are.',
-  hood: 'The SQL behind every panel with its time and row count.',
-}
 
 // The SQL panel under each view shows the statements of that view's latest data request.
 const SKIP = /^\/api\/(topics|stats|health|check\/recorded)\b/
@@ -99,8 +88,8 @@ const today = new Date().toISOString().slice(0, 10)
             <CheckView v-else-if="v.name === 'check'" />
             <SourcesView v-else-if="v.name === 'sources'" />
             <AskView v-else-if="v.name === 'ask'" />
-            <HoodView v-else-if="v.name === 'hood'" />
-            <PendingView v-else :label="v.label" :detail="PENDING[v.name]" />
+            <AtlasView v-else-if="v.name === 'atlas'" />
+            <HoodView v-else />
             <SqlPanel
               v-if="v.name !== 'hood' && sqlByView[v.name]"
               :statements="sqlByView[v.name]!.statements"
