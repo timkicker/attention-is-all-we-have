@@ -2,7 +2,7 @@
   // Differences tab (wf/05) and the same tab on a past date (wf/07): Finnish statements that at least one
   // other edition tells differently, differing part marked. ?q= filters, ?date= picks the date.
   import * as copy from '../lib/copy'
-  import { getDifferences, resolveTopic } from '../lib/data'
+  import { getCounts, getDifferences, resolveTopic } from '../lib/data'
   import { dateState } from '../lib/date.svelte'
   import type { DiffRow, DifferencesVM, Failure, TabCounts } from '../lib/model'
   import { paths, router } from '../lib/router.svelte'
@@ -41,6 +41,17 @@
     })
   })
 
+  // The tab counts load on their own (Removed can be slow); the list does not wait for them.
+  $effect(() => {
+    const date = dateState.value
+    let live = true
+    counts = { differences: null, removed: null }
+    getCounts(params.qid, date).then((c) => {
+      if (live) counts = c
+    })
+    return () => (live = false)
+  })
+
   $effect(() => {
     const date = dateState.value
     const query = qParam
@@ -58,7 +69,6 @@
       }
       vm = r.data
       rows = r.data.rows
-      counts = r.data.counts
       title = r.data.topic.title
     })
     return () => (live = false)
