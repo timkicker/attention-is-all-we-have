@@ -113,6 +113,11 @@ paths:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check.json}}
         "422": {$ref: "#/components/responses/Error"}
+        "503":
+          description: embed_unavailable, the embedder for text the fixtures do not know is not answering
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Error"}
   /api/check/recorded:
     get:
       operationId: checkRecorded

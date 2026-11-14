@@ -14,13 +14,16 @@ Every judged candidate is stored with the run, so a replay at any as_of needs no
 import datetime as dt
 import hashlib
 import json
+import os
 import secrets
 import string
 from concurrent.futures import ThreadPoolExecutor
 
+import requests
+
 from api import sqllog
-from api.util import MAX_TS, iso, lang_order, oldid_url, sql_ts
-from contract.engine import Candidate, get_engine
+from api.util import MAX_TS, ApiError, iso, lang_order, oldid_url, sql_ts
+from contract.engine import Candidate, _fixture, claim_hash, get_engine
 
 MATCH = ("same", "partial")
 ALPHABET = string.digits + string.ascii_lowercase
@@ -132,15 +135,50 @@ def label(judged: list[dict], as_of: dt.datetime, rewritten: set[tuple] = frozen
     return {"label": "not_found", "evidence": []}
 
 
+EMBED_TIMEOUT = 20  # seconds per embed request while a reader waits for a check
+
+
+def _bge_backend(engine) -> bool:
+    """Fake engine with a real bge-m3 EMBED_BACKEND (ollama, st, remote): pasted claims get vectors comparable with
+    the stored sentence vectors, so the similarity guess may judge them. EMBED_BACKEND=fake or unset keeps the old
+    fixture-or-random behaviour, since sketch vectors cannot be compared with bge-m3 ones."""
+    return engine.name == "fake" and os.environ.get("EMBED_BACKEND") not in (None, "", "fake")
+
+
+def embed_claims(engine, claims: list[str]) -> list[list[float]]:
+    """Claim vectors. The fake engine answers from its fixtures; with a bge-m3 EMBED_BACKEND a claim the fixtures do
+    not know is embedded with the embedder the any-article ingest uses, instead of getting a random vector."""
+    table = _fixture("embed")
+    unknown = [c for c in claims if claim_hash(c) not in table]
+    if not _bge_backend(engine) or not unknown:
+        return engine.embed(claims)
+    from engine.embed import backend, embed_texts, shared_store
+
+    try:
+        # shared_store() reads data/emb/ once per process and keeps new vectors in memory, it never writes
+        fresh = embed_texts(unknown, shared_store(), be=backend(timeout=EMBED_TIMEOUT))
+    except (requests.ConnectionError, requests.HTTPError, requests.Timeout) as e:
+        raise ApiError(
+            503, "embed_unavailable", "The embedding service is not answering, so new text cannot be checked now."
+        ) from e
+    by_text = dict(zip(unknown, fresh, strict=True))
+    return [[float(x) for x in by_text[c]] if c in by_text else engine.embed([c])[0] for c in claims]
+
+
 def _judge_claim(engine, claim: str, cands: dict[str, list[dict]]) -> dict[str, list[dict]]:
     def one(lang: str) -> tuple[str, list[dict]]:
         rows = cands[lang]
         if not rows:
             return lang, []
-        verdicts = engine.judge(claim, "en", [Candidate(r["lang"], r["page_id"], r["h"], r["text"]) for r in rows])
-        by_h = {v.h: v for v in verdicts}
+        cs = [Candidate(r["lang"], r["page_id"], r["h"], r["text"]) for r in rows]
+        if _bge_backend(engine) and claim_hash(claim) not in _fixture("embed"):
+            # a pasted claim the fixtures never saw: the similarity guess, stored under its own model name
+            pairs = engine.judge_or_guess(claim, "en", cs, strict=True)
+        else:
+            pairs = [(v, engine.model_id) for v in engine.judge(claim, "en", cs)]
+        by_h = {v.h: (v, model) for v, model in pairs}
         return lang, [
-            _evidence(r, by_h[r["h"]], engine.model_id, engine.prompt_version) for r in rows if r["h"] in by_h
+            _evidence(r, by_h[r["h"]][0], by_h[r["h"]][1], engine.prompt_version) for r in rows if r["h"] in by_h
         ]
 
     with ThreadPoolExecutor(max_workers=min(6, len(cands) or 1)) as pool:
@@ -161,7 +199,7 @@ def run_check(
     engine = get_engine()
     langs = sorted(langs or default_langs(), key=lang_order)
     claims = engine.split_claims(text)
-    vectors = engine.embed(claims) if claims else []
+    vectors = embed_claims(engine, claims) if claims else []
     run_id = run_id or new_run_id()
     sqllog.run_file(
         "check_store_run",

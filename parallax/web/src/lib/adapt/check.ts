@@ -4,10 +4,11 @@
 //   some edition contradicts it            -> Disputed · <those editions> say otherwise
 //   else some edition stopped saying it    -> Disputed · in <says> of <all>, <edition> removed it in <year>
 //   else some edition says it              -> Backed by <says> of <all> editions
+//                                             (Likely backed by ..., when only the similarity guess matched it)
 //   else                                   -> In no edition
 import type { api as Api } from '../api/client'
 import type { CheckRecordedRes, CheckRes, EvidenceRaw } from '../api/types'
-import { backedBy, DISPUTED, disputedOtherwise, excerpt, IN_NO_EDITION } from '../copy'
+import { backedBy, DISPUTED, disputedOtherwise, excerpt, IN_NO_EDITION, likelyBackedBy } from '../copy'
 import { fmtYear } from '../format'
 import { LANGS, type CheckResultVM, type CheckRow, type CheckVerdict, type CheckVM, type Result } from '../model'
 import { paths } from '../router.svelte'
@@ -17,6 +18,9 @@ import type { TopicCtx, WithoutCounts } from './shared'
 type Client = typeof Api
 type Claim = CheckRes['claims'][number]
 type Recorded = CheckRecordedRes['runs'][number]
+
+/** The offline judge that only compares shared names and numbers (contract/engine.py FAKE_GUESS_MODEL). */
+export const GUESS_MODEL = 'fake-judge-similarity'
 
 /** How many recorded answers the Check page offers. */
 export const RECORDED_MAX = 3
@@ -125,7 +129,8 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
         : checkCopy.disputedRemovedBy(says.length, all, stopped.map(([l]) => l), year)
   } else if (says.length) {
     verdict = 'backed'
-    head = backedBy(says.length, all)
+    const guessed = says.every(([, v]) => v.evidence.every((e) => e.verdict?.model === GUESS_MODEL))
+    head = guessed ? likelyBackedBy(says.length, all) : backedBy(says.length, all)
   } else {
     verdict = 'none'
     head = IN_NO_EDITION
