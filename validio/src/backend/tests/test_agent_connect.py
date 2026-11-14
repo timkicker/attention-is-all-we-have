@@ -91,8 +91,9 @@ def test_consent_then_allow_signs_the_pass_to_the_agents_key(client, holder, ctx
     assert s["state"] == "consent"
     assert s["consent"]["name"] == "Kitchen buyer"
     assert s["consent"]["keyId"] == key.thumbprint()[:8]
-    assert s["consent"]["may"] == ["Order alone up to 1,200.00 €", "Ask you up to 2,000.00 €",
-                                   "Never above 2,000.00 €", "Substitutes from Valio's list"]
+    assert s["consent"]["may"] == ["Orders alone up to 1,200.00 €", "Needs approval up to 2,000.00 €",
+                                   "Blocked above 2,000.00 €", "Substitutes up to 5 % extra"]
+    assert client.get("/api/rules").json()["maxExtraPct"] == 5  # the consent says what Rules say
     assert client.get("/agent/v1/pass", params={"code": code}).json() == {"status": "consent"}
 
     s = client.post("/api/agent/allow").json()
@@ -169,6 +170,20 @@ def test_rules_resign_keeps_the_connected_agent(client, ctx):  # noqa: F811
     assert ask(client, mine, "after-rules").status_code == 200
     s = client.get("/api/agent").json()
     assert s["agent"]["passVersion"] == 4 and s["versions"][0]["why"] == "Rules changed"
+
+
+def test_consent_says_the_rules_as_saved(client):  # noqa: F811
+    from conftest import CODE
+
+    client.post("/api/agent/disconnect")
+    r = client.put("/api/rules", headers={"X-Approve-Code": CODE}, json={
+        "aloneUpToCents": 100000, "approvalUpToCents": 300000, "perWeekCents": 800000,
+        "substitutes": "extra", "maxExtraPct": 5})
+    assert r.status_code == 200, r.text
+    pair_own_agent(client)
+    assert client.get("/api/agent").json()["consent"]["may"] == [
+        "Orders alone up to 1,000.00 €", "Needs approval up to 3,000.00 €", "Blocked above 3,000.00 €",
+        "Per week up to 8,000.00 €", "Substitutes up to 5 % extra"]
 
 
 @pytest.mark.parametrize("path", ["/api/agent/demo", "/api/demo/example"])

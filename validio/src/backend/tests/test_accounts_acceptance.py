@@ -101,6 +101,14 @@ def b_untouched(w):
     assert snapshot(w["b"]) == w["b0"], "browser B changed although only A acted"
 
 
+def pass_is_the_rules(c: TestClient) -> None:
+    """The pass the Agent page shows (Technical fold) carries exactly the saved Rules: the current version, not
+    the copy an agent showed before the last re-sign."""
+    p, r = ok(c.get("/api/spend-passes/M-1")), ok(c.get("/api/rules"))
+    shown = (p["autoLimitCents"], p["hardCapCents"], p.get("weekCapCents"))
+    assert shown == (r["aloneUpToCents"], r["approvalUpToCents"], r["perWeekCents"]), (shown, r)
+
+
 def ledger(c: TestClient) -> list[dict]:
     return ok(c.get("/api/ledger"))["entries"]
 
@@ -122,6 +130,7 @@ def test_02_demo_template_numbers(world):
         r = ok(c.get("/api/rules"))
         assert (r["aloneUpToCents"], r["approvalUpToCents"], r["saved"]) == (ALONE, APPROVAL, True)
         assert ok(c.get("/api/settings"))["diet"] == ["FREE_FROM_LACTOSE"]
+        pass_is_the_rules(c)
 
 
 def test_01b_without_a_session_the_public_caller_is_refused(world):
@@ -154,6 +163,7 @@ def test_03_connect_the_demo_agent(world):
     new = ledger(a)[led:]
     assert any(e["kind"] == "agent" and e.get("spendPassId") for e in new), [e["sentence"] for e in new]
     assert a.post("/api/agent/allow").status_code == 409, "allow twice"
+    pass_is_the_rules(a)
     b_untouched(world)
 
 
@@ -193,6 +203,7 @@ def test_05_lower_the_alone_limit(world):
     assert agent["state"] == "active", "saving Rules must keep the agent connected"
     assert agent["versions"][0]["why"] == "Rules changed"
     assert agent["agent"]["passVersion"] == r["passVersion"]
+    pass_is_the_rules(a)
     b_untouched(world)
 
 

@@ -64,7 +64,7 @@
     {/if}
   </div>
   <p class="help" id="code-help">
-    {#if error}{error}{:else if session.account?.demoCode}Demo code <span data-code>{session.account.demoCode}</span>{:else}{LIVE ? "The 6-digit code you set for approvals." : "Demo: any 6 digits"}{/if}
+    <!-- a demo copy's code stands in the demo bar, once -->{#if error}{error}{:else if !session.account?.demoCode}{LIVE ? "The 6-digit code you set for approvals." : "Demo: any 6 digits"}{/if}
   </p>
 </form>
 

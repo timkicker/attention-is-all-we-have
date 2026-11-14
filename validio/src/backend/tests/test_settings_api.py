@@ -45,8 +45,8 @@ def test_rules_save_writes_one_entry(client):  # noqa: F811
     assert put_rules(client).status_code == 200
     mine = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass"]
     assert len(mine) == 1
-    assert mine[0]["sentence"] == ("Owner changed Spend Pass M-1. Alone up to 1,200.00 € → 1,600.00 €. "
-                                   "Never above 2,000.00 € → 2,500.00 €. Extra for a split up to 5 % → none.")
+    assert mine[0]["sentence"] == ("Owner changed Spend Pass M-1. Orders alone up to 1,200.00 € → 1,600.00 €. "
+                                   "Blocked above 2,000.00 € → 2,500.00 €. Extra for a split up to 5 % → none.")
 
 
 def test_rules_keep_the_diet_and_diet_keeps_the_rules(client):  # noqa: F811

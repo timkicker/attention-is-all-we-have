@@ -55,17 +55,25 @@ export function turnedDownGroups(list: RankedOption[]): { name: string; items: R
   return [...groups.values()].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 }
 
+/** The week under the Total bar: "This week 2,200.10 of 8,000.00 €". The bar itself shows one order
+ *  against the per-order limits; only the week counts the orders before it. */
+export function weekLine(used: number, cap: number | undefined): string {
+  const n = money(used).replace(/\u00a0€$/, "");
+  return cap === undefined ? `This week ${money(used)}` : `This week ${n} of ${money(cap)}`;
+}
+
 /** The ledger actor word from the entry's kind. */
-export const ACTOR: Record<LedgerKind, string> = {
+export const ACTOR: Partial<Record<LedgerKind, string>> = {
   order: "Validio",
   request: "Agent",
   decision: "Validio",
-  approval: "Owner",
+  approval: "You",
   simulation: "Demo",
   renewal: "Validio",
 };
 
-/** Ledger entries under the request or steady order they belong to, in chain order. */
+/** Ledger entries under the request or steady order they belong to, in chain order inside a group; the
+ *  group with the newest entry first, so the last thing that happened is on top. */
 export function ledgerGroups(entries: LedgerEntry[]): { id: string; entries: LedgerEntry[] }[] {
   const out: { id: string; entries: LedgerEntry[] }[] = [];
   for (const e of [...entries].sort((a, b) => a.seq - b.seq)) {
@@ -74,7 +82,15 @@ export function ledgerGroups(entries: LedgerEntry[]): { id: string; entries: Led
     if (g) g.entries.push(e);
     else out.push({ id, entries: [e] });
   }
-  return out;
+  const last = (g: { entries: LedgerEntry[] }) => g.entries[g.entries.length - 1].seq;
+  return out.sort((a, b) => last(b) - last(a));
+}
+
+/** The Agent filter: what the agent asked and what became of it (its requests), its Rules, and its
+ *  connect, pause and refusals. Steady orders and the presenter's switches are not the agent's. */
+export function agentEntries(entries: LedgerEntry[]): LedgerEntry[] {
+  const asked = new Set(entries.filter((e) => e.actor.startsWith("agent:")).map((e) => e.requestId));
+  return entries.filter((e) => e.kind === "agent" || e.kind === "spend_pass" || (e.requestId && asked.has(e.requestId)));
 }
 
 /** The steady list pill and the right column, from the order's lines. */

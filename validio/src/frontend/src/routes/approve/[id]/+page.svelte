@@ -10,11 +10,11 @@
   import { ChevronRight } from "@lucide/svelte";
   import { api, ApiError, needsToken } from "$lib/api/client";
   import type { Order } from "$lib/api/types";
-  import { bump } from "$lib/chrome.svelte";
+  import { bump, chrome } from "$lib/chrome.svelte";
   import { day, money, nb } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
-  import { optionLine } from "$lib/v";
+  import { optionLine, weekLine } from "$lib/v";
   import VCode from "$lib/v/VCode.svelte";
   import VHead from "$lib/v/VHead.svelte";
   import VLane from "$lib/v/VLane.svelte";
@@ -44,6 +44,11 @@
 
   let done = $state<Order | undefined>();
   let step = $state<null | "approve" | "reject">(null);
+  // The phone shows the demo bar, with the code, only while the code is asked.
+  $effect(() => {
+    chrome.asking = !!step && codeRequired;
+    return () => (chrome.asking = false);
+  });
   let code = $state("");
   let wrong = $state("");
   let busy = $state(false);
@@ -77,10 +82,12 @@
   const codeRequired = $derived(!!demo.data?.codeRequired);
   const waiting = $derived(o?.state === "waiting");
 
+  // Every approval and rejection asks for the code, also when Rules took it this visit.
   async function press(kind: "approve" | "reject") {
     problem = "";
     wrong = "";
-    if (codeRequired && !isCode(owner.code)) {
+    if (codeRequired) {
+      code = "";
       step = kind;
       return;
     }
@@ -134,14 +141,14 @@
 </script>
 
 {#if !o && noOrder}
-  <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${id}`, label: id }]} here="Approve" back={{ href: `/requests/${id}`, label: "Request" }} />
+  <VHead title="Approve" crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${id}`, label: id }]} here="Approve" back={{ href: `/requests/${id}`, label: "Request" }} />
   <div class="none">
     <p data-testid="approve-none">{noOrder === "blocked" || noOrder === "rejected" ? "Blocked. Nothing to approve." : "Nothing to approve yet."}</p>
     <a href="/requests/{id}" data-testid="approve-none-request">Open {id} ›</a>
   </div>
 {:else if !o}
   {#if order.error}
-    <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} />
+    <VHead title="Approve" crumbs={[{ href: "/orders", label: "Orders" }]} here="Approve" back={{ href: "/orders", label: "Orders" }} />
     <VState kind="error" title={/404|not found/i.test(order.error) ? `No request ${id}.` : "Validio is not reachable."} detail={order.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={3} />
@@ -151,12 +158,12 @@
   {@const what = doneWhat(o, placed)}
   <VHead
     title={placed ? `Ordered ${what}` : `Not ordered: ${what}`}
-    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
   >
     {#snippet facts()}
-      <VPill label={placed ? "Placed" : "Rejected"} tone={placed ? "ok" : "bad"} />
+      <VPill label={placed ? "Ordered" : "Rejected"} tone={placed ? "ok" : "bad"} />
       <b class="num">{o.moneyText ?? money(o.totalCents)}</b>
       {#if placed}<a href="/ledger">Order {o.id} ›</a>{/if}
     {/snippet}
@@ -169,7 +176,7 @@
     title={o.questionText ?? r?.question ?? `Order for ${money(o.totalCents)}?`}
     titleId="question"
     titleTestid="approve-question"
-    crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
+    crumbs={[{ href: "/orders", label: "Orders" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
   >
@@ -177,13 +184,14 @@
       <span>Deliver by {day(o.deliverBy)}</span>
       {#if l?.isSubstitute && !l.onValioList}<span>Not on Valio's list</span>{/if}
     {/snippet}
+    {#if r?.leadText && !l?.isSubstitute}<p class="q-sub" data-testid="approve-why" id="approve-why">{nb(r.leadText)}</p>{/if}
   </VHead>
 
   <div class="blocks decide">
     <div>
-      <VLane name="Total" value={o.moneyText ?? money(o.totalCents)} sub={o.usedBeforeCents ? `${money(o.usedBeforeCents)} ordered before` : undefined}>
+      <VLane name="Total" value={o.moneyText ?? money(o.totalCents)} sub={weekLine((o.usedBeforeCents ?? 0) + o.totalCents, pass.data?.weekCapCents)}>
         {#snippet plot()}
-          <VPlotTotal before={o.usedBeforeCents ?? 0} amount={o.totalCents} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
+          <VPlotTotal amount={o.totalCents} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
         {/snippet}
       </VLane>
     </div>
@@ -211,13 +219,13 @@
       </details>
     {/if}
 
-    {#if step && codeRequired && !isCode(owner.code)}
+    {#if step && codeRequired}
       <VCode bind:value={code} error={wrong} onsubmit={submitCode} />
     {/if}
     {#if problem}<p class="q-sub" role="alert">{problem}</p>{/if}
 
     <div class="bar" data-bar>
-      {#if step === "reject" && !(codeRequired && !isCode(owner.code))}
+      {#if step === "reject" && !codeRequired}
         <Button variant="outline" onclick={cancel}>Cancel</Button>
         <Button id="confirm-reject" data-testid="code-submit" disabled={busy} onclick={() => decide("reject")}>{busy ? "Rejecting…" : "Confirm rejection"}</Button>
       {:else if step}

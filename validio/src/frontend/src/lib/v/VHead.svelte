@@ -101,7 +101,7 @@
   }
   .kopfleiste {
     position: sticky;
-    top: 0;
+    top: var(--demo-h, 0px);
     z-index: 15;
     display: flex;
     align-items: center;

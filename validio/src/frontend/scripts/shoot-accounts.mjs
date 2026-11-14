@@ -105,11 +105,20 @@ async function walk(browser, v) {
     const box = page.getByTestId("code-input").filter({ visible: true }).first();
     const asks = await box.waitFor({ timeout: 3000 }).then(() => true, () => false);
     await shoot(`${state}-code`);
-    if (asks) await box.fill(CODE);
+    if (!asks) return;
+    await box.fill(CODE);
     await page.getByTestId("code-submit").filter({ visible: true }).first().click()
       .catch(() => missing.add(`${state}: code-submit`));
   };
-  const nav = (state, id, name) => click(state, id, "link", name);
+  // A phone detail page (request, approve) has a back link and no dock: home first, as a person would.
+  const home = async () => {
+    const dock = page.getByTestId("nav-inbox").filter({ visible: true }).first();
+    if (!(await dock.waitFor({ timeout: 1000 }).then(() => true, () => false))) await page.goto("/");
+  };
+  const nav = async (state, id, name) => {
+    await home();
+    return click(state, id, "link", name);
+  };
   const example = async (state) => {
     await nav(state, "nav-inbox", /^inbox$/i);
     if (await click(state, "example-send", "button", /send example request/i)) await sleep(1500);
@@ -206,11 +215,14 @@ async function walk(browser, v) {
   if (await nav("ledger", "nav-ledger", /^ledger$/i)) await shoot("ledger");
 
   // Settings, the diet with its code prompt
+  await home();
   const settings = page.getByTestId("nav-settings").or(page.getByTestId("phone-settings")).filter({ visible: true }).first();
   if (await settings.count()) {
     await settings.click();
     await shoot("settings");
-    if (await click("settings-diet", /^set-(nav|row)-diet$/, "link", /diet and allergens/i)) await shoot("settings-diet");
+    // one page with a section list on the side at 1280; on the phone one list, nothing to pick
+    const sections = (await page.getByTestId(/^set-(nav|row)-/).filter({ visible: true }).count()) > 0;
+    if (sections && (await click("settings-diet", /^set-(nav|row)-diet$/, "link", /diet and allergens/i))) await shoot("settings-diet");
     const gluten = page.getByRole("switch", { name: /gluten/i }).or(page.getByRole("checkbox", { name: /gluten/i })).filter({ visible: true }).first();
     if (await gluten.count()) {
       await gluten.click();
@@ -219,7 +231,7 @@ async function walk(browser, v) {
         await shoot("settings-saved");
       }
     } else missing.add("settings: gluten switch");
-    for (const [id, name] of [["kitchen", /^kitchen$/i], ["login", /login and approval code/i], ["theme", /^theme$/i]]) {
+    for (const [id, name] of sections ? [["kitchen", /^kitchen$/i], ["login", /login and approval code/i], ["theme", /^theme$/i]] : []) {
       await page.goto("/settings");
       if (!(await click(`settings-${id}`, new RegExp(`^set-(nav|row)-${id}$`), "link", name))) continue;
       await shoot(`settings-${id}`);
