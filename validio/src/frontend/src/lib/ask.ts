@@ -12,8 +12,6 @@ const ENDING: Partial<Record<SupplyRequest["status"], string>> = {
   rejected: "Blocked",
 };
 
-const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
-
 export function askSummary(r: SupplyRequest): string[] {
   const out = [`Agent asked Validio for ${r.title ?? r.titleText ?? r.text}.`];
   const ids = r.liveChecked?.ids;
@@ -24,7 +22,7 @@ export function askSummary(r: SupplyRequest): string[] {
     const o = l.chosen && l.options.find((x) => x.productId === l.chosen!.productId);
     return o ? [`${o.quantity ?? l.chosen!.salesQty} × ${o.displayName ?? o.name}, ${o.moneyText ?? money(o.totalCents)}`] : [];
   });
-  if (head === "Blocked" || !picked.length) out.push(`${head}: ${lower(r.decision.summary ?? r.decision.sentence ?? "nothing was ordered").replace(/\.?$/, ".")}`);
+  if (head === "Blocked" || !picked.length) out.push(`${head}: ${(r.decision.summary ?? r.decision.sentence ?? "Nothing was ordered").replace(/\.?$/, ".")}`);
   else out.push(`${head}: ${picked.join("; ")}.`);
   return out;
 }

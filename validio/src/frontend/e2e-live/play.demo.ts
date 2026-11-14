@@ -25,8 +25,8 @@ test("ask as the kitchen's agent: a short summary, the log folded", async ({ pag
   // One example chip for each ending, each recorded at Valio.
   const cases = [
     { chip: "100 litres of whipping cream by Monday", first: "Ordered alone: ", status: "Ordered alone" },
-    { chip: "50 bags of lactose-free mozzarella by Monday", first: "Waits for you: ", status: "Waiting for you" },
-    { chip: "20 kg of butter by Monday", first: "Blocked: ", status: "Blocked" },
+    { chip: "50 kg of quark by Monday, budget 100 euro", first: "Waits for you: ", status: "Waiting for you" },
+    { chip: "20 kg of parmesan by Monday", first: "Blocked: Valio has", status: "Blocked" },
   ];
   for (const [i, c] of cases.entries()) {
     await open();
@@ -35,10 +35,11 @@ test("ask as the kitchen's agent: a short summary, the log folded", async ({ pag
     await page.getByTestId("ask-send").click();
     await expect(page.getByTestId("ask-open")).toBeVisible({ timeout: 60_000 });
     const lines = summary.locator("li");
-    await expect(lines).toHaveCount(3);
+    // Parmesan is blocked before any live call, so it has no "Checked" line.
+    await expect(lines).toHaveCount(c.chip.includes("parmesan") ? 2 : 3);
     await expect(lines.nth(0)).toHaveText(/^Agent\sasked\sValidio\sfor\s.+\sby\s.+\.$/);
-    await expect(lines.nth(1)).toHaveText(/^Checked\s\d+\sproducts\slive\.$/);
-    await expect(lines.nth(2)).toHaveText(new RegExp(`^${c.first}`));
+    if (!c.chip.includes("parmesan")) await expect(lines.nth(1)).toHaveText(/^Checked\s\d+\sproducts\slive\.$/);
+    await expect(lines.last()).toHaveText(new RegExp(`^${c.first.replace(/ /g, "\\s")}`));
     // The raw log is there, folded; nothing of it shows until opened.
     await expect(log).not.toHaveAttribute("open", "");
     expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("request_supply");
@@ -55,10 +56,10 @@ test("ask as the kitchen's agent: a short summary, the log folded", async ({ pag
 
   // No request: the agent's last sentence is the one line.
   await open();
-  await page.getByTestId("ask-input").fill("20 kg of saffron by Monday");
+  await page.getByTestId("ask-input").fill("20 kg of butter by Monday");
   await page.getByTestId("ask-send").click();
   await expect(summary.locator("li")).toHaveCount(1, { timeout: 60_000 });
-  await expect(summary).toHaveText(/^Validio\scould\snot\stake\sthe\srequest,\snothing\sordered\.$/);
+  await expect(summary).toHaveText(/^Valio's\sanswers\sfor\sbutter\saren't\srecorded\sfor\sthis\sdemo\.$/);
   await expect(page.getByTestId("ask-open")).toHaveCount(0);
   expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("503");
 });
