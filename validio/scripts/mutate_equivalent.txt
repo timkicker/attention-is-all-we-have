@@ -1,33 +1,12 @@
 # Surviving mutants that cannot change behaviour, one per line: mutant name, then why. mutate_score.py
 # leaves them out of the score. A survivor that does change behaviour belongs in a test, not here.
 validio.audit.log.x_canonical__mutmut_4 ensure_ascii=None is falsy, the same as False
-validio.audit.log.xǁAuditLogǁ__init____mutmut_11 check_same_thread=None is falsy, the same as False
-validio.audit.log.xǁAuditLogǁ__init____mutmut_13 default isolation level: every statement already runs inside an explicit BEGIN IMMEDIATE
-validio.audit.log.xǁAuditLogǁ__init____mutmut_19 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_23 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁ__init____mutmut_32 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_33 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_39 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_40 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_48 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁ__init____mutmut_51 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_4 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_8 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_9 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_53 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_54 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_61 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_62 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_65 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁappend__mutmut_68 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁlist__mutmut_5 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁlist__mutmut_6 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁlist__mutmut_13 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁlist__mutmut_14 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁverify__mutmut_9 SQL keywords and names are case-insensitive in SQLite
 validio.audit.log.xǁAuditLogǁverify__mutmut_10 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁverify__mutmut_14 SQL keywords and names are case-insensitive in SQLite
-validio.audit.log.xǁAuditLogǁverify__mutmut_15 SQL keywords and names are case-insensitive in SQLite
 validio.policy.mandate.x_load_or_create_key__mutmut_8 jwcrypto's default EC curve is P-256
 validio.policy.mandate.x_issue_mandate__mutmut_10 sd-jwt 0.10.4 signs with ES256 when sign_alg is None
 validio.policy.mandate.x_issue_mandate__mutmut_14 sd-jwt 0.10.4 signs with ES256 when sign_alg is None
@@ -67,3 +46,48 @@ validio.policy.mandate.x_present__mutmut_29 the key binding signs whatever JSON 
 validio.policy.mandate.x_verify_presentation__mutmut_17 only element 0 of the split is used
 validio.policy.mandate.x_verify_presentation__mutmut_33 the header alg is already checked to be ES256, jwcrypto uses it when alg is None
 validio.policy.mandate.x_verify_presentation__mutmut_35 the header alg is already checked to be ES256, jwcrypto uses it when alg is None
+validio.audit.log.xǁAuditLogǁ__init____mutmut_28 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_41 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_42 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_53 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_66 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_67 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_75 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ__init____mutmut_78 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁhead__mutmut_4 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁhead__mutmut_5 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_7 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_8 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_10 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_14 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_15 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_59 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_60 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_67 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_68 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_83 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_84 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_86 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_89 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_90 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_93 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_94 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁ_append__mutmut_97 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.xǁAuditLogǁverify__mutmut_11 SQL keywords and names are case-insensitive in SQLite
+validio.audit.log.x_head_signature_ok__mutmut_6 the kitchen key is EC P-256, so only ES256 verifies; jwcrypto refuses alg none by default
+validio.audit.log.x_head_signature_ok__mutmut_8 the kitchen key is EC P-256, so only ES256 verifies; jwcrypto refuses alg none by default
+validio.audit.log.xǁAuditLogǁ_sign__mutmut_11 jwcrypto takes the alg from the protected header, which says ES256
+validio.audit.log.xǁAuditLogǁ_sign__mutmut_14 jwcrypto takes the alg from the protected header, which says ES256
+validio.audit.log.xǁAuditLogǁ__init____mutmut_18 check_same_thread=None is falsy, the same as False
+validio.audit.log.xǁAuditLogǁ__init____mutmut_20 every statement runs inside an explicit BEGIN IMMEDIATE or SAVEPOINT, so the implicit transaction never opens
+validio.audit.log.xǁAuditLogǁ_append__mutmut_5 a SAVEPOINT outside a transaction opens a deferred one; only the lock time differs, and appends hold the connection lock
+validio.audit.log.x__entry__mutmut_3 "" is not a dict either, so the same fallback body follows
+validio.policy.decide.x_decide__mutmut_10 no policy reads the agent id or the product id, only their entity types
+validio.policy.decide.x_decide__mutmut_34 no policy reads the agent id or the product id, only their entity types
+validio.policy.decide.x_decide__mutmut_35 no policy reads the agent id or the product id, only their entity types
+validio.policy.decide.x_decide__mutmut_68 both forbids apply to every action, so PlaceOrder and Escalate name the same ones
+validio.policy.mandate.x_present__mutmut_33 jwcrypto takes the alg from the protected header, which says ES256
+validio.policy.mandate.x_present__mutmut_36 jwcrypto takes the alg from the protected header, which says ES256
+validio.policy.mandate.x__mandate__mutmut_97 bool(None) is False, the same default
+validio.policy.mandate.x__mandate__mutmut_99 bool(None) is False, the same default
+validio.matching.substitute.x__judge__mutmut_41 rstrip takes a set of characters; no reason sentence ends in X

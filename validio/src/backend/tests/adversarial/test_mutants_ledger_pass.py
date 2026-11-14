@@ -2,16 +2,21 @@
 
 Each test names the behaviour it pins; the mutant it was written for is in the comment."""
 
+import base64
 import hashlib
 import json
 import sqlite3
+import time
 from datetime import datetime, timedelta
 
 import pytest
+from jwcrypto.jwk import JWK
+from jwcrypto.jws import JWS
 
-from validio.audit.log import GENESIS, AuditLog, VerifyResult, entry_hash
+from validio.audit.log import GENESIS, HEAD_TYP, AuditLog, VerifyResult, _entry, entry_hash
 from validio.policy.mandate import (
     DEMO_CLAIMS,
+    DEMO_SD_FIELDS,
     MandateError,
     NonceStore,
     _b64,
@@ -19,7 +24,9 @@ from validio.policy.mandate import (
     _digests,
     _kb_payload,
     _mandate,
+    issue_mandate,
     load_or_create_key,
+    present,
     verify_presentation,
 )
 
@@ -114,6 +121,101 @@ def test_empty_ledger_head_is_genesis(tmp_path):
     log = AuditLog(tmp_path / "ledger.db")
     assert log._con.execute("SELECT count, hash FROM ledger_head").fetchone() == (0, GENESIS)
     assert log.verify() == VerifyResult(True, 0, None)
+
+
+class _SignFails(RuntimeError):
+    pass
+
+
+def _failing_sign(*_):
+    raise _SignFails
+
+
+def test_failed_append_leaves_no_transaction_open(tmp_path, monkeypatch):
+    # ROLLBACK -> None: TypeError replaces the real error and the transaction stays open, so the next
+    # append nests into it and nothing reaches the file
+    log = _ledger(tmp_path, 2)
+    monkeypatch.setattr(log, "_sign", _failing_sign)
+    with pytest.raises(_SignFails):
+        _append(log)
+    assert not log._con.in_transaction
+    monkeypatch.undo()
+    _append(log)
+    other = sqlite3.connect(tmp_path / "ledger.db")
+    assert other.execute("SELECT count(*) FROM ledger").fetchone() == (3,)
+
+
+def test_failed_nested_append_keeps_the_outer_transaction(tmp_path, monkeypatch):
+    # ROLLBACK TO / RELEASE ledger_append -> None or "XX...XX": the real error is lost, or the half-written
+    # entry stays inside the order store's transaction
+    log = _ledger(tmp_path, 1)
+    con = log._con
+    con.execute("BEGIN")
+    monkeypatch.setattr(log, "_sign", _failing_sign)
+    with pytest.raises(_SignFails):
+        _append(log)
+    assert con.in_transaction
+    assert con.execute("SELECT count(*) FROM ledger").fetchone() == (1,)
+    con.execute("COMMIT")
+    monkeypatch.undo()
+    assert log.verify() == VerifyResult(True, 1, None)
+
+
+def test_head_hash_changed_on_a_short_ledger_points_at_the_last_entry(tmp_path):
+    # min(count + 1, max(head count, 1)) -> max(head count, 2)
+    log = _ledger(tmp_path, 1)
+    log._con.execute("UPDATE ledger_head SET hash = ? WHERE id = 1", ("0" * 64,))
+    assert log.verify() == VerifyResult(False, 1, 1)
+
+
+def test_extra_field_with_a_matching_hash_breaks_the_chain_there(tmp_path):
+    # `set(body) != FIELDS or stored_seq != expected` -> `and`: a body with a field more passes when its hash
+    # is recomputed, and the break shows one entry later
+    log = _ledger(tmp_path)
+    seq, body, _ = _rows(log)[1]
+    body = {**json.loads(body), "note": "added later"}
+    log._con.execute("UPDATE ledger SET body = ?, hash = ? WHERE seq = ?", (json.dumps(body), entry_hash(body), seq))
+    assert log.verify() == VerifyResult(False, 1, 2)
+
+
+def test_signed_head_names_its_type_and_key(tmp_path):
+    # "typ" / "kid" in the protected header renamed: a reader cannot tell a head from another kitchen JWS
+    key = JWK.generate(kty="EC", crv="P-256")
+    log = AuditLog(tmp_path / "ledger.db", key=key)
+    _append(log)
+    jws = JWS()
+    jws.deserialize(log.head().signature)
+    assert json.loads(jws.objects["protected"]) == {"alg": "ES256", "typ": HEAD_TYP, "kid": key.thumbprint()}
+
+
+def test_head_from_before_the_signature_gets_its_columns(tmp_path):
+    # ("at", "sig") -> ("XXatXX", ...): an old head table never gets the column, and every append fails
+    path = tmp_path / "old.db"
+    con = sqlite3.connect(path)
+    con.execute("CREATE TABLE ledger (seq INTEGER PRIMARY KEY, order_id TEXT, body TEXT NOT NULL, hash TEXT NOT NULL)")
+    con.execute("CREATE TABLE ledger_head (id INTEGER PRIMARY KEY CHECK (id = 1), count INTEGER NOT NULL, "
+                "hash TEXT NOT NULL)")
+    con.execute("INSERT INTO ledger_head VALUES (1, 0, ?)", (GENESIS,))
+    con.commit()
+    con.close()
+    key = JWK.generate(kty="EC", crv="P-256")
+    log = AuditLog(path, key=key)
+    assert {r[1] for r in log._con.execute("PRAGMA table_info(ledger_head)")} == {"id", "count", "hash", "at", "sig"}
+    assert log.verify() == VerifyResult(False, 0, 1)  # the old head is unsigned
+    _append(log)
+    assert log.verify() == VerifyResult(True, 1, None)
+
+
+def test_tampered_entry_still_shows_as_plain_values():
+    # the ledger page shows a tampered row as it is; every field falls back to an empty value of its type
+    garbage = {"seq": "7", "at": None, "actor": None, "kind": None, "sentence": None, "facts": "ab",
+               "mandate_id": None, "disclosed": [1], "rule_ids": "ab", "order_id": None, "prev_hash": None}
+    e = _entry(json.dumps(garbage), "h")
+    assert (e.seq, e.at, e.actor, e.kind, e.sentence, e.facts, e.mandate_id, e.disclosed, e.rule_ids,
+            e.order_id, e.prev_hash, e.hash) == (0, "", "", "", "", [], None, {}, [], None, "", "h")
+    for text in ("not json", "[1]"):
+        e = _entry(text, "h")
+        assert (e.sentence, e.seq, e.facts) == ("(this entry is not readable)", 0, [])
 
 
 # policy/mandate.py: NonceStore
@@ -271,3 +373,45 @@ def test_revocation_is_asked_about_the_pass_jti():
     with pytest.raises(MandateError, match="^Spend Pass M-1 was revoked by the kitchen$"):
         _with_kb_iat(int(NOW.timestamp()), NonceStore(), revoked=lambda jti: asked.append(jti) or True)
     assert asked == ["M-1"]
+
+
+# policy/mandate.py: the pass's own iat, a missing jti, the key binding's default time
+
+def _pass(**claims):
+    return issue_mandate({**DEMO_CLAIMS, **claims}, DEMO_SD_FIELDS, KITCHEN, AGENT)
+
+
+def _present(issuance, ns, **kw):
+    _, jwt, disc, kbjwt = honest_parts(ns, issuance=issuance)
+    token = "~".join([jwt, *disc, kbjwt])
+    return verify_presentation(token, kitchen_pub=KITCHEN, issuer=ISSUER, aud=AUDIENCE, nonces=ns, now=NOW, **kw)
+
+
+def test_pass_iat_that_is_not_a_number_is_refused():
+    # `iat is not None and type(iat) is not int` -> `iat is None and ...`: a string iat reaches `iat > ts`
+    with pytest.raises(MandateError, match="^Spend Pass without validity window$"):
+        _present(_pass(iat="2026-11-14"), NonceStore())
+
+
+def test_pass_iat_one_skew_ahead_is_accepted_one_more_second_is_not():
+    # `iat > ts + skew` -> `>=`
+    ts = int(NOW.timestamp())
+    assert _present(_pass(iat=ts + 60), NonceStore()).id == "M-1"
+    with pytest.raises(MandateError, match="^Spend Pass issued in the future$"):
+        _present(_pass(iat=ts + 61), NonceStore())
+
+
+def test_pass_without_jti_asks_revocation_about_the_empty_id():
+    # payload.get("jti", "") -> None / "XXXX": revocation is asked about "None" instead of ""
+    asked = []
+    claims = {k: v for k, v in DEMO_CLAIMS.items() if k != "jti"}
+    issuance = issue_mandate(claims, DEMO_SD_FIELDS, KITCHEN, AGENT)
+    assert _present(issuance, NonceStore(), revoked=lambda jti: asked.append(jti) or False).id == ""
+    assert asked == [""]
+
+
+def test_key_binding_without_iat_is_signed_now():
+    # `int(time.time()) if iat is None else iat` -> always iat: the key binding carries "iat": null
+    token = present(_pass(), {"diet"}, AGENT, AUDIENCE, "n-1")
+    kb_payload = json.loads(base64.urlsafe_b64decode(token.split("~")[-1].split(".")[1] + "=="))
+    assert abs(kb_payload["iat"] - time.time()) < 5
