@@ -4,6 +4,7 @@ Nothing here makes a live call. Every product that drops out gets a reason a che
 """
 
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
@@ -80,20 +81,45 @@ FILLER = frozenset(["of", "a", "an", "the", "some", "please", "for", "by", "and"
                                  "week", "monday's", "fresh", "bulk"])
 
 
+# kinds the parser found in the catalogue, by word: the categories most of the products with that word sit in
+GENERIC: dict[str, Kind] = {}
+# where counting names goes wrong: most names with "cream" are ice cream, Valio files cream under 10401
+CATEGORY_HINTS = {"cream": ("10401",)}
+
+
 def kind_of(name: str, unit: str = "PCS") -> Kind:
-    """A known kind, or any product word from the catalogue: its name has to hold the word, in any category."""
-    return KINDS.get(name) or Kind((name,), unit, None, ("",))
+    """A known kind, a catalogue word the parser resolved, or any product whose name holds the word."""
+    return KINDS.get(name) or GENERIC.get(name) or Kind((name,), unit, None, ("",))
+
+
+def _generic(word: str, cat: Catalog) -> Kind | None:
+    """Products whose name holds the word at a word start, kept to the top level categories that hold at
+    least half as many of them as the biggest one: "butter" stays with the butters, not peanut butter."""
+    rx = re.compile(rf"\b{re.escape(word)}")
+    hits = [p for p in cat.search(text=word, limit=5000) if rx.search((p.name_en or "").lower())]
+    if not hits:
+        return None
+    if word in CATEGORY_HINTS:
+        return Kind((word,), "PCS", None, CATEGORY_HINTS[word])
+    counts = Counter(p.category[:3] for p in hits)
+    top = max(counts.values())
+    return Kind((word,), "PCS", None, tuple(sorted(c for c, n in counts.items() if 2 * n >= top)))
 
 
 def _product_word(t: str, cat: Catalog) -> str | None:
-    """The first word of the request the catalogue has products for, singular first since it finds both:
-    "30 cartons of vegan pancakes" gives "pancake"."""
+    """The first product the catalogue knows in the request, two words before one ("whipping cream", "ice
+    cream"), singular first since it finds both: "30 cartons of vegan pancakes" gives "pancake"."""
     t = re.sub(r"budget.*$|\b20\d\d-\d\d-\d\d\b|lactose[- ]free|gluten[- ]free", " ", t)
-    for w in re.findall(r"[a-zäöå]{3,}", t):
-        if w in FILLER or w in UNITS:
-            continue
-        for form in (w[:-1], w) if w.endswith("s") else (w,):  # the singular finds both
-            if any(form in (p.name_en or "").lower() for p in cat.search(text=form, limit=20)):
+    words = [w for w in re.findall(r"[a-zäöå]{3,}", t) if w not in FILLER and w not in UNITS]
+    for i, w in enumerate(words):
+        nxt = words[i + 1] if i + 1 < len(words) else None
+        tries = [f"{w} {n}" for n in ((nxt[:-1], nxt) if nxt and nxt.endswith("s") else (nxt,)) if n]
+        tries += [w[:-1], w] if w.endswith("s") else [w]  # the singular finds both
+        for form in tries:
+            if form in GENERIC:
+                return form
+            if kind := _generic(form, cat):
+                GENERIC[form] = kind
                 return form
     return None
 

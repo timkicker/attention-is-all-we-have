@@ -69,6 +69,6 @@ class Availability:
             closing_time=_ts(x.get("closingTime")), sales_block=bool(x.get("salesBlock")),
             lines=[ScheduleLine(amount=ln["availableAmount"], available=date.fromisoformat(ln["availableDate"]),
                                 sales_unit=ln["salesUnit"], sales_block=bool(ln.get("salesBlock")))
-                   for ln in x.get("scheduleLines") or []],
+                   for ln in x.get("scheduleLines") or [] if ln.get("availableDate")],  # none: no date given
             time_now=_ts(time_now),
         )
