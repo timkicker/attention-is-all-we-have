@@ -60,6 +60,16 @@ def test_pairing_shows_the_connector_and_a_reload_keeps_it(kitchens):
     assert demo.get("/api/agent").json()["state"] == "pairing"  # looking it up is no request on the URL
 
 
+def test_a_pairing_from_before_connector_urls_gets_one(kitchens):
+    demo, _, agent, a, _ = kitchens
+    start_pairing(demo)
+    connect.drop_connector(get_accounts().ctx(a))  # as a pairing started before the deploy left it
+    m = URL.fullmatch(demo.get("/api/agent").json()["pairing"]["mcpUrl"])
+    assert m, "an old pairing must still show the connector URL"
+    Mcp(agent, f"/mcp/c/{m.group(1)}/")
+    assert demo.get("/api/agent").json()["state"] == "consent"
+
+
 def test_tools_wait_for_allow(kitchens):
     demo, _, agent, _, _ = kitchens
     token = start_pairing(demo)

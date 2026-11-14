@@ -222,7 +222,7 @@
             <code class="url big" data-testid="mcp-url" id="mcp-url">{a.pairing.mcpUrl}</code>
             {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
           </div>
-          <p class="steps" data-testid="mcp-hint">Add this URL to your agent as an MCP server, in Claude Code: <code class="mono">claude mcp add --transport http validio URL</code>. Then ask it to order. Allow appears here on its first call.</p>
+          <p class="steps" data-testid="mcp-hint">Add this URL to your agent as an MCP server. Allow appears here on its first call.</p>
         </Section>
         <details class="fold vendor">
           <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />Agent without MCP</summary>

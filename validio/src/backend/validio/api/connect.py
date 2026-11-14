@@ -242,6 +242,13 @@ def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> 
     if link.state == "pairing":
         mcp, api = urls(ctx, request)
         held = _connector(ctx)
+        if not (held and held[2]):  # a pairing started before connector URLs existed gets one now
+            with ctx.rt.lock:
+                held = _connector(ctx)
+                if not (held and held[2]):
+                    token = secrets.token_urlsafe(32)
+                    _set_connector(ctx, JWK.generate(kty="EC", crv="P-256").export_private(), _token_hash(token), token)
+                    held = _connector(ctx)
         if held and held[2]:  # any MCP agent: the connector URL; signing agents use the code and /mcp/k/
             mcp = f"{base_url(request)}/mcp/c/{held[2]}/"
         code = link.code
