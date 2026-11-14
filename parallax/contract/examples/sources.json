@@ -1,0 +1,37 @@
+{
+ "editions": [
+  {
+   "lang": "fi",
+   "rev_id": 24373824,
+   "refs": 150,
+   "isbn": {
+    "FI": 7,
+    "EN": 1
+   },
+   "domains": {
+    "yle.fi": 4,
+    "hs.fi": 2
+   }
+  },
+  {
+   "lang": "en",
+   "rev_id": 1384334162,
+   "refs": 212,
+   "isbn": {
+    "EN": 40,
+    "FI": 3
+   },
+   "domains": {
+    "books.google.com": 12
+   }
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT lang, rev_id, refs, isbn, domains FROM ref_stat FOR SYSTEM_TIME AS OF TIMESTAMP %s WHERE topic_id = %s",
+   "ms": 0.5,
+   "rows": 2,
+   "index": "none"
+  }
+ ]
+}

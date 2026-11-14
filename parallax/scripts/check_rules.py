@@ -17,12 +17,13 @@ SKIP_FILES = {"PLAN.md", "scripts/check_rules.py"}
 HOME_PATH = re.compile(r"(/home/[a-z_][\w.-]*/|/Users/[\w.-]+/|[A-Z]:\\\\Users\\\\)")
 SECRETS = [
     re.compile(r"nvapi-[A-Za-z0-9_-]{20,}"),
+    re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),
     re.compile(r"\bsk-[A-Za-z0-9]{20,}"),
     re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}"),
     re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
     re.compile(r"AKIA[0-9A-Z]{16}"),
 ]
-ENV_ASSIGN = re.compile(r"^(NVIDIA_API_KEYS|DB_PASSWORD|[A-Z_]*(API_KEY|TOKEN|SECRET))=(.+)$", re.M)
+ENV_ASSIGN = re.compile(r"^(GEMINI_API_KEY|NVIDIA_API_KEYS|DB_PASSWORD|[A-Z_]*(API_KEY|TOKEN|SECRET))=(.+)$", re.M)
 WIKI_WRITE = [
     re.compile(r"action\s*[=:]\s*['\"]?(edit|upload|move|delete|protect|rollback)\b"),
     re.compile(r"\b(csrftoken|oauth_consumer|mwoauth|pywikibot)\b", re.I),

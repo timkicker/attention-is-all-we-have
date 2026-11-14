@@ -1,0 +1,68 @@
+{
+ "topics": [
+  {
+   "topic_id": "winterwar",
+   "label_en": "Winter War",
+   "wikidata_id": "Q134949",
+   "depth": "deep",
+   "editions": [
+    {
+     "lang": "fi",
+     "page_id": 1256,
+     "title": "Talvisota",
+     "history": "yearly",
+     "revisions": 6,
+     "first_ts": "2005-12-31T19:28:39Z"
+    },
+    {
+     "lang": "sv",
+     "page_id": 23612,
+     "title": "Vinterkriget",
+     "history": "yearly",
+     "revisions": 6,
+     "first_ts": "2005-11-21T08:08:35Z"
+    },
+    {
+     "lang": "de",
+     "page_id": 51245,
+     "title": "Winterkrieg",
+     "history": "yearly",
+     "revisions": 6,
+     "first_ts": "2005-12-29T20:58:39Z"
+    },
+    {
+     "lang": "en",
+     "page_id": 33924,
+     "title": "Winter War",
+     "history": "yearly",
+     "revisions": 6,
+     "first_ts": "2005-12-30T07:19:35Z"
+    },
+    {
+     "lang": "ru",
+     "page_id": 33700,
+     "title": "Советско-финляндская война (1939—1940)",
+     "history": "yearly",
+     "revisions": 6,
+     "first_ts": "2005-12-20T17:50:46Z"
+    },
+    {
+     "lang": "et",
+     "page_id": 43646,
+     "title": "Talvesõda",
+     "history": "yearly",
+     "revisions": 5,
+     "first_ts": "2009-12-18T10:58:40Z"
+    }
+   ]
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT t.topic_id, p.lang, p.page_id, p.title FROM topic t JOIN page p USING (topic_id)",
+   "ms": 0.6,
+   "rows": 6,
+   "index": "none"
+  }
+ ]
+}

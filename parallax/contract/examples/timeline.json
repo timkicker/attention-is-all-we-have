@@ -1,0 +1,126 @@
+{
+ "claim": {
+  "lang": "fi",
+  "page_id": 1256,
+  "h": "8519fbaf22d33984",
+  "text": "Neuvostoliitto lavasti 26. marraskuuta 1939 Mainilan laukaukset , joilla se perusteli sotaa puolustuksellisena toimenpiteenä.",
+  "section": "Suomen ja Neuvostoliiton neuvottelut aluemuutoksista"
+ },
+ "lives": [
+  {
+   "lang": "en",
+   "page_id": 33924,
+   "h": "7aee25bc3466a2fc",
+   "text": "On November 26 the Soviets staged the Shelling of Mainila , an incident in which Soviet artillery shelled areas near the Russian village of Mainila, then announced that a Finnish artillery attack had killed Soviet troops.",
+   "born": "2005-12-30T07:19:35Z",
+   "died": "2009-12-31T20:28:48Z",
+   "born_rev": 33225464,
+   "died_rev": 335165674,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": {
+    "label": "same",
+    "model": "fake-judge",
+    "prompt_version": "judge-v1"
+   }
+  },
+  {
+   "lang": "en",
+   "page_id": 33924,
+   "h": "44de4935d07aca55",
+   "text": "On 26 November, a border incident was reported near the village of Mainila .",
+   "born": "2009-12-31T20:28:48Z",
+   "died": "2017-12-29T18:23:52Z",
+   "born_rev": 335165674,
+   "died_rev": 817645920,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": null
+  },
+  {
+   "lang": "en",
+   "page_id": 33924,
+   "h": "7c75a288e1641b04",
+   "text": "On 26 November 1939, an incident was reported near the Soviet village of Mainila close to the border with Finland: A Soviet border guard post had been shelled by an unknown party resulting, according to Soviet reports, in the deaths of four and injuries of nine border guards.",
+   "born": "2017-12-29T18:23:52Z",
+   "died": "2021-12-30T12:19:01Z",
+   "born_rev": 817645920,
+   "died_rev": 1062771208,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": null
+  },
+  {
+   "lang": "en",
+   "page_id": 33924,
+   "h": "935864305a0aec38",
+   "text": "On 26 November 1939, an incident was reported near the Soviet village of Mainila , close to the border with Finland.",
+   "born": "2021-12-30T12:19:01Z",
+   "died": "2026-11-07T19:50:21Z",
+   "born_rev": 1062771208,
+   "died_rev": 1384334162,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": null
+  },
+  {
+   "lang": "en",
+   "page_id": 33924,
+   "h": "a3b291dafd10d41b",
+   "text": "On 26 November 1939, an incident was reported near the Soviet village of Mainila , near the border with Finland.",
+   "born": "2026-11-07T19:50:21Z",
+   "died": null,
+   "born_rev": 1384334162,
+   "died_rev": null,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": {
+    "label": "partial",
+    "model": "fake-judge",
+    "prompt_version": "judge-v1"
+   }
+  },
+  {
+   "lang": "de",
+   "page_id": 51245,
+   "h": "176471723f110570",
+   "text": "Am 26. November inszenierte die Rote Armee im Dorf Mainila ( russisch Майнило ) einen Grenzzwischenfall, bei dem angeblich sowjetische Truppen von finnischer Artillerie beschossen worden seien ( Mainila-Zwischenfall ).",
+   "born": "2013-12-31T09:20:48Z",
+   "died": null,
+   "born_rev": 125967039,
+   "died_rev": null,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": {
+    "label": "same",
+    "model": "fake-judge",
+    "prompt_version": "judge-v1"
+   }
+  },
+  {
+   "lang": "ru",
+   "page_id": 33700,
+   "h": "ac5853856a89a0eb",
+   "text": "В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнила , инсценированный советской стороной — что также подтверждается соответствующими распоряжениями Маннергейма, уверенного в неизбежности советской провокации и потому предварительно отведшего войска от границы на расстояние, исключающее возникновение недоразумений.",
+   "born": "2013-12-30T18:13:32Z",
+   "died": "2017-12-23T09:24:26Z",
+   "born_rev": 60401111,
+   "died_rev": 89813748,
+   "died_comment": null,
+   "time_precision": "snapshot",
+   "verdict": {
+    "label": "same",
+    "model": "fake-judge",
+    "prompt_version": "judge-v1"
+   }
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT lang, h, text, row_start, row_end FROM claim FOR SYSTEM_TIME ALL WHERE (lang, h) IN (...) ORDER BY lang, row_start",
+   "ms": 0.9,
+   "rows": 7,
+   "index": "none"
+  }
+ ]
+}
