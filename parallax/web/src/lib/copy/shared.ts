@@ -35,10 +35,10 @@ export function editions(langs: readonly string[]): string {
 
 // ---------- Finding words ----------
 
-const SEP: NotePart = { text: ' · ' }
+const SEP: NotePart = { text: ', ', sep: true }
 const says = (n: number) => (n === 1 ? 'says' : 'say')
 
-/** Joins note groups with " · ". */
+/** Joins note groups; NoteLine sets them apart by space. */
 export function note(...groups: Note[]): Note {
   const out: Note = []
   groups.filter((g) => g.length).forEach((g, i) => {
@@ -99,9 +99,9 @@ export function stillAgreedThen(langs: readonly string[]): string {
   return `${editions(langs)} still agreed then`
 }
 
-/** "4 Feb 2015 · Swedish changed “Soviet troops fired the shots” to “has never been settled”". */
+/** "4 Feb 2015, Swedish changed “Soviet troops fired the shots” to “has never been settled”". */
 export function changedFromTo(date: string, lang: string, from: string, to: string): string {
-  return `${fmtDate(date)} · ${edition(lang)} changed “${from}” to “${to}”`
+  return `${fmtDate(date)}, ${edition(lang)} changed “${from}” to “${to}”`
 }
 
 /** "Edit comment: “attribute the claim, sources disagree”". */
@@ -139,10 +139,10 @@ export function likelyBackedBy(n: number, of = 7): string {
   return `Likely backed by ${n} of ${of} editions (matched by shared names and numbers, no model)`
 }
 
-/** "Disputed · in 3 of 7, English removed it in 2009". */
-export function disputedRemoved(n: number, of: number, langs: string | readonly string[], year: string | number): string {
+/** ["Disputed", "in 3 of 7", "English removed it in 2009"]: parts of a check row head. */
+export function disputedRemoved(n: number, of: number, langs: string | readonly string[], year: string | number): string[] {
   const who = typeof langs === 'string' ? edition(langs) : editions(langs)
-  return `${DISPUTED} · in ${n} of ${of}, ${who} removed it in ${year}`
+  return [DISPUTED, `in ${n} of ${of}`, `${who} removed it in ${year}`]
 }
 
 /** "Not compared yet in Russian and Estonian": a close sentence exists, but nobody compared it with this one. */
@@ -150,9 +150,9 @@ export function notCompared(langs: readonly string[]): string {
   return `Not compared yet in ${editions(langs)}`
 }
 
-/** "Disputed · Swedish and Russian say otherwise". */
-export function disputedOtherwise(langs: readonly string[]): string {
-  return `${DISPUTED} · ${editions(langs)} ${says(langs.length)} otherwise`
+/** ["Disputed", "Swedish and Russian say otherwise"]. */
+export function disputedOtherwise(langs: readonly string[]): string[] {
+  return [DISPUTED, `${editions(langs)} ${says(langs.length)} otherwise`]
 }
 
 /**
@@ -197,7 +197,6 @@ export const FOOT = {
   machine: 'Translations by machine',
   affiliation: 'Not affiliated with Wikimedia',
   hood: UNDER_THE_HOOD,
-  sep: ' · ',
 } as const
 
 // ---------- Dates and lists ----------

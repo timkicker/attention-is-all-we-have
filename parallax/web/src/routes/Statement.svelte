@@ -94,7 +94,7 @@
               </div>
             {/each}
           {:else}
-            <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}{#if i > 0 && !g.say.spans.length}<span class="why">{' · '}{copy.topic.SAYS_DIFFERENTLY}</span>{/if}</p>
+            <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}{#if i > 0 && !g.say.spans.length}<span class="why">{' '}{copy.topic.saysItDifferently(g.langs.length)}</span>{/if}</p>
             <p class="say" class:clamp={!openQ.has(i)} {@attach overflow(i)}><Marked value={g.say} /></p>
             {#if cut.has(i) || openQ.has(i)}
               <button class="more sec u" type="button" aria-expanded={openQ.has(i)} onclick={() => toggle(i)}>{openQ.has(i) ? copy.topic.LESS : copy.topic.MORE}</button>
@@ -115,7 +115,8 @@
       <div class="list">
         {#each allChanges ? vm.changes : vm.changes.slice(0, SHOWN) as c, i (i)}
           <div class="item" data-testid={TID.changeRow}>
-            <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}{changeRest(c)}</p>
+            <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}</p>
+            <p>{changeRest(c)}</p>
             {#if c.comment}<p class="t13 muted one-line" title={c.comment}>{copy.editComment(c.comment)}</p>{/if}
           </div>
         {:else}

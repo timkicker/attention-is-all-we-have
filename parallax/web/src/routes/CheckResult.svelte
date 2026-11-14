@@ -51,7 +51,7 @@
     {@const vm = res.data}
     <div class="meta" data-testid={TID.checkMeta}>
       <p class="sec">
-        {#if vm.label && vm.recordedOn}{vm.label}{copy.FOOT.sep}<span class="nw">{copy.check.recordedDate(vm.recordedOn)}</span>{:else}{vm.label ?? copy.check.PASTED}{/if}
+        {#if vm.label && vm.recordedOn}{vm.label},{' '}<span class="nw">{copy.check.recordedDate(vm.recordedOn)}</span>{:else}{vm.label ?? copy.check.PASTED}{/if}
       </p>
       <a class="u sec" href={vm.againHref} data-testid={TID.checkAgain}>{copy.check.CHECK_ANOTHER}</a>
     </div>
@@ -66,7 +66,7 @@
     <div class="list">
       {#each all ? vm.rows : vm.rows.slice(0, FIRST) as row (row.id)}
         <Item href={row.href} testid={TID.checkRow} data-verdict={row.verdict}>
-          <p class="v" class:bad={row.verdict !== 'backed'}>{row.head}</p>
+          <p class="v parts" class:bad={row.verdict !== 'backed'}>{#each row.head as h, k (k)}<span>{h}</span>{/each}</p>
           <p class="say">{row.say}</p>
         </Item>
       {/each}

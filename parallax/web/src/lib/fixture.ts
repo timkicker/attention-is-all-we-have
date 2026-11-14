@@ -309,12 +309,12 @@ const RUNS = {
     answer:
       'Shots were reported at Mainila on 26 November 1939. The Soviet Union staged them to have a reason for war. Mannerheim personally ordered an inquiry at the border. Finnish troops did not fire the shots at Mainila. The Red Army attacked Finland four days later, on 30 November 1939. Finland denied firing and proposed a joint investigation.',
     rows: (): CheckRow[] => [
-      { id: '0', verdict: 'none', head: IN_NO_EDITION, say: 'Mannerheim personally ordered an inquiry at the border', href: null },
+      { id: '0', verdict: 'none', head: [IN_NO_EDITION], say: 'Mannerheim personally ordered an inquiry at the border', href: null },
       { id: '1', verdict: 'disputed', head: disputedRemoved(3, 7, 'en', 2009), say: 'The Soviet Union staged the shots to have a reason for war', href: stmt(MAINILA) },
       { id: '2', verdict: 'disputed', head: disputedOtherwise(['sv', 'ru']), say: 'Finnish troops did not fire the shots at Mainila', href: stmt(MAINILA) },
-      { id: '3', verdict: 'backed', head: backedBy(7), say: 'The Red Army attacked Finland four days later, on 30 November 1939', href: stmt(MAINILA) },
-      { id: '4', verdict: 'backed', head: backedBy(6), say: 'Shots were reported at the border village of Mainila on 26 November 1939', href: stmt(MAINILA) },
-      { id: '5', verdict: 'backed', head: backedBy(5), say: 'Finland denied firing and proposed a joint investigation', href: stmt(MAINILA) },
+      { id: '3', verdict: 'backed', head: [backedBy(7)], say: 'The Red Army attacked Finland four days later, on 30 November 1939', href: stmt(MAINILA) },
+      { id: '4', verdict: 'backed', head: [backedBy(6)], say: 'Shots were reported at the border village of Mainila on 26 November 1939', href: stmt(MAINILA) },
+      { id: '5', verdict: 'backed', head: [backedBy(5)], say: 'Finland denied firing and proposed a joint investigation', href: stmt(MAINILA) },
     ],
   },
   rec000000002: {
@@ -325,7 +325,7 @@ const RUNS = {
     rows: (): CheckRow[] => [
       { id: '0', verdict: 'disputed', head: disputedOtherwise(['sv']), say: 'Finland lost 26,662 soldiers in the Winter War', href: stmt(LOSSES) },
       { id: '1', verdict: 'disputed', head: disputedRemoved(3, 7, 'ru', 2014), say: 'About 126,875 Soviet soldiers were killed', href: stmt(LOSSES) },
-      { id: '2', verdict: 'backed', head: backedBy(7), say: 'The war ended with the Moscow Peace Treaty on 13 March 1940', href: stmt(LEAGUE) },
+      { id: '2', verdict: 'backed', head: [backedBy(7)], say: 'The war ended with the Moscow Peace Treaty on 13 March 1940', href: stmt(LEAGUE) },
     ],
   },
 } as const
