@@ -243,3 +243,9 @@ def test_steady_ledger_entries_name_the_steady_order(client):
     client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
     entries = client.get("/api/ledger").json()["entries"]
     assert entries and {e.get("requestId") for e in entries} == {"S-1"}
+
+
+def test_split_line_says_where_the_amount_comes_from(client):
+    parm = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["463968"]
+    assert parm["sentence"].startswith("137 from this product, 40 from a swap.")
+    assert "the usual line is" not in parm["sentence"]

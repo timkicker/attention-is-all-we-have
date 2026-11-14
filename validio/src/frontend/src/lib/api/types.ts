@@ -226,6 +226,10 @@ export interface SupplyRequest {
   timeText?: string;
   /** What orders placed under the same Spend Pass before this request add up to: R-2 gives 101000. */
   usedBeforeCents?: number;
+  /** The title without the date: "200 bags of lactose-free mozzarella 125 g". */
+  titleText?: string;
+  /** The product the request named, when Validio turned it down. It is then not among the options. */
+  askedFor?: { productId: string; displayName: string; stateText: string };
 }
 
 /** One row in the inbox. */
@@ -244,6 +248,8 @@ export interface InboxItem {
   summary?: string;
   moneyText?: string;
   timeText?: string;
+  /** The title without the date. */
+  titleText?: string;
 }
 
 export type OrderState = "waiting" | "approved" | "placed" | "rejected" | "blocked";
@@ -356,6 +362,8 @@ export interface LedgerEntry {
   disclosedText?: string[];
   /** The request or Steady Order the entry belongs to: "R-1", "R-2", "S-1". A simulation takes the request it was made for. */
   requestId?: string;
+  /** One short sentence with a verb for the row: no actor, money as "1,200.00 €", an order id once. */
+  displayText?: string;
 }
 
 export interface ChainStatus {
@@ -368,6 +376,8 @@ export interface ChainStatus {
 export interface Ledger {
   entries: LedgerEntry[];
   chain: ChainStatus;
+  /** One head per request or Steady Order, in ledger order. */
+  groups?: { requestId: string; titleText: string }[];
 }
 
 export type DriftKind = "per_guest_up" | "cost_up" | "contract_ends" | "stock_below";

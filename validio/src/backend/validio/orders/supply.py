@@ -202,8 +202,7 @@ class SupplyService:
         if any((o.get("supplierText") or {}).get("planted") for o in options):
             line["note"] = "A description in these options talks to AI agents. Descriptions are never used for decisions."
         if same:
-            line["note"] = (f"All these products have the same footprint in Valio's data ({carbon.pop():g} kg CO2e "
-                            f"per kg, a group average), so it does not change the choice.")
+            line["note"] = f"Same footprint for all: {carbon.pop():g} kg CO2e per kg, a group average."
         return {"line": line, "proposal": proposal, "need": need}
 
     def _sub(self, o: SubOption) -> dict:
