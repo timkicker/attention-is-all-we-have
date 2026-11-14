@@ -32,7 +32,8 @@ def test_align_rows_unique_and_ranked():
         )
         assert c.fetchone()[0] == 0
         c.execute(
-            "SELECT COUNT(*) FROM (SELECT as_of, src_lang, src_page, src_h, dst_lang, MIN(`rank`) lo, MAX(`rank`) hi, COUNT(*) n "
+            "SELECT COUNT(*) FROM (SELECT as_of, src_lang, src_page, src_h, dst_lang,"
+            " MIN(`rank`) lo, MAX(`rank`) hi, COUNT(*) n "
             "FROM align GROUP BY 1,2,3,4,5 HAVING lo <> 1 OR hi <> n) x"
         )
         assert c.fetchone()[0] == 0
