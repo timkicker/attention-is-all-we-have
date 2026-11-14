@@ -1,0 +1,2 @@
+Translate each numbered sentence from Wikipedia into plain English. Keep names, dates, numbers and the original's wording choices (for example "staged" vs "reported") as literally as possible. Do not add or explain anything.
+Answer only with JSON: {"gloss":["...","..."]} with one English sentence per input sentence, in the same order.

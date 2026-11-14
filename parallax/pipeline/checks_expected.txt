@@ -1,0 +1,11 @@
+claims_current_per_lang: de, 481 | en, 623 | et, 188 | fi, 549 | ru, 758 | sv, 154 | uk, 467
+claims_all_per_lang: de, 1036 | en, 2688 | et, 527 | fi, 2457 | ru, 2696 | sv, 386 | uk, 842
+sections_all_per_lang: de, 200 | en, 502 | et, 137 | fi, 2269 | ru, 473 | sv, 127 | uk, 206
+revisions_per_lang: de, 1197, 24 | en, 6720, 26 | et, 253, 20 | fi, 2143, 2143 | ru, 3885, 22 | sv, 781, 24 | uk, 660, 21
+set_probe_vector: 
+probe_en_2008_nearest: On November 26, the Soviets staged the Shelling of Mainila, 
+probe_en_2012_nearest: On 26 November, a border incident was reported near the vill
+probe_de_today_nearest: Am 26. November inszenierte die Rote Armee im Dorf Mainila e
+exact_staged_death: 309285088, 2009-08-21 18:00:56, exact
+ru_staged_term_2012_vs_2016: 1, 0
+explain_ann_uses_emb: key=emb
