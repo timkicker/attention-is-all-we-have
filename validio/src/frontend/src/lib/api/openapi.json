@@ -4,7 +4,7 @@
       "AccountView": {
         "properties": {
           "agent": {
-            "$ref": "#/components/schemas/AgentStateView"
+            "$ref": "#/components/schemas/AgentState"
           },
           "createdAt": {
             "title": "Createdat",
@@ -70,23 +70,107 @@
         "title": "AccountView",
         "type": "object"
       },
-      "AgentStateView": {
+      "AgentInfo": {
         "properties": {
+          "connectedAt": {
+            "title": "Connectedat",
+            "type": "string"
+          },
+          "keyId": {
+            "title": "Keyid",
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastusedat"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "passId": {
+            "title": "Passid",
+            "type": "string"
+          },
+          "passVersion": {
+            "title": "Passversion",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "keyId",
+          "connectedAt",
+          "lastUsedAt",
+          "passId",
+          "passVersion"
+        ],
+        "title": "AgentInfo",
+        "type": "object"
+      },
+      "AgentState": {
+        "properties": {
+          "agent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "consent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Consent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pairing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Pairing"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "state": {
-            "default": "none",
+            "enum": [
+              "none",
+              "pairing",
+              "consent",
+              "active",
+              "paused"
+            ],
             "title": "State",
             "type": "string"
           },
           "versions": {
             "items": {
-              "additionalProperties": true,
-              "type": "object"
+              "$ref": "#/components/schemas/PassVersion"
             },
             "title": "Versions",
             "type": "array"
           }
         },
-        "title": "AgentStateView",
+        "required": [
+          "state",
+          "versions"
+        ],
+        "title": "AgentState",
         "type": "object"
       },
       "ApprovalCodeIn": {
@@ -352,6 +436,32 @@
           "idempotencyKey"
         ],
         "title": "ConfirmIn",
+        "type": "object"
+      },
+      "Consent": {
+        "properties": {
+          "keyId": {
+            "title": "Keyid",
+            "type": "string"
+          },
+          "may": {
+            "items": {
+              "type": "string"
+            },
+            "title": "May",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "keyId",
+          "may"
+        ],
+        "title": "Consent",
         "type": "object"
       },
       "DecisionView": {
@@ -1481,6 +1591,150 @@
           "deliverBy"
         ],
         "title": "OrderView",
+        "type": "object"
+      },
+      "PairIn": {
+        "properties": {
+          "code": {
+            "maxLength": 12,
+            "minLength": 8,
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "publicJwk": {
+            "additionalProperties": true,
+            "description": "the agent's public P-256 key as a JWK",
+            "title": "Publicjwk",
+            "type": "object"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "publicJwk"
+        ],
+        "title": "PairIn",
+        "type": "object"
+      },
+      "PairOut": {
+        "properties": {
+          "status": {
+            "const": "consent",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "PairOut",
+        "type": "object"
+      },
+      "Pairing": {
+        "properties": {
+          "apiUrl": {
+            "title": "Apiurl",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "expiresAt": {
+            "title": "Expiresat",
+            "type": "string"
+          },
+          "mcpUrl": {
+            "title": "Mcpurl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "expiresAt",
+          "mcpUrl",
+          "apiUrl"
+        ],
+        "title": "Pairing",
+        "type": "object"
+      },
+      "PassOut": {
+        "properties": {
+          "spendPass": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the issued Spend Pass, bound to the agent's key",
+            "title": "Spendpass"
+          },
+          "status": {
+            "enum": [
+              "consent",
+              "allowed",
+              "denied"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "PassOut",
+        "type": "object"
+      },
+      "PassVersion": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "at",
+          "why"
+        ],
+        "title": "PassVersion",
+        "type": "object"
+      },
+      "PauseIn": {
+        "properties": {
+          "paused": {
+            "title": "Paused",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "paused"
+        ],
+        "title": "PauseIn",
         "type": "object"
       },
       "ProductSummary": {
@@ -3557,6 +3811,91 @@
         ]
       }
     },
+    "/agent/v1/pair": {
+      "post": {
+        "description": "Answer the kitchen's pairing code with the agent's name and public P-256 key. The kitchen then\nsees the consent screen.",
+        "operationId": "pair_agent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PairIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PairOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pair Agent",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
+    "/agent/v1/pass": {
+      "get": {
+        "description": "Poll with the pairing code: consent (still waiting), allowed (with the Spend Pass) or denied.",
+        "operationId": "get_pass",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Pass",
+        "tags": [
+          "agent"
+        ]
+      }
+    },
     "/agent/v1/products": {
       "get": {
         "description": "Products from Valio's catalog with graded claims. Static data only, no live call.\nSupplier text sits in descriptionUntrusted and is never used for a decision.",
@@ -3901,6 +4240,173 @@
         ]
       }
     },
+    "/api/agent": {
+      "get": {
+        "operationId": "get_agent_api_agent_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Agent",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/allow": {
+      "post": {
+        "operationId": "allow_route_api_agent_allow_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Allow Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/demo": {
+      "post": {
+        "operationId": "demo_route_api_agent_demo_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/deny": {
+      "post": {
+        "operationId": "deny_route_api_agent_deny_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Deny Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/disconnect": {
+      "post": {
+        "operationId": "disconnect_route_api_agent_disconnect_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Disconnect Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/pair": {
+      "post": {
+        "operationId": "pair_route_api_agent_pair_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Pair Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/agent/pause": {
+      "post": {
+        "operationId": "pause_route_api_agent_pause_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PauseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pause Route",
+        "tags": [
+          "web"
+        ]
+      }
+    },
     "/api/demo": {
       "get": {
         "operationId": "demo_state_api_demo_get",
@@ -3977,6 +4483,28 @@
           }
         },
         "summary": "Demo Ask",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/demo/example": {
+      "post": {
+        "description": "The connected demo agent sends the challenge's sentence.",
+        "operationId": "example_api_demo_example_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Example",
         "tags": [
           "web"
         ]

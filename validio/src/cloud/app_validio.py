@@ -107,7 +107,7 @@ def fill() -> str:
     import subprocess
     import sys
 
-    from validio.api import codes
+    from validio.api import codes, connect
     from validio.demo import seed as demo_seed
 
     demo_seed.reset(Path(TEMPLATE_DB), Path(TEMPLATE_KEYS))
@@ -138,5 +138,6 @@ def fill() -> str:
     if run.returncode != 0 or "ALL SCENES OK" not in out:
         raise RuntimeError(f"demo scenes failed, volume not committed:\n{out[-3000:]}")
     codes.store(Path(TEMPLATE_DB), codes.DEMO_CODE)  # after the scenes, which ran on their throwaway code
+    connect.leave_unconnected(Path(TEMPLATE_DB))  # a juror connects the demo agent first
     data.commit()
     return out

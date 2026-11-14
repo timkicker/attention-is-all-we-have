@@ -184,11 +184,15 @@ def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
 def _show_issued(ctx: Ctx) -> dict:
     """Spend Pass M-1 shown the way the agent shows it, as the kitchen last issued it. Right after Start over no
     agent has shown it yet, and the page still has to work."""
-    from ..agent.holder import Holder
+    from ..agent.holder import DISCLOSE
+    from ..demo import seed
     from ..orders.service import mandate_dict
-    from . import tools
+    from ..policy.mandate import _mandate
 
-    m = ctx.verify(Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir).presentation())
+    # read from the kitchen's own copy, not presented: the pass may be bound to an agent's key we do not hold,
+    # and looking at it is no agent call (no nonce, no pause check)
+    claims = seed.issued_claims(seed.issuance(ctx.db_path))
+    m = _mandate({k: v for k, v in claims.items() if k not in DEMO_SD_FIELDS or k in DISCLOSE})
     ctx.store.remember_pass(m.id, mandate_dict(m))
     return ctx.store.seen_pass(m.id)
 
@@ -306,7 +310,7 @@ def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
             rid = steady.group(1)
         elif e["kind"] == "request":
             current = rid = next(asked, None)
-        elif e["kind"] == "spend_pass":
+        elif e["kind"] in ("spend_pass", "agent"):
             rid = e["spend_pass_id"]  # the owner's change belongs to the pass, not the request before it
         elif e["kind"] == "simulation":
             rid = "demo"  # the presenter's switches are their own group, never a request's

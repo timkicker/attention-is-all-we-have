@@ -14,6 +14,8 @@ from dataclasses import replace
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+from jwcrypto.jwk import JWK
+
 from ..config import DATA
 from ..policy.mandate import (
     AUDIENCE,
@@ -161,18 +163,75 @@ def pass_version(path: Path | None, pass_id: str) -> int:
     return int(row[0]) if row else 1
 
 
-def sign_again(path: Path | None, keys_dir: Path | None, changes: dict) -> dict:
-    """The owner signs M-1 again: same id and validity window, new limits, the next `ver`. The old copy is
-    superseded from now on. Returns the new claims."""
+def issuance(path: Path | None = None, pass_id: str = SPEND_PASS_ID) -> str:
+    """The pass as the kitchen last signed it (issuer JWT with every disclosure)."""
+    con = sqlite3.connect(path or db_path())
+    try:
+        (out,) = con.execute("select issuance from spend_pass where id = ?", (pass_id,)).fetchone()
+    finally:
+        con.close()
+    return out
+
+
+def issued_claims(token: str) -> dict:
+    """Every claim of an issuance we signed ourselves, disclosures resolved, `cnf` kept. Not a check: it reads
+    our own database, the signature was made here."""
+    import base64
+
+    def b64json(seg: str):
+        return json.loads(base64.urlsafe_b64decode(seg + "=" * (-len(seg) % 4)))
+
+    jwt, *disclosures = [p for p in token.split("~") if p]
+    claims = {k: v for k, v in b64json(jwt.split(".")[1]).items() if k not in ("_sd", "_sd_alg")}
+    for d in disclosures:
+        _salt, key, value = b64json(d)
+        claims[key] = value
+    return claims
+
+
+VERSION_SCHEMA = ("create table if not exists pass_version (pass_id text, ver integer, issuance text, at text, "
+                  "why text, primary key (pass_id, ver))")
+
+
+def pass_versions(path: Path | None, pass_id: str = SPEND_PASS_ID) -> list[dict]:
+    """Every version the kitchen signed, newest first. The seeded one shows as version 1 even before the first
+    re-sign wrote it down."""
+    con = sqlite3.connect(path or db_path())
+    try:
+        con.execute(VERSION_SCHEMA)
+        rows = con.execute("select ver, at, why from pass_version where pass_id = ? order by ver desc",
+                           (pass_id,)).fetchall()
+    finally:
+        con.close()
+    out = [{"version": v, "at": at, "why": why} for v, at, why in rows]
+    if not any(v["version"] == 1 for v in out):
+        out.append({"version": 1, "at": NOW.isoformat(), "why": "Agent connected"})
+    return out
+
+
+def sign_again(path: Path | None, keys_dir: Path | None, changes: dict, *, agent_pub=None,
+               why: str = "Rules changed", at: datetime | None = None) -> dict:
+    """The owner signs M-1 again: same id and validity window, the claims it has now with `changes` on top, the
+    next `ver`. The old copy is superseded from now on. Bound to `agent_pub`, or to the key the pass is bound
+    to now. Every version lands in `pass_version`. Returns the new claims."""
     path, keys_dir = Path(path or db_path()), Path(keys_dir or keys_path())
     ver = pass_version(path, SPEND_PASS_ID) + 1
-    claims = {**DEMO_CLAIMS, **changes, "ver": ver}
-    issuance = issue_mandate(claims, DEMO_SD_FIELDS, kitchen_key(keys_dir),
-                             load_or_create_key(keys_dir / "agent-es256.json"))
+    current = issued_claims(issuance(path))
+    cnf = current.pop("cnf", None)
+    if agent_pub is None:
+        agent_pub = JWK(**cnf["jwk"]) if cnf else load_or_create_key(keys_dir / "agent-es256.json")
+    claims = {**DEMO_CLAIMS, **current, **changes, "ver": ver}
+    token = issue_mandate(claims, DEMO_SD_FIELDS, kitchen_key(keys_dir), agent_pub)
     con = sqlite3.connect(path, isolation_level=None)
     try:
         con.execute("begin immediate")
-        con.execute("update spend_pass set issuance = ? where id = ?", (issuance, SPEND_PASS_ID))
+        con.execute(VERSION_SCHEMA)
+        old = con.execute("select issuance from spend_pass where id = ?", (SPEND_PASS_ID,)).fetchone()[0]
+        con.execute("insert or ignore into pass_version values (?, ?, ?, ?, ?)",
+                    (SPEND_PASS_ID, ver - 1, old, NOW.isoformat() if ver == 2 else None, "Agent connected"))
+        con.execute("insert or replace into pass_version values (?, ?, ?, ?, ?)",
+                    (SPEND_PASS_ID, ver, token, (at or datetime.now(NOW.tzinfo)).isoformat(), why))
+        con.execute("update spend_pass set issuance = ? where id = ?", (token, SPEND_PASS_ID))
         con.execute("insert or replace into demo_state values (?, ?)", (f"pass_version:{SPEND_PASS_ID}", str(ver)))
         con.execute("commit")
     except BaseException:

@@ -20,7 +20,7 @@ from validio.policy.mandate import MandateError
 from validio.valio.budget import CallBudgetExceeded
 from validio.valio.client import ReplayMiss, ValioUnavailable
 
-from . import accounts, agent_v1, settings, ui
+from . import accounts, agent_v1, connect, settings, ui
 from .mcp_server import server as mcp_server
 from .state import get_ctx
 
@@ -82,6 +82,7 @@ app.include_router(ui.router)
 app.include_router(settings.router)
 app.include_router(ui.session_router)
 app.include_router(accounts.router)
+app.include_router(connect.web_router())
 app.mount("/mcp", mcp_app)
 
 

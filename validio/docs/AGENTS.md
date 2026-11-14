@@ -19,6 +19,40 @@ For an MCP host the whole configuration is in `examples/mcp.json`:
 
 Keep the slash at the end of the URL. A POST to `/mcp` without it never reaches the MCP server and gets a 405.
 
+On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The kitchen's Agent page shows both. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
+
+### Pairing
+
+The kitchen presses "Connect agent" and gets an 8 character code, valid ten minutes. The agent sends it with its name and its public P-256 key:
+
+<!-- check: body POST /agent/v1/pair -->
+```json
+{
+  "code": "7KQ4-M2XD",
+  "name": "Kitchen buyer",
+  "publicJwk": {"kty": "EC", "crv": "P-256", "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU", "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"}
+}
+```
+
+<!-- check: response POST /agent/v1/pair -->
+```json
+{
+  "status": "consent"
+}
+```
+
+The kitchen now sees the agent's name and what it may do, and allows or denies. The agent asks with the same code until the answer is there. On Allow the kitchen signs Spend Pass M-1 again, bound to the agent's key, and the answer carries it:
+
+<!-- check: response GET /agent/v1/pass -->
+```json
+{
+  "status": "allowed",
+  "spendPass": "eyJhbGciOiJFUzI1NiJ9.…~WyJ…~"
+}
+```
+
+A wrong or expired code gets a 404, and five wrong codes end the pairing. `status` is `consent` while the kitchen has not answered and `denied` after Deny. While the kitchen pauses the agent, every call with the pass gets a 401 `the kitchen paused this agent`. After Disconnect the agent's copy is refused as superseded.
+
 ## Spend Pass
 
 The Spend Pass is the kitchen's signed permission to spend. It is an SD-JWT issued by `kitchen:hotel-espoo` and bound to the agent's own P-256 key through its `cnf` claim, so a stolen pass is useless without that key. Pass M-1 of the demo allows 1200.00 EUR per order without a person, never more than 2000.00 EUR, only lactose-free products from three product groups and delivery by 16 November. It is valid from 14 November 10:00 to 17 November 00:00 Helsinki time.
