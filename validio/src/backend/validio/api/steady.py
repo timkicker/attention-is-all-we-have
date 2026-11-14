@@ -34,7 +34,7 @@ from ..demo.clock import demo_now
 from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
 from ..orders.store import Store
 from ..policy.mandate import Mandate
-from ..standing.drift import unit_word
+from ..standing.drift import next_renewals, unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
@@ -342,11 +342,21 @@ def _steady() -> tuple[StandingOrder, object]:
     return learn(h), h
 
 
-def _get_order(order_id: str) -> tuple[StandingOrder, object]:
+def _get_order(order_id: str, rt: "Runtime | None" = None) -> tuple[StandingOrder, object]:
+    if rt is not None and rt.real_clock:
+        raise HTTPException(404, f"No Steady Order with id {order_id}: this kitchen has none yet.")
     so, h = _steady()
     if order_id != so.id:
         raise HTTPException(404, f"No Steady Order with id {order_id}.")
     return so, h
+
+
+def _this_week(live, so: StandingOrder) -> dict | None:
+    """The renewal for the delivery that is next now, or None: last week's renewal is history, so a new week
+    renews again (the idempotency keys name the delivery day, so nothing orders twice)."""
+    state = _load(live.path, so.id)
+    target = next_renewals(so.weekday, live.service.clock(), 1)[0].isoformat()
+    return state if state and state.get("delivery") == target else None
 
 
 def _pending(so: StandingOrder, h) -> SteadyOrderOut:
@@ -447,10 +457,12 @@ def _dump(view: SteadyOrderOut) -> dict:
 @router.get("", response_model=list[SteadyOrderSummaryOut], response_model_exclude_none=True)
 def steady_list(request: Request):
     rt = _ctx(request).rt
+    if rt.real_clock:  # S-1 is learned from the demo kitchen's history; a kitchen's own account has none yet
+        return []
     with rt.lock:
         live = rt.live()
         so, h = _steady()
-        state = _load(live.path, so.id)
+        state = _this_week(live, so)
         view = _view(state) if state else _pending(so, h)
     flagged = [ln for ln in view.lines if ln.flags and ln.result != "accepted"]
     return [SteadyOrderSummaryOut(id=view.id, name=view.name, weekday=view.weekday, line_count=len(view.lines),
@@ -462,8 +474,8 @@ def steady_order(request: Request, order_id: str):
     rt = _ctx(request).rt
     with rt.lock:
         live = rt.live()
-        so, h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         return _with_pass(_view(state) if state else _pending(so, h), live)
 
 
@@ -484,8 +496,8 @@ def renew(order_id: str, rt: Runtime | None = None) -> SteadyOrderOut:
         rt = get_ctx().rt
     with rt.lock:
         live = rt.live()
-        so, h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         if state:  # already renewed this week: nothing is ordered twice
             return _with_pass(_view(state), live)
         now = live.service.clock()
@@ -530,8 +542,8 @@ def steady_accept(request: Request, order_id: str, product_id: str,
     _chef(ctx, request, f"steady:{order_id}:{product_id}", x_approve_code, body)
     with rt.lock:
         live = rt.live()
-        so, _h = _get_order(order_id)
-        state = _load(live.path, so.id)
+        so, _h = _get_order(order_id, rt)
+        state = _this_week(live, so)
         if not state:
             raise HTTPException(409, "Renew the order first.")
         view = _view(state)

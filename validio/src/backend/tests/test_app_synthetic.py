@@ -217,3 +217,25 @@ def test_cookies_are_secure_on_a_public_deploy_behind_a_proxy(monkeypatch):
     monkeypatch.setenv("VALIDIO_TRUST_PROXY", "")
     monkeypatch.setenv("VALIDIO_PUBLIC", "1")
     assert secure_cookies(plain)
+
+
+def test_an_own_account_has_no_borrowed_steady_order(c):
+    assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+    assert c.get("/api/steady").json() == []
+    assert c.get("/api/steady/S-1").status_code == 404
+    assert c.post("/api/steady/S-1/renew", headers={"X-Approve-Code": SIGNUP["approvalCode"]}).status_code == 404
+
+
+def test_last_weeks_renewal_does_not_block_this_week(syn_ctx):
+    from datetime import timedelta
+    from types import SimpleNamespace
+
+    from validio.api import steady
+
+    so, _h = steady._steady()
+    live = syn_ctx.rt.live()
+    target = steady.next_renewals(so.weekday, live.service.clock(), 1)[0]
+    steady._save(live.path, so.id, {"view": {}, "delivery": target.isoformat()})
+    assert steady._this_week(live, so) is not None
+    later = SimpleNamespace(path=live.path, service=SimpleNamespace(clock=lambda: live.service.clock() + timedelta(days=7)))
+    assert steady._this_week(later, so) is None  # a week on: renew again
