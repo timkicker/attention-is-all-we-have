@@ -9,7 +9,7 @@
   import { api } from "$lib/api/client";
   import type { RankedOption } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
-  import { day, money, nb } from "$lib/format";
+  import { day, fieldWord, money, nb, valueWord } from "$lib/format";
   import { optionLine, optionPill, requestPill, turnedDownGroups } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import VLane from "$lib/v/VLane.svelte";
@@ -70,10 +70,37 @@
     document.getElementById(`supplier-${planted.productId}`)?.scrollIntoView({ block: "center" });
   }
   const rank = (list: RankedOption[], o: RankedOption) => String(list.indexOf(o) + 1);
+
+  const rejected = $derived(r?.status === "rejected");
+  // The facts Validio confirmed, for the chosen row's fold.
+  const CHECKED = new Set(["attested", "attested_until", "consistent"]);
+  function checkedLine(o: RankedOption): string {
+    const f = o.facts.filter((x) => CHECKED.has(x.grade) && !/^(description|key_ingredients)$/.test(x.field) && (x.valueText ?? x.value) != null);
+    return f.length ? `Checked: ${f.map((x) => `${fieldWord(x.field)} ${x.valueText ?? valueWord(x.field, x.value)}`).join(", ")}.` : "";
+  }
+  // The owner's states carry the rule in the chosen row's fold, not in the head.
+  const ruleInFold = $derived(["waiting", "ordered", "approved", "rejected"].includes(r?.status ?? ""));
+  const priced = $derived(prices.length);
+  // "Lactose-free mozzarella 125 g is out of stock (simulated)." from askedFor.
+  const askedLine = $derived.by(() => {
+    const a = r?.askedFor;
+    if (!a) return "";
+    const state = a.stateText.replace(/\s*\(.*\)\s*$/, "").replace(/ at Valio$/i, "");
+    const simulated = /simulated/i.test(a.stateText) ? " (simulated)" : "";
+    return `${a.displayName} is ${state.charAt(0).toLowerCase()}${state.slice(1)}${simulated}.`;
+  });
+  const askedSub = $derived(/Valio really has [^)]+/.exec(r?.askedFor?.stateText ?? "")?.[0]);
 </script>
 
-{#snippet optionRow(o: RankedOption, left: string | null)}
-  {@const p = o.productId === asked ? { label: "Asked for", tone: "neutral" as const } : optionPill(o)}
+{#snippet optionRow(o: RankedOption, left: string | null, grouped = false)}
+  {@const p = grouped
+    ? null
+    : o.productId === asked
+      ? { label: "Asked for", tone: "neutral" as const }
+      : o.verdict === "chosen" && rejected
+        ? { label: "Proposed", tone: "neutral" as const }
+        : optionPill(o)}
+  {@const amt = o.moneyText ?? money(o.totalCents)}
   <li data-testid="option-{o.productId}" id="option-{o.productId}">
     <span class="ev-left">{#if p}<VPill label={p.label} tone={p.tone} />{:else if left}{left}{/if}</span>
     <span class="ev-main">
@@ -81,10 +108,12 @@
       <span class="ev-sub">{optionLine(o)}</span>
       {#if o.verdict === "chosen"}
         <details class="fold">
-          <summary><ChevronRight class="chev" aria-hidden="true" />Why</summary>
-          <div class="fold-body">
+          <summary data-testid="why-{o.productId}"><ChevronRight class="chev" aria-hidden="true" />Why this product</summary>
+          <div class="fold-body" data-testid="why-body-{o.productId}">
             <p>{o.fullName ?? o.name}, product {o.productId}.</p>
-            <p>{nb(o.sentence)}</p>
+            {#each o.reasons?.length ? o.reasons : [o.sentence] as why (why)}<p>{nb(why)}</p>{/each}
+            {#if checkedLine(o)}<p>{nb(checkedLine(o))}</p>{/if}
+            {#if ruleInFold}<p data-testid="request-rule" id="request-rule">Rule: {rule}</p>{/if}
           </div>
         </details>
       {/if}
@@ -101,7 +130,7 @@
         </span>
       {/if}
     </span>
-    <span class="ev-amt">{o.moneyText ?? money(o.totalCents)}</span>
+    <span class="ev-amt" class:none={!amt}>{amt || "No price"}</span>
   </li>
 {/snippet}
 
@@ -109,7 +138,7 @@
   {#each turnedDownGroups(list) as g (g.name)}
     <div class="day"><b>{g.name}</b><span>{g.items.length}</span></div>
     <ul class="rc-ev">
-      {#each g.items as o (o.productId)}{@render optionRow(o, null)}{/each}
+      {#each g.items as o (o.productId)}{@render optionRow(o, null, true)}{/each}
     </ul>
   {/each}
 {/snippet}
@@ -138,19 +167,18 @@
     {#if r.status === "waiting"}
       <p class="question">{nb(r.question)}</p>
       <p class="q-sub" id="request-why">
-        {#if r.askedFor}Not on Valio's substitute list.{:else}{#if sim}{nb(sim.sentence)}{/if}
-        {#if chosen?.isSubstitute && !chosen.onValioList}The swap is not on Valio's list.{/if}{/if}
-        <span data-testid="request-rule" id="request-rule">Rule: {rule}</span>
+        {#if r.askedFor}{nb(askedLine)}{:else if sim}{nb(sim.sentence)}{/if}
+        {#if chosen?.isSubstitute && !chosen.onValioList}The swap is not on Valio's list.{/if}
       </p>
       <div class="head-btn">
         <Button href="/approve/{r.id}" data-testid="open-approve" id="open-approve">Open approval</Button>
       </div>
     {:else if r.status === "ordered" || r.status === "approved"}
       <p class="question">Placed after you approved.</p>
-      <p class="q-sub">Price and delivery confirmed again. <span data-testid="request-rule" id="request-rule">Rule: {rule}</span></p>
+      <p class="q-sub">Price and delivery confirmed again.</p>
     {:else if r.status === "rejected"}
       <p class="question">You rejected it.</p>
-      <p class="q-sub">Nothing was ordered. <span data-testid="request-rule" id="request-rule">Rule: {rule}</span></p>
+      <p class="q-sub">Nothing was ordered.</p>
     {:else}
       <p class="lead" id="decision-sentence">
         {nb(r.decision.summary ?? r.decision.sentence)}
@@ -164,18 +192,19 @@
       <VLane
         name="Total"
         value={r.moneyText ?? money(r.totalCents)}
-        sub={r.usedBeforeCents ? `${money(r.usedBeforeCents)} ordered before` : undefined}
+        sub={rejected ? "Nothing added" : r.usedBeforeCents ? `${money(r.usedBeforeCents)} ordered before` : undefined}
       >
         {#snippet plot()}
-          <VPlotTotal before={r.usedBeforeCents ?? 0} amount={r.totalCents ?? 0} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
+          <VPlotTotal before={r.usedBeforeCents ?? 0} amount={rejected ? 0 : (r.totalCents ?? 0)} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
         {/snippet}
       </VLane>
-      <VLane name="Options" testid="lane-options" value={String(counted.length)} sub="{possible.length} possible, {down.length} turned down">
+      <VLane name="Options" testid="lane-options" value={String(counted.length)} sub="{priced} with a price, {counted.length - priced} without">
         {#snippet plot()}
           <VPlotOptions
             {prices}
             chosen={chosen?.totalCents}
-            said="{prices.length} priced options from {money(Math.min(...prices))} to {money(Math.max(...prices))}{chosen?.totalCents !== undefined ? `, chosen ${money(chosen.totalCents)}` : ''}."
+            word={rejected ? "Proposed" : "Chosen"}
+            said="{prices.length} priced options from {money(Math.min(...prices))} to {money(Math.max(...prices))}{chosen?.totalCents !== undefined ? `, ${rejected ? "proposed" : "chosen"} ${money(chosen.totalCents)}` : ''}."
           />
         {/snippet}
       </VLane>
@@ -183,9 +212,9 @@
 
     <Section class="v-card">
       {#if r.askedFor}
-        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={r.askedFor.stateText} testid="asked-for" />
+        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={askedSub ? `${askedSub}.` : r.askedFor.stateText} testid="asked-for" />
       {/if}
-      <VValueRow label="Checked live" value="{r.liveChecked.ids} products" sub="Stock, price and delivery, read from Valio at {nb(r.timeText ?? '10:00')}." testid="live-checked" />
+      <VValueRow label="Checked live" value="Read live from Valio at {r.timeText ?? '10:00'}" sub="Stock, price and delivery" testid="live-checked" />
       {#if planted}
         <VValueRow label="Ignored" value="Written to steer AI agents" sub={planted.supplierText?.planted ? "Planted by the team for the demo." : undefined} href="#supplier-{planted.productId}" onclick={toIgnored} testid="ignored-note" />
       {/if}
