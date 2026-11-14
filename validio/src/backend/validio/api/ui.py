@@ -270,7 +270,9 @@ def ledger(ctx: CtxDep):
     for e, rid in zip(entries, _request_ids(ctx, entries), strict=True):
         e["request_id"] = rid
         if rid and rid not in titles:
-            if rid.startswith("R-"):
+            if rid.startswith("M-"):
+                titles[rid] = (f"Spend Pass {rid}", f"Spend Pass {rid}")
+            elif rid.startswith("R-"):
                 v = get_request(ctx, rid)
                 titles[rid] = (v.title, v.title_text or v.title)
             else:
@@ -304,6 +306,8 @@ def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
             for j in waiting:
                 out[j] = rid
             waiting = []
+        elif e["kind"] == "spend_pass":
+            rid = e["spend_pass_id"]  # the owner's change belongs to the pass, not the request before it
         elif e["kind"] == "simulation":
             rid = None
             waiting.append(i)
