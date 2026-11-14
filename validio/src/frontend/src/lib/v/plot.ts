@@ -1,6 +1,6 @@
 // Label placement for the record plots: inside the box, no two overlapping,
-// one row when the plot is wide (>= 480 px), two rows when it is narrow.
-export const WIDE = 480;
+// one row when the plot is wide (>= 600 px), two rows when it is narrow.
+export const WIDE = 600;
 
 export interface Want {
   text: string;
