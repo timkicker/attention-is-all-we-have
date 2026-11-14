@@ -57,7 +57,7 @@ def test_asked_for_product_stands_apart(client, holder):
     _milk_and_mozzarella(client, holder)
     r2 = client.get("/api/requests/R-2").json()
     assert r2["askedFor"] == {"productId": "466375", "displayName": "Lactose-free mozzarella 125 g",
-                              "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"}
+                              "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."}
     listed = [o["productId"] for ln in r2["lines"]
               for o in ln["options"] + (ln.get("substitutes") or []) + (ln.get("beyondList") or [])]
     assert "466375" not in listed

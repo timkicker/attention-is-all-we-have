@@ -83,11 +83,11 @@
   const askedLine = $derived.by(() => {
     const a = r?.askedFor;
     if (!a) return "";
-    const state = a.stateText.replace(/\s*\(.*\)\s*$/, "").replace(/ at Valio$/i, "");
-    const simulated = /simulated/i.test(a.stateText) ? " (simulated)" : "";
+    const demo = /for this demo|simulated/i.test(a.stateText);
+    const state = demo ? "out of stock" : a.stateText.replace(/\s*\(.*\)\s*$/, "").replace(/ at Valio$/i, "");
+    const simulated = demo ? " (simulated)" : "";
     return `${a.displayName} is ${state.charAt(0).toLowerCase()}${state.slice(1)}${simulated}.`;
   });
-  const askedSub = $derived(/Valio really has [^)]+/.exec(r?.askedFor?.stateText ?? "")?.[0]);
 </script>
 
 {#snippet optionRow(o: RankedOption, left: string | null, grouped = false)}
@@ -216,7 +216,7 @@
 
     <Section class="v-card">
       {#if r.askedFor}
-        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={askedSub ? `${askedSub}.` : r.askedFor.stateText} testid="asked-for" />
+        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={r.askedFor.stateText} testid="asked-for" />
       {/if}
       <VValueRow label="Checked live" value="Read live from Valio at {r.timeText ?? '10:00'}" sub="Stock, price and delivery" testid="live-checked" />
       {#if planted}

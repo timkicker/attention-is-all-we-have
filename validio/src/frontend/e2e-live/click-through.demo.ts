@@ -174,7 +174,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   // the asked-for product stands apart as askedFor, no longer among the options (one count everywhere)
   const r2 = await json(request, "/api/requests/R-2");
   expect(r2.askedFor).toEqual({ productId: "466375", displayName: "Lactose-free mozzarella 125 g",
-    stateText: "Out of stock at Valio (simulated, Valio really has 11,603 bags)" });
+    stateText: "Simulated stock-out for this demo. Valio's live count is 11,603 bags." });
   expect(r2.titleText).toBe("200 bags of lactose-free mozzarella 125 g");
   await page.goto("/requests/R-2");
   const subs = ["466151", "473986", "468526", "475908"];
