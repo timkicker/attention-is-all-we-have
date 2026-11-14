@@ -84,6 +84,8 @@ class FakeLLM:
                                                       "limit": 5})])
         if req is None:
             return Step([ToolCall("request_supply", {"lines": task["lines"], "deliverBy": task["deliverBy"]})])
+        if "error" in req:  # e.g. no recordings yet: say why instead of "request None"
+            return Step(text=f"Validio could not take the request, nothing ordered. {req['error']}")
         rid = req.get("requestId") or req.get("id")
         out = outcome(req)
         if self.scene == 1:
