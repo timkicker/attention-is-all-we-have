@@ -66,3 +66,15 @@ def test_en_mainila_life_ends_on_21_august_2009_on_seed_v2(client):
     (staged,) = lives_of(client.get(EN_STAGED_V2).json(), "en")[:1]
     assert staged["died"].startswith("2009-08-21") and staged["died_rev"] == 309285088
     assert staged["time_precision"] == "exact"
+
+
+def test_judged_lives_beyond_the_nearest_are_kept(client, monkeypatch):
+    # v4: fi Mainila's partial en match of 2009 to 2015 ("a border incident was reported") was not among
+    # the 200 nearest en lives, so the timeline skipped it. Here the window is cut to one life per edition.
+    from api.routes import timeline
+
+    full = lives_of(client.get(FI_MAINILA).json(), "en")
+    judged = {x["h"] for x in full if x["verdict"]}
+    monkeypatch.setattr(timeline, "NEAREST", 1)
+    cut = lives_of(client.get(FI_MAINILA).json(), "en")
+    assert judged and judged <= {x["h"] for x in cut if x["verdict"]}

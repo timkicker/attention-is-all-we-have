@@ -8,5 +8,5 @@ SELECT * FROM (
   JOIN claim FOR SYSTEM_TIME ALL AS b IGNORE INDEX (emb)
     ON b.topic_id = %(topic)s AND b.lang <> %(lang)s
 ) c
-WHERE rnk <= 200
+WHERE rnk <= %(near)s
 ORDER BY lang, row_start
