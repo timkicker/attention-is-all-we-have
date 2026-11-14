@@ -59,3 +59,22 @@ async def test_scene4_twice_orders_nothing_twice(ctx):
     _, second, _ = await pane(ctx)
     ids = [[ln.get("orderId") for ln in t.events[2].data["lines"]] for t in (first, second)]
     assert ids[0] == ids[1] and ids[0][0]
+
+
+@pytest.mark.asyncio
+async def test_renew_calls_the_steady_function_not_the_http_route(ctx, monkeypatch):
+    # the Spend Pass stands in for the approve code: no code travels, and no HTTP call is made
+    import httpx
+
+    from validio.api import ui
+
+    def closed(*a, **kw):
+        raise AssertionError("the tool must not go through the code check")
+
+    monkeypatch.setattr(ui, "check_code", closed)
+    monkeypatch.setattr(httpx, "AsyncClient", closed)
+    h = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
+    async with McpPort(server, spend_pass=h.presentation) as port:
+        a = await port.call("renew_steady_order", {"orderId": "S-1"})
+    assert "error" not in a, a
+    assert a["id"] == "S-1" and a["renewedAt"]
