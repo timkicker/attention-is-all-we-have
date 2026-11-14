@@ -4,8 +4,7 @@
   import { afterNavigate, goto } from "$app/navigation";
   import { page } from "$app/state";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Badge } from "@arlen/ui-kit/components/ui/badge";
-  import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
+    import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import * as Tooltip from "@arlen/ui-kit/components/ui/tooltip";
   import { notePage } from "@arlen/ui-kit/components/ui/page/history";
@@ -17,6 +16,7 @@
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
   import VAsk from "$lib/v/VAsk.svelte";
+  import VPill from "$lib/v/VPill.svelte";
 
   let { children } = $props();
 
@@ -139,7 +139,7 @@
 </svelte:head>
 
 {#snippet navBadge(n: number)}
-  <span class="nb"><Badge variant="outline" class="v-count" aria-hidden="true">{n}</Badge></span>
+  <span class="nb"><VPill count label={String(n)} tone="wait" /></span>
   <span class="sr-only">, {n} waiting</span>
 {/snippet}
 
@@ -305,7 +305,7 @@
     gap: 12px;
     height: 32px;
     padding: 0 8px;
-    border-radius: 6px;
+    border-radius: var(--radius-button);
     font-size: 13px;
     line-height: 20px;
     color: var(--v-muted);
@@ -395,7 +395,7 @@
     grid-auto-columns: 1fr;
     align-items: center;
     height: 64px;
-    border-radius: 12px;
+    border-radius: var(--radius-card);
     background: var(--card);
     border: 1px solid var(--border);
   }
