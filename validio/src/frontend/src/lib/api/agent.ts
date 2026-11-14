@@ -151,8 +151,21 @@ function token(): string {
 export function mockMcpCall(): void {
   const m = load();
   if (m.agent.state !== "pairing") return;
-  m.agent = { state: "consent", consent: { name: "Claude Code", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode: "K7P-3QX" }, versions: m.agent.versions };
+  // `at`: when the call came, which the contract does not carry yet (see consentAt).
+  const consent = { name: "Claude Code", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode: "K7P-3QX", at: now() };
+  m.agent = { state: "consent", consent, versions: m.agent.versions };
   store(m);
+}
+
+// When each consent was first seen on this page, for a server that does not say.
+const seen = new Map<string, string>();
+
+/** When the agent's first call came: the server's `consent.at` once it sends one, else when this page first saw it. */
+export function consentAt(c: NonNullable<AgentState["consent"]>): string {
+  const at = (c as { at?: string }).at;
+  if (at) return at;
+  if (!seen.has(c.keyId)) seen.set(c.keyId, now());
+  return seen.get(c.keyId) as string;
 }
 
 /** Fixture only: the demo Reset puts this kitchen's agent and rules back to the start. */
