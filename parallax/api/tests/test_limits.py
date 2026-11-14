@@ -91,3 +91,25 @@ def test_limited_requests_get_429_too_many(client, monkeypatch):
         assert r.status_code == 429 and r.json()["error"]["code"] == "too_many" and int(r.headers["Retry-After"]) >= 1
     finally:
         ratelimit.reset()
+
+
+def test_limit_can_look_without_spending():
+    lim = ratelimit.Limit("t", per_minute=1, burst=1, clock=lambda: 0.0)
+    assert lim.take("a", spend=False) == 0 and lim.take("a", spend=False) == 0
+    assert lim.take("a") == 0 and lim.take("a", spend=False) > 0
+
+
+def test_failed_ingest_uses_no_token(client, monkeypatch):
+    from pipeline import wapi
+
+    monkeypatch.setenv("RATE_LIMITS", "1")
+    monkeypatch.setenv("RATE_INGEST", "1/1")
+    ratelimit.reset()
+    try:
+        monkeypatch.setattr(wapi, "get", lambda url, params=None, **kw: {"entities": {}})
+        for qid in ("Q90000011", "Q90000012", "Q90000013"):  # unknown items: 404, the token stays
+            assert client.post("/api/ingest", json={"qid": qid}).status_code == 404
+        assert client.post("/api/ingest", json={"qid": "Q134949"}).status_code == 202  # loaded topic: free
+        assert ratelimit._limit("ingest").take("testclient", spend=False) == 0
+    finally:
+        ratelimit.reset()
