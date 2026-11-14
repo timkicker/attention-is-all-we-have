@@ -1,14 +1,23 @@
 import { test, expect, type Page } from "@playwright/test";
 import { fresh, slop } from "./helpers";
 
-// Agent page in fixture mode: connected (demo), pause, disconnect with a
-// confirm, connect again, the code appearing by itself on the agent's first
-// call (validioMcpCall plays it), Deny and Allow.
+// Agent page in fixture mode: the demo starts with no agent, as the real demo
+// copy does. Connect, the code appearing by itself on the agent's first call
+// (validioMcpCall plays it), Deny and Allow, then pause and disconnect.
 
-async function toAgent(page: Page) {
+const call = (page: Page) => page.evaluate(() => (window as unknown as { validioMcpCall: () => void }).validioMcpCall());
+
+async function toAgent(page: Page, connect = true) {
   await fresh(page);
   await page.goto("/agent");
   await expect(page.locator("h1")).toHaveText("Agent");
+  await expect(page.getByTestId("agent-none")).toBeVisible();
+  if (!connect) return;
+  await page.locator("#agent-connect").click();
+  await expect(page.getByTestId("mcp-url")).toBeVisible();
+  await call(page);
+  await page.locator("#consent-allow").click();
+  await expect(page.getByTestId("agent-state")).toHaveText("Active");
 }
 
 async function disconnect(page: Page) {
@@ -23,12 +32,11 @@ async function noSideScroll(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
 }
 
-test("the demo agent shows name, connected and last used, and links to its activity", async ({ page }) => {
+test("a connected agent shows name, connected and last used, and links to its activity", async ({ page }) => {
   await toAgent(page);
-  await expect(page.getByTestId("agent-state")).toHaveText("Active");
-  await expect(page.getByTestId("agent-name-value")).toHaveText("Claude Code");
-  await expect(page.getByTestId("agent-connected-value")).toHaveText("Sat 14 Nov, 09:40");
-  await expect(page.getByTestId("agent-used-value")).toHaveText("Sat 14 Nov, 11:05");
+  await expect(page.getByTestId("agent-name-value")).toHaveText("MCP agent");
+  await expect(page.getByTestId("agent-connected-value")).toHaveText(/^\w{3}\s\d+\s\w{3},\s\d\d:\d\d$/);
+  await expect(page.getByTestId("agent-used-value")).toHaveText("Not yet");
   expect(await slop(page)).toEqual([]);
   await page.getByTestId("agent-activity").click();
   await expect(page).toHaveURL(/\/activity$/);
@@ -57,8 +65,7 @@ test("disconnect asks first, and Cancel keeps the agent", async ({ page }) => {
 });
 
 test("connecting shows the MCP address, the fold for other agents, and Cancel", async ({ page }) => {
-  await toAgent(page);
-  await disconnect(page);
+  await toAgent(page, false);
   await page.locator("#agent-connect").click();
   await expect(page.getByTestId("agent-state")).toHaveText("Connecting");
   await expect(page.getByTestId("mcp-hint")).toHaveText("Add this address to your agent as an MCP server, then ask it to order something.");
@@ -76,14 +83,13 @@ test("connecting shows the MCP address, the fold for other agents, and Cancel", 
 });
 
 test("the agent's first call shows the code without a reload; Deny, then Allow", async ({ page }) => {
-  await toAgent(page);
-  await disconnect(page);
+  await toAgent(page, false);
   await page.locator("#agent-connect").click();
   await expect(page.getByTestId("mcp-url")).toBeVisible();
   await page.evaluate(() => (window as unknown as { validioMcpCall: () => void }).validioMcpCall());
-  await expect(page.getByTestId("verify-code")).toHaveText("K7P-3QX", { timeout: 5000 });
+  await expect(page.getByTestId("verify-code")).toHaveText(/^[A-Z2-9]{3}-[A-Z2-9]{3}$/, { timeout: 5000 });
   await expect(page.getByTestId("agent-state")).toHaveText("Check the code");
-  await expect(page.getByTestId("consent-who")).toHaveText(/^Claude Code called at \d\d:\d\d$/);
+  await expect(page.getByTestId("consent-who")).toHaveText(/^MCP agent called at \d\d:\d\d$/);
   await expect(page.getByTestId("consent")).toContainText("Your agent shows this code too. Allow only if it matches.");
   await expect(page.getByTestId("consent-may")).toContainText("Orders alone up to 1,200.00 €");
   expect(await slop(page)).toEqual([]);
@@ -95,7 +101,7 @@ test("the agent's first call shows the code without a reload; Deny, then Allow",
   await page.evaluate(() => (window as unknown as { validioMcpCall: () => void }).validioMcpCall());
   await page.locator("#consent-allow").click();
   await expect(page.getByTestId("agent-state")).toHaveText("Active");
-  await expect(page.getByTestId("agent-name-value")).toHaveText("Claude Code");
+  await expect(page.getByTestId("agent-name-value")).toHaveText("MCP agent");
   await expect(page.getByTestId("agent-used-value")).toHaveText("Not yet");
 });
 
