@@ -27,10 +27,15 @@ describe('recorded labels come from the data', () => {
     expect(modelName('gemini-3.8-flash')).toBe('Gemini')
     expect(recordedLabel({ answer_model: 'gemma-4-31b-it', question: 'When did the Winter War end?' })).toBe('Gemma on when did the Winter War end')
     expect(recordedLabel({ answer_model: null, question: null })).toBeNull()
+    const long = recordedLabel({ answer_model: 'gemini-3.8-flash', question: 'How much territory did Finland cede to the Soviet Union after the Winter War?' })
+    expect(long).toBe('Gemini on how much territory did Finland cede to the Soviet')
+    expect(long!.length).toBeLessThanOrEqual(60)
   })
   it('offers different questions first', () => {
     const r = (id: string, q: string) => ({ run_id: id, question: q, answer_model: 'm', answer_date: null })
     expect(pickRecorded([r('1', 'a'), r('2', 'a'), r('3', 'b')], 2).map((x) => x.run_id)).toEqual(['1', '3'])
+    const qs = ['When did the Winter War end?', 'How many Finnish soldiers died in the Winter War?', 'Who fired the shots at Mainila in November 1939?']
+    expect(pickRecorded(qs.map((q, i) => r(String(i), q))).map((x) => x.question)).toEqual([qs[2], qs[1], qs[0]])
   })
 })
 
@@ -67,9 +72,9 @@ describe('result', () => {
     expect(r.summary).toEqual({ total: 3, none: 1, disputed: 1, backed: 1 })
     expect(r.label).toBe('Gemini on who fired the shots at Mainila')
     expect(r.answer).toBe('Whole answer.')
-    expect(copy.check.summary(r.summary, r.mostBacked ?? true)).toBe('Of 3 statements, 1 is in no edition, 1 is disputed and 1 is backed by most editions')
+    expect(copy.checkSummary(r.summary, r.mostBacked)).toBe('Of 3 statements, 1 is in no edition, 1 is disputed and 1 is backed by most editions')
     const few = toResult(ctx, { ...d, claims: [claim(0, seven((l) => (l === 'sv' ? 'says' : 'not_found')))] })
-    expect(copy.check.summary(few.summary, few.mostBacked ?? true)).toBe('Of 1 statement, 1 is backed by at least one edition')
+    expect(copy.checkSummary(few.summary, few.mostBacked)).toBe('Of 1 statement, 1 is backed by at least one edition')
   })
   it('a pasted answer has no label', () => {
     expect(toResult(ctx, { ...base, source: 'live', claims: [] }).label).toBeNull()

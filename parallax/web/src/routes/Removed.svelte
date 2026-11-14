@@ -1,6 +1,7 @@
 <script lang="ts">
   // Removed tab (wf/08): statements one edition removed while others still have them.
-  // Filters live in the URL: ?q= (find a statement), ?edition= (lang), ?offset= (rows shown before "Show N more").
+  // Filters live in the URL: ?q= (find a statement), ?edition= (lang), ?offset= (rows "Show N more" added).
+  // The page shows FIRST rows, then STEP more per click; the adapter is asked for at least that many.
   import * as copy from '../lib/copy'
   import { getRemoved, resolveTopic } from '../lib/data'
   import { dateState } from '../lib/date.svelte'
@@ -30,14 +31,19 @@
 
   const qParam = $derived(router.query.get('q') ?? '')
   const edition = $derived(asLang(router.query.get('edition')))
+  const FIRST = 5
+  const STEP = 25
   const offset = $derived(Math.max(0, Number(router.query.get('offset')) || 0))
+  const shown = $derived(FIRST + offset)
+  const visible = $derived(res?.ok ? res.data.rows.slice(0, shown) : [])
+  const more = $derived(res?.ok ? Math.max(0, res.data.total - visible.length) : 0)
 
   $effect(() => {
     resolveTopic(params.qid).then((r) => (title = r.ok ? r.data.title : params.qid))
   })
 
   $effect(() => {
-    const args = { q: qParam, offset, edition }
+    const args = { q: qParam, offset: shown, edition }
     const date = dateState.value
     let live = true
     getRemoved(params.qid, date, args).then((r) => {
@@ -60,8 +66,8 @@
     q = ''
     router.setQuery({ q: null, offset: null }, { replace: true })
   }
-  function more() {
-    if (res?.ok) router.setQuery({ offset: String(res.data.rows.length) }, { replace: true })
+  function showMore() {
+    router.setQuery({ offset: String(offset + STEP) }, { replace: true })
   }
 </script>
 
@@ -89,15 +95,15 @@
     {/if}
   {:else}
     <div class="list">
-      {#each res.data.rows as row (row.id)}
+      {#each visible as row (row.id)}
         <Item href={row.href} testid={TID.removedRow}>
           <p class="say"><Marked value={row.say} as="del" /></p>
           <NoteLine parts={row.note} />
         </Item>
       {/each}
     </div>
-    {#if res.data.more > 0}
-      <p class="more"><button class="btn" type="button" data-testid={TID.showMore} onclick={more}>{copy.showMore(res.data.more)}</button></p>
+    {#if more > 0}
+      <p class="more"><button class="btn" type="button" data-testid={TID.showMore} onclick={showMore}>{copy.showMore(more)}</button></p>
     {/if}
   {/if}
 
