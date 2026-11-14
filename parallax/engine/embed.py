@@ -4,7 +4,8 @@ EMBED_BACKEND=ollama  POST EMBED_URL/api/embed, model bge-m3, batches of 32 (lap
 EMBED_BACKEND=st      sentence-transformers BAAI/bge-m3 in this process, fp16, batch 128 (GPU)
 EMBED_BACKEND=remote  POST EMBED_URL/embed {texts} to engine.embed_server (Verda GPU through an ssh tunnel)
 
-VectorStore keeps every vector on disk under data/emb/ keyed by claim hash, so a text is embedded once.
+VectorStore keeps every vector on disk under data/emb/ keyed by claim hash, so a text is embedded once. The batch
+pipeline writes new shards; the API process uses shared_store(), loaded once per process and never written.
 """
 
 import os
@@ -91,10 +92,14 @@ def backend():
 
 
 class VectorStore:
-    """Vectors by claim hash in npz shards under data/emb/. Appends a shard per flush."""
+    """Vectors by claim hash in npz shards under data/emb/. Appends a shard per flush.
 
-    def __init__(self, root: Path | None = None) -> None:
+    persist=False keeps new vectors in memory only: flush() never writes, so readers in parallel never race on a
+    shard file name."""
+
+    def __init__(self, root: Path | None = None, persist: bool = True) -> None:
         self.root = root or EMB_DIR
+        self.persist = persist
         self.vecs: dict[str, np.ndarray] = {}
         self._pending: dict[str, np.ndarray] = {}
         self._shards = 0
@@ -116,6 +121,8 @@ class VectorStore:
 
     def put(self, h: str, v: np.ndarray) -> None:
         self.vecs[h] = v
+        if not self.persist:
+            return
         self._pending[h] = v
         if len(self._pending) >= 4096:
             self.flush()
@@ -132,6 +139,20 @@ class VectorStore:
         tmp.replace(path)
         self._shards += 1
         self._pending = {}
+
+
+_SHARED: VectorStore | None = None
+_SHARED_LOCK = threading.Lock()
+
+
+def shared_store() -> VectorStore:
+    """The read-only store of this process: data/emb/ is read on first use only, new vectors stay in memory."""
+    global _SHARED
+    if _SHARED is None:
+        with _SHARED_LOCK:
+            if _SHARED is None:
+                _SHARED = VectorStore(persist=False)
+    return _SHARED
 
 
 def embed_texts(texts: list[str], store: VectorStore | None = None, be=None, progress=None) -> list[np.ndarray]:
