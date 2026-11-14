@@ -28,7 +28,7 @@ test("the paired agent orders alone, the request opens from Orders", async ({ pa
   await pairAgent(kitchen, page);
   agent(kitchen, 2);
   await page.goto("/");
-  await expect(page.getByTestId("demo-bar")).toContainText(CODE);
+  await expect(page.getByTestId("demo-bar")).toContainText("Demo kitchen");
   await expect(page.locator("#inbox-R-1")).toHaveCount(0); // handled: in Orders, not the Inbox
   await page.getByTestId("nav-orders").click();
   await page.getByTestId("order-r-R-1").click();

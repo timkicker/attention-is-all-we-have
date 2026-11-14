@@ -32,7 +32,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   // The code is asked when the owner presses Approve; with it the order is placed.
   await expect(page.getByTestId("code-input")).toHaveCount(0);
   await page.getByTestId("approve").click();
-  await expect(page.locator("#code-help")).not.toContainText("246810"); // the demo bar names it, once
+  await expect(page.locator("#code-help")).toContainText("246810"); // the code prompt names the demo code
   await code(page);
   await expect(page.getByTestId("order-done")).toContainText("confirmed again");
   await expect(page.getByTestId("approve")).toHaveCount(0);

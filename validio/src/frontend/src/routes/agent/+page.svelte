@@ -190,7 +190,7 @@
       {:else if a.state === "paused"}
         <VPill label="Paused" tone="neutral" testid="agent-state" />
       {:else}
-        <VPill label="Not connected" tone="neutral" testid="agent-state" />
+        <VPill label={a.state === "pairing" ? "Waiting for your agent" : a.state === "consent" ? "Waiting for you" : "Not connected"} tone="neutral" testid="agent-state" />
       {/if}
       {#if a.agent}
         <span data-testid="agent-name">{a.agent.name}</span>
@@ -216,21 +216,21 @@
       </div>
     {:else if a.state === "pairing" && a.pairing}
       <section class="sec" aria-labelledby="h-pair">
-        <h2 class="v-h" id="h-pair">Pairing code</h2>
+        <h2 class="v-h" id="h-pair">Connect your agent</h2>
         <Section class="v-card">
           <div class="pair">
-            <span class="code mono" data-testid="pair-code" id="pair-code" data-raw>{a.pairing.code}</span>
-            {@render copy_button("code", a.pairing.code, "Copy pairing code")}
-          </div>
-          <VValueRow label="Valid until" value={hm(a.pairing.expiresAt)} />
-        </Section>
-        <details class="fold vendor" open>
-          <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />For your agent's vendor</summary>
-          <div class="fold-body urls">
-            <span class="url-label">MCP</span>
-            <code class="url" data-testid="mcp-url">{a.pairing.mcpUrl}</code>
+            <code class="url big" data-testid="mcp-url" id="mcp-url">{a.pairing.mcpUrl}</code>
             {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
-            <span class="hint" data-testid="mcp-hint">Paste the MCP URL into any MCP agent. Claude Code: <code class="mono">claude mcp add --transport http validio URL</code></span>
+          </div>
+          <p class="steps" data-testid="mcp-hint">Add this URL to your agent as an MCP server, in Claude Code: <code class="mono">claude mcp add --transport http validio URL</code>. Then ask it to order. Allow appears here on its first call.</p>
+        </Section>
+        <details class="fold vendor">
+          <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />Agent without MCP</summary>
+          <div class="fold-body urls">
+            <span class="url-label">Code</span>
+            <code class="url" data-testid="pair-code" id="pair-code" data-raw>{a.pairing.code}</code>
+            {@render copy_button("code", a.pairing.code, "Copy pairing code")}
+            <span class="hint">Valid until {hm(a.pairing.expiresAt)}</span>
             <span class="url-label">API</span>
             <code class="url">{a.pairing.apiUrl}</code>
             {@render copy_button("api", a.pairing.apiUrl, "Copy API URL")}
@@ -382,12 +382,20 @@
     gap: 16px;
     padding: 16px;
   }
-  .pair .code {
-    font-size: 32px;
-    line-height: 40px;
+  .pair .big {
+    font-size: var(--fs-body);
+    line-height: 24px;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  .steps {
+    margin: 0;
+    padding: 0 16px 16px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+    overflow-wrap: anywhere;
   }
   .vendor {
     margin-top: 12px;
@@ -524,10 +532,6 @@
     margin-top: 4px;
   }
   @media (max-width: 760px) {
-    .pair .code {
-      font-size: 28px;
-      line-height: 36px;
-    }
     .urls {
       grid-template-columns: minmax(0, 1fr) auto;
     }
