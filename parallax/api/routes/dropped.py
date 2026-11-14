@@ -219,7 +219,8 @@ def _topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
         for r in sqllog.run_file("dropped_alive", {"topic": topic, "hs": tuple(wanted)}):
             alive[(r["lang"], r["h"])] = r
     out = []
-    for r in sorted(latest.values(), key=lambda r: (-int(r["days"]), lang_order(r["lang"]), r["h"])):
+    by_lang = sorted(latest.values(), key=lambda r: (lang_order(r["lang"]), r["h"]))
+    for r in sorted(by_lang, key=lambda r: r["row_end"], reverse=True):  # newest removal first
         found = alive_in(r, pairs, alive)
         if found:
             out.append((r, found))
