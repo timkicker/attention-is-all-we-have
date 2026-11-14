@@ -2,7 +2,8 @@
 
 The UI shows sentences in English. pipeline.gloss covers claims alive today; this fills the rest, collected
 through the API itself (in process), so the set is exactly what the pages ask for:
-  (a) every row of /api/dropped for the topic, with the sentences still alive elsewhere,
+  (a) every row of /api/dropped for the topic, the removed words of a partial cut, and the sentences still
+      alive elsewhere,
   (b) /api/compare at today and at the As-of quick picks (web/src/lib/ui/AsOf.svelte): Finnish versions and
       the matched sentences of the other editions,
   (c) the /api/claim/.../timeline entries of each statement the Differences list shows on those dates
@@ -18,7 +19,9 @@ import gzip
 import math
 import os
 
+from api.routes.dropped import cut_words
 from contract.db import connect
+from contract.engine import claim_hash
 
 DATES = [None, "2020-01-01", "2015-01-01", "2010-01-01", "2008-01-01"]  # AsOf.svelte quick picks, None = today
 BATCH = 20  # sentences per model call, as in engine.real.GeminiEngine.gloss
@@ -60,6 +63,9 @@ def collect(client, topic: str, scope: str) -> dict[str, dict[tuple[str, str], s
         d = _get(client, "/api/dropped", topic=topic, offset=offset, limit=200)
         for r in d["rows"]:
             add("dropped", r["lang"], r["h"], r["text"])
+            if r.get("removed"):  # a partial cut: its removed words get a gloss of their own
+                words = cut_words(r["text"], r["removed"])
+                add("dropped", r["lang"], claim_hash(words), words)
             for a in r["alive_in"]:
                 add("dropped", a["lang"], a["h"], a["text"])
         offset += 200
