@@ -1,6 +1,7 @@
 """GeminiEngine: the real engine that contract.engine.get_engine() loads for ENGINE=real (PLAN A9).
 
-embed: bge-m3 through engine.embed (vector store first). judge, split_claims, gloss: gemini-3.8-flash.
+embed: bge-m3 through engine.embed (process-wide read-only vector store first).
+judge, split_claims, gloss: gemini-3.8-flash.
 """
 
 import os
@@ -8,7 +9,7 @@ from pathlib import Path
 
 from contract.engine import LABELS, Candidate, Verdict
 from engine import gemini
-from engine.embed import embed_texts
+from engine.embed import embed_texts, shared_store
 
 PROMPTS = Path(__file__).resolve().parent / "prompts"
 LANG_NAMES = {
@@ -63,7 +64,8 @@ class GeminiEngine:
         self.prompt_version = os.environ.get("JUDGE_PROMPT", "judge-v1")
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        return [v.tolist() for v in embed_texts(texts)]
+        # One store per process, loaded once; the API never writes shards (only the batch pipeline does).
+        return [v.tolist() for v in embed_texts(texts, shared_store())]
 
     def judge(self, claim: str, claim_lang: str, candidates: list[Candidate]) -> list[Verdict]:
         if not candidates:
