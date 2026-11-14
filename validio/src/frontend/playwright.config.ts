@@ -11,7 +11,8 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [["list"]],
   use: { baseURL: `http://127.0.0.1:${PORT}`, viewport: { width: 1280, height: 900 }, colorScheme: "dark" },
-  testIgnore: ["live/**"],
+  // accounts-demo walks the real backend: playwright.accounts.config.ts, `make accounts-e2e`
+  testIgnore: ["live/**", "accounts-demo.spec.ts"],
   webServer: {
     command: `npx vite build && npx vite preview --host 127.0.0.1 --port ${PORT} --strictPort`,
     url: `http://127.0.0.1:${PORT}`,

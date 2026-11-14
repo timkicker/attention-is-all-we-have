@@ -37,7 +37,12 @@ for (const v of VIEWS) {
     await page.evaluate(() => localStorage.clear());
     await go("/login");
     await demoLogin(page);
-    await go("/");
+    // a demo copy starts without an agent; the example request shows once one is connected
+    await go("/agent");
+    await page.getByTestId("agent-demo").click();
+    await page.getByTestId("consent-allow").click();
+    await expect(page.getByTestId("agent-state")).toHaveText("Active");
+    await page.getByRole("link", { name: "Inbox" }).first().click();
     await expect(page.getByTestId("example")).toBeVisible();
     await audit(page, "inbox", out, phone);
     await go("/settings");

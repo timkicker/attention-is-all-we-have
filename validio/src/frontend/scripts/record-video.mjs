@@ -231,8 +231,8 @@ const SCENES = {
   // Shot 2: ordered alone, the ranking and the planted line
   2: async () => {
     await agent(2);
-    await click("nav-inbox");
-    await click("inbox-R-1");
+    await click("nav-orders");
+    await click("order-r-R-1");
     await point("request-status", 1);
     await point("live-checked", 1);
     await point("option-464306", 2);

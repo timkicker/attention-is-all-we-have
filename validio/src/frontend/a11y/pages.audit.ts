@@ -12,7 +12,7 @@ const OUT = `${process.env.A11Y_OUT}/results`;
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 390, height: 844 } };
 const SCHEMES = ["light", "dark"] as const;
-const BEFORE = ["/", "/requests/R-1", "/requests/R-2", "/approve/R-2", "/orders", "/steady/S-1", "/ledger"];
+const BEFORE = ["/", "/requests/R-1", "/requests/R-2", "/approve/R-2", "/orders", "/steady/S-1", "/ledger", "/agent", "/settings", "/login"];
 const AFTER = ["/approve/R-2", "/steady/S-1", "/ledger"]; // after the keyboard approve, renew and accept
 
 type Found = { route: string; variant: string; axe: object[]; focus: string[]; targets: string[]; error?: string };
