@@ -13,7 +13,8 @@ With --kitchen k-... it is a kitchen account's agent instead, on /mcp/k/{account
 or the public link): --pair CODE answers the pairing code the Agent page shows with the agent's own key
 (kept under --agent-keys), waits for Allow and keeps the Spend Pass; --scene then presents that pass.
 
-The model is Gemini when GEMINI_API_KEY is set, otherwise the fake twin with the same tool calls."""
+The model is Gemini when GEMINI_API_KEY is set (in validio/.env or the environment) and LLM_MODE is not fake,
+otherwise the fake twin with the same tool calls."""
 
 import argparse
 import asyncio

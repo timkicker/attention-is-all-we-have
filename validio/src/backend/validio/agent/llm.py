@@ -1,14 +1,20 @@
 """The model behind the kitchen's agent: Gemini when GEMINI_API_KEY is set, otherwise a fixed twin.
 
+The key, GEMINI_MODEL and LLM_MODE come from validio/.env with the environment on top, as the settings
+and the reader read them. LLM_MODE=fake keeps the twin even when a key is there.
+
 Both see the same thing: the task and Validio's answers after `redact`. Both answer with tool calls
 from the same five tools. The twin's script is the call sequence the Gemini path is asked to follow."""
 
 import json
 import os
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Protocol
 
+from ..config import DEFAULT_ENV, _read_env_file
 from .tools import TOOLS
 
 # Stable model code with function calling, checked 2026-11-14 on the Gemini API docs:
@@ -170,11 +176,12 @@ class GeminiLLM:
         )
 
     @classmethod
-    def from_env(cls) -> "GeminiLLM":
-        key = os.environ.get("GEMINI_API_KEY")
+    def from_env(cls, env: Mapping[str, str] | None = None) -> "GeminiLLM":
+        env = os.environ if env is None else env
+        key = env.get("GEMINI_API_KEY")
         if not key:
             raise RuntimeError("GEMINI_API_KEY is not set")
-        return cls(key, os.environ.get("GEMINI_MODEL") or DEFAULT_MODEL)
+        return cls(key, env.get("GEMINI_MODEL") or DEFAULT_MODEL)
 
     def _contents(self, history: list[dict]) -> list:
         t = self._types
@@ -204,5 +211,16 @@ class GeminiLLM:
         return Step(calls, None if calls else (r.text or "").strip())
 
 
-def make_llm(scene: int) -> LLM:
-    return GeminiLLM.from_env() if os.environ.get("GEMINI_API_KEY") else FakeLLM(scene)
+def model_env(env_file: Path | None = DEFAULT_ENV) -> dict[str, str]:
+    """validio/.env with the environment on top. A variable set in the environment wins even when empty,
+    so GEMINI_API_KEY= in the environment keeps the twin although .env has a key."""
+    env = _read_env_file(env_file) if env_file else {}
+    env.update(os.environ)
+    return env
+
+
+def make_llm(scene: int, env_file: Path | None = DEFAULT_ENV) -> LLM:
+    env = model_env(env_file)
+    if env.get("LLM_MODE", "").strip().lower() != "fake" and env.get("GEMINI_API_KEY"):
+        return GeminiLLM.from_env(env)
+    return FakeLLM(scene)
