@@ -90,7 +90,7 @@ class SupplyService:
                         text=ln.text or qty_of(ln.quantity, p, ln.unit))
         elif ln.text:
             try:
-                need = parse_need(ln.text, self.now().date())
+                need = parse_need(ln.text, self.now().date(), self.catalog)
             except ValueError as e:
                 raise RequestError(str(e)) from e
             need.required_claims |= diet

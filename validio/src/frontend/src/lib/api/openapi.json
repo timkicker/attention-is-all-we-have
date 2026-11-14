@@ -19,6 +19,63 @@
         "title": "ApproveIn",
         "type": "object"
       },
+      "AskIn": {
+        "properties": {
+          "text": {
+            "description": "what the kitchen asks its agent for",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "AskIn",
+        "type": "object"
+      },
+      "AskOut": {
+        "properties": {
+          "final": {
+            "description": "the agent's last sentence",
+            "title": "Final",
+            "type": "string"
+          },
+          "lines": {
+            "description": "the agent's calls and Validio's answers, as the terminal pane prints them",
+            "items": {
+              "type": "string"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "model": {
+            "description": "\"Gemini gemini-3.8-flash\" or \"fake model (no Gemini key)\"",
+            "title": "Model",
+            "type": "string"
+          },
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the request the agent made, absent when Validio refused it",
+            "title": "Requestid"
+          }
+        },
+        "required": [
+          "model",
+          "lines",
+          "final"
+        ],
+        "title": "AskOut",
+        "type": "object"
+      },
       "AskedFor": {
         "properties": {
           "displayName": {
@@ -3232,6 +3289,66 @@
           }
         },
         "summary": "Demo State",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/demo/ask": {
+      "post": {
+        "description": "The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when\nGEMINI_API_KEY is set, the fake model otherwise. On a public deploy the demo token guards it too.",
+        "operationId": "demo_ask_api_demo_ask_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-demo-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Demo-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Demo Ask",
         "tags": [
           "web"
         ]

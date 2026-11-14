@@ -103,5 +103,12 @@ def task_for(n: int) -> dict[str, Any]:
             "claims": list(s.claims), "steadyOrder": s.steady}
 
 
+def task_for_text(text: str) -> dict[str, Any]:
+    """Any kitchen text as one request line, the way scene 2 sends its fixed one."""
+    lines = [{"text": text}]
+    return {"text": f"Kitchen request: {text}. Request lines: {lines}. Deliver by {DELIVER_BY}.", "request": text,
+            "lines": lines, "deliverBy": DELIVER_BY, "search": None, "claims": [], "steadyOrder": None}
+
+
 async def run_scene(n: int, llm: LLM, port: McpPort, on_event=None) -> Transcript:
     return await run(task_for(n), llm, port, on_event=on_event)

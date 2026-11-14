@@ -72,11 +72,35 @@ NEAR_MISS = {"LOW_LACTOSE": "Low lactose is not lactose free"}
 
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 UNITS = {"l": "L", "litre": "L", "litres": "L", "liter": "L", "liters": "L", "kg": "KG", "kilos": "KG",
-         "kilo": "KG", "pcs": "PCS", "pieces": "PCS", "bags": "PCS", "packs": "PCS"}
+         "kilo": "KG", "pcs": "PCS", "pieces": "PCS", "bags": "PCS", "packs": "PCS", "cartons": "PCS",
+         "carton": "PCS", "boxes": "PCS", "box": "PCS", "bottles": "PCS", "cans": "PCS", "packages": "PCS"}
+# words around the product word in a request that are never the product
+FILLER = frozenset(["of", "a", "an", "the", "some", "please", "for", "by", "and", "with", "in", "on", "to", "from", "order", "need", "we", "need", "i", "want"]
+                   + WEEKDAYS + ["budget", "euro", "eur", "free", "lactose", "gluten", "vegan", "next", "this",
+                                 "week", "monday's", "fresh", "bulk"])
 
 
-def parse_need(text: str, today: date) -> Need:
-    """Deterministic parser for the demo phrasing. The agent may send typed lines instead."""
+def kind_of(name: str, unit: str = "PCS") -> Kind:
+    """A known kind, or any product word from the catalogue: its name has to hold the word, in any category."""
+    return KINDS.get(name) or Kind((name,), unit, None, ("",))
+
+
+def _product_word(t: str, cat: Catalog) -> str | None:
+    """The first word of the request the catalogue has products for, singular first since it finds both:
+    "30 cartons of vegan pancakes" gives "pancake"."""
+    t = re.sub(r"budget.*$|\b20\d\d-\d\d-\d\d\b|lactose[- ]free|gluten[- ]free", " ", t)
+    for w in re.findall(r"[a-zäöå]{3,}", t):
+        if w in FILLER or w in UNITS:
+            continue
+        for form in (w[:-1], w) if w.endswith("s") else (w,):  # the singular finds both
+            if any(form in (p.name_en or "").lower() for p in cat.search(text=form, limit=20)):
+                return form
+    return None
+
+
+def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
+    """Deterministic parser for the demo phrasing. The agent may send typed lines instead. With a catalogue,
+    any product word it has products for is a kind ("20 kg of parmesan"), not only milk, mozzarella and oat."""
     t = text.lower()
     m = re.search(r"(\d+(?:[.,]\d+)?)\s*(" + "|".join(sorted(UNITS, key=len, reverse=True)) + r")\b", t)
     if not m:
@@ -85,6 +109,8 @@ def parse_need(text: str, today: date) -> Need:
     if quantity.is_integer():
         quantity = int(quantity)
     kind = next((k for k in KINDS if any(w in t for w in KINDS[k].words)), None)
+    if kind is None and cat is not None:
+        kind = _product_word(t, cat)
     if kind is None:
         raise ValueError(f"no known product kind in {text!r}")
     required, excluded = set(), set()
@@ -162,7 +188,7 @@ def amount_per_sales_unit(need: Need, p: Product, q: Quote | None = None) -> tup
 
 
 def _in_net(need: Need, p: Product) -> bool:
-    kind = KINDS[need.kind]
+    kind = kind_of(need.kind, need.unit)
     name = (p.name_en or "").lower()
     if not any(w in name for w in kind.words):
         return False
@@ -177,7 +203,7 @@ def _in_net(need: Need, p: Product) -> bool:
 
 def static_reasons(need: Need, p: Product) -> list[str]:
     """Reasons from the static catalog alone, so they cost no live call."""
-    kind = KINDS[need.kind]
+    kind = kind_of(need.kind, need.unit)
     name = (p.name_en or "").lower()
     reasons = []
     has_all = need.required_claims <= p.claims
@@ -211,7 +237,7 @@ def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tupl
     if need.product_id:
         p = cat.get(need.product_id)
         return ([p] if p else []), []
-    kind = KINDS[need.kind]
+    kind = kind_of(need.kind, need.unit)
     seen: dict[str, Product] = {}
     for prefix in kind.net:
         for w in kind.words:
