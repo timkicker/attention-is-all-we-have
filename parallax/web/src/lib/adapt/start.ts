@@ -36,7 +36,9 @@ export type PreparedWithCount = StartVM['prepared'][number] & { editions: number
 
 export function toPrepared(raw: TopicsRes): PreparedWithCount[] {
   // The topics list carries no year span, so years stay empty in live mode.
-  return raw.topics
+  // The example's article comes first, the rest keep the API's order.
+  return [...raw.topics]
+    .sort((a, b) => Number(b.wikidata_id === EXAMPLE_QID) - Number(a.wikidata_id === EXAMPLE_QID))
     .filter((t) => t.wikidata_id)
     .map((t) => ({ qid: t.wikidata_id, title: t.label_en, from: null, to: null, editions: t.editions.length, href: paths.differences(t.wikidata_id) }))
 }
