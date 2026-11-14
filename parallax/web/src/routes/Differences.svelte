@@ -3,6 +3,7 @@
   // other edition tells differently, differing part marked. ?q= filters, ?date= picks the date.
   import * as copy from '../lib/copy'
   import { getCounts, getDifferences, resolveTopic } from '../lib/data'
+  import { FOCUS_AT, FOCUS_AT_PHONE, focusOn } from '../lib/adapt/topic'
   import { dateState } from '../lib/date.svelte'
   import type { DiffRow, DifferencesVM, Failure, TabCounts } from '../lib/model'
   import { paths, router } from '../lib/router.svelte'
@@ -32,6 +33,15 @@
   let title = $state('')
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let q = $state(router.query.get('q') ?? '')
+  /** Phone width: a list row's 3 lines hold fewer characters, so the text starts closer to its mark. */
+  let phone = $state(false)
+  $effect(() => {
+    const mq = matchMedia('(max-width: 600px)')
+    phone = mq.matches
+    const on = () => (phone = mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  })
 
   const qParam = $derived(router.query.get('q') ?? '')
 
@@ -124,7 +134,7 @@
   {/if}
 
   <div class="ctl">
-    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
+    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} label={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
     <AsOf />
   </div>
 
@@ -147,7 +157,7 @@
     <div class="list">
       {#each rows as r (r.id)}
         <Item href={r.href} testid={TID.diffRow}>
-          <p class="say clamp3"><Marked value={r.say} /></p>
+          <p class="say clamp3"><Marked value={focusOn(r.say, phone ? FOCUS_AT_PHONE : FOCUS_AT)} /></p>
           <NoteLine parts={r.note} />
         </Item>
       {/each}
