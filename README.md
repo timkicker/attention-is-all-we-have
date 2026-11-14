@@ -6,7 +6,7 @@ Validio is our entry for Valio Aimo's challenge "Trusted Trade Agents" at Juncti
 
 ![The web app: the inbox with R-2 waiting, the R-2 request page and the approval on a phone](docs/img/screens.png)
 
-The inbox, the request that waits for the owner, and its approval on a phone, captured from the demo build.
+The inbox, the request that waits for the owner and its approval on a phone, captured from the demo build.
 
 - Live demo: (link follows)
 - Video: (link follows)
@@ -16,4 +16,4 @@ The inbox, the request that waits for the owner, and its approval on a phone, ca
 
 Start in [validio/README.md](validio/README.md). It explains the setup, the architecture and a quick look that needs no key and no data. The plan with the reasoning behind each part is [PROJECT_BLUEPRINT-validio.md](PROJECT_BLUEPRINT-validio.md).
 
-Our second project, Zombie Facts for MariaDB's challenge "Wikipedia Through Time", lives in [zombie-facts/](zombie-facts/README.md). Its plan is [PROJECT_BLUEPRINT-zombie-facts.md](PROJECT_BLUEPRINT-zombie-facts.md).
+Our second project is for MariaDB's challenge "Wikipedia Through Time". After talking to the MariaDB and Wikipedia booth on Saturday we rebuilt it: **Parallax** (working name) lines up how different language editions of Wikipedia tell the same event, claim by claim and through time, with MariaDB's system-versioned tables and vector search in one query. It only shows evidence and never edits Wikipedia. The plan is [PROJECT_BLUEPRINT-parallax.md](PROJECT_BLUEPRINT-parallax.md). Zombie Facts ([zombie-facts/](zombie-facts/README.md), [plan](PROJECT_BLUEPRINT-zombie-facts.md)) stays inside it as the "dropped here, alive there" view.
