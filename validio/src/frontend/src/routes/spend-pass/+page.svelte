@@ -4,6 +4,7 @@
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import * as Popover from "@arlen/ui-kit/components/ui/popover";
   import { Section } from "@arlen/ui-kit/components/ui/section";
+  import { Switch } from "@arlen/ui-kit/components/ui/switch";
   import { Info } from "@lucide/svelte";
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import { api, ApiError, needsToken } from "$lib/api/client";
@@ -32,43 +33,43 @@
   const codeRequired = $derived(!!demo.data?.codeRequired);
   let editing = $state(false);
   let saving = $state(false);
-  let formProblem = $state("");
-  const f = $state({ auto: "", hard: "", lactose: true, deliverBy: "2026-11-16", substitutes: true, code: "" });
-  const euros = (c: number) => (c / 100).toFixed(2);
-  const cents = (t: string) => Math.round(Number(t.replace(/[^\d.]/g, "")) * 100);
+  // Problems sit on the field they belong to; `form` is for anything else.
+  let bad = $state<{ auto?: string; hard?: string; code?: string; form?: string }>({});
+  const f = $state({ auto: "", hard: "", substitutes: true, code: "" });
+  const euros = (c: number) => (c / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const cents = (t: string) => (/^\s*[\d,]*\.?\d*\s*$/.test(t) && /\d/.test(t) ? Math.round(Number(t.replace(/[,\s]/g, "")) * 100) : NaN);
+  const tidy = (k: "auto" | "hard") => {
+    const c = cents(f[k]);
+    if (c > 0) f[k] = euros(c);
+  };
   function startEdit() {
     if (!p) return;
     f.auto = euros(p.autoLimitCents ?? 0);
     f.hard = euros(p.hardCapCents ?? 0);
-    f.lactose = p.diet?.some((d) => /lactose/i.test(d)) ?? true;
-    f.deliverBy = p.deliverBy?.slice(0, 10) ?? "2026-11-16";
     f.substitutes = p.substitutes !== "never";
     f.code = owner.code;
-    formProblem = "";
+    bad = {};
     editing = true;
   }
   async function save(e: SubmitEvent) {
     e.preventDefault();
+    if (!p) return;
+    // Diet and date are fixed: Valio's answers are recorded for these only.
     const body: SpendPassIn = {
       autoLimitCents: cents(f.auto),
       hardCapCents: cents(f.hard),
-      diet: f.lactose ? ["FREE_FROM_LACTOSE"] : [],
-      deliverBy: f.deliverBy,
+      diet: p.diet?.some((d) => /lactose/i.test(d)) ? ["FREE_FROM_LACTOSE"] : [],
+      deliverBy: p.deliverBy?.slice(0, 10) ?? "2026-11-16",
       substitutes: f.substitutes,
     };
-    if (!(body.autoLimitCents > 0) || !(body.hardCapCents > 0)) {
-      formProblem = "Type both limits in euros, for example 1200.";
-      return;
-    }
-    if (codeRequired) {
-      if (!isCode(f.code)) {
-        formProblem = "Type the 6 digit approval code.";
-        return;
-      }
-      owner.code = f.code;
-    }
+    const next: typeof bad = {};
+    if (!(body.autoLimitCents > 0)) next.auto = "Type an amount in euros.";
+    if (!(body.hardCapCents > 0)) next.hard = "Type an amount in euros.";
+    if (codeRequired && !isCode(f.code)) next.code = "Type the 6 digit code.";
+    bad = next;
+    if (Object.keys(next).length) return;
+    if (codeRequired) owner.code = f.code;
     saving = true;
-    formProblem = "";
     try {
       await api.signPass(body);
       editing = false;
@@ -76,13 +77,36 @@
     } catch (err) {
       if (needsToken(err)) return; // the presenter closed the token dialog
       const msg = err instanceof Error ? err.message : String(err);
-      formProblem = err instanceof ApiError && err.status === 403 ? "That approval code is not right." : err instanceof ApiError && err.status === 422 ? `${cap(msg)}.` : msg;
-      if (err instanceof ApiError && err.status === 403) owner.code = "";
+      if (err instanceof ApiError && err.status === 403) {
+        bad = { code: "That code is not right." };
+        owner.code = "";
+      } else if (err instanceof ApiError && err.status === 422 && /never above/i.test(msg)) bad = { auto: "Must be below never above." };
+      else bad = { form: err instanceof ApiError && err.status === 422 ? `${cap(msg)}.` : msg };
     } finally {
       saving = false;
     }
   }
 </script>
+
+{#snippet money_field(k: "auto" | "hard", label: string)}
+  <span class="money">
+    <label for="f-{k}">{label}</label>
+    <span class="euro">
+      <Input
+        id="f-{k}"
+        data-testid="f-{k}"
+        inputmode="decimal"
+        bind:value={f[k]}
+        onblur={() => tidy(k)}
+        autocomplete="off"
+        aria-invalid={bad[k] ? true : undefined}
+        aria-describedby={bad[k] ? `f-${k}-problem` : undefined}
+      />
+      <span class="unit" aria-hidden="true">€</span>
+    </span>
+    {#if bad[k]}<span class="problem" id="f-{k}-problem" data-testid="f-{k}-problem" role="alert">{bad[k]}</span>{/if}
+  </span>
+{/snippet}
 
 {#if !p}
   <VHead title="Spend Pass" />
@@ -98,50 +122,22 @@
     {/snippet}
     {#snippet facts()}
       <VPill label={valid ? "Valid" : "Expired"} tone={valid ? "ok" : "neutral"} />
-      <span>Signed by you</span>
-      <span data-testid="pass-approvers" id="pass-approvers">Agent sees limits and diet, not approvers</span>
+      <span>
+        Signed by you
+        <Popover.Root>
+          <Popover.Trigger>
+            {#snippet child({ props })}
+              <Button {...props} variant="ghost" size="icon-sm" aria-label="What the agent sees" class="info-btn" id="pass-sees"><Info /></Button>
+            {/snippet}
+          </Popover.Trigger>
+          <Popover.Content class="v-pop"><span data-testid="pass-approvers" id="pass-approvers">Agent sees limits and diet, not approvers.</span></Popover.Content>
+        </Popover.Root>
+      </span>
       <span>{day(p.validFrom)} to <span data-testid="pass-valid-to" id="pass-valid-to">{day(p.validTo)}</span></span>
     {/snippet}
   </VHead>
 
   <div class="blocks">
-    {#if editing}
-      <form class="limits" data-testid="limits-form" onsubmit={save}>
-        <Section class="v-card">
-          <div class="field">
-            <label for="f-auto">Orders alone up to, €</label>
-            <Input id="f-auto" data-testid="f-auto" inputmode="decimal" bind:value={f.auto} autocomplete="off" />
-          </div>
-          <div class="field">
-            <label for="f-hard">Never above, €</label>
-            <Input id="f-hard" data-testid="f-hard" inputmode="decimal" bind:value={f.hard} autocomplete="off" />
-          </div>
-          <div class="field">
-            <label class="check"><input type="checkbox" id="f-lactose" bind:checked={f.lactose} /> Lactose free</label>
-            <p class="hint">Valio's answers are recorded for lactose-free only.</p>
-          </div>
-          <div class="field">
-            <label for="f-deliver">Deliver by</label>
-            <Input id="f-deliver" type="date" bind:value={f.deliverBy} />
-            <p class="hint">Recorded for 16 Nov only.</p>
-          </div>
-          <div class="field">
-            <label class="check"><input type="checkbox" id="f-subs" bind:checked={f.substitutes} /> Substitutes from Valio's list</label>
-          </div>
-          {#if codeRequired}
-            <div class="field">
-              <label for="f-code">Approval code</label>
-              <Input id="f-code" data-testid="f-code" inputmode="numeric" maxlength={6} bind:value={f.code} autocomplete="one-time-code" />
-            </div>
-          {/if}
-        </Section>
-        {#if formProblem}<p class="problem" role="alert" data-testid="limits-problem">{formProblem}</p>{/if}
-        <div class="form-buttons">
-          <Button variant="outline" onclick={() => (editing = false)}>Cancel</Button>
-          <Button type="submit" data-testid="limits-save" disabled={saving}>Sign again</Button>
-        </div>
-      </form>
-    {/if}
     <div>
       <VLane
         name="Limits"
@@ -154,25 +150,79 @@
       </VLane>
     </div>
 
+    {#if editing}
+      <form class="limits" data-testid="limits-form" onsubmit={save} novalidate>
+        <Section class="v-card">
+          <VValueRow label="Limits">
+            <span class="money-pair">
+              {@render money_field("auto", "Alone up to")}
+              {@render money_field("hard", "Never above")}
+            </span>
+          </VValueRow>
+          {#if p.diet?.length}<VValueRow label="Diet" value={cap(p.diet.join(", "))} />{/if}
+          <VValueRow label="Deliver by" value={day(p.deliverBy)} sub="Recorded for lactose free and 16 Nov only." />
+          <VValueRow label="Substitutes">
+            <span class="sw-row">
+              <Switch ariaLabel="Substitutes" bind:value={f.substitutes} />
+              <span>{f.substitutes ? `From Valio's list, up to ${p.split.maxExtraCostPct} % extra` : "None"}</span>
+            </span>
+          </VValueRow>
+          <VValueRow label="Product groups">
+            {p.categories.length}
+            <Popover.Root>
+              <Popover.Trigger>
+                {#snippet child({ props })}
+                  <Button {...props} variant="ghost" size="icon-sm" aria-label="Which product groups" class="info-btn"><Info /></Button>
+                {/snippet}
+              </Popover.Trigger>
+              <Popover.Content class="v-pop">{p.categories.join(", ")}</Popover.Content>
+            </Popover.Root>
+          </VValueRow>
+        </Section>
+        {#if bad.form}<p class="problem" role="alert" data-testid="limits-problem">{bad.form}</p>{/if}
+        <div class="form-buttons">
+          <Button variant="outline" onclick={() => (editing = false)}>Cancel</Button>
+          <Button type="submit" data-testid="limits-save" disabled={saving}>Sign again</Button>
+          {#if codeRequired}
+            <span class="code">
+              <Input
+                id="f-code"
+                data-testid="f-code"
+                aria-label="Approval code"
+                placeholder="Approval code"
+                inputmode="numeric"
+                maxlength={6}
+                bind:value={f.code}
+                autocomplete="one-time-code"
+                aria-invalid={bad.code ? true : undefined}
+                aria-describedby={bad.code ? "f-code-problem" : undefined}
+              />
+              {#if bad.code}<span class="problem" id="f-code-problem" data-testid="f-code-problem" role="alert">{bad.code}</span>{/if}
+            </span>
+          {/if}
+        </div>
+      </form>
+    {:else}
     <Section class="v-card">
-      {#if p.diet?.length}<VValueRow label="Diet" value={cap(p.diet.join(", "))} testid="pass-diet" />{/if}
-      <VValueRow label="Deliver by" value={day(p.deliverBy)} testid="pass-deliver-by" />
-      <VValueRow
-        label="Substitutes"
-        value="{p.split.allowListedSubstitutes ? "From Valio's list" : 'None'}, up to {p.split.maxExtraCostPct} % extra"
-      />
-      <VValueRow label="Product groups">
-        {p.categories.length}
-        <Popover.Root>
-          <Popover.Trigger>
-            {#snippet child({ props })}
-              <Button {...props} variant="ghost" size="icon-sm" aria-label="Which product groups" class="info-btn"><Info /></Button>
-            {/snippet}
-          </Popover.Trigger>
-          <Popover.Content class="v-pop">{p.categories.join(", ")}</Popover.Content>
-        </Popover.Root>
-      </VValueRow>
-    </Section>
+        {#if p.diet?.length}<VValueRow label="Diet" value={cap(p.diet.join(", "))} testid="pass-diet" />{/if}
+        <VValueRow label="Deliver by" value={day(p.deliverBy)} testid="pass-deliver-by" />
+        <VValueRow
+          label="Substitutes"
+          value="{p.split.allowListedSubstitutes ? "From Valio's list" : 'None'}, up to {p.split.maxExtraCostPct} % extra"
+        />
+        <VValueRow label="Product groups">
+          {p.categories.length}
+          <Popover.Root>
+            <Popover.Trigger>
+              {#snippet child({ props })}
+                <Button {...props} variant="ghost" size="icon-sm" aria-label="Which product groups" class="info-btn"><Info /></Button>
+              {/snippet}
+            </Popover.Trigger>
+            <Popover.Content class="v-pop">{p.categories.join(", ")}</Popover.Content>
+          </Popover.Root>
+        </VValueRow>
+      </Section>
+    {/if}
   </div>
 {/if}
 
@@ -182,47 +232,68 @@
     flex-direction: column;
     gap: 16px;
   }
-  .field {
+  .money-pair {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .money {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--v-line);
+    gap: 4px;
+    width: 140px;
   }
-  .field:last-child {
-    border-bottom: 0;
-  }
-  .field label {
+  .money label {
     font-size: var(--fs-meta);
-    color: var(--v-fg);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
   }
-  .field :global(input:not([type="checkbox"])) {
-    max-width: 320px;
+  .euro {
+    position: relative;
+    display: block;
   }
-  .field .check {
-    display: flex;
+  .euro :global(input) {
+    width: 100%;
+    text-align: right;
+    padding-right: 26px;
+    font-variant-numeric: tabular-nums;
+  }
+  .unit {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--v-muted);
+    pointer-events: none;
+  }
+  .money .problem {
+    white-space: nowrap;
+  }
+  /* The kit Switch, on in Valio blue: its accent comes from the nearest wrapper. */
+  .sw-row {
+    --color-accent: var(--valio);
+    --color-accent-foreground: var(--v-on-valio);
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-size: var(--fs-body);
+    gap: 10px;
   }
-  .field :global(input[type="checkbox"]) {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--v-fg);
-  }
-  .hint,
   .problem {
     margin: 0;
     font-size: var(--fs-meta);
-    color: var(--v-muted);
-  }
-  .problem {
+    line-height: var(--lh-meta);
     color: var(--v-bad-text);
   }
   .form-buttons {
     display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: 8px;
-    justify-content: flex-end;
+  }
+  .code {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 140px;
   }
   :global(.info-btn) {
     vertical-align: middle;

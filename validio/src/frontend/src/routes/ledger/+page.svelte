@@ -44,7 +44,8 @@
   {:else}
     <div data-testid="ledger" id="ledger">
       {#each groups as g (g.id)}
-        <div class="day"><b>{nb(titleOf(g.id))}</b><span>{g.id}</span></div>
+        <!-- The id once after the title ("Spend Pass M-1"); the demo's own group has no id to show. -->
+        <div class="day" data-testid="ledger-group-{g.id}"><b>{nb(titleOf(g.id))}</b>{#if g.id !== "demo" && !titleOf(g.id).endsWith(g.id)}<span>{g.id}</span>{/if}</div>
         <ul class="rc-ev led">
           {#each g.entries as e (e.seq)}
             <li data-testid="ledger-entry" class:broken={chain && !chain.ok && chain.brokenAt === e.seq}>

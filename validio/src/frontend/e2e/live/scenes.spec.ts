@@ -66,7 +66,7 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await page.locator("#page-menu").click();
   await page.locator("#reset").click();
   await page.locator("#demo-token-input").fill(TOKEN);
-  await page.getByRole("button", { name: "Use and run" }).click();
+  await page.getByRole("button", { name: "Run", exact: true }).click();
   await expect(page.locator("#inbox-R-1")).toHaveCount(0);
   await page.locator("#nav-open-ledger").click();
   await expect(page.locator("#chain-status")).toContainText("Chain verified");

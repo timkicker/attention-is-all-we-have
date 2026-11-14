@@ -14,54 +14,51 @@ test.afterAll(async ({ request }) => {
   await request.post("/api/demo/reset");
 });
 
-test("ask as the kitchen's agent: a short summary, the log folded", async ({ page }) => {
+test("ask as the kitchen's agent: one row per ask, the log folded", async ({ page }) => {
   await page.goto("/");
-  const open = async () => {
-    await page.locator("#page-menu").click();
-    await page.getByTestId("menu-ask").click();
-  };
-  const summary = page.getByTestId("ask-summary");
+  await page.locator("#page-menu").click();
+  await page.getByTestId("menu-ask").click();
+  const dialog = page.getByTestId("ask-dialog");
   const log = page.getByTestId("ask-log");
-  // One example chip for each ending, each recorded at Valio.
+  // One chip for each ending, each recorded at Valio; a tap sends it, rows stack newest on top.
   const cases = [
-    { chip: "100 litres of whipping cream by Monday", first: "Ordered alone: ", status: "Ordered alone" },
-    { chip: "50 kg of quark by Monday, budget 100 euro", first: "Waits for you: ", status: "Waiting for you" },
-    { chip: "20 kg of parmesan by Monday", first: "Blocked: Valio has", status: "Blocked" },
+    { chip: "100 l whipping cream", pill: "Ordered alone", sub: null, end: true },
+    { chip: "50 kg quark, budget 100 €", pill: "Waiting for you", sub: /^160\.30\s€\sis\sover\sthe\sbudget/, end: true },
+    { chip: "20 kg parmesan", pill: "Blocked", sub: /^Valio\shas\sno\slactose.free\sparmesan\.$/, end: false },
   ];
   for (const [i, c] of cases.entries()) {
-    await open();
-    await page.getByRole("button", { name: c.chip, exact: true }).click();
-    await expect(page.getByTestId("ask-input")).toHaveValue(c.chip);
-    await page.getByTestId("ask-send").click();
-    await expect(page.getByTestId("ask-open")).toBeVisible({ timeout: 60_000 });
-    const lines = summary.locator("li");
-    // Parmesan is blocked before any live call, so it has no "Checked" line.
-    await expect(lines).toHaveCount(c.chip.includes("parmesan") ? 2 : 3);
-    await expect(lines.nth(0)).toHaveText(/^Agent\sasked\sValidio\sfor\s.+\sby\s.+\.$/);
-    if (!c.chip.includes("parmesan")) await expect(lines.nth(1)).toHaveText(/^Checked\s\d+\sproducts\slive\.$/);
-    await expect(lines.last()).toHaveText(new RegExp(`^${c.first.replace(/ /g, "\\s")}`));
-    // The raw log is there, folded; nothing of it shows until opened.
-    await expect(log).not.toHaveAttribute("open", "");
-    expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("request_supply");
-    await log.locator("summary").click();
-    await expect(log).toContainText("request_supply");
-    if (process.env.SHOTS && i === 0) {
-      await log.locator("summary").click();
-      await page.screenshot({ path: `${process.env.SHOTS}/play-ask-live-1280-light.png` });
-    }
-    await page.getByTestId("ask-open").click();
-    await expect(page).toHaveURL(new RegExp(`/requests/R-${i + 1}$`));
-    await expect(page.locator("#request-status")).toContainText(c.status);
+    await page.locator(`#ask-chip-${i + 1}`).click();
+    const row = page.getByTestId(`ask-row-R-${i + 1}`);
+    await expect(row).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByTestId("ask-entry").first()).toContainText(c.pill);
+    await expect(row).toContainText(c.pill);
+    await expect(row).toHaveAttribute("href", `/requests/R-${i + 1}`);
+    const text = await row.innerText();
+    expect(text).not.toMatch(/Open R-|Recorded at Valio|Agent asked/);
+    if (c.end) expect(text).toMatch(/\d+\.\d\d\s€/);
+    else expect(text).not.toMatch(/€/);
+    if (c.sub) await expect(row.locator(".v-row-sub")).toHaveText(c.sub);
+    await expect(page.getByTestId("ask-input")).toHaveValue("");
   }
+  await expect(page.getByTestId("ask-entry")).toHaveCount(3);
+  // The log is there, folded; nothing of it shows until opened, and no JSON when it is.
+  await expect(log).not.toHaveAttribute("open", "");
+  expect(await dialog.innerText()).not.toContain("request_supply");
+  await log.locator("summary").click();
+  await expect(log).toContainText("→ request_supply");
+  expect(await log.innerText()).not.toMatch(/[{}"]|\b\d{6}\b/);
 
-  // No request: the agent's last sentence is the one line.
-  await open();
-  await page.getByTestId("ask-input").fill("20 kg of butter by Monday");
-  await page.getByTestId("ask-send").click();
-  await expect(summary.locator("li")).toHaveCount(1, { timeout: 60_000 });
-  await expect(summary).toHaveText(/^Valio's\sanswers\sfor\sbutter\saren't\srecorded\sfor\sthis\sdemo\.$/);
-  await expect(page.getByTestId("ask-open")).toHaveCount(0);
-  expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("503");
+  // No request: one muted line, typed and sent with Enter.
+  await page.getByTestId("ask-input").fill("30 litres of yoghurt by Monday");
+  await page.getByTestId("ask-input").press("Enter");
+  await expect(page.getByTestId("ask-none")).toHaveText(/^Not\srecorded\sfor\sthis\sdemo:\syoghurt$/, { timeout: 60_000 });
+  expect(await dialog.innerText()).not.toContain("503");
+
+  // A row is one link to its request.
+  await page.getByTestId("ask-row-R-1").click();
+  await expect(page).toHaveURL(/\/requests\/R-1$/);
+  await expect(page.locator("#request-status")).toContainText("Ordered alone");
+  await expect(dialog).toHaveCount(0);
 });
 
 test("change limits: 422 and 403 inline, then signed", async ({ page, request }) => {
@@ -75,12 +72,12 @@ test("change limits: 422 and 403 inline, then signed", async ({ page, request })
   await page.getByTestId("f-hard").fill("1200");
   await page.getByTestId("f-code").fill(CODE);
   await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("limits-problem")).toContainText("above never above");
+  await expect(page.getByTestId("f-auto-problem")).toHaveText("Must be below never above.");
 
   await page.getByTestId("f-hard").fill("2000");
   await page.getByTestId("f-code").fill(WRONG);
   await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("limits-problem")).toContainText("not right");
+  await expect(page.getByTestId("f-code-problem")).toContainText("not right");
 
   await page.getByTestId("f-code").fill(CODE);
   await page.getByTestId("limits-save").click();
@@ -88,6 +85,10 @@ test("change limits: 422 and 403 inline, then signed", async ({ page, request })
   await expect(page.locator("main")).toContainText("1,300.00");
   await page.goto("/");
   await expect(page.getByTestId("pass-auto")).toHaveText(/^1,300\.00\s€$/);
+  // The ledger: one group head "Spend Pass M-1", the entry names what changed.
+  await page.goto("/ledger");
+  await expect(page.getByTestId("ledger-group-M-1")).toHaveText(/^Spend\sPass\s*M-1$/);
+  await expect(page.getByTestId("ledger")).toContainText(/Alone\sup\sto\s1,200\.00\s€\s→\s1,300\.00\s€/);
 });
 
 test("the stock-out switch turns on and off", async ({ page, request }) => {
@@ -96,10 +97,15 @@ test("the stock-out switch turns on and off", async ({ page, request }) => {
   await page.getByTestId("stock-out").click();
   await expect.poll(async () => (await (await request.get("/api/demo")).json()).stockOut466375).toBe(true);
   await page.locator("#page-menu").click();
-  await page.getByTestId("stock-back").click();
+  await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "true");
+  await page.getByTestId("stock-out").click();
   await expect.poll(async () => (await (await request.get("/api/demo")).json()).stockOut466375).toBe(false);
   await page.locator("#page-menu").click();
-  await expect(page.getByTestId("stock-out")).toBeVisible();
+  await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "false");
+  await page.keyboard.press("Escape");
+  // Both switches are entries of the Demo group, which shows no id.
+  await page.goto("/ledger");
+  await expect(page.getByTestId("ledger-group-demo")).toHaveText(/^Demo$/);
 });
 
 test("a refused Steady click reloads the order", async ({ page }) => {

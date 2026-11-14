@@ -8,15 +8,49 @@ test("ask without a backend says so calmly", async ({ page }) => {
   await page.locator("#page-menu").click();
   await page.getByTestId("menu-ask").click();
   await expect(page.getByTestId("ask-send")).toBeDisabled();
-  await page.getByTestId("ask-input").fill("500 litres of lactose-free milk by Monday");
-  await page.getByTestId("ask-send").click();
-  const summary = page.getByTestId("ask-summary");
-  await expect(summary.locator("li")).toHaveCount(1);
-  await expect(summary).toContainText("no backend");
-  await expect(summary).not.toHaveClass(/bad/);
+  const input = page.getByTestId("ask-input");
+  await expect(input).toHaveAttribute("placeholder", "e.g. 50 kg of quark by Monday");
+  await input.fill("500 litres of lactose-free milk by Monday");
+  await input.press("Enter");
+  // One muted line, the input cleared for the next ask, nothing raw.
+  await expect(page.getByTestId("ask-entry")).toHaveCount(1);
+  await expect(page.getByTestId("ask-none")).toContainText("no backend");
+  await expect(input).toHaveValue("");
   await expect(page.getByTestId("ask-log")).toHaveCount(0);
-  await expect(page.getByTestId("ask-open")).toHaveCount(0);
   await expect(page.getByRole("alert")).toHaveCount(0);
+  // A chip sends at once; the newest row is on top.
+  await page.locator("#ask-chip-3").click();
+  await expect(page.getByTestId("ask-entry")).toHaveCount(2);
+  // No footer: the ✕ closes it.
+  const dialog = page.getByTestId("ask-dialog");
+  await expect(dialog.getByRole("button", { name: "Close" })).toHaveCount(1);
+  await expect(dialog.getByText("Recorded at Valio")).toHaveCount(0);
+  const box = await dialog.boundingBox();
+  expect(Math.round(box!.width)).toBeLessThanOrEqual(520);
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(dialog).toHaveCount(0);
+});
+
+test("dialogs: a plain dim over the whole width, and nothing pinned on top", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await fresh(page);
+  await stockOut(page);
+  await page.goto("/approve/R-2");
+  const bar = page.locator("[data-bar]");
+  await expect(bar).toBeVisible();
+  await page.locator("#page-menu").click();
+  await expect(page.locator("#menu-reset")).toBeVisible();
+  await expect(bar).toBeHidden();
+  const scrim = page.locator(".dialog-backdrop");
+  expect(await scrim.evaluate((e) => getComputedStyle(e).backdropFilter)).toBe("none");
+  const w = await scrim.evaluate((e) => e.getBoundingClientRect().width);
+  expect(w).toBe(await page.evaluate(() => window.innerWidth));
+  // The sheet's first item is hit where it is drawn, not the bar's button.
+  const reset = await page.locator("#menu-reset").boundingBox();
+  const hit = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest("[id]")?.id, [reset!.x + 20, reset!.y + reset!.height / 2]);
+  expect(hit).toBe("menu-reset");
+  await page.keyboard.press("Escape");
+  await expect(bar).toBeVisible();
 });
 
 test("change limits: 422 inline, then the new numbers everywhere", async ({ page }) => {
@@ -24,14 +58,18 @@ test("change limits: 422 inline, then the new numbers everywhere", async ({ page
   await page.goto("/spend-pass");
   await page.getByTestId("change-limits").click();
   const form = page.getByTestId("limits-form");
-  await expect(form).toContainText("Recorded for 16 Nov only.");
-  await expect(page.locator("#f-lactose")).toBeChecked();
-  await expect(page.locator("#f-deliver")).toHaveValue("2026-11-16");
+  // The edit mode of the same card: the plot stays, nothing shows twice, no native controls.
+  await expect(page.locator(".v-card")).toHaveCount(1);
+  await expect(page.locator("[data-plot-subject], svg").first()).toBeVisible();
+  await expect(form.locator("input[type=checkbox], input[type=date]")).toHaveCount(0);
+  await expect(form).toContainText("Recorded for lactose free and 16 Nov only.");
+  await expect(page.getByTestId("f-auto")).toHaveValue("1,200.00");
+  await expect(form.getByRole("switch", { name: "Substitutes" })).toHaveAttribute("aria-checked", "true");
   await page.getByTestId("f-auto").fill("1900");
   await page.getByTestId("f-hard").fill("1800");
   if (await page.getByTestId("f-code").isVisible()) await page.getByTestId("f-code").fill(CODE);
   await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("limits-problem")).toContainText("above never above");
+  await expect(page.getByTestId("f-auto-problem")).toHaveText("Must be below never above.");
 
   await page.getByTestId("f-auto").fill("900");
   await page.getByTestId("limits-save").click();
@@ -47,11 +85,11 @@ test("the stock-out switch turns off again", async ({ page }) => {
   await stockOut(page);
   await expect(page.getByTestId("inbox-R-2")).toBeVisible();
   await page.locator("#page-menu").click();
-  await expect(page.getByTestId("stock-out")).toHaveCount(0);
-  await page.getByTestId("stock-back").click();
+  await expect(page.getByText("Demo", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "true");
+  await page.getByTestId("stock-out").click();
   await page.locator("#page-menu").click();
-  await expect(page.getByTestId("stock-out")).toBeEnabled();
-  await expect(page.getByTestId("stock-back")).toHaveCount(0);
+  await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "false");
   await page.keyboard.press("Escape");
   // What the agent already asked for stays where it was.
   await expect(page.getByTestId("inbox-R-2")).toBeVisible();
@@ -70,11 +108,14 @@ test("on the public link every write asks for the demo token once", async ({ pag
   }
   const token = page.locator("#demo-token-input");
   await expect(token).toBeVisible();
+  await expect(page.getByRole("dialog")).toContainText("Demo token");
   await token.fill("wrong");
-  await page.getByRole("button", { name: "Use and run" }).click();
-  await expect(page.getByText("That token is not right.")).toBeVisible();
+  await page.getByRole("button", { name: "Run", exact: true }).click();
+  await expect(page.getByTestId("token-problem")).toHaveText("That token is not right.");
+  // The typed value stays, so it can be corrected.
+  await expect(token).toHaveValue("wrong");
   await token.fill("pub-token");
-  await page.getByRole("button", { name: "Use and run" }).click();
+  await page.getByRole("button", { name: "Run", exact: true }).click();
   await expect(page.getByTestId("line-463968")).toContainText("772.49");
 
   // The same page session (the token lives in memory): the stock-out switch and approve send it without asking.
@@ -116,4 +157,23 @@ test("the phone approve page has the page menu, so Start over is one step", asyn
   await page.locator("#menu-reset").click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId("inbox-R-2")).toHaveCount(0);
+});
+
+test("the ledger heads: Demo without an id, every id once", async ({ page }) => {
+  await fresh(page);
+  await stockOut(page);
+  await page.goto("/ledger");
+  await expect(page.getByTestId("ledger-group-demo")).toHaveText(/^Demo$/);
+  for (const head of await page.locator("[data-testid^=ledger-group-]").allInnerTexts()) {
+    const id = head.match(/\b[RSM]-\d+\b/g) ?? [];
+    expect(id.length, head).toBeLessThanOrEqual(1);
+  }
+});
+
+test("the Spend Pass facts: who the agent sees sits behind the (i)", async ({ page }) => {
+  await fresh(page);
+  await page.goto("/spend-pass");
+  await expect(page.locator("main")).not.toContainText("not approvers");
+  await page.locator("#pass-sees").click();
+  await expect(page.getByTestId("pass-approvers")).toHaveText("Agent sees limits and diet, not approvers.");
 });

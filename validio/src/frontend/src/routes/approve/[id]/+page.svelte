@@ -204,7 +204,7 @@
     {/if}
     {#if problem}<p class="q-sub" role="alert">{problem}</p>{/if}
 
-    <div class="bar">
+    <div class="bar" data-bar>
       {#if step === "reject" && !(codeRequired && !isCode(owner.code))}
         <Button variant="outline" onclick={cancel}>Cancel</Button>
         <Button id="confirm-reject" data-testid="code-submit" disabled={busy} onclick={() => decide("reject")}>{busy ? "Rejecting…" : "Confirm rejection"}</Button>
