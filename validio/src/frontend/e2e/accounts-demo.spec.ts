@@ -15,7 +15,7 @@ const BASE = process.env.ACCOUNTS_BASE;
 if (BASE) test.use({ baseURL: BASE });
 
 /** A control by its test id, or else by its role and visible label (the labels in docs/DEMO.md). */
-function el(page: Page, id: string, role: "button" | "link" | "tab" | "checkbox" | "textbox", name: RegExp): Locator {
+function el(page: Page, id: string | RegExp, role: "button" | "link" | "tab" | "checkbox" | "textbox", name: RegExp): Locator {
   return page.getByTestId(id).or(page.getByRole(role, { name })).filter({ visible: true }).first();
 }
 
@@ -44,7 +44,7 @@ async function sendExample(page: Page, status: RegExp) {
   await page.waitForLoadState("networkidle");
   const rows = page.locator("main").getByText(status);
   const before = await rows.count();
-  await el(page, "send-example", "button", /send example request/i).click();
+  await el(page, "example-send", "button", /send example request/i).click();
   await expect(rows).toHaveCount(before + 1, { timeout: 30_000 });
 }
 
@@ -115,11 +115,15 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   // 8 Settings: the kitchen's name opens them; a diet change asks the code
   await page.getByTestId("nav-settings").or(page.getByTestId("phone-settings")).or(page.getByRole("link", { name: /hotel espoo kitchen/i })).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/\/settings/);
-  await page.getByTestId("diet-FREE_FROM_GLUTEN").or(page.getByRole("checkbox", { name: /gluten/i })).first().check();
+  await el(page, /^set-(nav|row)-diet$/, "link", /diet and allergens/i).click();
+  const gluten = () => page.getByRole("switch", { name: /gluten/i }).or(page.getByRole("checkbox", { name: /gluten/i })).filter({ visible: true }).first();
+  await expect(gluten()).not.toBeChecked();
+  await gluten().click();
   await el(page, "diet-save", "button", /^save$/i).click();
   await typeCode(page);
+  await expect(page.getByTestId("diet-saved")).toBeVisible();
   await page.reload();
-  await expect(page.getByTestId("diet-FREE_FROM_GLUTEN").or(page.getByRole("checkbox", { name: /gluten/i })).first()).toBeChecked();
+  await expect(gluten()).toBeChecked();
 
   // B saw none of it
   await b.reload();
