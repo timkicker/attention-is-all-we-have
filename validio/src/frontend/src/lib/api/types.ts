@@ -526,3 +526,65 @@ export interface DemoState {
   /** What Valio really has of 466375, read from its availability answer at request time. */
   realStock466375?: { quantity: number; unit: string };
 }
+
+// ---------- accounts (validio/docs/ACCOUNTS-API.md) ----------
+
+/** The kitchen's account: one per kitchen, the session cookie names it. */
+export interface Account {
+  id: string;
+  name: string;
+  /** Null for a demo copy. */
+  email: string | null;
+  /** The kitchen's Valio Aimo customer number, typed once at sign up. */
+  customerNumber: string;
+  deliveryAddress: string;
+  /** A copy of the demo kitchen, one per browser session. */
+  isDemo: boolean;
+  /** Only on a demo copy: its fixed approval code, shown in the demo bar on purpose. */
+  demoCode?: string;
+  /** The Inbox checklist. */
+  setup: { kitchen: boolean; rules: boolean; agent: boolean; done: boolean };
+  agent: AgentState;
+  createdAt: string;
+}
+
+export interface AgentState {
+  state: "none" | "pairing" | "consent" | "active" | "paused";
+  pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
+  consent?: { name: string; keyId: string; may: string[] };
+  agent?: { name: string; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
+  /** Newest first. */
+  versions: { version: number; at: string; why: string }[];
+}
+
+export interface Rules {
+  aloneUpToCents: number;
+  approvalUpToCents: number;
+  substitutes: "off" | "listed" | "extra";
+  maxExtraPct: number;
+  /** False until saved once: everything needs approval. */
+  saved: boolean;
+  passVersion: number;
+}
+
+export type RulesIn = Omit<Rules, "saved" | "passVersion"> & { code: string };
+
+export type Diet = "FREE_FROM_LACTOSE" | "FREE_FROM_GLUTEN" | "VEGAN";
+
+export interface Settings {
+  kitchen: { name: string; customerNumber: string; deliveryAddress: string };
+  diet: Diet[];
+  login: { email: string | null };
+}
+
+export interface LoginIn {
+  email: string;
+  password: string;
+}
+
+export interface SignupIn extends LoginIn {
+  name: string;
+  customerNumber: string;
+  /** The 6-digit approval code the owner sets now and types for every approval. */
+  approvalCode: string;
+}

@@ -4,16 +4,19 @@
 
 import { ApiError, needsToken, tokenPrompt } from "./error";
 import * as mock from "./mock";
-import { owner } from "../owner.svelte";
+import { owner, session } from "../owner.svelte";
 import type {
+  Account,
   AskOut,
   DemoState,
   InboxItem,
   Ledger,
+  LoginIn,
   Order,
   SpendPass,
   SpendPassIn,
   SteadyOrder,
+  SignupIn,
   SteadyOrderSummary,
   SupplyRequest,
 } from "./types";
@@ -24,6 +27,7 @@ export const LIVE = import.meta.env.VITE_API === "live";
 async function call<T>(method: "GET" | "POST", path: string, headers: Record<string, string> = {}, body?: unknown): Promise<T> {
   const res = await fetch(path, {
     method,
+    credentials: "include",
     headers: { accept: "application/json", ...(body === undefined ? {} : { "content-type": "application/json" }), ...headers },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
@@ -35,8 +39,11 @@ async function call<T>(method: "GET" | "POST", path: string, headers: Record<str
     } catch {
       // not JSON, keep the status line
     }
+    // The session ran out: the layout sends the page to /login.
+    if (res.status === 401 && !/^\/api\/account\/(login|signup|demo)/.test(path) && !/token/i.test(detail)) session.account = null;
     throw new ApiError(res.status, detail);
   }
+  if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
 
@@ -64,6 +71,13 @@ const both = <T>(live: () => Promise<T>, fixture: () => Promise<T>) =>
 const id = encodeURIComponent;
 
 export const api = {
+  /** Who is logged in; 401 when nobody is. */
+  account: (): Promise<Account> => (LIVE ? get("/api/account") : mock.account()),
+  login: (body: LoginIn): Promise<Account> => (LIVE ? post("/api/account/login", {}, body) : mock.login(body)),
+  signup: (body: SignupIn): Promise<Account> => (LIVE ? post("/api/account/signup", {}, body) : mock.signup(body)),
+  /** A copy of the demo kitchen for this browser session (the same copy on reload). */
+  demoLogin: (): Promise<Account> => (LIVE ? post("/api/account/demo") : mock.demoLogin()),
+  logout: (): Promise<void> => (LIVE ? post("/api/account/logout") : mock.logout()),
   inbox: (): Promise<InboxItem[]> => (LIVE ? get("/api/inbox") : mock.inbox()),
   request: (rid: string): Promise<SupplyRequest> =>
     LIVE ? get(`/api/requests/${id(rid)}`) : mock.request(rid),

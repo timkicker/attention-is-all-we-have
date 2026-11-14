@@ -11,14 +11,17 @@ import { money } from "$lib/format";
 import { answers, refused, states } from "./snapshots/states";
 import { ApiError } from "./error";
 import type {
+  Account,
   AskOut,
   DemoState,
   InboxItem,
   Ledger,
+  LoginIn,
   Order,
   SpendPass,
   SpendPassIn,
   SteadyOrder,
+  SignupIn,
   SteadyOrderSummary,
   SupplyRequest,
 } from "./types";
@@ -223,4 +226,104 @@ export async function stockOut(on = true): Promise<DemoState> {
 export async function reset(): Promise<DemoState> {
   save({ ...START });
   return demoState();
+}
+
+// ---------- accounts ----------
+// The fixture plays the session cookie with localStorage: who is logged in,
+// and the accounts made in this browser. The demo kitchen is the recorded one.
+
+const SESSION = "validio-mock-session";
+const ACCOUNTS = "validio-mock-accounts";
+const DEMO_CODE = "246810";
+
+function read<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw) as T;
+  } catch {
+    // no storage: nobody stays logged in across a reload
+  }
+  return fallback;
+}
+
+function write(key: string, value: unknown): void {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // see read()
+  }
+}
+
+let sessionMemory: Account | null = null;
+
+function signedIn(): Account {
+  const a = read<Account | null>(SESSION, sessionMemory);
+  if (!a) throw new ApiError(401, "not logged in");
+  return a;
+}
+
+function enter(a: Account): Account {
+  sessionMemory = a;
+  write(SESSION, a);
+  return copy(a);
+}
+
+export async function account(): Promise<Account> {
+  return copy(signedIn());
+}
+
+/** The demo kitchen as a fresh copy: rules saved, the demo agent connected. */
+const DEMO_ACCOUNT: Account = {
+  id: "k-demo",
+  name: "Hotel Espoo kitchen",
+  email: null,
+  customerNumber: "",
+  deliveryAddress: "",
+  isDemo: true,
+  demoCode: DEMO_CODE,
+  setup: { kitchen: true, rules: true, agent: true, done: true },
+  agent: {
+    state: "active",
+    agent: { name: "Kitchen buyer", keyId: "", connectedAt: "2026-11-14T10:00:00+02:00", lastUsedAt: null, passId: "M-1", passVersion: 1 },
+    versions: [{ version: 1, at: "2026-11-14T10:00:00+02:00", why: "Agent connected" }],
+  },
+  createdAt: "2026-11-14T10:00:00+02:00",
+};
+
+export async function demoLogin(): Promise<Account> {
+  return enter(copy(DEMO_ACCOUNT));
+}
+
+type Stored = Account & { password: string };
+
+export async function login(body: LoginIn): Promise<Account> {
+  const found = read<Stored[]>(ACCOUNTS, []).find((a) => (a.email ?? "").toLowerCase() === body.email.trim().toLowerCase());
+  if (!found || found.password !== body.password) throw new ApiError(401, "wrong email or password");
+  const { password: _, ...a } = found;
+  return enter(a);
+}
+
+export async function signup(body: SignupIn): Promise<Account> {
+  const list = read<Stored[]>(ACCOUNTS, []);
+  const email = body.email.trim();
+  if (list.some((a) => (a.email ?? "").toLowerCase() === email.toLowerCase())) throw new ApiError(409, "an account with this email exists");
+  const a: Account = {
+    id: `k-${list.length + 1}`,
+    name: body.name.trim(),
+    email,
+    customerNumber: body.customerNumber.trim(),
+    deliveryAddress: "",
+    isDemo: false,
+    setup: { kitchen: false, rules: false, agent: false, done: false },
+    agent: { state: "none", versions: [] },
+    createdAt: new Date().toISOString(),
+  };
+  write(ACCOUNTS, [...list, { ...a, password: body.password }]);
+  return enter(a);
+}
+
+export async function logout(): Promise<void> {
+  sessionMemory = null;
+  write(SESSION, null);
 }
