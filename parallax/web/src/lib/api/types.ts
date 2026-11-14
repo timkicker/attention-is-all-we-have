@@ -9,8 +9,8 @@ export interface SqlStatement {
   ms: number
   rows: number
   index: 'emb' | 'none'
-  /** Bound parameters; a list parameter is logged as its length. */
-  params?: Record<string, string | number | null | { count: number }>
+  /** Bound parameters; a list parameter is logged as its length, a long string as its length in characters. */
+  params?: Record<string, string | number | null | { count: number } | { chars: number }>
 }
 
 export interface ApiErrorBody {

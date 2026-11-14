@@ -85,9 +85,9 @@ describe('stored matches', () => {
 describe('formatSql', () => {
   it('writes the parameters in, lists as a count, one clause per line', () => {
     const s = st(
-      '  SELECT a.h,   a.text\n  FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %(as_of)s AS a\n  WHERE a.topic_id = %(topic)s AND a.h IN %(hs)s AND %(section)s IS NULL  \n',
+      '  SELECT a.h,   a.text\n  FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %(as_of)s AS a\n  WHERE a.topic_id = %(topic)s AND a.h IN %(hs)s AND %(section)s IS NULL AND %(q)s > \'\'  \n',
       3,
-      { as_of: '2008-01-01 00:00:00', topic: "o'neil", hs: { count: 25 }, section: null },
+      { as_of: '2008-01-01 00:00:00', topic: "o'neil", hs: { count: 25 }, section: null, q: { chars: 500 } },
     )
     expect(formatSql(s)).toBe(
       [
@@ -96,7 +96,8 @@ describe('formatSql', () => {
         "  FOR SYSTEM_TIME AS OF TIMESTAMP '2008-01-01 00:00:00' AS a",
         "WHERE a.topic_id = 'o''neil'",
         '  AND a.h IN (/* 25 values */)',
-        '  AND NULL IS NULL;',
+        '  AND NULL IS NULL',
+        "  AND '…' /* 500 characters */ > '';",
       ].join('\n'),
     )
   })
