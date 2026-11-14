@@ -39,7 +39,10 @@ def test_ledger_display_text(client, holder):
     shown = [e["displayText"] for e in entries]
     assert shown[0] == "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
     assert entries[0]["sentence"].startswith("The agent asked for 1000 litres")  # the raw text stays
-    assert "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you." in shown
+    placed = [e for e in entries if e["kind"] == "order"]
+    assert [(e["actor"], e["actorText"]) for e in placed] == [("validio", "Validio")] * 2  # Validio places, the agent asks
+    assert placed[0]["displayText"] == \
+        "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
     assert "Asked you: the substitute is not on Valio's list." in shown
     assert "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €." in shown
     for e in entries:

@@ -218,7 +218,8 @@ def _end(s: str) -> str:
     return s if s.endswith((".", "?", "!")) else s + "."
 
 
-def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | None = None) -> str:
+def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | None = None,
+                order_id: str | None = None) -> str:
     """One short sentence with a verb for a ledger row. The actor has its own column, so it is not repeated;
     an order id shows once; money reads "1,200.00 €". The raw sentence stays for the detail fold."""
     s = sentence.strip()
@@ -249,6 +250,9 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
     alone = re.match(r"May order it alone: ([\d,.]+ €) is inside the auto limit of ([\d,.]+ €)", s)
     if alone:
         return f"Cleared it to order alone: {alone.group(1)} is within {alone.group(2)}."
+    alone = re.match(r"Ordered (.+? without asking you)\.", s)
+    if alone and order_id:
+        return f"Placed {order_id}: {alone.group(1)}."
     placed = re.match(r"Placed order (O-\d+): (.+?) after the \w+ \w+\.", s)
     if placed:
         return f"Placed {placed.group(1)}: {placed.group(2)}."
