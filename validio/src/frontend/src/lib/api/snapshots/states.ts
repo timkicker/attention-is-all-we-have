@@ -1932,11 +1932,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
+     "hash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
      "kind": "decision",
      "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 11,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -2296,11 +2296,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
+     "hash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
      "kind": "decision",
      "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 11,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -2336,10 +2336,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "00c4319ecbabddbdb27a841b0af3b98063c8f5bd5b9bf7b8d69fc526a807faad",
+     "hash": "b9b143b982aa9961a983052d842d6e6a7117e1f86888c870766f42fdaad24c59",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "423ebdc584239802e51dd8534d7454abd7e8ef61a496176779b4d524e8d90af5",
+     "prevHash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
      "ruleIds": [
       "ask-human"
      ],
@@ -2379,10 +2379,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "9b13005a4367e80bd32edeecb3fbd9c3350f78e494ff9793aebea084199db0d6",
+     "hash": "d47c9c64ca13c39a335e83bf4cfc20bd3b694d1218cf10927ed5b9b0e089215b",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "00c4319ecbabddbdb27a841b0af3b98063c8f5bd5b9bf7b8d69fc526a807faad",
+     "prevHash": "b9b143b982aa9961a983052d842d6e6a7117e1f86888c870766f42fdaad24c59",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 13,
@@ -2420,10 +2420,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "eaade2822d26ae95d4212eec64110b026d7eaf3d0fbb7244c3cd423260b87822",
+     "hash": "4c9d51a3ce322ea2339a05bf802ba2c229c06ddaaa17d2bf9d21d01425f51a50",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "9b13005a4367e80bd32edeecb3fbd9c3350f78e494ff9793aebea084199db0d6",
+     "prevHash": "d47c9c64ca13c39a335e83bf4cfc20bd3b694d1218cf10927ed5b9b0e089215b",
      "ruleIds": [
       "ask-human"
      ],
@@ -3168,11 +3168,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
      "kind": "decision",
      "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 13,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -3616,11 +3616,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
      "kind": "decision",
      "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 13,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -3656,10 +3656,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
+     "hash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "4ab1dd5c8d4ffd59c86c450b39b78a4bee4963447fc78cbf24306a9f2c6190ac",
+     "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
      "ruleIds": [
       "ask-human"
      ],
@@ -3699,10 +3699,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
+     "hash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "35b4a385a56943a688086a66766246ef0b6cac73787cc59d0b20e58c49968cc3",
+     "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 15,
@@ -3740,10 +3740,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "1bd58cda0771187276956583c60dc7ed50c03947eabeedc550e6ecb39a671664",
+     "hash": "e7747a8c86d44315ffd2e9e22398dbeca5de261aa2ca9690e67da59baf3d68a2",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "70272525909cb4dc9c8b847cf66da4cccf7e4cc2c47f8fbaba745a603d0aa9e6",
+     "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
      "ruleIds": [
       "ask-human"
      ],
@@ -4402,11 +4402,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "hash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
      "kind": "decision",
      "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 12,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -4807,11 +4807,11 @@ export const answers: Answers = {
       "never above"
      ],
      "facts": [],
-     "hash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "hash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
      "kind": "decision",
      "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
      "ruleIds": [],
-     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: 26 % more per guest than usual and none in stock at Valio. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
+     "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 12,
      "spendPassId": "S-1-W46",
      "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -4847,10 +4847,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "fff0ed46a02dabcf6be63a2313c5f1f1ce7973212d1b97a3e7e9e6c22c268448",
+     "hash": "4e05f3ec1c9ab44a514ba0d187a6f5d26f6d523462efecfdf9b2728bedd93f7f",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "c890929921524619c3db58c5b7fe51f6a814814d6d49bd367fdb53af0f1cd71a",
+     "prevHash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
      "ruleIds": [
       "ask-human"
      ],
@@ -4890,10 +4890,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "20ea724efed82415e188efb5a1a1a55fab98a3897c657d3100ada7a6272cf1f8",
+     "hash": "b132b0ccbd187db9fad90d772728ebac9513168be9ca64b232454815863f3e4b",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "fff0ed46a02dabcf6be63a2313c5f1f1ce7973212d1b97a3e7e9e6c22c268448",
+     "prevHash": "4e05f3ec1c9ab44a514ba0d187a6f5d26f6d523462efecfdf9b2728bedd93f7f",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 14,
@@ -4931,10 +4931,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "173310f887f8b26c406597845be5a603ded53a8612326e4b27b8fd0b9ae69d94",
+     "hash": "cc5092db157e70c1e6491d71db9ffb384d5f8a0a7eb2a2d0b436eeaa969c6e25",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "20ea724efed82415e188efb5a1a1a55fab98a3897c657d3100ada7a6272cf1f8",
+     "prevHash": "b132b0ccbd187db9fad90d772728ebac9513168be9ca64b232454815863f3e4b",
      "ruleIds": [
       "ask-human"
      ],
@@ -12873,7 +12873,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
@@ -13034,7 +13034,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
@@ -13195,7 +13195,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
@@ -13356,7 +13356,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
@@ -13517,7 +13517,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
@@ -13678,7 +13678,7 @@ export const answers: Answers = {
       "productId": "466375",
       "qtyText": "98 bags",
       "result": "blocked",
-      "sentence": "Not renewed: 26 % more per guest than usual and none in stock at Valio.",
+      "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
       "thisWeekQuantity": 98,
       "totalCents": 11368,

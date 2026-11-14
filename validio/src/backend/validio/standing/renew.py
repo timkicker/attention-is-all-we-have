@@ -66,6 +66,12 @@ def _why(f: DriftFlag) -> str:
     return "Drift Watch flagged it"
 
 
+def _not_renewed(stop: DriftFlag, drift: list[DriftFlag]) -> str:
+    """Valio has none, or no delivery date: that stopped it, so it leads; the drift follows."""
+    gone = "none in stock at Valio" if stop.sentence.startswith("Out of stock") else "no delivery date from Valio"
+    return f"Not renewed: {gone}. Also {and_list([_why(f) for f in drift])}."
+
+
 def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[str, Quote],
           avail: dict[str, Availability], mandate: Mandate, now: datetime, split_fill: SplitFill,
           delivery: date | None = None) -> RenewedLine:
@@ -81,10 +87,9 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
 
     none = [f for f in short if f.value <= 0]  # out of stock or no delivery date: no button could order it
     if drift and none:
-        gone = "none in stock at Valio" if "Out of stock" in none[0].sentence else "no delivery date from Valio"
         kept = [replace(f, sentence=f.sentence.removesuffix(" Renew anyway?")) for f in flags]  # no button to press
         return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.BLOCKED, flags=kept,
-                       sentence=f"Not renewed: {and_list([_why(f) for f in drift] + [gone])}.")
+                       sentence=_not_renewed(none[0], drift))
 
     if drift:
         d = decide(context_for(mandate, p, a, total_cents=total, now=now, is_renewal=True, drift_flag=True,
