@@ -30,7 +30,7 @@ from .state import Ctx
 ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"  # no 0, O, 1, I, L
 CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
-DEMO_AGENT = "Demo agent"
+DEMO_AGENT = seed.DEMO_AGENT_NAME
 MCP_NAME = "MCP agent"  # the name of a connector agent whose client sent no usable clientInfo.name
 RESERVED = frozenset({"you", "owner", "validio", "demo", "kitchen"})  # names the screens give someone else
 KNOWN_CLIENTS = {"claude-code": "Claude Code", "claude-ai": "Claude"}  # ids some clients send as their name
@@ -203,7 +203,7 @@ def clean_name(raw) -> str:
     return name if name and name.lower() not in RESERVED else MCP_NAME
 
 
-NAMES_SCHEMA = "create table if not exists agent_name (sub text primary key, name text not null)"
+NAMES_SCHEMA = f"create table if not exists {seed.AGENT_NAME_TABLE}"
 
 
 def _remember_name(ctx: Ctx, sub: str, name: str) -> None:

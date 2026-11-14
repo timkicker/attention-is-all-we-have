@@ -19,8 +19,9 @@ import type {
   SignupIn,
 } from "./types";
 
-// The demo copy's history names its agent "Agent", as the server's does.
-const AGENT = "Agent";
+// The demo copy's history names its agent the way the server's seed does: the name the demo agent reports
+// when it pairs (DEMO_AGENT_NAME in validio/demo/seed.py).
+const AGENT = "Kitchen agent";
 
 const copy = <T>(v: T): T => structuredClone(v);
 

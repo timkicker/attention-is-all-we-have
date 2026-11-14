@@ -8,11 +8,11 @@ test("an ordered request reads asked, checked, rule, result, proof", async ({ pa
   await page.goto("/activity/R-2");
   await expect(page.getByTestId("detail-title")).toHaveText(/mozzarella-fontal/);
   await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
-  await expect(page.getByTestId("asked")).toContainText("Agent");
+  await expect(page.getByTestId("asked")).toContainText("Kitchen agent");
   await expect(page.getByTestId("check-stock")).toHaveAttribute("data-ok", "false");
   await expect(page.getByTestId("check-substitute")).toHaveAttribute("data-ok", "true");
   await expect(page.locator("#rule-link")).toHaveAttribute("href", "/rules");
-  await expect(page.locator("#rule-link")).toContainText("Rules, version 2");
+  await expect(page.getByTestId("rule-version")).toHaveText("Rules, version 2");
   await expect(page.getByTestId("result-order")).toContainText("O-6");
   await expect(page.getByTestId("result-delivery")).toContainText("Mon 16 Nov");
   await expect(page.getByTestId("approval")).toHaveCount(0);

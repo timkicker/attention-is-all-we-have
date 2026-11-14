@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from test_accounts import SIGNUP, account_ctx, app_env  # noqa: F401
 
 from validio.api import activity
+from validio.api.connect import DEMO_AGENT
 from validio.api.settings import DEMO_RULES
 
 CODE = "246810"
@@ -77,7 +78,7 @@ def test_detail_of_an_order_placed_alone(kitchen):
     c, _, r1, _ = kitchen
     d = c.get(f"/api/activity/{r1}").json()
     assert set(d) == {"item", "asked", "checks", "rule", "result", "approval", "proof"}
-    assert d["asked"] == {"text": EXAMPLE, "agentName": "Demo agent"}
+    assert d["asked"] == {"text": EXAMPLE, "agentName": DEMO_AGENT}
     labels = [x["label"] for x in d["checks"]]
     assert labels[:3] == ["Product", "Price", "Stock"] and "Allergens" in labels
     for x in d["checks"]:  # a note adds to its value, it never says it again
@@ -89,7 +90,7 @@ def test_detail_of_an_order_placed_alone(kitchen):
     assert d["rule"] == {"text": "Under your 1,200.00 € limit, ordered alone.", "version": 2}
     assert d["result"]["orderId"] == d["item"]["orderId"] and d["result"]["delivery"] == "2026-11-16"
     assert d["approval"] is None
-    assert next(p["actor"] for p in d["proof"]) == "Demo agent"
+    assert next(p["actor"] for p in d["proof"]) == DEMO_AGENT
     assert any(p["text"].startswith(f"Ordered {d['item']['orderId']}") for p in d["proof"])
     ledger = {e["hash"] for e in c.get("/api/ledger").json()["entries"]}
     assert all(len(p["hash"]) == 64 and p["hash"] in ledger for p in d["proof"])
@@ -164,7 +165,7 @@ def test_home_in_one_call(kitchen):
     c, _, _r1, r2 = kitchen
     h = c.get("/api/home").json()
     assert set(h) == {"agent", "week", "setup", "needsYou", "latest"}
-    assert h["agent"]["state"] == "active" and h["agent"]["name"] == "Demo agent" and h["agent"]["lastUsedAt"]
+    assert h["agent"]["state"] == "active" and h["agent"]["name"] == DEMO_AGENT and h["agent"]["lastUsedAt"]
     assert h["week"] == {"usedCents": 101000, "capCents": DEMO_RULES["perWeekCents"]}
     assert h["setup"] == {"rulesSaved": True, "agentConnected": True, "firstOrder": True}
     assert [it["id"] for it in h["needsYou"]] == [r2]
@@ -198,3 +199,9 @@ def test_closed_to_a_stranger(app_env):  # noqa: F811
     with TestClient(app_env, client=("203.0.113.9", 50000)) as stranger:
         for path in ("/api/home", "/api/activity", "/api/activity/R-1"):
             assert stranger.get(path).status_code in (401, 403), path
+
+
+def test_a_price_without_end_date_says_price_once():
+    from validio.text.format import fact_text
+
+    assert fact_text("price", "18.01 €", "catalog price, no end date") == ("18.01 €", "no end date")
