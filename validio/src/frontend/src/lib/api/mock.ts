@@ -239,8 +239,16 @@ function enter(a: Account): Account {
   return copy(a);
 }
 
+/** The agent as the Agent page's fixture (api/agent.ts) holds it, so a reload keeps the checklist right. */
+function withAgent(a: Account): Account {
+  const m = read<{ agent?: Account["agent"] } | null>("validio-agent-mock-v1", null);
+  if (!m?.agent) return a;
+  const on = m.agent.state === "active" || m.agent.state === "paused";
+  return { ...a, agent: m.agent, setup: { ...a.setup, agent: on, done: a.setup.kitchen && a.setup.rules && on } };
+}
+
 export async function account(): Promise<Account> {
-  return copy(signedIn());
+  return withAgent(copy(signedIn()));
 }
 
 /** The demo kitchen as a fresh copy: rules saved, no agent connected yet. */
