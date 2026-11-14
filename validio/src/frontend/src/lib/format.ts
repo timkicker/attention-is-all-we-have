@@ -219,8 +219,12 @@ export function stockOutLine(req: SupplyRequest | undefined): string {
   const opt = req.lines
     .flatMap((l) => [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])])
     .find((o) => o.productId === pid);
-  const really = /Valio really has [^;.]+/.exec(sim.sentence)?.[0];
-  return `${opt ? nameWord(opt.name) : `Product ${pid}`} is out of stock at Valio (simulated for the demo${really ? `; ${really}` : ""}).`;
+  // The mock names the product by number ("stock-out of 466375"), the live
+  // API by name ("stock-out of Gran Castelli ...").
+  const named = /stock-out of (.+)$/.exec(sim.what)?.[1];
+  const name = opt ? nameWord(opt.name) : named ? nameWord(named) : "The asked product";
+  const really = /Valio (?:really )?has [^;]+?(?=[;.]?$|; )/.exec(sim.sentence.trim())?.[0];
+  return `${name} is out of stock at Valio (simulated for the demo${really ? `; ${really}` : ""}).`;
 }
 
 /** The next date a weekly order on `weekday` ("Monday") arrives, after the

@@ -52,7 +52,7 @@
       <span data-testid="request-status" id="request-status">
         {#if asking}<State label={status.label} tone="act" />{:else}<span class:t-bad={status.tone === "bad"}>{status.label}</span>{/if}
       </span>
-      {#if req.orderId && !asking}<a href="/ledger">Order {req.orderId}</a>{/if}
+      {#if req.orderId && !asking}<span>Order {req.orderId}</span>{/if}
     </p>
   </header>
 
@@ -168,6 +168,16 @@
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--color-fg-secondary);
+  }
+  @media (max-width: 760px) {
+    .pane :global(.fold#fold-details) {
+      min-height: 44px;
+    }
+    .aside a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
   }
   .details {
     display: flex;

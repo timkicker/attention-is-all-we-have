@@ -38,8 +38,8 @@
      (WCAG 2.5.5); a link in running text keeps its line height. */
   .content :is(button, [role="button"], input, select, a[href]:not(p a, li > a.inline)),
   .bar :is(button, a[href]) {
-    min-height: 2.75rem;
-    min-width: 2.75rem;
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 :root:root[data-theme="light"] {

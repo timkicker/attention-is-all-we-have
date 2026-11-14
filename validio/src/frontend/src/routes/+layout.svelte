@@ -127,11 +127,11 @@
           <SidebarMenu>
             {#each NAV as item (item.href)}
               <SidebarMenuItem>
-                <SidebarMenuButton id={item.id} data-testid={item.id} isActive={item.match(path)} tooltip={item.label} onclick={() => goto(item.href)}>
+                <SidebarMenuButton id={item.id} data-testid={item.id} isActive={item.match(path)} tooltip={item.href === "/" && waiting > 0 ? `Inbox ${waiting} waiting for you` : item.label} onclick={() => goto(item.href)}>
                   <item.icon strokeWidth={1.75} />
                   <span>{item.label}</span>
                   {#if item.href === "/" && waiting > 0}
-                    <span class="count"><Badge variant="secondary" aria-label="{waiting} waiting for you">{waiting}</Badge></span>
+                    <span class="count"><Badge variant="secondary">{waiting}</Badge></span>
                   {/if}
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -372,8 +372,8 @@
       padding-inline-start: 0.5rem;
     }
     .bar :global(.menu-btn) {
-      width: 2.75rem;
-      height: 2.75rem;
+      width: 44px;
+      height: 44px;
     }
     /* On the phone the page itself scrolls, not a box inside it. */
     :global(.app),

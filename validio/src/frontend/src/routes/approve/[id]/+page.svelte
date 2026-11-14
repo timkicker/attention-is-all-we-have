@@ -229,7 +229,7 @@
       background: var(--color-bg-app);
     }
     .buttons :global(button) {
-      min-height: 2.75rem;
+      min-height: 44px;
     }
   }
 </style>
