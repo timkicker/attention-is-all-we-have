@@ -178,10 +178,22 @@ app.include_router(connect.web_router())
 app.mount("/mcp", mcp_app)
 
 
+CODES = ((ApproveRefused, "refused"), (IdempotencyConflict, "conflict"), (OrderStateError, "already"),
+         (ValioUnavailable, "valio_down"))
+
+
 def _err(status: int):
     def handler(_req: Request, exc: Exception) -> JSONResponse:
+        """{"detail": the sentence, as before} plus "code" where a screen must tell cases apart: a 409 is
+        "refused" (Valio was asked again and the order was not placed, "refusedText" says why for the owner),
+        "already" (the order was decided before) or "conflict" (an idempotency key used for another body)."""
         headers = {"WWW-Authenticate": "SD-JWT"} if status == 401 else None
-        return JSONResponse({"detail": str(exc).strip("'")}, status_code=status, headers=headers)
+        body: dict = {"detail": str(exc).strip("'")}
+        if code := next((c for t, c in CODES if isinstance(exc, t)), None):
+            body["code"] = code
+        if isinstance(exc, ApproveRefused):
+            body["refusedText"] = exc.refused_text
+        return JSONResponse(body, status_code=status, headers=headers)
     return handler
 
 

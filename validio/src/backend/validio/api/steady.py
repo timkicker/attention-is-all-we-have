@@ -266,6 +266,7 @@ class Runtime:
             audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
             service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: demo_now(self.settings.now, store.con),
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
+                                   valio_down=lambda: seed.valio_down(path),
                                    lock=self.lock)  # one lock for every write and the demo reset
             self._live = _Live(token, path, store, audit, service, self.keys_dir())
         return self._live

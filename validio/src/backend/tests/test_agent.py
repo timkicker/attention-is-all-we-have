@@ -9,7 +9,7 @@ import os
 import agent_double
 import pytest
 
-from validio.agent.buyer import SCENES, run_scene
+from validio.agent.buyer import SCENES, run_scene, task_for
 from validio.agent.llm import FakeLLM, GeminiLLM
 from validio.agent.port import McpPort
 from validio.agent.tools import TOOLS, redact
@@ -250,3 +250,36 @@ def test_tests_run_the_fake_model_by_default():
 
     assert os.environ["LLM_MODE"] == "fake"
     assert isinstance(make_llm(2), FakeLLM)
+
+
+def test_a_gemini_failure_hands_the_run_to_the_scripted_agent():
+    from validio.agent.llm import model_text
+
+    class Broken(GeminiLLM):
+        def __init__(self, fallback):  # no client: the first step fails as a timeout would
+            self.fallback, self.fell_back, self.note, self.inputs = fallback, False, None, []
+            self.name = "Gemini test"
+
+        def _step(self, history):
+            raise TimeoutError("slow")
+
+    llm = Broken(FakeLLM(2))
+    assert model_text(llm) == "Agent: Gemini"
+    history = [{"role": "user", **task_for(2)}]
+    step = llm.step(history)
+    assert [c.name for c in step.calls] == ["request_supply"]  # the twin's first move
+    assert llm.fell_back and "TimeoutError" in llm.note and model_text(llm) == "Agent: scripted"
+    assert llm.step(history).calls[0].name == "request_supply"  # it stays on the twin for the run
+    assert len(llm.inputs) == 2
+
+
+def test_without_a_fallback_a_gemini_failure_still_raises():
+    class Broken(GeminiLLM):
+        def __init__(self):
+            self.fallback, self.fell_back, self.note, self.inputs = None, False, None, []
+
+        def _step(self, history):
+            raise TimeoutError("slow")
+
+    with pytest.raises(TimeoutError):
+        Broken().step([{"role": "user", **task_for(2)}])

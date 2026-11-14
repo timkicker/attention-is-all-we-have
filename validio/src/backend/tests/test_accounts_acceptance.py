@@ -7,7 +7,7 @@ copy the whole time; after every step nothing A did shows in B. At the end B run
 judged on its own limits and its own week.
 
 Numbers: docs/ACCOUNTS-API.md and the demo template the orchestrator fixed (agent not connected at start,
-alone up to 1,200.00 €, approval up to 5,000.00 €, demo code 246810; the example request is 1,000 l of
+alone up to 1,200.00 €, approval up to 2,000.00 €, demo code 246810; the example request is 1,000 l of
 lactose-free milk, 1,010.00 € from the recorded Valio answers, ordered alone; alone limit 800.00 € makes
 the same request wait).
 
@@ -27,7 +27,7 @@ from fastapi.testclient import TestClient
 CODE = "246810"
 EXAMPLE = "1000 litres of lactose-free milk by Monday, budget 1200 euro"
 EXAMPLE_CENTS = 101000
-ALONE, APPROVAL = 120000, 500000
+ALONE, APPROVAL = 120000, 200000
 LOWER_ALONE = 80000
 ROOT = Path(__file__).resolve().parents[3]  # validio/
 
@@ -212,8 +212,10 @@ def test_04_example_request_is_ordered(world):
 def test_05_lower_the_alone_limit(world):
     a = world["a"]
     before = ok(a.get("/api/rules"))
+    # every field the Rules page sends: leaving out perWeekCents would drop the weekly limit, and the
+    # limits would then count every order of the pass together
     body = {"aloneUpToCents": LOWER_ALONE, "approvalUpToCents": APPROVAL, "substitutes": before["substitutes"],
-            "maxExtraPct": before["maxExtraPct"]}
+            "maxExtraPct": before["maxExtraPct"], "perWeekCents": before["perWeekCents"]}
     assert a.put("/api/rules", json={**body, "code": "000000"}).status_code == 403
     assert ok(a.get("/api/rules")) == before, "a wrong code changed the Rules"
     led = len(ledger(a))

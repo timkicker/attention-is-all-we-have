@@ -8,12 +8,14 @@ Best Pick ranks, Cedar decides per option. Nothing the agent says about price or
 import logging
 import re
 import sqlite3
+import time
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
 from ..catalog.model import Product
+from ..matching import compare
 from ..matching.need import CLAIM_NAMES, KINDS, Need, Ranked, parse_need, screen
 from ..matching.rank import rank
 from ..matching.reasons import carbon_sentence, option_sentence
@@ -22,7 +24,8 @@ from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
 from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
-from ..valio.client import NotRecorded, ReplayMiss, ValioUnavailable
+from ..valio.client import NotRecorded, ReplayMiss, ValioBusy, ValioRefused, ValioUnavailable
+from .explain import explain
 from .service import (
     SEVERITY,
     IdempotencyConflict,
@@ -77,6 +80,12 @@ class LineRequest:
     product_id: str | None = None
     quantity: float | None = None
     unit: str | None = None  # the product's sales unit, or L / KG
+
+
+def order_status(o: dict) -> str:
+    """The request status an order's state gives."""
+    return {"placed": "ordered" if o.get("approvedBy") else "ordered_alone",
+            "waiting": "waiting", "rejected": "rejected", "blocked": "blocked"}[o["state"]]
 
 
 class RequestError(ValueError):
@@ -170,6 +179,7 @@ class SupplyService:
             o["quantity"], o["unit"] = r.sales_qty, p.sales_unit
         if r.total_cents is not None:
             o["totalCents"] = r.total_cents
+        o["reliabilityText"] = compare.reliability_text(p)
         if on_list is not None:
             o["onValioList"] = on_list
         if st := self._supplier_text(p):
@@ -187,6 +197,7 @@ class SupplyService:
         need = self._need(ln, mandate, deliver_by)
         cands, dropped = screen(need, self.catalog)
         ids = [p.id for p in cands]
+        self.orders.check_valio()  # the demo switch "Valio not answering"
         try:
             quotes = self.valio.price(ids, need.deliver_by, budget) if ids else {}
             avail = self.orders.adjust(self.valio.availability(ids, need.deliver_by, budget)) if ids else {}
@@ -217,6 +228,7 @@ class SupplyService:
                 verdict = "not_deliverable" if "Valio gives no delivery date for it" in r.reasons else "rejected"
                 options.append(self._option(r, verdict, _sentence(r, same)))
         options += [self._option(r, "rejected", _sentence(r)) for r in dropped]
+        decided = self._compare(need, ranked, options, chosen, quotes, avail, mandate)
 
         line: dict[str, Any] = {
             "lineId": f"L-{n}", "text": need.text,
@@ -246,7 +258,43 @@ class SupplyService:
             line["note"] = "A description in these options talks to AI agents. Descriptions are never used for decisions."
         if same:
             line["note"] = f"Same footprint for all: {carbon.pop():g} kg CO2e per kg, a group average."
+        if decided:
+            line["decidedBy"] = decided
+            line["decidedByText"] = "Only one option fits." if decided == "only option" else f"Decided by: {decided}."
         return {"line": line, "proposal": proposal, "need": need}
+
+    def _compare(self, need: Need, ranked: list[Ranked], options: list[dict], chosen: Ranked | None, quotes,
+                 avail, mandate: Mandate) -> str | None:
+        """The comparison rows of every ranked option and why the chosen one won (matching/compare.py).
+        Returns the key that decided, None when nothing was chosen."""
+        by_id = {o["productId"]: o for o in options}
+        now = self.now()
+        unit: dict[int, str | None] = {}
+        for r in ranked:
+            o = by_id.get(r.product.id)
+            if o is None:
+                continue
+            a = avail.get(r.product.id)
+            unit[id(r)] = compare.unit_price_text(compare.unit_price_cents(need, r, quotes.get(r.product.id)),
+                                                  need.unit)
+            extra = {"unitPriceText": unit[id(r)], "deliveryText": compare.delivery_text(a),
+                     "deliveryDate": a.lines[0].available.isoformat() if a is not None and a.lines else None,
+                     "cutoffText": compare.cutoff_text(a, now),
+                     "dietText": compare.diet_text(r.product, need.required_claims)}
+            o.update({k: v for k, v in extra.items() if v is not None})
+        if chosen is None:
+            return None
+        ok = [r for r in ranked if by_id.get(r.product.id, {}).get("verdict") in ACCEPTED
+              and r.total_cents is not None]
+        cheapest = min(r.total_cents for r in ok)
+        prefer = tuple(mandate.prefer_labels or ())
+        runner = next((r for r in ok if r is not chosen), None)
+        decided = compare.decided_by(chosen, runner, cheapest, prefer)
+        by_id[chosen.product.id]["whyText"] = compare.why_text(chosen, runner, decided, cheapest, unit)
+        for r in ok:
+            if r is not chosen:
+                by_id[r.product.id]["whyNotText"] = compare.why_not_text(r, chosen, cheapest, unit, prefer)
+        return decided
 
     def _sub(self, o: SubOption) -> dict:
         verdict = {SubVerdict.BLOCKED_DIET: "blocked", SubVerdict.UNDELIVERABLE: "not_deliverable",
@@ -282,6 +330,8 @@ class SupplyService:
             self.store.remember_pass(mandate.id, mandate_dict(mandate))
             budget = CallBudget(self.orders.max_ids)
             now = self.now()
+            started = time.monotonic()
+            remember = True  # Valio not answering is never remembered, so the same key can try again
             req = self.store.new_request({"createdAt": now.isoformat(), "agent": agent or mandate.holder,
                                           "text": text or "; ".join(self._line_text(ln) for ln in lines),
                                           "spendPassId": mandate.id, "status": "working"})
@@ -339,19 +389,35 @@ class SupplyService:
                         req["status"] = "blocked"
                         self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
             except ValioUnavailable as e:
-                # Valio did not answer twice: refused before any order, one entry in the ledger
+                # Valio did not answer twice (or is busy, or refused the key): refused before any order, one
+                # entry in the ledger, and not remembered under the key, so a retry after Valio is back works
                 req["lines"], req["status"] = [], "blocked"
-                req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": str(e)}
+                said = str(e) if isinstance(e, (ValioBusy, ValioRefused)) else \
+                    f"Valio didn't answer at {now:%H:%M}. Nothing was ordered."
+                req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": str(e),
+                                   "reasonCode": "valio_down", "ownerText": said}
                 self._log(req, mandate, "validio", "decision", str(e), [], None)
+                remember = False
             except (RequestError, CallBudgetExceeded, OrderError) as e:
                 # refused before a decision: stored as blocked, with the reason in the ledger
                 req["lines"], req["status"] = [], "blocked"
+                why = str(e).strip(chr(39))
+                if isinstance(e, CallBudgetExceeded):
+                    code = "too_many"
+                    said = "This request needs more products checked than Validio asks Valio at once. Nothing was ordered."
+                else:
+                    code, said = "unreadable", f"Validio couldn't use this request: {why}. Nothing was ordered."
                 req["decision"] = {"outcome": "block", "ruleIds": [],
-                                   "sentence": f"Refused the request: {str(e).strip(chr(39))}. Nothing was ordered."}
+                                   "sentence": f"Refused the request: {why}. Nothing was ordered.",
+                                   "reasonCode": code, "ownerText": said}
                 self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)
             req["liveChecked"] = {"calls": budget.calls, "ids": budget.ids_sent, "idsPerCall": budget.per_call}
+            req["elapsedMs"] = round((time.monotonic() - started) * 1000)
+            if (mode := getattr(self.valio, "mode", None)) in ("live", "record", "replay"):
+                req["valioMode"] = mode
             self.store.put_request(req)
-            self.store.idem_put(mandate.id, "request:" + idempotency_key, body_hash, req["id"])
+            if remember:
+                self.store.idem_put(mandate.id, "request:" + idempotency_key, body_hash, req["id"])
             return self.get_request(req["id"])
 
     def _question(self, built: list[dict], order: dict) -> str:
@@ -408,14 +474,18 @@ class SupplyService:
         if req is None:
             raise NotFound(f"no request {request_id}")
         req["requestId"] = req["id"]
+        source = req.get("decision")  # what decided, before the sentence below says what happened last
         if req.get("orderId"):
             o = self.orders.get(req["orderId"])
-            req["status"] = {"placed": "ordered" if o.get("approvedBy") else "ordered_alone",
-                             "waiting": "waiting", "rejected": "rejected", "blocked": "blocked"}[o["state"]]
+            req["status"] = order_status(o)
+            source = o["decision"]
             if o["state"] in ("placed", "blocked") or o.get("approvedBy"):
                 req["decision"] = {**req.get("decision", {}), "sentence": self._latest_sentence(o)
                                    or req.get("decision", {}).get("sentence", "")}
             req["totalCents"] = o["totalCents"]
+        if req.get("decision"):
+            diet = sorted({d for ln in req.get("lines") or [] for d in ln["need"]["diet"]})
+            req["decision"] = {**req["decision"], **explain(source, req["status"], diet, req.get("deliverBy"))}
         return req
 
     def _latest_sentence(self, o: dict) -> str | None:

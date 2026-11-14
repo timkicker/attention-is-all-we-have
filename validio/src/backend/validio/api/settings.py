@@ -41,7 +41,7 @@ NEVER = tuple(NEVER_ALLERGENS)
 DEFAULT_NAME = "Hotel Espoo kitchen"
 # the demo kitchen's saved Rules (the template, after the five scenes): O-1 and O-2 already used 1,190.10 € of
 # the pass, so alone and approval count per order and only the week counts them all
-DEMO_RULES = {"aloneUpToCents": 120000, "approvalUpToCents": 500000, "substitutes": "extra", "maxExtraPct": 5,
+DEMO_RULES = {"aloneUpToCents": 120000, "approvalUpToCents": 200000, "substitutes": "extra", "maxExtraPct": 5,
               "perWeekCents": 800000}
 
 

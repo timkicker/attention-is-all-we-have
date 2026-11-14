@@ -332,7 +332,9 @@ def ledger_head(ctx: CtxDep):
 
 def _demo_state(ctx: Ctx, on: bool) -> DemoState:
     real = ctx.real_stock()
-    return DemoState(stock_out_466375=on, code_required=ctx.has_code,
+    mode = getattr(ctx.valio, "mode", None)
+    return DemoState(stock_out_466375=on, code_required=ctx.has_code, valio_down=ctx.valio_down(),
+                     valio_mode=mode, valio_mode_text=display.valio_mode_text(mode),
                      real_stock_466375={"quantity": real[0], "unit": real[1]} if real else None)
 
 

@@ -22,6 +22,7 @@ from .tools import TOOLS
 # "Function calling: Supported", latest update September 2026) and the supported-models table at
 # https://ai.google.dev/gemini-api/docs/function-calling. GEMINI_MODEL overrides it.
 DEFAULT_MODEL = "gemini-3.8-flash"
+TIMEOUT_S = 20  # one Gemini step; slower than this and the scripted agent finishes the run
 
 SYSTEM = (
     "You are the purchasing agent of the kitchen hotel-espoo. You buy only through the Validio tools. "
@@ -157,14 +158,17 @@ class GeminiLLM:
     """Gemini function calling over the same five tools. Automatic calling is off: the buyer runs
     every call through the MCP port itself."""
 
-    def __init__(self, api_key: str, model: str):
+    def __init__(self, api_key: str, model: str, fallback: "LLM | None" = None, timeout_s: float = TIMEOUT_S):
         from google import genai
         from google.genai import types
 
         self._types = types
-        self._client = genai.Client(api_key=api_key)
+        self._client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=int(timeout_s * 1000)))
         self.model = model
         self.name = f"Gemini {model}"
+        self.fallback = fallback  # the scripted agent that finishes the run when Gemini fails
+        self.fell_back = False
+        self.note: str | None = None
         self.inputs: list = []
         self._turns: list = []  # the model's own answers as sent, thought signatures included
         self._config = types.GenerateContentConfig(
@@ -176,12 +180,12 @@ class GeminiLLM:
         )
 
     @classmethod
-    def from_env(cls, env: Mapping[str, str] | None = None) -> "GeminiLLM":
+    def from_env(cls, env: Mapping[str, str] | None = None, fallback: "LLM | None" = None) -> "GeminiLLM":
         env = os.environ if env is None else env
         key = env.get("GEMINI_API_KEY")
         if not key:
             raise RuntimeError("GEMINI_API_KEY is not set")
-        return cls(key, env.get("GEMINI_MODEL") or DEFAULT_MODEL)
+        return cls(key, env.get("GEMINI_MODEL") or DEFAULT_MODEL, fallback)
 
     def _contents(self, history: list[dict]) -> list:
         t = self._types
@@ -202,7 +206,22 @@ class GeminiLLM:
         return out
 
     def step(self, history: list[dict[str, Any]]) -> Step:
+        """One Gemini turn. A timeout, a quota or any other failure hands the rest of the run to the scripted
+        agent (`fallback`), which reads the same history; without one the error goes up as before."""
         self.inputs.append(json.loads(json.dumps(history)))
+        if self.fell_back:
+            return self.fallback.step(history)
+        try:
+            return self._step(history)
+        except Exception as e:
+            if self.fallback is None:
+                raise
+            self.fell_back = True
+            self.note = f"Gemini did not answer ({type(e).__name__}), the scripted agent finished the run."
+            self.name = f"{self.fallback.name}, after Gemini failed"
+            return self.fallback.step(history)
+
+    def _step(self, history: list[dict[str, Any]]) -> Step:
         r = self._client.models.generate_content(model=self.model, contents=self._contents(history),
                                                  config=self._config)
         calls = [ToolCall(fc.name, dict(fc.args or {})) for fc in (r.function_calls or [])]
@@ -222,5 +241,10 @@ def model_env(env_file: Path | None = DEFAULT_ENV) -> dict[str, str]:
 def make_llm(scene: int, env_file: Path | None = DEFAULT_ENV) -> LLM:
     env = model_env(env_file)
     if env.get("LLM_MODE", "").strip().lower() != "fake" and env.get("GEMINI_API_KEY"):
-        return GeminiLLM.from_env(env)
+        return GeminiLLM.from_env(env, fallback=FakeLLM(scene))
     return FakeLLM(scene)
+
+
+def model_text(llm: Any) -> str:
+    """"Agent: Gemini" or "Agent: scripted", for under the result."""
+    return "Agent: Gemini" if isinstance(llm, GeminiLLM) and not llm.fell_back else "Agent: scripted"

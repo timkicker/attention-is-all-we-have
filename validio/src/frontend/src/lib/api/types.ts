@@ -114,6 +114,22 @@ export interface RankedOption {
   moneyText?: string;
   /** The sentence as a list, one reason each; the screen joins them. */
   reasons?: string[];
+  /** Price per litre or kilo when the pack size is known: "1.01 € per l". */
+  unitPriceText?: string;
+  /** Valio's earliest delivery date, ISO. */
+  deliveryDate?: string;
+  /** "Arrives Mon 16 Nov". */
+  deliveryText?: string;
+  /** "Order by Sun 15 Nov 17:00", or "Order cut-off passed Thu 12 Nov 15:00". */
+  cutoffText?: string;
+  /** "Delivered in full 99 of 100 times", "No record yet: treated as least reliable". */
+  reliabilityText?: string;
+  /** The diet the request needs with how sure: "Lactose free: Valio confirms, ingredients agree". */
+  dietText?: string;
+  /** Chosen option only: why it won, two short sentences. */
+  whyText?: string;
+  /** Every other option: why not this one. "Costs 90.00 € more: 1.10 € per l against 1.01 €." */
+  whyNotText?: string;
 }
 
 export interface SplitPart {
@@ -160,7 +176,31 @@ export interface Decision {
   sentence: string;
   /** At most about 12 words for the screen. */
   summary?: string;
+  /** Why it ended here, for every status. */
+  reasonCode?: ReasonCode;
+  /** One plain sentence in the kitchen's own limits: "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone." */
+  ownerText?: string;
 }
+
+export type ReasonCode =
+  | "auto_ok"
+  | "over_alone"
+  | "over_budget"
+  | "swap_unlisted"
+  | "diet_unchecked"
+  | "stock_unconfirmed"
+  | "ask_other"
+  | "week_cap"
+  | "hard_cap"
+  | "diet"
+  | "no_price"
+  | "sales_block"
+  | "outside_groups"
+  | "none_available"
+  | "blocked_other"
+  | "valio_down"
+  | "too_many"
+  | "unreadable";
 
 export interface RequestLine {
   lineId: string;
@@ -178,6 +218,10 @@ export interface RequestLine {
   chosen?: Choice;
   /** One sentence on why a swap was needed and what it found. */
   swapSentence?: string;
+  /** The Best Pick key that chose between the top two: "price", "delivery record", "labels", "footprint", "only option". */
+  decidedBy?: string;
+  /** "Decided by: price." or "Only one option fits." */
+  decidedByText?: string;
 }
 
 export interface Choice {
@@ -240,7 +284,17 @@ export interface SupplyRequest {
   liveCountText?: string;
   /** The one muted line that names a simulated stock-out: "Out of stock (simulated). Swap not on Valio's list." */
   leadText?: string;
+  /** How long Validio took for this request, Valio included. */
+  elapsedMs?: number;
+  /** How Valio was asked; replay means recorded answers, never "Live". */
+  valioMode?: ValioMode;
+  /** "Done in 3 s, 12 products checked with Valio". */
+  speedText?: string;
+  /** "Valio checked 10:00", or "Valio's recorded answers" in replay. */
+  valioText?: string;
 }
+
+export type ValioMode = "live" | "record" | "replay";
 
 /** One row in the inbox. */
 export interface InboxItem {
@@ -505,8 +559,22 @@ export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;
   stockOut466375: boolean;
+  /** The demo switch "Valio not answering": every Valio read fails (POST /api/demo/valio-down). */
+  valioDown?: boolean;
+  valioMode?: ValioMode;
+  /** "Valio's recorded answers" or "Valio live". */
+  valioModeText?: string;
   /** What Valio really has of 466375, read from its availability answer at request time. */
   realStock466375?: { quantity: number; unit: string };
+}
+
+/** The body of a 409 from approve or reject. */
+export interface ConflictBody {
+  detail: string;
+  /** refused: Valio was asked again and nothing was ordered. already: decided before. conflict: idempotency key reused. */
+  code?: "refused" | "already" | "conflict";
+  /** code refused only: "Valio's price went from 18.01 € to 18.60 € (+3.3 %). Not ordered." */
+  refusedText?: string;
 }
 
 // ---------- accounts (validio/docs/ACCOUNTS-API.md) ----------
