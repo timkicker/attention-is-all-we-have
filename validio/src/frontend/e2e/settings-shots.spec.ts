@@ -23,7 +23,6 @@ for (const v of VIEWS) {
       problems.push(...(await slop(p)).map((x) => `${name}: ${x}`));
     };
     const go = (path: string) => page.goto(`${path}${path.includes("?") ? "&" : "?"}theme=${v.theme}`);
-    const phone = v.width < 761;
 
     // A new account: the checklist with nothing done.
     await go("/login");
@@ -40,14 +39,9 @@ for (const v of VIEWS) {
     await shoot("checklist-new");
 
     // Settings of a real account.
-    await go(phone ? "/settings" : "/settings/kitchen");
-    if (phone) {
-      await expect(page.getByTestId("set-row-kitchen")).toBeVisible();
-      await shoot("settings-list");
-      await page.getByTestId("set-row-kitchen").click();
-    }
+    await go("/settings");
     await expect(page.getByTestId("kitchen-name")).toContainText("Ravintola Kumpula");
-    await shoot("settings-kitchen");
+    await shoot("settings");
     await page.getByTestId("kitchen-edit").click();
     await page.locator("#f-kitchen-name").fill("");
     await page.getByTestId("kitchen-save").click();
@@ -64,7 +58,7 @@ for (const v of VIEWS) {
     await expect(page.getByTestId("setup")).toContainText("1 of 3");
     await shoot("checklist-kitchen-done");
 
-    await go("/settings/login");
+    await go("/settings");
     await expect(page.getByTestId("login-email")).toContainText("chef@example.org");
     await shoot("settings-login");
     await page.getByTestId("login-change-email").click();
@@ -90,7 +84,7 @@ for (const v of VIEWS) {
     await expect(page.getByTestId("example-send")).toBeEnabled();
     await shoot("inbox-example-sent");
 
-    await go("/settings/diet");
+    await go("/settings");
     await expect(page.getByTestId("diet-FREE_FROM_LACTOSE")).toHaveAttribute("aria-checked", "true");
     await shoot("settings-diet");
     await page.getByTestId("diet-FREE_FROM_GLUTEN").click();
@@ -106,13 +100,8 @@ for (const v of VIEWS) {
     await expect(page.getByTestId("diet-saved")).toBeVisible();
     await shoot("settings-diet-saved");
 
-    await go("/settings/login");
-    await shoot("settings-login-demo");
-    await go("/settings/theme");
-    await expect(page.getByTestId("theme")).toBeVisible();
-    await shoot("settings-theme");
-
-    if (phone) await go("/settings");
+    await go("/settings");
+    await shoot("settings-demo");
     await page.getByTestId("log-out").click();
     await expect(page).toHaveURL(/\/login/);
 
