@@ -12,6 +12,11 @@ export type Timeline = S['Timeline']
 export type Life = S['Life']
 export type Statement = S['Statement']
 export type Dropped = S['Dropped']
+export type Check = S['Check'] & { question?: string | null; as_of?: string | null }
+export type CheckClaim = Check['claims'][number]
+export type Evidence = S['Evidence']
+export type CheckRecorded = S['CheckRecorded']
+export type Stats = S['Stats']
 /** Fields the API adds beyond the contract: the last revision that still had the sentence. */
 export type DroppedRow = Dropped['rows'][number] & { last_rev?: number | null; last_url?: string | null; time_precision?: string }
 
@@ -61,6 +66,11 @@ export const api = {
     p: { topic?: string; lang?: string; reason?: string; min_days?: number; offset?: number; limit?: number },
     init?: RequestInit,
   ) => getJson<Dropped>('/api/dropped', p, init),
+  check: (body: { text: string; as_of?: string; langs?: string[] }) =>
+    getJson<Check>('/api/check', {}, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }),
+  checkRun: (runId: string, asOf?: string) => getJson<Check>(`/api/check/${encodeURIComponent(runId)}`, { as_of: asOf }),
+  checkRecorded: () => getJson<CheckRecorded>('/api/check/recorded'),
+  stats: () => getJson<Stats>('/api/stats'),
   timeline: (lang: string, pageId: number, h: string) =>
     getJson<Timeline>(`/api/claim/${encodeURIComponent(lang)}/${pageId}/${encodeURIComponent(h)}/timeline`),
 }
