@@ -252,7 +252,6 @@ const SCENES = {
     await go("/");
     await point("inbox-summary-R-2", 1); // "Asks you: ..."
     await click("inbox-R-2");
-    await point("asked-for", 1); // 466375 itself: 0 in stock, 200 needed
     await point("option-465256", 2); // R-2 opens on Beyond the list
     await click("tab-list");
     for (const p of ["466151", "473986"]) await point(`option-${p}`, 0.6); // blocked on milk, no delivery date
@@ -262,7 +261,7 @@ const SCENES = {
     const order = (await api("/api/requests/R-2")).orderId;
     await act("approve", async () => (await api(`/api/orders/${order}`)).state === "placed",
       () => api(`/api/orders/${order}/approve`, chef));
-    await point("order-steps", 1.5);
+    await point("order-done", 1.5); // "Price and delivery confirmed again before ordering."
     await phone(false);
   },
   // Shot 4: the Steady Order renews, the parmesan splits, the pancakes wait, the mozzarella is held
