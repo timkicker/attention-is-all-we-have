@@ -141,7 +141,10 @@ def inbox(ctx: CtxDep):
 
 @router.get("/requests/{request_id}", response_model=SupplyRequestView, response_model_exclude_none=True)
 def request_detail(ctx: CtxDep, request_id: str):
-    return asked_apart(ctx, get_request(ctx, request_id))
+    v = asked_apart(ctx, get_request(ctx, request_id))
+    if v.status == "waiting" and not v.lead_text and v.decision:
+        v.lead_text = display.reason_text(v.decision.sentence)  # why it waits, under the question
+    return v
 
 
 def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
@@ -270,7 +273,7 @@ def ledger(ctx: CtxDep):
         e["request_id"] = rid
         if rid and rid not in titles:
             if rid.startswith("M-"):
-                titles[rid] = ("Spend Pass", "Spend Pass")  # the page puts the id next to it
+                titles[rid] = ("Rules", "Rules")
             elif rid == "demo":
                 titles[rid] = ("Demo", "Demo")
             elif rid.startswith("R-"):
