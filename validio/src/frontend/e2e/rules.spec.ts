@@ -28,22 +28,22 @@ async function edit(page: Page) {
 test("the three blocks say each rule once, with no summary on top", async ({ page }) => {
   await fresh(page);
   await page.locator("#nav-rules").click();
-  await expect(page.getByTestId("rules-version")).toContainText("Version 4");
+  await expect(page.getByTestId("rules-version")).toContainText("Version 2");
   await expect(row(page, "alone")).toContainText("Up to 1,200.00");
   await expect(row(page, "waiting")).toContainText("Up to 5,000.00");
   await expect(row(page, "blocked")).toContainText("Above 5,000.00");
   await expect(row(page, "week")).toContainText("Up to 8,000.00");
   await expect(row(page, "must")).toContainText("Lactose-free");
-  await expect(row(page, "never")).toContainText("Nuts");
+  await expect(row(page, "never")).toContainText("Nothing left out");
   await expect(row(page, "allowed")).toContainText("From Valio's list");
-  await expect(row(page, "extra")).toContainText("Up to 10 %");
+  await expect(row(page, "extra")).toContainText("Up to 5 %");
   await expect(row(page, "unlisted")).toContainText("Waiting for you");
   // No sentence repeating them: the page holds 1,200.00 exactly once.
   expect((await page.locator("main").innerText()).match(/1,200\.00/g)).toHaveLength(1);
   expect(await slop(page)).toEqual([]);
 });
 
-test("one save asks the code once, a wrong code stays inline, the right one makes version 5", async ({ page }) => {
+test("one save asks the code once, a wrong code stays inline, the right one makes version 3", async ({ page }) => {
   await fresh(page);
   await page.goto("/rules");
   await edit(page);
@@ -65,9 +65,9 @@ test("one save asks the code once, a wrong code stays inline, the right one make
   await page.getByTestId("code-submit").click();
   await expect(page).toHaveURL(/\/rules\?saved$/);
   await expect(page.locator("#rules-saved")).toContainText("Saved");
-  await expect(page.getByTestId("rules-version")).toContainText("Version 5");
+  await expect(page.getByTestId("rules-version")).toContainText("Version 3");
   await expect(row(page, "alone")).toContainText("Up to 1,500.00");
-  await expect(row(page, "never")).toContainText("Nuts and peanuts");
+  await expect(row(page, "never")).toContainText("Peanuts");
 });
 
 test("problems show under their own field and nothing is saved", async ({ page }) => {
@@ -92,7 +92,7 @@ test("problems show under their own field and nothing is saved", async ({ page }
   await page.getByTestId("code-submit").click();
   await expect(page.getByTestId("f-week-problem")).toHaveText("At least 5,000.00 €, the Waiting for you limit.");
   await page.goto("/rules");
-  await expect(page.getByTestId("rules-version")).toContainText("Version 4");
+  await expect(page.getByTestId("rules-version")).toContainText("Version 2");
 });
 
 test("saving nothing says so, Never hides the extra cost, an empty week is no limit", async ({ page }) => {

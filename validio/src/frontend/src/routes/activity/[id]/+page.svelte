@@ -3,6 +3,7 @@
   /// what Validio checked at Valio, the rule that decided, the result, and the
   /// proof folded away. While it waits, the owner answers here: Approve asks
   /// for the approval code under the buttons, Reject needs none.
+  import { tick } from "svelte";
   import { page } from "$app/state";
   import { Check, ChevronRight, X } from "@lucide/svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
@@ -71,6 +72,12 @@
       bump();
     } catch (e) {
       problem = why(e);
+      // Answered elsewhere meanwhile: close the code and read the request again.
+      if (e instanceof ApiError && e.status === 409) {
+        asking = false;
+        code = "";
+        bump();
+      }
     } finally {
       busy = false;
     }
@@ -140,10 +147,13 @@
       <Section class="v-card">
         <div class="ask" data-testid="approval">
           <p class="ask-q">Your agent waits for you. Valio holds this price until {until(d.approval.holdUntil)}.</p>
-          <div class="v-buttons">
-            <Button id="approve" data-testid="approve" aria-expanded={asking} disabled={busy} onclick={() => (asking = true)}>Approve</Button>
-            <Button id="reject" data-testid="reject" variant="outline" disabled={busy} onclick={reject}>Reject</Button>
-          </div>
+          <!-- While the code is asked, its own Approve and Cancel stand in for these two. -->
+          {#if !asking}
+            <div class="v-buttons">
+              <Button id="approve" data-testid="approve" aria-expanded={false} disabled={busy} onclick={() => (asking = true)}>Approve</Button>
+              <Button id="reject" data-testid="reject" variant="outline" disabled={busy} onclick={reject}>Reject</Button>
+            </div>
+          {/if}
           {#if problem && !asking}<p class="ask-problem" role="alert">{problem}</p>{/if}
         </div>
         {#if asking}
@@ -152,13 +162,13 @@
               bind:value={code}
               error={problem}
               {busy}
-              submitLabel="Confirm"
+              submitLabel="Approve"
               onsubmit={confirm}
               oncancel={() => {
                 asking = false;
                 code = "";
                 problem = "";
-                document.getElementById("approve")?.focus();
+                tick().then(() => document.getElementById("approve")?.focus());
               }}
             />
           </div>
@@ -176,6 +186,8 @@
       </Section>
     </section>
 
+    <!-- A request blocked before Valio was asked has nothing checked: no empty card for it. -->
+    {#if d.checks.length}
     <section class="part" aria-labelledby="h-checks">
       <h2 class="v-h" id="h-checks">What Validio checked at Valio</h2>
       <Section class="v-card">
@@ -184,6 +196,7 @@
         {/each}
       </Section>
     </section>
+    {/if}
 
     <section class="part" aria-labelledby="h-rule">
       <h2 class="v-h" id="h-rule">Which rule decided</h2>
@@ -200,8 +213,9 @@
       <h2 class="v-h" id="h-result">Result</h2>
       <Section class="v-card">
         {#if d.result}
-          {@render fact("result-order", "Valio order", d.result.orderId)}
-          {@render fact("result-delivery", "Delivery", date(d.result.delivery))}
+          {@const ids = d.result.orderIds.length ? d.result.orderIds : [d.result.orderId]}
+          {@render fact("result-order", ids.length > 1 ? "Valio orders" : "Valio order", ids.join(", "))}
+          {#if d.result.delivery}{@render fact("result-delivery", "Delivery", date(d.result.delivery))}{/if}
         {:else}
           <p class="none" data-testid="result-none">{NOT_ORDERED[d.item.status]}</p>
         {/if}

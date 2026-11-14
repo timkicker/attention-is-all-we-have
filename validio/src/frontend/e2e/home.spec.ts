@@ -33,8 +33,8 @@ test("first start: three steps, each one a link", async ({ page }) => {
 test("set up: agent and week on one line, Needs you, Latest without repeats", async ({ page }) => {
   await fresh(page);
   await expect(page.getByTestId("section-setup")).toHaveCount(0);
-  await expect(page.getByTestId("home-agent")).toContainText("Claude Code");
-  await expect(page.getByTestId("home-agent")).toContainText("active");
+  // The demo kitchen has no agent until one connects, as the real demo copy.
+  await expect(page.getByTestId("home-agent")).toContainText("No agent connected");
   await expect(page.getByTestId("home-week")).toContainText("1,190.10");
   await expect(page.getByTestId("home-week")).toContainText("8,000.00");
   await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "15");
@@ -54,7 +54,7 @@ test("after approving, Home updates on its own", async ({ page }) => {
   await page.locator("#approve").click();
   await page.locator("#approve-code").fill(CODE);
   await page.getByTestId("code-submit").click();
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
+  await expect(page.getByTestId("detail-status")).toHaveText("Approved by you");
   await page.locator("#nav-home").click();
   await expect(page.getByTestId("needs-none")).toBeVisible();
   await expect(page.getByTestId("home-week")).toContainText("2,705.10");

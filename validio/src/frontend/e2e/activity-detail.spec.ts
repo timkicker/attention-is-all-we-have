@@ -8,11 +8,11 @@ test("an ordered request reads asked, checked, rule, result, proof", async ({ pa
   await page.goto("/activity/R-2");
   await expect(page.getByTestId("detail-title")).toHaveText(/mozzarella-fontal/);
   await expect(page.getByTestId("detail-status")).toHaveText("Ordered alone");
-  await expect(page.getByTestId("asked")).toContainText("Claude Code");
+  await expect(page.getByTestId("asked")).toContainText("Agent");
   await expect(page.getByTestId("check-stock")).toHaveAttribute("data-ok", "false");
   await expect(page.getByTestId("check-substitute")).toHaveAttribute("data-ok", "true");
   await expect(page.locator("#rule-link")).toHaveAttribute("href", "/rules");
-  await expect(page.locator("#rule-link")).toContainText("Rules, version 4");
+  await expect(page.locator("#rule-link")).toContainText("Rules, version 2");
   await expect(page.getByTestId("result-order")).toContainText("O-6");
   await expect(page.getByTestId("result-delivery")).toContainText("Mon 16 Nov");
   await expect(page.getByTestId("approval")).toHaveCount(0);
@@ -23,7 +23,7 @@ test("an ordered request reads asked, checked, rule, result, proof", async ({ pa
   expect(await slop(page)).toEqual([]);
 });
 
-test("waiting: Approve asks the code under the buttons, Cancel closes it", async ({ page }) => {
+test("waiting: Approve asks the code in place of the buttons, Cancel brings them back", async ({ page }) => {
   await fresh(page);
   await page.goto("/activity/R-4");
   await expect(page.getByTestId("approval")).toContainText("15:00 today");
