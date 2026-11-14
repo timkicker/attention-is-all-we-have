@@ -19,12 +19,14 @@ export const OPEN_EXAMPLE = 'Open this comparison →'
 // Search result status, right side of a result row
 export const READY = 'Ready'
 export const LOADING = 'Loading now'
-export const NO_FINNISH = 'No Finnish article'
+export const NO_FINNISH = 'Cannot be loaded'
 /** "6 min to load". */
 export function toLoad(etaS: number): string {
   return `${mins(etaS)} to load`
 }
 export const NO_RESULTS = 'No article found'
+export const SEARCHING = 'Searching'
+export const SEARCH_FAILED = 'Search is not available right now'
 
 // Ingest
 export const READING = 'Reading the full edit history in seven languages. You can close this tab and come back from search'
@@ -50,3 +52,6 @@ export function faster(fromYear: number, toYear: number, etaS: number): string {
 }
 export const INGEST_FAILED = 'Loading this article failed'
 export const NO_FINNISH_LONG = 'This article has no Finnish version, so Parallax cannot compare it'
+export const INGEST_NOT_FOUND = 'There is no loading job for this article'
+export const START_AGAIN = 'Start loading'
+export const LOAD_FAILED = 'Could not read the loading state. Trying again'
