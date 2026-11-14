@@ -1,17 +1,18 @@
-import { test, expect } from "@playwright/test";
+import { CODE, connectDemoAgent, expect, fresh, test } from "./kitchen";
 
 // The play controls against the live backend: ask, change limits, stock-out on and off, and a
-// refused Steady click that reloads the order.
-const CODE = process.env.E2E_CODE!;
+// refused Steady click that reloads the order. On a demo copy from the plain seed with the demo agent
+// connected (the menu's Ask is that agent).
 const WRONG = CODE === "000000" ? "111111" : "000000";
 
 test.describe.configure({ mode: "serial" });
 
-test.beforeAll(async ({ request }) => {
-  expect((await request.post("/api/demo/reset")).status()).toBe(200);
+test.beforeAll(async ({ kitchen }) => {
+  await fresh(kitchen);
+  await connectDemoAgent(kitchen);
 });
-test.afterAll(async ({ request }) => {
-  await request.post("/api/demo/reset");
+test.afterAll(async ({ kitchen }) => {
+  await fresh(kitchen);
 });
 
 test("ask as the kitchen's agent: one row per ask, the log folded", async ({ page }) => {

@@ -100,7 +100,7 @@ function measure(page: Page, name: string) {
             if (a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) fail("6a", `labels overlap: "${(labels[i].l as HTMLElement).innerText}" and "${(labels[j].l as HTMLElement).innerText}"`);
           }
         const name = lane.querySelector(".rc-n")?.textContent ?? "";
-        if (/Total|Limits/.test(name) && !labels.some(({ l }) => /never above/.test(l.textContent ?? ""))) fail("6a", `${name} plot without never above`);
+        if (/Total|Limits/.test(name) && !labels.some(({ l }) => /blocked above/.test(l.textContent ?? ""))) fail("6a", `${name} plot without blocked above`);
       }
     }
     for (const x of document.querySelectorAll(".rc-xax")) if (!x.closest(".rc-lane")) fail("6", "rc-xax outside a lane");
@@ -245,7 +245,9 @@ function measure(page: Page, name: string) {
       const back = document.querySelector(".kopfleiste a");
       if (back) {
         const r = box(back);
-        if (!near(r.left, 8) || !near(r.right, 52) || !near(r.top, 0) || !near(r.bottom, 48)) fail("22", `back box ${r.left},${r.top} ${r.right},${r.bottom}`);
+        // The demo bar, where shown, sits above the header on the phone.
+        const t = document.querySelector(".demobar")?.getBoundingClientRect().bottom ?? 0;
+        if (!near(r.left, 8) || !near(r.right, 52) || !near(r.top, t) || !near(r.bottom, t + 48)) fail("22", `back box ${r.left},${r.top} ${r.right},${r.bottom}`);
       }
     }
     return out;
@@ -269,7 +271,7 @@ for (const v of VIEWS) {
 
       await fresh(page);
       await go("/");
-      await expect(page.getByTestId("inbox-R-1")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Inbox" })).toBeVisible();
       await check("inbox");
       await go("/requests/R-1");
       await expect(page.locator("#request-title")).toBeVisible();
@@ -554,20 +556,20 @@ test("rejected request shows the proposal, not a spend", async ({ page }) => {
   await expect(lane.locator("[data-plot-subject]")).toHaveCount(0);
 });
 
-// The inbox groups a request by the state its pill shows: nothing under
-// Handled may still be working or waiting. The fixture states here; scene 1
-// with R-1 still "working" in e2e-live (the fixtures have no working state).
+// The Inbox keeps only what is open: no row there carries a final pill (handled
+// requests live on Orders).
 const FINAL_PILLS = ["Ordered alone", "Ordered", "Rejected", "Blocked"];
-async function handledPills(page: Page): Promise<string[]> {
-  await expect(page.getByTestId("inbox-R-1")).toBeVisible();
-  const sec = page.locator("section", { has: page.locator("#h-Handled") });
-  return (await sec.count()) ? sec.locator(".v-pill").allInnerTexts() : [];
+async function inboxPills(page: Page): Promise<string[]> {
+  await expect(page.getByRole("heading", { name: "Inbox" })).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  return page.locator("main .v-pill").allInnerTexts();
 }
-test("handled rows carry only final pills", async ({ page }) => {
+test("the inbox holds no handled rows", async ({ page }) => {
   await fresh(page);
   await page.goto("/");
-  for (const p of await handledPills(page)) expect(FINAL_PILLS, p).toContain(p.trim());
+  for (const p of await inboxPills(page)) expect(FINAL_PILLS, p).not.toContain(p.trim());
   await stockOut(page);
   await page.goto("/");
-  for (const p of await handledPills(page)) expect(FINAL_PILLS, p).toContain(p.trim());
+  await expect(page.getByTestId("inbox-R-2")).toBeVisible();
+  for (const p of await inboxPills(page)) expect(FINAL_PILLS, p).not.toContain(p.trim());
 });

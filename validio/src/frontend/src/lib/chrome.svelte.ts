@@ -10,6 +10,8 @@ export const chrome = $state({
   phone: phoneQuery?.matches ?? false,
   /** A detail page (VHead with a way back): on the phone it draws its own header. */
   detail: false,
+  /** Approve asks for the code now: on the phone the demo bar shows only then. */
+  asking: false,
   /** Whether the stock-out is on, for the menu. */
   stockIsOut: false,
 });

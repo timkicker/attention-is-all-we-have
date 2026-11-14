@@ -167,9 +167,17 @@ class Ctx:
             self._kitchen = (path, JWK.from_json(load_or_create_key(path).export_public()))
         return self._kitchen[1]
 
-    def reset(self) -> None:
+    def reset(self, fresh: bool = False) -> None:
+        """`fresh` on an account: the seed of `make seed` in its own store and keys instead of the template, with no
+        agent connected (the live e2e starts every run from there, also against the public link)."""
         with self.rt.lock:
-            if self._reseed is not None:
+            if fresh and self.account is not None:
+                from .connect import leave_unconnected
+
+                self.rt.close()
+                seed.reset(self.db_path, self.keys_dir)
+                leave_unconnected(self.db_path)
+            elif self._reseed is not None:
                 self._reseed()
             else:
                 seed.reset(self.db_path, self.keys_dir)

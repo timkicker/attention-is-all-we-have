@@ -37,5 +37,5 @@ jobs:
       - name: pytest
         run: |
           dirs="tests/contract"
-          for d in pipeline/tests api/tests; do [ -d "$d" ] && dirs="$dirs $d"; done
+          for d in pipeline/tests engine/tests eval/tests api/tests; do [ -d "$d" ] && dirs="$dirs $d"; done
           uv run pytest $dirs -q
