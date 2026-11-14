@@ -51,7 +51,7 @@ for (const v of VIEWS) {
     await page.getByTestId("vendor-fold").click();
     await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/);
     await expect(page.getByTestId("mcp-url")).toContainText("/mcp/c/");
-    await expect(page.getByTestId("mcp-hint")).toContainText("claude mcp add --transport http validio URL");
+    await expect(page.getByTestId("mcp-hint")).toHaveText("Add this URL to your agent as an MCP server. Allow appears here on its first call.");
     await shoot("pairing");
 
     await page.getByTestId("agent-demo").click();
@@ -151,7 +151,7 @@ test("any MCP agent: its first call on the pairing URL shows the consent without
   await page.getByTestId("agent-connect").click();
   const url = (await page.getByTestId("mcp-url").textContent())!;
   expect(url).toMatch(/^https?:\/\/.+\/mcp\/c\/[0-9a-f]+\/$/);
-  await expect(page.getByTestId("mcp-hint")).toContainText("claude mcp add --transport http validio URL");
+  await expect(page.getByTestId("mcp-hint")).toHaveText("Add this URL to your agent as an MCP server. Allow appears here on its first call.");
   for (const w of [1280, 390]) {
     await page.setViewportSize({ width: w, height: w === 390 ? 844 : 900 });
     await page.waitForTimeout(250);
