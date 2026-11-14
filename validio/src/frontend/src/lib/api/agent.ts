@@ -57,7 +57,7 @@ export function mayWords(r: Rules): string[] {
   ];
 }
 
-// A fresh demo copy: rules saved, no agent yet, so "Connect the demo agent" is the first thing on the page.
+// A fresh demo copy: rules saved, no agent yet; an MCP agent connects itself.
 function start(): Mock {
   return {
     agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
@@ -100,11 +100,12 @@ function bumpVersion(m: Mock, why: string): number {
 }
 
 const LOOK = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-function pairCode(): string {
+function randomCode(n: number): string {
   let s = "";
-  for (let i = 0; i < 8; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
-  return `${s.slice(0, 4)}-${s.slice(4)}`;
+  for (let i = 0; i < n; i++) s += LOOK[Math.floor(Math.random() * LOOK.length)];
+  return `${s.slice(0, n / 2)}-${s.slice(n / 2)}`;
 }
+const pairCode = () => randomCode(8);
 
 function token(): string {
   const b = new Uint8Array(24);
@@ -112,15 +113,18 @@ function token(): string {
   return Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
 }
 
-/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it. */
-export function mockMcpCall(): void {
+/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it.
+ *  The agent gets the same verification code in its tool answer; returned here for the console. */
+export function mockMcpCall(): string | undefined {
   const m = load();
   if (m.agent.state !== "pairing") return;
-  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules) }, versions: m.agent.versions };
+  const verifyCode = randomCode(6);
+  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode }, versions: m.agent.versions };
   store(m);
+  return verifyCode;
 }
 // In the browser console of the fixture build: validioMcpCall()
-if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => void }).validioMcpCall = mockMcpCall;
+if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall = mockMcpCall;
 
 const mock = {
   async agent(): Promise<AgentState> {
@@ -139,13 +143,6 @@ const mock = {
       },
       versions: m.agent.versions,
     };
-    store(m);
-    return structuredClone(m.agent);
-  },
-  async demo(): Promise<AgentState> {
-    await later(300);
-    const m = load();
-    m.agent = { state: "consent", consent: { name: "Demo kitchen agent", keyId: "q3Hk7pXa", may: mayWords(m.rules) }, versions: m.agent.versions };
     store(m);
     return structuredClone(m.agent);
   },
@@ -207,8 +204,6 @@ const mock = {
 export const agentApi = {
   agent: (): Promise<AgentState> => (LIVE ? call("GET", "/api/agent") : mock.agent()),
   pair: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pair") : mock.pair()),
-  /** Demo copies only: the server's demo agent answers the code. */
-  demo: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/demo") : mock.demo()),
   allow: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/allow") : mock.allow()),
   deny: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/deny") : mock.deny()),
   pause: (paused: boolean): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pause", { paused }) : mock.pause(paused)),
