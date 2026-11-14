@@ -14,9 +14,7 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
-  import VAsk from "$lib/v/VAsk.svelte";
   import VPill from "$lib/v/VPill.svelte";
-  import VMenu from "$lib/v/VMenu.svelte";
 
   let { children } = $props();
 
@@ -50,7 +48,6 @@
 
   afterNavigate(({ to }) => {
     if (to?.url) notePage(to.url.pathname);
-    askOpen = false; // a result row was followed
   });
 
   // The rail: the window between phone and desktop, or the person folded it.
@@ -76,7 +73,6 @@
     void chrome.version;
     if (!session.account) return;
     count().catch(() => {});
-    api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
   });
 
   // Any write the server refused for want of the token (a demo switch, or
@@ -120,14 +116,6 @@
       tokenOpen = true;
     }
   }
-  // The fixture answers at once; with the backend the kitchen's agent asks again first.
-  demoActions.stockOut = () => demo(() => api.stockOut(true), "/");
-  demoActions.stockBack = () => demo(() => api.stockOut(false), page.url.pathname);
-  demoActions.ask = async () => {
-    askOpen = true;
-  };
-
-  let askOpen = $state(false);
   demoActions.reset = () => demo(() => api.reset(), "/");
 
   function useToken(e: SubmitEvent) {
@@ -210,7 +198,6 @@
           <span>{session.account.name}</span>
           <span class="sr-only">, Settings</span>
         </a>
-        {#if session.account.isDemo}<VMenu />{/if}
       </header>
     {/if}
     <div class="wrap">
@@ -253,8 +240,6 @@
     </div>
   </form>
 </Dialog>
-
-<VAsk open={askOpen} onClose={() => (askOpen = false)} />
 
 {#if LIVE}<span hidden id="live-mode"></span>{/if}
 
@@ -394,9 +379,6 @@
     background: var(--v-app);
     border-bottom: 1px solid var(--v-line);
   }
-  .phonebar:has(:global(.dialog-backdrop)) {
-    z-index: 60;
-  }
   .pb-name {
     display: inline-flex;
     align-items: center;
@@ -409,10 +391,6 @@
     font-weight: 500;
     color: var(--v-fg);
     text-decoration: none;
-  }
-  .phonebar :global(.menu-btn) {
-    width: 44px;
-    height: 44px;
   }
   .demobar {
     display: flex;

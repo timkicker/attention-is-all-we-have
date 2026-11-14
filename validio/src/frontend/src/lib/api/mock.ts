@@ -1,8 +1,8 @@
 // The web app without a backend. Every answer here is one the real backend
 // gave, recorded by scripts/snapshots.py into snapshots/states.ts; nothing is
-// invented. The demo controls only move between recorded states:
+// invented. The owner's controls only move between recorded states:
 //
-//   mozzarella request: none -> (stock-out) waiting -> placed | rejected
+//   mozzarella request: none -> (stock-out, seeded by the tests) waiting -> placed | rejected
 //   steady order:       pending -> (renew) renewed -> accepted | mozzarella | both
 //
 // The state lives in localStorage so a reload keeps it, as the backend would.
@@ -12,7 +12,6 @@ import { answers, refused, states } from "./snapshots/states";
 import { ApiError } from "./error";
 import type {
   Account,
-  AskOut,
   DemoState,
   InboxItem,
   Ledger,
@@ -31,8 +30,6 @@ type Steady = "pending" | "renewed" | "accepted" | "mozzarella" | "both";
 interface State {
   moz: Moz;
   steady: Steady;
-  /** The stock-out ended again; the recorded answers stay where they were. */
-  back?: boolean;
   /** The limits the owner signed in this browser, laid over the recorded pass. */
   pass?: Pick<SpendPassIn, "autoLimitCents" | "hardCapCents" | "diet" | "deliverBy" | "substitutes">;
 }
@@ -135,12 +132,6 @@ export async function publicGate(token: string): Promise<void> {
   if (want && token !== want) throw new ApiError(401, "wrong or missing kitchen token");
 }
 
-/** No agent runs without the backend: the fixture says so instead of inventing an answer. */
-export async function ask(text: string): Promise<AskOut> {
-  if (!text.trim()) throw new ApiError(422, "say what the kitchen needs");
-  return { model: "none", lines: [], final: "This build has no backend, so no agent can ask. Start it with make demo to try your own text." };
-}
-
 export async function order(id: string): Promise<Order> {
   return at(`/api/orders/${id}`, answers.orders[id]);
 }
@@ -199,28 +190,7 @@ export async function acceptLine(id: string, productId: string, code: string): P
 }
 
 export async function demoState(): Promise<DemoState> {
-  const d = at("/api/demo", answers.demo);
-  return load().back ? { ...d, stockOut466375: false } : d;
-}
-
-/**
- * The stock-out switch. With the backend the kitchen's agent then asks again;
- * the fixture jumps to the answer that run gave: the request waits for the owner.
- */
-export async function stockOut(on = true): Promise<DemoState> {
-  const s = load();
-  if (!on) {
-    // Ending it: the mozzarella request keeps the state it reached.
-    if (s.moz !== "none") save({ ...s, back: true });
-    return demoState();
-  }
-  if (s.back) save({ ...s, back: false });
-  if (s.moz === "none") {
-    // An accepted mozzarella line cannot stay accepted once the stock is gone.
-    const steady: Steady = s.steady === "mozzarella" ? "renewed" : s.steady === "both" ? "accepted" : s.steady;
-    save({ ...load(), moz: "waiting", steady });
-  }
-  return demoState();
+  return at("/api/demo", answers.demo);
 }
 
 export async function reset(): Promise<DemoState> {
