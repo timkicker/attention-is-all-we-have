@@ -2,10 +2,10 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := lives bisect embed load checks align judge gloss eval m-lives contested atlas bench \
+A_STUBS := bisect embed load checks align judge gloss eval m-lives contested atlas bench \
 	sources-data l-scale dump release
 
-.PHONY: fetch-smoke fetch parse test-a $(A_STUBS)
+.PHONY: fetch-smoke fetch parse lives test-a $(A_STUBS)
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -15,6 +15,9 @@ fetch:
 
 parse:
 	$(PY) -m pipeline.parse --topic $(TOPIC)
+
+lives:
+	$(PY) -m pipeline.lives --topic $(TOPIC)
 
 test-a:
 	$(UV) run pytest pipeline/tests engine/tests eval/tests -q
