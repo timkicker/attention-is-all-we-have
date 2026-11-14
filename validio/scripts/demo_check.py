@@ -278,13 +278,13 @@ def free_port() -> int:
         return s.getsockname()[1]
 
 
-def start_server(port: int, store: Path, token: str, code: str) -> subprocess.Popen:
+def start_server(port: int, store: Path, token: str, code: str, keys: Path) -> subprocess.Popen:
     try:
         httpx.get(f"http://127.0.0.1:{port}/api/health", timeout=1)
         raise SystemExit(f"something already answers on 127.0.0.1:{port}; it is not this check's server")
     except httpx.HTTPError:
         pass
-    e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_DEMO_TOKEN": token,
+    e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_KEYS": str(keys), "VALIDIO_DEMO_TOKEN": token,
          "VALIDIO_APPROVE_CODE": code, "VALIO_MODE": "replay", "VALIDIO_DEMO": "1"}
     log = open(store / "server.log", "w")  # noqa: SIM115  (the server writes it until it stops)
     p = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
@@ -307,6 +307,8 @@ async def main() -> int:
     ap.add_argument("--base", help="check a running server instead of starting one")
     ap.add_argument("--scenes", default="1,2,3,4,5")
     ap.add_argument("--rounds", type=int, default=2)
+    ap.add_argument("--store", help="play into this directory (validio.db and keys/), e.g. data/template, "
+                                    "the filled kitchen every account is copied from")
     ap.add_argument("-v", "--verbose", action="store_true", help="print the agent's tool calls")
     args = ap.parse_args()
     scenes = [int(s) for s in args.scenes.split(",")]
@@ -316,11 +318,13 @@ async def main() -> int:
         base, db = args.base.rstrip("/"), Path(env().get("VALIDIO_DB") or ROOT / "data" / "validio.db")
         token, code = env().get("VALIDIO_DEMO_TOKEN", ""), env().get("VALIDIO_APPROVE_CODE", "")
     else:
-        store = ROOT / "artifacts" / "demo-check"
+        store = Path(args.store).resolve() if args.store else ROOT / "artifacts" / "demo-check"
         store.mkdir(parents=True, exist_ok=True)
+        if args.store:
+            keys = store / "keys"
         token, code = secrets.token_urlsafe(16), f"{secrets.randbelow(10**6):06d}"
         port = free_port()
-        proc = start_server(port, store, token, code)
+        proc = start_server(port, store, token, code, keys)
         base, db = f"http://127.0.0.1:{port}", store / "validio.db"
     try:
         for i in range(args.rounds):
