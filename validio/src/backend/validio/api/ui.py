@@ -11,6 +11,7 @@ Demo switches: a logged-in demo copy (docs/ACCOUNTS-API.md), or the local kitche
 caller on this machine. Without a code, approve stays closed to anyone not on this machine."""
 
 import hmac
+import json
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
@@ -176,8 +177,8 @@ def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
 
 
 def _show_issued(ctx: Ctx) -> dict:
-    """Spend Pass M-1 shown the way the agent shows it, as the kitchen last issued it. Right after Start over no
-    agent has shown it yet, and the page still has to work."""
+    """Spend Pass M-1 as the kitchen signed it last, the fields the agent discloses: the current version, also
+    right after a re-sign the agent has not shown yet (Rules, Diet, connect)."""
     from ..agent.holder import DISCLOSE
     from ..demo import seed
     from ..orders.service import mandate_dict
@@ -187,16 +188,14 @@ def _show_issued(ctx: Ctx) -> dict:
     # and looking at it is no agent call (no nonce, no pause check)
     claims = seed.issued_claims(seed.issuance(ctx.db_path))
     m = _mandate({k: v for k, v in claims.items() if k not in DEMO_SD_FIELDS or k in DISCLOSE})
-    ctx.store.remember_pass(m.id, mandate_dict(m))
-    return ctx.store.seen_pass(m.id)
+    return json.loads(json.dumps(mandate_dict(m)))
 
 
 @router.get("/spend-passes/{pass_id}", response_model=SpendPassView, response_model_exclude_none=True)
 def spend_pass(ctx: CtxDep, pass_id: str):
-    """The Spend Pass as the agent last showed it. Fields it did not disclose stay absent."""
-    m = ctx.store.seen_pass(pass_id)
-    if m is None and pass_id == SPEND_PASS_ID:
-        m = _show_issued(ctx)
+    """M-1 as the kitchen signed it last; any other pass as the agent last showed it. Fields it does not
+    disclose stay absent."""
+    m = _show_issued(ctx) if pass_id == SPEND_PASS_ID else ctx.store.seen_pass(pass_id)
     if m is None:
         raise HTTPException(404, f"no agent has shown Spend Pass {pass_id} yet")
     shown = sorted(m["disclosed"])
@@ -205,6 +204,7 @@ def spend_pass(ctx: CtxDep, pass_id: str):
         valid_from=datetime.fromtimestamp(m["not_before"], HELSINKI).isoformat(),
         valid_to=datetime.fromtimestamp(m["expires"], HELSINKI).isoformat(),
         auto_limit_cents=m["auto_limit_cents"], hard_cap_cents=m["hard_cap_cents"],
+        week_cap_cents=m.get("week_cap_cents"),
         diet=[CLAIM_NAMES.get(d, d) for d in m["diet"]] if m["diet"] is not None else None,
         categories=m["categories"], deliver_by=m["deliver_by"], substitutes=m["substitutes"],
         split={"max_extra_cost_pct": m["split_max_extra_bp"] / 100, "allow_listed_substitutes": m["split_allow_listed"]},
@@ -228,10 +228,8 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
     changes = {"autoLimitCents": body.auto_limit_cents, "hardCapCents": body.hard_cap_cents,
                "diet": sorted(set(body.diet)), "deliverBy": body.deliver_by.isoformat(),
                "substitutes": SUBSTITUTES_LISTED if body.substitutes else "never"}
-    with ctx.rt.lock:
-        resign(ctx, changes, "Rules changed")
-        m = _show_issued(ctx)  # shown once, so the page and what the next request is judged against agree at once
-    return spend_pass(ctx, m["id"])
+    resign(ctx, changes, "Rules changed")
+    return spend_pass(ctx, SPEND_PASS_ID)
 
 
 @router.get("/orders/{order_id}", response_model=OrderView, response_model_exclude_none=True)
