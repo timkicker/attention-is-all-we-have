@@ -1,21 +1,26 @@
 import { expect, test } from '@playwright/test'
+import { QID, TID, TOPIC, copy, path } from './support'
 
-// PLAN B7 done check: Hood shows one statement with both FOR SYSTEM_TIME AS OF and VEC_DISTANCE_COSINE.
-test('under the hood shows the one statement with AS OF and the vector distance', async ({ page }) => {
-  await page.goto('/hood')
-  await expect(page.getByTestId('hood-timing')).toContainText(/\d+(\.\d)? ms, [\d,]+ rows/)
-  const statements = page.getByTestId('sql-statement')
-  const both = statements.filter({ hasText: 'FOR SYSTEM_TIME AS OF' }).filter({ hasText: 'VEC_DISTANCE_COSINE' })
-  await expect(both.first()).toBeVisible()
-  await expect(page.getByTestId('hood-stats')).toContainText('Sentence lives')
+// Screen 11: how statements are matched, the one query with AS OF and the vector distance, numbers and limits.
+test('under the hood shows the query with AS OF and the vector distance', async ({ page }) => {
+  await page.goto(path.hood())
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(copy.hood.TITLE)
+  await expect(page.getByTestId(TID.hoodSection)).toHaveCount(4)
+  for (const s of ['matched', 'query', 'numbers', 'limits'])
+    await expect(page.locator(`[data-testid="${TID.hoodSection}"][data-section="${s}"]`)).toBeVisible()
+  const sql = page.getByTestId(TID.hoodQuery)
+  await expect(sql).toContainText('FOR SYSTEM_TIME')
+  await expect(sql).toContainText('VEC_DISTANCE_COSINE')
+  // top-1 and top-5 recall only show where the seed has them measured
+  for (const key of ['versions', 'query_ms'])
+    await expect(page.locator(`[data-testid="${TID.hoodNumber}"][data-key="${key}"]`)).toContainText(/\d/)
+  await expect(page.getByTestId(TID.foot)).toContainText(copy.FOOT.affiliation)
 })
 
-test('every data view has its SQL panel', async ({ page }) => {
-  for (const view of ['compare', 'dropped']) {
-    await page.goto(`/${view}`)
-    const panel = page.getByTestId('sql-panel')
-    await expect(panel).toContainText(`GET /api/${view}`)
-    await panel.locator('summary').click()
-    await expect(panel.getByTestId('sql-statement').filter({ hasText: 'FOR SYSTEM_TIME' }).first()).toBeVisible()
-  }
+test('coming from a topic the bar leads back to it', async ({ page }) => {
+  await page.goto(path.hood(QID))
+  const back = page.getByTestId(TID.barLink)
+  await expect(back).toHaveText(copy.backTo(TOPIC))
+  await back.click()
+  await expect(page).toHaveURL(new RegExp(`/t/${QID}`))
 })

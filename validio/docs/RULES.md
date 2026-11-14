@@ -13,6 +13,8 @@ The rules that decide every order are in `src/backend/validio/policy/policies.ce
 
 Validio first asks Cedar about `PlaceOrder`. If that is allowed the outcome is "ordered alone". Otherwise it asks about `Escalate` and an allowed answer means "waiting for you". When neither is allowed the line is blocked and its sentence says why. With several lines in one order the strictest outcome counts for the whole order.
 
+The Rules' per week limit is not a Cedar rule. It is the only limit that counts orders already placed, so Validio checks it before it asks Cedar: when the orders this Spend Pass placed plus the new one would go over it, the order is blocked under the id `never-over-week-cap`. The alone and approval limits always hold per order.
+
 The context of all four rules contains only whole numbers and yes or no values that Validio fills itself, so neither model output nor supplier text can be put into it. Every field is required by the schema, so a typo in a rule fails validation when the app starts and can never turn into a silent change. A Spend Pass that does not show a limit counts as a limit of zero and an undisclosed diet counts as unchecked, which means a pass that shows too little can never order alone.
 
 ## Context fields

@@ -40,6 +40,14 @@
   border-color: var(--v-line-strong);
   color: var(--v-fg);
 }
+/* A pressed kit Chip fills with the foreground and inherits the background as
+   its text, but the kit's `button.chip-body:hover` sets the text back to the
+   foreground: under the pointer the label was drawn in the colour of its own
+   fill and vanished, in both themes (kit a9f10d4, chip.svelte). The pressed
+   label keeps the background colour while hovered. */
+.chip.on > button.chip-body:hover {
+  color: var(--background);
+}
 [data-slot="button"].border-border:hover {
   border-color: var(--valio);
   color: var(--valio);
@@ -168,6 +176,16 @@ h1.v-title {
 .facts b {
   color: var(--v-fg);
   font-weight: 500;
+}
+/* An underlined text link (the Agent page's way to Rules). */
+a.v-link {
+  color: var(--v-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--v-faint);
+  text-underline-offset: 3px;
+}
+a.v-link:hover {
+  text-decoration-color: currentColor;
 }
 /* The sentence that carries the decision, under the title; its outcome word in colour. */
 .lead {
