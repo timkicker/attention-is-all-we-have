@@ -13,7 +13,7 @@ test("an ordered request reads asked, checked, rule, result, proof", async ({ pa
   await expect(page.getByTestId("check-substitute")).toHaveAttribute("data-ok", "true");
   await expect(page.locator("#rule-link")).toHaveAttribute("href", "/rules");
   await expect(page.getByTestId("rule-version")).toHaveText("Rules, version 2");
-  await expect(page.getByTestId("result-order")).toContainText("O-6");
+  await expect(page.getByTestId("result-order")).toHaveAttribute("data-order", "O-6");
   await expect(page.getByTestId("result-delivery")).toContainText("Mon 16 Nov");
   await expect(page.getByTestId("approval")).toHaveCount(0);
   // Proof is folded until asked for.
@@ -47,7 +47,7 @@ test("a short code is refused, six digits approve and the page updates", async (
   await page.getByTestId("code-submit").click();
   await expect(page.getByTestId("approval")).toHaveCount(0);
   await expect(page.getByTestId("detail-status")).not.toHaveText("Waiting for you");
-  await expect(page.getByTestId("result-order")).toContainText("O-7");
+  await expect(page.getByTestId("result-order")).toHaveAttribute("data-order", "O-7");
   await expect(page.locator("#nav-home .nb")).toHaveCount(0);
 });
 

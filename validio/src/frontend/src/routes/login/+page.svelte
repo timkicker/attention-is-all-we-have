@@ -1,5 +1,6 @@
 <script lang="ts">
-  /// The door: one sentence on what Validio is, then Log in or Create account,
+  /// The door, split: on the left the petrol panel with the wordmark and one
+  /// serif sentence on what Validio is; on the right Log in or Create account,
   /// then the demo kitchen, which is a real kitchen with sample orders.
   import { goto } from "$app/navigation";
   import { Button } from "@arlen/ui-kit/components/ui/button";
@@ -68,126 +69,188 @@
 </script>
 
 <div class="door">
-  <header class="door-head">
-    <h1 class="v-title">Validio</h1>
-    <p class="door-what" data-testid="login-what">Your purchasing agent orders from Valio Aimo through Validio, alone inside your rules and with your approval above them.</p>
-  </header>
+  <section class="panel" aria-label="About Validio">
+    <div class="p-mark"><h1 class="wordmark">Validio</h1><span class="for">for Valio Aimo customers</span></div>
+    <div class="p-copy">
+      <p class="statement" data-testid="login-what">Let your agent order from Valio Aimo, inside the rules you set.</p>
+      <p>Before every order, Validio asks Valio for the price and the stock. Your agent orders alone only below your limit; above it, the order waits for you.</p>
+      <p>Every decision is written to a sealed record you can read at any time.</p>
+    </div>
+    <p class="p-foot">A service for restaurant kitchens buying from Valio Aimo.</p>
+  </section>
 
-  <form class="v-form" onsubmit={submit} novalidate aria-labelledby="door-h">
-    <h2 class="v-h" id="door-h">{mode === "login" ? "Log in" : "Create account"}</h2>
-    {#if mode === "signup"}
-      <VField id="login-kitchen" label="Kitchen name" bind:value={f.kitchen} problem={bad.kitchen} autocomplete="organization" />
-    {/if}
-    <VField id="login-email" label="Email" type="email" bind:value={f.email} problem={bad.email} autocomplete="email" />
-    <VField
-      id="login-password"
-      label="Password"
-      type="password"
-      bind:value={f.password}
-      problem={bad.password}
-      hint={mode === "signup" ? "At least 8 characters" : ""}
-      autocomplete={mode === "login" ? "current-password" : "new-password"}
-    />
-    {#if mode === "signup"}
-      <VField id="login-customer" label="Valio customer number" inputmode="numeric" bind:value={f.customer} problem={bad.customer} hint="As on Valio's invoice" autocomplete="off" />
-      <VField
-        id="login-code"
-        label="Approval code"
-        inputmode="numeric"
-        maxlength={6}
-        class="mono"
-        bind:value={f.code}
-        problem={bad.code}
-        hint="6 digits you choose, asked for every approval"
-        autocomplete="off"
-      />
-    {/if}
-    {#if bad.form}<p class="problem" role="alert" data-testid="login-problem">{bad.form}</p>{/if}
-    <Button type="submit" class="wide" id="login-submit" data-testid="login-submit" disabled={busy}>{mode === "login" ? "Log in" : "Create account"}</Button>
-    <p class="swap">
-      <span>{mode === "login" ? "New kitchen?" : "Have an account?"}</span>
-      <Button variant="ghost" size="sm" id="login-swap" data-testid="login-swap" onclick={() => swap(mode === "login" ? "signup" : "login")}>
-        {mode === "login" ? "Create account" : "Log in"}
-      </Button>
-    </p>
-  </form>
+  <section class="form-side">
+    <div class="form-in">
+      <form class="v-form" onsubmit={submit} novalidate aria-labelledby="door-h">
+        <h2 class="door-h" id="door-h">{mode === "login" ? "Log in" : "Create account"}</h2>
+        {#if mode === "signup"}
+          <VField id="login-kitchen" label="Kitchen name" bind:value={f.kitchen} problem={bad.kitchen} autocomplete="organization" />
+        {/if}
+        <VField id="login-email" label="Email" type="email" bind:value={f.email} problem={bad.email} autocomplete="email" />
+        <VField
+          id="login-password"
+          label="Password"
+          type="password"
+          bind:value={f.password}
+          problem={bad.password}
+          hint={mode === "signup" ? "At least 8 characters" : ""}
+          autocomplete={mode === "login" ? "current-password" : "new-password"}
+        />
+        {#if mode === "signup"}
+          <VField id="login-customer" label="Valio customer number" inputmode="numeric" bind:value={f.customer} problem={bad.customer} hint="As on Valio's invoice" autocomplete="off" />
+          <VField
+            id="login-code"
+            label="Approval code"
+            inputmode="numeric"
+            maxlength={6}
+            class="mono"
+            bind:value={f.code}
+            problem={bad.code}
+            hint="6 digits you choose, asked for every approval"
+            autocomplete="off"
+          />
+        {/if}
+        {#if bad.form}<p class="problem" role="alert" data-testid="login-problem">{bad.form}</p>{/if}
+        <Button type="submit" class="wide" id="login-submit" data-testid="login-submit" disabled={busy}>{mode === "login" ? "Log in" : "Create account"}</Button>
+        <p class="swap">
+          {mode === "login" ? "New kitchen?" : "Have an account?"}
+          <button type="button" class="link-btn" id="login-swap" data-testid="login-swap" onclick={() => swap(mode === "login" ? "signup" : "login")}>
+            {mode === "login" ? "Create account" : "Log in"}
+          </button>
+        </p>
+      </form>
 
-  <div class="or" aria-hidden="true"><span>or</span></div>
-
-  <div class="demo">
-    <Button variant="outline" class="wide" id="try-demo" data-testid="try-demo" disabled={busy} aria-describedby="demo-what" onclick={() => run(() => api.demoLogin())}>
-      Try the demo kitchen
-    </Button>
-    <p class="demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
-  </div>
+      <div class="demo">
+        <p class="d-head">Just looking?</p>
+        <p class="d-text demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
+        <Button variant="outline" class="wide" id="try-demo" data-testid="try-demo" disabled={busy} aria-describedby="demo-what" onclick={() => run(() => api.demoLogin())}>
+          Try the demo kitchen
+        </Button>
+      </div>
+    </div>
+  </section>
 </div>
 
 <style>
   .door {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  .panel {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    width: 100%;
-    max-width: 360px;
-    margin: 10vh auto 0;
+    padding: 48px 64px;
+    background: var(--valio-band);
+    color: var(--valio-band-fg);
   }
-  .door-head .v-title {
-    margin: 0 0 8px;
-  }
-  .door-what {
+  .p-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
     margin: 0;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    color: var(--v-muted);
   }
-  .door :global(.wide) {
-    width: 100%;
-  }
-  .door .v-h {
+  .wordmark {
     margin: 0;
-    min-height: 0;
+    font-family: var(--v-sans);
+    font-size: 26px;
+    line-height: 32px;
+    font-weight: 600;
   }
-  .swap {
+  .for {
+    font-size: var(--fs-meta);
+    color: var(--valio-band-muted);
+  }
+  .p-copy {
+    margin: auto 0;
+    max-width: 480px;
+    padding: 48px 0;
+  }
+  .p-copy p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 25px;
+    color: var(--valio-band-muted);
+  }
+  .p-copy p + p {
+    margin-top: 14px;
+  }
+  .p-copy .statement {
+    margin-bottom: 28px;
+    font-family: var(--v-sans);
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    letter-spacing: var(--ls-title);
+    color: var(--valio-band-fg);
+  }
+  .p-foot {
+    margin: 0;
+    font-size: var(--fs-cap);
+    color: var(--valio-band-muted);
+  }
+  .form-side {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    margin: -8px 0 0;
+    padding: 48px 32px;
+    background: var(--v-surface);
+  }
+  .form-in {
+    width: 100%;
+    max-width: 380px;
+  }
+  .form-in .door-h {
+    margin: 0 0 24px;
+    font-family: var(--v-sans);
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 600;
+  }
+  .form-in :global(.wide) {
+    width: 100%;
+    height: 42px;
+    font-size: var(--fs-head);
+  }
+  .swap {
+    margin: 0;
     font-size: var(--fs-meta);
-    line-height: var(--lh-meta);
     color: var(--v-muted);
   }
-  .or {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: var(--fs-cap);
-    line-height: 16px;
-    color: var(--v-faint);
-  }
-  .or::before,
-  .or::after {
-    content: "";
-    flex: 1;
-    border-top: 1px solid var(--v-line);
+  .link-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--valio);
+    text-decoration: underline;
+    text-decoration-color: var(--valio-underline);
+    text-underline-offset: 3px;
+    cursor: pointer;
   }
   .demo {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--v-line);
   }
-  .demo-what {
+  .d-head {
     margin: 0;
-    text-align: center;
+    font-family: var(--v-sans);
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 600;
+  }
+  .d-text {
+    margin: 2px 0 14px;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-muted);
-  }
-  .nowrap {
-    white-space: nowrap;
   }
   .demo-what .mono {
     color: var(--v-fg);
+  }
+  .nowrap {
+    white-space: nowrap;
   }
   .problem {
     margin: 0;
@@ -195,12 +258,38 @@
     line-height: var(--lh-meta);
     color: var(--v-bad-text);
   }
-  @media (max-width: 760px) {
+  @media (max-width: 900px) {
     .door {
-      margin-top: 24px;
+      grid-template-columns: minmax(0, 1fr);
     }
-    .swap {
-      margin-top: -4px;
+    .panel {
+      padding: 24px 20px 28px;
+    }
+    .p-copy {
+      padding: 28px 0 0;
+    }
+    .p-copy .statement {
+      font-size: 26px;
+      line-height: 33px;
+      margin-bottom: 14px;
+    }
+    .p-copy p:not(.statement) {
+      font-size: 15px;
+      line-height: 23px;
+    }
+    .p-foot {
+      display: none;
+    }
+    .form-side {
+      padding: 32px 20px 48px;
+      align-items: flex-start;
+    }
+    .form-in .door-h {
+      font-size: 24px;
+      line-height: 32px;
+    }
+    .link-btn {
+      min-height: 44px;
     }
   }
 </style>
