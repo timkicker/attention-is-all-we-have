@@ -510,6 +510,7 @@ a.v-row:hover .v-row-title {
 }
 .day span {
   color: var(--v-muted);
+  white-space: nowrap;
 }
 .rc-diff {
   margin-top: 12px;
@@ -581,7 +582,13 @@ details.fold .fold-body p + p {
   .head {
     grid-template-columns: minmax(0, 1fr);
   }
-  .facts a::after,
+  /* A facts link is a 44 px target without moving the line: its box grows by
+     12 above and below, and the negative margin gives that space back. */
+  .facts a {
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
+  }
   .lead a::after {
     content: "";
     position: absolute;
