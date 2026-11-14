@@ -12,6 +12,8 @@ The inbox, the request that waits for the owner, and its approval on a phone, ca
 - Video: (link follows)
 - Pitch deck: (link follows)
 
+**In progress today:** one account per kitchen with its own settings and agent connect, see [validio/docs/PLAN-ACCOUNTS.md](validio/docs/PLAN-ACCOUNTS.md).
+
 Start in [validio/README.md](validio/README.md). It explains the setup, the architecture and a quick look that needs no key and no data. The plan with the reasoning behind each part is [PROJECT_BLUEPRINT-validio.md](PROJECT_BLUEPRINT-validio.md).
 
 Our second project, Zombie Facts for MariaDB's challenge "Wikipedia Through Time", lives in [zombie-facts/](zombie-facts/README.md). Its plan is [PROJECT_BLUEPRINT-zombie-facts.md](PROJECT_BLUEPRINT-zombie-facts.md).
