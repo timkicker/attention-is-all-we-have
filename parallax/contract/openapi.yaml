@@ -176,6 +176,22 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Stats"}
               examples: {default: {externalValue: examples/stats.json}}
+  /api/sql/vector:
+    get:
+      operationId: sqlVector
+      parameters:
+        - {name: topic, in: query, required: true, schema: {type: string}}
+        - {name: as_of, in: query, schema: {type: string}}
+        - {name: anchor, in: query, schema: {type: string, default: fi}}
+        - {name: limit, in: query, schema: {type: integer, default: 25}}
+      responses:
+        "200":
+          description: Runs the vector search behind the Differences list for one day and returns that statement
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SqlPanel"}
+              examples: {default: {externalValue: examples/sql_panel.json}}
+        "404": {$ref: "#/components/responses/Error"}
   /api/sql/{panel_id}:
     get:
       operationId: sqlPanel
