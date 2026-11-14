@@ -42,3 +42,9 @@ def test_public_read_needs_the_demo_token(client, monkeypatch):  # noqa: F811
     assert ask(client, "500 litres of lactose-free milk by Monday").status_code == 403
     r = ask(client, "500 litres of lactose-free milk by Monday", **{"X-Demo-Token": TOKEN})
     assert r.status_code == 200, r.text
+
+
+def test_same_text_twice_is_a_new_request(client):  # noqa: F811
+    a = ask(client, "500 litres of lactose-free milk by Monday").json()
+    b = ask(client, "500 litres of lactose-free milk by Monday").json()
+    assert (a["requestId"], b["requestId"]) == ("R-1", "R-2")
