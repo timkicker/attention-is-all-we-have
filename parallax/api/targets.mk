@@ -25,7 +25,8 @@ test-web:
 record-checks:
 	$(UV) run python -m api.record_checks $(RECORD_ARGS)
 
-# Playwright against the API serving web/dist on E2E_PORT (default 8000) with the loaded seed; E2E_URL for a remote.
+# Playwright against the API serving web/dist on E2E_PORT (default 8010) with seed-mini in its own database
+# parallax_e2e (see e2e/playwright.config.ts); E2E_URL for a running instance.
 # The demo walk (@demo) runs through make demo-check.
 e2e: web-build
 	cd e2e && npx playwright test --workers 2 --grep-invert @demo
