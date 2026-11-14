@@ -1,218 +1,173 @@
 <script lang="ts">
-  // The open ledger, one line per entry: when, what happened in one sentence,
-  // who. Whether the chain holds comes first. The raw record, rules, shown
-  // Spend Pass fields and hashes open under an entry; nothing is open at first.
-  import * as Collapsible from "@arlen/ui-kit/components/ui/collapsible";
+  /// The open ledger as halbat's feed: entries in chain order under the
+  /// request or steady order they belong to. Each entry is a closed fold
+  /// holding the backend's sentence, the rules, the disclosed fields and the hashes.
   import { api } from "$lib/api/client";
-  import type { LedgerEntry } from "$lib/api/types";
-  import { setChrome } from "$lib/chrome.svelte";
-  import { hm, holderWord, prose, sentences, time } from "$lib/format";
   import { live } from "$lib/live.svelte";
-  import Frame from "$lib/components/Frame.svelte";
-  import Info from "$lib/components/Info.svelte";
+  import { ACTOR, ledgerGroups } from "$lib/v";
+  import VHead from "$lib/v/VHead.svelte";
+  import VPill from "$lib/v/VPill.svelte";
+  import VState from "$lib/v/VState.svelte";
 
-  setChrome("Ledger");
   const ledger = live(() => api.ledger());
+  const inbox = live(() => api.inbox());
+  const steady = live(() => api.steadyList());
 
-  const newest = $derived([...(ledger.data?.entries ?? [])].reverse());
-
-  const KIND: Record<string, { label: string }> = {
-    request: { label: "Request" },
-    decision: { label: "Decision" },
-    order: { label: "Order" },
-    approval: { label: "Approval" },
-    simulation: { label: "Simulated" },
-    renewal: { label: "Renewal" },
-  };
-  // Backend keys in words; an unknown key is split into words, never shown raw.
-  const FIELD: Record<string, string> = {
-    autoLimitCents: "auto limit",
-    hardCapCents: "hard cap",
-    diet: "diet",
-    deliverBy: "delivery date",
-    categories: "product groups",
-    substitutes: "substitutes",
-    split: "splitting",
-    preferLabels: "preferred labels",
-  };
-  const fieldKey = (k: string) => FIELD[k] ?? k.replace(/Cents$/, "").replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
-  const ruleWord = (r: string) => r.replaceAll("-", " ").replaceAll("_", " ");
-
-  const short = (h: string) => (h.length > 16 ? `${h.slice(0, 8)}…${h.slice(-6)}` : h);
+  const titleOf = (id: string) =>
+    inbox.data?.find((i) => i.id === id)?.displayName ?? steady.data?.find((s) => s.id === id)?.name ?? "Other entries";
+  const groups = $derived(ledgerGroups(ledger.data?.entries ?? []));
+  const chain = $derived(ledger.data?.chain);
 </script>
 
-<Frame title="Ledger" top>
-  {#snippet head()}
-    {#if ledger.data}
-      {@const chain = ledger.data.chain}
-      <p class="facts">
-        <span class="chain" id="chain-status" data-testid="chain-status" class:bad={!chain.ok}>
-          {#if chain.ok}Chain verified · <span class="num">{chain.count}</span> entries{:else}Chain broken at entry {chain.brokenAt} of {chain.count}{/if}
-        </span>
-        <Info
-          label="What the chain proves"
-          text="Each entry carries the hash of the one before it. Change one letter anywhere and every later hash stops matching, so the ledger shows where."
-        />
-      </p>
+<VHead title="Ledger">
+  {#snippet facts()}
+    {#if chain}
+      <VPill label={chain.ok ? "Verified" : `Broken at ${chain.brokenAt}`} tone={chain.ok ? "ok" : "bad"} testid="chain-status" id="chain-status" />
+      <span class="num">{chain.count} entries</span>
+      <span>Every entry signs the one before it</span>
     {/if}
   {/snippet}
-  {#if ledger.data}
-    <ol class="rows" id="ledger" data-testid="ledger">
-      {#each newest as e (e.seq)}
-        {@render entry(e)}
-      {:else}
-        <li class="empty t-quiet">Nothing happened yet.</li>
-      {/each}
-    </ol>
-  {:else if ledger.error}
-    <p class="t-quiet">Cannot read the ledger: {ledger.error}</p>
-  {/if}
-</Frame>
+</VHead>
 
-{#snippet entry(e: LedgerEntry)}
-  {@const k = KIND[e.kind] ?? { label: e.kind }}
-  {@const said = sentences(e.sentence)}
-  <li class="entry" id="entry-{e.seq}" data-testid="ledger-entry">
-    <Collapsible.Root>
-      <Collapsible.Trigger class="line">
-        <span class="when num">{hm(e.at)}</span>
-        <span class="object">{prose(said[0] ?? "")}</span>
-        <span class="who">{holderWord(e.actor)}</span>
-        <Collapsible.Chevron />
-      </Collapsible.Trigger>
-      <Collapsible.Content forceMount>
-        {#snippet child({ props, open })}
-          <div {...props} hidden={!open} class="more" id="entry-more-{e.seq}">
-            {#if said.length > 1}<p class="rest">{said.slice(1).join(" ")}</p>{/if}
-            <dl>
-              <dt>Entry</dt>
-              <dd class="num">#{e.seq}, {k.label.toLowerCase()}{#if e.orderId}, order {e.orderId}{/if}, {time(e.at)}</dd>
-              {#if e.ruleIds.length}<dt>Rules</dt><dd>{e.ruleIds.map(ruleWord).join(", ")}</dd>{/if}
-              {#if e.disclosed.length}<dt>Spend Pass fields shown</dt><dd>{e.disclosed.map(fieldKey).join(", ")}</dd>{/if}
-              <dt>Raw record</dt>
-              <dd class="recorded" data-raw>{e.sentence}</dd>
-              <dt>Hash</dt>
-              <dd class="mono">{short(e.hash)}</dd>
-              <dt>Previous</dt>
-              <dd class="mono">{short(e.prevHash)}</dd>
-            </dl>
-          </div>
-        {/snippet}
-      </Collapsible.Content>
-    </Collapsible.Root>
-  </li>
-{/snippet}
+<div class="blocks">
+  {#if ledger.error && !ledger.data}
+    <VState kind="error" title="Validio is not reachable." detail={ledger.error} onretry={() => location.reload()} />
+  {:else if !ledger.loaded}
+    <VState kind="loading" rows={4} />
+  {:else if !groups.length}
+    <VState kind="empty" title="Nothing recorded yet." />
+  {:else}
+    <div data-testid="ledger" id="ledger">
+      {#each groups as g (g.id)}
+        <div class="day"><b>{titleOf(g.id)}</b><span>{g.id}</span></div>
+        <ul class="rc-ev led">
+          {#each g.entries as e (e.seq)}
+            <li data-testid="ledger-entry" class:broken={chain && !chain.ok && chain.brokenAt === e.seq}>
+              <details>
+                <summary>
+                  <span class="ev-left"><span class="t num">{e.timeText}</span><span class="who">{ACTOR[e.kind] ?? e.actorText ?? e.actor}</span></span>
+                  <span class="ev-main">
+                    <span class="sent">{e.summary ?? e.sentence}</span>
+                    {#if chain && !chain.ok && chain.brokenAt === e.seq}<span class="ev-sub">Hash does not match the entry before.</span>{/if}
+                  </span>
+                  <span class="oid num">{e.orderId ?? ""}</span>
+                </summary>
+                <div class="body" data-raw>
+                  <p>{e.sentence}</p>
+                  <p>By {e.actor}</p>
+                  {#if e.ruleIds.length}<p>Rules: {e.ruleIds.join(", ")}</p>{/if}
+                  {#if e.disclosedText?.length}<p>Shown to the agent: {e.disclosedText.join(", ")}</p>{/if}
+                  <p class="hash mono">Hash {e.hash}</p>
+                  <p class="hash mono">Before {e.prevHash}</p>
+                </div>
+              </details>
+            </li>
+          {/each}
+        </ul>
+      {/each}
+    </div>
+  {/if}
+</div>
 
 <style>
-  .facts {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    font-size: var(--text-sm);
+  .led > li {
+    display: block;
+    padding: 0;
+    position: relative;
   }
-  .chain {
+  .led > li.broken::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--v-bad);
+  }
+  summary {
+    display: grid;
+    grid-template-columns: 176px minmax(0, 1fr) auto;
+    column-gap: 24px;
+    align-items: start;
+    min-height: 50px;
+    padding: 14px 0;
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .ev-left {
+    display: flex;
+    gap: 12px;
+  }
+  .who {
+    color: var(--v-fg);
     font-weight: 500;
   }
-  .chain.bad {
-    color: var(--destructive-on-tint);
-  }
-  .rows {
+  .ev-main {
     display: flex;
     flex-direction: column;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .entry + .entry {
-    border-top: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
-  }
-  .rows :global(.line) {
-    display: grid;
-    grid-template-columns: 3.5rem minmax(0, 1fr) 6rem 1rem;
-    gap: 0.75rem;
-    align-items: baseline;
-    width: 100%;
-    padding: 0.5rem 0.35rem;
-    border-radius: var(--radius-input);
-    text-align: start;
-  }
-  .rows :global(.line:hover) {
-    background: color-mix(in srgb, var(--color-fg-primary) 5%, transparent);
-  }
-  .when,
-  .who {
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
-  }
-  .object {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: var(--text-sm);
   }
-  .rows :global(.kit-chevron) {
-    align-self: center;
+  .sent {
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
   }
-  .more {
-    margin: 0 0 0.75rem calc(3.5rem + 1.1rem);
-    padding: 0.25rem 0;
-    font-size: var(--text-xs);
+  .oid {
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
   }
-  .rest {
-    margin: 0 0 0.6rem;
-    max-width: 70ch;
-    font-size: var(--text-sm);
+  summary:hover .sent {
+    text-decoration: underline;
+    text-decoration-color: var(--v-faint);
+    text-underline-offset: 3px;
   }
-  dl {
-    display: grid;
-    grid-template-columns: max-content minmax(0, 1fr);
-    gap: 0.3rem 1rem;
+  .body {
+    padding: 0 0 16px 200px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  .body p {
     margin: 0;
   }
-  dt {
-    color: var(--color-fg-secondary);
+  .body p + p {
+    margin-top: 4px;
   }
-  dd {
-    margin: 0;
-    overflow-wrap: break-word;
-  }
-  .recorded {
-    color: var(--color-fg-secondary);
-  }
-  .empty {
-    padding: 1rem 0;
-    font-size: var(--text-sm);
+  .hash {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--v-faint);
+    overflow-wrap: anywhere;
   }
   @media (max-width: 760px) {
-    /* Two lines: the event, then "Validio · 10:00". */
-    .rows :global(.line) {
-      grid-template-columns: auto auto minmax(0, 1fr) 1rem;
-      gap: 0.15rem 0.35rem;
+    summary {
+      grid-template-columns: minmax(0, 1fr) auto;
+      row-gap: 4px;
+      padding: 12px 0;
+      min-height: 72px;
     }
-    .object {
-      grid-column: 1 / 4;
+    .ev-left {
       grid-row: 1;
-      white-space: normal;
+      grid-column: 1;
+      font-size: 14px;
     }
     .who {
-      grid-column: 1;
-      grid-row: 2;
+      color: var(--v-muted);
+      font-weight: 400;
     }
-    .who::after {
-      content: " ·";
-    }
-    .when {
-      grid-column: 2;
-      grid-row: 2;
-    }
-    .rows :global(.kit-chevron) {
-      grid-column: 4;
+    .oid {
       grid-row: 1;
+      grid-column: 2;
     }
-    .more {
-      margin-inline-start: 0;
+    .ev-main {
+      grid-row: 2;
+      grid-column: 1 / -1;
+    }
+    .body {
+      padding-left: 0;
     }
   }
 </style>

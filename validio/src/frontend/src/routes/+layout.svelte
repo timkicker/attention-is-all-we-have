@@ -1,30 +1,15 @@
 <script lang="ts">
   import "../app.css";
   import { onMount } from "svelte";
-  import { goto } from "$app/navigation";
+  import { afterNavigate, goto } from "$app/navigation";
   import { page } from "$app/state";
-  import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarHeader,
-    SidebarInset,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarProvider,
-    SidebarRail,
-    SidebarTrigger,
-  } from "@arlen/ui-kit/components/ui/sidebar";
-  import { Separator } from "@arlen/ui-kit/components/ui/separator";
   import { Button } from "@arlen/ui-kit/components/ui/button";
+  import { Badge } from "@arlen/ui-kit/components/ui/badge";
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import { Input } from "@arlen/ui-kit/components/ui/input";
-  import { IconAction } from "@arlen/ui-kit/components/ui/icon-action";
-  import { Badge } from "@arlen/ui-kit/components/ui/badge";
-  import * as DropdownMenu from "@arlen/ui-kit/components/ui/dropdown-menu";
-  import { CalendarSync, Check, ChevronLeft, Ellipsis, FlaskConical, Inbox, KeyRound, RotateCcw, ScrollText, ShieldCheck } from "@lucide/svelte";
+  import * as Tooltip from "@arlen/ui-kit/components/ui/tooltip";
+  import { notePage } from "@arlen/ui-kit/components/ui/page/history";
+  import { CalendarSync, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { ApiError, api, LIVE } from "$lib/api/client";
   import { owner } from "$lib/owner.svelte";
   import { CLOCK, dayTime } from "$lib/format";
@@ -33,36 +18,56 @@
 
   let { children } = $props();
 
-  const NAV = [
-    { href: "/", id: "nav-inbox", label: "Inbox", short: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/requests") },
-    { href: "/steady", id: "nav-steady-orders", label: "Steady orders", short: "Steady", icon: CalendarSync, match: (p: string) => p.startsWith("/steady") },
-    { href: "/ledger", id: "nav-open-ledger", label: "Ledger", short: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
+  const AREAS = [
+    {
+      label: "Orders",
+      icon: Inbox,
+      pages: [
+        { href: "/", id: "nav-inbox", label: "Inbox", short: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/requests") || p.startsWith("/approve") },
+        { href: "/steady", id: "nav-steady-orders", label: "Steady orders", short: "Steady", icon: CalendarSync, match: (p: string) => p.startsWith("/steady") },
+      ],
+    },
+    {
+      label: "Trust",
+      icon: ShieldCheck,
+      pages: [
+        { href: "/spend-pass", id: "nav-spend-pass", label: "Spend Pass", short: "Pass", icon: ShieldCheck, match: (p: string) => p.startsWith("/spend-pass") },
+        { href: "/ledger", id: "nav-open-ledger", label: "Ledger", short: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
+      ],
+    },
   ];
-  const PASS = { href: "/spend-pass", id: "nav-spend-pass", label: "Spend Pass", short: "Pass", icon: ShieldCheck, match: (p: string) => p.startsWith("/spend-pass") };
+  const PAGES = AREAS.flatMap((a) => a.pages);
 
   const path = $derived(page.url.pathname);
-  // The approve page is one question and two buttons: no dock under it.
-  const single = $derived(path.startsWith("/approve"));
+  // The approve page has its own bottom bar: no dock under it.
+  const approve = $derived(path.startsWith("/approve"));
 
+  afterNavigate(({ to }) => {
+    if (to?.url) notePage(to.url.pathname);
+  });
+
+  // The rail: the window between phone and desktop, or the person folded it.
+  let folded = $state(false);
+  let mid = $state(false);
   onMount(() => {
-    const q = window.matchMedia("(max-width: 760px)");
-    const set = () => (chrome.phone = q.matches);
+    const q = window.matchMedia("(min-width: 761px) and (max-width: 1023px)");
+    const set = () => (mid = q.matches);
     set();
     q.addEventListener("change", set);
     return () => q.removeEventListener("change", set);
   });
+  const rail = $derived(folded || mid);
 
   let waiting = $state(0);
-  onMount(() =>
-    poll(async () => {
-      const items = await api.inbox();
-      waiting = items.filter((i) => i.status === "waiting").length;
-    }),
-  );
-  // Refresh the count at once after a demo action.
+  const count = async () => {
+    const items = await api.inbox();
+    waiting = items.filter((i) => i.status === "waiting").length;
+  };
+  onMount(() => poll(count));
   $effect(() => {
     void chrome.version;
-    api.inbox().then((items) => (waiting = items.filter((i) => i.status === "waiting").length));
+    count().catch(() => {});
+    api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
   });
 
   // A demo switch the server refused for want of the token opens the token
@@ -77,30 +82,23 @@
     try {
       await fn();
       bump();
-      goto(next);
+      await goto(next);
     } catch (e) {
       if (e instanceof ApiError && e.status === 403) {
         then = () => demo(fn, next);
         tokenValue = "";
         demoProblem = owner.demoToken ? "That token is not right." : "";
-        tokenOpen = true;
       } else {
         demoProblem = e instanceof Error ? e.message : String(e);
         then = null;
-        tokenOpen = true;
       }
+      tokenOpen = true;
     }
   }
   // The fixture answers at once; with the backend the kitchen's agent asks again first.
-  const stockOut = () => demo(() => api.stockOut(), LIVE ? "/" : "/requests/R-2");
-  demoActions.stockOut = stockOut;
-  // Whether the stock-out is on, for the check mark in the menu.
-  let stockIsOut = $state(false);
-  $effect(() => {
-    void chrome.version;
-    api.demoState().then((d) => (stockIsOut = d.stockOut466375), () => {});
-  });
-  const reset = () => demo(() => api.reset(), "/");
+  demoActions.stockOut = () => demo(() => api.stockOut(), "/");
+  demoActions.reset = () => demo(() => api.reset(), "/");
+
   function useToken(e: SubmitEvent) {
     e.preventDefault();
     owner.demoToken = tokenValue.trim();
@@ -115,112 +113,73 @@
   <title>{chrome.title ? `${chrome.title}, Validio` : "Validio"}</title>
 </svelte:head>
 
-<SidebarProvider class="app">
+{#snippet navBadge(n: number)}
+  <span class="nb"><Badge variant="outline" class="v-count" aria-hidden="true">{n}</Badge></span>
+  <span class="sr-only">, {n} waiting</span>
+{/snippet}
+
+<div class="shell" class:rail class:phone={chrome.phone}>
   {#if !chrome.phone}
-  <Sidebar collapsible="icon">
-    <SidebarHeader>
-      <div class="brand"><span class="brand-name">Validio</span></div>
-    </SidebarHeader>
-    <SidebarContent>
+    <aside class="side">
+      <div class="top">
+        <span class="brand">Validio</span>
+        {#if !mid}
+          <Button variant="ghost" size="icon-sm" class="fold" aria-label={folded ? "Open the sidebar" : "Fold the sidebar"} aria-pressed={folded} onclick={() => (folded = !folded)}>
+            <PanelLeft />
+          </Button>
+        {/if}
+      </div>
       <nav aria-label="Main">
-        <SidebarGroup>
-          <SidebarMenu>
-            {#each NAV as item (item.href)}
-              <SidebarMenuItem>
-                <SidebarMenuButton id={item.id} data-testid={item.id} isActive={item.match(path)} tooltip={item.href === "/" && waiting > 0 ? `Inbox ${waiting} waiting for you` : item.label} onclick={() => goto(item.href)}>
-                  <item.icon strokeWidth={1.75} />
-                  <span>{item.label}</span>
-                  {#if item.href === "/" && waiting > 0}
-                    <span class="count"><Badge variant="secondary">{waiting}</Badge></span>
-                  {/if}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+        {#each AREAS as area (area.label)}
+          <div class="nav area"><area.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="lbl">{area.label}</span></div>
+          <div class="sub">
+            {#each area.pages as p (p.href)}
+              {#if rail}
+                <Tooltip.Root>
+                  <Tooltip.Trigger>
+                    {#snippet child({ props })}
+                      <a {...props} href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+                        <p.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="sr-only">{p.label}</span>
+                        {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
+                      </a>
+                    {/snippet}
+                  </Tooltip.Trigger>
+                  <Tooltip.TooltipContent side="right">{p.label}</Tooltip.TooltipContent>
+                </Tooltip.Root>
+              {:else}
+                <a href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+                  <span class="lbl">{p.label}</span>
+                  {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
+                </a>
+              {/if}
             {/each}
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton id={PASS.id} data-testid={PASS.id} isActive={PASS.match(path)} tooltip={PASS.label} onclick={() => goto(PASS.href)}>
-                <PASS.icon strokeWidth={1.75} />
-                <span>{PASS.label}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
+          </div>
+        {/each}
       </nav>
-    </SidebarContent>
-    <SidebarFooter>
-      <div class="kitchen">
-        <span class="kitchen-name">Hotel Espoo kitchen</span>
+      <div class="foot">
+        <span class="kitchen">Hotel Espoo kitchen</span>
         <span class="clock num">{dayTime(CLOCK)}</span>
       </div>
-    </SidebarFooter>
-    <SidebarRail />
-  </Sidebar>
+    </aside>
   {/if}
 
-  <SidebarInset class="inset">
-    <h1 class="sr-only">Validio</h1>
-    <header class="bar">
-      {#if !chrome.phone}
-        <SidebarTrigger class="-ml-1" />
-        <Separator orientation="vertical" class="me-1 h-4!" />
-      {/if}
-      {#if chrome.back && chrome.phone}
-        {@const to = chrome.back.href}
-        <IconAction size="control" label="Back to {chrome.back.label}" onclick={() => goto(to)}>
-          <ChevronLeft size={18} strokeWidth={1.75} />
-        </IconAction>
-      {/if}
-      <!-- On the phone a detail page names its parent here and the thing in its
-           own heading, so the title is said once. -->
-      <span class="bar-title" id="bar-title">{chrome.phone && chrome.back ? chrome.back.label : chrome.title}</span>
-      <span class="grow"></span>
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
-          {#snippet child({ props })}
-            <!-- The tooltip trigger sets its own id on the button, so the
-                 stable id the suites and the video click sits on this span. -->
-            <span class="menu-wrap" id="page-menu">
-              <Button {...props} variant="ghost" size="icon-sm" tooltip="Demo controls" aria-label="Demo controls" data-testid="page-menu" class="menu-btn">
-                <Ellipsis />
-              </Button>
-            </span>
-          {/snippet}
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content align="end">
-          <DropdownMenu.Label>Demo controls</DropdownMenu.Label>
-          {#if !LIVE}<p class="menu-note" id="demo-data">Example orders, not this kitchen's.</p>{/if}
-          <DropdownMenu.Item
-            id="stock-out"
-            data-testid="stock-out"
-            disabled={stockIsOut}
-            aria-label={stockIsOut ? "Stock-out of 466375 simulated" : "Simulate stock-out of 466375"}
-            onSelect={stockOut}
-          >
-            {#if stockIsOut}<Check size={15} strokeWidth={1.75} />{:else}<FlaskConical size={15} strokeWidth={1.75} />{/if}
-            {stockIsOut ? "Stock-out of 466375 simulated" : "Simulate stock-out of 466375"}
-          </DropdownMenu.Item>
-          <DropdownMenu.Item id="menu-reset" onSelect={reset}>
-            <RotateCcw size={15} strokeWidth={1.75} />
-            Start over
-          </DropdownMenu.Item>
-          {#if LIVE}
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item id="demo-token" onSelect={() => { then = null; demoProblem = ""; tokenValue = owner.demoToken; tokenOpen = true; }}>
-              <KeyRound size={15} strokeWidth={1.75} />
-              Demo token
-            </DropdownMenu.Item>
-          {/if}
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    </header>
-    <main class="content" class:single>
+  <main class="v-main">
+    <div class="wrap" class:narrow={approve}>
       {@render children()}
-    </main>
-  </SidebarInset>
-</SidebarProvider>
+    </div>
+  </main>
+</div>
+
+{#if chrome.phone && !approve}
+  <nav class="dock" aria-label="Main">
+    {#each PAGES as p (p.href)}
+      <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+        <span class="di"><p.icon size={20} strokeWidth={1.75} aria-hidden="true" />{#if p.href === "/" && waiting > 0}<span class="db">{@render navBadge(waiting)}</span>{/if}</span>
+        <span>{p.short}</span>
+      </a>
+    {/each}
+  </nav>
+{/if}
 
 <Dialog open={tokenOpen} onClose={() => (tokenOpen = false)} labelledby="token-title" size="sm">
   <form class="token" onsubmit={useToken}>
@@ -229,7 +188,7 @@
       <label for="demo-token-input">The presenter's token. Kept until you close the page.</label>
       <Input id="demo-token-input" bind:value={tokenValue} autocomplete="off" aria-invalid={demoProblem ? true : undefined} />
     {/if}
-    {#if demoProblem}<p class="t-bad">{demoProblem}</p>{/if}
+    {#if demoProblem}<p class="bad">{demoProblem}</p>{/if}
     <div class="token-buttons">
       <Button variant="outline" onclick={() => (tokenOpen = false)}>Cancel</Button>
       {#if then || !demoProblem}<Button type="submit">{then ? "Use and run" : "Use"}</Button>{/if}
@@ -237,199 +196,229 @@
   </form>
 </Dialog>
 
-{#if !single}
-  <nav class="dock" aria-label="Main, phone">
-    {#each [...NAV, PASS] as item (item.href)}
-      <a href={item.href} class:on={item.match(path)} aria-current={item.match(path) ? "page" : undefined}>
-        <span class="pw"><item.icon size={20} strokeWidth={1.75} /></span>
-        <span>{item.short}</span>
-      </a>
-    {/each}
-  </nav>
-{/if}
+{#if LIVE}<span hidden id="live-mode"></span>{/if}
 
 <style>
-  :global(.app) {
-    height: 100svh;
-    min-height: 0;
-    overflow: hidden;
+  .shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: 208px minmax(0, 1fr);
+    min-height: 100vh;
   }
-  :global(.inset) {
-    height: 100svh;
-    min-height: 0;
+  /* The sidebar's colour runs the whole page height, also past the sticky panel. */
+  .shell:not(.phone)::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 208px;
+    background: var(--v-shell);
+    border-right: 1px solid var(--v-line);
+  }
+  .shell.rail::before {
+    width: 48px;
+  }
+  .shell.rail {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .shell.phone {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .v-main {
+    min-width: 0;
+  }
+  .side {
+    position: sticky;
+    top: 0;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    background: var(--v-shell);
+    border-right: 1px solid var(--v-line);
+    z-index: 5;
   }
-  .brand {
+  .top {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 1.5rem;
-    padding-inline: 0.25rem;
-    overflow: hidden;
+    justify-content: space-between;
+    height: 32px;
+    padding-left: 8px;
+    margin-bottom: 8px;
   }
-  .brand-name {
-    font-size: var(--text-md);
+  .brand {
+    font-size: 15px;
+    line-height: 22px;
     font-weight: 600;
-    white-space: nowrap;
   }
-  .kitchen {
+  .side nav {
     display: flex;
     flex-direction: column;
-    padding: 0.25rem 0.5rem;
+    gap: 2px;
+  }
+  .sub {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .sub + .nav.area {
+    margin-top: 12px;
+  }
+  .nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--v-muted);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .nav.area {
+    font-weight: 500;
+    color: var(--v-fg);
+  }
+  .nav.area :global(svg) {
+    color: var(--v-faint);
+  }
+  .sub .nav {
+    padding-left: 36px;
+  }
+  a.nav:hover:not(.on) {
+    background: color-mix(in srgb, var(--v-fg) 6%, transparent);
+    color: var(--v-fg);
+  }
+  .nav.on {
+    color: var(--v-fg);
+    font-weight: 500;
+  }
+  .nav.on::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--valio);
+  }
+  .nb {
+    margin-left: auto;
+    display: inline-flex;
+  }
+  .foot {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
     white-space: nowrap;
     overflow: hidden;
   }
-  .kitchen-name {
-    font-size: var(--text-sm);
+  .kitchen {
+    font-size: 13px;
+    line-height: 20px;
     font-weight: 500;
   }
   .clock {
-    font-size: var(--text-2xs);
-    color: var(--color-fg-secondary);
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--v-faint);
   }
-  :global([data-collapsible="icon"]) :is(.kitchen, .brand-name, .count) {
+  .rail .brand,
+  .rail .nav.area,
+  .rail .foot {
     display: none;
   }
-  .count {
-    margin-inline-start: auto;
+  .rail .top {
+    padding: 0;
+    justify-content: center;
+  }
+  .rail .sub .nav {
+    width: 32px;
+    padding: 0;
+    justify-content: center;
+  }
+  .rail .sub + .nav.area + .sub {
+    margin-top: 12px;
+  }
+  .rail .nb {
+    position: absolute;
+    top: -4px;
+    right: -10px;
   }
 
-  .bar {
-    display: flex;
-    flex-shrink: 0;
+  .dock {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 20;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     align-items: center;
-    gap: 0.5rem;
-    min-height: 2.5rem;
-    padding-inline: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
-    background: var(--background);
+    height: 64px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
   }
-  .bar-title {
-    min-width: 10ch;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: var(--text-sm);
+  .dock a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 100%;
+    font-size: 12px;
+    line-height: 16px;
     font-weight: 500;
+    color: var(--v-faint);
+    text-decoration: none;
   }
-  .grow {
-    flex: 1;
+  .dock a.on {
+    color: var(--v-fg);
   }
-  .menu-wrap {
+  .di {
+    position: relative;
     display: inline-flex;
   }
-  .menu-note {
+  .db {
+    position: absolute;
+    top: -8px;
+    left: 14px;
+  }
+  .db .nb {
     margin: 0;
-    padding: 0 0.5rem 0.35rem;
-    font-size: var(--text-xs);
-    color: var(--color-fg-secondary);
   }
   .token {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1.5rem;
+    gap: 12px;
+    padding: 24px;
   }
   .token h2 {
     margin: 0;
-    font-size: var(--text-base);
+    font-size: 15px;
+    line-height: 22px;
     font-weight: 600;
   }
   .token label,
   .token p {
     margin: 0;
-    font-size: var(--text-sm);
-    color: var(--color-fg-secondary);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--v-muted);
   }
-  .token p.t-bad {
-    color: var(--destructive-on-tint);
+  .token p.bad {
+    color: var(--v-bad-text);
   }
   .token-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  .content {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-  }
-
-  .dock {
-    display: none;
-  }
-
-  @media (max-width: 760px) {
-    .bar {
-      min-height: 3rem;
-      padding-inline: 0.5rem;
-    }
-    .bar-title {
-      font-size: var(--text-md);
-      font-weight: 600;
-      padding-inline-start: 0.5rem;
-    }
-    .bar :global(.menu-btn) {
-      width: 44px;
-      height: 44px;
-    }
-    /* On the phone the page itself scrolls, not a box inside it. */
-    :global(.app),
-    :global(.inset) {
-      height: auto;
-      min-height: 100svh;
-      overflow: visible;
-    }
-    .bar {
-      position: sticky;
-      top: 0;
-      z-index: 15;
-    }
-    .content {
-      overflow: visible;
-      padding-bottom: calc(6rem + env(safe-area-inset-bottom));
-    }
-    .dock {
-      position: fixed;
-      inset-inline: 0.75rem;
-      bottom: calc(0.75rem + env(safe-area-inset-bottom));
-      z-index: 20;
-      display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: 1fr;
-      align-items: center;
-      height: 4rem;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-card);
-      background: var(--color-bg-card);
-      /* Dark carries elevation in surface lightness; light lifts the card. */
-      box-shadow: var(--shadow-card, none);
-    }
-    .dock a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-      height: 100%;
-      font-size: var(--text-2xs);
-      font-weight: 500;
-      color: var(--color-fg-secondary);
-    }
-    .dock a.on {
-      color: var(--color-fg-primary);
-    }
-    .pw {
-      display: grid;
-      place-items: center;
-      width: 3.25rem;
-      height: 1.75rem;
-      border-radius: var(--radius-button);
-    }
-    .dock a.on .pw {
-      background: color-mix(in srgb, var(--color-fg-primary) 12%, transparent);
-    }
+    gap: 8px;
+    margin-top: 8px;
   }
 </style>

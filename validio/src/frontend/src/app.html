@@ -4,11 +4,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <script>
-      // Dark by default; light when the system asks for it or ?theme=light.
+      // The theme before the first paint: ?theme=, then the stored choice, then the system.
       (function () {
+        var KEY = "validio-theme";
         var q = new URLSearchParams(location.search).get("theme");
-        var light = q ? q === "light" : matchMedia("(prefers-color-scheme: light)").matches;
-        if (light) document.documentElement.dataset.theme = "light";
+        var mode = "system";
+        try {
+          mode = localStorage.getItem(KEY) || "system";
+        } catch (e) {}
+        var mq = matchMedia("(prefers-color-scheme: light)");
+        function set() {
+          var m = q || mode;
+          var light = m === "system" ? mq.matches : m === "light";
+          document.documentElement.dataset.theme = light ? "light" : "dark";
+        }
+        set();
+        mq.addEventListener("change", function () {
+          try {
+            mode = localStorage.getItem(KEY) || "system";
+          } catch (e) {}
+          set();
+        });
       })();
     </script>
     <title>Validio</title>
