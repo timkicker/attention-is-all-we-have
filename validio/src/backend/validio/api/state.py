@@ -13,6 +13,7 @@ closed while those are unset. The demo switches are for demo copies (a session) 
 import os
 import re
 import threading
+import time
 from contextvars import ContextVar
 from pathlib import Path
 
@@ -54,7 +55,7 @@ class Ctx:
             raise ValueError("VALIDIO_APPROVE_CODE must be 6 digits")
         # ("key", order or button) and ("client", address): the times of the wrong codes in the last 15 minutes
         self.code_tries: dict[tuple[str, str], list[float]] = {}
-        self.nonces = NonceStore()
+        self.nonces = NonceStore(decision_clock=False)
         self._supply: tuple[object, SupplyService] | None = None
         self._kitchen: tuple[tuple, JWK] | None = None
 
@@ -177,7 +178,22 @@ class Ctx:
     def reset(self, fresh: bool = False) -> None:
         """`fresh` on an account: the seed of `make seed` in its own store and keys instead of the template, with no
         agent connected (the live e2e starts every run from there, also against the public link)."""
+        # a request, order or approval asking Valio outside the lock writes first, then the tables go: wait without
+        # the lock until none is out there, then reset under it (a call may start meanwhile; after a minute the
+        # reset goes on and a late call gets a clean 503 from check_open)
+        give_up = time.monotonic() + 60
+        while True:
+            with self.rt.lock:
+                live = self.rt._live
+                if live is None or live.service.idle() or time.monotonic() >= give_up:
+                    self._reset_locked(fresh)
+                    return
+            live.service.wait_idle(max(0.0, give_up - time.monotonic()))
+
+    def _reset_locked(self, fresh: bool) -> None:
         with self.rt.lock:
+            if self.rt._live is not None:
+                self.rt._live.service.closed = True  # a late call that waited through the reset gets 503
             if fresh and self.account is not None:
                 from .connect import leave_unconnected
 
@@ -189,7 +205,10 @@ class Ctx:
             else:
                 seed.reset(self.db_path, self.keys_dir)
             self.code_tries.clear()
-            self.nonces = NonceStore()
+            self.nonces = NonceStore(decision_clock=False)
+            from .tools import forget_views
+
+            forget_views(self.db_path)
 
     def real_stock(self) -> tuple[float, str] | None:
         """466375 as Valio answers it, read at request time (replayed in the demo)."""

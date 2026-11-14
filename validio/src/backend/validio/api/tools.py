@@ -1,6 +1,8 @@
 """The five agent tools as plain functions. The HTTP routes under /agent/v1 and the MCP server both
 call these, so there is one code path. Writes take the Spend Pass presentation and verify it first."""
 
+import threading
+
 from ..catalog.labels import LABELS
 from ..catalog.model import Product
 from ..demo.seed import STOCKOUT_ID, stockout_note
@@ -78,17 +80,29 @@ def request_supply(ctx: Ctx, spend_pass: str, body: SupplyRequestIn) -> SupplyRe
     return _request_view(ctx, req)
 
 
-# Built views by (store, request id), each with the store's change count it was built at. The inbox, Activity and
-# the ledger are polled every two seconds and build a view per request, so a view is built again only after a
-# write to the kitchen's store (or a demo switch). Callers get a deep copy: some of them trim the lists.
-_VIEWS: dict[tuple[int, str], tuple[tuple, SupplyRequestView]] = {}
+# Built views by (store file, store serial, request id), each with the store's change count it was built at. The
+# inbox, Activity and the ledger are polled every two seconds and build a view per request, so a view is built
+# again only after a write to the kitchen's store (or a demo switch). The serial is never reused in the process
+# (unlike id(), which a new store may get once an evicted account's runtime is gone), so one kitchen never gets
+# another's view; a reset opens a new store and also drops the file's views (forget_views). Callers get a deep
+# copy: some of them trim the lists.
+_VIEWS: dict[tuple[str, int, str], tuple[int, SupplyRequestView]] = {}
 _VIEWS_MAX = 5000
+_VIEWS_LOCK = threading.Lock()
 
 
-def _generation(ctx: Ctx) -> int:
+def _generation(store) -> int:
     """Rows changed through the kitchen's one connection: every write, the ledger and the demo switches (each
     switch writes a ledger entry) count."""
-    return ctx.store.con.total_changes
+    return store.con.total_changes
+
+
+def forget_views(db_path) -> None:
+    """Every built view of this store file, called on a reset."""
+    path = str(db_path)
+    with _VIEWS_LOCK:
+        for k in [k for k in _VIEWS if k[0] == path]:
+            del _VIEWS[k]
 
 
 def _copy(v: SupplyRequestView) -> SupplyRequestView:
@@ -102,14 +116,17 @@ def _copy(v: SupplyRequestView) -> SupplyRequestView:
 
 
 def get_request(ctx: Ctx, request_id: str) -> SupplyRequestView:
-    key, gen = (id(ctx.store), request_id), _generation(ctx)
-    hit = _VIEWS.get(key)
+    store = ctx.store
+    key, gen = (str(store.path), store.serial, request_id), _generation(store)
+    with _VIEWS_LOCK:
+        hit = _VIEWS.get(key)
     if hit is not None and hit[0] == gen:
         return _copy(hit[1])
     view = _request_view(ctx, ctx.supply.get_request(request_id))
-    if len(_VIEWS) >= _VIEWS_MAX:
-        _VIEWS.clear()
-    _VIEWS[key] = (gen, _copy(view))
+    with _VIEWS_LOCK:
+        if len(_VIEWS) >= _VIEWS_MAX:
+            _VIEWS.clear()
+        _VIEWS[key] = (gen, _copy(view))
     return view
 
 

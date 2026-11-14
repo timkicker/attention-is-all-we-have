@@ -155,18 +155,34 @@ class NonceStore:
     The ttl holds on two clocks: `now` (Validio's decision clock, the frozen demo clock in the demo) and the
     process's own monotonic clock. The demo clock only moves with the ledger, so on it alone an unused nonce
     would never expire. When `max_open` nonces are open the oldest is dropped: a flood of unused nonces can
-    never stop issuing for the kitchen's own agent."""
+    never stop issuing for the kitchen's own agent.
+
+    `decision_clock=False` holds the ttl on the monotonic clock alone. The API does that: the demo clock jumps
+    2 to 4 minutes with every ledger entry of any agent, so with a few agents at once it passes five minutes
+    between one agent's nonce and its use; on a real clock the monotonic clock says the same."""
 
     def __init__(self, ttl: timedelta = timedelta(minutes=5), max_open: int = 10000,
-                 wall: Callable[[], float] = time.monotonic):
+                 wall: Callable[[], float] = time.monotonic, decision_clock: bool = True):
         self.ttl, self.max_open = ttl, max_open
         self._wall = wall
+        self._decision_clock = decision_clock
         self._issued: dict[str, tuple[datetime, float]] = {}  # insertion order is issue order
         self._lock = threading.Lock()
 
     def _fresh(self, at: tuple[datetime, float], now: datetime) -> bool:
         t, w = at
-        return now - t <= self.ttl and self._wall() - w <= self.ttl.total_seconds()
+        return (not self._decision_clock or now - t <= self.ttl) and self._wall() - w <= self.ttl.total_seconds()
+
+    def signed_on(self, nonce: str, now: datetime) -> datetime:
+        """The decision-clock time a key binding over `nonce` is checked against. Off the decision clock that is
+        the time the nonce was issued at (the `iat` the nonce answer gave): the single-use nonce, fresh on the
+        monotonic clock, already bounds when the binding was signed, while the demo clock moved with other
+        agents' ledger entries meanwhile."""
+        if self._decision_clock:
+            return now
+        with self._lock:
+            at = self._issued.get(nonce)
+        return now if at is None else at[0]
 
     def issue(self, now: datetime) -> str:
         nonce = secrets.token_urlsafe(24)
@@ -281,8 +297,9 @@ def verify_presentation(
     except (IndexError, ValueError, AttributeError) as e:
         raise MandateError("disclosure not part of the Spend Pass") from e
     ts = int(now.timestamp())
+    kb_ts = int(nonces.signed_on(nonce, now).timestamp())
     kb_iat = kb.get("iat")
-    if type(kb_iat) is not int or not (ts - KB_MAX_AGE.total_seconds() <= kb_iat <= ts + CLOCK_SKEW.total_seconds()):
+    if type(kb_iat) is not int or not (kb_ts - KB_MAX_AGE.total_seconds() <= kb_iat <= kb_ts + CLOCK_SKEW.total_seconds()):
         raise MandateError("key binding signed at the wrong time")
     nbf, exp, iat = payload.get("nbf"), payload.get("exp"), payload.get("iat")
     if type(nbf) is not int or type(exp) is not int or (iat is not None and type(iat) is not int):

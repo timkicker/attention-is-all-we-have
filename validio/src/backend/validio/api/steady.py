@@ -269,7 +269,7 @@ class Runtime:
             # an order and its ledger entry commit together; the kitchen key signs the head
             audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
             wall = lambda: datetime.now(self.settings.now.tzinfo)
-            clock = wall if self.real_clock else (lambda: demo_now(self.settings.now, store.con))
+            clock = wall if self.real_clock else (lambda: _demo_clock(self.settings.now, store))
             service = OrderService(store, self.catalog, self.valio, audit, clock=clock,
                                    stamp=wall if self.settings.real_time or self.real_clock else clock,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
@@ -285,6 +285,13 @@ class Runtime:
                 self._live.service.closed = True
                 self._live.store.close()
                 self._live = None
+
+
+def _demo_clock(base: datetime, store: Store) -> datetime:
+    """The demo clock reads the ledger on the store's shared connection, so it takes the store's lock as every
+    other read does: request_supply asks for the time without the kitchen lock while other agents write."""
+    with store.lock:
+        return demo_now(base, store.con)
 
 
 runtime = Runtime()
