@@ -71,9 +71,12 @@ test("owner approves the swap on the phone", async ({ page, kitchen }) => {
 });
 
 test("Reset in the demo bar starts the copy again", async ({ page }) => {
+  // a demo copy goes back to the template: the example orders R-1 and R-2, nothing waiting, nothing newer
+  const ids = async () =>
+    ((await (await page.request.get("/api/inbox")).json()) as { id: string }[]).map((r) => r.id).sort();
   await page.goto("/");
   await page.getByTestId("demo-reset").click();
-  await expect.poll(async () => (await (await page.request.get("/api/inbox")).json()).length).toBe(0);
-  await page.goto("/orders");
-  await expect(page.getByTestId("order-r-R-1")).toHaveCount(0);
+  await expect.poll(ids).toEqual(["R-1", "R-2"]);
+  await page.goto("/");
+  await expect(page.getByText("Nothing waits for you")).toBeVisible();
 });
