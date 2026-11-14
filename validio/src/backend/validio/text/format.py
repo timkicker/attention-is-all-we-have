@@ -117,7 +117,7 @@ def sentences(parts: list[str]) -> str:
 # Short names: at most about five words a person reads at a glance. Brands and Valio's codes go, the size stays.
 _BRANDS = frozenset(["valio", "castelli", "gran", "arla", "pro", "lagerblad", "foods", "findus", "galbani", "topfoods", "maestrella", "hyvä", "suomalainen", "arki", "eila", "luomu", "gefilus", "hyla"])
 _NOISE = frozenset(["uht", "esl", "pdo", "suomi", "suomesta", "fried", "frozen", "ca", "drink", "novobox", "based", "on", "mix", "from"])
-_FRONT = ("organic", "vegan")
+_FRONT = ("organic", "vegan", "sliced")  # "mozzarella stange sliced" reads "sliced mozzarella stange"
 _PACK = re.compile(r"^(\d+)\s?x\s?(?=\D)", re.IGNORECASE)
 _SIZE_TOKEN = re.compile(r"(\d+\s?x\s?)?\d+(?:\.\d+)? (?:kg|g|l|dl|cl|ml)\b")
 

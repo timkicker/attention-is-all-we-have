@@ -218,8 +218,11 @@ class RequestLineView(Model):
     def _names(self):
         # two products that would read the same get their brand back
         opts = [*self.options, *(self.substitutes or []), *(self.beyond_list or [])]
-        for o, n in zip(opts, _d().short_names([o.name for o in opts]), strict=True):
+        d = _d()
+        for o, n in zip(opts, d.short_names([o.name for o in opts]), strict=True):
             o.short_name = o.display_name = n
+            if o.verdict == "chosen" and o.is_substitute:
+                o.short_text = d.swap_text(o.reasons or [], self.need.diet, self.need.deliver_by) or o.short_text
         return self
 
 
@@ -402,12 +405,14 @@ class SpendPassView(Model):
     hidden: list[str]
     disclosed_text: list[str] | None = Field(None, description="the disclosed fields as a person reads them")
     hidden_text: list[str] | None = None
+    sees_text: str | None = Field(None, description="one sentence: what the agent sees of this Spend Pass")
 
     @model_validator(mode="after")
     def _text(self):
         d = _d()
         self.disclosed_text = self.disclosed_text or d.pass_fields(self.disclosed)
         self.hidden_text = self.hidden_text or d.pass_fields(self.hidden)
+        self.sees_text = self.sees_text or d.sees_text(self.disclosed, self.hidden)
         return self
 
 

@@ -19,6 +19,7 @@ from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Re
 from ..audit.log import head_signature_ok
 from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
+from . import display
 from .schemas import (
     ApproveIn,
     AskedFor,
@@ -111,8 +112,9 @@ def inbox(ctx: CtxDep):
     for r in reversed(ctx.store.requests()):
         v = get_request(ctx, r["id"])
         sentence = v.question if v.status == "waiting" and v.question else (v.decision.sentence if v.decision else "")
+        why = display.asks_text(v.decision.sentence) if v.status == "waiting" and v.decision else None
         out.append(InboxItem(id=v.id, created_at=v.created_at, text=v.text, status=v.status, sentence=sentence,
-                             total_cents=v.total_cents, title=v.title, title_text=v.title_text))
+                             total_cents=v.total_cents, title=v.title, title_text=v.title_text, summary=why))
     return out
 
 

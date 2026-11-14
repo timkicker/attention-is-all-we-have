@@ -77,7 +77,7 @@ def summary(sentence: str | None) -> str | None:
     first = re.split(r"(?<=[.?!])\s+(?=[A-Z])", sentence.strip(), maxsplit=1)[0].rstrip(".")
     first = re.sub(r"\s*\([^)]*\)", "", first)
     if _words(first) <= SUMMARY_WORDS:
-        return first + "."
+        return first if first.endswith("?") else first + "."
     for cut in (" without ", ": ", ", ", " because ", " and "):
         head, sep, rest = first.partition(cut)
         if not sep:
@@ -207,6 +207,48 @@ def short_text(verdict: str, reasons: list[str]) -> str | None:
     if _words(first) <= SHORT_WORDS:
         return first
     return " ".join(first.rstrip(".").split()[:SHORT_WORDS]) + " …"
+
+
+def swap_text(reasons: list[str], diet: list[str], deliver_by: str | None) -> str | None:
+    """The chosen option is a swap: what kind of swap and when it comes, "Cheapest lactose-free swap,
+    delivered by 16 Nov.". Every accepted option arrives by the need's date, the ranking turns down any other."""
+    if not any("Cheapest safe option" in r for r in reasons):
+        return None
+    kind = " and ".join(w.replace(" ", "-") for w in diet) or "safe"
+    when = ""
+    if deliver_by:
+        d = date.fromisoformat(deliver_by[:10])
+        when = f", delivered by {d.day} {d:%b}"
+    return f"Cheapest {kind} swap{when}."
+
+
+SEES = (("limits", ("autoLimitCents", "auto_limit_cents", "hardCapCents", "hard_cap_cents")),
+        ("diet rules", ("diet",)), ("who approves", ("approvers",)),
+        ("preferred labels", ("preferLabels", "prefer_labels")))
+
+
+def _sees(keys: list[str]) -> str:
+    words = [w for w, ks in SEES if any(k in keys for k in ks)]
+    if len(words) > 1 and words[1] == "diet rules" and words[0] == "limits":
+        words = ["limits and diet rules", *words[2:]]
+    return and_list([w if w == "who approves" or w.startswith("your") else f"your {w}" for w in words])
+
+
+def sees_text(disclosed: list[str], hidden: list[str]) -> str:
+    """One sentence for the Spend Pass card: "The agent sees your limits and diet rules, not who approves or
+    your preferred labels." The plain claims (product groups, deliver by) are not named, the agent sees them too."""
+    shown, kept = _sees(disclosed), _sees(hidden).replace(" and ", " or ")
+    if not shown:
+        return f"The agent does not see {kept}." if kept else "The agent sees only the plain rules."
+    return f"The agent sees {shown}" + (f", not {kept}." if kept else ".")
+
+
+def asks_text(sentence: str | None) -> str | None:
+    """Why a waiting request waits for you, for its inbox row: "Asks you: the swap is not on Valio's list."."""
+    said = ledger_text("approval", "", sentence or "")
+    if not said or not said.startswith("Asked you: "):
+        return None
+    return "Asks you: " + said[11:].replace("the substitute", "the swap")
 
 
 def _first(sentence: str) -> str:
