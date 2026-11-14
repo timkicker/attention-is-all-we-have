@@ -34,3 +34,16 @@ def test_imports_on_the_laptop(monkeypatch):
 def test_web_function_scales_to_zero_and_stays_single():
     src = APP_FILE.read_text()
     assert "min_containers=0" in src and "max_containers=1" in src
+
+
+def test_fill_builds_the_template_every_demo_copy_starts_from(monkeypatch):
+    # B5: the deploy plays the scenes into data/template (db and keys), never into the single kitchen's store,
+    # and leaves the demo code 246810 in it, hashed, so every demo copy answers to that code
+    ns = load_as("/root/app_validio.py", local=False, monkeypatch=monkeypatch)
+    assert ns["TEMPLATE_DB"] == "/app/data/template/validio.db"
+    assert ns["TEMPLATE_KEYS"] == "/app/data/template/keys"
+    src = APP_FILE.read_text()
+    fill = src[src.index("def fill("):]
+    assert '"VALIDIO_DB": TEMPLATE_DB' in fill and '"VALIDIO_KEYS": TEMPLATE_KEYS' in fill
+    assert "codes.store(Path(TEMPLATE_DB), codes.DEMO_CODE)" in fill
+    assert fill.index("ALL SCENES OK") < fill.index("codes.store(") < fill.index("data.commit()")
