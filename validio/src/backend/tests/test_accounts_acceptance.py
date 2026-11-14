@@ -114,7 +114,7 @@ def test_01_try_the_demo_kitchen(world):
     world["b0"] = snapshot(world["b"])
 
 
-@pending("demo template numbers (builder D): approval up to 5,000.00 €")
+@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_02_demo_template_numbers(world):
     for c in (world["a"], world["b"]):
         r = ok(c.get("/api/rules"))
@@ -130,7 +130,6 @@ def test_01b_without_a_session_the_public_caller_is_refused(world):
 
 # 2. Connect the demo agent
 
-@pending("POST /api/agent/pair, /demo, /allow (B4)")
 def test_03_connect_the_demo_agent(world):
     a = world["a"]
     aid = world["ids"][0]
@@ -158,7 +157,7 @@ def test_03_connect_the_demo_agent(world):
 
 # 3. Send the example request, see it ordered
 
-@pending("POST /api/demo/example (B4)")
+@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_04_example_request_is_ordered(world):
     a = world["a"]
     r = ok(a.post("/api/demo/example"))
@@ -176,7 +175,6 @@ def test_04_example_request_is_ordered(world):
 
 # 4. Lower the limit in Rules with the code
 
-@pending("needs the connected agent of step 3 for the pass version")
 def test_05_lower_the_alone_limit(world):
     a = world["a"]
     before = ok(a.get("/api/rules"))
@@ -199,12 +197,11 @@ def test_05_lower_the_alone_limit(world):
 
 # 5. Send again, see it wait
 
-@pending("POST /api/demo/example (B4)")
 def test_06_same_request_now_waits(world):
     a = world["a"]
     r = ok(a.post("/api/demo/example"))
     rid = r["requestId"]
-    assert rid and rid != world["first"], r["final"]
+    assert rid and rid != world.get("first"), r["final"]
     v = ok(a.get(f"/api/requests/{rid}"))
     assert v["status"] == "waiting", f"expected waiting, got {v['status']}: {(v.get('decision') or {}).get('sentence')}"
     assert v["orderId"]
@@ -218,7 +215,6 @@ def test_06_same_request_now_waits(world):
 
 # 6. Approve with the code
 
-@pending("depends on step 5")
 def test_07_approve_with_the_code(world):
     a, b = world["a"], world["b"]
     rid, oid = world["waiting"]
@@ -234,7 +230,6 @@ def test_07_approve_with_the_code(world):
 
 # 7. Pause the agent, see the refusal in the ledger
 
-@pending("POST /api/agent/pause and the paused refusal (B4)")
 def test_08_pause_and_refusal_in_ledger(world):
     a = world["a"]
     requests_before = [i["id"] for i in ok(a.get("/api/inbox"))]
@@ -255,7 +250,6 @@ def test_08_pause_and_refusal_in_ledger(world):
 
 # 8. Settings: change the diet
 
-@pending("depends on the agent steps for the version list")
 def test_09_change_the_diet(world):
     a = world["a"]
     diet = ["FREE_FROM_GLUTEN", "FREE_FROM_LACTOSE"]
@@ -273,7 +267,7 @@ def test_09_change_the_diet(world):
 
 # B on its own: its limits and its week, untouched by everything A did
 
-@pending("POST /api/agent/pair, /demo, /allow and /api/demo/example (B4)")
+@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_10_b_runs_the_example_on_its_own_copy(world):
     a, b = world["a"], world["b"]
     a_inbox = ok(a.get("/api/inbox"))
@@ -283,6 +277,6 @@ def test_10_b_runs_the_example_on_its_own_copy(world):
     assert ok(a.get("/api/agent"))["state"] == "paused", "B's connect touched A's agent"
     r = ok(b.post("/api/demo/example"))
     v = ok(b.get(f"/api/requests/{r['requestId']}"))
-    assert v["status"] == "ordered_alone", "B was judged on A's lowered limit or A's week"
+    assert v["status"] == "ordered_alone", f"B: {v['status']}: {(v.get('decision') or {}).get('sentence')}"
     assert ok(a.get("/api/inbox")) == a_inbox
     assert ok(b.get("/api/settings"))["diet"] == ["FREE_FROM_LACTOSE"]
