@@ -1,9 +1,9 @@
 """VALIDIO_PUBLIC_READ=1: a stranger on the public deploy reads the UI API without the kitchen token.
-Every write stays closed: the kitchen token or, on a public read deploy, the demo token for any POST, the
-6 digit code for approve, renew and the limits, the demo token for the demo switches."""
+Every write stays closed: the kitchen token (or a kitchen's session) for any POST, the 6 digit code for approve,
+renew and the limits. The demo token is gone: the demo switches answer a demo copy's session only."""
 
 import pytest
-from conftest import CODE, TOKEN
+from conftest import CODE
 from fastapi.testclient import TestClient
 
 from validio.api.app import app
@@ -52,13 +52,13 @@ def test_writes_without_a_token_stay_401_with_public_read(public, monkeypatch, p
     assert public.store.requests() == []  # nothing changed
 
 
-def test_approve_and_demo_still_need_code_and_demo_token(public, monkeypatch):
+def test_demo_switches_stay_closed_to_the_kitchen_token(public, monkeypatch):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
     with TestClient(app, client=REMOTE, headers={"X-Kitchen-Token": KT}) as c:
         assert c.post("/api/demo/stock-out").status_code == 403
-        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": "nope"}).status_code == 403
+        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": "anything"}).status_code == 403
+        assert c.post("/api/demo/reset").status_code == 403
         assert c.get("/api/demo").json()["stockOut466375"] is False
-        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN}).status_code == 200
 
 
 def test_public_read_is_only_the_exact_value_1(public, monkeypatch):
@@ -68,22 +68,27 @@ def test_public_read_is_only_the_exact_value_1(public, monkeypatch):
 
 
 
-def test_the_demo_token_opens_ui_writes_with_public_read(public, monkeypatch):
-    """The web app has a field for the demo token, not for the kitchen token."""
+def test_a_header_named_demo_token_opens_nothing(public, monkeypatch):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
-    with TestClient(app, client=REMOTE, headers={"X-Demo-Token": TOKEN}) as c:
-        assert c.post("/api/demo/stock-out").status_code == 200
-        r = c.post("/api/demo/ask", json={"text": "1500 litres of lactose-free milk by Monday"})
-        assert r.status_code == 200, r.text
-        oid = c.get(f"/api/requests/{r.json()['requestId']}").json()["orderId"]
-        assert c.post(f"/api/orders/{oid}/approve").status_code == 403  # the code still counts
-        assert c.post(f"/api/orders/{oid}/approve", json={"code": CODE}).status_code == 200
-        limits = {"autoLimitCents": 1, "hardCapCents": 2, "deliverBy": "2026-11-16"}
-        assert c.post("/api/spend-pass", json=limits).status_code == 403
-        assert c.post("/agent/v1/requests", json={"lines": [{"text": "1 l of milk"}],
-                                                  "idempotencyKey": "x"}).status_code == 401  # Spend Pass
+    with TestClient(app, client=REMOTE, headers={"X-Demo-Token": "demo-test-token"}) as c:
+        assert c.post("/api/demo/stock-out").status_code == 401
+        assert c.post("/api/demo/ask", json={"text": "1500 litres of lactose-free milk by Monday"}).status_code == 401
+        assert c.post("/api/spend-pass", json={"autoLimitCents": 1, "hardCapCents": 2,
+                                               "deliverBy": "2026-11-16"}).status_code == 401
+    assert public.store.requests() == []
 
 
-def test_the_demo_token_opens_nothing_without_public_read(public):
+def test_a_demo_copy_drives_the_demo_on_a_public_deploy(public, monkeypatch, tmp_path):
+    """What the demo token did, a demo session does now: switches, ask, and approve with 246810."""
+    from validio.api import accounts as acc_mod
+
+    monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
+    monkeypatch.setenv("VALIDIO_ACCOUNTS", str(tmp_path / "accounts"))
+    monkeypatch.setenv("VALIDIO_TEMPLATE", str(tmp_path / "template"))
+    acc_mod._tries.clear()
     with stranger() as c:
-        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN}).status_code == 401
+        assert c.post("/api/account/demo").status_code == 200
+        assert c.post("/api/demo/stock-out").status_code == 200
+        assert c.post("/api/demo/stock-out", json={"on": False}).status_code == 200
+        assert c.post("/api/demo/reset").status_code == 200
+    assert public.store.requests() == []  # the local kitchen did not move

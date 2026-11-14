@@ -26,7 +26,7 @@ def catalog():
 
 
 # the agent API and the web app API over one runtime in a temporary store (test_api, test_mcp)
-CODE, TOKEN = "246810", "demo-test-token"
+CODE = "246810"
 
 
 class Spy:
@@ -55,7 +55,6 @@ def ctx(tmp_path, catalog, monkeypatch):
     if not any(s.valio_cache.glob("price/*/*.json")):
         pytest.skip("needs_data: no recorded Valio answers, run make record")
     monkeypatch.setenv("VALIDIO_APPROVE_CODE", CODE)
-    monkeypatch.setenv("VALIDIO_DEMO_TOKEN", TOKEN)
     monkeypatch.setenv("VALIDIO_DEMO", "1")
     for k in ("VALIDIO_PUBLIC", "VALIDIO_PUBLIC_READ", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS"):
         monkeypatch.setenv(k, "")

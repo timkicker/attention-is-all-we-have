@@ -9,9 +9,8 @@ if [ ! -f "$f" ]; then
   umask 077
   code=$(python3 -c 'import secrets; print(f"{secrets.randbelow(10**6):06d}")')
   kitchen=$(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')
-  demo=$(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')
-  printf 'VALIDIO_PUBLIC=1\nVALIDIO_DEMO=1\nVALIDIO_APPROVE_CODE=%s\nVALIDIO_KITCHEN_TOKEN=%s\nVALIDIO_DEMO_TOKEN=%s\nVALIDIO_MCP_HOSTS=%s\nVALIDIO_PUBLIC_READ=1\n' \
-    "$code" "$kitchen" "$demo" "$host" > "$f"
+  printf 'VALIDIO_PUBLIC=1\nVALIDIO_DEMO=1\nVALIDIO_APPROVE_CODE=%s\nVALIDIO_KITCHEN_TOKEN=%s\nVALIDIO_MCP_HOSTS=%s\nVALIDIO_PUBLIC_READ=1\n' \
+    "$code" "$kitchen" "$host" > "$f"
   echo "wrote $f"
 fi
 chmod 600 "$f"

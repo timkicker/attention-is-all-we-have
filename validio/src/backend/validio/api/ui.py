@@ -7,8 +7,8 @@ public demo; every write still needs the token.
 Approve and reject: the 6 digit code (VALIDIO_APPROVE_CODE) as X-Approve-Code or {"code"}. The order is
 looked up first, so an unknown id answers 404 whatever the code. Five wrong codes lock that order, and five
 from one client lock that client.
-Demo switches: VALIDIO_DEMO=1, plus X-Demo-Token when VALIDIO_DEMO_TOKEN is set.
-Without a code or a token, approve and the demo switches stay closed to anyone not on this machine."""
+Demo switches: a logged-in demo copy (docs/ACCOUNTS-API.md), or the local kitchen with VALIDIO_DEMO=1 for a
+caller on this machine. Without a code, approve stays closed to anyone not on this machine."""
 
 import hmac
 import re
@@ -63,8 +63,6 @@ def kitchen(request: Request, ctx: CtxDep) -> None:
         return
     if ctx.public_read and request.method in ("GET", "HEAD"):
         return  # VALIDIO_PUBLIC_READ=1: anyone may look; writes still need the token, approve the code
-    if ctx.public_read and ctx.demo_token and _same(request.headers.get("x-demo-token"), ctx.demo_token):
-        return  # the public demo writes with the demo token the web app asks for; codes still count
     if not ctx.kitchen_token:
         raise HTTPException(403, "this server has no VALIDIO_KITCHEN_TOKEN, so the web API is closed to "
                                  "callers that are not on this machine")
@@ -111,18 +109,16 @@ def _code(ctx: Ctx, request: Request, order_id: str, header: str | None, body: A
     check_code(ctx, request, order_id, header, body)
 
 
-def _demo(ctx: Ctx, request: Request, token: str | None) -> None:
+def _demo(ctx: Ctx, request: Request) -> None:
+    """Demo controls: a demo copy's session, or the local kitchen (VALIDIO_DEMO=1) from this machine."""
     if ctx.account is not None:
         if not ctx.account["is_demo"]:
             raise HTTPException(404, "demo controls are only on the demo kitchen")
         return
     if not ctx.settings.demo:
         raise HTTPException(404, "demo controls are off")
-    if ctx.demo_token:
-        if not _same(token, ctx.demo_token):
-            raise HTTPException(403, "wrong or missing demo token")
-    elif not ctx.is_local(_host(request)):
-        raise HTTPException(403, "this server has no VALIDIO_DEMO_TOKEN, so the demo switches are closed")
+    if not ctx.is_local(_host(request)):
+        raise HTTPException(403, "demo controls are only on the demo kitchen")
 
 
 @router.get("/inbox", response_model=list[InboxItem], response_model_exclude_none=True)
@@ -343,11 +339,10 @@ def demo_state(ctx: CtxDep):
 
 
 @router.post("/demo/stock-out", response_model=DemoState, response_model_exclude_none=True)
-def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, Body()] = None,
-              x_demo_token: Annotated[str | None, Header()] = None):
+def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, Body()] = None):
     """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {"on": false} ends
     it. A change writes one simulation entry, the same state again writes none."""
-    _demo(ctx, request, x_demo_token)
+    _demo(ctx, request)
     on = body.on if body else True
     if ctx.stockout() != on:
         ctx.set_stockout(on)
@@ -355,9 +350,9 @@ def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, 
 
 
 @router.post("/demo/ask", response_model=AskOut, response_model_exclude_none=True)
-def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated[str | None, Header()] = None):
+def demo_ask(ctx: CtxDep, request: Request, body: AskIn):
     """The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when
-    GEMINI_API_KEY is set, the fake model otherwise. On a public deploy the demo token guards it too."""
+    GEMINI_API_KEY is set, the fake model otherwise. On a public read deploy only a demo copy may use it."""
     import asyncio
     import secrets
 
@@ -370,7 +365,7 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
     from .mcp_server import server
 
     if ctx.public_read or ctx.account is not None:
-        _demo(ctx, request, x_demo_token)
+        _demo(ctx, request)
     text = " ".join(body.text.split())
     if not text:
         raise HTTPException(422, "say what the kitchen needs, for example 500 litres of lactose-free milk by Monday")
@@ -401,8 +396,8 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)
-def reset(ctx: CtxDep, request: Request, x_demo_token: Annotated[str | None, Header()] = None):
+def reset(ctx: CtxDep, request: Request):
     """Back to the state `make demo` starts from: drops every table, seeds again."""
-    _demo(ctx, request, x_demo_token)
+    _demo(ctx, request)
     ctx.reset()
     return _demo_state(ctx, ctx.stockout())

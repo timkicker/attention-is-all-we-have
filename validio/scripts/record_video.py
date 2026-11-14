@@ -40,7 +40,7 @@ def free_port() -> int:
 def server_env(store: Path, code: str, base: dict, keep_model_key: bool = False) -> dict:
     env = {k: v for k, v in base.items() if k not in DROP and (keep_model_key or k != "GEMINI_API_KEY")}
     env.update(VALIO_MODE="replay", VALIDIO_DB=str(store / "validio.db"), VALIDIO_KEYS=str(store / "keys"),
-               VALIDIO_DEMO="1", VALIDIO_APPROVE_CODE=code, VALIDIO_DEMO_TOKEN="", NO_COLOR="1")
+               VALIDIO_DEMO="1", VALIDIO_APPROVE_CODE=code, NO_COLOR="1")
     return env
 
 
