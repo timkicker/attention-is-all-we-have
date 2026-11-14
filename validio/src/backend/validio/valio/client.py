@@ -24,6 +24,10 @@ class ReplayMiss(LookupError):
     pass
 
 
+class NotRecorded(ReplayMiss):
+    """A replay miss said for a person: what has no recording, never ids or make targets (those go to the log)."""
+
+
 class ValioUnavailable(RuntimeError):
     """Valio timed out, could not be reached or answered 5xx, twice. Nothing was ordered."""
 
