@@ -13,14 +13,21 @@ LACTOSE_FREE_MAX_G = 0.01  # g per 100 g, our reading until a Valio mentor confi
 GLUTEN_CODES = {"AW": "gluten cereals", "UW": "wheat", "NR": "rye", "GB": "barley", "GS": "spelt", "GK": "kamut"}
 FISH_CODES = {"AF": "fish", "AC": "crustaceans", "UM": "molluscs"}
 ANIMAL_CODES = {"AM": "milk", "AE": "egg", "ML": "lactose"}
-GLUTEN_WORDS = r"\b(WHEAT|BARLEY|RYE|SPELT|VEHNÄ|OHRA|RUIS)\w*"
+# cereal words in English, Finnish and Swedish (Valio's key ingredients are English, some keep the local word)
+GLUTEN_WORDS = r"\b(WHEAT|BARLEY|RYE|SPELT|VEHNÄ|OHRA|RUIS|VETE|KORN|RÅG|DINKEL)\w*"
+# oats (GO) are a gluten cereal on an allergen list, but certified gluten-free oats are allowed in a gluten-free
+# product: a gluten-free claim with oats listed is not contradicted, it waits for a person (unchecked)
+OATS = "GO"
 # A cereal word counts unless it is one of these known gluten-free ingredients, written out in full:
 # "gluten-free wheat starch", "gluten-free barley malt extract", "gluten-free malt extract (barley)".
 _GF = r"(?<![\w-])(?<!not )(?<!non-)(?<!non )gluten[- ]free\s+"
 GLUTEN_FREE_BEFORE = (re.compile(_GF + r"$", re.IGNORECASE), re.compile(_GF + r"malt\s+extract\s*\(\s*$", re.IGNORECASE))
 GLUTEN_FREE_AFTER = (re.compile(r"(wheat\s+st(ar|ra)ch|barley\s+malt\s+extract)\b", re.IGNORECASE),
                      re.compile(r"barley\s*\)", re.IGNORECASE))
-MEAT_WORDS = re.compile(r"\b(pork|beef|chicken|turkey|lamb|meat|bacon|ham|gelatine?)\b(?!-free)", re.IGNORECASE)
+MEAT_WORDS = re.compile(
+    r"\b(pork|beef|veal|chicken|turkey|duck|lamb|mutton|venison|meat|bacon|ham|salami|chorizo|pepperoni|prosciutto"
+    r"|lard|tallow|gelatine?|anchov(?:y|ies)|liha|sianliha|naudanliha|kana|broileri?|kalkkuna|pekoni|kinkku|liivate"
+    r"|kött|fläsk|kyckling|gelatin)\b(?!-free)", re.IGNORECASE)
 HONEY = re.compile(r"\bhoney\b", re.IGNORECASE)
 
 
@@ -63,6 +70,8 @@ def claim_check(p: Product, claim: str) -> tuple[TrustLevel, list[str]]:
             return TrustLevel.MISSING, ["no gluten-free claim in Valio's data"]
         if not p.has_allergen_data:
             return TrustLevel.UNCHECKED, ["claims gluten free but has no allergen data"]
+        if OATS in p.contains:
+            return TrustLevel.UNCHECKED, ["claims gluten free and lists oats, safe only with gluten-free oats"]
         return TrustLevel.CONSISTENT, ["no gluten cereal listed"]
 
     if claim in ("VEGETARIAN", "VEGAN"):
