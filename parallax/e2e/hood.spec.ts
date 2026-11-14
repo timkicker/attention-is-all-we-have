@@ -11,7 +11,9 @@ test('under the hood shows the query with AS OF and the vector distance', async 
   const sql = page.getByTestId(TID.hoodQuery)
   await expect(sql).toContainText('FOR SYSTEM_TIME')
   await expect(sql).toContainText('VEC_DISTANCE_COSINE')
-  await expect(page.getByTestId(TID.hoodNumber)).toHaveCount(4)
+  // top-1 and top-5 recall only show where the seed has them measured
+  for (const key of ['versions', 'query_ms'])
+    await expect(page.locator(`[data-testid="${TID.hoodNumber}"][data-key="${key}"]`)).toContainText(/\d/)
   await expect(page.getByTestId(TID.foot)).toContainText(copy.FOOT.affiliation)
 })
 

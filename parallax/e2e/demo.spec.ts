@@ -19,7 +19,7 @@ test.describe('demo script @demo', () => {
     await expect(page).toHaveTitle(/Parallax/)
     await expect(page.getByTestId(TID.barLogo)).toHaveText(copy.WORDMARK)
     await page.getByTestId(TID.startExampleOpen).click()
-    await expect(page).toHaveURL(new RegExp(`/t/${QID}$`))
+    await expect(page).toHaveURL(new RegExp(`/t/${QID}(/s/fi/\\d+/[0-9a-f]{16})?$`))
   })
 
   test('0:08 differences: Mainila told differently, the Finnish dead with other numbers', async ({ page }) => {
