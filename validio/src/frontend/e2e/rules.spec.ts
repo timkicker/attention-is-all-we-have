@@ -300,9 +300,9 @@ for (const v of VIEWS) {
       await go("/requests/R-2");
       await expect(page.getByTestId("request-status")).toContainText("Ordered");
       await check("R-2 ordered");
-      await go("/steady");
-      await expect(page.getByTestId("steady-S-1")).toBeVisible();
-      await check("steady list");
+      await go("/orders");
+      await expect(page.getByTestId("order-s-S-1")).toBeVisible();
+      await check("orders list");
       await go("/steady/S-1");
       await expect(page.getByTestId("renew")).toBeVisible();
       await check("steady before");
@@ -458,8 +458,8 @@ test("phone bars never cover the page end", async ({ page }) => {
   await code(page);
   await expect(page.getByTestId("order-done")).toBeVisible();
   await check("approve done");
-  await page.goto("/steady");
-  await check("steady list");
+  await page.goto("/orders");
+  await check("orders list");
   await page.goto("/steady/S-1");
   await check("steady before");
   await page.getByTestId("renew").click();

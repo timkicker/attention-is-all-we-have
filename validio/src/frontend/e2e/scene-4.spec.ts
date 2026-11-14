@@ -7,8 +7,8 @@ test("scene 4: steady order renews with flags", async ({ page }) => {
   await fresh(page);
   // As in the demo: the stock-out of scene 3 comes first, so the mozzarella line is blocked.
   await stockOut(page);
-  await page.goto("/steady");
-  await page.getByTestId("steady-S-1").click();
+  await page.goto("/orders?f=steady");
+  await page.getByTestId("order-s-S-1").click();
   await expect(page.getByTestId("simulated-history")).toContainText("simulated");
 
   // The first write asks for the approval code once, then runs.

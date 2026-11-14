@@ -224,7 +224,7 @@ test("scene 4: the chef renews S-1", async ({ page, request }) => {
   await page.waitForLoadState("networkidle");
   if ((await page.getByTestId("nav-steady-orders").count()) > 0) {
     await page.getByTestId("nav-steady-orders").click();
-    if ((await page.getByTestId("steady-S-1").count()) > 0) await page.getByTestId("steady-S-1").click();
+    if ((await page.getByTestId("order-s-S-1").count()) > 0) await page.getByTestId("order-s-S-1").click();
     else await page.goto("/steady/S-1");
   } else await page.goto("/steady/S-1");
   const renewed = async () => !!(await json(request, "/api/steady/S-1")).renewedAt;
