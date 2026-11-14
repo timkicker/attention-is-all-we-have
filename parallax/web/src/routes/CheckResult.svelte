@@ -47,7 +47,9 @@
   {:else}
     {@const vm = res.data}
     <div class="meta" data-testid={TID.checkMeta}>
-      <p class="sec">{vm.label ? copy.check.recordedOn(vm.label, vm.recordedOn) : copy.check.PASTED}</p>
+      <p class="sec">
+        {#if vm.label && vm.recordedOn}{vm.label}{copy.FOOT.sep}<span class="nw">{copy.check.recordedDate(vm.recordedOn)}</span>{:else}{vm.label ?? copy.check.PASTED}{/if}
+      </p>
       <a class="u sec" href={vm.againHref} data-testid={TID.checkAgain}>{copy.check.CHECK_ANOTHER}</a>
     </div>
     <p class="ans sec">
@@ -73,7 +75,7 @@
 
 <style>
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
-  .meta a { flex: none; white-space: nowrap; }
+  .meta a, .nw { flex: none; white-space: nowrap; }
   .v { color: var(--fg2); }
   .v.bad { color: var(--fg); font-weight: var(--w-medium); }
   .ans { margin-top: 16px; }
