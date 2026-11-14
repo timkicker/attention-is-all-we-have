@@ -11,6 +11,7 @@ import { backedBy, DISPUTED, disputedOtherwise, disputedRemoved, excerpt, IN_NO_
 import { fmtYear } from '../format'
 import { LANGS, type CheckResultVM, type CheckRow, type CheckVerdict, type CheckVM, type Result } from '../model'
 import { paths } from '../router.svelte'
+import * as checkCopy from '../copy/check'
 import type { TopicCtx, WithoutCounts } from './shared'
 
 type Client = typeof Api
@@ -54,8 +55,9 @@ function capped(q: string): string {
 /** The recorded answer's label, built only from its stored data: "<model> on <question>". */
 export function recordedLabel(r: { answer_model: string | null; question: string | null }): string | null {
   const m = modelName(r.answer_model)
+  const short = r.question ? checkCopy.QUESTION_TOPICS.find(([re]) => re.test(r.question ?? ''))?.[1] : undefined
   const part = questionPart(r.question)
-  const q = part ? capped(part) : null
+  const q = short ?? (part ? capped(part) : null)
   if (m && q) return `${m} on ${q}`
   return m ?? (q ? q.charAt(0).toUpperCase() + q.slice(1) : null)
 }
@@ -112,11 +114,15 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
   if (contradicts.length) {
     verdict = 'disputed'
     head = disputedOtherwise(contradicts.map(([l]) => l))
-  } else if (stopped.length) {
+  } else if (stopped.length && says.length && says.length * 2 <= all) {
+    // A real removal (rewordings are filtered out by the API) and at most half the editions still say it.
     verdict = 'disputed'
-    // Every edition that removed it, with the year of the last removal; evidence is the sentence life that ended.
     const died = stopped.map(([, v]) => v.evidence[0]?.died ?? '').sort().at(-1)
-    head = died ? disputedRemoved(says.length, all, stopped.map(([l]) => l), fmtYear(died)) : DISPUTED
+    const year = died ? fmtYear(died) : null
+    head =
+      stopped.length > 2 || !year
+        ? checkCopy.disputedRemovedIn(says.length, all, stopped.length)
+        : disputedRemoved(says.length, all, stopped.map(([l]) => l), year)
   } else if (says.length) {
     verdict = 'backed'
     head = backedBy(says.length, all)

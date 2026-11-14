@@ -111,6 +111,8 @@
 </main>
 
 <style>
+  /* Three lines at most; the statement page shows the whole sentence. */
+  .say { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
   .ctl { display: flex; gap: 12px; margin-top: 24px; }
   .ctl :global(.field) { flex: 1 1 auto; min-width: 0; }
   .pair { display: flex; gap: 12px; flex: none; }

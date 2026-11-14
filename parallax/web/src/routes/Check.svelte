@@ -89,10 +89,11 @@
   .ta::placeholder { color: var(--fg3); }
   .ta:focus { outline: none; border-color: var(--fg); }
   .bad { margin-top: 8px; }
-  .go { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; }
+  .go { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-top: 16px; }
+  .go .btn { flex-shrink: 0; margin-left: auto; }
   .go .u { color: var(--fg2); }
   @media (max-width: 600px) {
     .go { flex-direction: column; align-items: stretch; }
-    .go .btn { justify-content: center; }
+    .go .btn { justify-content: center; margin-left: 0; }
   }
 </style>
