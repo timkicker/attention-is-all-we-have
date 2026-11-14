@@ -61,7 +61,7 @@ export function agent(k: Kitchen, scene: number) {
 export async function pairAgent(k: Kitchen, page: Page) {
   await page.goto("/agent");
   await page.getByTestId("agent-connect").click();
-  const code = (await page.getByTestId("pair-code").innerText()).trim();
+  const code = ((await page.getByTestId("pair-code").textContent()) ?? "").trim();
   const done = new Promise<void>((ok, fail) =>
     execFile("uv", cli(k, ["--pair", code, "--wait", "60"]), { cwd: "../backend", env: process.env }, (err, _o, e) =>
       err ? fail(new Error(`agent.py --pair: ${e || err.message}`)) : ok()),
