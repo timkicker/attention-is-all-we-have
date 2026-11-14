@@ -20,6 +20,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse
 from pydantic import Field
 
 from ..demo import seed
@@ -43,7 +44,10 @@ create table if not exists account (
   customer text not null, address text not null default '', is_demo integer not null default 0,
   rules_saved integer not null default 0, created_at real not null);
 create table if not exists session (id_hash text primary key, account_id text not null, expires real not null);
+create table if not exists link (id_hash text primary key, account_id text not null, path text not null,
+  expires real not null);
 """
+LINK_SECONDS = 10 * 60
 
 
 def accounts_dir() -> Path:
@@ -289,6 +293,14 @@ class LoginIn(Model):
     password: str = Field(max_length=200)
 
 
+class PhoneLinkIn(Model):
+    path: str = Field("/", max_length=200, pattern=r"^(/[A-Za-z0-9_-]+)*/?$", description="where the phone lands")
+
+
+class PhoneLinkOut(Model):
+    url: str
+
+
 class SetupView(Model):
     kitchen: bool
     rules: bool
@@ -415,3 +427,29 @@ def account(request: Request):
     if a is None:
         raise HTTPException(401, "not logged in")
     return view(get_accounts().get(a))
+
+
+@router.post("/phone-link", response_model=PhoneLinkOut)
+def phone_link(request: Request, body: PhoneLinkIn):
+    """A one-time link, valid 10 minutes, that logs a phone into this account and opens `path`."""
+    a = session_account_id(request)
+    if a is None:
+        raise HTTPException(401, "not logged in")
+    token = secrets.token_urlsafe(24)
+    with get_accounts()._db() as con:
+        con.execute("insert into link values (?, ?, ?, ?)", (_sid_hash(token), a, body.path, time.time() + LINK_SECONDS))
+    return PhoneLinkOut(url=f"{str(request.base_url).rstrip('/')}/api/account/open/{token}")
+
+
+@router.get("/open/{token}", include_in_schema=False)
+def open_link(request: Request, token: str):
+    acc = get_accounts()
+    with acc._db() as con:
+        row = con.execute("select account_id, path, expires from link where id_hash = ?", (_sid_hash(token),)).fetchone()
+        con.execute("delete from link where id_hash = ?", (_sid_hash(token),))
+    if row is None or row["expires"] < time.time() or acc.get(row["account_id"]) is None:
+        raise HTTPException(404, "this link is used or expired")
+    r = RedirectResponse(row["path"], status_code=303)
+    r.set_cookie(COOKIE, acc.start_session(row["account_id"]), httponly=True, samesite="lax",
+                 secure=request.url.scheme == "https", max_age=SESSION_SECONDS, path="/")
+    return r
