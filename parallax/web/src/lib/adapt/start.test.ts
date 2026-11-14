@@ -127,8 +127,14 @@ describe('loadStart', () => {
     expect(ex.href).toBe('/t/Q134949/s/fi/1256/abe24bc5f22fda02')
     expect(ex.title).toBe('How four editions tell the Mainila shots')
     expect(ex.lines.map((l) => l.lang)).toEqual(['fi', 'sv', 'en', 'ru'])
+    expect(ex.lines.map((l) => l.say.text)).toEqual([
+      'The Soviet Union staged the Shelling of Mainila',
+      'The official Soviet explanation referred to Mainila.',
+      'On 26 November 1939, an incident was reported near Mainila',
+      'The Soviet Union organized a provocation',
+    ])
     const markedWords = ex.lines.map((l) => l.say.spans.map((s) => l.say.text.slice(s.start, s.end)))
-    expect(markedWords).toEqual([['staged'], [], ['was reported'], []])
+    expect(markedWords).toEqual([['staged'], ['The official Soviet explanation'], ['was reported'], ['organized a provocation']])
   })
 
   it('puts Winter War first and keeps the API order for the rest', async () => {
@@ -140,7 +146,7 @@ describe('loadStart', () => {
     expect(((await loadStart(client([topic('Q152786', 'M')], { ok: true, data: FULL }))) as { data: { example: unknown } }).data.example).toBeNull()
     const failed = await loadStart(client([topic('Q134949', 'Winter War')], { ok: false, error: { status: 500, code: 'x', message: '' } }))
     expect(failed.ok && failed.data.example).toBeNull()
-    const one = mainila({ en: cell({ text: 'an incident was reported', marks: [term('was reported')] }) })
+    const one = mainila({ en: cell({ text: 'an incident was reported', marks: [] }) })
     const r = await loadStart(client([topic('Q134949', 'Winter War')], { ok: true, data: one }))
     expect(r.ok && r.data.example).toBeNull()
   })

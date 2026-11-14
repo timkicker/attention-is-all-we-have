@@ -57,10 +57,18 @@ export async function loadStart(api: Client): Promise<Result<StartVM>> {
   return { ok: true, data: { prepared, example } }
 }
 
-/** At most this many other editions next to the Finnish line, as in the wireframe. */
-const EXAMPLE_OTHERS = 3
-/** A part before an elision shorter than this is not a usable quote; long quotes are clamped in CSS. */
-const EXAMPLE_MIN = 40
+/**
+ * The example is hand-picked, so each edition gets a hand-picked clause: a part of its live English text
+ * (gloss, or the English text itself) and the phrase in it that differs. Nothing is reworded: the clause
+ * and the phrase are only searched in the live text, and an edition whose clause is not there shows its
+ * whole text, marked where the phrase is found.
+ */
+export const EXAMPLE_CLAUSES: { lang: Lang; clause: string; mark: string }[] = [
+  { lang: 'fi', clause: 'the Soviet Union staged the Shelling of Mainila', mark: 'staged' },
+  { lang: 'sv', clause: 'The official Soviet explanation for the attack referred to the above-mentioned shelling of Mainila', mark: 'The official Soviet explanation' },
+  { lang: 'en', clause: 'an incident was reported near the Soviet village of Mainila', mark: 'was reported' },
+  { lang: 'ru', clause: 'the Soviet Union organized a provocation', mark: 'organized a provocation' },
+]
 
 function englishOf(lang: string, cell: CellRaw): string | null {
   return cell.gloss ?? (lang === 'en' ? cell.text : null)
@@ -78,38 +86,30 @@ function markIn(text: string, words: string[]): MarkedText {
   return { text, spans }
 }
 
-/**
- * The Finnish example statement and up to three editions that word it differently (a term mark that the API
- * can name in English). Finnish gets its English term marked; another edition gets a mark only where its own
- * differing words appear in its English text (the English edition). null when fewer than two differ.
- */
+/** The clause as it stands in the live text (first letter raised), or the whole text when it is not there. */
+export function clauseOf(text: string, clause: string): string {
+  const i = text.toLowerCase().indexOf(clause.toLowerCase())
+  if (i < 0) return text
+  return capital(text.slice(i, i + clause.length))
+}
+
+/** Finnish plus the curated editions that are in the data; null when fewer than two others are. */
 export function toExample(raw: CompareRes, topic: TopicRef): StartVM['example'] {
   const row = raw.rows[0]
   const fi = row?.cells[raw.anchor]
-  const fiText = fi && englishOf(raw.anchor, fi)
-  if (!row || !fi?.h || !fi.page_id || !fiText) return null
+  if (!row || !fi?.h || !fi.page_id) return null
   const lines: ExampleLine[] = []
-  const fiTerms = new Set<string>()
-  for (const lang of LANGS) {
-    if (lang === raw.anchor) continue
-    const cell = row.cells[lang]
-    if (!cell || cell.status !== 'matched') continue
-    const terms = cell.marks.filter((m) => m.kind === 'term' && m.this_en)
-    const text = englishOf(lang, cell)
-    if (!terms.length || !text) continue
-    terms.forEach((m) => fiTerms.add(m.this_en as string))
-    if (lines.length < EXAMPLE_OTHERS) {
-      // A gloss can hold an elision marker "<…>"; the example shows only the part before it.
-      const cut = text.split('<…>')[0].trim()
-      const shown = cut.length >= EXAMPLE_MIN ? cut : text
-      lines.push({ lang, say: markIn(shown, terms.map((m) => m.other)) })
-    }
+  for (const c of EXAMPLE_CLAUSES) {
+    const cell = row.cells[c.lang]
+    const text = cell && (c.lang === raw.anchor || cell.status === 'matched') ? englishOf(c.lang, cell) : null
+    if (!text) continue
+    lines.push({ lang: c.lang, say: markIn(clauseOf(text, c.clause), [c.mark]) })
   }
-  if (lines.length < 2) return null
+  if (lines[0]?.lang !== raw.anchor || lines.length < 3) return null
   return {
     topic,
-    title: exampleTitle(lines.length + 1),
-    lines: [{ lang: raw.anchor as Lang, say: markIn(fiText, [...fiTerms]) }, ...lines],
+    title: exampleTitle(lines.length),
+    lines,
     href: paths.statement(topic.qid, raw.anchor, fi.page_id, fi.h),
   }
 }
