@@ -57,7 +57,7 @@ def ctx(tmp_path, catalog, monkeypatch):
     monkeypatch.setenv("VALIDIO_APPROVE_CODE", CODE)
     monkeypatch.setenv("VALIDIO_DEMO_TOKEN", TOKEN)
     monkeypatch.setenv("VALIDIO_DEMO", "1")
-    for k in ("VALIDIO_PUBLIC", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS"):
+    for k in ("VALIDIO_PUBLIC", "VALIDIO_PUBLIC_READ", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS"):
         monkeypatch.setenv(k, "")
     monkeypatch.setenv("VALIDIO_DB", str(tmp_path / "validio.db"))
     monkeypatch.setenv("VALIDIO_KEYS", str(tmp_path / "keys"))

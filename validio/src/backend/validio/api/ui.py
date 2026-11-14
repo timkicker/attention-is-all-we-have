@@ -2,7 +2,8 @@
 
 Reads and writes: a caller on this machine needs nothing more; anyone else needs the kitchen token
 (VALIDIO_KITCHEN_TOKEN) as the X-Kitchen-Token header or the cookie POST /api/session sets, and finds the
-API closed while no token is configured.
+API closed while no token is configured. VALIDIO_PUBLIC_READ=1 opens the GET routes to anyone, for the
+public demo; every write still needs the token.
 Approve and reject: the 6 digit code (VALIDIO_APPROVE_CODE) as X-Approve-Code or {"code"}. The order is
 looked up first, so an unknown id answers 404 whatever the code. Five wrong codes lock that order, and five
 from one client lock that client.
@@ -52,6 +53,8 @@ def kitchen(request: Request, ctx: CtxDep) -> None:
     """The gate in front of every /api route but health and session."""
     if ctx.is_local(_host(request)):
         return
+    if ctx.public_read and request.method in ("GET", "HEAD"):
+        return  # VALIDIO_PUBLIC_READ=1: anyone may look; writes still need the token, approve the code
     if not ctx.kitchen_token:
         raise HTTPException(403, "this server has no VALIDIO_KITCHEN_TOKEN, so the web API is closed to "
                                  "callers that are not on this machine")
