@@ -57,6 +57,8 @@ The full contract is in [contract/openapi.yaml](contract/openapi.yaml). New with
 
 Existing endpoints include `/api/compare`, `/api/timeline`, `/api/dropped`, `/api/check` and `/api/check/recorded`.
 
+`POST /api/check` takes an optional `topic` (topic_id) so the evidence comes from that article only, checks at most 20 statements of an answer and answers 422 `bad_lang` for an edition it does not cover. Checks, new ingests, searches and questions are limited per visitor (429 `too_many`, see `api/ratelimit.py` and `.env.example`); `rate_limited` stays the code for "Wikipedia asked us to slow down". At most `INGEST_MAX_ACTIVE` (3) articles load at once. What a visitor types (an answer, a question, a search) is never kept for `GET /api/sql/{panel}`.
+
 ## Seed
 
 Seed v4 holds the Winter War in all seven editions with their full edit history, embeddings, model verdicts and English glosses. [contract/SEED.md](contract/SEED.md) describes the seeds. `make seed-mini` loads a small seed for tests. English glosses made later can be carried to another server with `make gloss-dump` and `make gloss-load FILE=…`.

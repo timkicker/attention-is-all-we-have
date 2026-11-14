@@ -100,12 +100,16 @@ class VectorStore:
     persist=False keeps new vectors in memory only: flush() never writes, so readers in parallel never race on a
     shard file name."""
 
-    def __init__(self, root: Path | None = None, persist: bool = True) -> None:
+    def __init__(self, root: Path | None = None, persist: bool = True, _share: "VectorStore | None" = None) -> None:
         self.root = root or EMB_DIR
         self.persist = persist
         self.vecs: dict[str, np.ndarray] = {}
         self._pending: dict[str, np.ndarray] = {}
         self._shards = 0
+        if _share is not None:  # same vectors in memory, read once per process (see writer())
+            self.vecs = _share.vecs
+            self._shards = len(list(self.root.glob("shard-*.npz"))) if self.root.exists() else 0
+            return
         if self.root.exists():
             for p in sorted(self.root.glob("shard-*.npz")):
                 z = np.load(p)
@@ -149,7 +153,8 @@ _SHARED_LOCK = threading.Lock()
 
 
 def shared_store() -> VectorStore:
-    """The read-only store of this process: data/emb/ is read on first use only, new vectors stay in memory."""
+    """The read-only store of this process: data/emb/ is read on first use only. Add to it only vectors of stored
+    sentences (the ingest, through writer()); a visitor's text goes through Overlay so it is not kept."""
     global _SHARED
     if _SHARED is None:
         with _SHARED_LOCK:
@@ -158,7 +163,39 @@ def shared_store() -> VectorStore:
     return _SHARED
 
 
-def embed_texts(texts: list[str], store: VectorStore | None = None, be=None, progress=None) -> list[np.ndarray]:
+def writer() -> VectorStore:
+    """A store that writes new shards (the ingest) over the vectors shared_store() already holds in memory, so the
+    process keeps one copy of data/emb/ instead of two."""
+    return VectorStore(persist=True, _share=shared_store())
+
+
+class Overlay:
+    """Looks vectors up in a store but keeps new ones only for its own lifetime (one request).
+
+    Text a visitor typed (a pasted answer, a question) is embedded once per request and then forgotten, so the
+    process does not grow with every check."""
+
+    def __init__(self, base: VectorStore) -> None:
+        self.base = base
+        self.own: dict[str, np.ndarray] = {}
+
+    def __contains__(self, h: str) -> bool:
+        return h in self.own or h in self.base
+
+    def get(self, h: str) -> np.ndarray | None:
+        v = self.own.get(h)
+        return v if v is not None else self.base.get(h)
+
+    def put(self, h: str, v: np.ndarray) -> None:
+        self.own[h] = v
+
+    def flush(self) -> None:
+        pass
+
+
+def embed_texts(
+    texts: list[str], store: "VectorStore | Overlay | None" = None, be=None, progress=None
+) -> list[np.ndarray]:
     """Vectors for texts, from the store when present; new ones are embedded in backend batches and stored."""
     store = store if store is not None else VectorStore()
     hs = [claim_hash(t) for t in texts]
