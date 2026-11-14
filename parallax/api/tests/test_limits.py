@@ -64,7 +64,7 @@ def test_unexpected_error_keeps_the_error_shape(client, monkeypatch):
     monkeypatch.setattr(topics.sqllog, "run_file", boom)
     with TestClient(app, raise_server_exceptions=False) as c:
         r = c.get("/api/stats")
-    assert r.status_code == 500
+    assert r.status_code == 500 and not schema_errors("/api/stats", r.json(), status="500")
     assert r.json() == {"error": {"code": "internal", "message": "Something went wrong on our side."}}
 
 
