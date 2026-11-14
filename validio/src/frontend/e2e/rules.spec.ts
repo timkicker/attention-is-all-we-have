@@ -399,6 +399,10 @@ test("options lane, tabs and approve agree on the count", async ({ page }) => {
   const lane = Number(await page.getByTestId("lane-options").locator(".rc-v").innerText());
   const tabs = (await page.getByRole("tab").locator("em").allInnerTexts()).map(Number);
   await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
+  // Every option row counts, the ones behind the "Can't arrive in time" fold too.
+  await expect(page.getByTestId("not-orderable")).not.toHaveAttribute("open");
+  const rows = await page.locator('[role="tabpanel"] [data-testid^="option-"]').count();
+  expect(rows).toBe(lane);
   await page.goto("/approve/R-2");
   const others = Number(await page.getByTestId("others").locator("summary .num").innerText());
   expect(tabs.length).toBe(2);
