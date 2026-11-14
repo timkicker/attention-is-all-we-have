@@ -93,9 +93,9 @@ for (const v of VIEWS) {
       await page.screenshot({ path: `${OUT}/steady-renewed-bottom-viewport-${v.width}-${v.theme}.png` });
     }
 
-    await go("/spend-pass");
-    await expect(page.locator("#pass-auto")).toContainText("1,200.00");
-    await shoot("spend-pass");
+    await go("/agent");
+    await expect(page.getByTestId("rules-alone")).toContainText("1,200.00");
+    await shoot("agent");
 
     await go("/ledger");
     await expect(page.locator("#chain-status")).toContainText("Verified");
@@ -143,12 +143,12 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
     await page.screenshot({ path: at("play-ask") });
     await page.keyboard.press("Escape");
 
-    await page.goto("/spend-pass");
-    await page.getByTestId("change-limits").click();
-    await page.getByTestId("f-auto").fill("2500");
-    if (await page.getByTestId("f-code").isVisible()) await page.getByTestId("f-code").fill("246810");
-    await page.getByTestId("limits-save").click();
-    await expect(page.getByTestId("f-auto-problem")).toBeVisible();
+    await page.goto("/agent");
+    await page.getByTestId("rules-edit").click();
+    await page.getByTestId("r-alone").fill("2500");
+    await page.getByTestId("code-input").fill("246810");
+    await page.getByTestId("code-submit").click();
+    await expect(page.locator("#r-alone-problem")).toBeVisible();
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-limits"), fullPage: true });
 

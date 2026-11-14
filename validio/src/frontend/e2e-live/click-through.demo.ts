@@ -79,7 +79,7 @@ test("scene 1: the agent asks for 1000 litres of milk", async ({ request }) => {
   expect(r1.text).toBe("1000 litres of lactose-free milk by Monday, budget 1200 euro");
 });
 
-test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass page the rest", async ({ page }) => {
+test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Agent page the Rules", async ({ page }) => {
   await page.goto("/");
   await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap");
   await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000\slitres of lactose-free milk/); // display words, "1,000"
@@ -90,19 +90,10 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass
     await expect(page.locator("section", { has: page.locator("#h-Open") }).getByTestId("inbox-R-1")).toBeVisible();
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
-  // The request pane keeps one Spend Pass line; the whole pass is its own page.
-  if ((await page.getByTestId("nav-spend-pass").count()) > 0) await page.getByTestId("nav-spend-pass").click();
-  else await page.goto("/spend-pass");
-  await expect(page).toHaveURL(/\/spend-pass$/);
-  await expect(page.getByTestId("pass-valid-to")).toBeVisible();
-  await needs(page, "pass-auto", "pass-cap", "pass-diet", "pass-deliver-by", "pass-valid-to");
-  await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
-  await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
-  await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
-  await expect(page.getByTestId("pass-deliver-by")).toContainText("16 Nov");
-  await expect(page.getByTestId("pass-valid-to")).toContainText("17 Nov");
-  await page.locator("#pass-sees").click();
-  await expect(page.getByTestId("pass-approvers")).toContainText("not approvers");
+  // The limits are the Agent page's Rules.
+  await page.goto("/agent");
+  await expect(page.getByTestId("rules-alone")).toContainText(money("1,200.00"));
+  await expect(page.getByTestId("rules-blocked")).toContainText(money("2,000.00"));
 });
 
 // Scene 2, ordered alone

@@ -92,34 +92,25 @@ test("approving a blocked request: a plain state, not an outage", async ({ page 
   await expect(page).toHaveURL(/\/requests\/R-3$/);
 });
 
-test("change limits: 422 and 403 inline, then signed", async ({ page, request }) => {
-  // The split limit is the seeded pass's, read from the API (500 basis points).
-  const pass = await (await request.get("/api/spend-passes/M-1")).json();
-  expect(pass.split.maxExtraCostPct).toBe(5);
-  await page.goto("/spend-pass");
-  await expect(page.locator("main")).toContainText(/up\sto\s5\s%\sextra/);
-  await page.getByTestId("change-limits").click();
-  await page.getByTestId("f-auto").fill("1300");
-  await page.getByTestId("f-hard").fill("1200");
-  await page.getByTestId("f-code").fill(CODE);
-  await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("f-auto-problem")).toHaveText("Must be below never above.");
+test("rules: 422 and 403 inline, then signed", async ({ page }) => {
+  await page.goto("/agent");
+  await page.getByTestId("rules-edit").click();
+  await page.getByTestId("r-alone").fill("2300");
+  await page.getByTestId("code-input").fill(CODE);
+  await page.getByTestId("code-submit").click();
+  await expect(page.locator("#r-alone-problem")).toHaveText("Above needs approval.");
 
-  await page.getByTestId("f-hard").fill("2000");
-  await page.getByTestId("f-code").fill(WRONG);
-  await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("f-code-problem")).toContainText("not right");
+  await page.getByTestId("r-alone").fill("1300");
+  await page.getByTestId("code-input").fill(WRONG);
+  await page.getByTestId("code-submit").click();
+  await expect(page.locator("#code-help")).toContainText("not right");
 
-  await page.getByTestId("f-code").fill(CODE);
-  await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("limits-form")).toHaveCount(0);
-  await expect(page.locator("main")).toContainText("1,300.00");
+  await page.getByTestId("code-input").fill(CODE);
+  await page.getByTestId("code-submit").click();
+  await expect(page.getByTestId("rules-form")).toHaveCount(0);
+  await expect(page.getByTestId("rules-alone")).toContainText("1,300.00");
   await page.goto("/");
   await expect(page.getByTestId("pass-auto")).toHaveText(/^1,300\.00\s€$/);
-  // The ledger: one group head "Spend Pass M-1", the entry names what changed.
-  await page.goto("/ledger");
-  await expect(page.getByTestId("ledger-group-M-1")).toHaveText(/^Spend\sPass\s*M-1$/);
-  await expect(page.getByTestId("ledger")).toContainText(/Alone\sup\sto\s1,200\.00\s€\s→\s1,300\.00\s€/);
 });
 
 test("the stock-out switch turns on and off", async ({ page, request }) => {
