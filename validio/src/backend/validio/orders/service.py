@@ -222,6 +222,14 @@ class OrderService:
         return sum(o["totalCents"] for o in self.store.orders()
                    if o.get("spendPassId") == pass_id and o["state"] == "placed")
 
+    def used_before(self, pass_id: str, at: str, exclude: str | None = None) -> int:
+        """What orders placed under this Spend Pass add up to, counting only those made before `at`
+        (a request's or an order's own time) and never the order `exclude`."""
+        when = datetime.fromisoformat(at)
+        return sum(o["totalCents"] for o in self.store.orders()
+                   if o.get("spendPassId") == pass_id and o["state"] == "placed" and o["id"] != exclude
+                   and datetime.fromisoformat(o["history"][0]["at"]) < when)
+
     @staticmethod
     def _public(lines: list[dict]) -> list[dict]:
         return [{k: v for k, v in ln.items() if not k.startswith("_")} for ln in lines]
