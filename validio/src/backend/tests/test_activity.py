@@ -179,7 +179,7 @@ def test_home_of_a_new_kitchen(app_env):  # noqa: F811
         assert h["agent"] == {"state": "none", "name": None, "lastUsedAt": None}
         assert h["setup"] == {"rulesSaved": False, "agentConnected": False, "firstOrder": False}
         assert h["week"]["usedCents"] == 0 and h["needsYou"] == []
-        assert [it["id"] for it in h["latest"]] == ["S-1"]
+        assert h["latest"] == []  # an own account gets no borrowed Steady Order S-1
         c.post("/api/agent/pair")
         assert c.get("/api/home").json()["agent"]["state"] == "pairing"
 
@@ -188,8 +188,8 @@ def test_each_kitchen_sees_only_its_own(kitchen, app_env):  # noqa: F811
     c, _, r1, _r2 = kitchen
     with TestClient(app_env) as other:
         other.post("/api/account/signup", json=SIGNUP)
-        assert other.get("/api/activity").json()["counts"] == {"all": 1, "ordered": 0, "waiting": 0, "blocked": 0,
-                                                               "standing": 1}
+        assert other.get("/api/activity").json()["counts"] == {"all": 0, "ordered": 0, "waiting": 0, "blocked": 0,
+                                                               "standing": 0}  # no S-1 for an own account
         assert other.get(f"/api/activity/{r1}").status_code == 404
         assert other.get("/api/home").json()["needsYou"] == []
     assert c.get("/api/activity").json()["counts"]["all"] == 3
