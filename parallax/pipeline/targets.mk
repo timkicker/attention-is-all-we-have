@@ -2,7 +2,7 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-.PHONY: fetch-smoke fetch parse lives bisect embed load checks checks-write dump release test-a align m-lives \
+.PHONY: fetch-smoke fetch parse lives bisect embed load reload checks checks-write dump release test-a align m-lives \
 	m-lives-load contested m-embed judge gloss atlas sources-data gold label eval answers bench l-scale docs
 
 fetch-smoke:
@@ -25,6 +25,10 @@ embed:
 
 load: db-reset
 	$(PY) -m pipeline.load --topic $(TOPIC)
+
+# Swap one topic's rows in a restored seed (make seed SEED=...) and keep everything else.
+reload:
+	$(PY) -m pipeline.load --topic $(TOPIC) --replace
 
 checks:
 	$(PY) -m pipeline.checks
