@@ -7,7 +7,6 @@ import * as mock from "./mock";
 import { owner, session } from "../owner.svelte";
 import type {
   Account,
-  AskOut,
   DemoState,
   InboxItem,
   Ledger,
@@ -97,10 +96,6 @@ export const api = {
   acceptLine: (sid: string, pid: string): Promise<SteadyOrder> =>
     both(() => write(`/api/steady/${id(sid)}/lines/${id(pid)}/accept`), () => mock.acceptLine(sid, pid, owner.code)),
   demoState: (): Promise<DemoState> => (LIVE ? get("/api/demo") : mock.demoState()),
-  /** On by default; `false` ends the simulated stock-out. */
-  stockOut: (on = true): Promise<DemoState> => both(() => demo("/api/demo/stock-out", { on }), () => mock.stockOut(on)),
-  /** The kitchen's agent on the owner's own text. */
-  ask: (text: string): Promise<AskOut> => both(() => demo("/api/demo/ask", { text }), () => mock.ask(text)),
   /** The owner signs Spend Pass M-1 again with new limits; the code goes as X-Approve-Code. */
   signPass: (body: SpendPassIn): Promise<SpendPass> => both(() => write("/api/spend-pass", body), () => mock.signPass(body, owner.code)),
   reset: (): Promise<DemoState> => both(() => demo("/api/demo/reset"), () => mock.reset()),
