@@ -163,3 +163,28 @@ def test_product_need_fixed_id(catalog):
     n = Need(kind="mozzarella", quantity=25, unit="KG", required_claims={"FREE_FROM_LACTOSE"},
              excluded_claims=set(), deliver_by=MON, budget_cents=None, product_id="466375")
     assert [p.id for p in candidates(n, catalog)] == ["466375"]
+
+
+# play audit: any product word the catalogue knows, not a fixed list
+
+
+@pytest.mark.parametrize("text,kind,qty,unit,claims", [
+    ("20 kg of parmesan by Monday", "parmesan", 20, "KG", set()),
+    ("100 litres of lactose-free cream by Monday", "cream", 100, "L", {"FREE_FROM_LACTOSE"}),
+    ("30 cartons of vegan pancakes by Monday", "pancake", 30, "PCS", {"VEGAN"}),
+])
+def test_any_catalogue_word_is_a_kind(catalog, text, kind, qty, unit, claims):
+    n = parse_need(text, TODAY, catalog)
+    assert (n.kind, n.quantity, n.unit, n.required_claims) == (kind, qty, unit, claims)
+    kept, dropped = screen(n, catalog)
+    assert kept or dropped  # the catalogue search finds products of that kind
+
+
+def test_a_word_the_catalogue_does_not_know_is_refused(catalog):
+    with pytest.raises(ValueError, match="no known product kind"):
+        parse_need("50 kg of unobtainium", TODAY, catalog)
+
+
+def test_without_a_catalogue_only_the_fixed_kinds():
+    with pytest.raises(ValueError, match="no known product kind"):
+        parse_need("20 kg of parmesan", TODAY)

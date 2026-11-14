@@ -24,6 +24,8 @@ from . import display
 from .schemas import (
     ApproveIn,
     AskedFor,
+    AskIn,
+    AskOut,
     DemoState,
     InboxItem,
     LedgerHeadView,
@@ -292,6 +294,39 @@ def stock_out(ctx: CtxDep, request: Request, x_demo_token: Annotated[str | None,
     if not ctx.stockout():
         ctx.set_stockout(True)
     return _demo_state(ctx, True)
+
+
+@router.post("/demo/ask", response_model=AskOut, response_model_exclude_none=True)
+def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated[str | None, Header()] = None):
+    """The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when
+    GEMINI_API_KEY is set, the fake model otherwise. On a public deploy the demo token guards it too."""
+    import asyncio
+
+    from ..agent.buyer import run, task_for_text
+    from ..agent.holder import Holder
+    from ..agent.llm import make_llm
+    from ..agent.pane import Style, render
+    from ..agent.port import McpPort
+    from . import tools
+    from .mcp_server import server
+
+    if ctx.public_read:
+        _demo(ctx, request, x_demo_token)
+    text = " ".join(body.text.split())
+    if not text:
+        raise HTTPException(422, "say what the kitchen needs, for example 500 litres of lactose-free milk by Monday")
+    holder = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
+
+    async def go():
+        async with McpPort(server, spend_pass=holder.presentation) as port:
+            return await run(task_for_text(text), make_llm(2), port)
+
+    t = asyncio.run(go())
+    plain = Style(False)
+    rid = next((e.data.get("requestId") or e.data.get("id") for e in t.events
+                if e.kind == "answer" and e.name == "request_supply" and isinstance(e.data, dict)
+                and "error" not in e.data), None)
+    return AskOut(request_id=rid, model=t.model, lines=[render(e, plain) for e in t.events], final=t.final)
 
 
 @router.post("/demo/reset", response_model=DemoState, response_model_exclude_none=True)
