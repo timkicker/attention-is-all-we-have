@@ -15,9 +15,15 @@ export function exampleKicker(topic: string): string {
   return `${EXAMPLE} · ${topic}`
 }
 export const OPEN_EXAMPLE = 'Open this comparison →'
-/** Live example heading: "How four editions tell one statement". */
-export function exampleTitle(editions: number): string {
-  return `How ${numWord(editions)} editions tell one statement`
+/** What the live example statement is about. Written by hand for the known example statement (adapt/start.ts EXAMPLE_STATEMENT). */
+export const EXAMPLE_SUBJECT = 'the Mainila shots'
+/** Live example heading: "How four editions tell the Mainila shots". */
+export function exampleTitle(editions: number, subject: string = EXAMPLE_SUBJECT): string {
+  return `How ${numWord(editions)} editions tell ${subject}`
+}
+/** Right column of a prepared article when no year span is known: "7 editions". */
+export function editionCount(n: number): string {
+  return n === 1 ? '1 edition' : `${n} editions`
 }
 
 // Search result status, right side of a result row
