@@ -162,3 +162,31 @@ def test_scale_prefers_stored_stat_keys(monkeypatch):
     assert d.scale() == stored
     del stored["fi_revisions"]  # a missing key falls back to the count, the others stay stored
     assert d.scale() == {"fi_lives": 1118463, "fi_dead": 532372, "fi_dead_1y": 292344, "fi_revisions": 2143}
+
+
+def test_reworded_rows_leave_the_list_but_partial_cuts_stay(monkeypatch):
+    from datetime import datetime
+
+    from api import sqllog
+    from api.routes import dropped
+
+    end = datetime(2026, 9, 12)
+    rows = [
+        {"lang": "fi", "page_id": 1, "h": "reworded", "row_end": end, "text": "Lopulta X lavasti laukaukset."},
+        {"lang": "ru", "page_id": 2, "h": "cut", "row_end": end, "text": "Обстрел у Майнилы, инсценированный."},
+        {"lang": "de", "page_id": 3, "h": "far", "row_end": end, "text": "Ganz andere Aussage hier."},
+    ]
+
+    def run_file(name, params=None):
+        if name == "dropped_reworded":
+            return [
+                {"lang": "fi", "page_id": 1, "h": "reworded", "dist": 0.02},
+                {"lang": "ru", "page_id": 2, "h": "cut", "dist": 0.05},
+                {"lang": "de", "page_id": 3, "h": "far", "dist": 0.4},
+            ]
+        if name == "dropped_successors":
+            return [{"lang": "ru", "page_id": 2, "row_start": end, "text": "Обстрел у Майнилы."}]
+        raise AssertionError(name)
+
+    monkeypatch.setattr(sqllog, "run_file", run_file)
+    assert dropped.reworded("winterwar", rows) == {("fi", 1, "reworded")}

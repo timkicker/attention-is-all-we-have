@@ -12,6 +12,10 @@ from contract.engine import claim_hash
 router = APIRouter()
 REASONS = ("none", "unsourced", "error", "speculation", "other")
 SCALE_KEYS = ("fi_lives", "fi_dead", "fi_dead_1y", "fi_revisions")
+# Cosine distance up to which a sentence the dropping edit wrote counts as the same statement reworded.
+# Calibrated on seed v4 Winter War: up to about 0.12 the pairs are rewordings (a date added, a word swapped,
+# "Lopulta Neuvostoliitto lavasti ..." -> "Neuvostoliitto lavasti ..."); above it numbers and content start to change.
+REWORDED = 0.12
 
 
 def _pairs() -> dict[tuple[str, str], dict[tuple[str, str], dict]]:
@@ -169,6 +173,23 @@ def scale() -> dict:
     return {k: int(stored[k]) if k in stored else int(counted[k]) for k in SCALE_KEYS}
 
 
+def reworded(topic: str, rows: list[dict]) -> set[tuple]:
+    """{(lang, page_id, h)} of dropped sentences the same edit only reworded: it wrote a sentence on the same page
+    within REWORDED cosine distance, and the change is not a partial cut (those stay listed with the cut part)."""
+    keys = tuple((r["lang"], r["page_id"], r["h"], r["row_end"]) for r in rows)
+    if not keys:
+        return set()
+    near = {
+        (x["lang"], x["page_id"], x["h"])
+        for x in sqllog.run_file("dropped_reworded", {"topic": topic, "keys": keys})
+        if x["dist"] is not None and float(x["dist"]) <= REWORDED
+    }
+    if not near:
+        return set()
+    cuts = removed_parts(topic, [r for r in rows if (r["lang"], r["page_id"], r["h"]) in near])
+    return near - set(cuts)
+
+
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
     lives = sqllog.run_file("dropped_topic", {"topic": topic, "lang": lang, "min_days": min_days})
     latest: dict[tuple, dict] = {}
@@ -176,6 +197,8 @@ def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
         k = (r["lang"], r["page_id"], r["h"])
         if k not in latest or r["row_end"] > latest[k]["row_end"]:
             latest[k] = r
+    gone = reworded(topic, list(latest.values()))
+    latest = {k: r for k, r in latest.items() if k not in gone}
     pairs = _pairs()
     wanted = {o[1] for r in latest.values() for p in pairs.get((r["lang"], r["h"]), {}) for o in [p, *pairs.get(p, {})]}
     alive = {}
