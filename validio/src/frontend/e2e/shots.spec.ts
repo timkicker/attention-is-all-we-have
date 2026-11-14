@@ -138,7 +138,7 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
     await page.getByTestId("menu-ask").click();
     await page.getByTestId("ask-input").fill("500 litres of lactose-free milk by Monday");
     await page.getByTestId("ask-send").click();
-    await expect(page.getByTestId("ask-final")).toBeVisible();
+    await expect(page.getByTestId("ask-summary")).toBeVisible();
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-ask") });
     await page.keyboard.press("Escape");

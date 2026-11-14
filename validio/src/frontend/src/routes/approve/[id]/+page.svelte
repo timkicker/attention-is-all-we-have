@@ -8,7 +8,7 @@
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { ChevronRight } from "@lucide/svelte";
-  import { ApiError, api } from "$lib/api/client";
+  import { api, ApiError, needsToken } from "$lib/api/client";
   import type { Order } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
   import { day, money, nb } from "$lib/format";
@@ -107,7 +107,9 @@
       window.scrollTo({ top: 0 });
     } catch (e) {
       const status = e instanceof ApiError ? e.status : 0;
-      if (status === 403) {
+      if (needsToken(e)) {
+        // the presenter closed the token dialog: nothing was sent
+      } else if (status === 403) {
         owner.code = "";
         wrong = "Wrong code. Try again.";
       } else if (status === 409) {
