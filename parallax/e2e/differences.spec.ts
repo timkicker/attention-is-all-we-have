@@ -10,7 +10,7 @@ test('differences lists the statements other editions tell differently', async (
   await page.goto(path.differences())
   await expect(page.getByTestId(TID.topicTitle)).toHaveText(TOPIC)
   await expect(page.getByTestId(TID.tabDifferences)).toContainText(copy.TABS.differences)
-  await expect(page.getByTestId(TID.asOf)).toContainText(new RegExp(`^(${copy.LATEST_EDIT} |${copy.AS_OF_TODAY})`))
+  await expect(page.getByTestId(TID.asOf)).toContainText(new RegExp(`^(${copy.NEWEST_VERSION} |${copy.AS_OF_TODAY})`))
   const rows = page.getByTestId(TID.diffRow)
   await expect(rows.first()).toBeVisible()
 
@@ -58,7 +58,7 @@ test('a past date shows that day, names editions without an article and keeps th
 
   await page.getByTestId(TID.backToToday).click()
   await expect(page).toHaveURL(new RegExp(`/t/${QID}$`))
-  await expect(page.getByTestId(TID.asOf)).toContainText(new RegExp(`^(${copy.LATEST_EDIT} |${copy.AS_OF_TODAY})`))
+  await expect(page.getByTestId(TID.asOf)).toContainText(new RegExp(`^(${copy.NEWEST_VERSION} |${copy.AS_OF_TODAY})`))
 })
 
 test('the date control sets a date for the topic', async ({ page }) => {
