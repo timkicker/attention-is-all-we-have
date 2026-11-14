@@ -82,6 +82,8 @@ const YOGHURT = [
   "kitchen  30 litres of yoghurt by Monday\n",
   'agent -> request_supply  lines=[{"text": "30 litres of yoghurt by Monday"}], deliverBy="2026-11-16"',
   "Validio <- request_supply\n  error: Error executing tool request_supply: 503 not recorded: Valio's answers for yoghurt aren't recorded for this demo. Nothing was ordered.\n",
+  // The agent repeats what Validio said; the log says it once.
+  "\nagent  Valio's answers for yoghurt aren't recorded for this demo. Nothing was ordered.\n",
 ];
 const flat = (steps: { who: string; what: string }[]) => steps.map((x) => `${x.who}: ${x.what}`);
 
