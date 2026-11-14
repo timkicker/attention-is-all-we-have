@@ -2,10 +2,9 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := load checks align judge gloss eval m-lives contested atlas bench \
-	sources-data l-scale dump release
+A_STUBS := align judge gloss eval m-lives contested atlas bench sources-data l-scale
 
-.PHONY: fetch-smoke fetch parse lives bisect embed test-a $(A_STUBS)
+.PHONY: fetch-smoke fetch parse lives bisect embed load checks checks-write dump release test-a $(A_STUBS)
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -24,6 +23,25 @@ bisect:
 
 embed:
 	$(PY) -m pipeline.embed --topic $(TOPIC)
+
+load: db-reset
+	$(PY) -m pipeline.load --topic $(TOPIC)
+
+checks:
+	$(PY) -m pipeline.checks
+
+checks-write:
+	$(PY) -m pipeline.checks --write
+
+# mariadb-dump runs inside the db container (credentials from its own environment), so the host needs no client.
+dump:
+	mkdir -p data
+	docker compose exec -T db sh -c 'mariadb-dump -u"$$MARIADB_USER" -p"$$MARIADB_PASSWORD" --dump-history --single-transaction "$$MARIADB_DATABASE"' | gzip > data/seed.sql.gz
+	@ls -lh data/seed.sql.gz
+
+release:
+	$(PY) -m pipeline.checks > data/release-notes.txt
+	gh release create parallax-seed-$(SEED) data/seed.sql.gz --title "seed $(SEED)" --notes-file data/release-notes.txt
 
 test-a:
 	$(UV) run pytest pipeline/tests engine/tests eval/tests -q
