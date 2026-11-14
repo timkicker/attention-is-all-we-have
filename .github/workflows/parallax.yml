@@ -1,0 +1,41 @@
+# Parallax CI: lint, rule guards, then contract, pipeline and api tests against MariaDB with seed-mini.
+name: parallax
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: parallax
+    services:
+      db:
+        image: mariadb:12.3.3
+        ports:
+          - 3307:3306
+        env:
+          MARIADB_DATABASE: parallax
+          MARIADB_USER: parallax
+          MARIADB_PASSWORD: parallax
+          MARIADB_ROOT_PASSWORD: parallax
+        options: >-
+          --health-cmd "healthcheck.sh --connect"
+          --health-interval 5s --health-timeout 5s --health-retries 30
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3307"
+      DB_USER: parallax
+      DB_PASSWORD: parallax
+      DB_NAME: parallax
+      ENGINE: fake
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: make check-rules
+      - run: make seed-mini
+      - name: pytest
+        run: |
+          dirs="tests/contract"
+          for d in pipeline/tests api/tests; do [ -d "$d" ] && dirs="$dirs $d"; done
+          uv run pytest $dirs -q

@@ -1,0 +1,10 @@
+.env
+data/
+web/node_modules/
+web/dist/
+e2e/results/
+*.sql.gz
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/

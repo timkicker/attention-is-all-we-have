@@ -1,0 +1,248 @@
+{
+ "8519fbaf22d33984:176471723f110570": {
+  "a_lang": "fi",
+  "b_lang": "de",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "lavasti",
+    "inszenierte"
+   ]
+  ],
+  "note": ""
+ },
+ "8519fbaf22d33984:a3b291dafd10d41b": {
+  "a_lang": "fi",
+  "b_lang": "en",
+  "label": "partial",
+  "numbers": [],
+  "terms": [
+   [
+    "lavasti",
+    "reported"
+   ]
+  ],
+  "note": "en states that an incident was reported, not who caused it"
+ },
+ "8519fbaf22d33984:7aee25bc3466a2fc": {
+  "a_lang": "fi",
+  "b_lang": "en",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "lavasti",
+    "staged"
+   ]
+  ],
+  "note": ""
+ },
+ "8519fbaf22d33984:fafe6f169258cd13": {
+  "a_lang": "fi",
+  "b_lang": "sv",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "lavasti",
+    "kunnat bevisas"
+   ]
+  ],
+  "note": ""
+ },
+ "8519fbaf22d33984:07b09eb9ae0069c6": {
+  "a_lang": "fi",
+  "b_lang": "ru",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": "ru quotes the Soviet note of 26 November"
+ },
+ "8519fbaf22d33984:ac5853856a89a0eb": {
+  "a_lang": "fi",
+  "b_lang": "ru",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "lavasti",
+    "инсценированный"
+   ]
+  ],
+  "note": ""
+ },
+ "8519fbaf22d33984:d74b5b02e646bb53": {
+  "a_lang": "fi",
+  "b_lang": "ru",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": "ru states the shelling took place, not who caused it"
+ },
+ "8519fbaf22d33984:b174df1b06bad0f0": {
+  "a_lang": "fi",
+  "b_lang": "et",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": "et states what the Soviet government announced"
+ },
+ "6fcbf86eca6b8af2:1f3cc9d5435b2e2b": {
+  "a_lang": "fi",
+  "b_lang": "de",
+  "label": "same",
+  "numbers": [
+   [
+    "26 662",
+    "26.662"
+   ]
+  ],
+  "terms": [],
+  "note": ""
+ },
+ "6fcbf86eca6b8af2:aabfc471f2095919": {
+  "a_lang": "fi",
+  "b_lang": "en",
+  "label": "contradicts",
+  "numbers": [
+   [
+    "26 662",
+    "25,904"
+   ]
+  ],
+  "terms": [],
+  "note": ""
+ },
+ "6fcbf86eca6b8af2:3305d2b8a0f9e905": {
+  "a_lang": "fi",
+  "b_lang": "et",
+  "label": "same",
+  "numbers": [
+   [
+    "26 662",
+    "26 662"
+   ]
+  ],
+  "terms": [],
+  "note": ""
+ },
+ "6fcbf86eca6b8af2:b36db6e825131f80": {
+  "a_lang": "fi",
+  "b_lang": "ru",
+  "label": "same",
+  "numbers": [
+   [
+    "26 662",
+    "26 662"
+   ]
+  ],
+  "terms": [],
+  "note": ""
+ },
+ "b8228084188ebad5:7aee25bc3466a2fc": {
+  "a_lang": "en",
+  "b_lang": "en",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "staged",
+    "staged"
+   ]
+  ],
+  "note": ""
+ },
+ "b8228084188ebad5:a3b291dafd10d41b": {
+  "a_lang": "en",
+  "b_lang": "en",
+  "label": "partial",
+  "numbers": [],
+  "terms": [
+   [
+    "staged",
+    "reported"
+   ]
+  ],
+  "note": ""
+ },
+ "b8228084188ebad5:8519fbaf22d33984": {
+  "a_lang": "en",
+  "b_lang": "fi",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "staged",
+    "lavasti"
+   ]
+  ],
+  "note": ""
+ },
+ "b8228084188ebad5:176471723f110570": {
+  "a_lang": "en",
+  "b_lang": "de",
+  "label": "same",
+  "numbers": [],
+  "terms": [
+   [
+    "staged",
+    "inszenierte"
+   ]
+  ],
+  "note": ""
+ },
+ "b8228084188ebad5:fafe6f169258cd13": {
+  "a_lang": "en",
+  "b_lang": "sv",
+  "label": "same",
+  "numbers": [],
+  "terms": [],
+  "note": ""
+ },
+ "b8228084188ebad5:07b09eb9ae0069c6": {
+  "a_lang": "en",
+  "b_lang": "ru",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": ""
+ },
+ "b8228084188ebad5:b174df1b06bad0f0": {
+  "a_lang": "en",
+  "b_lang": "et",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": ""
+ },
+ "ae7c5b098cba9d17:a37b690a0d1e8d7f": {
+  "a_lang": "en",
+  "b_lang": "sv",
+  "label": "same",
+  "numbers": [
+   [
+    "four",
+    "fyra"
+   ]
+  ],
+  "terms": [],
+  "note": ""
+ },
+ "ae7c5b098cba9d17:07b09eb9ae0069c6": {
+  "a_lang": "en",
+  "b_lang": "ru",
+  "label": "partial",
+  "numbers": [],
+  "terms": [],
+  "note": ""
+ },
+ "7ddf75c1046f392a:fafe6f169258cd13": {
+  "a_lang": "en",
+  "b_lang": "sv",
+  "label": "same",
+  "numbers": [],
+  "terms": [],
+  "note": ""
+ }
+}

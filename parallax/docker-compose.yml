@@ -1,0 +1,21 @@
+# Local database for Parallax. Credentials are local defaults, real values go in .env.
+services:
+  db:
+    image: mariadb:12.3.3
+    ports:
+      - "127.0.0.1:${DB_PORT:-3307}:3306"
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-parallax}
+      MARIADB_USER: ${DB_USER:-parallax}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-parallax}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-parallax}
+    volumes:
+      - parallax-db:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/parallax.cnf:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+volumes:
+  parallax-db:
