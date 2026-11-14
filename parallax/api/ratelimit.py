@@ -20,7 +20,8 @@ from api.util import ApiError
 MAX_KEYS = 10_000  # visitors remembered per limit; the least recently seen are forgotten first
 
 DEFAULTS = {
-    "check": (2.0, 5),  # each check splits and judges an answer with the model
+    # each check splits and judges an answer with the model; generous, since a whole room on one Wi-Fi shares an address
+    "check": (20.0, 30),
     "ingest": (0.2, 3),  # each new article is minutes of embedding and dozens of model calls
     "search": (60.0, 20),  # each search asks Wikipedia up to five times
     "ask": (20.0, 10),  # each question is embedded
