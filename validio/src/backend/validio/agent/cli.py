@@ -31,6 +31,7 @@ from pathlib import Path
 import httpx
 
 from ..config import ROOT
+from ..demo.seed import DEMO_AGENT_NAME
 from ..policy.mandate import load_or_create_key
 from .buyer import SCENES, run_scene
 from .holder import Holder
@@ -41,7 +42,7 @@ from .record import write
 
 BASE = "http://127.0.0.1:8410"
 ARTIFACTS = ROOT / "artifacts" / "agent"
-AGENT_NAME = "Kitchen agent"
+AGENT_NAME = DEMO_AGENT_NAME
 PASS_FILE = "pass.sdjwt"
 
 

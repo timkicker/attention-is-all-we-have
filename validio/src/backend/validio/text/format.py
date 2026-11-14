@@ -250,6 +250,8 @@ def fact_text(field: str, value, note: str | None) -> tuple[str | None, str | No
         v = v.replace("_", " ").lower()  # FREE_FROM_LACTOSE reads "free from lactose"
     if field == "price" and n and (m := re.fullmatch(r"until (\d{4}-\d\d-\d\d)", n)):
         n = f"until {day_text(m.group(1))}"
+    elif field == "price" and n:
+        n = re.sub(r"^catalog price,\s*", "", n)  # the screens say "Valio price" already: no "price" twice
     return v, (_tidy(n) if n else n)
 
 
