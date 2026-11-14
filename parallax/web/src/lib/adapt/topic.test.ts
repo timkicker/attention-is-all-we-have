@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { analyse, changedWords, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -125,5 +125,13 @@ describe('changes', () => {
     expect(s.groups.map((g) => g.langs.join())).toEqual(['ru', 'sv'])
     expect(s.groups[0].originals[0].url).toBe('https://ru.wikipedia.org/w/index.php?oldid=63917953')
     expect(removalOf(d)).toMatchObject({ date: '2014-07-09', lang: 'ru', to: '', comment: 'cut', url: 'https://ru.wikipedia.org/w/index.php?oldid=64106894' })
+  })
+  it('ranks clean marked sentences before infobox fields and long number lists, unmarked last', () => {
+    const r = (id: string, spans: number, infobox: boolean, differs: number): Analysed => ({
+      id, lang: 'fi', pageId: 1, h: id, say: { text: 'x'.repeat(40), spans: Array.from({ length: spans }, (_, i) => ({ start: i * 2, end: i * 2 + 1 })) },
+      original: '', note: [], differs: Array(differs).fill('sv'), contradicts: 0, newest: '', infobox,
+    })
+    const out = rank([r('box', 4, true, 6), r('list', 3, false, 6), r('plain', 0, false, 6), r('losses', 1, false, 3), r('mainila', 1, false, 5)])
+    expect(out.map((x) => x.id)).toEqual(['mainila', 'losses', 'box', 'list', 'plain'])
   })
 })
