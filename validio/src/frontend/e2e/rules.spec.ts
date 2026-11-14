@@ -491,7 +491,33 @@ test("chosen milk has a why fold with the full reasons", async ({ page }) => {
   await page.getByTestId("why-464306").click();
   const body = page.getByTestId("why-body-464306");
   await expect(body).toBeVisible();
-  await expect(body).toContainText("Cheapest safe option and Valio delivered it as ordered every time in its records.");
-  await expect(body).toContainText("Has the Hyvää Suomesta label, which your Spend Pass does not ask for.");
-  await expect(body).toContainText("Checked:");
+  // One reason per line; the one the row's short text already says is left out.
+  await expect(body.locator("p", { hasText: "Has the Hyvää Suomesta label, which your Spend Pass does not ask for." })).toHaveCount(1);
+  await expect(body).not.toContainText("Cheapest safe option and Valio delivered");
+  // One confirmed fact per line, each from its own field.
+  const facts = page.getByTestId("why-checked-464306").locator("li");
+  expect(await facts.count()).toBeGreaterThan(3);
+  for (const t of await facts.allInnerTexts()) expect(t, t).not.toContain(",");
+});
+
+// Rejected: the Total lane is the proposal, and nothing is added to the plot.
+test("rejected request shows the proposal, not a spend", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await fresh(page);
+  await stockOut(page);
+  await page.goto("/approve/R-2");
+  await page.getByTestId("reject").click();
+  await code(page);
+  await expect(page.locator("#order-steps")).toContainText("You rejected");
+  // The title stays on one line at 1280.
+  const h1 = page.locator("h1");
+  await expect(h1).toHaveText(/^Not ordered:\smozzarella-fontal/);
+  const lines = await h1.evaluate((e) => Math.round(e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight)));
+  expect(lines).toBe(1);
+  await page.goto("/requests/R-2");
+  const lane = page.getByTestId("lane-total");
+  await expect(lane.locator(".rc-n")).toHaveText("Proposed");
+  await expect(lane.locator(".rc-v")).toHaveText(/180\.10/);
+  await expect(lane.locator(".rc-s")).toHaveText("Nothing added");
+  await expect(lane.locator("[data-plot-subject]")).toHaveCount(0);
 });

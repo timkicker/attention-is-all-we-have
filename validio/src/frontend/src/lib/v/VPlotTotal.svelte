@@ -63,7 +63,9 @@
         {#if before > 0}
           <rect x="0" y="14" width={x(before)} height="8" class="before" />
         {/if}
-        <rect x={x(before)} y="14" width={Math.max(0, x(before + amount) - x(before))} height="8" class="subject" data-plot-subject />
+        {#if amount > 0}
+          <rect x={x(before)} y="14" width={Math.max(0, x(before + amount) - x(before))} height="8" class="subject" data-plot-subject />
+        {/if}
       </g>
       {#if tickX !== undefined}
         {#if tall}
