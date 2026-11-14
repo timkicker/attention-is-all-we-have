@@ -68,7 +68,7 @@ def test_scene2_end_to_end_http(client, holder, ctx):
 
     inbox = client.get("/api/inbox").json()
     assert [(i["id"], i["status"]) for i in inbox] == [(req["id"], "ordered_alone")]
-    assert inbox[0]["sentence"].startswith("Ordered 1,000 packs of Valio Hyvä ")
+    assert inbox[0]["sentence"].startswith("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for ")
 
     sp = client.get("/api/spend-passes/M-1").json()
     assert (sp["autoLimitCents"], sp["hardCapCents"], sp["diet"]) == (120000, 200000, ["lactose free"])
@@ -76,9 +76,9 @@ def test_scene2_end_to_end_http(client, holder, ctx):
 
     led = client.get("/api/ledger").json()
     assert led["chain"]["ok"] is True and led["chain"]["count"] == len(led["entries"])
-    assert any(e["sentence"].startswith("Ordered 1,000 packs of Valio Hyvä") and e["ruleIds"] == ["auto-order"]
+    assert any(e["sentence"].startswith("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk") and e["ruleIds"] == ["auto-order"]
                for e in led["entries"])
-    assert any("463047" in e["sentence"] and "AI agents" in e["sentence"] for e in led["entries"])
+    assert any("Ignored the description of low-lactose whole milk 1 l" in e["sentence"] and "AI agents" in e["sentence"] for e in led["entries"])
     assert "approvers" not in str(led) and "owner:anna" not in str(led)
 
 
@@ -178,7 +178,7 @@ def test_stockout_names_what_valio_really_has(client, holder, ctx):
     # read from Valio's (replayed) availability for the pass's delivery day, never a fixed number
     client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
     (entry,) = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "simulation"]
-    assert entry["sentence"] == ("Simulated a stock-out of Gran Castelli mozzarella 125 g lactose free (466375) for the demo. "
+    assert entry["sentence"] == ("Simulated a stock-out of lactose-free mozzarella 125 g for the demo. "
                                  "Valio has 11,603 bags.")
     req = ask_mozzarella(client, holder)
     assert req["simulated"][0]["sentence"] == "Stock-out simulated for the demo. Valio has 11,603 bags."
@@ -188,7 +188,7 @@ def test_scene3_swap_waits_and_approve_needs_code(client, holder):
     client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
     req = ask_mozzarella(client, holder)
     assert req["status"] == "waiting" and req["decision"]["outcome"] == "ask_human"
-    assert req["simulated"][0]["what"] == "stock-out of Gran Castelli mozzarella 125 g lactose free"
+    assert req["simulated"][0]["what"] == "stock-out of lactose-free mozzarella 125 g"
     assert req["liveChecked"]["ids"] <= 40
     subs = {o["productId"]: o["verdict"] for o in req["lines"][0]["substitutes"]}
     assert subs == {"466151": "blocked", "468526": "blocked", "475908": "blocked", "473986": "not_deliverable"}

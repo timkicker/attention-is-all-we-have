@@ -190,7 +190,7 @@ def test_short_stock_never_orders_alone(svc, mandate):
 def test_scene2_ledger_sentence(svc, mandate):
     o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k13")
     (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
-    assert entry.sentence.startswith("Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila ")
+    assert entry.sentence.startswith("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for ")
     assert "for 1,010.00 € without a person. Valio attests the stock and the contract price until " \
            "31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €." \
            in entry.sentence
@@ -238,10 +238,10 @@ def test_short_in_sales_units_refuses_approve(svc, mandate):
     # review-3 H4: Valio has 36 ST of 469054, which is 3 cartons of 12. 10 cartons must never be placed.
     o = svc.submit(mandate=mandate, lines=[LineIn("469054", 10)], deliver_by=MON, idempotency_key="h4",
                    required_claims=())
-    assert o["lines"][0]["short"] == "Only 3 cartons of Valio old style fermented milk 190 g low lacotse in stock, 10 needed"
+    assert o["lines"][0]["short"] == "Only 3 cartons of old style fermented milk 190 g in stock, 10 needed"
     assert o["lines"][0]["deliverable"] is False
     assert o["state"] == "waiting"
-    with pytest.raises(ApproveRefused, match="Only 3 cartons of Valio old style fermented milk 190 g low lacotse in stock, 10 needed"):
+    with pytest.raises(ApproveRefused, match="Only 3 cartons of old style fermented milk 190 g in stock, 10 needed"):
         svc.approve(o["id"], "owner:anna")
     assert svc.get(o["id"])["state"] == "waiting"
     ok = svc.submit(mandate=mandate, lines=[LineIn("469054", 3)], deliver_by=MON, idempotency_key="h4-ok",

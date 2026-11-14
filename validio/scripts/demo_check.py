@@ -35,18 +35,25 @@ from validio.audit.log import AuditLog
 from validio.config import DEFAULT_ENV, _read_env_file
 
 MAX_IDS = 40
-SCENE2_SENTENCE = ("Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free "
-                   "(464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, "
-                   "delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. "
+SCENE2_SENTENCE = ("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. "
+                   "Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. "
+                   "Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. "
                    "Valio gives no real count of the stock, so Validio treats it as in stock.")
 # what a person reads never shows a unit code, the old money shape, a placeholder count or glued fragments
-RAW = re.compile(r"\b(?:ST|BAG|KI|PAK|EUR)\b|9999999999|; [A-Z]|®")
+RAW = re.compile(r"\b(?:ST|BAG|KI|PAK|EUR|PCS)\b|9999999999|; [A-Z]|®|\(Terminal\)|\b4\d{5}\b")  # 4xxxxx: a product id
 
 
 def plain(texts, what: str):
     for t in texts:
         hit = RAW.search(t or "")
         check(hit is None, f"{what}: {hit and hit.group(0)!r} in {t!r}")
+
+
+def said(x):
+    """The sentences only: `reasons` and `summary` repeat parts of them for the screen."""
+    if isinstance(x, dict):
+        return {k: said(v) for k, v in x.items() if k not in ("reasons", "summary")}
+    return [said(v) for v in x] if isinstance(x, list) else x
 
 
 class Fail(AssertionError):
@@ -145,7 +152,7 @@ class Run:
               f"scene 2: ledger sentence {sentence!r}")
         check(t.final.endswith("is placed."), f"scene 2: agent said {t.final!r}")
         plain([o["sentence"] for o in opts.values()] + [req["decision"]["sentence"], req["text"]], "scene 2")
-        return f"464306 ordered alone, 1,000 packs for 1,010.00 €, 462921 blocked at 2,194.00 €, planted line " \
+        return f"464306 ordered alone, 1,000 × 1 l for 1,010.00 €, 462921 blocked at 2,194.00 €, planted line " \
                f"on 463047 ignored, checked {live['ids']} products live"
 
     async def scene3(self):
@@ -167,7 +174,7 @@ class Run:
               f"scene 3: Safe Swap chose {line['chosen']}, expected 465256 x 10")
         pick = next((o for o in line.get("beyondList") or [] if o["productId"] == "465256"), {})
         check("mozzarella-fontal blend" in pick.get("sentence", "")
-              and "Valio mozzarella-fontal 2.5 kg crumbled cheese" in (line.get("swapSentence") or ""),
+              and "Mozzarella-fontal crumbled cheese 2.5 kg" in (line.get("swapSentence") or ""),
               f"scene 3: 465256 explained as {pick.get('sentence')!r}, swap sentence {line.get('swapSentence')!r}")
         order = self.get(f"/api/orders/{req['orderId']}")
         check(order["state"] == "waiting" and order["totalCents"] == 18010, f"scene 3: order {order['state']} "
@@ -188,7 +195,7 @@ class Run:
         texts = [o["sentence"] for o in line["substitutes"] + line.get("beyondList", [])]
         texts += [line["swapSentence"], req["question"], order["decision"]["sentence"], req["text"]]
         plain(texts, "scene 3")
-        page = json.dumps({k: req[k] for k in ("lines", "decision", "question")}, ensure_ascii=False)
+        page = json.dumps(said({k: req[k] for k in ("lines", "decision", "question")}), ensure_ascii=False)
         n = page.count("not on Valio's list") + page.count("not on the list")
         check(n <= 2, f"scene 3: the request says {n} times that the substitute is not on Valio's list")
         return "3 listed substitutes blocked for lactose, 473986 not deliverable, 465256 blend 10 for 180.10 € " \
@@ -228,6 +235,8 @@ class Run:
         check(all(e["sentence"] for e in led["entries"]), "scene 5: an entry without a sentence")
         plain([e["sentence"] for e in led["entries"]], "scene 5 ledger")
         plain([i["sentence"] for i in self.get("/api/inbox")], "scene 5 inbox")
+        plain([i.get("title", "") for i in self.get("/api/inbox")] + [e.get("summary", "") for e in led["entries"]],
+              "scene 5 titles and summaries")
         text = str(led)
         check("owner:anna" not in text and "approvers" not in text, "scene 5: the approver list reached the ledger")
         # one changed letter breaks the chain: on a copy, never on the live store

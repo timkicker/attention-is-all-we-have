@@ -12,7 +12,7 @@ from statistics import mean, median
 
 from ..audit.sentences import eur
 from ..catalog.store import Catalog
-from ..text.format import count
+from ..text.format import count, product_qty
 from ..text.format import unit_word as fmt_unit_word
 from ..trust.levels import stock_in_sales_units
 from ..valio.models import Availability, Quote
@@ -110,17 +110,17 @@ def _stock(so: StandingOrder, avail: dict[str, Availability], cat: Catalog) -> l
     out = []
     for ln in so.lines:
         a, p = avail.get(ln.product_id), cat.get(ln.product_id)
-        unit = unit_word(a, p.sales_unit if p else None)
+        unit_code = (p.sales_unit if p else None) or (a.lines[0].sales_unit if a is not None and a.lines else None)
         stock = stock_in_sales_units(p, a) if p is not None else None
         if a is None or not a.deliverable:
             out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
-                                 f"Valio gives no delivery date for it, the usual line is {count(ln.sales_qty)} {unit}.", 0))
+                                 f"Valio gives no delivery date for it, the usual line is {product_qty(ln.sales_qty, p, unit_code)}.", 0))
         elif stock is not None and stock <= 0:
             out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
-                                 f"Out of stock at Valio, the usual line is {count(ln.sales_qty)} {unit}.", stock))
+                                 f"Out of stock at Valio, the usual line is {product_qty(ln.sales_qty, p, unit_code)}.", stock))
         elif stock is not None and stock < ln.sales_qty:
             out.append(DriftFlag(DriftKind.STOCK_BELOW, ln.product_id,
-                                 f"Only {count(stock)} {unit} in stock, the usual line is {count(ln.sales_qty)}.",
+                                 f"Only {product_qty(stock, p, unit_code)} in stock, the usual line is {count(ln.sales_qty)}.",
                                  stock))
     return out
 

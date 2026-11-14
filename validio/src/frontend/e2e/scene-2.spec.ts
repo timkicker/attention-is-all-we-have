@@ -9,7 +9,7 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await page.getByTestId("inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-title")).toHaveText("1,000 litres of lactose-free milk by Monday, budget 1,200.00 €");
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs of Valio Hyvä");
+  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
   await expect(page.getByTestId("live-checked")).toContainText(/Checked \d+ products live/);
   await expect(page.getByTestId("request-rule")).toContainText("auto-order");
   await expect(page.getByTestId("option-464306")).toContainText("1,010.00");

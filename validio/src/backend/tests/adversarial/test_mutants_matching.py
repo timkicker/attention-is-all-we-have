@@ -186,12 +186,12 @@ def test_judge_every_verdict():
     p = prod()
     ok = _judge(p, _ranked(), need(), True)
     assert (ok.verdict, ok.on_valio_list, ok.product) == (SubVerdict.OK_LISTED, True, p)
-    assert ok.sentence == "Lactose free and checked. 3 packs for 3.00 €, on Valio's substitute list"
+    assert ok.sentence == "Lactose free and checked. 3 × 1 l for 3.00 €, on Valio's substitute list"
     assert ok.ranked is not None
 
     out = _judge(p, _ranked(), need(), False)
     assert (out.verdict, out.on_valio_list) == (SubVerdict.OUTSIDE_LIST, False)
-    assert out.sentence == "Lactose free and checked. 3 packs for 3.00 €"
+    assert out.sentence == "Lactose free and checked. 3 × 1 l for 3.00 €"
 
     r = rank_one(need(), p, quote(), None, NOW)
     und = _judge(p, r, need(), True)
@@ -203,7 +203,7 @@ def test_judge_every_verdict():
     assert (rej.product, rej.verdict, rej.on_valio_list, rej.ranked) == (p, SubVerdict.REJECTED, False, r)
     r2 = rank_one(need(qty=5000), p, None, avail(), NOW)
     assert _judge(p, r2, need(qty=5000), True).sentence == \
-        "Valio has no price for it. Only 1,000 packs in stock, 5,000 needed"
+        "Valio has no price for it. Only 1,000 × 1 l in stock, 5,000 needed"
 
 
 def test_judge_blend_note_goes_to_notes():

@@ -8,7 +8,7 @@ import math
 from datetime import datetime
 
 from ..catalog.model import Product
-from ..text.format import and_list, count, qty_text
+from ..text.format import and_list, count, product_qty
 from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel, field_trust, stock_in_sales_units
 from ..valio.models import Availability, Quote
@@ -52,8 +52,8 @@ def rank_one(need: Need, p: Product, q: Quote | None, a: Availability | None, no
         if stock is None:
             notes.append("the quantity is unknown")
         elif sales_qty is not None and stock < sales_qty:
-            reasons.append(f"Out of stock at Valio, {qty_text(sales_qty, p.sales_unit)} needed" if stock <= 0
-                           else f"Only {qty_text(stock, p.sales_unit)} in stock, {count(sales_qty)} needed")
+            reasons.append(f"Out of stock at Valio, {product_qty(sales_qty, p)} needed" if stock <= 0
+                           else f"Only {product_qty(stock, p)} in stock, {count(sales_qty)} needed")
         if a.lines[0].available > need.deliver_by:
             reasons.append(f"Earliest delivery {a.lines[0].available:%d %b}, after {need.deliver_by:%d %b}")
     return Ranked(p, sales_qty, total, not reasons, reasons, notes, field_trust(p, q, a))
