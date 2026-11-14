@@ -13,6 +13,7 @@ this machine still finds approve, the demo switches and the web reads closed whi
 import os
 import re
 import threading
+from contextvars import ContextVar
 from pathlib import Path
 
 from jwcrypto.jwk import JWK
@@ -40,10 +41,16 @@ def _env() -> dict[str, str]:
 
 
 class Ctx:
-    def __init__(self, rt: Runtime = runtime):
+    """`account` is None for the local kitchen (VALIDIO_DB); an account's Ctx comes from api/accounts.py with its
+    own runtime, the hash of its own approval code and its own reset."""
+
+    def __init__(self, rt: Runtime = runtime, account=None, code_ok=None, reseed=None):
         self.rt = rt
+        self.account = account
+        self._code_ok = code_ok
+        self._reseed = reseed
         env = _env()
-        self.approve_code = env.get("VALIDIO_APPROVE_CODE", "")
+        self.approve_code = "" if account is not None else env.get("VALIDIO_APPROVE_CODE", "")
         if self.approve_code and not re.fullmatch(r"\d{6}", self.approve_code):
             raise ValueError("VALIDIO_APPROVE_CODE must be 6 digits")
         self.demo_token = env.get("VALIDIO_DEMO_TOKEN", "")
@@ -51,6 +58,17 @@ class Ctx:
         self.nonces = NonceStore()
         self._supply: tuple[object, SupplyService] | None = None
         self._kitchen: tuple[Path, JWK] | None = None
+
+    @property
+    def has_code(self) -> bool:
+        return self._code_ok is not None or bool(self.approve_code)
+
+    def code_ok(self, given: str | None) -> bool:
+        import hmac
+
+        if self._code_ok is not None:
+            return self._code_ok(given or "")
+        return hmac.compare_digest((given or "").encode(), self.approve_code.encode())
 
     # read on every call, so a test or an operator can change them without a restart
 
@@ -108,7 +126,7 @@ class Ctx:
 
     @property
     def keys_dir(self) -> Path:
-        return seed.keys_path()
+        return self.rt.keys_dir()
 
     @property
     def store(self):
@@ -145,7 +163,10 @@ class Ctx:
 
     def reset(self) -> None:
         with self.rt.lock:
-            seed.reset(self.db_path, self.keys_dir)
+            if self._reseed is not None:
+                self._reseed()
+            else:
+                seed.reset(self.db_path, self.keys_dir)
             self.code_tries.clear()
             self.nonces = NonceStore()
 
@@ -187,9 +208,15 @@ class Ctx:
 
 _ctx: Ctx | None = None
 _ctx_lock = threading.Lock()
+# the account a piece of code runs for when no request is at hand (demo/ask's in-process MCP client)
+current: ContextVar[Ctx | None] = ContextVar("validio_ctx", default=None)
 
 
 def get_ctx() -> Ctx:
+    """The Ctx set in `current`, else the local kitchen (or the one a test pinned with set_ctx)."""
+    c = current.get()
+    if c is not None:
+        return c
     global _ctx
     with _ctx_lock:
         if _ctx is None:

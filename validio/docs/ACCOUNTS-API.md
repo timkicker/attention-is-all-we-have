@@ -172,3 +172,35 @@ agent's own refusal (in `lines` and `final`) when it is paused.
 
 `POST /api/orders/{id}/approve` and `/reject` and the Steady Order buttons stay as they are, but check
 the account's own code (demo copies: 246810). `GET /api/demo` keeps `codeRequired: true`.
+
+## Accessor
+
+How backend code gets the current account's store (code in `src/backend/validio/api/accounts.py` and
+`api/state.py`).
+
+* **Web routes:** take `ctx: CtxDep` from `api/ui.py` (`Depends(request_ctx)`). `request_ctx(request)`
+  resolves the `validio_session` cookie to the account's `Ctx`; without a session it is `get_ctx()`, the
+  local kitchen, which the gate only lets callers on this machine reach. The Steady Order routes call
+  `steady._ctx(request)` the same way.
+* **A Ctx:** `ctx.rt` is the account's `Runtime` (own `validio.db`, `keys/`, `RLock`); `ctx.db_path`,
+  `ctx.keys_dir`, `ctx.store`, `ctx.audit`, `ctx.orders`, `ctx.nonces`, `ctx.code_tries` are all per
+  account. Catalog and Valio client are shared. `ctx.account` is the account row (dict: `id`, `name`,
+  `email`, `customer`, `address`, `is_demo`, `rules_saved`, `created_at`, ...) or `None` for the local
+  kitchen. `ctx.code_ok(code)` checks the account's approval code (scrypt hash; the env code for the local
+  kitchen), `ctx.has_code` says whether one is set. `ctx.reset()` copies the template again for an account.
+* **By id, no request:** `get_accounts().ctx(account_id)` (LRU of 64 open accounts). Use this for
+  `/agent/v1/k/{account}` and `/mcp/k/{account}/`. `get_accounts().get(id)` / `.update(id, **cols)` read
+  and write the account row (add columns in `SCHEMA`; `create table if not exists` will not add them to an
+  existing db, so add an `alter table` guard when you add one).
+* **Code without a request** (MCP tools, the in-process demo agent): `get_ctx()` returns the Ctx in the
+  contextvar `state.current` when set, else the local kitchen. `/api/demo/ask` sets it around its
+  `asyncio.run`, so the MCP tools in that run work on the account. The streamable-HTTP MCP sessions do
+  not inherit a contextvar from middleware: read the account from the path there.
+* **Template:** `make template` plays the five scenes once into `data/template/` (validio.db plus keys).
+  New accounts copy it (sqlite backup plus keys, milliseconds); without it they get a plain `seed.reset`.
+  All copies share the template's kitchen key. Env: `VALIDIO_ACCOUNTS` (default `data/accounts`),
+  `VALIDIO_TEMPLATE` (default `data/template`).
+* **Tests:** set `VALIDIO_ACCOUNTS` and `VALIDIO_TEMPLATE` to a tmp dir; `get_accounts()` makes a new
+  registry when they change. See `tests/test_accounts.py`.
+* Until the agent connection lands, `GET /api/account` answers `agent: {state: "none", versions: []}` and
+  `setup.agent` is true only on demo copies (`accounts.agent_state` is the hook to replace).

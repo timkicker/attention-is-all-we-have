@@ -1,6 +1,94 @@
 {
   "components": {
     "schemas": {
+      "AccountView": {
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/AgentStateView"
+          },
+          "createdAt": {
+            "title": "Createdat",
+            "type": "string"
+          },
+          "customerNumber": {
+            "title": "Customernumber",
+            "type": "string"
+          },
+          "deliveryAddress": {
+            "title": "Deliveryaddress",
+            "type": "string"
+          },
+          "demoCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Democode"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "isDemo": {
+            "title": "Isdemo",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "setup": {
+            "$ref": "#/components/schemas/SetupView"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "customerNumber",
+          "deliveryAddress",
+          "isDemo",
+          "setup",
+          "agent",
+          "createdAt"
+        ],
+        "title": "AccountView",
+        "type": "object"
+      },
+      "AgentStateView": {
+        "properties": {
+          "state": {
+            "default": "none",
+            "title": "State",
+            "type": "string"
+          },
+          "versions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Versions",
+            "type": "array"
+          }
+        },
+        "title": "AgentStateView",
+        "type": "object"
+      },
       "ApprovalCodeIn": {
         "properties": {
           "current": {
@@ -983,6 +1071,26 @@
           "idsPerCall"
         ],
         "title": "LiveChecked",
+        "type": "object"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "maxLength": 200,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 200,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn",
         "type": "object"
       },
       "LoginOut": {
@@ -1982,6 +2090,76 @@
           "login"
         ],
         "title": "SettingsOut",
+        "type": "object"
+      },
+      "SetupView": {
+        "properties": {
+          "agent": {
+            "title": "Agent",
+            "type": "boolean"
+          },
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          },
+          "kitchen": {
+            "title": "Kitchen",
+            "type": "boolean"
+          },
+          "rules": {
+            "title": "Rules",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kitchen",
+          "rules",
+          "agent",
+          "done"
+        ],
+        "title": "SetupView",
+        "type": "object"
+      },
+      "SignupIn": {
+        "properties": {
+          "approvalCode": {
+            "pattern": "^\\d{6}$",
+            "title": "Approvalcode",
+            "type": "string"
+          },
+          "customerNumber": {
+            "pattern": "^\\d{1,20}$",
+            "title": "Customernumber",
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 200,
+            "minLength": 3,
+            "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+            "title": "Email",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 200,
+            "minLength": 8,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password",
+          "customerNumber",
+          "approvalCode"
+        ],
+        "title": "SignupIn",
         "type": "object"
       },
       "SimulatedMark": {
@@ -3581,6 +3759,145 @@
         "summary": "Get Request",
         "tags": [
           "agent"
+        ]
+      }
+    },
+    "/api/account": {
+      "get": {
+        "operationId": "account_api_account_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Account",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/account/demo": {
+      "post": {
+        "description": "The demo kitchen: the copy this browser already has, or a fresh one from the template.",
+        "operationId": "demo_api_account_demo_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Demo",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/account/login": {
+      "post": {
+        "operationId": "login_api_account_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/account/logout": {
+      "post": {
+        "operationId": "logout_api_account_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Logout",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/account/signup": {
+      "post": {
+        "operationId": "signup_api_account_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Signup",
+        "tags": [
+          "account"
         ]
       }
     },
