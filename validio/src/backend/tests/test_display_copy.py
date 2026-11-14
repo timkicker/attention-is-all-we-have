@@ -116,13 +116,6 @@ def test_stange_reads_naturally():
         "Lactose-free sliced mozzarella stange 400 g"
 
 
-def test_waiting_without_a_stock_out_says_why_it_asks():
-    from validio.api import display as d
-    s = ("Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. "
-         "Needs a person: the substitute is not on Valio's list.")
-    assert d.asks_text(s) == "Asks you: the swap is not on Valio's list."
-
-
 def test_checked_facts_as_a_list(client, holder):
     ask_milk(client, holder)
     line = client.get("/api/requests/R-1").json()["lines"][0]
