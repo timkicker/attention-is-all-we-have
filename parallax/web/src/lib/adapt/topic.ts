@@ -268,7 +268,32 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
 
 /** Infobox rows read "losses1: 25,904 fallen"; the field name is not part of what the edition says. */
 export function readable(text: string, section: string): string {
-  return section === '[infobox]' ? text.replace(/^[\p{L}_ ]{1,30}\d*:\s+/u, '') : text
+  return tidy(section === '[infobox]' ? text.replace(/^[\p{L}_ ]{1,30}\d*:\s+/u, '') : text)
+}
+
+/** Wiki text leftovers: HTML entities, the "<...>" cut marker, doubled quote marks, runs of spaces. */
+export function tidy(text: string): string {
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s*<\s*(\.\.\.|…)\s*>\s*/g, ' ')
+    .replace(/""+/g, '"')
+    .replace(/''+/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+const tidyOr = (t: string | null | undefined) => (t == null ? t : tidy(t))
+
+/** The row with its texts tidied for reading. */
+function tidyRow(row: Row): Row {
+  const cells: Row['cells'] = {}
+  for (const [l, c] of Object.entries(row.cells)) cells[l] = { ...c, text: tidyOr(c.text) ?? null, gloss: tidyOr(c.gloss) ?? null }
+  return { ...row, cells }
 }
 
 function addDays(day: string, n: number): string {
@@ -629,7 +654,8 @@ export async function otherStatement(
   own: { text: string; gloss: string | null; url: string | null },
   dropped: Dropped | null,
 ) {
-  const say = dropped?.gloss ?? own.gloss ?? own.text
+  own = { ...own, text: tidy(own.text) }
+  const say = tidy(dropped?.gloss ?? own.gloss ?? own.text)
   const url = dropped?.last_url ?? own.url
   const first: StatementGroup = {
     langs: [lang as Lang],
@@ -642,7 +668,7 @@ export async function otherStatement(
   if (fi) {
     const cmp = await api.compare({ topic: ctx.topic.topicId, as_of: ctx.date ?? undefined, anchor: 'fi', h: fi.h, limit: 1 })
     const row = cmp.ok ? (cmp.data.rows.find((r) => r.cells.fi?.h === fi.h) ?? null) : null
-    if (cmp.ok && row) rest = statementOf(row, cmp.data.anchor, new Set(Object.keys(cmp.data.editions)), { lang: 'fi', text: fi.text, gloss: null })
+    if (cmp.ok && row) rest = statementOf(tidyRow(row), cmp.data.anchor, new Set(Object.keys(cmp.data.editions)), { lang: 'fi', text: fi.text, gloss: null })
   }
   let groups: StatementGroup[]
   if (rest) {
@@ -662,8 +688,8 @@ export async function otherStatement(
       .filter((a) => a.lang !== lang && isLang(a.lang))
       .map((a) => ({
         langs: [a.lang as Lang],
-        say: plain(a.text),
-        originals: [{ lang: a.lang as Lang, text: a.text, url: a.oldid_url }],
+        say: plain(tidy(a.text)),
+        originals: [{ lang: a.lang as Lang, text: tidy(a.text), url: a.oldid_url }],
         marked: [{ lang: a.lang as Lang, say: plain(a.text), url: a.oldid_url }],
       }))
   }
@@ -705,7 +731,8 @@ export async function loadStatement(
   if (!cmp.ok) return cmp
   const lives = tl.data.lives
   const own = lives.filter((l) => l.lang === lang && l.h === h)
-  const row = cmp.data.rows.find((r) => r.cells[lang]?.h === h) ?? null
+  const found = cmp.data.rows.find((r) => r.cells[lang]?.h === h) ?? null
+  const row = found && tidyRow(found)
   const present = new Set(Object.keys(cmp.data.editions))
   const last = own[own.length - 1]
   const dead = !row && (!last || !!last.died)
