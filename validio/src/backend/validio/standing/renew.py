@@ -79,6 +79,13 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
     drift = [f for f in flags if f.kind is not DriftKind.STOCK_BELOW]
     short = [f for f in flags if f.kind is DriftKind.STOCK_BELOW]
 
+    none = [f for f in short if f.value <= 0]  # out of stock or no delivery date: no button could order it
+    if drift and none:
+        gone = "none in stock at Valio" if "Out of stock" in none[0].sentence else "no delivery date from Valio"
+        kept = [replace(f, sentence=f.sentence.removesuffix(" Renew anyway?")) for f in flags]  # no button to press
+        return replace(base, this_week_qty=usual, total_cents=total, result=LineResult.BLOCKED, flags=kept,
+                       sentence=f"Not renewed: {and_list([_why(f) for f in drift] + [gone])}.")
+
     if drift:
         d = decide(context_for(mandate, p, a, total_cents=total, now=now, is_renewal=True, drift_flag=True,
                                required_claims=ln.diet, sales_qty=usual, deliver_by=delivery), pid)

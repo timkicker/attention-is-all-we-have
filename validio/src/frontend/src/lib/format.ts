@@ -63,6 +63,7 @@ export const LINE_RESULT: Record<SteadyLineResult, { label: string; tone: Tone }
   waiting: { label: "Waiting for you", tone: "act" },
   flagged: { label: "Drift flag", tone: "act" },
   accepted: { label: "Accepted", tone: "ok" },
+  blocked: { label: "Not renewed", tone: "bad" },
 };
 
 /** A label for any state the API sends, also one these maps do not know yet:

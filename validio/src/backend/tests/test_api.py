@@ -198,6 +198,8 @@ def test_scene3_swap_waits_and_approve_needs_code(client, holder):
     oid = req["orderId"]
     assert client.post(f"/api/orders/{oid}/approve").status_code == 403
     assert client.post(f"/api/orders/{oid}/approve", json={"code": "000000"}).status_code == 403
+    assert client.get(f"/api/orders/{oid}").json()["questionText"] == \
+        "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     r = client.post(f"/api/orders/{oid}/approve", headers={"X-Approve-Code": CODE})
     assert r.status_code == 200 and r.json()["state"] == "placed"
     assert [h["state"] for h in r.json()["history"]] == ["waiting", "approved", "placed"]
