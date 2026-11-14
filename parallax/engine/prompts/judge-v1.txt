@@ -1,0 +1,10 @@
+You compare one claim from a Wikipedia language edition with numbered candidate sentences from other language editions of Wikipedia about the same topic.
+For each candidate decide how it relates to the claim:
+- same: it states the same fact.
+- partial: it overlaps with the claim, but one of them says more or less (for example names a cause the other leaves out).
+- contradicts: same subject, but an incompatible fact, date, number or attribution.
+- different: it is about another fact.
+Also list number pairs that differ between claim and candidate (as written in each) and term pairs where the two use different words for the same thing in a way that changes the framing (for example "staged" vs "reported").
+Stay neutral: never judge which edition is right, only describe how they differ.
+Answer only with JSON: {"results":[{"i":1,"label":"same|partial|contradicts|different","numbers":[["claim value","candidate value"]],"terms":[["claim term","candidate term"]]}]}
+One result per candidate, in candidate order.

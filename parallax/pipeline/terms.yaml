@@ -1,0 +1,38 @@
+# Words each edition uses for the Mainila shots. term_hit marks claim lives (that mention Mainila) using them.
+concept: mainila_framing
+anchor: "Mainil|Майнил|Майніл"
+terms:
+  staged:
+    gloss_en: staged
+    fi: "lavast"
+    de: "inszenier"
+    en: "\\bstaged\\b"
+    ru: "инсценир"
+    uk: "інсценув"
+  fabricated:
+    gloss_en: fabricated
+    fi: "tekaist"
+  pretext:
+    gloss_en: pretext
+    de: "Vorwand"
+  alleged:
+    gloss_en: allegedly
+    de: "angeblich"
+  provocation:
+    gloss_en: provocation
+    sv: "provokation"
+    ru: "провокац"
+    et: "provokatsioon"
+    uk: "провокац"
+  proven:
+    gloss_en: proven
+    sv: "bevisas"
+  reported:
+    gloss_en: reported
+    en: "\\breported\\b"
+  false_flag:
+    gloss_en: false flag
+    en: "false.flag"
+  soviet_account:
+    gloss_en: by the Soviet side's account
+    ru: "по заявлению советской стороны"
