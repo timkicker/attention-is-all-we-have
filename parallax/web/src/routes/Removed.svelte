@@ -14,7 +14,7 @@
   import Field from '../lib/ui/Field.svelte'
   import Footer from '../lib/ui/Footer.svelte'
   import Item from '../lib/ui/Item.svelte'
-  import type { RemovedRow } from '../lib/model'
+  import type { MarkedText, RemovedRow } from '../lib/model'
   import Marked from '../lib/ui/Marked.svelte'
   import NoteLine from '../lib/ui/NoteLine.svelte'
   import Skeleton from '../lib/ui/states/Skeleton.svelte'
@@ -43,6 +43,24 @@
     const cut = struck(r)
     const whole = r.say.text.replace(/[\s.,;:()]+/g, ' ').trim()
     return cut !== whole && !cut.includes(' ') && (cut.length <= 3 || UNIT.test(cut))
+  }
+  // Under the 2-line clamp a struck part further in than about 2 lines would be hidden: then the text starts a little
+  // before it with "…" (as focusOn in adapt/topic.ts does for 3 lines). The statement page has the whole sentence.
+  let narrow = $state(typeof matchMedia === 'function' && matchMedia('(max-width: 600px)').matches)
+  $effect(() => {
+    if (typeof matchMedia !== 'function') return
+    const mq = matchMedia('(max-width: 600px)')
+    const on = () => (narrow = mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  })
+  function focused(say: MarkedText): MarkedText {
+    const first = say.spans[0]?.start ?? 0
+    if (first <= (narrow ? 50 : 120)) return say
+    let at = say.text.lastIndexOf(' ', first - 24)
+    if (at < 0) at = first - 24
+    const cut = at + 1
+    return { text: `…${say.text.slice(cut)}`, spans: say.spans.map((sp) => ({ start: sp.start - cut + 1, end: sp.end - cut + 1 })) }
   }
   const visible = $derived(
     res?.ok
@@ -114,7 +132,7 @@
     <div class="list">
       {#each visible as row (row.id)}
         <Item href={row.href} testid={TID.removedRow}>
-          <p class="say"><Marked value={row.say} as="del" /></p>
+          <p class="say"><Marked value={focused(row.say)} as="del" /></p>
           <NoteLine parts={row.note} />
         </Item>
       {/each}
