@@ -3,7 +3,7 @@ TOPIC ?= winterwar
 PY := $(UV) run python
 
 .PHONY: fetch-smoke fetch parse lives bisect embed load reload checks checks-write dump release test-a align m-lives \
-	m-lives-load contested m-embed judge gloss atlas sources-data gold label eval answers bench l-scale docs
+	m-lives-load contested m-embed judge gloss gloss-fill gloss-dump gloss-load atlas sources-data gold label eval answers bench l-scale docs ingest prepare
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -71,6 +71,18 @@ judge:
 gloss:
 	$(PY) -m pipeline.gloss --topic $(TOPIC)
 
+# English glosses for everything the UI shows (dropped rows, past dates, timelines). Needs ENGINE=real and the key.
+gloss-fill:
+	$(PY) -m pipeline.gloss_fill --topic $(TOPIC)
+
+# Carry the glosses to a server that holds the same seed, without calling the model again.
+gloss-dump:
+	mkdir -p data
+	$(PY) -m pipeline.gloss_fill --topic $(TOPIC) --dump data/gloss-$(TOPIC).sql.gz
+
+gloss-load:
+	$(LOAD) $(FILE)
+
 atlas:
 	$(PY) -m pipeline.atlas
 
@@ -100,3 +112,12 @@ l-scale:
 docs:
 	$(PY) -m pipeline.docs
 
+
+# Any-article ingest (pipeline/job.py) without the API: one Wikidata item, or several one after another.
+# Resumable: finished editions and loaded topics are skipped. Prints the model calls per item and in total.
+# SINCE=2021-01-01 keeps only the history from that date on.
+ingest:
+	$(PY) -m pipeline.job $(QID) $(if $(SINCE),--since $(SINCE))
+
+prepare:
+	$(PY) -m pipeline.job $(QIDS) $(if $(SINCE),--since $(SINCE))

@@ -40,10 +40,10 @@ def test_en_staged_is_dropped_with_matches_through_fi(client):
     assert en["gloss"] is None or en["gloss"]
 
 
-def test_rows_sorted_by_days_alive_and_paged(client):
+def test_rows_sorted_newest_removal_first_and_paged(client):
     body = client.get("/api/dropped", params={"topic": "winterwar"}).json()
-    days = [r["days"] for r in body["rows"]]
-    assert days == sorted(days, reverse=True)
+    died = [r["died"] for r in body["rows"]]
+    assert died == sorted(died, reverse=True)
     one = client.get("/api/dropped", params={"topic": "winterwar", "limit": 1, "offset": 1}).json()
     assert one["total"] == body["total"] and one["rows"][0]["h"] == body["rows"][1]["h"]
 
@@ -117,3 +117,76 @@ def test_ru_staged_clause_on_a_full_seed(client):
     body = client.get("/api/dropped", params={"topic": "winterwar", "lang": "ru", "limit": 200}).json()
     ru = [r for r in body["rows"] if "инсценированный советской стороной" in r["text"]]
     assert any(r["died_rev"] == 64106894 and "de" in {a["lang"] for a in r["alive_in"]} for r in ru)
+
+
+def test_cut_span_finds_the_one_cut():
+    from api.routes.dropped import cut_span
+
+    text = "Stalin expected the Red Army to reach Helsinki within twelve days."
+    end = cut_span(text, "Stalin expected the Red Army to reach Helsinki.")
+    assert text[end["start"] : end["end"]] == "within twelve days." and end["end"] == len(text)
+    mid = cut_span("The Soviet Union staged the shots.", "The Soviet Union the shots.")
+    assert mid == {"start": 17, "end": 23}
+    assert cut_span(text, "Stalin hoped the Red Army would reach Helsinki.") is None  # reworded, not cut
+    assert cut_span(text, text) is None
+    assert cut_span("A — B c d", "A B c d") is None  # only a dash went
+
+
+def test_rows_carry_the_removed_part(client):
+    body = client.get("/api/dropped", params={"topic": "winterwar", "limit": 200}).json()
+    for r in body["rows"]:
+        assert r["removed"] is None or 0 <= r["removed"]["start"] < r["removed"]["end"] <= len(r["text"])
+        assert r["removed"] is None or "words_en" in r["removed"]
+
+
+def test_cut_words_trims_the_trailing_comma():
+    from api.routes.dropped import cut_words
+
+    assert cut_words("Stalin hoped, staged, the end", {"start": 13, "end": 21}) == "staged"
+
+
+def test_scale_prefers_stored_stat_keys(monkeypatch):
+    from api import sqllog
+    from api.routes import dropped as d
+
+    stored = {"fi_lives": 1118463, "fi_dead": 532372, "fi_dead_1y": 292344, "fi_revisions": 862076}
+    counted = {"fi_lives": 9, "fi_dead": 8, "fi_dead_1y": 7, "fi_revisions": 2143}
+
+    def fake(name, params=None):
+        if name == "dropped_stat":
+            return [{"k": k, "v": str(v)} for k, v in stored.items()]
+        assert name == "dropped_scale", "all keys stored: nothing is counted"
+        return [counted]
+
+    monkeypatch.setattr(sqllog, "run_file", fake)
+    assert d.scale() == stored
+    del stored["fi_revisions"]  # a missing key falls back to the count, the others stay stored
+    assert d.scale() == {"fi_lives": 1118463, "fi_dead": 532372, "fi_dead_1y": 292344, "fi_revisions": 2143}
+
+
+def test_reworded_rows_leave_the_list_but_partial_cuts_stay(monkeypatch):
+    from datetime import datetime
+
+    from api import sqllog
+    from api.routes import dropped
+
+    end = datetime(2026, 9, 12)
+    rows = [
+        {"lang": "fi", "page_id": 1, "h": "reworded", "row_end": end, "text": "Lopulta X lavasti laukaukset."},
+        {"lang": "ru", "page_id": 2, "h": "cut", "row_end": end, "text": "Обстрел у Майнилы, инсценированный."},
+        {"lang": "de", "page_id": 3, "h": "far", "row_end": end, "text": "Ganz andere Aussage hier."},
+    ]
+
+    def run_file(name, params=None):
+        if name == "dropped_reworded":
+            return [
+                {"lang": "fi", "page_id": 1, "h": "reworded", "dist": 0.02},
+                {"lang": "ru", "page_id": 2, "h": "cut", "dist": 0.05},
+                {"lang": "de", "page_id": 3, "h": "far", "dist": 0.4},
+            ]
+        if name == "dropped_successors":
+            return [{"lang": "ru", "page_id": 2, "row_start": end, "text": "Обстрел у Майнилы."}]
+        raise AssertionError(name)
+
+    monkeypatch.setattr(sqllog, "run_file", run_file)
+    assert dropped.reworded("winterwar", rows) == {("fi", 1, "reworded")}

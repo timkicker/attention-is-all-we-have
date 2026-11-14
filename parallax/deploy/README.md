@@ -11,7 +11,7 @@ make deploy HOST=root@<ip>          # rsync the repo, build and start the stack
 Loading the seed on the server, once per fresh database (`data/seed-v4.sql.gz` copied there first):
 
 ```
-C="docker compose -f deploy/docker-compose.prod.yml --env-file .env"
+C="docker compose -f deploy/docker-compose.prod.yml -f deploy/docker-compose.ingest.yml --env-file .env"
 $C up -d --wait db
 $C run --rm -T api uv run --no-sync python scripts/load_sql.py --reset data/seed-v4.sql.gz
 ```
