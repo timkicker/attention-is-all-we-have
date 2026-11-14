@@ -1,6 +1,6 @@
 <script lang="ts">
-  /// The kitchen's one agent: connect it (pairing code, or the demo agent),
-  /// let it in on the consent card, then pause or disconnect it. Its Rules
+  /// The kitchen's one agent: connect it over MCP (or a pairing code), let it
+  /// in on the consent card once its code matches, then pause or disconnect it. Its Rules
   /// sit below in one card, edited in place and saved with the approval code.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
@@ -36,7 +36,7 @@
     try {
       const next = await run();
       ag.data = next;
-      // The Inbox checklist and the example request read the agent from the session.
+      // The Inbox checklist reads the agent from the session.
       const acc = session.account;
       if (acc) {
         const agent = next.state === "active" || next.state === "paused";
@@ -210,9 +210,6 @@
     {:else if a.state === "none"}
       <div class="row-buttons">
         <Button data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
-        {#if session.account?.isDemo}
-          <Button variant="outline" data-testid="agent-demo" disabled={busy} onclick={() => act(agentApi.demo)}>Connect the demo agent</Button>
-        {/if}
       </div>
     {:else if a.state === "pairing" && a.pairing}
       <section class="sec" aria-labelledby="h-pair">
@@ -237,9 +234,6 @@
           </div>
         </details>
         <div class="row-buttons">
-          {#if session.account?.isDemo}
-            <Button variant="outline" data-testid="agent-demo" disabled={busy} onclick={() => act(agentApi.demo)}>Connect the demo agent</Button>
-          {/if}
           <Button variant="ghost" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
         </div>
       </section>
@@ -247,6 +241,12 @@
       <section class="sec" aria-labelledby="h-consent" data-testid="consent">
         <h2 class="v-h" id="h-consent">{a.consent.name} wants to order for {session.account?.name ?? "your kitchen"} within your Rules</h2>
         <Section class="v-card">
+          {#if a.consent.verifyCode}
+            <div class="verify">
+              <span class="code mono" data-testid="verify-code" id="verify-code" data-raw>{a.consent.verifyCode}</span>
+              <p class="steps" data-testid="verify-hint">Your agent shows this code too. Allow only if it matches.</p>
+            </div>
+          {/if}
           <ul class="may" aria-label="What it may do">
             {#each a.consent.may as m (m)}<li>{m}</li>{/each}
           </ul>
@@ -388,6 +388,21 @@
     font-weight: 600;
     overflow-wrap: anywhere;
     min-width: 0;
+  }
+  .verify {
+    padding: 16px 16px 0;
+    border-bottom: 1px solid var(--v-line);
+  }
+  .verify .code {
+    display: block;
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+  }
+  .verify .steps {
+    padding: 4px 0 16px;
   }
   .steps {
     margin: 0;
@@ -532,6 +547,10 @@
     margin-top: 4px;
   }
   @media (max-width: 760px) {
+    .verify .code {
+      font-size: 28px;
+      line-height: 36px;
+    }
     .urls {
       grid-template-columns: minmax(0, 1fr) auto;
     }
