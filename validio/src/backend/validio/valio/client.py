@@ -78,6 +78,26 @@ def checked_base_url(url: str) -> str:
     return f"https://{TEST_API_HOST}"
 
 
+def recorded_days(cache_dir: Path | None) -> list[date]:
+    """The delivery days replay can answer: a folder with recordings under both price and availability."""
+    if cache_dir is None:
+        return []
+    days = []
+    for d in sorted(Path(cache_dir).glob("price/*")):
+        try:
+            day = date.fromisoformat(d.name)
+        except ValueError:
+            continue
+        if any(d.glob("*.json")) and any((Path(cache_dir) / "availability" / d.name).glob("*.json")):
+            days.append(day)
+    return days
+
+
+def days_text(days: list[date]) -> str:
+    """"Mon 2026-11-16, Tue 2026-11-17": the weekday for a person, the ISO date for deliverBy."""
+    return ", ".join(f"{d:%a} {d.isoformat()}" for d in days)
+
+
 def replay_key(endpoint: str, requested: date, ids: list[str]) -> str:
     return hashlib.sha256(f"{endpoint}|{requested.isoformat()}|{','.join(sorted(ids))}".encode()).hexdigest()
 
@@ -98,6 +118,10 @@ class ValioClient:
         self._http = http
         self.backoff = backoff
         self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
+
+    def recorded_days(self) -> list[date] | None:
+        """The days replay has answers for; None when the client asks Valio itself (any day)."""
+        return recorded_days(self.cache_dir) if self.mode == "replay" else None
 
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
         out: dict[str, Quote] = {}
@@ -173,6 +197,10 @@ class ValioClient:
         if exact.is_file():
             return json.loads(exact.read_text())["response"]
         key = (endpoint, requested.isoformat())
+        if key not in self._index and not any(d.glob("*.json")):
+            days = days_text(recorded_days(self.cache_dir)) or "none"
+            raise ReplayMiss(f"no recorded {endpoint} answers for delivery on {requested}, recorded delivery days: "
+                             f"{days}, run make record first")
         if key not in self._index:
             heads, rows, clash = {}, {}, set()
             for f in sorted(d.glob("*.json")):

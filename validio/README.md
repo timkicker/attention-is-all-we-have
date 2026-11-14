@@ -39,7 +39,7 @@ The first run goes in this order:
 ```sh
 make setup RAW=/path/to/folder   # .env from .env.example, uv sync, web app packages, copy and check the files, build data/catalog.db
 # now open .env and put the key after VALIO_API_KEY=
-make record                      # asks Valio's test API once and stores the answers under data/cache/valio/
+make record                      # asks Valio's test API once per delivery day (Mon 16 to Fri 20 Nov) and stores the answers under data/cache/valio/
 make seed                        # demo state: kitchen hotel-espoo, Spend Pass M-1, 8 weeks of simulated history
 make demo                        # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
@@ -107,7 +107,7 @@ The screen marks everything that is simulated. Mozzarella 466375 runs out in sce
 
 ## Replay
 
-Every answer from Valio's test API is stored under `data/cache/valio/<endpoint>/<date>/` and named by the SHA-256 of endpoint, date and the sorted product ids. With `VALIO_MODE=replay` (the default) the client answers only from those files and never opens a connection. A question it has no answer for raises `ReplayMiss`, so a missing recording shows up as an error and never as a quiet empty result. `VALIO_MODE=record` calls the API and saves the answers and `live` calls it without saving. Valio's data and the recordings never go into git because Valio allows their use only for this challenge.
+Every answer from Valio's test API is stored under `data/cache/valio/<endpoint>/<date>/` and named by the SHA-256 of endpoint, date and the sorted product ids. With `VALIO_MODE=replay` (the default) the client answers only from those files and never opens a connection. A question it has no answer for raises `ReplayMiss`, so a missing recording shows up as an error and never as a quiet empty result. The delivery days replay can answer are the date folders recorded for both endpoints: `make record` records Monday to Friday of the week after the demo clock, skipping ids a day already has, and an agent asking for any other day gets `503 not recorded` with the recorded days named, as does the description of the `request_supply` tool. `VALIO_MODE=record` calls the API and saves the answers and `live` calls it without saving. Valio's data and the recordings never go into git because Valio allows their use only for this challenge.
 
 ## Guard checks
 
