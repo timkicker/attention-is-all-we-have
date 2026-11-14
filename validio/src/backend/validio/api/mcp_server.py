@@ -21,7 +21,7 @@ from ..orders.store import NotFound
 from ..orders.supply import RequestError
 from ..policy.mandate import MandateError
 from ..valio.budget import CallBudgetExceeded
-from ..valio.client import ValioUnavailable
+from ..valio.client import ReplayMiss, ValioUnavailable
 from . import tools
 from .schemas import ConfirmIn, SupplyLineIn, SupplyRequestIn
 from .state import get_ctx
@@ -35,7 +35,8 @@ server = MCPServer("validio", instructions=(
 STATUS = ((MandateError, "401 Spend Pass refused"), (NotFound, "404 not found"), (ServiceClosed, "503 reset, send it again"),
           (OrderStateError, "409 conflict"), (IdempotencyConflict, "409 conflict"), (ApproveRefused, "409 conflict"),
           (RequestError, "422 cannot read the request"), (OrderError, "422 order refused"),
-          (CallBudgetExceeded, "422 too many products"), (ValioUnavailable, "503 Valio down"))
+          (CallBudgetExceeded, "422 too many products"), (ReplayMiss, "503 no recorded answers"),
+          (ValioUnavailable, "503 Valio down"))
 
 
 def _errors(fn):
