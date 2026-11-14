@@ -59,8 +59,8 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await expect(page.locator("#chain-status")).toContainText("Chain verified");
   await expect(page.locator("#ledger")).toContainText("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese");
   await expect(page.locator("#ledger")).not.toContainText("owner:anna");
-  await page.locator("#nav-spend-pass").click();
-  await expect(page.locator("#pass-auto")).toContainText("1,200.00");
+  await page.goto("/agent");
+  await expect(page.locator("#rules-alone")).toContainText("1,200.00");
 
   // The demo switches want the presenter's token: asked in a dialog, then run.
   await page.locator("#page-menu").click();

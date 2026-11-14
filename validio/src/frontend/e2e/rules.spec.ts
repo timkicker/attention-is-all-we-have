@@ -313,9 +313,9 @@ for (const v of VIEWS) {
       await page.getByTestId("accept-471376").click();
       await expect(page.getByTestId("line-471376")).toContainText("Accepted");
       await check("steady accepted");
-      await go("/spend-pass");
-      await expect(page.locator("#pass-cap")).toBeVisible();
-      await check("spend pass");
+      await go("/agent");
+      await expect(page.getByTestId("rules-blocked")).toBeVisible();
+      await check("agent");
       await go("/ledger");
       await expect(page.getByTestId("chain-status")).toBeVisible();
       await check("ledger");
@@ -466,8 +466,8 @@ test("phone bars never cover the page end", async ({ page }) => {
   await code(page);
   await expect(page.getByTestId("accept-471376")).toBeVisible();
   await check("steady after");
-  await page.goto("/spend-pass");
-  await check("spend pass");
+  await page.goto("/agent");
+  await check("agent");
   await page.goto("/ledger");
   await check("ledger");
   expect(problems, problems.join("\n")).toEqual([]);

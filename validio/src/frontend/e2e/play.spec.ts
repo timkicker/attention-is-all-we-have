@@ -55,39 +55,6 @@ test("dialogs: a plain dim over the whole width, and nothing pinned on top", asy
   await expect(bar).toBeVisible();
 });
 
-test("change limits: 422 inline, then the new numbers everywhere", async ({ page }) => {
-  await fresh(page);
-  await page.goto("/spend-pass");
-  await page.getByTestId("change-limits").click();
-  const form = page.getByTestId("limits-form");
-  // The edit mode of the same card: the plot stays, nothing shows twice, no native controls.
-  await expect(page.locator(".v-card")).toHaveCount(1);
-  await expect(page.locator("[data-plot-subject], svg").first()).toBeVisible();
-  await expect(form.locator("input[type=checkbox], input[type=date]")).toHaveCount(0);
-  await expect(form).toContainText("Recorded for lactose free and 16 Nov only.");
-  await expect(page.getByTestId("f-auto")).toHaveValue("1,200.00");
-  await expect(form.getByRole("switch", { name: "Substitutes" })).toHaveAttribute("aria-checked", "true");
-  await page.getByTestId("f-auto").fill("1900");
-  await page.getByTestId("f-hard").fill("1800");
-  if (await page.getByTestId("f-code").isVisible()) {
-    // The field comes before the action: code, Sign again, Cancel.
-    const order = await form.locator("#f-code, [data-testid=limits-save], [data-testid=limits-cancel]").evaluateAll((es) => es.map((e) => e.id || e.getAttribute("data-testid")));
-    expect(order).toEqual(["f-code", "limits-save", "limits-cancel"]);
-    await expect(form.locator("label[for=f-code]")).toHaveText("Approval code");
-    await page.getByTestId("f-code").fill(CODE);
-  }
-  await page.getByTestId("limits-save").click();
-  await expect(page.getByTestId("f-auto-problem")).toHaveText("Must be below never above.");
-
-  await page.getByTestId("f-auto").fill("900");
-  await page.getByTestId("limits-save").click();
-  await expect(form).toHaveCount(0);
-  await expect(page.locator("main")).toContainText("900.00");
-  await page.goto("/");
-  await expect(page.getByTestId("pass-auto")).toHaveText(/^900\.00\s€$/);
-  await expect(page.getByTestId("pass-cap")).toHaveText(/^1,800\.00\s€$/);
-});
-
 test("the stock-out switch turns off again", async ({ page }) => {
   await fresh(page);
   await stockOut(page);
@@ -176,10 +143,3 @@ test("the ledger heads: Demo without an id, every id once", async ({ page }) => 
   }
 });
 
-test("the Spend Pass facts: who the agent sees sits behind the (i)", async ({ page }) => {
-  await fresh(page);
-  await page.goto("/spend-pass");
-  await expect(page.locator("main")).not.toContainText("not approvers");
-  await page.locator("#pass-sees").click();
-  await expect(page.getByTestId("pass-approvers")).toHaveText("Agent sees limits and diet, not approvers.");
-});
