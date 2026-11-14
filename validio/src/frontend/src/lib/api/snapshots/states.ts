@@ -162,6 +162,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -187,6 +188,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -212,6 +214,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -256,6 +259,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -291,6 +295,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -316,6 +321,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -341,6 +347,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -385,6 +392,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -429,6 +437,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -486,6 +495,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -513,6 +523,7 @@ export const answers: Answers = {
      "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "kind": "decision",
      "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 7,
@@ -538,6 +549,7 @@ export const answers: Answers = {
      "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
      "kind": "decision",
      "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -573,6 +585,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -598,6 +611,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -623,6 +637,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -667,6 +682,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -711,6 +727,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -768,6 +785,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -795,6 +813,7 @@ export const answers: Answers = {
      "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "kind": "decision",
      "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 7,
@@ -820,6 +839,7 @@ export const answers: Answers = {
      "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
      "kind": "decision",
      "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -863,6 +883,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-4",
      "prevHash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -906,6 +927,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-4",
      "prevHash": "de6b67f523c329bb5c4eb7620ee37ddd12756929b7e5d9e6991022578a167b8d",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 10,
@@ -947,6 +969,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "61b0f3a5269c0e867fb486651a24cfe817f1829432be01c9f2fa36365709cf5e",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -982,6 +1005,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -1007,6 +1031,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -1032,6 +1057,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1076,6 +1102,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1120,6 +1147,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1177,6 +1205,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "db979cd7f85cb4f4ed1b7dd860584e109df26d7400da91063d8017bfefb62c94",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1204,6 +1233,7 @@ export const answers: Answers = {
      "hash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
      "kind": "decision",
      "prevHash": "90f8a2df7a571c374319ba927434a5ab623d16c7b6c135c0ee6d1bb1ce67d131",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 7,
@@ -1229,6 +1259,7 @@ export const answers: Answers = {
      "hash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
      "kind": "decision",
      "prevHash": "f54a399902a557219a7da25cddf79543dfd22e366a29d8c048c3cc768daf7b37",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -1272,6 +1303,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-4",
      "prevHash": "664b6fe8698d310a8e21fdbb512b72a5c375b868f905b9bb5fa92ab69b077fea",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -1315,6 +1347,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-4",
      "prevHash": "dd182c140fa87ccc3ebb28d6d59035bd1b974acd334ba0994b96f0b4462e92b5",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 98 bags of lactose-free mozzarella 125 g for 113.68 €.",
      "seq": 10,
@@ -1356,6 +1389,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "5d6868987d19aeff9aa0fab7d429bc6ed5694574b3a7967948739a8c26b01231",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -1391,6 +1425,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -1416,6 +1451,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -1441,6 +1477,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1485,6 +1522,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1504,6 +1542,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -1528,6 +1567,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -1569,6 +1609,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -1604,6 +1645,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -1629,6 +1671,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -1654,6 +1697,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1698,6 +1742,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1717,6 +1762,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -1741,6 +1787,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -1782,6 +1829,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -1826,6 +1874,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1883,6 +1932,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -1910,6 +1960,7 @@ export const answers: Answers = {
      "hash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "kind": "decision",
      "prevHash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 10,
@@ -1935,6 +1986,7 @@ export const answers: Answers = {
      "hash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
      "kind": "decision",
      "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 11,
@@ -1968,6 +2020,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -1993,6 +2046,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -2018,6 +2072,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2062,6 +2117,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2081,6 +2137,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2105,6 +2162,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -2146,6 +2204,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -2190,6 +2249,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2247,6 +2307,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "628e1b4f73fc96a943802e82bc7145343efac98bfa235dd4295600052b58a838",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2274,6 +2335,7 @@ export const answers: Answers = {
      "hash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
      "kind": "decision",
      "prevHash": "2098e32875ab6d2c82cf73b570704fa1366973e784f6b05fc1e24bb5e69e3a3f",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 10,
@@ -2299,6 +2361,7 @@ export const answers: Answers = {
      "hash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
      "kind": "decision",
      "prevHash": "492fb4924283de57f909442be4c4b8f848845b60e4942f795119ffd59d57b980",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 11,
@@ -2340,6 +2403,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-5",
      "prevHash": "e08d4633c7e48ec98dfe8775b9b3817b431278ac159e813ed8fc136ae4c1c661",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2383,6 +2447,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-5",
      "prevHash": "b9b143b982aa9961a983052d842d6e6a7117e1f86888c870766f42fdaad24c59",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 13,
@@ -2424,6 +2489,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-5",
      "prevHash": "d47c9c64ca13c39a335e83bf4cfc20bd3b694d1218cf10927ed5b9b0e089215b",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -2459,6 +2525,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -2484,6 +2551,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -2509,6 +2577,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2553,6 +2622,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2572,6 +2642,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2596,6 +2667,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -2637,6 +2709,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -2680,6 +2753,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
      "seq": 8,
@@ -2721,6 +2795,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -2756,6 +2831,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -2781,6 +2857,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -2806,6 +2883,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2850,6 +2928,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -2869,6 +2948,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -2893,6 +2973,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -2934,6 +3015,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -2977,6 +3059,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
      "seq": 8,
@@ -3018,6 +3101,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -3062,6 +3146,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3119,6 +3204,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3146,6 +3232,7 @@ export const answers: Answers = {
      "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
      "kind": "decision",
      "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 12,
@@ -3171,6 +3258,7 @@ export const answers: Answers = {
      "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
      "kind": "decision",
      "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 13,
@@ -3204,6 +3292,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -3229,6 +3318,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -3254,6 +3344,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3298,6 +3389,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3317,6 +3409,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -3341,6 +3434,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -3382,6 +3476,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -3425,6 +3520,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
      "seq": 8,
@@ -3466,6 +3562,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-2",
      "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -3510,6 +3607,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3567,6 +3665,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3594,6 +3693,7 @@ export const answers: Answers = {
      "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
      "kind": "decision",
      "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 12,
@@ -3619,6 +3719,7 @@ export const answers: Answers = {
      "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
      "kind": "decision",
      "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 13,
@@ -3660,6 +3761,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-5",
      "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -3703,6 +3805,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-5",
      "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 15,
@@ -3744,6 +3847,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-5",
      "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -3779,6 +3883,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -3804,6 +3909,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -3829,6 +3935,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3873,6 +3980,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -3892,6 +4000,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -3916,6 +4025,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -3957,6 +4067,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -4000,6 +4111,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
      "seq": 8,
@@ -4033,6 +4145,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -4058,6 +4171,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -4083,6 +4197,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4127,6 +4242,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4146,6 +4262,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -4170,6 +4287,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -4211,6 +4329,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -4254,6 +4373,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
      "seq": 8,
@@ -4296,6 +4416,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4353,6 +4474,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4380,6 +4502,7 @@ export const answers: Answers = {
      "hash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
      "kind": "decision",
      "prevHash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 11,
@@ -4405,6 +4528,7 @@ export const answers: Answers = {
      "hash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
      "kind": "decision",
      "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 12,
@@ -4438,6 +4562,7 @@ export const answers: Answers = {
      "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
      "kind": "request",
      "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
      "seq": 1,
@@ -4463,6 +4588,7 @@ export const answers: Answers = {
      "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
      "kind": "decision",
      "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
+     "requestId": "R-1",
      "ruleIds": [],
      "sentence": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
      "seq": 2,
@@ -4488,6 +4614,7 @@ export const answers: Answers = {
      "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
      "kind": "decision",
      "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4532,6 +4659,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
+     "requestId": "R-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4551,6 +4679,7 @@ export const answers: Answers = {
      "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
      "kind": "simulation",
      "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
      "seq": 5,
@@ -4575,6 +4704,7 @@ export const answers: Answers = {
      "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
      "kind": "request",
      "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
      "seq": 6,
@@ -4616,6 +4746,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-2",
      "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+     "requestId": "R-2",
      "ruleIds": [
       "ask-human"
      ],
@@ -4659,6 +4790,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-2",
      "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+     "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
      "seq": 8,
@@ -4701,6 +4833,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-3",
      "prevHash": "aa6489274091ab23a5eefec9bd79d5b019ed6a35e0aeb4e17efc55010f3929ec",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4758,6 +4891,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-4",
      "prevHash": "f07ea0a1852b154809de2dfcc2b1a4f9431f518e26834cac1489911d6750a3cf",
+     "requestId": "S-1",
      "ruleIds": [
       "auto-order"
      ],
@@ -4785,6 +4919,7 @@ export const answers: Answers = {
      "hash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
      "kind": "decision",
      "prevHash": "d4f5aa1afb7aa6707514870af26ba9673dbea99bd684bb85e9213220ee20a5ff",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
      "seq": 11,
@@ -4810,6 +4945,7 @@ export const answers: Answers = {
      "hash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
      "kind": "decision",
      "prevHash": "b356894462037e9a7f00029ba53b445297b3ba34812a49fe9b5d5cf6c5da39a5",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
      "seq": 12,
@@ -4851,6 +4987,7 @@ export const answers: Answers = {
      "kind": "decision",
      "orderId": "O-5",
      "prevHash": "84a1e574b43a75c386d66c97811571dceddea4f6d14c0658f0dd315e9d185075",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -4894,6 +5031,7 @@ export const answers: Answers = {
      "kind": "approval",
      "orderId": "O-5",
      "prevHash": "4e05f3ec1c9ab44a514ba0d187a6f5d26f6d523462efecfdf9b2728bedd93f7f",
+     "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
      "seq": 14,
@@ -4935,6 +5073,7 @@ export const answers: Answers = {
      "kind": "order",
      "orderId": "O-5",
      "prevHash": "b132b0ccbd187db9fad90d772728ebac9513168be9ca64b232454815863f3e4b",
+     "requestId": "S-1",
      "ruleIds": [
       "ask-human"
      ],
@@ -5455,6 +5594,7 @@ export const answers: Answers = {
         ],
         "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+        "shortText": "Cheapest safe option, always delivered in full.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5654,6 +5794,7 @@ export const answers: Answers = {
         ],
         "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
         "shortName": "Arki lactose-free skimmed milk 1 l",
+        "shortText": "90.00 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5835,6 +5976,7 @@ export const answers: Answers = {
         ],
         "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free milk 1 l",
+        "shortText": "390.00 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6024,6 +6166,7 @@ export const answers: Answers = {
         ],
         "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free semi-skimmed milk 1 l",
+        "shortText": "550.00 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6205,6 +6348,7 @@ export const answers: Answers = {
         ],
         "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free whole milk 1 l",
+        "shortText": "630.00 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6386,6 +6530,7 @@ export const answers: Answers = {
         ],
         "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+        "shortText": "640.00 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6559,6 +6704,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": false,
         "moneyText": "1,314.72 €",
         "name": "Valio Eila® semi skimmed milk drink 1,75 l lactose free",
@@ -6571,6 +6718,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
         "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6756,6 +6904,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio skimmed milk 1 l lactose free UHT",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": false,
         "moneyText": "1,332.00 €",
         "name": "Valio skimmed milk 1 l lactose free UHT",
@@ -6768,6 +6918,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
         "shortName": "Lactose-free skimmed milk 1 l",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6944,6 +7095,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": false,
         "moneyText": "1,372.00 €",
         "name": "Valio Eila® semi skimmed milk drink 1 l lactose free",
@@ -6956,6 +7109,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
         "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7140,6 +7294,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": false,
         "moneyText": "1,524.00 €",
         "name": "Valio Eila® skimmed milk drink 1 l lactose free",
@@ -7152,6 +7308,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
         "shortName": "Eila lactose-free skimmed milk 1 l",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7323,6 +7480,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": false,
         "moneyText": "1,565.50 €",
         "name": "Valio Eila® semi skimmed milk drink 10 l novobox lactose free",
@@ -7335,6 +7494,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
         "shortName": "Lactose-free semi-skimmed milk 10 l",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "totalCents": 156550,
         "unit": "KI",
         "verdict": "rejected"
@@ -7514,6 +7674,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+        "groupOrder": 1,
+        "groupText": "Over the hard cap",
         "isSubstitute": false,
         "moneyText": "2,194.00 €",
         "name": "Valio Eila®  Luomu™ semi skimmed milk drink 1 l lactose free, organic",
@@ -7527,6 +7689,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
         "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+        "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7540,6 +7703,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free coffee milk 5 dl",
         "facts": [],
         "fullName": "Valio coffee milk 5 dl lactose free",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio coffee milk 5 dl lactose free",
         "productId": "462626",
@@ -7548,6 +7713,7 @@ export const answers: Answers = {
         ],
         "sentence": "Coffee milk, not plain milk.",
         "shortName": "Lactose-free coffee milk 5 dl",
+        "shortText": "Coffee milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7559,6 +7725,8 @@ export const answers: Answers = {
         "displayName": "Low-lactose whole milk 1 l",
         "facts": [],
         "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": false,
         "name": "Arla Whole milk 1 L Suomesta low lactose Uht",
         "productId": "463047",
@@ -7567,6 +7735,7 @@ export const answers: Answers = {
         ],
         "sentence": "Low lactose is not lactose free.",
         "shortName": "Low-lactose whole milk 1 l",
+        "shortText": "Low lactose is not lactose free.",
         "supplierText": {
          "grade": "untrusted",
          "planted": true,
@@ -7595,6 +7764,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free portion milk 100 x 2 cl",
         "facts": [],
         "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
         "productId": "463203",
@@ -7603,6 +7774,7 @@ export const answers: Answers = {
         ],
         "sentence": "Portion packs, not plain milk.",
         "shortName": "Lactose-free portion milk 100 x 2 cl",
+        "shortText": "Portion packs, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7614,6 +7786,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free cafè milk 1 l",
         "facts": [],
         "fullName": "Arla Cafè milk 1 l UHT lactose free",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Arla Cafè milk 1 L UHT lactose free",
         "productId": "463380",
@@ -7622,6 +7796,7 @@ export const answers: Answers = {
         ],
         "sentence": "Café milk, not plain milk.",
         "shortName": "Lactose-free cafè milk 1 l",
+        "shortText": "Café milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7633,6 +7808,8 @@ export const answers: Answers = {
         "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
         "facts": [],
         "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
         "productId": "463779",
@@ -7641,6 +7818,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.25 l packs, too small for 1,000 litres.",
         "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+        "shortText": "0.25 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7652,6 +7830,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free semi-skimmed milk 5 dl",
         "facts": [],
         "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
         "productId": "464198",
@@ -7660,6 +7840,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.5 l packs, too small for 1,000 litres.",
         "shortName": "Lactose-free semi-skimmed milk 5 dl",
+        "shortText": "0.5 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7671,6 +7852,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free coffee milk 1 l",
         "facts": [],
         "fullName": "Valio coffee milk 1 l lactose free UHT",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio coffee milk 1 l lactose free UHT",
         "productId": "464237",
@@ -7679,6 +7862,7 @@ export const answers: Answers = {
         ],
         "sentence": "Coffee milk, not plain milk.",
         "shortName": "Lactose-free coffee milk 1 l",
+        "shortText": "Coffee milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7690,6 +7874,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
         "facts": [],
         "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
         "productId": "464399",
@@ -7698,6 +7884,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.2 l packs, too small for 1,000 litres.",
         "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+        "shortText": "0.2 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7709,6 +7896,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free semi-skimmed milk 0.5 l",
         "facts": [],
         "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
         "productId": "464440",
@@ -7717,6 +7906,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.5 l packs, too small for 1,000 litres.",
         "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+        "shortText": "0.5 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7728,6 +7918,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free low fat milk 6 × 5 dl",
         "facts": [],
         "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
         "productId": "465149",
@@ -7736,6 +7928,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.5 l packs, too small for 1,000 litres.",
         "shortName": "Lactose-free low fat milk 6 × 5 dl",
+        "shortText": "0.5 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7747,6 +7940,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
         "facts": [],
         "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+        "groupOrder": 10,
+        "groupText": "Packs too small",
         "isSubstitute": false,
         "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
         "productId": "466288",
@@ -7755,6 +7950,7 @@ export const answers: Answers = {
         ],
         "sentence": "0.25 l packs, too small for 1,000 litres.",
         "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+        "shortText": "0.25 l packs, too small for 1,000 litres.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7766,6 +7962,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
         "facts": [],
         "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "5 x Arla Acidofilus-Bifidus sour milk 1 L lactose free fatfree Suomi",
         "productId": "469331",
@@ -7774,6 +7972,7 @@ export const answers: Answers = {
         ],
         "sentence": "Sour milk, not plain milk.",
         "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+        "shortText": "Sour milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7785,6 +7984,8 @@ export const answers: Answers = {
         "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
         "facts": [],
         "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": false,
         "name": "12 x Arla Semi skimmed milk 1 L Suomi low lactose UHT",
         "productId": "469541",
@@ -7793,6 +7994,7 @@ export const answers: Answers = {
         ],
         "sentence": "Low lactose is not lactose free.",
         "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+        "shortText": "Low lactose is not lactose free.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7804,6 +8006,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free skimmed sour milk 5 kg",
         "facts": [],
         "fullName": "Valio skimmed sour milk 5 kg lactose free",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio skimmed sour milk 5 kg lactose free",
         "productId": "472492",
@@ -7812,6 +8016,7 @@ export const answers: Answers = {
         ],
         "sentence": "Sour milk, not plain milk.",
         "shortName": "Lactose-free skimmed sour milk 5 kg",
+        "shortText": "Sour milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7823,6 +8028,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free coffee milk vanilla 1 l",
         "facts": [],
         "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio coffee milk drink vanilla 1 l lactose free UHT",
         "productId": "473142",
@@ -7831,6 +8038,7 @@ export const answers: Answers = {
         ],
         "sentence": "Coffee milk, not plain milk.",
         "shortName": "Lactose-free coffee milk vanilla 1 l",
+        "shortText": "Coffee milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7842,6 +8050,8 @@ export const answers: Answers = {
         "displayName": "Skimmed sour milk 1 l",
         "facts": [],
         "fullName": "Valio skimmed sour milk 1 l Hyla",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": false,
         "name": "Valio skimmed sour milk 1 l HYLA®",
         "productId": "475534",
@@ -7851,6 +8061,7 @@ export const answers: Answers = {
         ],
         "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
         "shortName": "Skimmed sour milk 1 l",
+        "shortText": "Low lactose is not lactose free.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7862,6 +8073,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free AB sour milk 1 l",
         "facts": [],
         "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio Gefilus® AB sour milk 1% 1 l lactose free",
         "productId": "476957",
@@ -7870,6 +8083,7 @@ export const answers: Answers = {
         ],
         "sentence": "Sour milk, not plain milk.",
         "shortName": "Lactose-free AB sour milk 1 l",
+        "shortText": "Sour milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7881,6 +8095,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free skimmed sour milk 1 l",
         "facts": [],
         "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
+        "groupOrder": 9,
+        "groupText": "Not plain milk",
         "isSubstitute": false,
         "name": "Valio Eila® skimmed sour milk 1 l lactose free",
         "productId": "477050",
@@ -7889,6 +8105,7 @@ export const answers: Answers = {
         ],
         "sentence": "Sour milk, not plain milk.",
         "shortName": "Lactose-free skimmed sour milk 1 l",
+        "shortText": "Sour milk, not plain milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -7900,6 +8117,8 @@ export const answers: Answers = {
         "displayName": "Lactose-free ruoka milk vegetable 10 l",
         "facts": [],
         "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+        "groupOrder": 9,
+        "groupText": "Not milk",
         "isSubstitute": false,
         "name": "Arla Ruoka 10 L 15% lactose free based on milk vegetable mix UHT",
         "productId": "462703",
@@ -7908,6 +8127,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free but a cooking fat mix, not milk.",
         "shortName": "Lactose-free ruoka milk vegetable 10 l",
+        "shortText": "Not milk.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8116,6 +8336,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+        "shortText": "Cheapest safe option, always delivered in full.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -8221,6 +8442,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
+        "shortText": "16.50 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8384,6 +8606,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
+        "shortText": "54.80 € more.",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
@@ -8489,6 +8712,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8633,6 +8857,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 400 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
@@ -8645,6 +8871,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 400 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8791,6 +9018,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 150 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
@@ -8803,6 +9032,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 150 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8896,6 +9126,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
@@ -8908,6 +9140,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9011,6 +9244,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
@@ -9021,6 +9256,7 @@ export const answers: Answers = {
         ],
         "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9133,6 +9369,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Gran Castelli mozzarella 125 g lactose free",
+        "groupOrder": 6,
+        "groupText": "Out of stock at Valio",
         "isSubstitute": false,
         "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
@@ -9145,6 +9383,7 @@ export const answers: Answers = {
         ],
         "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
         "shortName": "Lactose-free mozzarella 125 g",
+        "shortText": "Out of stock at Valio, 200 bags needed.",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -9155,6 +9394,8 @@ export const answers: Answers = {
         "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
         "fullName": "Pasta Filata Mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
@@ -9164,6 +9405,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Pasta filata mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
@@ -9239,6 +9481,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Galbani Mozzarella Lactose free 100 g",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
@@ -9248,6 +9492,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free mozzarella 100 g",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9259,6 +9504,8 @@ export const answers: Answers = {
         "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
@@ -9268,12 +9515,15 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella bufala cheese buffalo 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
         "displayName": "Mozzarella 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
@@ -9283,6 +9533,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        }
       ],
@@ -9498,6 +9749,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+        "shortText": "Cheapest safe option, always delivered in full.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -9603,6 +9855,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
+        "shortText": "16.50 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9766,6 +10019,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
+        "shortText": "54.80 € more.",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
@@ -9871,6 +10125,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10015,6 +10270,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 400 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
@@ -10027,6 +10284,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 400 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10173,6 +10431,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 150 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
@@ -10185,6 +10445,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 150 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10278,6 +10539,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
@@ -10290,6 +10553,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10393,6 +10657,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
@@ -10403,6 +10669,7 @@ export const answers: Answers = {
         ],
         "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10515,6 +10782,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Gran Castelli mozzarella 125 g lactose free",
+        "groupOrder": 6,
+        "groupText": "Out of stock at Valio",
         "isSubstitute": false,
         "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
@@ -10527,6 +10796,7 @@ export const answers: Answers = {
         ],
         "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
         "shortName": "Lactose-free mozzarella 125 g",
+        "shortText": "Out of stock at Valio, 200 bags needed.",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -10537,6 +10807,8 @@ export const answers: Answers = {
         "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
         "fullName": "Pasta Filata Mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
@@ -10546,6 +10818,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Pasta filata mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
@@ -10621,6 +10894,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Galbani Mozzarella Lactose free 100 g",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
@@ -10630,6 +10905,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free mozzarella 100 g",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10641,6 +10917,8 @@ export const answers: Answers = {
         "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
@@ -10650,12 +10928,15 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella bufala cheese buffalo 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
         "displayName": "Mozzarella 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
@@ -10665,6 +10946,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        }
       ],
@@ -10880,6 +11162,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+        "shortText": "Cheapest safe option, always delivered in full.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -10985,6 +11268,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
+        "shortText": "16.50 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11148,6 +11432,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
+        "shortText": "54.80 € more.",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked"
@@ -11253,6 +11538,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11397,6 +11683,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 400 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "289.36 €",
         "name": "Valio mozzarella e400 g grated",
@@ -11409,6 +11697,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 400 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11555,6 +11844,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Valio mozzarella 150 g grated",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "moneyText": "310.93 €",
         "name": "Valio mozzarella e150 g grated",
@@ -11567,6 +11858,7 @@ export const answers: Answers = {
         ],
         "sentence": "Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Mozzarella grated 150 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11660,6 +11952,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "moneyText": "540.45 €",
         "name": "4 x Arla Pro 1,5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
@@ -11672,6 +11966,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11775,6 +12070,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+        "groupOrder": 8,
+        "groupText": "Order cut-off passed",
         "isSubstitute": true,
         "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
         "onValioList": false,
@@ -11785,6 +12082,7 @@ export const answers: Answers = {
         ],
         "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
         "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+        "shortText": "Order cut-off 12 Nov 15:00 has passed.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11897,6 +12195,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Gran Castelli mozzarella 125 g lactose free",
+        "groupOrder": 6,
+        "groupText": "Out of stock at Valio",
         "isSubstitute": false,
         "moneyText": "232.00 €",
         "name": "Gran Castelli mozzarella 125g lactose free",
@@ -11909,6 +12209,7 @@ export const answers: Answers = {
         ],
         "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
         "shortName": "Lactose-free mozzarella 125 g",
+        "shortText": "Out of stock at Valio, 200 bags needed.",
         "totalCents": 23200,
         "unit": "BAG",
         "verdict": "rejected"
@@ -11919,6 +12220,8 @@ export const answers: Answers = {
         "displayName": "Pasta filata mozzarella 125 g",
         "facts": [],
         "fullName": "Pasta Filata Mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Pasta Filata Mozzarella  125g",
         "onValioList": true,
@@ -11928,6 +12231,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Pasta filata mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
@@ -12003,6 +12307,8 @@ export const answers: Answers = {
          }
         ],
         "fullName": "Galbani Mozzarella Lactose free 100 g",
+        "groupOrder": 7,
+        "groupText": "No delivery date",
         "isSubstitute": true,
         "name": "Galbani Mozzarella Lactose free 100g",
         "onValioList": true,
@@ -12012,6 +12318,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked, but Valio gives no delivery date for it.",
         "shortName": "Lactose-free mozzarella 100 g",
+        "shortText": "No delivery date.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -12023,6 +12330,8 @@ export const answers: Answers = {
         "displayName": "Mozzarella bufala cheese buffalo 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella bufala 125g mozzarella cheese from buffalo milk",
         "onValioList": true,
@@ -12032,12 +12341,15 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella bufala cheese buffalo 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        },
        {
         "displayName": "Mozzarella 125 g",
         "facts": [],
         "fullName": "Castelli mozzarella 125 g",
+        "groupOrder": 3,
+        "groupText": "Not lactose free",
         "isSubstitute": true,
         "name": "Castelli mozzarella 125g",
         "onValioList": true,
@@ -12047,6 +12359,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lists milk and has no lactose-free claim in Valio's data.",
         "shortName": "Mozzarella 125 g",
+        "shortText": "Not lactose free.",
         "verdict": "blocked"
        }
       ],

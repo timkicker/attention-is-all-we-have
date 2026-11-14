@@ -228,7 +228,8 @@
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -427,7 +428,8 @@
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -608,7 +610,8 @@
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -797,7 +800,8 @@
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -978,7 +982,8 @@
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -1159,7 +1164,8 @@
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -1344,7 +1350,10 @@
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -1541,7 +1550,10 @@
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -1729,7 +1741,10 @@
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -1925,7 +1940,10 @@
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -2103,7 +2121,10 @@
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -2300,7 +2321,10 @@
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -2319,7 +2343,10 @@
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -2355,7 +2382,10 @@
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -2374,7 +2404,10 @@
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -2393,7 +2426,10 @@
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -2412,7 +2448,10 @@
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -2431,7 +2470,10 @@
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -2450,7 +2492,10 @@
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -2469,7 +2514,10 @@
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -2488,7 +2536,10 @@
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -2507,7 +2558,10 @@
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -2526,7 +2580,10 @@
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -2545,7 +2602,10 @@
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -2564,7 +2624,10 @@
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -2583,7 +2646,10 @@
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -2602,7 +2668,10 @@
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -2622,7 +2691,10 @@
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -2641,7 +2713,10 @@
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -2660,7 +2735,10 @@
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -2679,7 +2757,10 @@
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -2847,6 +2928,7 @@
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -2872,6 +2954,7 @@
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -2899,6 +2982,7 @@
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -2943,6 +3027,7 @@
           "auto-order"
         ],
         "orderId": "O-1",
+        "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "actorText": "Agent",

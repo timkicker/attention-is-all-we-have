@@ -151,6 +151,9 @@ class RankedOptionView(Model):
     qty_text: str | None = None
     money_text: str | None = None
     reasons: list[str] | None = Field(None, description="the sentence as a list, one reason each")
+    short_text: str | None = Field(None, description="at most about eight words: \"90.00 € more.\"")
+    group_text: str | None = Field(None, description="turned-down options only: their heading, \"Order cut-off passed\"")
+    group_order: int | None = Field(None, description="turned-down options only: the heading's place, lowest first")
 
     @model_validator(mode="after")
     def _text(self):
@@ -163,6 +166,9 @@ class RankedOptionView(Model):
         if self.money_text is None and self.total_cents is not None:
             self.money_text = d.money(self.total_cents)
         self.reasons = self.reasons if self.reasons is not None else d.reasons(self.sentence)
+        self.short_text = self.short_text or d.short_text(self.verdict, self.reasons)
+        if self.verdict in d.TURNED_DOWN and self.group_text is None:
+            self.group_text, self.group_order, _ = d.group(self.reasons)
         return self
 
 
@@ -406,6 +412,7 @@ class LedgerEntryView(Model):
     disclosed: list[str]
     rule_ids: list[str]
     order_id: str | None = None
+    request_id: str | None = Field(None, description="the request or Steady Order the entry belongs to: R-2, S-1")
     prev_hash: str
     hash: str
     actor_text: str | None = None

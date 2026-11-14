@@ -147,3 +147,62 @@ __all__ = [
     "time_text",
     "title",
 ]
+
+
+# Turned-down options under one heading each. The first group whose pattern matches any reason wins, in
+# this order: what a rule forbids first, then what Valio cannot deliver, then what does not fit the need.
+GROUPS: tuple[tuple[str, str], ...] = (
+    ("Over the hard cap", r"over the hard cap"),
+    ("Breaks a Spend Pass rule", r"^Blocked:"),
+    ("Not lactose free", r"not lactose free|no lactose-free claim"),
+    ("Not gluten free", r"not gluten free|no gluten-free claim"),
+    ("Not vegan", r"not vegan|no vegan claim"),
+    ("Out of stock at Valio", r"Out of stock at Valio|^Only .* in stock"),
+    ("No delivery date", r"no delivery date"),
+    ("Order cut-off passed", r"cut-off .*has passed"),
+    ("Not {what}", r", not ([a-z][a-z -]*?)\.?$"),
+    ("Packs too small", r"too small for"),
+    ("Pack size unknown", r"^Pack size unknown"),
+    ("Quantity unknown", r"quantity is unknown"),
+)
+TURNED_DOWN = ("rejected", "blocked", "not_deliverable")
+SHORT_WORDS = 8
+
+
+def group(reasons: list[str]) -> tuple[str, int, str | None]:
+    """The heading, its place in GROUPS and the reason that put it there."""
+    for i, (head, pat) in enumerate(GROUPS):
+        for r in reasons:
+            m = re.search(pat, r.rstrip("."), re.IGNORECASE)
+            if m:
+                return head.format(what=m.group(1)) if "{what}" in head else head, i + 1, r
+    return "Turned down", len(GROUPS) + 1, None
+
+
+def short_text(verdict: str, reasons: list[str]) -> str | None:
+    """At most about eight words for an option row; the reasons stay as they are."""
+    if not reasons:
+        return None
+    if verdict in TURNED_DOWN:
+        head, _, why = group(reasons)
+        cap = re.search(r"([\d,.]+ €) is over the hard cap of ([\d,.]+ €)", why or "")
+        if cap:
+            return f"{cap.group(1)} is over the {cap.group(2)} hard cap."
+        if why and _words(why) <= SHORT_WORDS:
+            return why if why.endswith(".") else why + "."
+        return head + "."
+    text = " ".join(reasons)
+    more = re.search(r"([\d,.]+ €) more than the cheapest", text)
+    if more:
+        return f"{more.group(1)} more."
+    if "Cheapest safe option" in text:
+        if "every time" in text:
+            return "Cheapest safe option, always delivered in full."
+        seen = re.search(r"as ordered (\d+) of (\d+) times", text)
+        if seen:
+            return f"Cheapest safe option, {round(100 * int(seen.group(1)) / int(seen.group(2)))} % delivered in full."
+        return "Cheapest safe option."
+    first = reasons[0]
+    if _words(first) <= SHORT_WORDS:
+        return first
+    return " ".join(first.rstrip(".").split()[:SHORT_WORDS]) + " …"

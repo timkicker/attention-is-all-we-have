@@ -254,7 +254,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -453,7 +454,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -634,7 +636,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -823,7 +826,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -1004,7 +1008,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -1185,7 +1190,8 @@ export const scene1: Snapshot = {
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -1370,7 +1376,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -1567,7 +1576,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -1755,7 +1767,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -1951,7 +1966,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -2129,7 +2147,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -2326,7 +2347,10 @@ export const scene1: Snapshot = {
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -2345,7 +2369,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -2381,7 +2408,10 @@ export const scene1: Snapshot = {
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -2400,7 +2430,10 @@ export const scene1: Snapshot = {
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -2419,7 +2452,10 @@ export const scene1: Snapshot = {
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -2438,7 +2474,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -2457,7 +2496,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -2476,7 +2518,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -2495,7 +2540,10 @@ export const scene1: Snapshot = {
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -2514,7 +2562,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -2533,7 +2584,10 @@ export const scene1: Snapshot = {
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -2552,7 +2606,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -2571,7 +2628,10 @@ export const scene1: Snapshot = {
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -2590,7 +2650,10 @@ export const scene1: Snapshot = {
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -2609,7 +2672,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -2628,7 +2694,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -2648,7 +2717,10 @@ export const scene1: Snapshot = {
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -2667,7 +2739,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -2686,7 +2761,10 @@ export const scene1: Snapshot = {
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -2705,7 +2783,10 @@ export const scene1: Snapshot = {
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -2803,6 +2884,7 @@ export const scene1: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -2828,6 +2910,7 @@ export const scene1: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -2855,6 +2938,7 @@ export const scene1: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -3207,7 +3291,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -3406,7 +3491,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -3587,7 +3673,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -3776,7 +3863,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -3957,7 +4045,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -4138,7 +4227,8 @@ export const scene2: Snapshot = {
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -4323,7 +4413,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -4520,7 +4613,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -4708,7 +4804,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -4904,7 +5003,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -5082,7 +5184,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -5279,7 +5384,10 @@ export const scene2: Snapshot = {
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -5298,7 +5406,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -5334,7 +5445,10 @@ export const scene2: Snapshot = {
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -5353,7 +5467,10 @@ export const scene2: Snapshot = {
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -5372,7 +5489,10 @@ export const scene2: Snapshot = {
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -5391,7 +5511,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -5410,7 +5533,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -5429,7 +5555,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -5448,7 +5577,10 @@ export const scene2: Snapshot = {
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -5467,7 +5599,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -5486,7 +5621,10 @@ export const scene2: Snapshot = {
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -5505,7 +5643,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -5524,7 +5665,10 @@ export const scene2: Snapshot = {
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -5543,7 +5687,10 @@ export const scene2: Snapshot = {
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -5562,7 +5709,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -5581,7 +5731,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -5601,7 +5754,10 @@ export const scene2: Snapshot = {
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -5620,7 +5776,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -5639,7 +5798,10 @@ export const scene2: Snapshot = {
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -5658,7 +5820,10 @@ export const scene2: Snapshot = {
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -5826,6 +5991,7 @@ export const scene2: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -5851,6 +6017,7 @@ export const scene2: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -5878,6 +6045,7 @@ export const scene2: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -5922,6 +6090,7 @@ export const scene2: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
+        "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "actorText": "Agent",
@@ -6198,7 +6367,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Out of stock at Valio, 200 bags needed.",
                 "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ]
+              ],
+              "shortText": "Out of stock at Valio, 200 bags needed.",
+              "groupText": "Out of stock at Valio",
+              "groupOrder": 6
             }
           ],
           "substitutes": [
@@ -6215,7 +6387,10 @@ export const scene3: Snapshot = {
               "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "473986",
@@ -6304,7 +6479,10 @@ export const scene3: Snapshot = {
               "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "468526",
@@ -6319,7 +6497,10 @@ export const scene3: Snapshot = {
               "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "475908",
@@ -6334,7 +6515,10 @@ export const scene3: Snapshot = {
               "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             }
           ],
           "beyondList": [
@@ -6496,7 +6680,8 @@ export const scene3: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "463383",
@@ -6606,7 +6791,8 @@ export const scene3: Snapshot = {
                 "10 bags for 196.60 €.",
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "16.50 € more."
             },
             {
               "productId": "465174",
@@ -6764,7 +6950,8 @@ export const scene3: Snapshot = {
                 "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "54.80 € more."
             },
             {
               "productId": "470836",
@@ -6874,7 +7061,8 @@ export const scene3: Snapshot = {
                 "63 × 400 g for 334.53 €.",
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "154.43 € more."
             },
             {
               "productId": "474642",
@@ -7030,7 +7218,10 @@ export const scene3: Snapshot = {
               "moneyText": "289.36 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "467107",
@@ -7188,7 +7379,10 @@ export const scene3: Snapshot = {
               "moneyText": "310.93 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463685",
@@ -7293,7 +7487,10 @@ export const scene3: Snapshot = {
               "moneyText": "540.45 €",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "467197",
@@ -7404,7 +7601,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -7669,7 +7869,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -7868,7 +8069,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -8049,7 +8251,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -8238,7 +8441,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -8419,7 +8623,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -8600,7 +8805,8 @@ export const scene3: Snapshot = {
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -8785,7 +8991,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -8982,7 +9191,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -9170,7 +9382,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -9366,7 +9581,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -9544,7 +9762,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -9741,7 +9962,10 @@ export const scene3: Snapshot = {
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -9760,7 +9984,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -9796,7 +10023,10 @@ export const scene3: Snapshot = {
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -9815,7 +10045,10 @@ export const scene3: Snapshot = {
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -9834,7 +10067,10 @@ export const scene3: Snapshot = {
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -9853,7 +10089,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -9872,7 +10111,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -9891,7 +10133,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -9910,7 +10155,10 @@ export const scene3: Snapshot = {
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -9929,7 +10177,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -9948,7 +10199,10 @@ export const scene3: Snapshot = {
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -9967,7 +10221,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -9986,7 +10243,10 @@ export const scene3: Snapshot = {
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -10005,7 +10265,10 @@ export const scene3: Snapshot = {
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -10024,7 +10287,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -10043,7 +10309,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -10063,7 +10332,10 @@ export const scene3: Snapshot = {
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -10082,7 +10354,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -10101,7 +10376,10 @@ export const scene3: Snapshot = {
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -10120,7 +10398,10 @@ export const scene3: Snapshot = {
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -10365,6 +10646,7 @@ export const scene3: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -10390,6 +10672,7 @@ export const scene3: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -10417,6 +10700,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -10461,6 +10745,7 @@ export const scene3: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
+        "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "actorText": "Agent",
@@ -10481,6 +10766,7 @@ export const scene3: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "actorText": "Demo",
@@ -10502,6 +10788,7 @@ export const scene3: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "actorText": "Agent",
@@ -10545,6 +10832,7 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "actorText": "Validio",
@@ -10586,6 +10874,7 @@ export const scene3: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "actorText": "Owner",
@@ -10629,6 +10918,7 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
         "actorText": "Validio",
@@ -10905,7 +11195,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Out of stock at Valio, 200 bags needed.",
                 "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ]
+              ],
+              "shortText": "Out of stock at Valio, 200 bags needed.",
+              "groupText": "Out of stock at Valio",
+              "groupOrder": 6
             }
           ],
           "substitutes": [
@@ -10922,7 +11215,10 @@ export const scene4: Snapshot = {
               "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "473986",
@@ -11011,7 +11307,10 @@ export const scene4: Snapshot = {
               "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "468526",
@@ -11026,7 +11325,10 @@ export const scene4: Snapshot = {
               "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "475908",
@@ -11041,7 +11343,10 @@ export const scene4: Snapshot = {
               "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             }
           ],
           "beyondList": [
@@ -11203,7 +11508,8 @@ export const scene4: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "463383",
@@ -11313,7 +11619,8 @@ export const scene4: Snapshot = {
                 "10 bags for 196.60 €.",
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "16.50 € more."
             },
             {
               "productId": "465174",
@@ -11471,7 +11778,8 @@ export const scene4: Snapshot = {
                 "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "54.80 € more."
             },
             {
               "productId": "470836",
@@ -11581,7 +11889,8 @@ export const scene4: Snapshot = {
                 "63 × 400 g for 334.53 €.",
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "154.43 € more."
             },
             {
               "productId": "474642",
@@ -11737,7 +12046,10 @@ export const scene4: Snapshot = {
               "moneyText": "289.36 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "467107",
@@ -11895,7 +12207,10 @@ export const scene4: Snapshot = {
               "moneyText": "310.93 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463685",
@@ -12000,7 +12315,10 @@ export const scene4: Snapshot = {
               "moneyText": "540.45 €",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "467197",
@@ -12111,7 +12429,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -12376,7 +12697,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -12575,7 +12897,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -12756,7 +13079,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -12945,7 +13269,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -13126,7 +13451,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -13307,7 +13633,8 @@ export const scene4: Snapshot = {
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -13492,7 +13819,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -13689,7 +14019,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -13877,7 +14210,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -14073,7 +14409,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -14251,7 +14590,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -14448,7 +14790,10 @@ export const scene4: Snapshot = {
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -14467,7 +14812,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -14503,7 +14851,10 @@ export const scene4: Snapshot = {
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -14522,7 +14873,10 @@ export const scene4: Snapshot = {
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -14541,7 +14895,10 @@ export const scene4: Snapshot = {
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -14560,7 +14917,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -14579,7 +14939,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -14598,7 +14961,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -14617,7 +14983,10 @@ export const scene4: Snapshot = {
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -14636,7 +15005,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -14655,7 +15027,10 @@ export const scene4: Snapshot = {
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -14674,7 +15049,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -14693,7 +15071,10 @@ export const scene4: Snapshot = {
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -14712,7 +15093,10 @@ export const scene4: Snapshot = {
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -14731,7 +15115,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -14750,7 +15137,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -14770,7 +15160,10 @@ export const scene4: Snapshot = {
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -14789,7 +15182,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -14808,7 +15204,10 @@ export const scene4: Snapshot = {
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -14827,7 +15226,10 @@ export const scene4: Snapshot = {
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -15072,6 +15474,7 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -15097,6 +15500,7 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -15124,6 +15528,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -15168,6 +15573,7 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
+        "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "actorText": "Agent",
@@ -15188,6 +15594,7 @@ export const scene4: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "actorText": "Demo",
@@ -15209,6 +15616,7 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "actorText": "Agent",
@@ -15252,6 +15660,7 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "actorText": "Validio",
@@ -15293,6 +15702,7 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "actorText": "Owner",
@@ -15336,6 +15746,7 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
         "actorText": "Validio",
@@ -15380,6 +15791,7 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
+        "requestId": "S-1",
         "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
         "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
         "actorText": "Validio",
@@ -15437,6 +15849,7 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
+        "requestId": "S-1",
         "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
         "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
         "actorText": "Validio",
@@ -15462,6 +15875,7 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "S-1",
         "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
         "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "actorText": "Validio",
@@ -15487,6 +15901,7 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "S-1",
         "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
         "actorText": "Validio",
@@ -15530,6 +15945,7 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
         "hash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
         "actorText": "Validio",
@@ -15571,6 +15987,7 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
         "hash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
         "actorText": "Owner",
@@ -15614,6 +16031,7 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
         "hash": "e7747a8c86d44315ffd2e9e22398dbeca5de261aa2ca9690e67da59baf3d68a2",
         "actorText": "Validio",
@@ -15970,7 +16388,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Out of stock at Valio, 200 bags needed.",
                 "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ]
+              ],
+              "shortText": "Out of stock at Valio, 200 bags needed.",
+              "groupText": "Out of stock at Valio",
+              "groupOrder": 6
             }
           ],
           "substitutes": [
@@ -15987,7 +16408,10 @@ export const scene5: Snapshot = {
               "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "473986",
@@ -16076,7 +16500,10 @@ export const scene5: Snapshot = {
               "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "468526",
@@ -16091,7 +16518,10 @@ export const scene5: Snapshot = {
               "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "475908",
@@ -16106,7 +16536,10 @@ export const scene5: Snapshot = {
               "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
-              ]
+              ],
+              "shortText": "Not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             }
           ],
           "beyondList": [
@@ -16268,7 +16701,8 @@ export const scene5: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "463383",
@@ -16378,7 +16812,8 @@ export const scene5: Snapshot = {
                 "10 bags for 196.60 €.",
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "16.50 € more."
             },
             {
               "productId": "465174",
@@ -16536,7 +16971,8 @@ export const scene5: Snapshot = {
                 "54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "54.80 € more."
             },
             {
               "productId": "470836",
@@ -16646,7 +17082,8 @@ export const scene5: Snapshot = {
                 "63 × 400 g for 334.53 €.",
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
-              ]
+              ],
+              "shortText": "154.43 € more."
             },
             {
               "productId": "474642",
@@ -16802,7 +17239,10 @@ export const scene5: Snapshot = {
               "moneyText": "289.36 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "467107",
@@ -16960,7 +17400,10 @@ export const scene5: Snapshot = {
               "moneyText": "310.93 €",
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463685",
@@ -17065,7 +17508,10 @@ export const scene5: Snapshot = {
               "moneyText": "540.45 €",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
-              ]
+              ],
+              "shortText": "No delivery date.",
+              "groupText": "No delivery date",
+              "groupOrder": 7
             },
             {
               "productId": "467197",
@@ -17176,7 +17622,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             }
           ],
           "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Mozzarella-fontal crumbled cheese 2.5 kg does, but it is not on the list, so you decide.",
@@ -17441,7 +17890,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "Cheapest safe option, always delivered in full."
             },
             {
               "productId": "464401",
@@ -17640,7 +18090,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "90.00 € more."
             },
             {
               "productId": "463335",
@@ -17821,7 +18272,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "390.00 € more."
             },
             {
               "productId": "464201",
@@ -18010,7 +18462,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "550.00 € more."
             },
             {
               "productId": "464073",
@@ -18191,7 +18644,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "630.00 € more."
             },
             {
               "productId": "464398",
@@ -18372,7 +18826,8 @@ export const scene5: Snapshot = {
               "reasons": [
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
-              ]
+              ],
+              "shortText": "640.00 € more."
             },
             {
               "productId": "469287",
@@ -18557,7 +19012,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "464119",
@@ -18754,7 +19212,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "465039",
@@ -18942,7 +19403,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "476240",
@@ -19138,7 +19602,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "463038",
@@ -19316,7 +19783,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown."
-              ]
+              ],
+              "shortText": "Order cut-off 12 Nov 15:00 has passed.",
+              "groupText": "Order cut-off passed",
+              "groupOrder": 8
             },
             {
               "productId": "462921",
@@ -19513,7 +19983,10 @@ export const scene5: Snapshot = {
                 "Order cut-off 12 Nov 15:00 has passed.",
                 "The quantity is unknown.",
                 "Blocked: 2,194.00 € is over the hard cap of 2,000.00 €."
-              ]
+              ],
+              "shortText": "2,194.00 € is over the 2,000.00 € hard cap.",
+              "groupText": "Over the hard cap",
+              "groupOrder": 1
             },
             {
               "productId": "462626",
@@ -19532,7 +20005,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463047",
@@ -19568,7 +20044,10 @@ export const scene5: Snapshot = {
               "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "463203",
@@ -19587,7 +20066,10 @@ export const scene5: Snapshot = {
               "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
-              ]
+              ],
+              "shortText": "Portion packs, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463380",
@@ -19606,7 +20088,10 @@ export const scene5: Snapshot = {
               "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
-              ]
+              ],
+              "shortText": "Café milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "463779",
@@ -19625,7 +20110,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464198",
@@ -19644,7 +20132,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464237",
@@ -19663,7 +20154,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "464399",
@@ -19682,7 +20176,10 @@ export const scene5: Snapshot = {
               "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.2 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "464440",
@@ -19701,7 +20198,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "465149",
@@ -19720,7 +20220,10 @@ export const scene5: Snapshot = {
               "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.5 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "466288",
@@ -19739,7 +20242,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
-              ]
+              ],
+              "shortText": "0.25 l packs, too small for 1,000 litres.",
+              "groupText": "Packs too small",
+              "groupOrder": 10
             },
             {
               "productId": "469331",
@@ -19758,7 +20264,10 @@ export const scene5: Snapshot = {
               "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "469541",
@@ -19777,7 +20286,10 @@ export const scene5: Snapshot = {
               "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "472492",
@@ -19796,7 +20308,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "473142",
@@ -19815,7 +20330,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
-              ]
+              ],
+              "shortText": "Coffee milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "475534",
@@ -19835,7 +20353,10 @@ export const scene5: Snapshot = {
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
-              ]
+              ],
+              "shortText": "Low lactose is not lactose free.",
+              "groupText": "Not lactose free",
+              "groupOrder": 3
             },
             {
               "productId": "476957",
@@ -19854,7 +20375,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "477050",
@@ -19873,7 +20397,10 @@ export const scene5: Snapshot = {
               "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
-              ]
+              ],
+              "shortText": "Sour milk, not plain milk.",
+              "groupText": "Not plain milk",
+              "groupOrder": 9
             },
             {
               "productId": "462703",
@@ -19892,7 +20419,10 @@ export const scene5: Snapshot = {
               "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
-              ]
+              ],
+              "shortText": "Not milk.",
+              "groupText": "Not milk",
+              "groupOrder": 9
             }
           ],
           "chosen": {
@@ -20137,6 +20667,7 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
         "hash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "actorText": "Agent",
@@ -20162,6 +20693,7 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-1",
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
         "hash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "actorText": "Validio",
@@ -20189,6 +20721,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
+        "requestId": "R-1",
         "prevHash": "124e31b6d532c7728767094bc3a21456317eb0e57a7e437df3f481d490f63879",
         "hash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "actorText": "Validio",
@@ -20233,6 +20766,7 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
+        "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
         "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "actorText": "Agent",
@@ -20253,6 +20787,7 @@ export const scene5: Snapshot = {
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
         "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "actorText": "Demo",
@@ -20274,6 +20809,7 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "R-2",
         "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
         "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "actorText": "Agent",
@@ -20317,6 +20853,7 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
         "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "actorText": "Validio",
@@ -20358,6 +20895,7 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
         "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "actorText": "Owner",
@@ -20401,6 +20939,7 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
+        "requestId": "R-2",
         "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
         "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
         "actorText": "Validio",
@@ -20445,6 +20984,7 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
+        "requestId": "S-1",
         "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
         "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
         "actorText": "Validio",
@@ -20502,6 +21042,7 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
+        "requestId": "S-1",
         "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
         "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
         "actorText": "Validio",
@@ -20527,6 +21068,7 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "S-1",
         "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
         "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "actorText": "Validio",
@@ -20552,6 +21094,7 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
+        "requestId": "S-1",
         "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
         "actorText": "Validio",
@@ -20595,6 +21138,7 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
         "hash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
         "actorText": "Validio",
@@ -20636,6 +21180,7 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
         "hash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
         "actorText": "Owner",
@@ -20679,6 +21224,7 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
+        "requestId": "S-1",
         "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
         "hash": "e7747a8c86d44315ffd2e9e22398dbeca5de261aa2ca9690e67da59baf3d68a2",
         "actorText": "Validio",
