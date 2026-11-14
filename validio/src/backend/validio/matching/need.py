@@ -137,6 +137,11 @@ def _product_word(t: str, cat: Catalog) -> str | None:
     return None
 
 
+def starts_word(word: str, text: str) -> bool:
+    """`word` at the start of a word in `text`: "oat" in "oat drink" or "oats", never in "goat" or "coated"."""
+    return re.search(rf"\b{re.escape(word)}", text, re.IGNORECASE) is not None
+
+
 # a number as people write it: 1000, 1,000, 1.000, 1 000 (thousands), 2.5 or 2,5 (decimals), 1,000.50
 NUMBER = r"(?<![\d.,])(\d{1,3}(?:(?:[ \u00a0\u202f]|,(?=\d{3}(?!\d))|\.(?=\d{3}(?!\d)))\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?)"
 
@@ -170,7 +175,7 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
         raise ValueError(f"the quantity in {text!r} is not more than zero")
     if quantity.is_integer():
         quantity = int(quantity)
-    kind = next((k for k in KINDS if any(w in t for w in KINDS[k].words)), None)
+    kind = next((k for k in KINDS if any(starts_word(w, t) for w in KINDS[k].words)), None)
     if kind is None and cat is not None:
         kind = _product_word(t, cat)
     if kind is None:
