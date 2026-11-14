@@ -135,7 +135,8 @@ describe('changes', () => {
     expect(out.map((x) => x.id)).toEqual(['mainila', 'losses', 'box', 'list', 'plain'])
   })
   it('treats rounded numbers as agreeing and different-scale numbers as not comparable', () => {
-    expect(agrees({ this: '48,745', other: 'about 48,000' })).toBe(true)
+    expect(agrees({ this: '48,745', other: 'about 49,000' })).toBe(true)
+    expect(agrees({ this: '26,662', other: '25,904' })).toBe(false)
     expect(agrees({ this: '264,908', other: '265,000' })).toBe(true)
     expect(agrees({ this: '25,904', other: '22,830' })).toBe(false)
     expect(comparable({ this: '48,745', other: 'up to 422' })).toBe(false)
