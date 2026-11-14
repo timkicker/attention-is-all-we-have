@@ -82,13 +82,41 @@ export function numberText(other: string): string | null {
   return `${hedge ? `${hedge} ` : ''}${body}${pct}`
 }
 
+/**
+ * Both sides of a number mark measure the same thing: the other number is within the same order of magnitude
+ * (ratio 0.2 to 5). "422" against "48,745" is a different count, so the note says "says it differently".
+ */
+export function comparable(m: { this: string; other: string }): boolean {
+  const a = numbersIn(m.this)[0]?.value
+  const b = numbersIn(m.other)[0]?.value
+  if (a === undefined || b === undefined || a === 0) return false
+  const r = b / a
+  return r >= 0.2 && r <= 5
+}
+
 // ---------- Marks on the English text ----------
 
 const real = (s: string | null | undefined) => !!s && s.trim() !== '' && s.trim() !== 'None'
 
 /** Marks that name something: a number or term on both sides (the judge writes "None" for an absent side). */
 export function namedMarks(c: Cell): Mark[] {
-  return (c.marks ?? []).filter((m) => real(m.this) && real(m.other))
+  return (c.marks ?? []).filter((m) => real(m.this) && real(m.other) && !(m.kind === 'number' && agrees(m)))
+}
+
+/** A number mark whose two sides agree after rounding: within 3%, or equal at the rounder number's precision. */
+export function agrees(m: { this: string; other: string }): boolean {
+  const a = numbersIn(m.this)[0]?.value
+  const b = numbersIn(m.other)[0]?.value
+  if (a === undefined || b === undefined) return false
+  if (a === b) return true
+  if (Math.abs(a - b) <= 0.03 * Math.max(Math.abs(a), Math.abs(b))) return true
+  const step = (n: number) => {
+    let p = 1
+    while (n !== 0 && n % (p * 10) === 0) p *= 10
+    return p
+  }
+  const p = Math.max(step(a), step(b))
+  return Math.round(a / p) === Math.round(b / p)
 }
 
 /** Spans in an English text for the Finnish side of these marks: numbers by value, terms by their English word. */
@@ -158,7 +186,11 @@ export function kindOf(c: Cell | undefined, present: boolean): Kind {
   if (!c || c.status === 'not_found') return 'missing'
   if (c.status !== 'matched' || !c.verdict || !MATCHED.has(c.verdict.label)) return 'open'
   if (c.verdict.label === 'contradicts') return 'differs'
-  if (c.verdict.label === 'partial') return namedMarks(c).length ? 'differs' : 'open'
+  if (c.verdict.label === 'partial') {
+    if (namedMarks(c).length) return 'differs'
+    const raw = (c.marks ?? []).filter((m) => real(m.this) && real(m.other))
+    return raw.length && raw.every((m) => m.kind === 'number' && agrees(m)) ? 'same' : 'open'
+  }
   return 'same'
 }
 
@@ -198,7 +230,7 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
   const byValue = new Map<string, Lang[]>()
   const wordy: Lang[] = []
   for (const l of differs) {
-    const n = namedMarks(row.cells[l]).find((m) => m.kind === 'number' && numberText(m.other))
+    const n = namedMarks(row.cells[l]).find((m) => m.kind === 'number' && numberText(m.other) && comparable(m))
     if (n) {
       const v = numberText(n.other)!
       byValue.set(v, [...(byValue.get(v) ?? []), l])
