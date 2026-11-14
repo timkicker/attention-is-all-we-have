@@ -3,6 +3,7 @@
 and signs for it, so its tools take no spendPass. Rules, approval, Pause and the ledger stay as they are."""
 
 import asyncio
+import contextlib
 import hashlib
 import importlib.util
 import re
@@ -77,7 +78,10 @@ def test_tools_wait_for_allow(kitchens):
     m = Mcp(agent, f"/mcp/c/{token}/")
     assert demo.get("/api/agent").json()["state"] == "consent"
     res = m.call("request_supply", {"lines": MILK})
-    assert res.get("isError") and "press Allow" in res["content"][0]["text"]
+    code = demo.get("/api/agent").json()["consent"]["verifyCode"]
+    assert res.get("isError") and res["content"][0]["text"].startswith(
+        f"Waiting for the kitchen to press Allow in Validio. Show the user this verification code: {code}. "
+        "It must match the code on the Validio Agent page.")
     assert demo.get("/api/inbox").json() == []
 
 
@@ -224,15 +228,13 @@ async def _first_call(url: str) -> str:
         return " ".join(getattr(x, "text", "") for x in r.content) if r.is_error else "no error"
 
 
-def test_mcp_client_with_only_the_url_orders_after_allow(app_env):  # noqa: F811
-    import httpx
+@contextlib.contextmanager
+def _serve(app):
+    """The app on a free port of this machine, as a deployed server answers."""
     import uvicorn
 
-    spec = importlib.util.spec_from_file_location("connector_check", ROOT / "scripts" / "connector_check.py")
-    check = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(check)
     port = _free_port()
-    server = uvicorn.Server(uvicorn.Config(app_env, host="127.0.0.1", port=port, log_level="warning"))
+    server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning"))
     t = threading.Thread(target=server.run, daemon=True)
     t.start()
     try:
@@ -240,18 +242,64 @@ def test_mcp_client_with_only_the_url_orders_after_allow(app_env):  # noqa: F811
             if server.started:
                 break
             time.sleep(0.05)
-        with httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=60) as web:
-            web.post("/api/account/demo")
-            url = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
-            assert re.fullmatch(rf"http://127\.0\.0\.1:{port}/mcp/c/[A-Za-z0-9_-]{{43}}/", url), url
-            assert "press Allow" in asyncio.run(_first_call(url))
-            s = web.get("/api/agent").json()
-            assert s["state"] == "consent" and s["consent"]["name"] == "MCP agent"
-            assert web.post("/api/agent/allow").json()["state"] == "active"
-            lines: list[str] = []
-            out = asyncio.run(check.order_milk(url, say=lines.append))
-            assert out["status"] == "ordered_alone", lines
-            assert out["request"]["id"] in {i["id"] for i in web.get("/api/inbox").json()}
+        yield port
     finally:
         server.should_exit = True
         t.join(5)
+
+
+WAIT_TEXT = re.compile(r"Waiting for the kitchen to press Allow in Validio\. Show the user this verification code: "
+                       r"([A-Z2-9]{3}-[A-Z2-9]{3})\. It must match the code on the Validio Agent page\.")
+
+
+def test_mcp_client_with_only_the_url_orders_after_allow(app_env):  # noqa: F811
+    import httpx
+
+    spec = importlib.util.spec_from_file_location("connector_check", ROOT / "scripts" / "connector_check.py")
+    check = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(check)
+    with _serve(app_env) as port, httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=60) as web:
+        web.post("/api/account/demo")
+        url = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
+        assert re.fullmatch(rf"http://127\.0\.0\.1:{port}/mcp/c/[A-Za-z0-9_-]{{43}}/", url), url
+        lines: list[str] = []
+        waiting = asyncio.run(check.order_milk(url, say=lines.append))
+        s = web.get("/api/agent").json()
+        assert waiting["verifyCode"] == s["consent"]["verifyCode"]
+        assert f"verification code: {s['consent']['verifyCode']} (must match the code on the Validio Agent page)" in lines
+        assert s["state"] == "consent" and s["consent"]["name"] == "MCP agent"
+        assert web.post("/api/agent/allow").json()["state"] == "active"
+        lines: list[str] = []
+        out = asyncio.run(check.order_milk(url, say=lines.append))
+        assert out["status"] == "ordered_alone", lines
+        assert out["request"]["id"] in {i["id"] for i in web.get("/api/inbox").json()}
+
+
+def test_the_agent_shows_the_verification_code_of_the_agent_page(app_env):  # noqa: F811
+    """The python mcp Client gets the code in the tool error; the Agent page shows the same one. A new
+    connection gets a new code; Allow clears it."""
+    import httpx
+
+    with _serve(app_env) as port, httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=60) as web:
+        web.post("/api/account/demo")
+        url = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
+        said = asyncio.run(_first_call(url))
+        m = WAIT_TEXT.match(said)
+        assert m, said
+        consent = web.get("/api/agent").json()["consent"]
+        assert consent["verifyCode"] == m.group(1)
+        assert not set(m.group(1)) & set("0O1IL")
+        assert WAIT_TEXT.match(asyncio.run(_first_call(url))).group(1) == m.group(1)  # stable while it waits
+
+        web.post("/api/agent/deny")
+        again = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
+        second = WAIT_TEXT.match(asyncio.run(_first_call(again)))
+        assert second and second.group(1) != m.group(1)
+        assert web.get("/api/agent").json()["consent"]["verifyCode"] == second.group(1)
+
+        s = web.post("/api/agent/allow").json()
+        assert s["state"] == "active" and "consent" not in s
+        db, _ = get_accounts().paths(web.get("/api/account").json()["id"])
+        con = sqlite3.connect(db)
+        assert con.execute("select verify_code from agent_link").fetchone() == (None,)
+        con.close()

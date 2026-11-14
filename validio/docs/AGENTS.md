@@ -19,7 +19,7 @@ For an MCP host the whole configuration is in `examples/mcp.json`:
 
 Keep the slash at the end of the URL. A POST to `/mcp` without it never reaches the MCP server and gets a 405.
 
-On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The Agent page shows the HTTP address and, for MCP, a connector URL `/mcp/c/<token>/` for agents that cannot sign: add it as a remote MCP server (streamable HTTP, no OAuth), the kitchen presses Allow, and Validio holds the key and presents the pass on every call, so those tools take no `spendPass` (docs/ACCOUNTS-API.md, "Any MCP agent"). A signing agent pairs with the code and uses `/mcp/k/<account>/`. Over MCP that kitchen's nonce is the resource `validio://k/<account>/nonce`. An unknown account gets a 404. On a kitchen's own address the two reads, `get_request` and `get_order`, need the Spend Pass as well (the `Authorization` header, over MCP the `spendPass` argument), because the address is no secret; a pass from another kitchen gets a 401. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
+On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The Agent page shows the HTTP address and, for MCP, a connector URL `/mcp/c/<token>/` for agents that cannot sign: add it as a remote MCP server (streamable HTTP, no OAuth). Until the kitchen presses Allow, every tool answers "Waiting for the kitchen to press Allow in Validio. Show the user this verification code: <CODE>. It must match the code on the Validio Agent page." The kitchen presses Allow once the agent's code matches the one on its Agent page. From then on Validio holds the key and presents the pass on every call, so those tools take no `spendPass` (docs/ACCOUNTS-API.md, "Any MCP agent"). A signing agent pairs with the code and uses `/mcp/k/<account>/`. Over MCP that kitchen's nonce is the resource `validio://k/<account>/nonce`. An unknown account gets a 404. On a kitchen's own address the two reads, `get_request` and `get_order`, need the Spend Pass as well (the `Authorization` header, over MCP the `spendPass` argument), because the address is no secret; a pass from another kitchen gets a 401. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
 
 ### Pairing
 
@@ -37,11 +37,12 @@ The kitchen presses "Connect agent" and gets an 8 character code, valid ten minu
 <!-- check: response POST /agent/v1/pair -->
 ```json
 {
-  "status": "consent"
+  "status": "consent",
+  "verifyCode": "K7P-3QX"
 }
 ```
 
-The kitchen now sees the agent's name and what it may do, and allows or denies. The agent asks with the same code until the answer is there. On Allow the kitchen signs Spend Pass M-1 again, bound to the agent's key, and the answer carries it:
+Show the user `verifyCode`. The kitchen now sees the agent's name, what it may do and the same verification code, and allows or denies; it presses Allow only when the two codes match. The agent asks with the same code until the answer is there. On Allow the kitchen signs Spend Pass M-1 again, bound to the agent's key, and the answer carries it:
 
 <!-- check: response GET /agent/v1/pass -->
 ```json
