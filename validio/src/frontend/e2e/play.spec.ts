@@ -41,16 +41,16 @@ test("dialogs: a plain dim over the whole width, and nothing pinned on top", asy
   const bar = page.locator("[data-bar]");
   await expect(bar).toBeVisible();
   await page.locator("#page-menu").click();
-  await expect(page.locator("#menu-reset")).toBeVisible();
+  await expect(page.locator("#menu-ask")).toBeVisible();
   await expect(bar).toBeHidden();
   const scrim = page.locator(".dialog-backdrop");
   expect(await scrim.evaluate((e) => getComputedStyle(e).backdropFilter)).toBe("none");
   const w = await scrim.evaluate((e) => e.getBoundingClientRect().width);
   expect(w).toBe(await page.evaluate(() => window.innerWidth));
   // The sheet's first item is hit where it is drawn, not the bar's button.
-  const reset = await page.locator("#menu-reset").boundingBox();
-  const hit = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest("[id]")?.id, [reset!.x + 20, reset!.y + reset!.height / 2]);
-  expect(hit).toBe("menu-reset");
+  const item = await page.locator("#menu-ask").boundingBox();
+  const hit = await page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest("[id]")?.id, [item!.x + 20, item!.y + item!.height / 2]);
+  expect(hit).toBe("menu-ask");
   await page.keyboard.press("Escape");
   await expect(bar).toBeVisible();
 });
@@ -155,14 +155,12 @@ test("closing the token dialog sends nothing and shows no error", async ({ page 
   await expect(page.getByTestId("inbox-R-2")).toHaveCount(0);
 });
 
-test("the phone approve page has the page menu, so Start over is one step", async ({ page }) => {
+test("Reset in the phone's demo bar starts over in one step", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await fresh(page);
   await stockOut(page);
-  await page.goto("/approve/R-2");
-  await expect(page.getByTestId("approve-question")).toBeVisible();
-  await page.locator("#page-menu").click();
-  await page.locator("#menu-reset").click();
+  await expect(page.getByTestId("inbox-R-2")).toBeVisible();
+  await page.locator("#demo-reset").click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId("inbox-R-2")).toHaveCount(0);
 });

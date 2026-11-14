@@ -8,6 +8,8 @@ export const chrome = $state({
   version: 0,
   /** At most 760 px: no sidebar, a dock and a sticky header instead. */
   phone: phoneQuery?.matches ?? false,
+  /** A detail page (VHead with a way back): on the phone it draws its own header. */
+  detail: false,
   /** Whether the stock-out is on, for the menu. */
   stockIsOut: false,
 });

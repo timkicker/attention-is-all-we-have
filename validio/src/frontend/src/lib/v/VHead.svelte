@@ -7,6 +7,7 @@
   import { ChevronLeft, ChevronRight } from "@lucide/svelte";
   import { cameFrom } from "@arlen/ui-kit/components/ui/page/history";
   import { chrome, setTitle } from "$lib/chrome.svelte";
+  import { session } from "$lib/owner.svelte";
   import { nb } from "$lib/format";
   import VMenu from "./VMenu.svelte";
 
@@ -36,6 +37,13 @@
   } = $props();
 
   $effect(() => setTitle(title));
+  $effect(() => {
+    chrome.detail = !!back;
+    return () => (chrome.detail = false);
+  });
+  // The ⋯ holds only the demo controls: demo accounts only. On the phone a list
+  // page's ⋯ sits in the layout's header line.
+  const showMenu = $derived(menu && !!session.account?.isDemo);
 
   function goBack(e: MouseEvent) {
     if (!back) return;
@@ -52,7 +60,7 @@
     </a>
     <span class="kl-name" aria-hidden="true">{back.label}</span>
     <span class="grow"></span>
-    {#if menu}<VMenu />{/if}
+    {#if showMenu}<VMenu />{/if}
   </div>
 {/if}
 
@@ -71,10 +79,10 @@
     {#if facts}<div class="facts">{@render facts()}</div>{/if}
     {@render children?.()}
   </div>
-  {#if actions || (menu && !(chrome.phone && back))}
+  {#if actions || (showMenu && !chrome.phone)}
     <div class="head-actions">
       {@render actions?.()}
-      {#if menu && !(chrome.phone && back)}<span class="head-menu"><VMenu /></span>{/if}
+      {#if showMenu && !chrome.phone}<span class="head-menu"><VMenu /></span>{/if}
     </div>
   {/if}
 </header>

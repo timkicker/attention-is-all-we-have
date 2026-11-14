@@ -8,37 +8,25 @@
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import * as Tooltip from "@arlen/ui-kit/components/ui/tooltip";
   import { notePage } from "@arlen/ui-kit/components/ui/page/history";
-  import { CalendarSync, ChevronRight, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
+  import { Bot, ClipboardList, Inbox, PanelLeft, ScrollText } from "@lucide/svelte";
   import { api, LIVE, needsToken } from "$lib/api/client";
   import { tokenPrompt } from "$lib/api/error";
   import { owner, session } from "$lib/owner.svelte";
-  import { CLOCK, dayTime, nb } from "$lib/format";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
   import VAsk from "$lib/v/VAsk.svelte";
   import VPill from "$lib/v/VPill.svelte";
+  import VMenu from "$lib/v/VMenu.svelte";
 
   let { children } = $props();
 
-  const AREAS = [
-    {
-      label: "Orders",
-      icon: Inbox,
-      pages: [
-        { href: "/", id: "nav-inbox", label: "Inbox", short: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/requests") || p.startsWith("/approve") },
-        { href: "/steady", id: "nav-steady-orders", label: "Steady orders", short: "Steady", icon: CalendarSync, match: (p: string) => p.startsWith("/steady") },
-      ],
-    },
-    {
-      label: "Trust",
-      icon: ShieldCheck,
-      pages: [
-        { href: "/spend-pass", id: "nav-spend-pass", label: "Spend Pass", short: "Pass", icon: ShieldCheck, match: (p: string) => p.startsWith("/spend-pass") },
-        { href: "/ledger", id: "nav-open-ledger", label: "Ledger", short: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
-      ],
-    },
+  // Four places, flat. The kitchen's name at the foot (top left on the phone) opens Settings.
+  const PAGES = [
+    { href: "/", id: "nav-inbox", label: "Inbox", icon: Inbox, match: (p: string) => p === "/" || p.startsWith("/approve") },
+    { href: "/orders", id: "nav-orders", label: "Orders", icon: ClipboardList, match: (p: string) => p.startsWith("/orders") || p.startsWith("/requests") || p.startsWith("/steady") },
+    { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") || p.startsWith("/spend-pass") },
+    { href: "/ledger", id: "nav-ledger", label: "Ledger", icon: ScrollText, match: (p: string) => p.startsWith("/ledger") },
   ];
-  const PAGES = AREAS.flatMap((a) => a.pages);
 
   const path = $derived(page.url.pathname);
   // The login page stands alone: no sidebar, no dock.
@@ -177,40 +165,53 @@
         {/if}
       </div>
       <nav aria-label="Main">
-        {#each AREAS as area (area.label)}
-          <div class="nav area"><area.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="lbl">{area.label}</span></div>
-          <div class="sub">
-            {#each area.pages as p (p.href)}
-              {#if rail}
-                <Tooltip.Root>
-                  <Tooltip.Trigger>
-                    {#snippet child({ props })}
-                      <a {...props} href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
-                        <p.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="sr-only">{p.label}</span>
-                        {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
-                      </a>
-                    {/snippet}
-                  </Tooltip.Trigger>
-                  <Tooltip.TooltipContent side="right">{p.label}</Tooltip.TooltipContent>
-                </Tooltip.Root>
-              {:else}
-                <a href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
-                  <span class="lbl">{p.label}</span>
-                  {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
-                </a>
-              {/if}
-            {/each}
-          </div>
+        {#each PAGES as p (p.href)}
+          {#if rail}
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                {#snippet child({ props })}
+                  <a {...props} href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+                    <p.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="sr-only">{p.label}</span>
+                    {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
+                  </a>
+                {/snippet}
+              </Tooltip.Trigger>
+              <Tooltip.TooltipContent side="right">{p.label}</Tooltip.TooltipContent>
+            </Tooltip.Root>
+          {:else}
+            <a href={p.href} id={p.id} data-testid={p.id} class="nav" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+              <p.icon size={16} strokeWidth={1.75} aria-hidden="true" /><span class="lbl">{p.label}</span>
+              {#if p.href === "/" && waiting > 0}{@render navBadge(waiting)}{/if}
+            </a>
+          {/if}
         {/each}
       </nav>
-      <div class="foot">
-        <span class="kitchen">{session.account.name}</span>
-        <span class="clock num">{dayTime(CLOCK)}</span>
-      </div>
+      <a class="nav foot" href="/settings" id="nav-settings" data-testid="nav-settings" class:on={path.startsWith("/settings")} aria-current={path.startsWith("/settings") ? "page" : undefined}>
+        <span class="tile" aria-hidden="true">{session.account.name.charAt(0)}</span>
+        <span class="lbl kitchen">{session.account.name}</span>
+        {#if rail}<span class="sr-only">{session.account.name}, Settings</span>{/if}
+      </a>
     </aside>
   {/if}
 
   <main class="v-main">
+    {#if chrome.phone && !chrome.detail && !approve}
+      <header class="phonebar">
+        <a class="pb-name" href="/settings" id="phone-settings" data-testid="phone-settings">
+          <span class="tile" aria-hidden="true">{session.account.name.charAt(0)}</span>
+          <span>{session.account.name}</span>
+          <span class="sr-only">, Settings</span>
+        </a>
+        {#if session.account.isDemo}<VMenu />{/if}
+      </header>
+    {/if}
+    {#if session.account.isDemo && !approve && !(chrome.phone && chrome.detail)}
+      <div class="demobar" data-testid="demo-bar" id="demo-bar">
+        <span class="db-name">Demo kitchen</span>
+        <span>Approval code <b class="mono" data-code>{session.account.demoCode}</b></span>
+        <Button variant="ghost" id="demo-reset" data-testid="demo-reset" onclick={() => demoActions.reset()}>Reset</Button>
+      </div>
+    {/if}
     <div class="wrap" class:narrow={approve}>
       {@render children()}
     </div>
@@ -224,7 +225,7 @@
     {#each PAGES as p (p.href)}
       <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
         <span class="di"><p.icon size={20} strokeWidth={1.75} aria-hidden="true" />{#if p.href === "/" && waiting > 0}<span class="db">{@render navBadge(waiting)}</span>{/if}</span>
-        <span>{p.short}</span>
+        <span>{p.label}</span>
       </a>
     {/each}
   </nav>
@@ -314,14 +315,6 @@
     flex-direction: column;
     gap: 2px;
   }
-  .sub {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .sub + .nav.area {
-    margin-top: 12px;
-  }
   .nav {
     position: relative;
     display: flex;
@@ -336,15 +329,12 @@
     white-space: nowrap;
     text-decoration: none;
   }
-  .nav.area {
-    font-weight: 500;
-    color: var(--v-fg);
-  }
-  .nav.area :global(svg) {
+  .nav :global(svg) {
+    flex: none;
     color: var(--v-faint);
   }
-  .sub .nav {
-    padding-left: 36px;
+  .nav.on :global(svg) {
+    color: var(--v-fg);
   }
   a.nav:hover:not(.on) {
     background: var(--v-tint-hover);
@@ -369,38 +359,95 @@
   }
   .foot {
     margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    white-space: nowrap;
+    height: 40px;
     overflow: hidden;
   }
+  .tile {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-chip);
+    background: var(--v-tint-mid);
+    color: var(--v-fg);
+    font-size: var(--fs-cap);
+    line-height: 16px;
+    font-weight: 600;
+  }
   .kitchen {
-    font-size: 13px;
-    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--v-fg);
     font-weight: 500;
   }
-  .clock {
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--v-faint);
+  .phonebar {
+    position: sticky;
+    top: 0;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(48px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 8px 0;
+    background: var(--v-app);
+    border-bottom: 1px solid var(--v-line);
+  }
+  .phonebar:has(:global(.dialog-backdrop)) {
+    z-index: 60;
+  }
+  .pb-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 8px;
+    border-radius: var(--radius-button);
+    font-size: var(--fs-head);
+    line-height: var(--lh-head);
+    font-weight: 500;
+    color: var(--v-fg);
+    text-decoration: none;
+  }
+  .phonebar :global(.menu-btn) {
+    width: 44px;
+    height: 44px;
+  }
+  .demobar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 24px;
+    min-height: 32px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--v-line);
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  .demobar b {
+    color: var(--v-fg);
+    font-weight: 500;
+  }
+  .db-name {
+    color: var(--v-fg);
+    font-weight: 500;
+  }
+  .demobar :global([data-slot="button"]) {
+    margin-left: auto;
   }
   .rail .brand,
-  .rail .nav.area,
-  .rail .foot {
+  .rail .lbl {
     display: none;
   }
   .rail .top {
     padding: 0;
     justify-content: center;
   }
-  .rail .sub .nav {
+  .rail .nav {
     width: 32px;
     padding: 0;
     justify-content: center;
-  }
-  .rail .sub + .nav.area + .sub {
-    margin-top: 12px;
   }
   .rail .nb {
     position: absolute;
@@ -438,6 +485,15 @@
   }
   .dock a.on {
     color: var(--v-fg);
+  }
+  @media (max-width: 760px) {
+    .demobar {
+      padding: 4px 16px;
+    }
+    .v-main > .phonebar ~ .wrap,
+    .v-main > .demobar ~ .wrap {
+      padding-top: 16px;
+    }
   }
   .di {
     position: relative;

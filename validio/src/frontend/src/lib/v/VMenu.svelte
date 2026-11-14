@@ -1,33 +1,15 @@
 <script lang="ts">
-  /// The page menu ⋯: the demo switches and the theme. A dropdown on the
-  /// desktop, a sheet (kit Dialog) on the phone.
+  /// The page menu ⋯: the demo switches, on demo accounts only (Reset is in
+  /// the demo bar, the theme in Settings). A dropdown on the desktop, a sheet
+  /// (kit Dialog) on the phone.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
   import * as DropdownMenu from "@arlen/ui-kit/components/ui/dropdown-menu";
-  import { Check, Ellipsis } from "@lucide/svelte";
+  import { Ellipsis } from "@lucide/svelte";
   import { LIVE } from "$lib/api/client";
   import { chrome, demoActions } from "$lib/chrome.svelte";
-  import { setMode, theme, type Mode } from "$lib/theme.svelte";
 
-  const MODES: { id: Mode; label: string }[] = [
-    { id: "system", label: "System" },
-    { id: "light", label: "Light" },
-    { id: "dark", label: "Dark" },
-  ];
   let sheet = $state(false);
-
-  // A radio group is one tab stop; the arrows move the choice (WAI-ARIA radio).
-  function arrows(e: KeyboardEvent) {
-    const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-    const home = e.key === "Home" ? 0 : e.key === "End" ? MODES.length - 1 : undefined;
-    if (step === undefined && home === undefined) return;
-    e.preventDefault();
-    const at = MODES.findIndex((m) => m.id === theme.mode);
-    const next = home ?? (at + (step ?? 0) + MODES.length) % MODES.length;
-    setMode(MODES[next].id);
-    const group = e.currentTarget as HTMLElement;
-    group.querySelectorAll<HTMLElement>('[role="radio"]')[next]?.focus();
-  }
 
   function run(fn: () => Promise<void>) {
     sheet = false;
@@ -59,16 +41,6 @@
         Mozzarella stock-out
         <span class="vsw" class:on={chrome.stockIsOut} aria-hidden="true"><span class="thumb"></span></span>
       </button>
-      <button type="button" class="mi" id="menu-reset" onclick={() => run(demoActions.reset)}>Start over</button>
-      <div class="msep" role="separator"></div>
-      <p class="mlabel" id="theme-label">Theme</p>
-      <div role="radiogroup" aria-labelledby="theme-label" tabindex="-1" onkeydown={arrows}>
-        {#each MODES as m (m.id)}
-          <button type="button" class="mi" role="radio" aria-checked={theme.mode === m.id} tabindex={theme.mode === m.id ? 0 : -1} onclick={() => setMode(m.id)}>
-            {m.label}<span class="ck end" class:on={theme.mode === m.id}><Check size={16} strokeWidth={1.75} aria-hidden="true" /></span>
-          </button>
-        {/each}
-      </div>
     </div>
   </Dialog>
 {:else}
@@ -96,14 +68,6 @@
         Mozzarella stock-out
         <span class="vsw" class:on={chrome.stockIsOut} aria-hidden="true"><span class="thumb"></span></span>
       </DropdownMenu.CheckboxItem>
-      <DropdownMenu.Item id="menu-reset" onSelect={() => void demoActions.reset()}>Start over</DropdownMenu.Item>
-      <DropdownMenu.Separator />
-      <DropdownMenu.Label>Theme</DropdownMenu.Label>
-      <DropdownMenu.RadioGroup value={theme.mode} onValueChange={(v) => setMode(v as Mode)}>
-        {#each MODES as m (m.id)}
-          <DropdownMenu.RadioItem value={m.id}>{m.label}</DropdownMenu.RadioItem>
-        {/each}
-      </DropdownMenu.RadioGroup>
     </DropdownMenu.Content>
   </DropdownMenu.Root>
 {/if}
@@ -143,23 +107,6 @@
   .mi:disabled,
   .mi.note {
     color: var(--v-muted);
-  }
-  .end {
-    margin-left: auto;
-    display: inline-flex;
-  }
-  .ck {
-    visibility: hidden;
-    display: inline-flex;
-    color: var(--v-muted);
-  }
-  .ck.on {
-    visibility: visible;
-  }
-  .msep {
-    height: 1px;
-    background: var(--v-line);
-    margin: 6px -6px;
   }
   .mlabel {
     margin: 0;
