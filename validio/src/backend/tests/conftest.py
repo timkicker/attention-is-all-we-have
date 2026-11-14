@@ -46,6 +46,9 @@ class Spy:
     def mode(self):
         return getattr(self.inner, "mode", None)
 
+    def recorded_days(self):
+        return self.inner.recorded_days()
+
     def price(self, *a, **kw):
         self.calls += 1
         return self.inner.price(*a, **kw)

@@ -24,7 +24,7 @@ from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
 from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
-from ..valio.client import NotRecorded, ReplayMiss, ValioBusy, ValioRefused, ValioUnavailable
+from ..valio.client import NotRecorded, ReplayMiss, ValioBusy, ValioRefused, ValioUnavailable, days_text
 from .explain import explain
 from .service import (
     SEVERITY,
@@ -72,6 +72,12 @@ def _none_of(need: Need) -> str:
     """"lactose-free parmesan", for "Valio has no ..."."""
     diet = " ".join(CLAIM_NAMES.get(c, c).replace(" ", "-") for c in sorted(need.required_claims))
     return f"{diet} {need.kind.replace('_', ' ')}".strip()
+
+
+def not_recorded_day(day: date, days: list[date]) -> str:
+    """The 503 for a delivery day without recordings: names the days that have them, so an agent can pick one."""
+    have = f" Recorded delivery days: {days_text(days)}." if days else ""
+    return f"Valio's answers for delivery on {day:%a} {day.isoformat()} aren't recorded for this demo.{have} Nothing was ordered."
 
 
 @dataclass(frozen=True)
@@ -206,6 +212,9 @@ class SupplyService:
         except ReplayMiss as e:
             logging.getLogger(__name__).warning("replay miss: %s", e)  # ids and the fix, for the developer
             p = self.catalog.get(need.product_id) if need.product_id else None
+            days = getattr(self.valio, "recorded_days", lambda: None)()
+            if days is not None and need.deliver_by not in days:
+                raise NotRecorded(not_recorded_day(need.deliver_by, days)) from e
             what = short_ref(p.name_en) if p else need.kind.replace("_", " ") or "these products"
             raise NotRecorded(f"Valio's answers for {what} aren't recorded for this demo. Nothing was ordered.") from e
         ranked = rank(need, cands, quotes, avail, self.now(), prefer_labels=tuple(mandate.prefer_labels or ()))
