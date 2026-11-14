@@ -52,7 +52,8 @@ class Ctx:
         self.approve_code = "" if account is not None else env.get("VALIDIO_APPROVE_CODE", "")
         if self.approve_code and not re.fullmatch(r"\d{6}", self.approve_code):
             raise ValueError("VALIDIO_APPROVE_CODE must be 6 digits")
-        self.code_tries: dict[tuple[str, str], int] = {}  # ("key", order or button) and ("client", host)
+        # ("key", order or button) and ("client", address): the times of the wrong codes in the last 15 minutes
+        self.code_tries: dict[tuple[str, str], list[float]] = {}
         self.nonces = NonceStore()
         self._supply: tuple[object, SupplyService] | None = None
         self._kitchen: tuple[tuple, JWK] | None = None

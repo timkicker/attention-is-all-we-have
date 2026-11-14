@@ -25,6 +25,7 @@ from pydantic import Field
 
 from ..demo import seed
 from .connect import AgentState
+from .limits import client_ip
 from .schemas import Model
 from .state import Ctx, get_ctx
 from .steady import Runtime
@@ -405,7 +406,7 @@ def signup(request: Request, body: SignupIn):
 @router.post("/login", response_model=AccountView, response_model_exclude_none=True)
 def login(request: Request, body: LoginIn):
     email = body.email.strip().lower()
-    keys = [f"email:{email}", f"client:{request.client.host if request.client else '?'}"]
+    keys = [f"email:{email}", f"client:{client_ip(request)}"]
     if _too_many(keys):
         raise HTTPException(429, "too many wrong logins, wait 15 minutes")
     row = get_accounts().by_email(email)
