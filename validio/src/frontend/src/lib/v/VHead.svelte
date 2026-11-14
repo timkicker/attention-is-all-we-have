@@ -7,6 +7,7 @@
   import { ChevronLeft, ChevronRight } from "@lucide/svelte";
   import { cameFrom } from "@arlen/ui-kit/components/ui/page/history";
   import { chrome, setTitle } from "$lib/chrome.svelte";
+  import { nb } from "$lib/format";
   import VMenu from "./VMenu.svelte";
 
   let {
@@ -66,7 +67,7 @@
         <span aria-current="page">{here}</span>
       </nav>
     {/if}
-    <h1 class="v-title" id={titleId} data-testid={titleTestid}>{title}</h1>
+    <h1 class="v-title" id={titleId} data-testid={titleTestid}>{nb(title)}</h1>
     {#if facts}<div class="facts">{@render facts()}</div>{/if}
     {@render children?.()}
   </div>

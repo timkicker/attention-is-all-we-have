@@ -25,7 +25,11 @@ const money = (s: string) => new RegExp(s.replace(",", ",?").replace(".", "\\.")
 async function needs(page: Page, ...ids: string[]) {
   await page.waitForLoadState("networkidle");
   const missing: string[] = [];
-  for (const id of ids) if ((await page.getByTestId(id).count()) === 0) missing.push(id);
+  // networkidle can come before the page has drawn the answer; give each id a moment.
+  for (const id of ids) {
+    await page.getByTestId(id).first().waitFor({ state: "attached", timeout: 3000 }).catch(() => {});
+    if ((await page.getByTestId(id).count()) === 0) missing.push(id);
+  }
   if (missing.length === 0) return;
   const why = `page ${new URL(page.url()).pathname} has no data-testid ${missing.join(", ")} yet (lane C)`;
   if (STRICT) throw new Error(why);
@@ -78,7 +82,7 @@ test("scene 1: the agent asks for 1000 litres of milk", async ({ request }) => {
 test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass page the rest", async ({ page }) => {
   await page.goto("/");
   await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap");
-  await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000 litres of lactose-free milk/); // display words, "1,000"
+  await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000\slitres of lactose-free milk/); // display words, "1,000"
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   // The request pane keeps one Spend Pass line; the whole pass is its own page.
@@ -203,15 +207,15 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
   expect(led).toContain("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €");
   const shown = (await json(request, "/api/ledger")).entries.map((e: { displayText: string }) => e.displayText);
   expect(shown).toContain("Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.");
-  expect(led).toMatch(/Placed order O-2\b.*Valio was asked again: every line (?:can be delivered|is delivered by[^\n]*?) and no price rose more than 2 %/);
+  expect(led).toMatch(/Placed order O-2\b.*Valio was asked again: every line (?:can be delivered|is delivered by[^\n]*?) and no price rose more than 2\s%/);
 });
 
 test("scene 3 on screen: the phone page says placed", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/approve/R-2");
-  // Plan v2 §4.3: the done view's h1 is "Ordered" and the amount sits in its facts.
+  // Plan v2 §4.3: the done view's h1 is "Ordered" plus the product, and the amount sits in its facts.
   await needs(page, "order-steps");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ordered");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/^Ordered .*mozzarella-fontal/i);
   await expect(page.locator("main .facts")).toContainText(money("180.10"));
   await expect(page.getByTestId("order-steps")).toContainText(/asked you/i);
   await expect(page.getByTestId("order-steps")).toContainText(/approved/i);
@@ -245,7 +249,7 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   await page.goto("/steady/S-1");
   await needs(page, "simulated-history", "line-464306", "line-463968", "line-471376", "line-466375",
     "accept-471376");
-  await expect(page.getByTestId("simulated-history")).toContainText(/8 weeks/);
+  await expect(page.getByTestId("simulated-history")).toContainText(/8\sweeks/);
   await expect(page.getByTestId("simulated-history")).toContainText(/simulated/i);
   const milk = page.getByTestId("line-464306");
   await expect(milk).toContainText(/renewed/i);
@@ -263,7 +267,7 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   const pan = page.getByTestId("line-471376");
   // Lane L's copy: "Only 27 cartons in stock, the usual line is 30", and the
   // substitute by name rather than by number.
-  await expect(pan).toContainText(/27 of 30|Only 27 cartons in stock/);
+  await expect(pan).toContainText(/27 of 30|Only 27\scartons in stock/);
   await expect(pan).toContainText(/476523|Findus Pancake|would break a rule/);
   await expect(pan).toContainText("wheat");
   await expect(page.getByTestId("accept-471376")).toHaveText(/Order 27 now/);
@@ -312,7 +316,7 @@ test("scene 5 on screen: the ledger, its chain and nothing of the approver list"
   await expect(page.getByTestId("ledger")).toContainText(
     /Ignored the description of [^\n]*?, which talks to AI agents\./);
   await expect(page.getByTestId("ledger")).toContainText("Descriptions are never used for decisions.");
-  await expect(page.getByTestId("ledger")).toContainText(/Owner approved 10 (?:ST|packs|× [\d.,]+ \w+) of/);
+  await expect(page.getByTestId("ledger")).toContainText(/Owner approved 10 (?:ST|packs|×\s[\d.,]+\s\w+) of/);
   await expect(page.getByTestId("chain-status")).toContainText(/verified/i);
   await expect(page.getByTestId("chain-status")).toContainText(String(led.chain.count));
   await expect(page.getByTestId("ledger")).not.toContainText("owner:anna");

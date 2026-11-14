@@ -6,6 +6,7 @@
   import { ChevronRight } from "@lucide/svelte";
   import type { Pill } from "$lib/v";
   import VPill from "./VPill.svelte";
+  import { nb } from "$lib/format";
 
   let {
     pill,
@@ -40,13 +41,13 @@
 <svelte:element this={href ? "a" : "div"} class="v-row" class:has-mid={!!middle} {href} data-testid={testid} {id}>
   <span class="v-row-lead">{#if pill}<VPill label={pill.label} tone={pill.tone} />{/if}</span>
   <span class="v-row-main">
-    <span class="v-row-title">{title}</span>
-    {#if sub}<span class="v-row-sub" data-testid={subTestid} id={subTestid}>{sub}</span>{/if}
+    <span class="v-row-title">{nb(title)}</span>
+    {#if sub}<span class="v-row-sub" data-testid={subTestid} id={subTestid}>{nb(sub)}</span>{/if}
     {#if more}<span class="v-row-more">{@render more()}</span>{/if}
   </span>
   {#if middle}<span class="v-row-mid">{@render middle()}</span>{/if}
   <span class="v-row-end">
-    {#if right}{@render right()}{:else if end}<span class="num">{end}</span>{/if}
+    {#if right}{@render right()}{:else if end}<span class="num">{nb(end)}</span>{/if}
     {#if href}<ChevronRight class="go" size={16} strokeWidth={1.75} aria-hidden="true" />{/if}
   </span>
 </svelte:element>
