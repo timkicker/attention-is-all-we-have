@@ -7,6 +7,7 @@ replay  answers only from cache_dir and never opens a connection
 
 import hashlib
 import json
+import time
 from datetime import date
 from pathlib import Path
 
@@ -21,6 +22,20 @@ TEST_API_HOST = "junction26.valioaimo.fi"  # Valio's test API. The real webshop 
 
 class ReplayMiss(LookupError):
     pass
+
+
+class ValioUnavailable(RuntimeError):
+    """Valio timed out, could not be reached or answered 5xx, twice. Nothing was ordered."""
+
+    def __init__(self, cause: Exception | None = None):
+        super().__init__("Valio did not answer. Nothing was ordered.")
+        self.cause = cause
+
+
+def _transient(e: Exception) -> bool:
+    if isinstance(e, httpx.HTTPStatusError):
+        return e.response.status_code >= 500
+    return isinstance(e, httpx.TransportError)  # timeouts, refused or dropped connections
 
 
 def checked_base_url(url: str) -> str:
@@ -38,7 +53,8 @@ def replay_key(endpoint: str, requested: date, ids: list[str]) -> str:
 
 class ValioClient:
     def __init__(self, base_url: str, api_key: str, mode: str, cache_dir: Path | None,
-                 customer: str = "hotel-espoo", chunk: int = MAX_PER_CALL, http: httpx.Client | None = None):
+                 customer: str = "hotel-espoo", chunk: int = MAX_PER_CALL, http: httpx.Client | None = None,
+                 backoff: float = 0.5):
         base_url = checked_base_url(base_url)
         if mode not in ("live", "record", "replay"):
             raise ValueError(f"unknown mode {mode!r}")
@@ -49,6 +65,7 @@ class ValioClient:
         self.chunk = min(chunk, MAX_PER_CALL)
         self._api_key = api_key
         self._http = http
+        self.backoff = backoff
         self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
 
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
@@ -78,6 +95,23 @@ class ValioClient:
         return out
 
     def _call(self, endpoint: str, requested: date, ids: list[str]) -> dict:
+        """One read, asked once more after a short pause when Valio times out, cannot be reached or answers 5xx.
+        Both endpoints only read: Validio places orders in its own store, never at Valio, so a second try
+        cannot order twice. Anything that would place an order must not come through here."""
+        try:
+            return self._call_once(endpoint, requested, ids)
+        except httpx.HTTPError as e:
+            if not _transient(e):
+                raise
+        time.sleep(self.backoff)
+        try:
+            return self._call_once(endpoint, requested, ids)
+        except httpx.HTTPError as e:
+            if not _transient(e):
+                raise
+            raise ValioUnavailable(e) from e
+
+    def _call_once(self, endpoint: str, requested: date, ids: list[str]) -> dict:
         body = {"customer": self.customer, "requestedDate": requested.isoformat(), "products": ids}
         http = self._http or httpx.Client(timeout=30)
         try:
