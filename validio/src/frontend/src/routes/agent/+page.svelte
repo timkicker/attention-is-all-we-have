@@ -135,7 +135,7 @@
       <Section class="v-card">
         <div class="verify">
           <h2 class="sr-only" id="consent-h">Check the code</h2>
-          <p class="verify-code mono" id="verify-code" data-testid="verify-code" aria-label="Code {a.consent.verifyCode?.split('').join(' ')}">
+          <p class="verify-code mono" id="verify-code" data-testid="verify-code" data-raw aria-label="Code {a.consent.verifyCode?.split('').join(' ')}">
             {a.consent.verifyCode ?? ""}
           </p>
           <p class="verify-text">Your agent shows this code too. Allow only if it matches.</p>
