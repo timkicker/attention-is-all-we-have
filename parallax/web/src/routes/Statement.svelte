@@ -94,7 +94,7 @@
               </div>
             {/each}
           {:else}
-            <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}</p>
+            <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}{#if i > 0 && !g.say.spans.length}<span class="why">{' · '}{copy.topic.SAYS_DIFFERENTLY}</span>{/if}</p>
             <p class="say" class:clamp={!openQ.has(i)} {@attach overflow(i)}><Marked value={g.say} /></p>
             {#if cut.has(i) || openQ.has(i)}
               <button class="more sec u" type="button" aria-expanded={openQ.has(i)} onclick={() => toggle(i)}>{openQ.has(i) ? copy.topic.LESS : copy.topic.MORE}</button>
@@ -147,6 +147,7 @@
   .more { margin-top: 4px; font-size: var(--fs-15); }
   .one-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .v { color: inherit; text-decoration: none; }
+  .why { font-weight: var(--w-regular); color: var(--fg2); }
   .v:hover, .v:focus-visible { text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
   .changed { margin-top: 64px; }
   .changed .item { padding: 16px 0; }

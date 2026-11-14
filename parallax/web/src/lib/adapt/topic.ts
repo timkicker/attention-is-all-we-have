@@ -774,7 +774,7 @@ export async function loadStatement(
   const vm: WithoutCounts<StatementVM> = {
     topic: ctx.topic,
     date: ctx.date,
-    title: headingOf(s.title),
+    title: copy.topic.oneStatementIn(ctx.topic.title, new Set(s.groups.flatMap((g) => g.langs)).size),
     groups: s.groups,
     missing: s.missing,
     open: s.open,
