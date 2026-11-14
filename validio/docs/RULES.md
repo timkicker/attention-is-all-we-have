@@ -42,3 +42,7 @@ Money is in whole cents. Percentages are in basis points, so 5 % is 500.
 | `salesBlock` | Valio blocks the product from sale | availability answer |
 | `isRenewal` | the line comes from a Steady Order | Steady Orders |
 | `driftFlag` | Drift Watch flagged the line before renewal | Drift Watch |
+
+## Which price counts
+
+Every limit (alone, waiting, blocked above, per week, a request's budget) is compared with Valio's catalog price per sales unit before VAT (`catalogPrice` in the price answer, `valio/models.py`). Valio's answer also says whether a customer-specific net price exists (`netPriceFound`), but the test API gives no net price, so Validio does not use one. The Rules pages say "before VAT" next to the money.
