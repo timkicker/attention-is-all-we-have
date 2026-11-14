@@ -60,8 +60,10 @@
 }
 
 /* ---------- base ---------- */
-/* Tailwind 4 dropped the pointer from buttons (preflight leaves the default arrow) and the kit
-   doesn't add it back: everything that acts on a click shows the hand; a disabled control doesn't. */
+/* Tailwind 4 dropped the pointer from buttons (preflight leaves the default arrow), and the kit's
+   motion.css takes it off in-app links on purpose (an Arlen desktop app keeps the arrow). Validio is a
+   web page: everything that acts on a click shows the hand; a disabled control doesn't. */
+a[href],
 button,
 summary,
 select,
