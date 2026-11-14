@@ -130,7 +130,7 @@
     <div class="demobar" data-testid="demo-bar" id="demo-bar">
       <div class="col db-in">
         <span class="db-name">Demo kitchen</span>
-        {#if session.account.demoCode}<span class="db-code">Approval code <span class="num">{session.account.demoCode}</span></span>{/if}
+        {#if session.account.demoCode}<span class="db-code">Approval code: <span class="num">{session.account.demoCode}</span></span>{/if}
         <button type="button" class="db-reset" id="demo-reset" data-testid="demo-reset" onclick={reset}>Start over</button>
       </div>
     </div>
