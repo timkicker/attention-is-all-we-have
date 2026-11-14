@@ -107,8 +107,10 @@ def test_accept_before_renew_is_409(client):
 def test_ledger_names_every_line_decision(client):
     client.post("/api/steady/S-1/renew", headers=CHEF)
     sentences = " ".join(e.sentence for e in AuditLog(seed.db_path()).list())
-    for pid in ("464306", "463968", "471376", "466375"):
-        assert pid in sentences
+    # by short name, the product ids stay in the orders the entries point to
+    for name in ("300 × 1 l of lactose-free semi-skimmed milk", "137 × 125 g of parmesan reggiano",
+                 "30 cartons of vegan pancake 30 g", "98 bags of lactose-free mozzarella 125 g"):
+        assert name in sentences
     assert "26 % more per guest" in sentences
 
 
@@ -157,6 +159,19 @@ def test_accepted_line_has_one_approval_tied_to_its_order(client):
     new = log.list()[before:]
     assert [e.kind for e in new if e.kind == "approval"] == ["approval"]
     assert {e.order_id for e in new} == {pan["orderId"]}
+
+
+def test_order_after_an_accept_says_who_accepted(client):
+    # the video showed "Ordered 27 cartons ... without a human" right after "Chef accepted 27 cartons"
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    log = AuditLog(seed.db_path())
+    before = len(log.list())
+    client.post("/api/steady/S-1/lines/471376/accept", headers=CHEF)
+    orders = [e.sentence for e in log.list()[before:] if e.kind == "order"]
+    assert len(orders) == 1
+    assert "after the chef accepted" in orders[0]
+    assert "without a" not in orders[0]
+    assert "471376" not in orders[0]
 
 
 def test_renewed_line_that_waits_is_ordered_once(client, monkeypatch):

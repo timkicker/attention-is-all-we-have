@@ -6,12 +6,17 @@ fields, so an agent that sends its own price or trust level changes nothing."""
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
 
 class Model(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, extra="ignore")
+
+
+def _d():
+    from . import display
+    return display
 
 
 # agent input
@@ -63,6 +68,15 @@ class FactView(Model):
     source: str
     note: str | None = None
     until: str | None = None
+    value_text: str | None = Field(None, description="the value in words: no placeholder count, codes or ratios")
+    note_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        if self.value_text is None and self.note_text is None:
+            v, n = _d().fact_text(self.field, self.value, self.note)
+            self.value_text, self.note_text = v, n
+        return self
 
 
 class ReaderFlagView(Model):
@@ -87,6 +101,12 @@ class DecisionView(Model):
     outcome: Literal["auto_order", "ask_human", "block"]
     rule_ids: list[str]
     sentence: str
+    summary: str | None = Field(None, description="at most about 12 words for the screen, the sentence is the detail")
+
+    @model_validator(mode="after")
+    def _text(self):
+        self.summary = self.summary or _d().summary(self.sentence)
+        return self
 
 
 # products
@@ -125,6 +145,23 @@ class RankedOptionView(Model):
     on_valio_list: bool | None = None
     is_substitute: bool | None = None
     supplier_text: SupplierTextView | None = None
+    display_name: str | None = None
+    short_name: str | None = None
+    qty_text: str | None = None
+    money_text: str | None = None
+    reasons: list[str] | None = Field(None, description="the sentence as a list, one reason each")
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        from ..text.format import display_name
+        self.display_name = self.display_name or display_name(self.name)
+        self.short_name = self.short_name or d.short_name(self.name)
+        self.qty_text = self.qty_text or d.qty(self.quantity, self.unit, self.product_id)
+        if self.money_text is None and self.total_cents is not None:
+            self.money_text = d.money(self.total_cents)
+        self.reasons = self.reasons if self.reasons is not None else d.reasons(self.sentence)
+        return self
 
 
 class NeedView(Model):
@@ -134,6 +171,15 @@ class NeedView(Model):
     diet: list[str]
     deliver_by: str
     product_id: str | None = None
+    qty_text: str | None = Field(None, description="in the product's sales unit for a product line: 200 bags")
+    deliver_by_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        self.qty_text = self.qty_text or d.qty(self.quantity, self.unit, self.product_id)
+        self.deliver_by_text = self.deliver_by_text or d.day_word(self.deliver_by)
+        return self
 
 
 class ChoiceView(Model):
@@ -160,6 +206,14 @@ class RequestLineView(Model):
     chosen: ChoiceView | None = Field(None, description="what Validio would order for this line")
     note: str | None = None
 
+    @model_validator(mode="after")
+    def _names(self):
+        # two products that would read the same get their brand back
+        opts = [*self.options, *(self.substitutes or []), *(self.beyond_list or [])]
+        for o, n in zip(opts, _d().short_names([o.name for o in opts]), strict=True):
+            o.short_name = n
+        return self
+
 
 class SimulatedMark(Model):
     what: str
@@ -182,6 +236,22 @@ class SupplyRequestView(Model):
     order_id: str | None = None
     question: str | None = None
     simulated: list[SimulatedMark] | None = None
+    title: str | None = Field(None, description="from the parsed need, never the agent's own words")
+    agent_text: str | None = Field(None, description="what the agent sent, as it sent it")
+    money_text: str | None = None
+    time_text: str | None = None
+    display_name: str | None = Field(None, description="the same as title, the name types.ts already reads")
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        self.agent_text = self.agent_text or self.text
+        self.title = self.title or d.title(self.lines, self.deliver_by) or "Request"
+        self.display_name = self.display_name or self.title
+        if self.money_text is None and self.total_cents is not None:
+            self.money_text = d.money(self.total_cents)
+        self.time_text = self.time_text or d.time_text(self.created_at)
+        return self
 
 
 class InboxItem(Model):
@@ -191,6 +261,21 @@ class InboxItem(Model):
     status: str
     sentence: str
     total_cents: int | None = None
+    title: str | None = None
+    display_name: str | None = None
+    summary: str | None = None
+    money_text: str | None = None
+    time_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        self.display_name = self.display_name or self.title
+        self.summary = self.summary or d.summary(self.sentence)
+        if self.money_text is None and self.total_cents is not None:
+            self.money_text = d.money(self.total_cents)
+        self.time_text = self.time_text or d.time_text(self.created_at)
+        return self
 
 
 # orders
@@ -209,11 +294,35 @@ class OrderLineView(Model):
     is_substitute: bool = False
     on_valio_list: bool = False
     facts: list[FactView] = []
+    display_name: str | None = None
+    short_name: str | None = None
+    qty_text: str | None = None
+    money_text: str | None = None
+    delivery_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        from ..text.format import display_name
+        self.display_name = self.display_name or display_name(self.name)
+        self.short_name = self.short_name or d.short_name(self.name)
+        self.qty_text = self.qty_text or d.qty(self.quantity, self.unit, self.product_id)
+        if self.money_text is None and self.total_cents is not None:
+            self.money_text = d.money(self.total_cents)
+        if self.delivery_text is None and self.delivery_date:
+            self.delivery_text = f"delivery {d.day_word(self.delivery_date)}"
+        return self
 
 
 class HistoryStep(Model):
     state: str
     at: str
+    time_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        self.time_text = self.time_text or _d().time_text(self.at)
+        return self
 
 
 class OrderView(Model):
@@ -227,6 +336,12 @@ class OrderView(Model):
     spend_pass_id: str
     deliver_by: str
     approved_by: str | None = None
+    money_text: str | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        self.money_text = self.money_text or _d().money(self.total_cents)
+        return self
 
 
 # Spend Pass, ledger, demo
@@ -252,6 +367,15 @@ class SpendPassView(Model):
     split: SplitView
     disclosed: list[str]
     hidden: list[str]
+    disclosed_text: list[str] | None = Field(None, description="the disclosed fields as a person reads them")
+    hidden_text: list[str] | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        self.disclosed_text = self.disclosed_text or d.pass_fields(self.disclosed)
+        self.hidden_text = self.hidden_text or d.pass_fields(self.hidden)
+        return self
 
 
 class LedgerEntryView(Model):
@@ -267,6 +391,19 @@ class LedgerEntryView(Model):
     order_id: str | None = None
     prev_hash: str
     hash: str
+    actor_text: str | None = None
+    time_text: str | None = None
+    summary: str | None = None
+    disclosed_text: list[str] | None = None
+
+    @model_validator(mode="after")
+    def _text(self):
+        d = _d()
+        self.actor_text = self.actor_text or d.actor(self.actor)
+        self.time_text = self.time_text or d.time_text(self.at)
+        self.summary = self.summary or d.summary(self.sentence)
+        self.disclosed_text = self.disclosed_text or d.pass_fields(self.disclosed)
+        return self
 
 
 class ChainStatus(Model):

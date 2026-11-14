@@ -168,7 +168,7 @@ def test_order_placed_alone_and_logged(svc):
     o = svc.submit(mandate=PASS, lines=[LineIn("900001", 100)], deliver_by=MON, idempotency_key="s1")
     assert o["state"] == "placed" and o["totalCents"] == 10000
     (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
-    assert entry.sentence.startswith("Ordered 100 packs of Synthetic")
+    assert entry.sentence.startswith("Ordered 100 × 1 l of lactose-free synthetic milk for ")
     assert svc.audit.verify().ok
 
 
@@ -182,8 +182,8 @@ def test_short_in_boxes_never_approved(svc):
     o = svc.submit(mandate=PASS, lines=[LineIn("900004", 10)], deliver_by=MON, idempotency_key="s3",
                    required_claims=())
     assert o["state"] == "waiting"
-    assert o["lines"][0]["short"] == "Only 3 cartons of Synthetic lactose free milk drink 1 l box in stock, 10 needed"
-    with pytest.raises(ApproveRefused, match="Only 3 cartons of Synthetic lactose free milk drink 1 l box in stock"):
+    assert o["lines"][0]["short"] == "Only 3 cartons of lactose-free synthetic milk box 1 l in stock, 10 needed"
+    with pytest.raises(ApproveRefused, match="Only 3 cartons of lactose-free synthetic milk box 1 l in stock"):
         svc.approve(o["id"], "owner:synthetic")
 
 

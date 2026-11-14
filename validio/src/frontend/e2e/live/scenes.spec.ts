@@ -22,7 +22,7 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
   await page.locator("#inbox-R-1").click();
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1000 ST of 464306");
+  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
   await expect(page.locator("#live-checked")).toContainText(/Checked \d+ products live/);
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.locator("#fold-options").click();
@@ -35,7 +35,7 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await expect(page.locator("#simulated-stock-out")).toContainText("only in this demo");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#open-approve").click();
-  await expect(page.locator("#question")).toContainText("Approve 10 packs of 465256");
+  await expect(page.locator("#question")).toContainText("Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese");
   await page.locator("#approve-code").fill("000000");
   await page.locator("#approve").click();
   await expect(page.locator("#code-help")).toContainText("not right");
@@ -57,7 +57,7 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   // Scene 5 and the Spend Pass.
   await page.locator("#nav-open-ledger").click();
   await expect(page.locator("#chain-status")).toContainText("Chain verified");
-  await expect(page.locator("#ledger")).toContainText("Owner approved 10 ST of 465256");
+  await expect(page.locator("#ledger")).toContainText("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese");
   await expect(page.locator("#ledger")).not.toContainText("owner:anna");
   await page.locator("#nav-spend-pass").click();
   await expect(page.locator("#pass-auto")).toContainText("1,200.00");

@@ -6,7 +6,7 @@ from ..catalog.model import Product
 from ..demo.seed import STOCKOUT_ID, stockout_note
 from ..orders.supply import LineRequest
 from ..policy.mandate import AUDIENCE, MandateError
-from ..text.format import display_name
+from ..text.format import short_ref
 from ..trust.claims import claim_check
 from .schemas import (
     ConfirmIn,
@@ -59,7 +59,7 @@ def nonce(ctx: Ctx) -> NonceView:
 
 def _name(ctx: Ctx, pid: str) -> str:
     p = ctx.catalog.get(pid)
-    return display_name(p.name_en) if p else pid
+    return short_ref(p.name_en) if p else pid
 
 
 def _request_view(ctx: Ctx, req: dict) -> SupplyRequestView:

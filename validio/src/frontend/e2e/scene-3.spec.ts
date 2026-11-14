@@ -24,7 +24,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByTestId("open-approve").click();
-  await expect(page.getByTestId("approve-question")).toHaveText(/^Order 10\spacks of Valio mozzarella-fontal .* for 180\.10\s€\?$/);
+  await expect(page.getByTestId("approve-question")).toHaveText(/^Order 10 × 2\.5\skg of mozzarella-fontal crumbled cheese for 180\.10\s€\?$/);
 
   // The code is asked when the owner presses Approve; with it the order is placed.
   await expect(page.getByTestId("code-input")).toHaveCount(0);
@@ -36,6 +36,6 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/ledger");
-  await expect(page.getByTestId("ledger")).toContainText("Owner approved 10 packs of 465256 for 180.10 €");
+  await expect(page.getByTestId("ledger")).toContainText("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €");
   await expect(page.getByTestId("chain-status")).toContainText("Chain verified");
 });
