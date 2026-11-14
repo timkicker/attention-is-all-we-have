@@ -199,7 +199,7 @@ Rules = {
 | PUT | `/api/rules` | `{aloneUpToCents, approvalUpToCents, substitutes, maxExtraPct, perWeekCents?, diet?: {mustBe, never}, code}` | `Rules`, one new pass version, one ledger entry |
 
 * `code`: the account's 6 digit approval code (also accepted as `X-Approve-Code`). 403 wrong code, 429
-  after five wrong codes.
+  after five wrong codes within 15 minutes, for 15 minutes.
 * 422 when `aloneUpToCents > approvalUpToCents`, `perWeekCents < approvalUpToCents`, or a value is below 0
   or above 100,000.00 €.
 * Without a connected agent the Rules are saved and signed into the pass the next agent will get.

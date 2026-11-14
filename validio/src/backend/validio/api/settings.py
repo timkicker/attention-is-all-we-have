@@ -342,15 +342,22 @@ def put_approval_code(ctx: CtxDep, request: Request, body: Annotated[ApprovalCod
 
 
 @router.put("/settings/login", response_model=SettingsOut)
-def put_login(ctx: CtxDep, body: LoginChangeIn):
+def put_login(ctx: CtxDep, request: Request, body: LoginChangeIn):
     """A new email, a new password, or both, with the current password. Demo copies have no login."""
     from .accounts import get_accounts, hash_secret, secret_ok
 
     if ctx.account is None or ctx.account["is_demo"]:
         raise HTTPException(403, "this kitchen has no login to change")
+    from .accounts import _miss, _too_many
+    from .limits import client_ip
+
     acc = get_accounts()
     row = acc.get(ctx.account["id"])
+    keys = [f"password:{row['id']}", f"client:{client_ip(request)}"]  # as many tries as the login allows
+    if _too_many(keys):
+        raise HTTPException(429, "too many wrong passwords, wait 15 minutes")
     if not secret_ok(body.current_password, row["pw_hash"]):
+        _miss(keys)
         raise HTTPException(403, "wrong password")
     fields: dict = {}
     if body.email:
