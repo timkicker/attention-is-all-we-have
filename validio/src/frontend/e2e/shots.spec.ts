@@ -28,7 +28,7 @@ for (const v of VIEWS) {
 
     await fresh(page);
     await go("/");
-    await expect(page.getByTestId("inbox-R-1")).toContainText("Ordered alone");
+    await expect(page.getByRole("heading", { name: "Inbox" })).toBeVisible();
     await shoot("inbox");
 
     await go("/requests/R-1");

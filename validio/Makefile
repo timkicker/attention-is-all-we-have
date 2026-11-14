@@ -29,6 +29,7 @@ test-backend: guards
 
 test-web:
 	cd src/frontend && npm run check && npx playwright test
+	$(MAKE) accounts-e2e
 
 # mutation testing on the deciding modules, see docs/TESTING.md (slow: one worker)
 mutate:
