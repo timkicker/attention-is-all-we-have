@@ -72,6 +72,16 @@ export async function pairAgent(k: Kitchen, page: Page) {
   await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
 }
 
+/**
+ * The scene 3 stock-out of 466375 on this copy. It has no HTTP route (nothing in Validio orders or simulates
+ * for the owner); as scripts/demo_check.py does, it is set in the copy's store on this machine, with its
+ * ledger entry. Needs the server's store here: not against E2E_BASE / SMOKE_BASE.
+ */
+export function stockOut(k: Kitchen) {
+  const py = `from validio.api.accounts import get_accounts; get_accounts().ctx(${JSON.stringify(k.id)}).set_stockout(True)`;
+  execFileSync("uv", ["run", "python", "-W", "ignore", "-c", py], { cwd: "../backend", env: process.env, stdio: "pipe" });
+}
+
 /** The kitchen's agent as any MCP agent connects: the connector on the Agent page's URL, then Allow. */
 export async function connectMcpAgent(k: Kitchen) {
   const page = await k.ctx.newPage();
