@@ -38,7 +38,8 @@ def test_reads_are_open_with_public_read(public, monkeypatch):
         for path in READS:
             assert c.get(path).status_code == 200, path
         assert c.get("/api/orders/NOPE").status_code == 404  # open, so a missing order is a plain 404
-        assert c.get("/api/spend-passes/M-1").status_code == 404  # not shown by an agent yet, but not 401
+        assert c.get("/api/spend-passes/M-1").status_code == 200  # the issued pass, before any agent showed it
+        assert c.get("/api/spend-passes/M-9").status_code == 404
 
 
 @pytest.mark.parametrize("path", WRITES)
