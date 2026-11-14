@@ -288,6 +288,15 @@ def connected(mc: Context | None, present: bool = True) -> tuple[Ctx, str | None
     return ctx, (_errors(connector_presentation)(ctx) if present else None)
 
 
+def _cdump(m) -> dict | list:
+    """A connector answer without supplier free text: these agents are chat models that read every field and
+    have no holder of their own to strip it (agent/tools.py `redact`, the same rule the kitchen's own agent
+    gets). Product names stay; the line's note still says when a description talks to agents."""
+    from ..agent.tools import redact
+
+    return redact(m if isinstance(m, (dict, list)) else _dump(m))
+
+
 def _key(given: str | None) -> str:
     """A random key when none is sent: every call is a new request."""
     import secrets
@@ -302,7 +311,7 @@ def c_search_products(text: str | None = None, category: str | None = None, clai
     """Look up Valio products in the catalog (at most 20). Claims such as FREE_FROM_LACTOSE come with how well
     Valio's data backs them. Not needed before request_supply, which finds products from plain words."""
     ctx, _ = connected(mc, present=False)
-    return [_dump(p) for p in tools.search_products(ctx, text, category, claims, limit)]
+    return _cdump([_dump(p) for p in tools.search_products(ctx, text, category, claims, limit)])
 
 
 @connector_server.tool(name="request_supply")
@@ -317,7 +326,7 @@ def c_request_supply(lines: list[SupplyLineIn], deliverBy: str | None = None, id
     request. On a new connection it answers with the verification code instead (see connection_status)."""
     ctx, sp = connected(mc)
     body = SupplyRequestIn(lines=lines, deliver_by=deliverBy, idempotency_key=_key(idempotencyKey))
-    return _dump(tools.request_supply(ctx, sp, body))
+    return _cdump(tools.request_supply(ctx, sp, body))
 
 
 @connector_server.tool(name="connection_status")
@@ -338,7 +347,7 @@ def c_get_request(requestId: str, mc: Context | None = None) -> dict:
     """The current state of a request (R-...), with its options and decision."""
     ctx, sp = connected(mc)
     ctx.verify(sp)  # reads need the pass too, as on /mcp/k/: a paused agent reads nothing
-    return _dump(tools.get_request(ctx, requestId))
+    return _cdump(tools.get_request(ctx, requestId))
 
 
 @connector_server.tool(name="confirm_order")
@@ -350,7 +359,7 @@ def c_confirm_order(requestId: str, choice: list[dict], idempotencyKey: str | No
     are taken from Valio again. Returns the order (O-...) and its state."""
     ctx, sp = connected(mc)
     body = ConfirmIn(request_id=requestId, choice=choice, idempotency_key=_key(idempotencyKey))
-    return _dump(tools.confirm_order(ctx, sp, body))
+    return _cdump(tools.confirm_order(ctx, sp, body))
 
 
 @connector_server.tool(name="get_order")
@@ -360,7 +369,7 @@ def c_get_order(orderId: str, mc: Context | None = None) -> dict:
     placed, rejected or blocked."""
     ctx, sp = connected(mc)
     ctx.verify(sp)
-    return _dump(tools.get_order(ctx, orderId))
+    return _cdump(tools.get_order(ctx, orderId))
 
 
 @connector_server.tool(name="renew_steady_order")
@@ -378,4 +387,4 @@ async def c_renew_steady_order(orderId: str = "S-1", mc: Context | None = None) 
         view = await anyio.to_thread.run_sync(renew, orderId, ctx.rt)
     except HTTPException as e:
         raise ToolError(f"{e.status_code}: {e.detail}") from e
-    return view.model_dump(mode="json", by_alias=True, exclude_none=True)
+    return _cdump(view.model_dump(mode="json", by_alias=True, exclude_none=True))
