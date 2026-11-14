@@ -12,11 +12,11 @@ lactose-free milk, 1,010.00 € from the recorded Valio answers, ordered alone; 
 the same request wait).
 
 Both browsers call from addresses that are not this machine, so only the session cookie lets them in, as on
-the public link. The steps share one module-scoped world and run in file order. A step whose route is not
-built yet is marked `pending(...)` (xfail, not strict); flip it by deleting the mark once it passes.
+the public link. The steps share one module-scoped world and run in file order.
 """
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -32,8 +32,12 @@ LOWER_ALONE = 80000
 ROOT = Path(__file__).resolve().parents[3]  # validio/
 
 
-def pending(why: str):
-    return pytest.mark.xfail(reason=f"not built yet: {why}", strict=False)
+def template_flags() -> list[str]:
+    """The flags `make template` gives demo_check.py, read from the Makefile, so this test plays the same
+    template the deploy builds."""
+    m = re.search(r"^template:\n\t.*demo_check\.py (.*?)--store", (ROOT / "Makefile").read_text(), re.MULTILINE)
+    assert m, "the Makefile has no template target calling demo_check.py --store"
+    return m.group(1).split()
 
 
 @pytest.fixture(scope="module")
@@ -57,7 +61,7 @@ def world(tmp_path_factory, catalog):
         mp.setenv(k, v)
     for k in blank:
         mp.setenv(k, "")
-    built = subprocess.run([sys.executable, "-W", "ignore", str(ROOT / "scripts" / "demo_check.py"), "--rounds", "1",
+    built = subprocess.run([sys.executable, "-W", "ignore", str(ROOT / "scripts" / "demo_check.py"), *template_flags(),
                             "--store", str(template)], check=False, cwd=ROOT / "src" / "backend", env={**os.environ},
                            capture_output=True, text=True, timeout=300)
     assert built.returncode == 0 and (template / "validio.db").is_file(), built.stdout[-2000:] + built.stderr[-2000:]
@@ -114,7 +118,6 @@ def test_01_try_the_demo_kitchen(world):
     world["b0"] = snapshot(world["b"])
 
 
-@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_02_demo_template_numbers(world):
     for c in (world["a"], world["b"]):
         r = ok(c.get("/api/rules"))
@@ -157,7 +160,6 @@ def test_03_connect_the_demo_agent(world):
 
 # 3. Send the example request, see it ordered
 
-@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_04_example_request_is_ordered(world):
     a = world["a"]
     r = ok(a.post("/api/demo/example"))
@@ -267,7 +269,6 @@ def test_09_change_the_diet(world):
 
 # B on its own: its limits and its week, untouched by everything A did
 
-@pending("demo template numbers (builder D): the template has 1,190.10 € placed on M-1 and a 2,000.00 € cap")
 def test_10_b_runs_the_example_on_its_own_copy(world):
     a, b = world["a"], world["b"]
     a_inbox = ok(a.get("/api/inbox"))
