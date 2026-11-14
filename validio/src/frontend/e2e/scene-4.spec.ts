@@ -6,7 +6,7 @@ import { code, fresh } from "./helpers";
 test("scene 4: steady order renews with flags", async ({ page }) => {
   await fresh(page);
   await page.goto("/steady");
-  await page.getByTestId("steady-S-1").click();
+  await page.getByTestId("steady-S-1").getByRole("link").click();
   await expect(page.getByTestId("simulated-history")).toContainText("simulated for the demo");
 
   // The first write asks for the approval code once, then runs.

@@ -1,5 +1,5 @@
 // Formatting for money, dates and the words the pages share.
-import type { FactGrade, OptionVerdict, RequestStatus, SteadyLineResult } from "./api/types";
+import type { FactGrade, OptionVerdict, RequestStatus, SteadyLineResult, SupplyRequest } from "./api/types";
 
 const euro = new Intl.NumberFormat("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -203,5 +203,34 @@ export function holderWord(id: string): string {
     return "Agent";
   }
   if (name === "presenter") return "Demo";
+  // Validio's own parts (the steady-order runner) sign as Validio.
+  if (kind === "validio" || name === "validio") return "Validio";
   return cap(name.replaceAll("-", " "));
+}
+
+/** The one line that explains a switch forced by a simulated stock-out:
+ *  "Gran Castelli mozzarella 125 g lactose free is out of stock at Valio
+ *  (simulated for the demo; Valio really has 11,603 bags)." Empty when no
+ *  stock-out was simulated for this request. */
+export function stockOutLine(req: SupplyRequest | undefined): string {
+  const sim = (req?.simulated ?? []).find((x) => x.what.includes("stock-out"));
+  if (!req || !sim) return "";
+  const pid = /\d{6}/.exec(sim.what)?.[0];
+  const opt = req.lines
+    .flatMap((l) => [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])])
+    .find((o) => o.productId === pid);
+  const really = /Valio really has [^;.]+/.exec(sim.sentence)?.[0];
+  return `${opt ? nameWord(opt.name) : `Product ${pid}`} is out of stock at Valio (simulated for the demo${really ? `; ${really}` : ""}).`;
+}
+
+/** The next date a weekly order on `weekday` ("Monday") arrives, after the
+ *  demo clock: "Mon 16 Nov". */
+export function nextOn(weekday: string, from: string = CLOCK): string {
+  const names = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+  const want = names.indexOf(weekday.toLowerCase());
+  const d = new Date(from);
+  if (want < 0) return weekday;
+  const step = ((want - d.getUTCDay() + 7) % 7) || 7;
+  const next = new Date(d.getTime() + step * 86400000);
+  return new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: HELSINKI }).format(next).replace(",", "");
 }
