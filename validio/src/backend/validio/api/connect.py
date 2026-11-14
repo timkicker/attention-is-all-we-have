@@ -33,6 +33,7 @@ CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
 DEMO_AGENT = seed.DEMO_AGENT_NAME
 MCP_NAME = "MCP agent"  # the name of a connector agent whose client sent no usable clientInfo.name
+AGENT_NAME = "Agent"  # the name of a signing agent that paired with no usable name
 RESERVED = frozenset({"you", "owner", "validio", "demo", "kitchen"})  # names the screens give someone else
 KNOWN_CLIENTS = {"claude-code": "Claude Code", "claude-ai": "Claude"}  # ids some clients send as their name
 PAUSED = "the kitchen paused this agent"
@@ -194,14 +195,16 @@ def leave_unconnected(db_path: Path) -> None:
     save(Path(db_path), Link("none"))
 
 
-def clean_name(raw) -> str:
-    """The MCP client's clientInfo.name as the screens show it: printable, one line, at most 60 characters.
-    Nothing usable, or a name the screens use for someone else, reads "MCP agent"."""
+def clean_name(raw, fallback: str = MCP_NAME) -> str:
+    """An agent's name as the screens show it (the MCP client's clientInfo.name, or the name a signing agent
+    pairs with): printable, one line, at most 60 characters. Nothing usable, or a name the screens use for
+    someone else ("Validio", "owner", "you"), reads `fallback`, so no agent can pose as them on the consent
+    screen or in the ledger."""
     if not isinstance(raw, str):
-        return MCP_NAME
+        return fallback
     name = " ".join("".join(ch if ch.isprintable() else " " for ch in raw).split())[:60].strip()
     name = KNOWN_CLIENTS.get(name.lower(), name)
-    return name if name and name.lower() not in RESERVED else MCP_NAME
+    return name if name and name.lower() not in RESERVED else fallback
 
 
 NAMES_SCHEMA = f"create table if not exists {seed.AGENT_NAME_TABLE}"
@@ -351,7 +354,7 @@ def agent_pair(ctx: Ctx, body: PairIn) -> str:
     """The agent answers the code with its name and key. 404 for a wrong or expired code; five wrong codes
     end the pairing. Returns the verification code the consent screen shows."""
     key = _public(body.public_jwk)
-    name = " ".join(body.name.split())
+    name = clean_name(body.name, fallback=AGENT_NAME)
     with ctx.rt.lock:
         link = load(ctx)
         live = link.state == "pairing" and link.code_expires and datetime.fromisoformat(link.code_expires) > _wall()
@@ -391,6 +394,8 @@ def allow(ctx: Ctx) -> None:
         demo = key.thumbprint() == demo_key(ctx).thumbprint()
         sub = DEMO_CLAIMS["sub"] if demo else "agent:" + ("".join(ch if ch.isalnum() else "-" for ch in
                                                                    link.pending_name.lower()).strip("-") or "agent")
+        if not demo and sub in (DEMO_CLAIMS["sub"], "agent:validio", "agent:gate"):
+            sub = f"{sub}-{key_id(key)}"  # never the demo agent's or Validio's own actor in the ledger
         seed.sign_again(ctx.db_path, ctx.keys_dir, {"sub": sub}, agent_pub=key, why="Agent connected", at=ctx.stamp())
         ver = seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID)
         link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.stamp().isoformat(),
