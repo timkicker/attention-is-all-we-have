@@ -118,7 +118,7 @@
   .grab {
     width: 36px;
     height: 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-chip);
     background: var(--v-tint-strong);
     margin: 0 auto 8px;
   }
@@ -130,7 +130,7 @@
     min-height: 44px;
     padding: 0 10px;
     margin: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-button);
     background: none;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
@@ -209,6 +209,6 @@
   }
   :global(.dialog-card:has(.v-sheet)) {
     max-width: none;
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-modal) var(--radius-modal) 0 0;
   }
 </style>

@@ -109,7 +109,7 @@
     align-self: stretch;
     width: 44px;
     color: var(--v-fg);
-    border-radius: 6px;
+    border-radius: var(--radius-button);
   }
   .kl-name {
     font-size: var(--fs-meta);
