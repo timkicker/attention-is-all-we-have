@@ -102,9 +102,9 @@ test("Activity: rows open their detail, the detail goes back", async ({ page, ki
   await expect(page.getByTestId("rule")).toContainText(/Rules, version \d+/);
   await page.getByTestId("proof").locator("summary").click();
   await expect(page.getByTestId("proof")).toHaveAttribute("open", "");
-  // An unknown id: the page wants "<id> not found" for its Not found state, the backend answers 404
-  // "no request <id>" (api/activity.py), so live it shows the load error ("not reachable") with that text.
+  // An unknown id: any 404 is Not found, whatever the backend's detail ("no request R-999")
   await page.goto("/activity/R-999");
-  await expect(page.getByText(/^Not found$|no request R-999/).first()).toBeVisible();
+  await expect(page.getByText("Not found", { exact: true })).toBeVisible();
+  await expect(page.getByText("Validio is not reachable")).toHaveCount(0);
   await expect(page.getByTestId("detail-status")).toHaveCount(0);
 });

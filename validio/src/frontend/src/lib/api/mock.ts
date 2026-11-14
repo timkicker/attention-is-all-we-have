@@ -297,7 +297,7 @@ export async function activity(status: ActivityFilter = "all"): Promise<Activity
 export async function activityItem(id: string): Promise<ActivityDetail> {
   signedIn();
   const e = entries().find((x) => x.item.id === id);
-  if (!e) throw new ApiError(404, `${id} not found`);
+  if (!e) throw new ApiError(404, `no request ${id}`); // as the backend says it
   return later(copy({ item: e.item, ...e.detail }));
 }
 
