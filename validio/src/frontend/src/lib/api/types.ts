@@ -501,28 +501,6 @@ export interface SpendPassIn {
   code?: string;
 }
 
-/** POST /api/demo/ask: the kitchen's agent on any text. Kitchen token locally, demo token too when public. */
-export interface AskIn {
-  text: string;
-}
-
-export interface AskOut {
-  /** The request the agent made. Absent when Validio refused it, e.g. no recorded Valio answers. */
-  requestId?: string;
-  /** "Gemini gemini-3.8-flash" or "fake model (no Gemini key)". */
-  model: string;
-  /** The agent's calls and Validio's answers, as the terminal pane prints them. */
-  lines: string[];
-  /** The agent's last sentence. */
-  final: string;
-}
-
-/** POST /api/demo/stock-out body. Without a body it turns the stock-out on, as before. */
-export interface StockOutIn {
-  /** false ends the simulated stock-out of 466375. */
-  on: boolean;
-}
-
 export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;
@@ -555,7 +533,8 @@ export interface Account {
 export interface AgentState {
   state: "none" | "pairing" | "consent" | "active" | "paused";
   pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
-  consent?: { name: string; keyId: string; may: string[] };
+  /** verifyCode "XXX-XXX": the agent shows the same code; allow only if they match. */
+  consent?: { name: string; keyId: string; may: string[]; verifyCode?: string };
   agent?: { name: string; kind: "agent" | "mcp"; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
   /** Newest first. */
   versions: { version: number; at: string; why: string }[];
@@ -571,9 +550,20 @@ export interface Rules {
   /** False until saved once: everything needs approval. */
   saved: boolean;
   passVersion: number;
+  /** v2: diet and allergens live in the Rules (one save, one code, one pass version). */
+  diet?: RulesDiet;
 }
 
-export type RulesIn = Omit<Rules, "saved" | "passVersion"> & { code: string };
+export interface RulesDiet {
+  /** e.g. ["lactose-free"] */
+  mustBe: string[];
+  /** e.g. ["nuts"] */
+  never: string[];
+  /** What the kitchen can pick from. */
+  options: { mustBe: string[]; never: string[] };
+}
+
+export type RulesIn = Omit<Rules, "saved" | "passVersion" | "diet"> & { code: string; diet?: Pick<RulesDiet, "mustBe" | "never"> };
 
 export type Diet = "FREE_FROM_LACTOSE" | "FREE_FROM_GLUTEN" | "VEGAN";
 
@@ -593,4 +583,67 @@ export interface SignupIn extends LoginIn {
   customerNumber: string;
   /** The 6-digit approval code the owner sets now and types for every approval. */
   approvalCode: string;
+}
+
+// ---------- v2 (UI-V2-API.md) ----------
+
+export type ActivityStatus = "ordered" | "waiting" | "blocked" | "standing";
+export type ActivityFilter = "all" | ActivityStatus;
+
+/** One line of the timeline: a request the agent made, or a standing order. */
+export interface ActivityItem {
+  /** "R-4"; for standing the steady order id. */
+  id: string;
+  kind: "request" | "standing";
+  status: ActivityStatus;
+  title: string;
+  /** One plain line in the Rules words. */
+  why: string;
+  totalCents: number | null;
+  at: string;
+  orderId: string | null;
+}
+
+/** GET /api/home */
+export interface HomeOut {
+  agent: { state: AgentState["state"]; name: string | null; lastUsedAt: string | null };
+  week: { usedCents: number; capCents: number | null };
+  setup: { rulesSaved: boolean; agentConnected: boolean; firstOrder: boolean };
+  /** Status waiting, newest first. */
+  needsYou: ActivityItem[];
+  /** The newest 5 of all. */
+  latest: ActivityItem[];
+}
+
+/** GET /api/activity?status= */
+export interface ActivityList {
+  items: ActivityItem[];
+  counts: Record<ActivityFilter, number>;
+}
+
+export interface ActivityCheck {
+  label: "Product" | "Price" | "Stock" | "Allergens" | "Substitute";
+  value: string;
+  note: string | null;
+  /** null: nothing to judge (a plain fact). */
+  ok: boolean | null;
+}
+
+export interface ProofEntry {
+  at: string;
+  actor: string;
+  text: string;
+  hash: string;
+}
+
+/** GET /api/activity/{id} */
+export interface ActivityDetail {
+  item: ActivityItem;
+  asked: { text: string; agentName: string };
+  checks: ActivityCheck[];
+  rule: { text: string; version: number };
+  result: { orderId: string; delivery: string } | null;
+  /** Only while waiting. Approve and reject go to /api/orders/{orderId}/approve|reject. */
+  approval: { orderId: string; holdUntil: string } | null;
+  proof: ProofEntry[];
 }

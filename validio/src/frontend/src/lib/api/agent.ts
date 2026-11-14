@@ -3,9 +3,10 @@
 // browser, kept in localStorage so a reload keeps it, as the backend would.
 
 import { ApiError } from "./error";
-import type { AgentState, Rules, RulesIn } from "./types";
+import { session } from "../owner.svelte";
+import type { AgentState, Rules, RulesDiet, RulesIn } from "./types";
 
-export type { AgentState, Rules, RulesIn };
+export type { AgentState, Rules, RulesDiet, RulesIn };
 export type Substitutes = Rules["substitutes"];
 
 const LIVE = import.meta.env.VITE_API === "live";
@@ -32,9 +33,9 @@ async function call<T>(method: "GET" | "POST" | "PUT", path: string, body?: unkn
 
 // ---------- the fixture ----------
 
-const KEY = "validio-agent-mock-v1";
+// One fixture per kitchen, so a kitchen made here does not see the demo's agent.
+const key = () => `validio-agent-mock-v2-${session.account?.id ?? "none"}`;
 const HOST = typeof location === "undefined" ? "http://127.0.0.1" : location.origin;
-const ACCOUNT = "k-demo";
 const CODE = /^\d{6}$/;
 
 interface Mock {
@@ -54,35 +55,68 @@ export function mayWords(r: Rules): string[] {
     `Blocked above ${euro(r.approvalUpToCents)}`,
     ...(r.perWeekCents == null ? [] : [`Per week up to ${euro(r.perWeekCents)}`]),
     r.substitutes === "off" ? "No substitutes" : r.substitutes === "listed" ? "Substitutes from Valio's list" : `Substitutes up to ${r.maxExtraPct} % extra`,
+    ...(r.diet?.mustBe.length ? [`Only ${r.diet.mustBe.join(", ")}`] : []),
+    ...(r.diet?.never.length ? [`Never ${r.diet.never.join(", ")}`] : []),
   ];
 }
 
-// A fresh demo copy: rules saved, no agent yet, so "Connect the demo agent" is the first thing on the page.
+const DIET_OPTIONS: RulesDiet["options"] = {
+  mustBe: ["lactose-free", "gluten-free", "vegan"],
+  never: ["nuts", "peanuts", "gluten", "milk", "egg", "fish", "shellfish", "soy", "sesame"],
+};
+
+// The demo kitchen: rules saved (version 4) and Claude Code connected, as on the
+// wireframes. A kitchen made here: nothing saved, no agent.
 function start(): Mock {
+  if (!session.account?.isDemo)
+    return {
+      agent: { state: "none", versions: [] },
+      rules: { aloneUpToCents: 0, approvalUpToCents: 0, perWeekCents: null, substitutes: "off", maxExtraPct: 0, saved: false, passVersion: 0, diet: { mustBe: [], never: [], options: DIET_OPTIONS } },
+      wrong: 0,
+    };
   return {
-    agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
-    // api/settings.DEMO_RULES
-    rules: { aloneUpToCents: 120000, approvalUpToCents: 500000, perWeekCents: 800000, substitutes: "extra", maxExtraPct: 5, saved: true, passVersion: 1 },
+    agent: {
+      state: "active",
+      agent: { name: "Claude Code", kind: "mcp", keyId: "m4Rt8Kpz", connectedAt: "2026-11-14T09:40:00+02:00", lastUsedAt: "2026-11-14T11:05:00+02:00", passId: "M-1", passVersion: 4 },
+      versions: [
+        { version: 4, at: "2026-11-14T09:40:00+02:00", why: "Agent connected" },
+        { version: 3, at: "2026-11-14T09:30:00+02:00", why: "Rules changed" },
+        { version: 2, at: "2026-11-14T09:20:00+02:00", why: "Rules changed" },
+        { version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" },
+      ],
+    },
+    // "Your agent orders alone up to 1,200 €, asks you up to 5,000 €, never above. At most 8,000 € a week.
+    //  Lactose-free, no nuts. Substitutes from Valio's list, up to 10 % extra."
+    rules: {
+      aloneUpToCents: 120000,
+      approvalUpToCents: 500000,
+      perWeekCents: 800000,
+      substitutes: "extra",
+      maxExtraPct: 10,
+      saved: true,
+      passVersion: 4,
+      diet: { mustBe: ["lactose-free"], never: ["nuts"], options: DIET_OPTIONS },
+    },
     wrong: 0,
   };
 }
 
-let memory: Mock | undefined;
+const memory: Record<string, Mock> = {};
 
 function load(): Mock {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(key());
     if (raw) return JSON.parse(raw) as Mock;
   } catch {
     // no storage: keep it in memory
   }
-  return (memory ??= start());
+  return (memory[key()] ??= start());
 }
 
 function store(m: Mock): void {
-  memory = m;
+  memory[key()] = m;
   try {
-    localStorage.setItem(KEY, JSON.stringify(m));
+    localStorage.setItem(key(), JSON.stringify(m));
   } catch {
     // see load()
   }
@@ -112,12 +146,22 @@ function token(): string {
   return Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
 }
 
-/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it. */
+/** Fixture only: Claude Code made its first call on the pairing URL, as the server then shows it. */
 export function mockMcpCall(): void {
   const m = load();
   if (m.agent.state !== "pairing") return;
-  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules) }, versions: m.agent.versions };
+  m.agent = { state: "consent", consent: { name: "Claude Code", keyId: "m4Rt8Kpz", may: mayWords(m.rules), verifyCode: "K7P-3QX" }, versions: m.agent.versions };
   store(m);
+}
+
+/** Fixture only: the demo Reset puts this kitchen's agent and rules back to the start. */
+export function resetMock(): void {
+  delete memory[key()];
+  try {
+    localStorage.removeItem(key());
+  } catch {
+    // see load()
+  }
 }
 // In the browser console of the fixture build: validioMcpCall()
 if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => void }).validioMcpCall = mockMcpCall;
@@ -135,17 +179,10 @@ const mock = {
         expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(),
         // Any MCP agent: its first call asks for consent as "MCP agent".
         mcpUrl: `${HOST}/mcp/c/${token()}/`,
-        apiUrl: `${HOST}/agent/v1/k/${ACCOUNT}`,
+        apiUrl: `${HOST}/agent/v1/k/${session.account?.id ?? "k-demo"}`,
       },
       versions: m.agent.versions,
     };
-    store(m);
-    return structuredClone(m.agent);
-  },
-  async demo(): Promise<AgentState> {
-    await later(300);
-    const m = load();
-    m.agent = { state: "consent", consent: { name: "Demo kitchen agent", keyId: "q3Hk7pXa", may: mayWords(m.rules) }, versions: m.agent.versions };
     store(m);
     return structuredClone(m.agent);
   },
@@ -154,7 +191,7 @@ const mock = {
     const c = m.agent.consent;
     if (m.agent.state !== "consent" || !c) throw new ApiError(409, "nothing to allow");
     m.agent = { state: "active", versions: m.agent.versions };
-    m.agent.agent = { name: c.name, kind: "agent", keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
+    m.agent.agent = { name: c.name, kind: "mcp", keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
     bumpVersion(m, "Agent connected");
     store(m);
     return structuredClone(m.agent);
@@ -196,7 +233,8 @@ const mock = {
     if (body.aloneUpToCents > body.approvalUpToCents) throw new ApiError(422, "orders alone must not be above needs approval");
     if (body.perWeekCents != null && body.perWeekCents < body.approvalUpToCents) throw new ApiError(422, "per week is below needs approval");
     m.wrong = 0;
-    m.rules = { ...m.rules, ...body, saved: true };
+    const diet = body.diet ? { ...body.diet, options: m.rules.diet?.options ?? DIET_OPTIONS } : m.rules.diet;
+    m.rules = { ...m.rules, ...body, diet, saved: true };
     delete (m.rules as Partial<RulesIn>).code;
     bumpVersion(m, "Rules changed");
     store(m);
@@ -205,14 +243,15 @@ const mock = {
 };
 
 export const agentApi = {
+  /** Fixture only (see resetMock). */
+  resetMock,
   agent: (): Promise<AgentState> => (LIVE ? call("GET", "/api/agent") : mock.agent()),
   pair: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pair") : mock.pair()),
-  /** Demo copies only: the server's demo agent answers the code. */
-  demo: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/demo") : mock.demo()),
   allow: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/allow") : mock.allow()),
   deny: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/deny") : mock.deny()),
   pause: (paused: boolean): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/pause", { paused }) : mock.pause(paused)),
   disconnect: (): Promise<AgentState> => (LIVE ? call("POST", "/api/agent/disconnect") : mock.disconnect()),
+  /** Money, substitutes and (v2) diet in one; one save is one new pass version. */
   rules: (): Promise<Rules> => (LIVE ? call("GET", "/api/rules") : mock.rules()),
   saveRules: (body: RulesIn): Promise<Rules> => (LIVE ? call("PUT", "/api/rules", body) : mock.saveRules(body)),
 };
