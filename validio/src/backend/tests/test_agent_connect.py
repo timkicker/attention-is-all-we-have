@@ -31,6 +31,22 @@ def pair_own_agent(client, name="Kitchen buyer"):  # noqa: F811
     return key, code
 
 
+def test_a_signing_agent_gets_the_verification_code_of_the_consent_screen(client):  # noqa: F811
+    client.post("/api/agent/disconnect")
+    codes = []
+    for _ in range(2):
+        key = JWK.generate(kty="EC", crv="P-256")
+        code = client.post("/api/agent/pair").json()["pairing"]["code"]
+        r = client.post("/agent/v1/pair", json={"code": code, "name": "Kitchen buyer",
+                                                "publicJwk": key.export_public(as_dict=True)})
+        assert r.status_code == 202 and re.fullmatch(r"[A-HJKMNP-Z2-9]{3}-[A-HJKMNP-Z2-9]{3}", r.json()["verifyCode"])
+        assert client.get("/api/agent").json()["consent"]["verifyCode"] == r.json()["verifyCode"]
+        codes.append(r.json()["verifyCode"])
+        client.post("/api/agent/deny")
+        assert "consent" not in client.get("/api/agent").json()
+    assert codes[0] != codes[1]
+
+
 def test_a_seeded_kitchen_has_the_demo_agent(client):  # noqa: F811
     s = client.get("/api/agent").json()
     assert s["state"] == "active"

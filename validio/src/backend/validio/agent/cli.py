@@ -89,6 +89,8 @@ def send_pair(http: httpx.Client, kitchen: str, code: str, keys: Path) -> str:
                                                        "publicJwk": key.export_public(as_dict=True)})
     if r.status_code != 202:
         raise SystemExit(f"pairing refused: {r.status_code} {r.text[:200]}")
+    if r.json().get("verifyCode"):
+        print(f"verification code: {r.json()['verifyCode']} (must match the code on the Agent page)", flush=True)
     return r.json()["status"]
 
 
