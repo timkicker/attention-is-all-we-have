@@ -1,12 +1,12 @@
 <script lang="ts">
   /// Inbox: halbat's admin overview. One facts link to the Spend Pass, then
-  /// "Open" (waiting for you) and "Handled", each a card of status rows.
+  /// "Open" (still working or waiting for you) and "Handled", each a card of status rows.
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { api } from "$lib/api/client";
   import type { SupplyRequest } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
   import { money } from "$lib/format";
-  import { requestPill } from "$lib/v";
+  import { isFinal, requestPill } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import VState from "$lib/v/VState.svelte";
   import VStatusRow from "$lib/v/VStatusRow.svelte";
@@ -22,8 +22,9 @@
   });
 
   const items = $derived(inbox.data ?? []);
-  const open = $derived(items.filter((i) => i.status === "waiting"));
-  const handled = $derived(items.filter((i) => i.status !== "waiting"));
+  // Grouped by the same state the pill shows: open until the state is final.
+  const open = $derived(items.filter((i) => !isFinal(i.status)));
+  const handled = $derived(items.filter((i) => isFinal(i.status)));
   const simulated = (id: string) => reqs.data?.[id]?.simulated?.[0]?.sentence;
 </script>
 

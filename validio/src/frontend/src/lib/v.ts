@@ -19,6 +19,10 @@ export const REQUEST_PILL: Record<RequestStatus, Pill> = {
   blocked: { label: "Blocked", tone: "bad" },
 };
 
+/** The states nothing more happens in. Every other state, "working" too, is still open. */
+const FINAL: ReadonlySet<string> = new Set<RequestStatus>(["ordered_alone", "approved", "ordered", "rejected", "blocked"]);
+export const isFinal = (s: string | undefined): boolean => !!s && FINAL.has(s);
+
 export function requestPill(s: string | undefined): Pill {
   return (s && (REQUEST_PILL as Record<string, Pill>)[s]) || { label: words(s), tone: "neutral" };
 }
