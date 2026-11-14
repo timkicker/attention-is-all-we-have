@@ -4,7 +4,7 @@ import os
 import pytest
 
 from api.tests.conftest import schema_errors
-from contract.engine import FIXTURES
+from contract.engine import FIXTURES, claim_hash
 
 ANSWER = next(iter(json.loads((FIXTURES / "split.json").read_text(encoding="utf-8")).values()))["text"]
 
@@ -169,3 +169,34 @@ def test_reworded_sentence_still_says():
     assert label([dead, number], now)["label"] == "stopped_saying"
     # runs stored before verdicts kept terms read as before
     assert label([dead, _life("new", "partial", "2025-03-01T00:00:00Z")], now)["label"] == "stopped_saying"
+
+
+def _ollama_up() -> bool:
+    import requests
+
+    try:
+        return requests.get(f"{os.environ.get('EMBED_URL') or 'http://127.0.0.1:11434'}/api/tags", timeout=2).ok
+    except requests.RequestException:
+        return False
+
+
+@pytest.mark.parametrize("backend", ["fake", "ollama"])
+def test_pasted_gloss_is_found(client, monkeypatch, backend):
+    """Pasted text the fixtures never saw (the English gloss of a Finnish sentence) is embedded with EMBED_BACKEND
+    and judged by the similarity guess, so at least one edition backs it, under the guess model's own name."""
+    from contract.engine import FAKE_GUESS_MODEL, FakeEngine
+    from contract.engine import _fixture as fixture
+
+    if backend == "ollama" and not _ollama_up():
+        pytest.skip("no ollama with bge-m3")
+    monkeypatch.setenv("EMBED_BACKEND", backend)
+    from api import sqllog
+
+    gloss = sqllog.run("SELECT text_en FROM gloss WHERE lang = 'fi' AND h = '8519fbaf22d33984'")[0]["text_en"]
+    assert FakeEngine().split_claims(gloss) == [gloss] and claim_hash(gloss) not in fixture("embed")
+    r = client.post("/api/check", json={"text": gloss})
+    assert r.status_code == 200, r.text
+    per_lang = r.json()["claims"][0]["per_lang"]
+    backed = {lang: v for lang, v in per_lang.items() if v["label"] in ("says", "stopped_saying")}
+    assert backed, {lang: v["label"] for lang, v in per_lang.items()}
+    assert {e["verdict"]["model"] for v in backed.values() for e in v["evidence"]} == {FAKE_GUESS_MODEL}
