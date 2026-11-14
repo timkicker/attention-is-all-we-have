@@ -95,6 +95,10 @@
 :root:not([data-theme="light"]) [data-slot="button"].bg-primary:hover {
   background: var(--v-primary-hover);
 }
+/* The kit's dark outline border (--input) is nearly the card colour (O12). */
+:root:not([data-theme="light"]) [data-slot="button"].border-border {
+  border-color: var(--v-ctx);
+}
 
 /* ---------- base ---------- */
 html {
