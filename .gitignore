@@ -1,4 +1,4 @@
 # local agent skills and config, kept out of the repo
 .agents/
 .claude/
-AGENTS.md
+/AGENTS.md
