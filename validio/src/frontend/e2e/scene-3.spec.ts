@@ -15,7 +15,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   await expect(page.locator("#request-title")).toContainText("200 bags of");
   await expect(page.locator("#request-why")).toHaveText("Lactose-free mozzarella 125\u00a0g is out of stock (simulated). The swap is not on Valio's list.");
   await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
-  await expect(page.getByTestId("asked-for")).toContainText("Valio really has 11,603 bags");
+  await expect(page.getByTestId("asked-for")).toHaveText(/Simulated stock-out for this demo\. Valio's live count is 11,603\sbags\./);
   await expect(page.getByTestId("request-rule")).toContainText("ask-human");
   // Beyond the list is open first: the chosen blend.
   await expect(page.getByTestId("option-465256")).toContainText("180.10");
