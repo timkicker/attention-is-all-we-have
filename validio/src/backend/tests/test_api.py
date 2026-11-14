@@ -351,13 +351,3 @@ def test_ledger_entries_name_their_request(client, holder):
     assert ("simulation", "demo") in got  # the stock-out is the demo's own group, not a request's
     assert all(r in ("R-1", "R-2", "demo") for _, r in got)
 
-
-def test_nonce_route_is_rate_limited_per_client(client):
-    from validio.api.limits import NONCES
-
-    for _ in range(NONCES.limit):
-        assert client.get("/agent/v1/nonce").status_code == 200
-    r = client.get("/agent/v1/nonce")
-    assert r.status_code == 429 and r.headers["retry-after"] == "60"
-    with TestClient(app, client=("203.0.113.9", 50000)) as other:
-        assert other.get("/agent/v1/nonce").status_code == 200  # another client is not held up

@@ -315,6 +315,10 @@ How backend code gets the current account's store (code in `src/backend/validio/
   `email`, `customer`, `address`, `is_demo`, `rules_saved`, `created_at`, ...) or `None` for the local
   kitchen. `ctx.code_ok(code)` checks the account's approval code (scrypt hash; the env code for the local
   kitchen), `ctx.has_code` says whether one is set. `ctx.reset()` copies the template again for an account.
+* **Clock and pass window:** a kitchen's own account (`is_demo` false) decides on the wall clock
+  (`Runtime(real_clock=True)`). Its Spend Pass M-1 names no fixed delivery day and is valid for 30 days from
+  each signing; `Accounts.ctx` signs it again, with one ledger entry, once fewer than seven days are left
+  (`settings.renew_window`). Demo copies and the local kitchen keep the demo clock and the demo window.
 * **By id, no request:** `get_accounts().ctx(account_id)` (LRU of 64 open accounts). Use this for
   `/agent/v1/k/{account}` and `/mcp/k/{account}/`. `get_accounts().get(id)` / `.update(id, **cols)` read
   and write the account row (add columns in `SCHEMA`; `create table if not exists` will not add them to an

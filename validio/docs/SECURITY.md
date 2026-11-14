@@ -93,7 +93,7 @@ Proof:
 - `test_spend_pass.py::test_failed_check_keeps_the_nonce_unused`
 - `test_spend_pass.py::test_nonce_store_is_capped_and_drops_the_oldest`
 - `test_spend_pass.py::test_nonce_expires_on_the_wall_clock_while_the_demo_clock_stands_still`
-- `test_api.py::test_nonce_route_is_rate_limited_per_client`
+- `test_app_synthetic.py::test_nonce_route_is_rate_limited_per_client`
 - `test_api.py::test_retry_orders_once`
 - `test_orders.py::test_idempotent_submit`
 
