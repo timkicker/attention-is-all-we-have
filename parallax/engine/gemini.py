@@ -101,7 +101,7 @@ def _retry_after(exc) -> float | None:
 def ask_json(system: str, user: str, *, sleep=time.sleep, call=None) -> tuple[object, str]:
     """(parsed JSON, raw text). `call(messages)` replaces the API call in tests."""
     messages = [{"role": "system", "content": system}, {"role": "user", "content": user}]
-    effort = os.environ.get("GEMINI_REASONING_EFFORT", "minimal")
+    effort = os.environ.get("GEMINI_REASONING_EFFORT", "low")  # the endpoint answers 400 to "minimal"
 
     def api(msgs):
         kw = {"model": MODEL, "messages": msgs, "temperature": 0, "response_format": {"type": "json_object"}}
