@@ -3,6 +3,7 @@
   /// status rows. Handled requests live on the Orders page.
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { api } from "$lib/api/client";
+  import { agentApi } from "$lib/api/agent";
   import type { SupplyRequest } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
   import { money } from "$lib/format";
@@ -15,7 +16,8 @@
   import { shortReason } from "$lib/ask";
 
   const inbox = live(() => api.inbox());
-  const pass = live(() => api.spendPass("M-1"));
+  // The Rules as saved now (the pass the agent last showed can be an older version).
+  const rules = live(() => agentApi.rules());
   // The rows' simulated lines come with each request.
   const reqs = live(async () => {
     const items = await api.inbox();
@@ -32,10 +34,10 @@
 
 <VHead title="Inbox">
   {#snippet facts()}
-    {#if pass.data}
+    {#if rules.data?.saved}
       <a href="/agent#rules" data-testid="spend-pass">
-        Orders alone up to <span data-testid="pass-auto" id="pass-auto">{money(pass.data.autoLimitCents)}</span>, never above
-        <span data-testid="pass-cap" id="pass-cap">{money(pass.data.hardCapCents)}</span> ›
+        Orders alone up to <span data-testid="pass-auto" id="pass-auto">{money(rules.data.aloneUpToCents)}</span>, never above
+        <span data-testid="pass-cap" id="pass-cap">{money(rules.data.approvalUpToCents)}</span> ›
       </a>
     {/if}
   {/snippet}
