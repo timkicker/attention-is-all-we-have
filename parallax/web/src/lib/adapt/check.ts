@@ -41,18 +41,23 @@ function questionPart(q: string | null): string | null {
   return s.charAt(0).toLowerCase() + s.slice(1)
 }
 
-/** Longest recorded-answer label, cut on a word boundary (no "…"). */
-export const LABEL_MAX = 60
+/** Longest question shown in a recorded-answer label; a longer one is cut at the last word boundary before it. */
+export const QUESTION_MAX = 80
+
+function capped(q: string): string {
+  if (q.length <= QUESTION_MAX) return q
+  const cut = q.slice(0, QUESTION_MAX + 1)
+  const at = cut.lastIndexOf(' ')
+  return (at > 0 ? cut.slice(0, at) : q.slice(0, QUESTION_MAX)).replace(/[\s,;:]+$/, '')
+}
 
 /** The recorded answer's label, built only from its stored data: "<model> on <question>". */
 export function recordedLabel(r: { answer_model: string | null; question: string | null }): string | null {
   const m = modelName(r.answer_model)
-  const q = questionPart(r.question)
-  const full = m && q ? `${m} on ${q}` : (m ?? (q ? q.charAt(0).toUpperCase() + q.slice(1) : null))
-  if (!full || full.length <= LABEL_MAX) return full
-  const cut = full.slice(0, LABEL_MAX + 1)
-  const at = cut.lastIndexOf(' ')
-  return (at > 0 ? cut.slice(0, at) : full.slice(0, LABEL_MAX)).replace(/[\s,;:]+$/, '')
+  const part = questionPart(r.question)
+  const q = part ? capped(part) : null
+  if (m && q) return `${m} on ${q}`
+  return m ?? (q ? q.charAt(0).toUpperCase() + q.slice(1) : null)
 }
 
 /** Questions the Check page offers first: the Mainila shots, then the losses. */

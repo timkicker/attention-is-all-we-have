@@ -27,9 +27,23 @@ describe('recorded labels come from the data', () => {
     expect(modelName('gemini-3.8-flash')).toBe('Gemini')
     expect(recordedLabel({ answer_model: 'gemma-4-31b-it', question: 'When did the Winter War end?' })).toBe('Gemma on when did the Winter War end')
     expect(recordedLabel({ answer_model: null, question: null })).toBeNull()
-    const long = recordedLabel({ answer_model: 'gemini-3.8-flash', question: 'How much territory did Finland cede to the Soviet Union after the Winter War?' })
-    expect(long).toBe('Gemini on how much territory did Finland cede to the Soviet')
-    expect(long!.length).toBeLessThanOrEqual(60)
+    // the five real questions of contract/fixtures/answers.json stay whole
+    const real = [
+      'Who fired the shots at Mainila in November 1939?',
+      'How many Finnish soldiers died in the Winter War?',
+      'How much territory did Finland cede to the Soviet Union after the Winter War?',
+      'When did the Winter War end?',
+      'What was the Terijoki government?',
+    ]
+    expect(real.map((question) => recordedLabel({ answer_model: 'gemini-3.8-flash', question }))).toEqual([
+      'Gemini on who fired the shots at Mainila in November 1939',
+      'Gemini on how many Finnish soldiers died in the Winter War',
+      'Gemini on how much territory did Finland cede to the Soviet Union after the Winter War',
+      'Gemini on when did the Winter War end',
+      'Gemini on what was the Terijoki government',
+    ])
+    const long = recordedLabel({ answer_model: 'm', question: `${'word '.repeat(20)}end?` })
+    expect(long).toBe(`M on ${'word '.repeat(16).trim()}`)
   })
   it('offers different questions first', () => {
     const r = (id: string, q: string) => ({ run_id: id, question: q, answer_model: 'm', answer_date: null })
