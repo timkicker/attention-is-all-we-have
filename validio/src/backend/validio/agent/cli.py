@@ -2,7 +2,8 @@
 printed for the demo's left pane.
 
 By default it talks MCP to the running Validio of `make demo` on 127.0.0.1:8410, so the web app on the
-right shows the same request. Scene 3 needs the presenter's stock-out button first. With --local (or
+right shows the same request. Scene 3 needs the simulated stock-out, which only the template build sets
+(scripts/demo_check.py, in process, no route). With --local (or
 when nothing answers on the port) it runs Validio's MCP server in process on a fresh seeded store under
 a temporary folder, and switches the simulated stock-out on itself for scene 3.
 

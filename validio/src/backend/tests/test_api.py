@@ -3,6 +3,7 @@
 import re
 
 import pytest
+from asking import stockout
 from conftest import CODE
 from fastapi.testclient import TestClient
 
@@ -154,8 +155,9 @@ def test_openapi_has_all_paths(client):
     assert {"/agent/v1/products", "/agent/v1/nonce", "/agent/v1/requests", "/agent/v1/requests/{request_id}",
             "/agent/v1/orders", "/agent/v1/orders/{order_id}", "/api/inbox", "/api/requests/{request_id}",
             "/api/spend-passes/{pass_id}", "/api/orders/{order_id}", "/api/orders/{order_id}/approve",
-            "/api/orders/{order_id}/reject", "/api/ledger", "/api/demo", "/api/demo/stock-out",
+            "/api/orders/{order_id}/reject", "/api/ledger", "/api/demo",
             "/api/demo/reset", "/api/health"} <= paths
+    assert not {"/api/demo/stock-out", "/api/demo/ask", "/api/demo/example", "/api/agent/demo"} & paths
     assert "SupplyRequestView" in spec["components"]["schemas"]
     assert "liveChecked" in spec["components"]["schemas"]["SupplyRequestView"]["properties"]
 
@@ -169,23 +171,28 @@ def ask_mozzarella(client, holder):
 
 
 def test_demo_controls_answer_this_machine_and_nobody_else(client, monkeypatch):
-    # the demo token is gone: the local kitchen's switches answer callers on this machine only, a demo copy's
-    # switches its session (test_accounts)
+    # the demo token is gone: the local kitchen's reset answers callers on this machine only, a demo copy's
+    # reset its session (test_accounts)
     with TestClient(app, client=("203.0.113.7", 50000)) as remote:
         monkeypatch.setenv("VALIDIO_KITCHEN_TOKEN", "kt")
-        assert remote.post("/api/demo/stock-out", headers={"X-Kitchen-Token": "kt"}).status_code == 403
         assert remote.post("/api/demo/reset", headers={"X-Kitchen-Token": "kt", "X-Demo-Token": "x"}).status_code == 403
     monkeypatch.setenv("VALIDIO_DEMO", "")
-    assert client.post("/api/demo/stock-out").status_code == 404
+    assert client.post("/api/demo/reset").status_code == 404
     monkeypatch.setenv("VALIDIO_DEMO", "1")
     assert client.get("/api/demo").json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
-    r = client.post("/api/demo/stock-out")
-    assert r.json() == {"codeRequired": True, "stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    stockout()
+    assert client.get("/api/demo").json()["stockOut466375"] is True
+
+
+def test_no_shortcut_orders_or_stocks(client):
+    # ordering only through an agent over MCP or the agent API; the stock-out has no switch
+    for path in ("/api/demo/stock-out", "/api/demo/ask", "/api/demo/example", "/api/agent/demo"):
+        assert client.post(path, json={"text": "500 litres of lactose-free milk"}).status_code in (404, 405), path
 
 
 def test_stockout_names_what_valio_really_has(client, holder, ctx):
     # read from Valio's (replayed) availability for the pass's delivery day, never a fixed number
-    client.post("/api/demo/stock-out")
+    stockout()
     (entry,) = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "simulation"]
     assert entry["sentence"] == ("Simulated a stock-out of lactose-free mozzarella 125 g for the demo. "
                                  "Valio has 11,603 bags.")
@@ -194,7 +201,7 @@ def test_stockout_names_what_valio_really_has(client, holder, ctx):
 
 
 def test_scene3_swap_waits_and_approve_needs_code(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     req = ask_mozzarella(client, holder)
     assert req["status"] == "waiting" and req["decision"]["outcome"] == "ask_human"
     assert req["simulated"][0]["what"] == "stock-out of lactose-free mozzarella 125 g"
@@ -216,7 +223,7 @@ def test_scene3_swap_waits_and_approve_needs_code(client, holder):
 
 
 def test_wrong_codes_lock_the_order(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     for _ in range(5):
         assert client.post(f"/api/orders/{oid}/approve", json={"code": "111111"}).status_code == 403
@@ -224,7 +231,7 @@ def test_wrong_codes_lock_the_order(client, holder):
 
 
 def test_reject(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     req = ask_mozzarella(client, holder)
     r = client.post(f"/api/orders/{req['orderId']}/reject", json={"code": CODE})
     assert r.json()["state"] == "rejected"
@@ -233,7 +240,7 @@ def test_reject(client, holder):
 
 def test_reset_starts_over(client, holder, ctx):
     ask_milk(client, holder)
-    client.post("/api/demo/stock-out")
+    stockout()
     r = client.post("/api/demo/reset")
     assert r.json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
     assert client.get("/api/inbox").json() == []
@@ -304,7 +311,7 @@ def test_request_and_order_show_what_the_pass_placed_before(client, holder):
         "requestId": milk["id"], "idempotencyKey": "milk-order-1",
         "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
     assert client.get(f"/api/requests/{milk['id']}").json()["usedBeforeCents"] == 0  # its own order is not before it
-    client.post("/api/demo/stock-out")
+    stockout()
     mozz = ask_mozzarella(client, holder)
     assert mozz["id"] == "R-2"
     assert client.get("/api/requests/R-2").json()["usedBeforeCents"] == 101000
@@ -335,7 +342,7 @@ def test_ledger_entries_name_their_request(client, holder):
     client.post("/agent/v1/orders", headers=auth(holder), json={
         "requestId": milk["id"], "idempotencyKey": "milk-order-1",
         "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
-    client.post("/api/demo/stock-out")
+    stockout()
     ask_mozzarella(client, holder)
     got = [(e["kind"], e.get("requestId")) for e in client.get("/api/ledger").json()["entries"]]
     assert got[:4] == [("request", "R-1"), ("decision", "R-1"), ("decision", "R-1"), ("order", "R-1")]

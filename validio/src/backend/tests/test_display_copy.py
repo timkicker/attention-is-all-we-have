@@ -4,6 +4,7 @@ entry, the asked-for product apart from the options, user words for Spend Pass f
 
 import re
 
+from asking import stockout
 from conftest import CODE
 from test_api import ask_milk, ask_mozzarella, auth, client, holder  # noqa: F401
 
@@ -15,7 +16,7 @@ def _milk_and_mozzarella(client, holder):
     client.post("/agent/v1/orders", headers=auth(holder), json={
         "requestId": milk["id"], "idempotencyKey": "milk-order-1",
         "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
-    client.post("/api/demo/stock-out")
+    stockout()
     return milk, ask_mozzarella(client, holder)
 
 

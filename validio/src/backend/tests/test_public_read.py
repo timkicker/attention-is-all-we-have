@@ -1,6 +1,6 @@
 """VALIDIO_PUBLIC_READ=1: a stranger on the public deploy reads the UI API without the kitchen token.
 Every write stays closed: the kitchen token (or a kitchen's session) for any POST, the 6 digit code for approve,
-renew and the limits. The demo token is gone: the demo switches answer a demo copy's session only."""
+renew and the limits. The demo token is gone: the demo reset answers a demo copy's session only."""
 
 import pytest
 from conftest import CODE
@@ -11,7 +11,7 @@ from validio.api.app import app
 REMOTE = ("203.0.113.7", 50000)
 KT = "kt-secret"
 READS = ("/api/inbox", "/api/ledger", "/api/ledger/head", "/api/demo", "/api/steady")
-WRITES = ("/api/orders/O-1/approve", "/api/orders/O-1/reject", "/api/demo/stock-out", "/api/demo/reset",
+WRITES = ("/api/orders/O-1/approve", "/api/orders/O-1/reject", "/api/demo/reset",
           "/api/steady/S-1/renew", "/api/steady/S-1/lines/464306/accept")
 
 
@@ -55,9 +55,8 @@ def test_writes_without_a_token_stay_401_with_public_read(public, monkeypatch, p
 def test_demo_switches_stay_closed_to_the_kitchen_token(public, monkeypatch):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
     with TestClient(app, client=REMOTE, headers={"X-Kitchen-Token": KT}) as c:
-        assert c.post("/api/demo/stock-out").status_code == 403
-        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": "anything"}).status_code == 403
         assert c.post("/api/demo/reset").status_code == 403
+        assert c.post("/api/demo/reset", headers={"X-Demo-Token": "anything"}).status_code == 403
         assert c.get("/api/demo").json()["stockOut466375"] is False
 
 
@@ -71,15 +70,14 @@ def test_public_read_is_only_the_exact_value_1(public, monkeypatch):
 def test_a_header_named_demo_token_opens_nothing(public, monkeypatch):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
     with TestClient(app, client=REMOTE, headers={"X-Demo-Token": "demo-test-token"}) as c:
-        assert c.post("/api/demo/stock-out").status_code == 401
-        assert c.post("/api/demo/ask", json={"text": "1500 litres of lactose-free milk by Monday"}).status_code == 401
+        assert c.post("/api/demo/reset").status_code == 401
         assert c.post("/api/spend-pass", json={"autoLimitCents": 1, "hardCapCents": 2,
                                                "deliverBy": "2026-11-16"}).status_code == 401
     assert public.store.requests() == []
 
 
 def test_a_demo_copy_drives_the_demo_on_a_public_deploy(public, monkeypatch, tmp_path):
-    """What the demo token did, a demo session does now: switches, ask, and approve with 246810."""
+    """What the demo token did, a demo session does now: the reset, and approve with 246810."""
     from validio.api import accounts as acc_mod
 
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
@@ -88,7 +86,5 @@ def test_a_demo_copy_drives_the_demo_on_a_public_deploy(public, monkeypatch, tmp
     acc_mod._tries.clear()
     with stranger() as c:
         assert c.post("/api/account/demo").status_code == 200
-        assert c.post("/api/demo/stock-out").status_code == 200
-        assert c.post("/api/demo/stock-out", json={"on": False}).status_code == 200
         assert c.post("/api/demo/reset").status_code == 200
     assert public.store.requests() == []  # the local kitchen did not move

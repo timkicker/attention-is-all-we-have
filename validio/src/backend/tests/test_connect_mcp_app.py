@@ -12,6 +12,7 @@ import threading
 import time
 
 import pytest
+from asking import pair_demo_agent
 from fastapi.testclient import TestClient
 from test_accounts import SIGNUP, app_env  # noqa: F401
 from test_agent_routing import MCP_HEADERS, Mcp, _init
@@ -120,18 +121,19 @@ def test_the_url_outlives_the_code(kitchens, monkeypatch):
 
 
 def test_an_agent_with_its_own_key_ends_the_connector(kitchens):
-    demo, *_ = kitchens
+    demo, _, _, a, _ = kitchens
     token = start_pairing(demo)
     demo.post("/api/agent/deny")
-    demo.post("/api/agent/demo")
+    pair_demo_agent(get_accounts().ctx(a))
     out = demo.post("/api/agent/allow").json()
     assert out["agent"]["kind"] == "agent" and connect.connector_ctx(token) is None
 
 
 def test_the_code_still_pairs_a_signing_agent(kitchens):
-    demo, *_ = kitchens
+    demo, _, _, a, _ = kitchens
     token = start_pairing(demo)
-    assert demo.post("/api/agent/demo").json()["consent"]["name"] != "MCP agent"
+    pair_demo_agent(get_accounts().ctx(a))  # a signing agent answers the code on /agent/v1/pair
+    assert demo.get("/api/agent").json()["consent"]["name"] != "MCP agent"
     demo.post("/api/agent/allow")
     assert connect.connector_ctx(token) is None
 

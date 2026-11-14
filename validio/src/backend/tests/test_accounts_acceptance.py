@@ -1,7 +1,7 @@
 """Acceptance: the "Done means" path of the accounts plan through the HTTP API, two demo browsers side by side.
 
-Browser A walks the path: try the demo kitchen, connect the demo agent, send the example request and see it
-ordered, lower the alone limit in Rules with the code, send again and see it wait, approve with the code,
+Browser A walks the path: try the demo kitchen, pair the demo agent's key (a signing agent on /agent/v1/pair),
+let that agent send the example request over MCP and see it ordered, lower the alone limit in Rules with the code, send again and see it wait, approve with the code,
 pause the agent and see the refusal in the ledger, change the diet in Settings. Browser B holds its own demo
 copy the whole time; after every step nothing A did shows in B. At the end B runs the example itself and is
 judged on its own limits and its own week.
@@ -113,6 +113,29 @@ def ledger(c: TestClient) -> list[dict]:
     return ok(c.get("/api/ledger"))["entries"]
 
 
+def kitchen(aid: str):
+    from validio.api.accounts import get_accounts
+
+    return get_accounts().ctx(aid)
+
+
+def demo_agent_pairs(c: TestClient, aid: str, code: str) -> dict:
+    """The demo agent's key answers the pairing code on /agent/v1/k/{aid}/pair, as any signing agent does."""
+    from validio.api import connect
+
+    jwk = connect.demo_key(kitchen(aid)).export_public(as_dict=True)
+    r = c.post(f"/agent/v1/k/{aid}/pair", json={"code": code, "name": connect.DEMO_AGENT, "publicJwk": jwk})
+    assert r.status_code == 202, r.text
+    return ok(c.get("/api/agent"))
+
+
+def example(aid: str):
+    """The kitchen's agent sends the example request over MCP (in process, the fake model)."""
+    from asking import ask
+
+    return ask(kitchen(aid), EXAMPLE)
+
+
 # 1. Try the demo kitchen
 
 def test_01_try_the_demo_kitchen(world):
@@ -151,7 +174,7 @@ def test_03_connect_the_demo_agent(world):
     assert len(p["pairing"]["code"].replace("-", "")) == 8
     assert re.search(r"/mcp/c/[A-Za-z0-9_-]{43}/$", p["pairing"]["mcpUrl"])  # any MCP agent; signing ones use the code
     assert p["pairing"]["apiUrl"].endswith(f"/agent/v1/k/{aid}")
-    c = ok(a.post("/api/agent/demo"))
+    c = demo_agent_pairs(a, aid, p["pairing"]["code"])
     assert c["state"] == "consent" and c["consent"]["name"] and c["consent"]["may"]
     assert any("1,200.00 €" in m for m in c["consent"]["may"]), c["consent"]["may"]
     s = ok(a.post("/api/agent/allow"))
@@ -171,9 +194,9 @@ def test_03_connect_the_demo_agent(world):
 
 def test_04_example_request_is_ordered(world):
     a = world["a"]
-    r = ok(a.post("/api/demo/example"))
-    rid = r["requestId"]
-    assert rid, r["final"]
+    r = example(world["ids"][0])
+    rid = r.request_id
+    assert rid, r.final
     v = ok(a.get(f"/api/requests/{rid}"))
     assert v["status"] == "ordered_alone", v.get("decision")
     assert v["totalCents"] == EXAMPLE_CENTS
@@ -211,9 +234,9 @@ def test_05_lower_the_alone_limit(world):
 
 def test_06_same_request_now_waits(world):
     a = world["a"]
-    r = ok(a.post("/api/demo/example"))
-    rid = r["requestId"]
-    assert rid and rid != world.get("first"), r["final"]
+    r = example(world["ids"][0])
+    rid = r.request_id
+    assert rid and rid != world.get("first"), r.final
     v = ok(a.get(f"/api/requests/{rid}"))
     assert v["status"] == "waiting", f"expected waiting, got {v['status']}: {(v.get('decision') or {}).get('sentence')}"
     assert v["orderId"]
@@ -248,9 +271,9 @@ def test_08_pause_and_refusal_in_ledger(world):
     s = ok(a.post("/api/agent/pause", json={"paused": True}))
     assert s["state"] == "paused"
     led = len(ledger(a))
-    r = ok(a.post("/api/demo/example"))
-    assert not r.get("requestId"), "a paused agent got a request through"
-    assert "paused" in (r["final"] + " ".join(r["lines"])).lower()
+    r = example(world["ids"][0])
+    assert not r.request_id, "a paused agent got a request through"
+    assert "paused" in (r.final + " ".join(r.lines)).lower()
     assert [i["id"] for i in ok(a.get("/api/inbox"))] == requests_before
     refused = [e for e in ledger(a)[led:] if e["kind"] == "agent" and "paused" in e["sentence"].lower()]
     assert len(refused) == 1, [e["sentence"] for e in ledger(a)[led:]]
@@ -282,12 +305,13 @@ def test_09_change_the_diet(world):
 def test_10_b_runs_the_example_on_its_own_copy(world):
     a, b = world["a"], world["b"]
     a_inbox = ok(a.get("/api/inbox"))
-    ok(b.post("/api/agent/pair"))
-    ok(b.post("/api/agent/demo"))
+    bid = world["ids"][1]
+    p = ok(b.post("/api/agent/pair"))
+    demo_agent_pairs(b, bid, p["pairing"]["code"])
     assert ok(b.post("/api/agent/allow"))["state"] == "active"
     assert ok(a.get("/api/agent"))["state"] == "paused", "B's connect touched A's agent"
-    r = ok(b.post("/api/demo/example"))
-    v = ok(b.get(f"/api/requests/{r['requestId']}"))
+    r = example(bid)
+    v = ok(b.get(f"/api/requests/{r.request_id}"))
     assert v["status"] == "ordered_alone", f"B: {v['status']}: {(v.get('decision') or {}).get('sentence')}"
     assert ok(a.get("/api/inbox")) == a_inbox
     assert ok(b.get("/api/settings"))["diet"] == ["FREE_FROM_LACTOSE"]

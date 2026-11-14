@@ -5,6 +5,7 @@ import io
 import json
 
 import pytest
+from asking import pair_demo_agent
 from mcp import Client
 
 from validio.agent.buyer import run_scene
@@ -82,7 +83,7 @@ async def test_renew_calls_the_steady_function_not_the_http_route(ctx, monkeypat
 
 @pytest.mark.asyncio
 async def test_renew_works_on_the_account_in_current(ctx, tmp_path, monkeypatch):
-    # demo/ask sets state.current to the account: the tool renews that account's Steady Order, not the local one
+    # an in-process client sets state.current to the account: the tool renews that account's Steady Order, not the local one
     from validio.agent.holder import DISCLOSE
     from validio.api import accounts, connect, state, steady
     from validio.demo import seed
@@ -92,7 +93,7 @@ async def test_renew_works_on_the_account_in_current(ctx, tmp_path, monkeypatch)
     reg = accounts.get_accounts()
     row = reg.create(name="K", email=None, password=None, customer="1", code="246810", is_demo=True)
     acct = reg.ctx(row["id"])
-    connect.answer_as_demo_agent(acct)  # a new account starts unconnected: connect the server's demo agent
+    pair_demo_agent(acct)  # a new account starts unconnected: the demo agent's key pairs
     connect.allow(acct)
     token = state.current.set(acct)
     try:

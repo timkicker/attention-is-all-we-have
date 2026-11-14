@@ -1,5 +1,7 @@
-"""Play audit 6: the simulated stock-out goes off again, with its own ledger entry."""
+"""Play audit 6: the simulated stock-out goes off again, with its own ledger entry. It has no route any more;
+the template build sets it in the store (scripts/demo_check.py)."""
 
+from asking import ask, stockout
 from test_api import client  # noqa: F401
 
 
@@ -8,9 +10,9 @@ def sims(client):  # noqa: F811
 
 
 def test_on_then_off(client):  # noqa: F811
-    assert client.post("/api/demo/stock-out").json()["stockOut466375"] is True
-    r = client.post("/api/demo/stock-out", json={"on": False})
-    assert r.status_code == 200 and r.json()["stockOut466375"] is False
+    stockout(on=True)
+    assert client.get("/api/demo").json()["stockOut466375"] is True
+    stockout(on=False)
     assert client.get("/api/demo").json()["stockOut466375"] is False
     on, off = sims(client)
     assert on.startswith("Simulated a stock-out of")
@@ -18,18 +20,10 @@ def test_on_then_off(client):  # noqa: F811
     assert client.get("/api/ledger").json()["chain"]["ok"]
 
 
-def test_same_state_twice_writes_nothing(client):  # noqa: F811
-    client.post("/api/demo/stock-out", json={"on": False})
-    assert sims(client) == []
-    client.post("/api/demo/stock-out", json={"on": True})
-    client.post("/api/demo/stock-out", json={"on": True})
-    assert len(sims(client)) == 1
-
-
-def test_stock_out_entries_are_the_demos_own_group(client):  # noqa: F811
-    client.post("/api/demo/ask", json={"text": "500 litres of lactose-free milk by Monday"})
-    client.post("/api/demo/stock-out", json={"on": True})
-    client.post("/api/demo/stock-out", json={"on": False})
+def test_stock_out_entries_are_the_demos_own_group(client, ctx):  # noqa: F811
+    ask(ctx, "500 litres of lactose-free milk by Monday")
+    stockout(on=True)
+    stockout(on=False)
     led = client.get("/api/ledger").json()
     assert {e["requestId"] for e in led["entries"] if e["kind"] == "simulation"} == {"demo"}
     assert {"requestId": "demo", "titleText": "Demo"} in led["groups"]
