@@ -25,6 +25,21 @@
   })
 
   const vm = $derived(res?.ok ? res.data : null)
+
+  // The query block scrolls sideways; more = some of it is still hidden on the right.
+  let pre = $state<HTMLPreElement | null>(null)
+  let more = $state(false)
+  function measure() {
+    if (pre) more = pre.scrollLeft + pre.clientWidth < pre.scrollWidth - 1
+  }
+  $effect(() => {
+    if (!pre) return
+    void vm?.sql
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(pre)
+    return () => ro.disconnect()
+  })
   const h = copy.hood
   // Wireframe words in mock mode; live data says what the logged statement really does.
   const kind = $derived(vm && 'queryKind' in vm ? (vm as HoodVM & { queryKind: string }).queryKind : null)
@@ -54,7 +69,7 @@
     <section class="s" data-testid={TID.hoodSection} data-section="query">
       <h2>{h.QUERY_H}</h2>
       <p>{queryLead}</p>
-      <pre data-testid={TID.hoodQuery}>{vm.sql}</pre>
+      <pre data-testid={TID.hoodQuery} bind:this={pre} class:more onscroll={measure}>{vm.sql}</pre>
     </section>
 
     <section class="s" data-testid={TID.hoodSection} data-section="numbers">
@@ -96,7 +111,9 @@
   .top p { margin-top: 4px; }
   section.s { margin-top: 56px; }
   section.s p { margin-top: 8px; color: var(--fg2); }
-  pre { margin-top: 16px; padding: 16px; background: var(--soft); border-radius: var(--r); font: 400 var(--fs-13) / var(--lh-13) var(--mono); overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-variant-ligatures: none; }
+  pre { margin-top: 16px; padding: 16px; background: var(--soft); border-radius: var(--r); font: 400 var(--fs-13) / var(--lh-13) var(--mono); overflow-x: auto; white-space: pre; font-variant-ligatures: none; }
+  /* Fades the right edge while more of the line is hidden, so the sideways scroll is visible. */
+  pre.more { mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
   dl { margin-top: 8px; }
   dl div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   dt { color: var(--fg2); }
