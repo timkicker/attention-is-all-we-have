@@ -31,7 +31,7 @@ export const CODE = "246810";
  */
 export async function slop(page: Page): Promise<string[]> {
   return page.evaluate(() => {
-    // Proof entries ([data-raw]) are the hashed originals and stay as they were written.
+    // Proof entries and codes read out verbatim ([data-raw]) stay as they were written.
     const raw = [...document.querySelectorAll<HTMLElement>("[data-raw]")];
     raw.forEach((e) => (e.style.display = "none"));
     const text = document.body.innerText;
