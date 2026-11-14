@@ -20,6 +20,7 @@
 
   /* ---------- fonts ---------- */
   --v-sans: "Figtree Variable", "Figtree", "Helvetica Neue", Arial, sans-serif;
+  --v-script: "Pacifico", "Figtree Variable", cursive; /* the Validio wordmark only */
   --font-sans: var(--v-sans);
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
 

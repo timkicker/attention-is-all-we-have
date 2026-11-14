@@ -288,12 +288,13 @@
     text-decoration: none;
     color: inherit;
   }
+  /* The wordmark in a heavy brush script, white on the petrol band. */
   .wordmark {
-    font-family: var(--v-sans);
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: 700;
-    letter-spacing: var(--ls-title);
+    font-family: var(--v-script);
+    font-size: 26px;
+    line-height: 34px;
+    font-weight: 400;
+    letter-spacing: 0;
   }
   .for {
     font-size: var(--fs-cap);
@@ -389,7 +390,8 @@
     padding: 0 40px;
   }
   .band.phone .wordmark {
-    font-size: 19px;
+    font-size: 22px;
+    line-height: 30px;
   }
   .band.phone .k-name {
     max-width: 180px;
