@@ -55,21 +55,33 @@ function onDate(rows: DroppedRowRaw[], date: string | null): DroppedRowRaw[] {
   return date ? rows.filter((r) => r.died !== null && r.died.slice(0, 10) <= date) : rows
 }
 
+/** A partial cut; `words_en` is the English gloss of the removed words (dropped.py), null without one. */
+type Cut = { start: number; end: number; words_en?: string | null }
+
 /** The statement with its removed part struck, and what the note says was removed. */
 export function cutOf(r: Pick<DroppedRowRaw, 'text' | 'gloss' | 'removed'>): {
   say: MarkedText
   what: 'all' | 'end' | { words: string }
 } {
-  const cut = r.removed
-  // The English gloss is a translation of the whole sentence; character offsets of a cut do not carry
-  // over to it, so a partial cut is shown on the original wording.
+  const cut: Cut | null | undefined = r.removed
   if (!cut) {
     const text = r.gloss ?? r.text
     return { say: { text, spans: [{ start: 0, end: text.length }] }, what: 'all' }
   }
-  const say = { text: r.text, spans: [{ start: cut.start, end: cut.end }] }
-  if (cut.end >= r.text.length) return { say, what: 'end' }
+  const atEnd = cut.end >= r.text.length
   const words = r.text.slice(cut.start, cut.end).replace(/[\s,;:]+$/, '')
+  // The English gloss translates the whole sentence, so the cut's offsets do not carry over. With a gloss
+  // the English sentence is shown and the removed words are struck where their own gloss is found in it.
+  if (r.gloss) {
+    const en = cut.words_en?.replace(/[\s.,;:]+$/, '') ?? null
+    const at = en ? r.gloss.toLowerCase().indexOf(en.toLowerCase()) : -1
+    const spans = at >= 0 && en ? [{ start: at, end: at + en.length }] : []
+    const say = { text: r.gloss, spans }
+    if (atEnd) return { say, what: 'end' }
+    return { say, what: { words: excerpt(en ?? words, QUOTE_MAX) } }
+  }
+  const say = { text: r.text, spans: [{ start: cut.start, end: cut.end }] }
+  if (atEnd) return { say, what: 'end' }
   return { say, what: { words: excerpt(words, QUOTE_MAX) } }
 }
 
