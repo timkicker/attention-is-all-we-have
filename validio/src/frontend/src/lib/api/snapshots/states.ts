@@ -5014,7 +5014,8 @@ export const answers: Answers = {
     "requestId": "R-1",
     "spendPassId": "M-1",
     "state": "placed",
-    "totalCents": 101000
+    "totalCents": 101000,
+    "usedBeforeCents": 0
    }
   ],
   "O-2": [
@@ -5081,7 +5082,8 @@ export const answers: Answers = {
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "waiting",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    },
    {
     "approvedBy": "owner",
@@ -5157,7 +5159,8 @@ export const answers: Answers = {
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "placed",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    },
    {
     "decision": {
@@ -5227,7 +5230,8 @@ export const answers: Answers = {
     "requestId": "R-2",
     "spendPassId": "M-1",
     "state": "rejected",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    }
   ]
  },
@@ -7933,7 +7937,8 @@ export const answers: Answers = {
     "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
     "timeText": "10:00",
     "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
-    "totalCents": 101000
+    "totalCents": 101000,
+    "usedBeforeCents": 0
    }
   ],
   "R-2": [
@@ -9316,7 +9321,8 @@ export const answers: Answers = {
     "text": "200 bags of lactose-free mozzarella 125 g",
     "timeText": "10:14",
     "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    },
    {
     "agent": "agent:buyer-1",
@@ -10697,7 +10703,8 @@ export const answers: Answers = {
     "text": "200 bags of lactose-free mozzarella 125 g",
     "timeText": "10:14",
     "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    },
    {
     "agent": "agent:buyer-1",
@@ -12078,7 +12085,8 @@ export const answers: Answers = {
     "text": "200 bags of lactose-free mozzarella 125 g",
     "timeText": "10:14",
     "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
-    "totalCents": 18010
+    "totalCents": 18010,
+    "usedBeforeCents": 101000
    }
   ]
  },

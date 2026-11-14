@@ -285,3 +285,19 @@ def test_every_product_has_a_short_display_name(client, holder):
     assert all(p["displayName"] == p["shortName"] and p["fullName"] for p in opts)
     lines = client.get(f"/api/orders/{o['id']}").json()["lines"]
     assert lines[0]["displayName"] == "Lactose-free semi-skimmed milk 1 l"
+
+
+def test_request_and_order_show_what_the_pass_placed_before(client, holder):
+    # O10: R-2 waits under Spend Pass M-1 after O-1 (milk, 1,010.00 €) was placed under it
+    milk = ask_milk(client, holder)
+    assert client.get(f"/api/requests/{milk['id']}").json()["usedBeforeCents"] == 0
+    client.post("/agent/v1/orders", headers=auth(holder), json={
+        "requestId": milk["id"], "idempotencyKey": "milk-order-1",
+        "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
+    assert client.get(f"/api/requests/{milk['id']}").json()["usedBeforeCents"] == 0  # its own order is not before it
+    client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
+    mozz = ask_mozzarella(client, holder)
+    assert mozz["id"] == "R-2"
+    assert client.get("/api/requests/R-2").json()["usedBeforeCents"] == 101000
+    assert client.get(f"/api/orders/{mozz['orderId']}").json()["usedBeforeCents"] == 101000
+    assert client.get("/api/inbox").json()[0]["id"] == "R-2"

@@ -218,6 +218,8 @@ export interface SupplyRequest {
   moneyText?: string;
   /** "10:00" on the demo clock. */
   timeText?: string;
+  /** What orders placed under the same Spend Pass before this request add up to: R-2 gives 101000. */
+  usedBeforeCents?: number;
 }
 
 /** One row in the inbox. */
@@ -286,6 +288,8 @@ export interface Order {
   moneyText?: string;
   /** The approve page's question: "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?" */
   questionText?: string;
+  /** What orders placed under the same Spend Pass before this one add up to. */
+  usedBeforeCents?: number;
 }
 
 /**

@@ -1093,6 +1093,18 @@
           "totalCents": {
             "title": "Totalcents",
             "type": "integer"
+          },
+          "usedBeforeCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what orders placed under the same Spend Pass before this one add up to",
+            "title": "Usedbeforecents"
           }
         },
         "required": [
@@ -2565,6 +2577,18 @@
               }
             ],
             "title": "Totalcents"
+          },
+          "usedBeforeCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what orders placed under the same Spend Pass before this request add up to",
+            "title": "Usedbeforecents"
           }
         },
         "required": [

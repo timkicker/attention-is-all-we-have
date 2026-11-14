@@ -2714,7 +2714,8 @@
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {

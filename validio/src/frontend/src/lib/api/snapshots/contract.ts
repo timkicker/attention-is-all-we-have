@@ -2740,7 +2740,8 @@ export const scene1: Snapshot = {
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {
@@ -5693,7 +5694,8 @@ export const scene2: Snapshot = {
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {
@@ -5804,6 +5806,7 @@ export const scene2: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "moneyText": "1,010.00 €",
+      "usedBeforeCents": 0,
       "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
@@ -7450,7 +7453,8 @@ export const scene3: Snapshot = {
       "agentText": "200 bags of lactose-free mozzarella 125 g",
       "moneyText": "180.10 €",
       "timeText": "10:14",
-      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov"
+      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "usedBeforeCents": 101000
     },
     "R-1": {
       "id": "R-1",
@@ -10152,7 +10156,8 @@ export const scene3: Snapshot = {
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {
@@ -10272,6 +10277,7 @@ export const scene3: Snapshot = {
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
       "moneyText": "180.10 €",
+      "usedBeforeCents": 101000,
       "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
@@ -10339,6 +10345,7 @@ export const scene3: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "moneyText": "1,010.00 €",
+      "usedBeforeCents": 0,
       "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
@@ -12153,7 +12160,8 @@ export const scene4: Snapshot = {
       "agentText": "200 bags of lactose-free mozzarella 125 g",
       "moneyText": "180.10 €",
       "timeText": "10:14",
-      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov"
+      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "usedBeforeCents": 101000
     },
     "R-1": {
       "id": "R-1",
@@ -14855,7 +14863,8 @@ export const scene4: Snapshot = {
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {
@@ -14975,6 +14984,7 @@ export const scene4: Snapshot = {
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
       "moneyText": "180.10 €",
+      "usedBeforeCents": 101000,
       "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
@@ -15042,6 +15052,7 @@ export const scene4: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "moneyText": "1,010.00 €",
+      "usedBeforeCents": 0,
       "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },
@@ -17214,7 +17225,8 @@ export const scene5: Snapshot = {
       "agentText": "200 bags of lactose-free mozzarella 125 g",
       "moneyText": "180.10 €",
       "timeText": "10:14",
-      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov"
+      "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "usedBeforeCents": 101000
     },
     "R-1": {
       "id": "R-1",
@@ -19916,7 +19928,8 @@ export const scene5: Snapshot = {
       "agentText": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
-      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov"
+      "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "usedBeforeCents": 0
     }
   },
   "spendPass": {
@@ -20036,6 +20049,7 @@ export const scene5: Snapshot = {
       "deliverBy": "2026-11-16",
       "approvedBy": "owner",
       "moneyText": "180.10 €",
+      "usedBeforeCents": 101000,
       "questionText": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?"
     },
     "O-1": {
@@ -20103,6 +20117,7 @@ export const scene5: Snapshot = {
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
       "moneyText": "1,010.00 €",
+      "usedBeforeCents": 0,
       "questionText": "Order 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €?"
     }
   },

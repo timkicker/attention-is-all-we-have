@@ -244,6 +244,9 @@ class SupplyRequestView(Model):
     time_text: str | None = None
     display_name: str | None = Field(None, description="the same as title, the name types.ts already reads")
 
+    used_before_cents: int | None = Field(
+        None, description="what orders placed under the same Spend Pass before this request add up to")
+
     @model_validator(mode="after")
     def _text(self):
         d = _d()
@@ -341,6 +344,8 @@ class OrderView(Model):
     deliver_by: str
     approved_by: str | None = None
     money_text: str | None = None
+    used_before_cents: int | None = Field(
+        None, description="what orders placed under the same Spend Pass before this one add up to")
     question_text: str | None = Field(None, description="the approve page's question, \"Order 10 × 2.5 kg of ... for 180.10 €?\"")
 
     @model_validator(mode="after")

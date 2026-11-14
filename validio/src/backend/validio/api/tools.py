@@ -64,6 +64,7 @@ def _name(ctx: Ctx, pid: str) -> str:
 
 def _request_view(ctx: Ctx, req: dict) -> SupplyRequestView:
     view = SupplyRequestView.model_validate(req)
+    view.used_before_cents = ctx.orders.used_before(view.spend_pass_id, view.created_at, view.order_id)
     if ctx.stockout() and any(ln.need.product_id == STOCKOUT_ID for ln in view.lines):
         view.simulated = [SimulatedMark(what=f"stock-out of {_name(ctx, STOCKOUT_ID)}", sentence=stockout_note(ctx.real_stock()))]
     return view
@@ -90,4 +91,7 @@ def confirm_order(ctx: Ctx, spend_pass: str, body: ConfirmIn) -> OrderView:
 
 
 def get_order(ctx: Ctx, order_id: str) -> OrderView:
-    return OrderView.model_validate(ctx.orders.get(order_id))
+    o = ctx.orders.get(order_id)
+    view = OrderView.model_validate(o)
+    view.used_before_cents = ctx.orders.used_before(o["spendPassId"], o["history"][0]["at"], o["id"])
+    return view
