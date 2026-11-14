@@ -77,9 +77,9 @@ for (const v of VIEWS) {
     await expect(page.locator("#order-done")).toContainText("confirmed again");
     await shoot("approve-done");
 
-    await go("/steady");
-    await expect(page.getByTestId("steady-S-1")).toBeVisible();
-    await shoot("steady-list");
+    await go("/orders");
+    await expect(page.getByTestId("order-s-S-1")).toBeVisible();
+    await shoot("orders");
     await go("/steady/S-1");
     await expect(page.locator("#simulated-history")).toBeAttached();
     await shoot("steady-before");
