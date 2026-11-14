@@ -13,7 +13,8 @@ Run from validio/:
   make modal-secret    create the secret from MODAL_SECRETS (a 600 file, written with fresh values if missing)
   make modal-deploy    build the web app, deploy, then reset the demo state in the volume
   make modal-seed      reset the demo state in the volume again
-  make modal-fill      play the five demo scenes into the volume, so a visitor finds the demo, not an empty store
+  make modal-fill      play the five demo scenes into data/template in the volume: the filled demo kitchen every
+                       demo copy is made from (db and keys), its approval code the demo code 246810, hashed
 Stop:  modal app stop validio-web
 """
 
@@ -24,6 +25,8 @@ import modal
 
 REMOTE = "/app"  # validio/ inside the container, so config.ROOT and DATA resolve the same way
 DATA = f"{REMOTE}/data"
+TEMPLATE_DB = f"{DATA}/template/validio.db"  # the filled demo kitchen; each demo copy starts as a copy of it
+TEMPLATE_KEYS = f"{DATA}/template/keys"
 # Laptop paths exist only where the app is deployed from. Inside the container Modal places this file at
 # /root/app_validio.py, so nothing below may look at them there.
 LOCAL = modal.is_local()
@@ -95,20 +98,23 @@ def seed() -> str:
 
 @app.function(image=image, volumes={DATA: data}, timeout=600)
 def fill() -> str:
-    """demo_check's five scenes, one round from a reset, against the store in the volume: the app runs in
-    this container on 127.0.0.1 (no public gate here, no secret), the scenes go through its API and MCP,
-    then the volume is committed. Run it while no web container is up, so none holds an older copy."""
+    """demo_check's five scenes, one round from a reset, against the template in the volume: the app runs in
+    this container on 127.0.0.1 (no public gate here, no secret) with the template as its store, the scenes go
+    through its API and MCP, then the demo code goes in and the volume is committed. Every demo copy is made
+    from this template. Run it while no web container is up, so none holds an older copy."""
     import os
     import secrets
     import subprocess
     import sys
 
+    from validio.api import codes
     from validio.demo import seed as demo_seed
 
-    demo_seed.reset()
+    demo_seed.reset(Path(TEMPLATE_DB), Path(TEMPLATE_KEYS))
     port = "8419"
     # a throwaway code and demo token that live only in this container, so the scenes check the gates too
     env = {**os.environ, "VALIDIO_PUBLIC": "", "VALIDIO_KITCHEN_TOKEN": "",
+           "VALIDIO_DB": TEMPLATE_DB, "VALIDIO_KEYS": TEMPLATE_KEYS,
            "VALIDIO_APPROVE_CODE": f"{secrets.randbelow(10**6):06d}", "VALIDIO_DEMO_TOKEN": secrets.token_urlsafe(16)}
     server = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
                                "--port", port], cwd=f"{REMOTE}/src/backend", env=env)
@@ -131,5 +137,6 @@ def fill() -> str:
     out = run.stdout + run.stderr
     if run.returncode != 0 or "ALL SCENES OK" not in out:
         raise RuntimeError(f"demo scenes failed, volume not committed:\n{out[-3000:]}")
+    codes.store(Path(TEMPLATE_DB), codes.DEMO_CODE)  # after the scenes, which ran on their throwaway code
     data.commit()
     return out
