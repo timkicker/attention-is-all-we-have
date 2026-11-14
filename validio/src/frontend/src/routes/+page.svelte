@@ -110,7 +110,7 @@
     {:else}
       <Section class="v-card">
         <div class="status" data-testid="home-status">
-          <a class="st-agent" href="/agent" id="home-agent" data-testid="home-agent">
+          <a class="st-agent hit" href="/agent" id="home-agent" data-testid="home-agent">
             <span class="dot" class:on={h.agent.state === "active"} aria-hidden="true"></span>
             {#if h.agent.state === "none"}
               <span>No agent connected</span>

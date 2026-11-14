@@ -84,8 +84,8 @@
   }
   @media (max-width: 760px) {
     /* One row that scrolls sideways on its own, edge to edge, not two rows.
-       The chips stay the kit's size; their press area reaches the 44 px a
-       finger needs without moving the row. */
+       The chips stay the kit's size; their press area (app.css) reaches past
+       them into the row's padding. */
     .filters {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -95,14 +95,6 @@
     }
     .filters :global(.chip) {
       flex: none;
-    }
-    .filters :global(button.chip-body) {
-      position: relative;
-    }
-    .filters :global(button.chip-body)::after {
-      content: "";
-      position: absolute;
-      inset: -10px -4px;
     }
   }
   .days {

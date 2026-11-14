@@ -141,7 +141,7 @@
 {#if demoBar}
   <div class="demobar" data-testid="demo-bar" id="demo-bar">
     <span class="db-name">Demo kitchen</span>
-    <Button variant="ghost" size="sm" id="demo-reset" data-testid="demo-reset" onclick={reset}>Reset</Button>
+    <Button variant="ghost" size="sm" class="hit" id="demo-reset" data-testid="demo-reset" onclick={reset}>Reset</Button>
   </div>
 {/if}
 <div class="shell" class:rail class:phone={chrome.phone}>
