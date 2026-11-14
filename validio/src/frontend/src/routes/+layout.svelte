@@ -488,7 +488,11 @@
   }
   @media (max-width: 760px) {
     .demobar {
-      padding: 4px 16px;
+      flex-wrap: nowrap;
+      gap: 16px;
+      padding: 0 4px 0 16px;
+      min-height: 44px;
+      white-space: nowrap;
     }
     .v-main > .phonebar ~ .wrap,
     .v-main > .demobar ~ .wrap {

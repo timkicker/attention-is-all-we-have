@@ -273,7 +273,7 @@ export async function account(): Promise<Account> {
   return copy(signedIn());
 }
 
-/** The demo kitchen as a fresh copy: rules saved, the demo agent connected. */
+/** The demo kitchen as a fresh copy: rules saved, no agent connected yet. */
 const DEMO_ACCOUNT: Account = {
   id: "k-demo",
   name: "Hotel Espoo kitchen",
@@ -282,12 +282,8 @@ const DEMO_ACCOUNT: Account = {
   deliveryAddress: "",
   isDemo: true,
   demoCode: DEMO_CODE,
-  setup: { kitchen: true, rules: true, agent: true, done: true },
-  agent: {
-    state: "active",
-    agent: { name: "Kitchen buyer", keyId: "", connectedAt: "2026-11-14T10:00:00+02:00", lastUsedAt: null, passId: "M-1", passVersion: 1 },
-    versions: [{ version: 1, at: "2026-11-14T10:00:00+02:00", why: "Agent connected" }],
-  },
+  setup: { kitchen: true, rules: true, agent: false, done: false },
+  agent: { state: "none", versions: [] },
   createdAt: "2026-11-14T10:00:00+02:00",
 };
 
