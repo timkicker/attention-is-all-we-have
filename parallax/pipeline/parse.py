@@ -219,6 +219,7 @@ def _infobox(raw: str) -> dict[str, str]:
         raw_val = re.sub(r"<br\s*/?>", ", ", raw_val, flags=re.I)
         raw_val = re.sub(r"\n\s*[*#]\s*", ", ", raw_val)
         val = _finish(clean_inline(raw_val))
+        val = re.sub(r"\s+", " ", val)
         val = re.sub(r"\s*,\s*(,\s*)+", ", ", val).strip(" ,;")
         if val and not any(x in val for x in ("{{", "}}", "[[", "]]", "|")):
             out[key] = val
