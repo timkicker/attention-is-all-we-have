@@ -2278,6 +2278,18 @@
         "title": "RequestLineView",
         "type": "object"
       },
+      "ResetIn": {
+        "properties": {
+          "fresh": {
+            "default": false,
+            "description": "a demo copy: the plain seed instead of the played template, no agent",
+            "title": "Fresh",
+            "type": "boolean"
+          }
+        },
+        "title": "ResetIn",
+        "type": "object"
+      },
       "RulesIn": {
         "properties": {
           "aloneUpToCents": {
@@ -4678,8 +4690,25 @@
     },
     "/api/demo/reset": {
       "post": {
-        "description": "Back to the state `make demo` starts from: drops every table, seeds again.",
+        "description": "Back to the state `make demo` starts from: drops every table, seeds again. A demo copy goes back to the\ntemplate, or with {\"fresh\": true} to the plain seed with no agent connected.",
         "operationId": "reset_api_demo_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ResetIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -4690,6 +4719,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Reset",

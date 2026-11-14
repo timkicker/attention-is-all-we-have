@@ -1,8 +1,8 @@
-import { execFileSync } from "node:child_process";
-import { test, expect, type APIRequestContext, type Page } from "@playwright/test";
+import type { APIRequestContext, Page } from "@playwright/test";
+import { CODE, agent, expect, fresh, pairAgent, test } from "./kitchen";
 
 // The 10:00 click-through of docs/DEMO.md against the live backend, scene by scene, with the numbers
-// the page must show. Every screen check finds its element by data-testid (list in testids.md, sent
+// the page must show, on a demo copy started from the plain seed with the CLI agent paired (kitchen.ts). Every screen check finds its element by data-testid (list in testids.md, sent
 // to lane C). While a page lacks a testid the check is a fixme naming it; once the testid lands the
 // check runs for real. E2E_STRICT=1 makes a missing testid a failure.
 //
@@ -11,13 +11,7 @@ import { test, expect, type APIRequestContext, type Page } from "@playwright/tes
 // page cannot do it yet, the same step goes through the API and the test is annotated "fallback", so
 // the scenes after it still see the state the demo has at that point.
 
-const CODE = process.env.E2E_CODE!;
 const STRICT = process.env.E2E_STRICT === "1";
-
-function agent(scene: number) {
-  execFileSync("uv", ["run", "python", "-W", "ignore", "../../scripts/agent.py", "--scene", String(scene),
-    "--base", process.env.E2E_BASE!], { cwd: "../backend", env: process.env, stdio: "pipe" });
-}
 
 // a money amount as the page may write it: 1,010.00 or 1010.00
 const money = (s: string) => new RegExp(s.replace(",", ",?").replace(".", "\\."));
@@ -48,8 +42,8 @@ async function act(page: Page, id: string, done: () => Promise<boolean>, fallbac
       await code.fill(CODE);
       await page.getByTestId("code-submit").click();
     }
-    await page.waitForLoadState("networkidle");
-    if (await done()) return;
+    // networkidle was reached long before the click: give the write a moment to land
+    if (await expect.poll(done, { timeout: 10_000 }).toBe(true).then(() => true, () => false)) return;
   }
   test.info().annotations.push({ type: "fallback", description: `${id}: done by API, the page could not` });
   await fallback();
@@ -66,14 +60,17 @@ const lines = (s: { lines: { productId: string }[] }) => Object.fromEntries(s.li
 
 test.describe.configure({ mode: "serial" });
 
-test.beforeAll(async ({ request }) => {
-  expect((await request.post("/api/demo/reset")).status()).toBe(200);
+test.beforeAll(async ({ kitchen }) => {
+  await fresh(kitchen);
+  const page = await kitchen.ctx.newPage();
+  await pairAgent(kitchen, page);
+  await page.close();
 });
 
 // Scene 1, request
 
-test("scene 1: the agent asks for 1000 litres of milk", async ({ request }) => {
-  agent(1);
+test("scene 1: the agent asks for 1000 litres of milk", async ({ request, kitchen }) => {
+  agent(kitchen, 1);
   const [r1] = await json(request, "/api/inbox");
   expect(r1.id).toBe("R-1");
   expect(r1.text).toBe("1000 litres of lactose-free milk by Monday, budget 1200 euro");
@@ -83,11 +80,8 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Agent page
   await page.goto("/");
   await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap");
   await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000\slitres of lactose-free milk/); // display words, "1,000"
-  // Grouped by the state the pill shows: nothing under Handled is still working or waiting.
-  const handled = page.locator("section", { has: page.locator("#h-Handled") });
-  for (const pill of await handled.locator(".v-pill").allInnerTexts()) expect(["Ordered alone", "Ordered", "Rejected", "Blocked"]).toContain(pill.trim());
-  if (/Working|Waiting/.test(await page.getByTestId("inbox-R-1").innerText()))
-    await expect(page.locator("section", { has: page.locator("#h-Open") }).getByTestId("inbox-R-1")).toBeVisible();
+  // The Inbox holds only what is open; handled requests live in Orders.
+  await expect(page.locator("section", { has: page.locator("#h-Open") }).getByTestId("inbox-R-1")).toBeVisible();
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   // The limits are the Agent page's Rules.
@@ -98,8 +92,8 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Agent page
 
 // Scene 2, ordered alone
 
-test("scene 2: the agent's order O-1 is placed alone", async ({ request }) => {
-  agent(2);
+test("scene 2: the agent's order O-1 is placed alone", async ({ request, kitchen }) => {
+  agent(kitchen, 2);
   const r1 = await json(request, "/api/requests/R-1");
   expect(r1.status).toBe("ordered_alone");
   expect((await json(request, `/api/orders/${r1.orderId}`)).state).toBe("placed");
@@ -108,8 +102,11 @@ test("scene 2: the agent's order O-1 is placed alone", async ({ request }) => {
 
 test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", async ({ page }) => {
   await page.goto("/");
-  await needs(page, "inbox-R-1");
-  await page.getByTestId("inbox-R-1").click();
+  // handled now: gone from the Inbox, in Orders
+  await expect(page.getByTestId("inbox-R-1")).toHaveCount(0);
+  await page.getByTestId("nav-orders").click();
+  await needs(page, "order-r-R-1");
+  await page.getByTestId("order-r-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await needs(page, "request-status", "live-checked", "option-464306", "option-464401",
     "option-463335", "option-462921", "option-462703", "option-463047", "supplier-463047", "reader-463047");
@@ -142,12 +139,12 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
 
 // Scene 3, owner approves a swap
 
-test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ page, request }) => {
+test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ page, request, kitchen }) => {
   await page.goto("/");
   await page.locator("#page-menu").click(); // the switch sits in the bar's demo menu
   await act(page, "stock-out", async () => (await json(request, "/api/demo")).stockOut466375 === true,
     async () => { expect((await request.post("/api/demo/stock-out")).status()).toBe(200); });
-  agent(3);
+  agent(kitchen, 3);
   const r2 = await json(request, "/api/requests/R-2");
   expect([r2.status, r2.totalCents, r2.orderId]).toEqual(["waiting", 18010, "O-2"]);
 });
@@ -222,11 +219,10 @@ test("scene 3 on screen: the phone page says placed", async ({ page }) => {
 test("scene 4: the chef renews S-1", async ({ page, request }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  if ((await page.getByTestId("nav-steady-orders").count()) > 0) {
-    await page.getByTestId("nav-steady-orders").click();
-    if ((await page.getByTestId("order-s-S-1").count()) > 0) await page.getByTestId("order-s-S-1").click();
-    else await page.goto("/steady/S-1");
-  } else await page.goto("/steady/S-1");
+  await page.getByTestId("nav-orders").click();
+  await needs(page, "order-s-S-1");
+  await page.getByTestId("order-s-S-1").click();
+  await expect(page).toHaveURL(/\/steady\/S-1$/);
   const renewed = async () => !!(await json(request, "/api/steady/S-1")).renewedAt;
   await act(page, "renew", renewed, async () => {
     expect((await request.post("/api/steady/S-1/renew", { headers: chef })).status()).toBe(200);
@@ -302,8 +298,7 @@ test("scene 5 on screen: the ledger, its chain and nothing of the approver list"
   expect(led.chain.ok).toBe(true);
   await page.goto("/");
   await page.waitForLoadState("networkidle");
-  if ((await page.getByTestId("nav-open-ledger").count()) > 0) await page.getByTestId("nav-open-ledger").click();
-  else await page.goto("/ledger");
+  await page.getByTestId("nav-ledger").click();
   await expect(page).toHaveURL(/\/ledger$/);
   await needs(page, "ledger", "ledger-entry", "chain-status");
   await expect(page.getByTestId("ledger-entry")).toHaveCount(led.entries.length);

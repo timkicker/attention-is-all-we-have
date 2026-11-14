@@ -1,32 +1,37 @@
-import { execFileSync } from "node:child_process";
-import { test, expect } from "@playwright/test";
+import { CODE, agent, expect, fresh, pairAgent, test } from "./kitchen";
 
-// The built web app and the API from one process, no Vite: the real agent places requests over
-// MCP, the pages read them through /api on the same origin.
-function agent(scene: number) {
-  execFileSync("uv", ["run", "python", "-W", "ignore", "../../scripts/agent.py", "--scene", String(scene),
-    "--base", process.env.SMOKE_BASE!], {
-    cwd: "../backend",
-    env: process.env,
-    stdio: "pipe",
-  });
-}
+// The built web app and the API from one process, no Vite: the login page lets a juror into a demo copy,
+// the kitchen's agent (paired through the Agent page) places requests over MCP on the copy's own path,
+// the pages read them through /api on the same origin.
 
 test.describe.configure({ mode: "serial" });
 
-test("app and API from one process", async ({ page, request }) => {
-  expect((await request.get("/api/health")).status()).toBe(200);
-  expect((await request.get("/api/nope")).status()).toBe(404);
-  // a deep link is the SPA's index.html, not a 404
-  const deep = await request.get("/requests/R-9");
+test("app and API from one process, every page behind the login", async ({ browser, baseURL }) => {
+  const anon = await browser.newContext({ baseURL });
+  const r = anon.request;
+  expect((await r.get("/api/health")).status()).toBe(200);
+  expect((await r.get("/api/nope")).status()).toBe(404);
+  expect((await r.get("/api/account")).status()).toBe(401);
+  // a deep link is the SPA's index.html, not a 404, and the SPA sends a visitor to the login page
+  const deep = await r.get("/requests/R-9");
   expect(deep.status()).toBe(200);
   expect(await deep.text()).toContain("<html");
+  const p = await anon.newPage();
+  await p.goto("/requests/R-9");
+  await expect(p).toHaveURL(/\/login$/);
+  await expect(p.getByTestId("try-demo")).toBeVisible();
+  await anon.close();
+});
 
-  await request.post("/api/demo/reset");
-  agent(2);
+test("the paired agent orders alone, the request opens from Orders", async ({ page, kitchen }) => {
+  await fresh(kitchen);
+  await pairAgent(kitchen, page);
+  agent(kitchen, 2);
   await page.goto("/");
-  await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
-  await page.locator("#inbox-R-1").click();
+  await expect(page.getByTestId("demo-bar")).toContainText(CODE);
+  await expect(page.locator("#inbox-R-1")).toHaveCount(0); // handled: in Orders, not the Inbox
+  await page.getByTestId("nav-orders").click();
+  await page.getByTestId("order-r-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-status")).toContainText("Ordered alone");
   await expect(page.locator("#live-checked")).toContainText("Live");
@@ -36,11 +41,12 @@ test("app and API from one process", async ({ page, request }) => {
   await expect(page.locator("#request-status")).toContainText("Ordered alone");
 });
 
-test("owner approves the swap on the phone", async ({ page }) => {
+test("owner approves the swap on the phone", async ({ page, kitchen }) => {
   await page.goto("/");
-  await page.locator("#page-menu").click();
-  await page.locator("#stock-out").click();
-  agent(3);
+  await page.getByTestId("page-menu").click();
+  await page.getByTestId("stock-out").click();
+  await expect.poll(async () => (await (await page.request.get("/api/demo")).json()).stockOut466375).toBe(true);
+  agent(kitchen, 3);
   await page.reload();
   await expect(page.locator("#inbox-R-2")).toContainText("Waiting for you");
   await page.locator("#inbox-R-2").click();
@@ -48,17 +54,26 @@ test("owner approves the swap on the phone", async ({ page }) => {
   await expect(page.locator("#option-465256")).toContainText("180.10");
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator("#open-approve").click();
-  await page.locator("#approve").click();
-  // the app asks for the code only when the server wants one
+  await page.getByTestId("open-approve").click();
+  await page.getByTestId("approve").click();
+  // a demo copy asks its code (the demo bar names it) unless it was typed this visit
   if (await page.getByTestId("code-input").isVisible({ timeout: 2000 }).catch(() => false)) {
-    await page.getByTestId("code-input").fill("246810");
+    await page.getByTestId("code-input").fill(CODE);
     await page.getByTestId("code-submit").click();
   }
   await expect(page.locator("#order-done")).toContainText("confirmed again");
 
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/ledger");
+  await page.goto("/");
+  await page.getByTestId("nav-ledger").click();
   await expect(page.locator("#chain-status")).toContainText("Verified");
   await expect(page.locator("#ledger")).toContainText("after the owner approved");
+});
+
+test("Reset in the demo bar starts the copy again", async ({ page }) => {
+  await page.goto("/");
+  await page.getByTestId("demo-reset").click();
+  await expect.poll(async () => (await (await page.request.get("/api/inbox")).json()).length).toBe(0);
+  await page.goto("/orders");
+  await expect(page.getByTestId("order-r-R-1")).toHaveCount(0);
 });

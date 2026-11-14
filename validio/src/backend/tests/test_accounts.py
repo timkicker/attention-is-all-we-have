@@ -263,3 +263,21 @@ def test_login_change_needs_the_password_and_keeps_emails_unique(app_env):
     with client(app_env) as d:
         d.post("/api/account/demo")
         assert d.put("/api/settings/login", json={"currentPassword": "x", "email": "d@example.org"}).status_code == 403
+
+
+def test_fresh_reset_seeds_the_demo_copy_without_an_agent(app_env):
+    """{"fresh": true}: the seed of `make seed` instead of the template, R-1 next, no agent (the live e2e's start)."""
+    with client(app_env) as d:
+        d.post("/api/account/demo")
+        connect_demo_agent(d)
+        assert d.post("/api/demo/example").json()["requestId"] == "R-1"
+        assert d.post("/api/demo/stock-out").json()["stockOut466375"] is True
+        r = d.post("/api/demo/reset", json={"fresh": True})
+        assert r.status_code == 200 and r.json()["stockOut466375"] is False
+        assert d.get("/api/inbox").json() == []
+        assert d.get("/api/agent").json()["state"] == "none"
+        connect_demo_agent(d)
+        r = d.post("/api/demo/example"); assert r.json().get("requestId") == "R-1", r.text
+    with client(app_env) as c:
+        c.post("/api/account/signup", json=SIGNUP)
+        assert c.post("/api/demo/reset", json={"fresh": True}).status_code == 404
