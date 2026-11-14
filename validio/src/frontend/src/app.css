@@ -1,73 +1,10 @@
 @import "../vendor/arlen-ui-kit/src/app.css";
 @import "../vendor/arlen-ui-kit/src/lib/theme-light.css";
+@import "./lib/tokens.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
 /* The kit's dark: utilities follow the theme the page chose, not only the system. */
 @custom-variant dark (&:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *));
-
-/* Validio: halbat's grammar on the kit's ramp, Valio blue as the one accent.
-   Port names are --v-*; no kit name is assigned here except the scoped list
-   in the plan (heights, text sizes on a selector, chip radius, row space,
-   card shadow, primary, ring). */
-:root {
-  color-scheme: dark;
-  --valio: #009ddb;
-  --valio-ink: #009ddb;
-  --primary: #fafafa;
-  --primary-foreground: #0a0a0a;
-  --v-primary-hover: #e1e1e1;
-  --v-shell: var(--color-bg-shell);
-  --v-app: var(--color-bg-app);
-  --v-fg: var(--color-fg-primary);
-  --v-muted: var(--color-fg-secondary);
-  --v-ctx: var(--color-border-strong);
-  --v-faint: #85858e;
-  --v-line: #1f1f22;
-  --v-ok: #8fb38a;
-  --v-bad: #e5686c;
-  --v-ok-text: var(--v-ok);
-  --v-bad-text: var(--v-bad);
-  --v-wait-text: var(--valio-ink);
-
-  /* type: desktop 12/13/14/15/24, phone 12/14/16/24 */
-  --fs-cap: 12px;
-  --fs-meta: 13px;
-  --fs-head: 14px;
-  --fs-body: 15px;
-  --fs-title: 24px;
-  --lh-meta: 20px;
-  --lh-head: 20px;
-  --lh-body: 22px;
-  --height-control: 32px;
-  --height-control-prominent: 32px;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --v-on-valio: #ffffff;
-}
-:root[data-theme="light"] {
-  color-scheme: light;
-  --valio: #007fb0;
-  --valio-ink: #002f6d;
-  --primary: #002f6d;
-  --primary-foreground: #ffffff;
-  --v-primary-hover: #002960;
-  --v-faint: #68686f;
-  --v-line: #e4e4e7;
-  --v-ok: #477142;
-  --v-bad: #c2393e;
-  --v-ok-text: color-mix(in srgb, var(--v-ok) 72%, #000);
-  --v-bad-text: color-mix(in srgb, var(--v-bad) 72%, #000);
-}
-@media (max-width: 760px) {
-  :root {
-    --fs-meta: 14px;
-    --fs-head: 16px;
-    --fs-body: 16px;
-    --lh-head: 24px;
-    --lh-body: 24px;
-    --height-control: 44px;
-    --height-control-prominent: 44px;
-  }
-}
 
 /* Focus: one mark, outside every layer, so the kit's outline-none loses. */
 :root {
@@ -343,19 +280,19 @@ a.v-row:hover .v-row-title {
   font-weight: 500;
 }
 .v-pill.tone-ok {
-  background: color-mix(in srgb, var(--v-ok) 14%, transparent);
+  background: var(--v-wash-ok);
   color: var(--v-ok-text);
 }
 .v-pill.tone-bad {
-  background: color-mix(in srgb, var(--v-bad) 14%, transparent);
+  background: var(--v-wash-bad);
   color: var(--v-bad-text);
 }
 .v-pill.tone-wait {
-  background: color-mix(in srgb, var(--valio) 14%, transparent);
+  background: var(--v-wash-wait);
   color: var(--v-wait-text);
 }
 .v-pill.tone-neutral {
-  background: color-mix(in srgb, var(--v-fg) 8%, transparent);
+  background: var(--v-tint-fill);
   color: var(--v-muted);
 }
 .v-count {
@@ -365,7 +302,7 @@ a.v-row:hover .v-row-title {
   min-width: 18px;
   padding: 0 5px;
   font-variant-numeric: tabular-nums;
-  background: color-mix(in srgb, var(--valio) 16%, transparent);
+  background: var(--v-wash-wait);
   color: var(--v-wait-text);
 }
 
@@ -527,7 +464,7 @@ a.v-row:hover .v-row-title {
   margin-top: 12px;
   padding: 12px;
   border-radius: 6px;
-  background: color-mix(in srgb, var(--v-fg) 5%, transparent);
+  background: var(--v-tint-wash);
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
 }

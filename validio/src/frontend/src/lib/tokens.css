@@ -1,0 +1,96 @@
+/* Validio's tokens: the only file with a colour or a radius written as a value.
+   Everything else reads a var() from here or from the Arlen ui-kit;
+   scripts/check-tokens.mjs fails the build on a literal anywhere else.
+
+   Colour: the kit's ramp, Valio blue as the one accent, one red and one green
+   (the kit's error and success point at ours, so a kit Notice, an invalid
+   field and a pill agree). Radius: the kit's role scale, nothing of our own.
+   Tints: one wash per job, so a hover is the same hover everywhere. */
+:root {
+  color-scheme: dark;
+  --valio: #009ddb;
+  --valio-ink: #009ddb;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --v-primary-hover: #e1e1e1;
+  --v-shell: var(--color-bg-shell);
+  --v-app: var(--color-bg-app);
+  --v-fg: var(--color-fg-primary);
+  --v-muted: var(--color-fg-secondary);
+  --v-ctx: var(--color-border-strong);
+  --v-faint: #85858e;
+  --v-line: #1f1f22;
+  --v-ok: #8fb38a;
+  --v-bad: #e5686c;
+  --v-ok-text: var(--v-ok);
+  --v-bad-text: var(--v-bad);
+  --v-wait-text: var(--valio-ink);
+  --v-on-valio: #ffffff;
+  --v-shadow-thumb: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  /* the kit's state colours are ours */
+  --color-error: var(--v-bad);
+  --color-success: var(--v-ok);
+  --destructive: var(--v-bad);
+
+  /* Washes of the foreground, weakest first. */
+  --v-tint-wash: color-mix(in srgb, var(--v-fg) 5%, transparent); /* inset boxes, plot track */
+  --v-tint-hover: color-mix(in srgb, var(--v-fg) 6%, transparent); /* a row or nav item under the pointer (kit LinkCard) */
+  --v-tint-fill: color-mix(in srgb, var(--v-fg) 8%, transparent); /* neutral pill (kit outline Badge) */
+  --v-tint-mid: color-mix(in srgb, var(--v-fg) 10%, transparent); /* menu item under the pointer (kit menu), plot zone */
+  --v-tint-strong: color-mix(in srgb, var(--v-fg) 16%, transparent); /* ticks, the sheet's grab bar */
+  /* A status colour as the ground of a pill or count, all at 14 %. */
+  --v-wash-ok: color-mix(in srgb, var(--v-ok) 14%, transparent);
+  --v-wash-bad: color-mix(in srgb, var(--v-bad) 14%, transparent);
+  --v-wash-wait: color-mix(in srgb, var(--valio) 14%, transparent);
+
+  /* Radius: the kit's role tokens, used directly; no radius of our own.
+     --radius-chip 4    tags, pills, counts, chips, the grab bar
+     --radius-button 6  buttons, nav and menu items, the back link
+     --radius-input 8   fields, switches, inset boxes
+     --radius-card 12   cards, the phone dock
+     --radius-modal 16  dialogs and sheets
+     --radius-full is not used: the kit's Switch sits on --radius-input. */
+
+  /* type: desktop 12/13/14/15/24, phone 12/14/16/24 */
+  --fs-cap: 12px;
+  --fs-meta: 13px;
+  --fs-head: 14px;
+  --fs-body: 15px;
+  --fs-title: 24px;
+  --lh-meta: 20px;
+  --lh-head: 20px;
+  --lh-body: 22px;
+  /* One control height for fields and buttons side by side: 32 on the desk, 44 on the phone. */
+  --height-control: 32px;
+  --height-control-prominent: 32px;
+  --v-dialog-pad: 20px;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --valio: #007fb0;
+  --valio-ink: #002f6d;
+  --primary: #002f6d;
+  --primary-foreground: #ffffff;
+  --v-primary-hover: #002960;
+  --v-faint: #68686f;
+  --v-line: #e4e4e7;
+  --v-ok: #477142;
+  --v-bad: #c2393e;
+  --v-ok-text: color-mix(in srgb, var(--v-ok) 72%, #000);
+  --v-bad-text: color-mix(in srgb, var(--v-bad) 72%, #000);
+  --color-error: var(--v-bad);
+  --color-success: var(--v-ok);
+}
+@media (max-width: 760px) {
+  :root {
+    --fs-meta: 14px;
+    --fs-head: 16px;
+    --fs-body: 16px;
+    --lh-head: 24px;
+    --lh-body: 24px;
+    --height-control: 44px;
+    --height-control-prominent: 44px;
+  }
+}

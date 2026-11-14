@@ -119,7 +119,7 @@
     width: 36px;
     height: 4px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--v-fg) 20%, transparent);
+    background: var(--v-tint-strong);
     margin: 0 auto 8px;
   }
   .mi {
@@ -138,7 +138,7 @@
     text-align: left;
   }
   button.mi:hover {
-    background: color-mix(in srgb, var(--v-fg) 8%, transparent);
+    background: var(--v-tint-mid);
   }
   .mi:disabled,
   .mi.note {
@@ -193,7 +193,7 @@
     height: 14px;
     border-radius: max(0px, calc(var(--radius-input) - 2px));
     background: var(--foreground);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--v-shadow-thumb);
   }
   .vsw.on {
     background: var(--valio);
