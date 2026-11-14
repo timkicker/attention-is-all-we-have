@@ -720,3 +720,10 @@ Our own agent is the command `validio-agent` (the same as `make agent`). It prin
 uv run validio-agent --scene 2
 uv run validio-agent --scene 4 --local
 ```
+
+For a kitchen account (a demo copy too), it pairs like any agent: press Connect agent on the Agent page, send the code it shows, then Allow. The key and the Spend Pass stay in `artifacts/agent/keys/<account>/` (or `--agent-keys`); the scenes then run on `/mcp/k/<account>/` of `--base`, which may be the public link.
+
+```
+uv run validio-agent --base https://... --kitchen k-... --pair ABCD-EFGH
+uv run validio-agent --base https://... --kitchen k-... --scene 2
+```
