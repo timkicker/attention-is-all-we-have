@@ -10,6 +10,7 @@ Demo switches: VALIDIO_DEMO=1, plus X-Demo-Token when VALIDIO_DEMO_TOKEN is set.
 Without a code or a token, approve and the demo switches stay closed to anyone not on this machine."""
 
 import hmac
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
@@ -167,7 +168,39 @@ def ledger(ctx: CtxDep):
                 "facts": e.facts, "spend_pass_id": e.mandate_id, "disclosed": sorted(e.disclosed),
                 "rule_ids": e.rule_ids, "order_id": e.order_id, "prev_hash": e.prev_hash, "hash": e.hash}
                for e in ctx.audit.list()]
+    for e, rid in zip(entries, _request_ids(ctx, entries), strict=True):
+        e["request_id"] = rid
     return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at})
+
+
+def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:
+    """Which request or Steady Order each entry belongs to, so the ledger can group by it. An entry with an
+    order takes that order's; a request entry starts the next request; a simulation belongs to the request
+    after it, the one it was made for; anything else to the request before it."""
+    owner = {o["id"]: o.get("requestId") for o in ctx.store.orders()}
+    owner.update({oid: sid for oid, sid in ctx.store.steady_orders().items() if not owner.get(oid)})
+    asked = iter(r["id"] for r in ctx.store.requests())
+    out: list[str | None] = []
+    current: str | None = None
+    waiting: list[int] = []  # simulations before their request
+    for i, e in enumerate(entries):
+        steady = re.match(r"Steady Order (S-\d+)", e["sentence"])
+        if e.get("order_id") and owner.get(e["order_id"]):
+            rid = owner[e["order_id"]]
+        elif steady:
+            rid = steady.group(1)
+        elif e["kind"] == "request":
+            current = rid = next(asked, None)
+            for j in waiting:
+                out[j] = rid
+            waiting = []
+        elif e["kind"] == "simulation":
+            rid = None
+            waiting.append(i)
+        else:
+            rid = current
+        out.append(rid)
+    return out
 
 
 @router.get("/ledger/head", response_model=LedgerHeadView, response_model_exclude_none=True)

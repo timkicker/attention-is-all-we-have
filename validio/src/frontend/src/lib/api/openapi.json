@@ -578,6 +578,18 @@
             "title": "Prevhash",
             "type": "string"
           },
+          "requestId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the request or Steady Order the entry belongs to: R-2, S-1",
+            "title": "Requestid"
+          },
           "ruleIds": {
             "items": {
               "type": "string"
@@ -1215,6 +1227,30 @@
             "description": "the whole product name, tidied, for a detail line",
             "title": "Fullname"
           },
+          "groupOrder": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "turned-down options only: the heading's place, lowest first",
+            "title": "Grouporder"
+          },
+          "groupText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "turned-down options only: their heading, \"Order cut-off passed\"",
+            "title": "Grouptext"
+          },
           "isSubstitute": {
             "anyOf": [
               {
@@ -1318,6 +1354,18 @@
               }
             ],
             "title": "Shortname"
+          },
+          "shortText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "at most about eight words: \"90.00 € more.\"",
+            "title": "Shorttext"
           },
           "supplierText": {
             "anyOf": [

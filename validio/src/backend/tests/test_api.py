@@ -301,3 +301,34 @@ def test_request_and_order_show_what_the_pass_placed_before(client, holder):
     assert client.get("/api/requests/R-2").json()["usedBeforeCents"] == 101000
     assert client.get(f"/api/orders/{mozz['orderId']}").json()["usedBeforeCents"] == 101000
     assert client.get("/api/inbox").json()[0]["id"] == "R-2"
+
+
+def test_options_carry_group_and_short_text(client, holder):
+    # the page parses no text: turned-down options come with a heading and an order, every option a short line
+    req = ask_milk(client, holder)
+    opts = [o for ln in client.get(f"/api/requests/{req['id']}").json()["lines"] for o in ln["options"]]
+    down = [o for o in opts if o["verdict"] in ("rejected", "blocked", "not_deliverable")]
+    assert down and all(o["groupText"] and isinstance(o["groupOrder"], int) for o in down)
+    assert not [o for o in opts if o not in down and "groupText" in o]
+    groups = {o["groupText"]: o["groupOrder"] for o in down}
+    assert {"Order cut-off passed", "Not lactose free", "Packs too small", "Not plain milk"} <= set(groups)
+    assert all(groups[o["groupText"]] == o["groupOrder"] for o in down)  # one order per heading
+    assert groups["Over the hard cap"] < groups["Not lactose free"] < groups["Order cut-off passed"]
+    assert all(o["shortText"] and len(o["shortText"].split()) <= 9 for o in opts), [o["shortText"] for o in opts]
+    by_rank = {o.get("rank"): o for o in opts}
+    assert by_rank[1]["shortText"] == "Cheapest safe option, always delivered in full."
+    assert by_rank[2]["shortText"] == "90.00 € more."
+    assert all(o["reasons"] for o in opts)
+
+
+def test_ledger_entries_name_their_request(client, holder):
+    milk = ask_milk(client, holder)
+    client.post("/agent/v1/orders", headers=auth(holder), json={
+        "requestId": milk["id"], "idempotencyKey": "milk-order-1",
+        "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
+    client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
+    ask_mozzarella(client, holder)
+    got = [(e["kind"], e.get("requestId")) for e in client.get("/api/ledger").json()["entries"]]
+    assert got[:4] == [("request", "R-1"), ("decision", "R-1"), ("decision", "R-1"), ("order", "R-1")]
+    assert ("simulation", "R-2") in got  # the stock-out belongs to the request it was made for
+    assert all(r in ("R-1", "R-2") for _, r in got)

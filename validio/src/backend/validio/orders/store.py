@@ -126,6 +126,12 @@ class Store:
                                     (scope, key)).fetchone()
         return (row[0], row[1]) if row else None
 
+    def steady_orders(self) -> dict[str, str]:
+        """Order id to the Steady Order that placed it, read from its idempotency key "steady:S-1:..."."""
+        with self._lock:
+            rows = self._con.execute("select key, ref from idempotency where key like 'steady:%'").fetchall()
+        return {ref: key.split(":")[1] for key, ref in rows}
+
     def idem_put(self, scope: str, key: str, body_hash: str, ref: str) -> None:
         with self._lock:
             self._con.execute("insert into idempotency values (?, ?, ?, ?)", (scope, key, body_hash, ref))
