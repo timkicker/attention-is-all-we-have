@@ -562,6 +562,8 @@ export interface Rules {
   approvalUpToCents: number;
   substitutes: "off" | "listed" | "extra";
   maxExtraPct: number;
+  /** All orders under the pass together, blocked over it; null: no weekly limit. */
+  perWeekCents: number | null;
   /** False until saved once: everything needs approval. */
   saved: boolean;
   passVersion: number;

@@ -52,6 +52,7 @@ export function mayWords(r: Rules): string[] {
     `Order alone up to ${euro(r.aloneUpToCents)}`,
     `Ask you up to ${euro(r.approvalUpToCents)}`,
     `Never above ${euro(r.approvalUpToCents)}`,
+    ...(r.perWeekCents == null ? [] : [`At most ${euro(r.perWeekCents)} a week`]),
     r.substitutes === "off" ? "No substitutes" : r.substitutes === "listed" ? "Substitutes from Valio's list" : `Substitutes up to ${r.maxExtraPct} % extra`,
   ];
 }
@@ -60,7 +61,8 @@ export function mayWords(r: Rules): string[] {
 function start(): Mock {
   return {
     agent: { state: "none", versions: [{ version: 1, at: "2026-11-14T09:10:00+02:00", why: "Rules changed" }] },
-    rules: { aloneUpToCents: 120000, approvalUpToCents: 200000, substitutes: "listed", maxExtraPct: 5, saved: true, passVersion: 1 },
+    // api/settings.DEMO_RULES
+    rules: { aloneUpToCents: 120000, approvalUpToCents: 500000, perWeekCents: 800000, substitutes: "extra", maxExtraPct: 5, saved: true, passVersion: 1 },
     wrong: 0,
   };
 }
@@ -175,6 +177,7 @@ const mock = {
     const max = 10_000_000;
     if ([body.aloneUpToCents, body.approvalUpToCents].some((c) => !(c >= 0) || c > max)) throw new ApiError(422, "an amount is out of range");
     if (body.aloneUpToCents > body.approvalUpToCents) throw new ApiError(422, "orders alone must not be above needs approval");
+    if (body.perWeekCents != null && body.perWeekCents < body.approvalUpToCents) throw new ApiError(422, "per week is below needs approval");
     m.wrong = 0;
     m.rules = { ...m.rules, ...body, saved: true };
     delete (m.rules as Partial<RulesIn>).code;
