@@ -35,56 +35,114 @@ export function shortGpu(gpu: string): string {
 function literal(v: Param): string {
   if (v === null) return 'NULL'
   if (typeof v === 'number') return String(v)
-  if (typeof v === 'object') return `(/* ${v.count} ${v.count === 1 ? "value" : "values"} */)`
+  if (typeof v === 'object') return `(/* ${v.count} ${v.count === 1 ? 'value' : 'values'} */)`
   return `'${v.replace(/'/g, "''")}'`
 }
 
-const KEYWORD_BREAK = / (?=ORDER BY |IGNORE INDEX|AND |ON )/g
+// Clause keywords that start a new line. ON, AND, OR and the table options go one step deeper.
+const CLAUSES = ['UNION ALL', 'UNION', 'SELECT', 'FROM', 'LEFT JOIN', 'JOIN', 'WHERE', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT', 'OFFSET']
+const DEEPER = ['ON', 'AND', 'OR', 'FOR SYSTEM_TIME', 'IGNORE INDEX']
+const KEYWORD = new RegExp(`^(${[...CLAUSES, ...DEEPER].map((k) => k.replace(' ', ' +')).join('|')})\\b`, 'i')
+/** A SELECT list line breaks after a comma once it is this long. */
+const LIST_WIDTH = 36
 
-/** Where to break rest so the first part fits max: after a ", " outside parentheses, else before a keyword. */
-function breakAt(rest: string, max: number, minCut: number): { at: number; skip: number } | null {
-  let depth = 0
-  let comma = -1
-  for (let i = 0; i < Math.min(rest.length, max); i++) {
-    const ch = rest[i]
-    if (ch === '(') depth++
-    else if (ch === ')') depth--
-    else if (ch === ',' && rest[i + 1] === ' ' && depth === 0 && i > minCut) comma = i
+/** Re-indents one SQL statement for reading: one clause per line, two spaces per subquery, runs of spaces
+ *  collapsed. Quoted text and comments stay as they are; parentheses of functions are never split. */
+export function prettySql(sql: string): string {
+  const lines: string[] = []
+  const stack: { sub: boolean; clause: string }[] = []
+  let level = 0
+  let clause = ''
+  let cur = ''
+  let deeper = false
+  const flush = () => {
+    const t = cur.trim()
+    if (t) lines.push('  '.repeat(level + (deeper ? 1 : 0)) + t)
+    cur = ''
   }
-  if (comma > 0) return { at: comma + 1, skip: comma + 2 }
-  let kw = -1
-  for (const m of rest.matchAll(KEYWORD_BREAK)) if (m.index > minCut && m.index < max) kw = m.index
-  return kw > 0 ? { at: kw, skip: kw + 1 } : null
+  const inFunc = () => stack.length > 0 && !stack[stack.length - 1].sub
+  let i = 0
+  while (i < sql.length) {
+    const ch = sql[i]
+    const rest = sql.slice(i)
+    if (ch === "'" || ch === '`' || ch === '"') {
+      let j = i + 1
+      while (j < sql.length && sql[j] !== ch) j++
+      cur += sql.slice(i, j + 1)
+      i = j + 1
+      continue
+    }
+    if (rest.startsWith('/*')) {
+      const j = sql.indexOf('*/', i + 2)
+      const stop = j < 0 ? sql.length : j + 2
+      cur += sql.slice(i, stop)
+      i = stop
+      continue
+    }
+    if (/\s/.test(ch)) {
+      if (cur && !cur.endsWith(' ') && !cur.endsWith('(')) cur += ' '
+      i++
+      continue
+    }
+    const atWord = i === 0 || /[\s(),]/.test(sql[i - 1])
+    const kw = atWord && !inFunc() ? rest.match(KEYWORD) : null
+    if (kw) {
+      const word = kw[1].toUpperCase().replace(/ +/g, ' ')
+      flush()
+      deeper = DEEPER.includes(word)
+      if (!deeper) clause = word
+      cur = word
+      i += kw[1].length
+      continue
+    }
+    if (ch === '(') {
+      const sub = /^\(\s*SELECT\b/i.test(rest)
+      stack.push({ sub, clause })
+      cur += '('
+      i++
+      if (sub) {
+        flush()
+        level++
+        deeper = false
+      }
+      continue
+    }
+    if (ch === ')') {
+      const top = stack.pop()
+      if (top?.sub) {
+        flush()
+        level = Math.max(0, level - 1)
+        clause = top.clause
+        deeper = false
+        cur = ')'
+      } else {
+        if (cur.endsWith(' ')) cur = cur.slice(0, -1)
+        cur += ')'
+      }
+      i++
+      continue
+    }
+    if (ch === ',' && clause === 'SELECT' && !inFunc()) {
+      cur += ','
+      i++
+      if (cur.trim().length >= LIST_WIDTH) {
+        flush()
+        deeper = true
+      }
+      continue
+    }
+    cur += ch
+    i++
+  }
+  flush()
+  return lines.join('\n')
 }
 
-/** Breaks a line longer than max outside parentheses, continuing two spaces deeper. The words stay the same. */
-export function wrapLine(line: string, max = 72): string[] {
-  if (line.length <= max) return [line]
-  const indent = line.length - line.trimStart().length
-  const pad = ' '.repeat(indent + 2)
-  const out: string[] = []
-  let rest = line
-  while (rest.length > max) {
-    const b = breakAt(rest, max, pad.length)
-    if (!b) break
-    out.push(rest.slice(0, b.at))
-    rest = pad + rest.slice(b.skip).trimStart()
-  }
-  out.push(rest)
-  return out
-}
-
-/** The statement as it ran: parameters written in, common indent removed, long lines wrapped at commas. */
+/** The statement as it ran: parameters written in, then re-indented by prettySql. */
 export function formatSql(s: SqlStatement): string {
   const params = s.params ?? {}
   const text = s.text.replace(/%\((\w+)\)s/g, (m, name: string) => (name in params ? literal(params[name]) : m))
-  const lines = text
-    .replace(/\s+$/, '')
-    .split('\n')
-    .map((l) => l.replace(/\s+$/, ''))
-  const indents = lines.filter((l) => l.trim()).map((l) => l.length - l.trimStart().length)
-  const cut = indents.length ? Math.min(...indents) : 0
-  return `${lines.flatMap((l) => wrapLine(l.slice(cut))).join('\n')};`
+  return `${prettySql(text.trim().replace(/;$/, ''))};`
 }
 
 const num = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null)

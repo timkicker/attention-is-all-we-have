@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { TopicsRes } from '../api/types'
 import type { SqlStatement } from '../api/types'
-import { formatSql, fromStats, pickQuery, queryKind, shortGpu, versionsOf, wrapLine } from './hood'
+import { formatSql, fromStats, pickQuery, queryKind, shortGpu, versionsOf, prettySql } from './hood'
 
 const st = (text: string, rows: number, params?: SqlStatement['params']): SqlStatement => ({
   text,
@@ -20,22 +20,6 @@ describe('pickQuery', () => {
   })
   it('gives null when no vector statement ran', () => {
     expect(pickQuery([st('SELECT 1', 1)])).toBeNull()
-  })
-})
-
-describe('formatSql', () => {
-  it('writes the parameters in, lists as a count, and dedents', () => {
-    const s = st(
-      '  SELECT *\n  FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %(as_of)s AS a\n  WHERE a.topic_id = %(topic)s AND a.h IN %(hs)s\n  AND a.x = %(n)s AND %(section)s IS NULL  \n',
-      3,
-      { as_of: '2008-01-01 00:00:00', topic: "o'neil", hs: { count: 25 }, n: 5, section: null },
-    )
-    expect(formatSql(s)).toBe(
-      "SELECT *\nFROM claim FOR SYSTEM_TIME AS OF TIMESTAMP '2008-01-01 00:00:00' AS a\nWHERE a.topic_id = 'o''neil' AND a.h IN (/* 25 values */)\nAND a.x = 5 AND NULL IS NULL;",
-    )
-  })
-  it('leaves unknown placeholders as they are', () => {
-    expect(formatSql(st('SELECT %(x)s', 1))).toBe('SELECT %(x)s;')
   })
 })
 
@@ -84,30 +68,6 @@ describe('versionsOf', () => {
   })
 })
 
-describe('wrapLine', () => {
-  it('breaks long lines after a comma and indents the rest', () => {
-    const line = '  SELECT ' + Array.from({ length: 12 }, (_, i) => `b.column_${i}`).join(', ')
-    const out = wrapLine(line, 40)
-    expect(out.length).toBeGreaterThan(1)
-    expect(out.every((l) => l.length <= 40)).toBe(true)
-    expect(out.slice(1).every((l) => l.startsWith('    '))).toBe(true)
-    expect(out.map((l) => l.trim()).join(' ')).toBe(line.trim())
-  })
-  it('keeps short lines and lines without a comma', () => {
-    expect(wrapLine('SELECT 1', 40)).toEqual(['SELECT 1'])
-    expect(wrapLine('x'.repeat(50), 40)).toEqual(['x'.repeat(50)])
-  })
-})
-
-describe('wrapLine keeps calls whole', () => {
-  it('never breaks inside parentheses and falls back to keywords', () => {
-    const line = '  JOIN claim FOR SYSTEM_TIME AS OF TIMESTAMP x AS b IGNORE INDEX (emb), VEC_DISTANCE_COSINE(b.emb, a.emb) AS d'
-    const out = wrapLine(line, 60)
-    expect(out.some((l) => l.includes('VEC_DISTANCE_COSINE(b.emb, a.emb)'))).toBe(true)
-    expect(out.some((l) => l.trimStart().startsWith('IGNORE INDEX'))).toBe(true)
-  })
-})
-
 describe('stored matches', () => {
   it('picks the align read over the verdict lookup and says it reads stored matches', () => {
     const align = st('SELECT al.src_h, al.`rank` AS rnk FROM align al JOIN claim b ON 1', 750)
@@ -121,3 +81,56 @@ describe('stored matches', () => {
     expect(shortGpu('laptop')).toBe('laptop')
   })
 })
+
+describe('formatSql', () => {
+  it('writes the parameters in, lists as a count, one clause per line', () => {
+    const s = st(
+      '  SELECT a.h,   a.text\n  FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %(as_of)s AS a\n  WHERE a.topic_id = %(topic)s AND a.h IN %(hs)s AND %(section)s IS NULL  \n',
+      3,
+      { as_of: '2008-01-01 00:00:00', topic: "o'neil", hs: { count: 25 }, section: null },
+    )
+    expect(formatSql(s)).toBe(
+      [
+        'SELECT a.h, a.text',
+        'FROM claim',
+        "  FOR SYSTEM_TIME AS OF TIMESTAMP '2008-01-01 00:00:00' AS a",
+        "WHERE a.topic_id = 'o''neil'",
+        '  AND a.h IN (/* 25 values */)',
+        '  AND NULL IS NULL;',
+      ].join('\n'),
+    )
+  })
+  it('leaves unknown placeholders as they are', () => {
+    expect(formatSql(st('SELECT %(x)s', 1))).toBe('SELECT %(x)s;')
+  })
+})
+
+describe('prettySql', () => {
+  it('indents subqueries by two and keeps function parentheses whole', () => {
+    const out = prettySql(
+      'SELECT * FROM (\n  SELECT a.h, ROW_NUMBER() OVER (PARTITION BY a.h, b.lang ORDER BY d) AS rnk\n  FROM claim a JOIN claim b ON b.x = a.x AND b.y IN (1, 2)\n) c WHERE rnk <= 5 ORDER BY a.h',
+    )
+    expect(out).toBe(
+      [
+        'SELECT *',
+        'FROM (',
+        '  SELECT a.h, ROW_NUMBER() OVER (PARTITION BY a.h, b.lang ORDER BY d) AS rnk',
+        '  FROM claim a',
+        '  JOIN claim b',
+        '    ON b.x = a.x',
+        '    AND b.y IN (1, 2)',
+        ') c',
+        'WHERE rnk <= 5',
+        'ORDER BY a.h',
+      ].join('\n'),
+    )
+  })
+  it('keeps quoted keywords and breaks long select lists after a comma', () => {
+    expect(prettySql("SELECT 'a FROM b' AS t")).toBe("SELECT 'a FROM b' AS t")
+    const out = prettySql('SELECT b.page_id, b.section, b.text, b.born_rev, b.died_rev, b.row_start FROM x').split('\n')
+    expect(out.length).toBe(3)
+    expect(out[1].startsWith('  ')).toBe(true)
+    expect(out[2]).toBe('FROM x')
+  })
+})
+
