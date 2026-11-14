@@ -326,6 +326,10 @@ def decide(
         parts.append(f"{eur(ctx.total_cents)} is over the hard cap of {eur(ctx.hard_cap_cents)}")
     if not ctx.has_delivery_line and not ctx.sales_block:
         parts.append("Valio gives no delivery line for it")
+    if not parts and not ctx.category_allowed:
+        parts.append("it is outside the Spend Pass's product groups")
+    if not parts and ctx.sales_block:
+        parts.append("Valio has a sales block on it")
     if not parts:
-        parts.append("no rule allows it (category outside the Spend Pass or a sales block)")
+        parts.append("no rule allows it")
     return Decision(Outcome.DENY, blocked, "Blocked: " + and_list(parts) + ".", c)

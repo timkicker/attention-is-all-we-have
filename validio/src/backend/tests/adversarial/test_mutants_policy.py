@@ -243,9 +243,9 @@ def test_context_outside_the_schema_is_a_policy_error(bad):
     ({"total_cents": 300000, "has_delivery_line": False}, ["never-over-hard-cap"],
      "Blocked: 3,000.00 € is over the hard cap of 2,000.00 € and Valio gives no delivery line for it."),
     ({"sales_block": True, "has_delivery_line": False}, ["no-permit"],
-     "Blocked: no rule allows it (category outside the Spend Pass or a sales block)."),
+     "Blocked: Valio has a sales block on it."),
     ({"category": "999"}, ["no-permit"],
-     "Blocked: no rule allows it (category outside the Spend Pass or a sales block)."),
+     "Blocked: it is outside the Spend Pass's product groups."),
 ])
 def test_blocked_sentence_names_each_cause(kw, rules, sentence):
     # `"never-break-diet" in blocked` -> `not in`; `not line and not sales_block` -> `or`; `if not parts` -> `if parts`
