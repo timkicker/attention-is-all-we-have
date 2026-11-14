@@ -341,6 +341,7 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
     """The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when
     GEMINI_API_KEY is set, the fake model otherwise. On a public deploy the demo token guards it too."""
     import asyncio
+    import secrets
 
     from ..agent.buyer import run, task_for_text
     from ..agent.holder import Holder
@@ -358,7 +359,8 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
     holder = Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir)
 
     async def go():
-        async with McpPort(server, spend_pass=holder.presentation) as port:
+        # a fresh salt per press: the same text again is a new request, retries inside one run still match
+        async with McpPort(server, spend_pass=holder.presentation, salt=secrets.token_hex(8)) as port:
             return await run(task_for_text(text), make_llm(2), port)
 
     t = asyncio.run(go())
