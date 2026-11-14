@@ -48,7 +48,7 @@ for (const v of VIEWS) {
     await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/);
     // The vendor fold is open: the MCP URL works for any MCP agent.
     await expect(page.getByTestId("mcp-url")).toContainText("/mcp/c/");
-    await expect(page.getByTestId("mcp-hint")).toContainText("claude mcp add --transport http validio http");
+    await expect(page.getByTestId("mcp-hint")).toHaveText("Paste the MCP URL into any MCP agent. Claude Code: claude mcp add --transport http validio URL");
     await shoot("pairing");
 
     await page.getByTestId("agent-demo").click();
@@ -148,10 +148,7 @@ test("any MCP agent: its first call on the pairing URL shows the consent without
   await page.getByTestId("agent-connect").click();
   const url = (await page.getByTestId("mcp-url").textContent())!;
   expect(url).toMatch(/^https?:\/\/.+\/mcp\/c\/[0-9a-f]+\/$/);
-  await expect(page.getByTestId("mcp-hint")).toHaveText(`Paste into any MCP agent, e.g. Claude Code: claude mcp add --transport http validio ${url}`);
-  await page.getByTestId("copy-mcp-cmd").click();
-  await expect(page.getByTestId("copy-mcp-cmd")).toHaveText("Copied");
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`claude mcp add --transport http validio ${url}`);
+  await expect(page.getByTestId("mcp-hint")).toHaveText("Paste the MCP URL into any MCP agent. Claude Code: claude mcp add --transport http validio URL");
   for (const w of [1280, 390]) {
     await page.setViewportSize({ width: w, height: w === 390 ? 844 : 900 });
     await page.waitForTimeout(250);

@@ -63,7 +63,6 @@
   }
 
   let confirmOff = $state(false);
-  const addCmd = (url: string) => `claude mcp add --transport http validio ${url}`;
 
   // ---------- Rules, edited in place ----------
   const SUBS: { value: Substitutes; label: string }[] = [
@@ -231,8 +230,7 @@
             <span class="url-label">MCP</span>
             <code class="url" data-testid="mcp-url">{a.pairing.mcpUrl}</code>
             {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
-            <span class="hint" data-testid="mcp-hint">Paste into any MCP agent, e.g. Claude Code: <code class="url mono">{addCmd(a.pairing.mcpUrl)}</code></span>
-            {@render copy_button("mcp-cmd", addCmd(a.pairing.mcpUrl), "Copy Claude Code command")}
+            <span class="hint" data-testid="mcp-hint">Paste the MCP URL into any MCP agent. Claude Code: <code class="mono">claude mcp add --transport http validio URL</code></span>
             <span class="url-label">API</span>
             <code class="url">{a.pairing.apiUrl}</code>
             {@render copy_button("api", a.pairing.apiUrl, "Copy API URL")}
@@ -414,9 +412,6 @@
     line-height: var(--lh-meta);
     color: var(--v-muted);
     overflow-wrap: anywhere;
-  }
-  .hint .url {
-    color: var(--v-fg);
   }
   .may {
     margin: 0;
