@@ -11,7 +11,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api import sqllog
+from api import cache, sqllog
 from api.db import close_all
 from api.routes import ask, atlas, check, compare, dropped, health, ingest, search, sources, timeline, topics
 from contract.db import load_env
@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logging.getLogger("parallax").warning("ingest tables not ensured: %s", e)
     if os.environ.get("INGEST_WORKER", "1") != "0":
-        ingest.WORKER = job.Worker()
+        ingest.WORKER = job.Worker(after_job=cache.clear)
         ingest.WORKER.start()
     yield
     if ingest.WORKER:
@@ -42,28 +42,51 @@ for module in (health, topics, compare, timeline, dropped, check, sources, ask, 
     app.include_router(module.router)
 
 
+async def _with_sql(request: Request, call_next) -> tuple[Response, str | None, list[dict], bytes | None]:
+    """Run the route with its statements captured; JSON bodies get them as `sql`. Returns the body when JSON."""
+    with sqllog.capture() as statements:
+        response = await call_next(request)
+        panel = sqllog.current_panel()
+    if not response.headers.get("content-type", "").startswith("application/json"):
+        return response, panel, statements, None
+    body = b"".join([chunk async for chunk in response.body_iterator])
+    data = json.loads(body)
+    if response.status_code < 400 and isinstance(data, dict):
+        data.setdefault("sql", statements)
+        if panel:
+            sqllog.LAST[panel] = statements
+    headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+    out = json.dumps(data, ensure_ascii=False).encode()
+    return (
+        Response(out, status_code=response.status_code, headers=headers, media_type="application/json"),
+        panel,
+        statements,
+        out,
+    )
+
+
 @app.middleware("http")
 async def attach_sql(request: Request, call_next):
     if not request.url.path.startswith("/api/") or request.url.path.startswith("/api/sql/"):
         return await call_next(request)
-    with sqllog.capture() as statements:
-        response = await call_next(request)
-        panel = sqllog.current_panel()
-    if response.headers.get("content-type", "").startswith("application/json"):
-        body = b"".join([chunk async for chunk in response.body_iterator])
-        data = json.loads(body)
-        if response.status_code < 400 and isinstance(data, dict):
-            data.setdefault("sql", statements)
-            if panel:
-                sqllog.LAST[panel] = statements
-        headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
-        return Response(
-            json.dumps(data, ensure_ascii=False),
-            status_code=response.status_code,
-            headers=headers,
-            media_type="application/json",
-        )
-    return response
+    key = cache.key(request)
+    if key is None:
+        response, *_ = await _with_sql(request, call_next)
+        if request.method not in ("GET", "HEAD", "OPTIONS") and response.status_code < 400:
+            cache.clear()  # a write (check, ingest) can change what the read routes return
+        return response
+    async with cache.single_flight(key):
+        hit = cache.get(key)
+        if hit is None:
+            gen = cache.generation()
+            response, panel, statements, body = await _with_sql(request, call_next)
+            if response.status_code == 200 and body is not None:
+                headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+                cache.put(key, gen, body, headers, panel, statements)
+            return response
+    if hit.panel:
+        sqllog.LAST[hit.panel] = hit.statements  # "Under the hood" shows the statements behind what was served
+    return Response(hit.body, status_code=200, headers=hit.headers, media_type="application/json")
 
 
 @app.exception_handler(StarletteHTTPException)
