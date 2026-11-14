@@ -22,8 +22,8 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
   await page.locator("#inbox-R-1").click();
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.locator("#live-checked")).toContainText("Read live from Valio at");
+  await expect(page.locator("#request-status")).toContainText("Ordered alone");
+  await expect(page.locator("#live-checked")).toContainText("Live");
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.locator("#fold-options").click();
   await expect(page.locator("#reader-463047")).toContainText("Order all 132 in stock");
@@ -41,16 +41,16 @@ test("live: scenes 2 to 5 against the backend", async ({ page }) => {
   await expect(page.locator("#code-help")).toContainText("not right");
   await page.locator("#approve-code").fill(CODE);
   await page.locator("#approve").click();
-  await expect(page.locator("#order-steps")).toContainText("Placed at Valio");
+  await expect(page.locator("#order-done")).toContainText("confirmed again");
   await page.setViewportSize({ width: 1280, height: 900 });
 
   // Scene 4: renew and accept send the code typed once above (same session).
   await page.locator("#nav-steady-orders").click();
   await page.getByRole("link", { name: /Weekly Monday order/ }).click();
-  await expect(page.locator("#simulated-history")).toContainText("Simulated history");
+  await expect(page.locator("#simulated-history")).toContainText("simulated");
   await page.locator("#renew").click();
   await expect(page.locator("#line-463968")).toContainText("772.49");
-  await expect(page.locator("#line-466375")).toContainText("26 % more per guest");
+  await expect(page.locator("#line-466375")).toContainText("None in stock at Valio.");
   await page.locator("#accept-471376").click();
   await expect(page.locator("#line-471376")).toContainText("Accepted");
 

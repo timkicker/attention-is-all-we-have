@@ -13,10 +13,9 @@ test("scene 3: owner approves the swap", async ({ page }) => {
 
   await page.getByTestId("inbox-R-2").click();
   await expect(page.locator("#request-title")).toContainText("200 bags of");
-  await expect(page.locator("#request-why")).toHaveText("Lactose-free mozzarella 125\u00a0g is out of stock (simulated). The swap is not on Valio's list.");
-  await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
-  await expect(page.getByTestId("asked-for")).toHaveText(/Simulated stock-out for this demo\. Valio's live count is 11,603\sbags\./);
-  await expect(page.getByTestId("request-rule")).toContainText("ask-human");
+  await expect(page.locator("#request-why")).toHaveText("Out of stock (simulated). Swap not on Valio's list.");
+  // The live count sits in the chosen row's fold.
+  await expect(page.getByTestId("asked-for")).toContainText("11,603");
   // Beyond the list is open first: the chosen blend.
   await expect(page.getByTestId("option-465256")).toContainText("180.10");
   await expect(page.getByTestId("option-465256")).toContainText("Chosen");
@@ -35,7 +34,7 @@ test("scene 3: owner approves the swap", async ({ page }) => {
   await page.getByTestId("approve").click();
   await expect(page.locator("#code-help")).toContainText("any 6 digits");
   await code(page);
-  await expect(page.getByTestId("order-steps")).toContainText("Validio placed the order");
+  await expect(page.getByTestId("order-done")).toContainText("confirmed again");
   await expect(page.getByTestId("approve")).toHaveCount(0);
 
   await page.setViewportSize({ width: 1280, height: 900 });

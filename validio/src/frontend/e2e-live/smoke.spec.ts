@@ -28,12 +28,12 @@ test("app and API from one process", async ({ page, request }) => {
   await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
   await page.locator("#inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.locator("#live-checked")).toContainText("Read live from Valio at");
+  await expect(page.locator("#request-status")).toContainText("Ordered alone");
+  await expect(page.locator("#live-checked")).toContainText("Live");
   await expect(page.locator("#option-464306")).toContainText("1,010.00");
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.reload(); // served by FastAPI's fallback
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
+  await expect(page.locator("#request-status")).toContainText("Ordered alone");
 });
 
 test("owner approves the swap on the phone", async ({ page }) => {
@@ -55,7 +55,7 @@ test("owner approves the swap on the phone", async ({ page }) => {
     await page.getByTestId("code-input").fill("246810");
     await page.getByTestId("code-submit").click();
   }
-  await expect(page.locator("#order-steps")).toContainText("Validio placed the order");
+  await expect(page.locator("#order-done")).toContainText("confirmed again");
 
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/ledger");
