@@ -266,7 +266,8 @@
     color: var(--v-muted);
     pointer-events: none;
   }
-  .money .problem {
+  .money .problem,
+  .code .problem {
     white-space: nowrap;
   }
   /* The kit Switch, on in Valio blue: its accent comes from the nearest wrapper. */
