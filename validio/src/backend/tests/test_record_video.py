@@ -38,12 +38,14 @@ def test_server_env_is_offline_with_its_own_store(tmp_path):
     assert "VALIDIO_DEMO_TOKEN" not in env
     assert env["NO_COLOR"] == "1"
     assert "VALIO_API_KEY" not in env and "GEMINI_API_KEY" not in env
+    assert env["LLM_MODE"] == "fake"  # a key in validio/.env must not switch the recording to Gemini
     assert env["PATH"] == "/bin"
 
 
 def test_server_env_keeps_the_gemini_key_only_when_asked(tmp_path):
     env = rv.server_env(tmp_path, "1", {"VALIO_API_KEY": "k", "GEMINI_API_KEY": "g"}, keep_model_key=True)
     assert env["GEMINI_API_KEY"] == "g" and "VALIO_API_KEY" not in env
+    assert "LLM_MODE" not in env
 
 
 def test_encode_cuts_the_lead_in_and_converts(tmp_path):

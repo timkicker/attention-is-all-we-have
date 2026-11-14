@@ -354,7 +354,7 @@ def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, 
 @router.post("/demo/ask", response_model=AskOut, response_model_exclude_none=True)
 def demo_ask(ctx: CtxDep, request: Request, body: AskIn):
     """The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when
-    GEMINI_API_KEY is set, the fake model otherwise. On a public read deploy only a demo copy may use it."""
+    GEMINI_API_KEY is set in validio/.env or the environment and LLM_MODE is not fake, the fake model otherwise. On a public read deploy only a demo copy may use it."""
     import asyncio
     import secrets
 
