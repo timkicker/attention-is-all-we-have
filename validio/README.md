@@ -2,7 +2,7 @@
 
 Validio sits between a kitchen's purchasing agent and Valio Aimo's wholesale API. The agent asks for supplies in plain words or by product id and Validio turns that into a typed need, searches its own copy of Valio's catalog and asks Valio's test API for price and availability of the few candidates only. Every fact it uses carries a Fact Grade that says how far it can be trusted (a missing value is never read as a yes). A rule engine (Cedar) then decides whether the agent may order alone, has to ask a person or is blocked, so no model output can move money on its own. Each decision ends up as one sentence in a hash-chained ledger that the kitchen and Valio read the same way.
 
-The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT.md](../PROJECT_BLUEPRINT.md). The Hard Lines are listed in [docs/RULES.md](docs/RULES.md) and the click-through for the demo in [docs/DEMO.md](docs/DEMO.md).
+The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-validio.md](../PROJECT_BLUEPRINT-validio.md). The Hard Lines are listed in [docs/RULES.md](docs/RULES.md) and the click-through for the demo in [docs/DEMO.md](docs/DEMO.md).
 
 ## Setup
 
