@@ -346,7 +346,7 @@ Track B targets (`api/targets.mk`): `api`, `web`, `web-build`, `test-b`, `test-w
 
 ## 2. Track A, data and engine
 
-Track A owns `parallax/pipeline/`, `parallax/engine/`, `parallax/eval/`, `parallax/docs/VERDA.md`, `parallax/docs/GEMINI.md`, `parallax/pipeline/targets.mk` and everything under `parallax/data/` (gitignored). It never edits `api/`, `web/`, `e2e/` or `contract/`. Its tests are in `pipeline/tests/`, `engine/tests/` and `eval/tests/`; `make test-a` runs them. Track A runs against its own local MariaDB and never waits for the app.
+Track A owns `parallax/pipeline/`, `parallax/engine/`, `parallax/eval/`, `parallax/docs/VERDA.md`, `parallax/docs/GEMINI.md`, `parallax/docs/SCALE.md`, `parallax/pipeline/targets.mk` and everything under `parallax/data/` (gitignored). It never edits `api/`, `web/`, `e2e/` or `contract/`. Its tests are in `pipeline/tests/`, `engine/tests/` and `eval/tests/`; `make test-a` runs them. Track A runs against its own local MariaDB and never waits for the app.
 
 Background facts for the whole track:
 
@@ -355,6 +355,11 @@ Background facts for the whole track:
 - MariaDB datasets: `gh release download <tag> -R MariaDB/mariadb-wikipedia-datasets`. `m-2026-10`: 16 parquet files `versions-NN.parquet`, 19,742 fi articles, 862,076 revisions to 1 Oct 2026, columns `page_id, title, rev_id, parent_id, timestamp, user, anonymous, comment, minor, sha1, bytes, text`. Never read `user` or `anonymous`. Talvisota has 2,143 versions in `versions-01.parquet`. `s-2026-10`: `articles-{fi,sv,en}.parquet` and `vectors-bge-m3-{fi,sv,en}` with one bge-m3 vector per article; 2,919 Wikidata ids exist in all three.
 - Measured on Saturday: bge-m3 through local Ollama embeds 18 sentences/s. Spike recall on 28 hand-checked cross-language pairs: R@1 0.57, R@5 0.89, R@10 0.96. At topic size exact search (`IGNORE INDEX(emb)`) took 0.7 to 3.6 ms and ANN 6 to 127 ms; ANN with `mhnsw_ef_search=80` and `LIMIT 2` once missed a row, ef 1000 never did.
 - Rate tiers: 10 requests/min without a contact in the User-Agent, 200/min with one. The spike got 429 after 8 fast calls with a contact-free UA.
+- Reverts: a revision is a revert when its `sha1` equals the `sha1` of an earlier revision of the same page other than its parent; it restores that earlier revision (the "revert target"). M has `sha1` for every revision and the API metadata from A2 has it too. Talvisota alone has 328 reverts, 240 of them undo anonymous edits, so with every revision (fi, and exact bisects) vandalism would otherwise show up as claims.
+- Noise rule (applies only to `time_precision='exact'` lives, fixed here so A4, A5 and A12 count the same way):
+  - **Noise life:** a life that lasted under 24 hours, or that was ended by a revert whose target is older than its `born_rev` (vandalism that was undone). Noise lives are not loaded into `claim` or `claim_life_fi`.
+  - **Healed gap:** when a sentence dies and the same `h` is born again within 24 hours, or the revision that brings it back is a revert to a revision in which it was alive (blanking that was undone), the two lives are merged into one. Healed gaps are not deaths.
+  - Raw numbers stay visible for honesty: `stat` keys `lives_raw`, `lives_noise`, `gaps_healed` per edition and for M.
 
 ### A1. Wikimedia client and cache (16:45 to 17:15, 30 min)
 
@@ -375,7 +380,7 @@ Background facts for the whole track:
 - **Inputs:** A1. `topics.yaml` holds `winterwar: {wikidata: Q134949, label_en: Winter War, fi_page: 1256, langs: [fi, sv, de, en, ru, et, uk]}`.
 - **Steps:**
   1. Revision metadata per non-fi edition: `prop=revisions&rvprop=ids|timestamp|size|flags|sha1|comment&rvlimit=max&rvdir=newer` with continuation. Write `data/hist/winterwar/<lang>.meta.jsonl.gz`. Never request `user`.
-  2. Pick snapshot revisions: for each year from the year after the first revision to 2026, the last revision before 1 January 00:00 UTC, plus the current one. Fetch their wikitext with `prop=revisions&revids=<id>|<id>...&rvprop=ids|timestamp|comment|content&rvslots=main`, 10 revids per call. Write `data/hist/winterwar/<lang>.snap.jsonl.gz` (`rev_id, ts, comment, text`).
+  2. Pick snapshot revisions: for each year from the year after the first revision to 2026, the last revision before 1 January 00:00 UTC, plus the current one. Fetch their wikitext with `prop=revisions&revids=<id>|<id>...&rvprop=ids|timestamp|comment|sha1|content&rvslots=main`, 10 revids per call. Write `data/hist/winterwar/<lang>.snap.jsonl.gz` (`rev_id, ts, comment, sha1, text`).
   3. fi: read page 1256 from `versions-01.parquet` (pyarrow filter on `page_id`, columns without `user` and `anonymous`) into `data/hist/winterwar/fi.every.jsonl.gz`. Also fi metadata rows for `revision`.
   4. Print counts per edition.
 - **Done check:** `make fetch TOPIC=winterwar` ends with a table where fi has 2,143 revisions with text, sv 781 and en 6,720 revisions of metadata (or more, as edits keep coming), each non-fi edition has between 19 and 26 snapshots while `r429` stays under 5. A second run makes zero requests.
@@ -392,7 +397,8 @@ Background facts for the whole track:
   3. The first template whose name contains `infobox`, `Infobox`, `Tietolaatikko`, `Infobox military conflict`, `Карточка` or `Конфликт` becomes `[infobox]` key/value JSON; its values also become sentences of the form `key: value` in section `[infobox]` (casualty figures live there).
   4. Splitter from the spike, kept as is: split on `(?<=[.!?])\s+` only where the next piece starts with a digit, an opening quote or bracket (`«"„(`) or a character for which `str.isupper()` is true (this covers Latin and Cyrillic capitals alike). Then glue a piece onto the previous one when the previous piece is under 25 characters or ends in a short word or abbreviation matching `\b(\d{1,2}|\w{1,3}|ym|esim|mm|ca|bzw|z\.B|u\.a|т\.е|e\.Kr|jKr|eKr)\.$`. Drop pieces under 20 characters.
   5. Output per revision: list of `{section, idx, text, h, has_ref}` with `h = claim_hash(text)`.
-- **Done check:** `uv run pytest pipeline/tests/test_parse.py -q` with fixtures for each language: the en 2008 snapshot yields a sentence containing "the Soviets staged the Shelling of Mainila"; the current ru revision yields "по заявлению советской стороны"; Finnish "12. maaliskuuta 1940" stays in one sentence; no sentence contains `{{`, `[[`, `|` or `v t e`; the de infobox yields at least one `[infobox]` row. Parsing all fi revisions of Talvisota takes under 3 minutes.
+  6. Parse cache keyed by revision `sha1`: identical text gives an identical parse, so a revert (and any other repeat of an earlier text) reuses the cached result instead of parsing again. In memory, per page (reverts stay inside one page), so A12 needs no extra disk. Count `parsed` and `cache_hits`.
+- **Done check:** `uv run pytest pipeline/tests/test_parse.py -q` with fixtures for each language: the en 2008 snapshot yields a sentence containing "the Soviets staged the Shelling of Mainila"; the current ru revision yields "по заявлению советской стороны"; Finnish "12. maaliskuuta 1940" stays in one sentence; no sentence contains `{{`, `[[`, `|` or `v t e`; the de infobox yields at least one `[infobox]` row; parsing the same `sha1` twice calls the parser once. Parsing all fi revisions of Talvisota takes under 3 minutes and prints `parsed=... cache_hits=...` (at least the 328 reverts are hits).
 - **Unblocks:** A4, A12, A14.
 
 ### A4. Sentence lives (18:30 to 19:15, 45 min)
@@ -406,8 +412,9 @@ Background facts for the whole track:
   3. `had_ref` is 1 if any revision of the life had a ref after the sentence, `has_ref` reflects the last revision of the life.
   4. Same `(lang, page_id, h, row_start)` twice: add 1 µs.
   5. Section rows: the same walk over `(section, sha1(section text))` gives the `section_text` lives.
-  6. Write `data/lives/winterwar-<lang>.jsonl.gz` and print per edition: lives, alive, dead, distinct texts.
-- **Done check:** `uv run pytest pipeline/tests/test_lives.py -q` covers a 4-revision toy history (born, died, reborn, still alive gives 2 lives for one `h`). `make lives TOPIC=winterwar` prints counts; en has a dead life containing "staged the Shelling of Mainila" that ends in 2010 (snapshot bound; A5 makes it exact).
+  6. Exact lives only: apply the noise rule from the background facts (heal gaps first, then drop noise lives). Revert detection uses the `sha1` of every revision in time order.
+  7. Write `data/lives/winterwar-<lang>.jsonl.gz` and print per edition: lives, alive, dead, distinct texts, and for exact editions also `lives_raw`, `lives_noise`, `gaps_healed`.
+- **Done check:** `uv run pytest pipeline/tests/test_lives.py -q` covers a 4-revision toy history (born, died, reborn, still alive gives 2 lives for one `h`, with gaps of more than 24 hours), plus noise cases: a sentence added and reverted after 10 minutes gives no life; a section blanked and reverted after 5 minutes gives one unbroken life; a sentence removed and re-added 3 days later by a normal edit gives 2 lives. `make lives TOPIC=winterwar` prints counts; en has a dead life containing "staged the Shelling of Mainila" that ends in 2010 (snapshot bound; A5 makes it exact); fi shows `lives_noise > 0`.
 - **Unblocks:** A5, A6, A7.
 
 ### A5. Exact bisect for demo claims (19:15 to 19:45, 30 min)
@@ -418,7 +425,7 @@ Background facts for the whole track:
 - **Steps:**
   1. `demo_claims.yaml` lists `(lang, regex)` pairs: en `staged the Shelling of Mainila`; ru `инсценированный советской стороной`; ru `предположительно инсценированный`; sv `rysk provokation`; de `Vorwand`; de `inszenierte`; fi `tekaistuihin`. More can be added.
   2. For each pair, find the first and last snapshot that match, then binary search over the metadata revision list between them, fetching single revisions with `revids=<id>&rvprop=content` (about 12 calls each).
-  3. Replace the life's snapshot bounds by exact `ts`, `born_rev`, `died_rev` and `died_comment`; set `time_precision='exact'`.
+  3. Replace the life's snapshot bounds by exact `ts`, `born_rev`, `died_rev` and `died_comment`; set `time_precision='exact'`. If the first revision without the claim is a revert or is undone within 24 hours, keep bisecting past it (noise rule), so the demo never shows a vandal edit as the moment a claim changed.
 - **Done check:** `make bisect TOPIC=winterwar` prints en `first_without=309285088 2009-08-21T18:00:56Z` with a comment containing "rewrote the mainila incident part" and ru `first_without=64106894 2014-07-09T10:22:55Z`. Unit test runs the binary search on a fake revision list.
 - **Unblocks:** the Time scene of the demo.
 
@@ -441,7 +448,7 @@ Background facts for the whole track:
 - **Files:** `pipeline/load.py`, `pipeline/checks.sql`, `pipeline/checks_expected.txt`, `pipeline/tests/test_load.py`.
 - **Inputs:** A4, A5, A6, `contract/schema.sql`.
 - **Steps:**
-  1. `make db-reset`, then insert `topic`, `page`, `revision` (all metadata rows, `snapshot=1` for parsed ones), `section_text`, `claim`. Session: `SET time_zone='+00:00'; SET system_versioning_insert_history=1`. History rows first with explicit `row_start, row_end`, then current rows with `row_start` only. Batches of 500, one transaction per edition. The loader is idempotent (reset and reload).
+  1. `make db-reset`, then insert `topic`, `page`, `revision` (all metadata rows, `snapshot=1` for parsed ones), `section_text`, `claim`. Session: `SET time_zone='+00:00'; SET system_versioning_insert_history=1`. History rows first with explicit `row_start, row_end`, then current rows with `row_start` only. Batches are cut by size, not by row count: at most 500 rows and at most 4 MB of SQL per statement, because long `section_text` rows would otherwise exceed the default `max_allowed_packet` (16 MB). One transaction per edition. Record load seconds per table for A13b. The loader is idempotent (reset and reload).
   2. `term` from `pipeline/terms.yaml` (the Mainila verbs per language: fi lavasti, tekaistu; de inszenierte, Vorwand, angeblich; sv provokation, bevisas; en staged, reported, false flag; ru инсценир, провокац, по заявлению советской стороны; et provokatsioon; uk провокац, інсценув) and `term_hit` from regex over claim lives with the same periods.
   3. `checks.sql`: row counts per edition (current and history), the Mainila probe (en `AS OF '2008-06-01'` nearest to the en Mainila vector is the "staged" sentence, `AS OF '2012-06-01'` the "reported" one), `EXPLAIN` shows `key=emb`. `make checks` diffs the output against `checks_expected.txt`.
   4. `make dump`: `mariadb-dump --dump-history --single-transaction parallax | gzip > data/seed.sql.gz`; `make release SEED=v2`.
@@ -492,7 +499,7 @@ Background facts for the whole track:
 
 - **Goal:** everything B needs for the real demo in one dump.
 - **Files:** `pipeline/targets.mk`.
-- **Steps:** run `make checks`, write `stat` keys (`revisions_total`, `lives_total`, `distinct_texts`, `vectors`, `embed_rate`, `judge_calls`), `make dump release SEED=v3`.
+- **Steps:** run `make checks`, write `stat` keys (`revisions_total`, `lives_total`, `lives_raw`, `lives_noise`, `gaps_healed`, `distinct_texts`, `vectors`, `embed_rate`, `judge_calls`), `make dump release SEED=v3`.
 - **Done check:** `make seed SEED=v3` on a clean database followed by `make checks` prints `checks OK`.
 - **Unblocks:** M2.
 
@@ -502,20 +509,36 @@ Background facts for the whole track:
 - **Files:** `pipeline/m_lives.py`, `pipeline/tests/test_m_lives.py`.
 - **Inputs:** A3, A4 and the 16 M parquet files in `data/m/`.
 - **Steps:**
-  1. One file at a time, group by `page_id`, sort by `timestamp`, parse with A3, lives with A4 (`time_precision='exact'`). Use a process pool of `cpu_count()-1`.
+  1. One file at a time, group by `page_id`, sort by `timestamp`, parse with A3 (with its `sha1` parse cache), lives with A4 (`time_precision='exact'`, noise rule applied). Read only the columns `page_id, title, rev_id, parent_id, timestamp, comment, minor, sha1, bytes, text`. Use a process pool of `cpu_count()-1`. Print a progress line per file with revisions/s and the cache hit rate, so the CPU time is known early: if the first file projects more than 120 minutes in total, tell your human and restrict A12 to the articles in the S atlas (A13) plus every article with at least one `unsourced` or `error` death.
   2. `reason` from `died_comment`: `unsourced` for `lähteetön|lähde puuttuu|ei lähdettä|lähteitä`, `error` for `virhe|väärä|korjaus`, `speculation` for `spekul|huhu|arvailu`, `other` for any other non-empty comment, `none` for empty.
-  3. Load into `claim_life_fi` (history rows with insert_history). Print lives, alive, dead, dead after at least 365 days, per reason.
+  3. Load into `claim_life_fi` (history rows with insert_history, batches cut by size as in A7). Print lives, alive, dead, dead after at least 365 days, per reason, and `lives_raw`, `lives_noise`, `gaps_healed`, `parsed`, `cache_hits`, CPU minutes.
   4. Embedding subset for `claim`: lives that are alive or lived at least 365 days. With Verda up, embed all of them; without, the 100 articles with the most `unsourced` or `error` deaths. Load into `claim` with `topic_id=NULL`.
-- **Done check:** `make m-lives` prints totals in the order of the Friday spike (about 1 million lives; the parser changed, so report the new numbers and do not reuse the old ones). `SELECT COUNT(*) FROM claim_life_fi FOR SYSTEM_TIME ALL` matches the printed total. The Talvisota rows in `claim_life_fi` equal the fi lives from A4.
-- **Unblocks:** Dropped view scale line, Check across all of fi.
+  5. Contested claims (edit wars at the level of a single sentence), pure SVT, no new table: `pipeline/contested.sql` counts lives per sentence over the whole history, `SELECT page_id, h, COUNT(*) lives FROM claim_life_fi FOR SYSTEM_TIME ALL GROUP BY page_id, h HAVING lives >= 3`. Because gaps were healed and noise dropped first, a count of 3 or more means people removed and restored the sentence repeatedly, not vandalism. Write `stat` key `contested_claims` (total, per-article top 20 with title and the sentence text, query milliseconds) and print the Talvisota ones. Target `make contested`.
+- **Done check:** `make m-lives` prints totals in the order of the Friday spike (about 1 million raw lives; the parser changed, so report the new numbers and do not reuse the old ones). `SELECT COUNT(*) FROM claim_life_fi FOR SYSTEM_TIME ALL` matches the printed total after noise. The Talvisota rows in `claim_life_fi` equal the fi lives from A4. `make contested` prints the total and a top 20 in which every entry has at least 3 lives. `uv run pytest pipeline/tests/test_m_lives.py -q` covers the parquet reader on a 3-page toy file (no `user` column read) and the contested query on toy rows.
+- **Unblocks:** Dropped view scale line, Check across all of fi, the contested line in SCALE.md and the submission text.
 
 ### A13. S atlas (00:45 to 01:30, 45 min)
 
 - **Goal:** breadth across 2,919 tri-lingual topics.
 - **Files:** `pipeline/atlas.py`, `pipeline/tests/test_atlas.py`.
 - **Steps:** load `article_vec` from the S vector files; fill `atlas_topic` with titles, coverage and the three pairwise distances computed in SQL (`VEC_DISTANCE_COSINE(a.emb, b.emb)` joined on `wikidata_id`); set `topic_id='winterwar'` for Q134949.
-- **Done check:** `make atlas` prints `all=2919`; `SELECT coverage, COUNT(*) FROM atlas_topic GROUP BY coverage` matches.
-- **Unblocks:** B10.
+- **Done check:** `make atlas` prints `all=2919`; `SELECT coverage, COUNT(*) FROM atlas_topic GROUP BY coverage` matches. Writes `stat` key `atlas` (topics per coverage, SQL milliseconds for the distance query, the 10 topics with the largest fi–sv and fi–en distance as "where to look next").
+- **Unblocks:** B10, A13b.
+- **Cut note (proposal for Tim):** A13 is the cheapest task that runs entirely on a provided dataset (S). If Atlas is cut (section 6, item 1), cut only the UI (B10) and keep A13: its numbers still go into the scale line and SCALE.md.
+
+### A13b. Scale bench (after A13, 30 min, uses the slack from the early contract)
+
+- **Goal:** measured numbers for the "Implementation: scalability on the provided datasets" criterion (20 %), from one command.
+- **Files:** `pipeline/bench.py`, `pipeline/tests/test_bench.py`, `docs/SCALE.md`, target `bench` in `pipeline/targets.mk`.
+- **Inputs:** A7, A12, A13 loaded in the local database.
+- **Steps:**
+  1. Sizes: rows (current and `FOR SYSTEM_TIME ALL`) and `data_length + index_length` from `information_schema.tables` for `claim`, `claim_life_fi`, `article_vec`, `section_text`, `revision`; load seconds recorded by A7 and A12; parse rate and cache hit rate from A12.
+  2. `AS OF` latency: 50 random `(page_id, date)` pairs, p50 and p95, once on the Winter War (`claim`) and once across all of M (`claim_life_fi`); `EXPLAIN` must show the `(page_id, row_start)` key, otherwise the bench fails.
+  3. Vector search at M size: 100 random `claim` vectors, exact (`IGNORE INDEX(emb)`) vs ANN with `mhnsw_ef_search` 20, 80 and 1000: recall@10 against exact and p50/p95 milliseconds, with the vector search in a subquery and the join after it.
+  4. The combined statement of the demo (`AS OF` plus `VEC_DISTANCE_COSINE`) on the Winter War: p50/p95 and rows.
+  5. Write everything to `stat` key `bench` and render `docs/SCALE.md` from it: one table per dataset (M, S, Winter War from the API, L if A17 ran), the noise numbers (`lives_raw`, `lives_noise`, `gaps_healed`), the contested claims count, and one paragraph on why sentences are the chunks (the "chunking" the organisers list as to do: one vector per sentence life finds a fact, not just a topic, and one vector per life instead of per revision keeps the vector count at distinct sentences).
+- **Done check:** `make bench` prints the tables and `bench OK`; every number in `docs/SCALE.md` is in `stat`. `uv run pytest pipeline/tests/test_bench.py -q` checks the percentile and recall helpers on toy data.
+- **Unblocks:** the scale line in Under the hood, the "Implementation" paragraph of the submission, A16.
 
 ### A14. Source statistics (01:30 to 02:00, 30 min)
 
@@ -535,10 +558,22 @@ Background facts for the whole track:
 
 ### A16. Side quest docs and final data (02:30 to 04:30)
 
-- **Goal:** `docs/GEMINI.md`, `docs/VERDA.md` (section 5) and the final dump.
-- **Steps:** numbers from `stat` and `eval/report.json` only; `make dump release SEED=final` at 04:30.
-- **Done check:** both docs exist, every number in them is in `stat` or `eval/report.json`; `make seed SEED=final checks` prints `checks OK`.
+- **Goal:** `docs/GEMINI.md`, `docs/VERDA.md` (section 5), a final `make bench` run for `docs/SCALE.md` and the final dump.
+- **Steps:** numbers from `stat` and `eval/report.json` only; rerun `make bench` on the final data; `make dump release SEED=final` at 04:30.
+- **Done check:** all three docs exist, every number in them is in `stat` or `eval/report.json`; `make seed SEED=final checks` prints `checks OK`.
 - **Unblocks:** M3, the submission form.
+
+### A17. Dataset L at scale (optional, only while the Verda GPU is up, background)
+
+- **Goal:** turn L (568,416 current fi articles) from a promise in VERDA.md into a measured number.
+- **Files:** `pipeline/l_scale.py`, `pipeline/tests/test_l_scale.py`.
+- **Inputs:** `l-2026-10` from the MariaDB datasets release, `engine/embed.py` (A6).
+- **Steps:**
+  1. L text is clean Markdown, so the wikitext parser is not needed: `split_sentences` and `claim_hash` from the contract over every article, one parquet file at a time. Print articles, sentences, distinct hashes, sentences/s.
+  2. With Verda up: embed the distinct sentences of a 10,000-article sample with backend `remote`, measure sentences/s and project hours and credits for all of L. No load into `claim` (schema and demo stay as they are).
+  3. Write `stat` key `l_scale`; A13b adds an L table to SCALE.md and VERDA.md gets the measured projection.
+- **Done check:** `make l-scale` prints the totals and, with Verda, the measured rate and the projection. Unit test splits a toy Markdown article.
+- **Cut:** first thing to drop, without asking, if anything in A1 to A16 is late or Verda is down.
 
 ## 3. Track B, app
 
