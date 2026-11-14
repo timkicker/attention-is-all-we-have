@@ -105,3 +105,15 @@ test("closing the token dialog sends nothing and shows no error", async ({ page 
   await expect(page.getByRole("alert")).toHaveCount(0);
   await expect(page.getByTestId("inbox-R-2")).toHaveCount(0);
 });
+
+test("the phone approve page has the page menu, so Start over is one step", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await fresh(page);
+  await stockOut(page);
+  await page.goto("/approve/R-2");
+  await expect(page.getByTestId("approve-question")).toBeVisible();
+  await page.locator("#page-menu").click();
+  await page.locator("#menu-reset").click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId("inbox-R-2")).toHaveCount(0);
+});

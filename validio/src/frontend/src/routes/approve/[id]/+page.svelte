@@ -129,7 +129,7 @@
 
 {#if !o}
   {#if order.error}
-    <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} menu={false} />
+    <VHead title="Approve" crumbs={[{ href: "/", label: "Inbox" }]} here="Approve" back={{ href: "/", label: "Inbox" }} />
     <VState kind="error" title={/404|not found/i.test(order.error) ? `No request ${id}.` : "Validio is not reachable."} detail={order.error} onretry={() => location.reload()} />
   {:else}
     <VState kind="loading" rows={3} />
@@ -142,7 +142,6 @@
     crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
-    menu={false}
   >
     {#snippet facts()}
       <VPill label={placed ? "Placed" : "Rejected"} tone={placed ? "ok" : "bad"} />
@@ -161,7 +160,6 @@
     crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
-    menu={false}
   >
     {#snippet facts()}
       <span>Deliver by {day(o.deliverBy)}</span>

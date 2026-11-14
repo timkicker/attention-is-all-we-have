@@ -123,7 +123,7 @@
   // "Ask as the kitchen's agent": the owner's own text goes through the same
   // agent loop as `make agent`; the dialog shows its calls, then the request.
   // One recorded example for each ending: ordered alone, waits for you, blocked.
-  const EXAMPLES = ["100 litres of whipping cream by Monday", "50 bags of lactose-free mozzarella by Monday", "20 kg of butter by Monday"];
+  const EXAMPLES = ["100 litres of whipping cream by Monday", "50 kg of quark by Monday, budget 100 euro", "20 kg of parmesan by Monday"];
   let askOpen = $state(false);
   let askText = $state("");
   let asking = $state(false);
