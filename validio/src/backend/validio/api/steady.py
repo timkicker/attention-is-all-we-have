@@ -216,9 +216,13 @@ class Runtime:
     Without a path the store is the local kitchen's (VALIDIO_DB, VALIDIO_KEYS). An account's runtime has its
     own path and keys and borrows the catalog and the Valio client of `shared`."""
 
-    def __init__(self, path: Path | None = None, keys: Path | None = None, shared: "Runtime | None" = None):
+    def __init__(self, path: Path | None = None, keys: Path | None = None, shared: "Runtime | None" = None,
+                 real_clock: bool = False):
+        """`real_clock`: decisions run on the wall clock (a kitchen's own account), not on the demo clock that
+        starts at VALIDIO_NOW and moves a few minutes per ledger entry (the local kitchen and demo copies)."""
         self.lock = threading.RLock()
         self._path, self._keys, self._shared = path, keys, shared
+        self.real_clock = real_clock
         self._live: _Live | None = None
         self._catalog: Catalog | None = None
         self._valio: ValioClient | None = None
@@ -264,10 +268,10 @@ class Runtime:
             store = Store(path)
             # an order and its ledger entry commit together; the kitchen key signs the head
             audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
-            clock = lambda: demo_now(self.settings.now, store.con)
             wall = lambda: datetime.now(self.settings.now.tzinfo)
+            clock = wall if self.real_clock else (lambda: demo_now(self.settings.now, store.con))
             service = OrderService(store, self.catalog, self.valio, audit, clock=clock,
-                                   stamp=wall if self.settings.real_time else clock,
+                                   stamp=wall if self.settings.real_time or self.real_clock else clock,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    valio_down=lambda: seed.valio_down(path),
                                    lock=self.lock)  # one lock for every write and the demo reset

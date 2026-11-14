@@ -96,3 +96,41 @@ def ctx(tmp_path, catalog, monkeypatch):
     set_ctx(None)
 
 
+
+
+@pytest.fixture(scope="session")
+def synthetic(tmp_path_factory):
+    """The SYNTHETIC catalog and recorded answers (tests/synthetic_data.py): runs without Valio's data, in CI."""
+    from synthetic_data import build
+
+    return build(tmp_path_factory.mktemp("synthetic"))
+
+
+@pytest.fixture
+def syn_ctx(tmp_path, synthetic, monkeypatch):
+    """The local kitchen and the account routes over the synthetic set, the way `ctx` sets them up over Valio's."""
+    from validio.api.state import Ctx, set_ctx
+    from validio.api.steady import Runtime
+    from validio.catalog.store import Catalog
+    from validio.demo import seed
+    from validio.valio.client import ValioClient
+
+    db, cache = synthetic
+    monkeypatch.setenv("VALIDIO_APPROVE_CODE", CODE)
+    monkeypatch.setenv("VALIDIO_DEMO", "1")
+    for k in ("VALIDIO_PUBLIC", "VALIDIO_PUBLIC_READ", "VALIDIO_KITCHEN_TOKEN", "VALIDIO_MCP_HOSTS",
+              "VALIDIO_TRUST_PROXY"):
+        monkeypatch.setenv(k, "")
+    monkeypatch.setenv("VALIDIO_DB", str(tmp_path / "validio.db"))
+    monkeypatch.setenv("VALIDIO_KEYS", str(tmp_path / "keys"))
+    monkeypatch.setenv("VALIDIO_ACCOUNTS", str(tmp_path / "accounts"))
+    monkeypatch.setenv("VALIDIO_TEMPLATE", str(tmp_path / "no-template"))
+    monkeypatch.setenv("VALIDIO_VALIO_CACHE", str(cache))
+    seed.reset()
+    rt = Runtime()
+    rt._catalog = Catalog(db)
+    rt._valio = Spy(ValioClient("https://junction26.valioaimo.fi", "", "replay", cache))
+    c = Ctx(rt)
+    set_ctx(c)
+    yield c
+    set_ctx(None)
