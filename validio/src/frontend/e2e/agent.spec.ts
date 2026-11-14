@@ -122,3 +122,11 @@ test("every state fits a 390 px phone", async ({ page }) => {
   await expect(page.getByTestId("verify-code")).toBeVisible({ timeout: 5000 });
   await noSideScroll(page);
 });
+
+test("with no agent, one line sends the person to their Rules first", async ({ page }) => {
+  await toAgent(page, false);
+  await expect(page.getByTestId("agent-none-rules")).toHaveText("Check your Rules first. Your agent orders within them.");
+  await page.locator("#agent-rules-link").click();
+  await expect(page).toHaveURL(/\/rules$/);
+  await expect(page.locator("h1")).toHaveText("Rules");
+});
