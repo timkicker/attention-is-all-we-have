@@ -1452,7 +1452,7 @@
                 "type": "null"
               }
             ],
-            "description": "at most about eight words: \"90.00 € more.\"",
+            "description": "at most about eight words: \"+90.00 €\", \"Cheapest.\"",
             "title": "Shorttext"
           },
           "supplierText": {
@@ -2155,6 +2155,17 @@
             ],
             "title": "Shortname"
           },
+          "shortText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shorttext"
+          },
           "split": {
             "anyOf": [
               {
@@ -2628,6 +2639,18 @@
             "title": "Id",
             "type": "string"
           },
+          "leadText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the one muted line under the title that names a simulated stock-out",
+            "title": "Leadtext"
+          },
           "lines": {
             "default": [],
             "items": {
@@ -2635,6 +2658,18 @@
             },
             "title": "Lines",
             "type": "array"
+          },
+          "liveAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "when Validio read Valio live for this request: \"10:14\"",
+            "title": "Liveat"
           },
           "liveChecked": {
             "anyOf": [
@@ -2645,6 +2680,18 @@
                 "type": "null"
               }
             ]
+          },
+          "liveCountText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the asked-for product's live count at Valio, for the chosen row's fold",
+            "title": "Livecounttext"
           },
           "moneyText": {
             "anyOf": [

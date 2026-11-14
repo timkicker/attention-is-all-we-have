@@ -92,7 +92,7 @@ export interface RankedOption {
   /** True when the option replaces the product the request named. */
   isSubstitute?: boolean;
   supplierText?: SupplierText;
-  /** At most about eight words: "90.00 € more.", "Cheapest safe option, always delivered in full." */
+  /** At most about eight words: "+90.00 €", "Cheapest, always delivered in full.", "Cheapest lactose-free swap." */
   shortText?: string;
   /** Turned-down options only (rejected, blocked, not_deliverable): "Order cut-off passed", "Not lactose free". */
   groupText?: string;
@@ -234,6 +234,12 @@ export interface SupplyRequest {
   titleText?: string;
   /** The product the request named, when Validio turned it down. It is then not among the options. */
   askedFor?: { productId: string; displayName: string; stateText: string };
+  /** When Validio read Valio live for this request: "10:14". */
+  liveAt?: string;
+  /** The asked-for product's live count, for the chosen row's fold: "Valio's live count of ...: 11,603 bags." */
+  liveCountText?: string;
+  /** The one muted line that names a simulated stock-out: "Out of stock (simulated). Swap not on Valio's list." */
+  leadText?: string;
 }
 
 /** One row in the inbox. */
@@ -431,6 +437,8 @@ export interface SteadyLine {
   usualQtyText?: string;
   qtyText?: string;
   moneyText?: string;
+  /** A held line in a few words: "None in stock at Valio.", "27 of 30 in stock." */
+  shortText?: string;
 }
 
 export interface SteadyOrder {

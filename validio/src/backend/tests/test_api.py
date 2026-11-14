@@ -316,8 +316,8 @@ def test_options_carry_group_and_short_text(client, holder):
     assert groups["Over the hard cap"] < groups["Not lactose free"] < groups["Order cut-off passed"]
     assert all(o["shortText"] and len(o["shortText"].split()) <= 9 for o in opts), [o["shortText"] for o in opts]
     by_rank = {o.get("rank"): o for o in opts}
-    assert by_rank[1]["shortText"] == "Cheapest safe option, always delivered in full."
-    assert by_rank[2]["shortText"] == "90.00 € more."
+    assert by_rank[1]["shortText"] == "Cheapest, always delivered in full."
+    assert by_rank[2]["shortText"] == "+90.00 €"
     assert all(o["reasons"] for o in opts)
 
 

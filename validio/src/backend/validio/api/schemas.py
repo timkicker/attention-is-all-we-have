@@ -151,7 +151,7 @@ class RankedOptionView(Model):
     qty_text: str | None = None
     money_text: str | None = None
     reasons: list[str] | None = Field(None, description="the sentence as a list, one reason each")
-    short_text: str | None = Field(None, description="at most about eight words: \"90.00 € more.\"")
+    short_text: str | None = Field(None, description="at most about eight words: \"+90.00 €\", \"Cheapest.\"")
     group_text: str | None = Field(None, description="turned-down options only: their heading, \"Order cut-off passed\"")
     group_order: int | None = Field(None, description="turned-down options only: the heading's place, lowest first")
     checks: list[str] | None = Field(None, description="the facts Validio confirmed, one short fact each")
@@ -230,6 +230,7 @@ class RequestLineView(Model):
             if o.verdict == "chosen" and o.is_substitute:
                 o.short_text = d.swap_text(o.reasons or [], self.need.diet, self.need.deliver_by) or o.short_text
             o.why_reasons = d.why_reasons(o.reasons or [], o.short_text)
+            o.checks = d.checks(o.facts, self.need.diet)
         return self
 
 
@@ -270,6 +271,11 @@ class SupplyRequestView(Model):
 
     used_before_cents: int | None = Field(
         None, description="what orders placed under the same Spend Pass before this request add up to")
+    live_at: str | None = Field(None, description="when Validio read Valio live for this request: \"10:14\"")
+    live_count_text: str | None = Field(
+        None, description="the asked-for product's live count at Valio, for the chosen row's fold")
+    lead_text: str | None = Field(
+        None, description="the one muted line under the title that names a simulated stock-out")
 
     @model_validator(mode="after")
     def _text(self):
@@ -281,6 +287,8 @@ class SupplyRequestView(Model):
         if self.money_text is None and self.total_cents is not None:
             self.money_text = d.money(self.total_cents)
         self.time_text = self.time_text or d.time_text(self.created_at)
+        if self.live_at is None and self.live_checked and self.live_checked.calls:
+            self.live_at = d.time_text(self.created_at)
         return self
 
 
