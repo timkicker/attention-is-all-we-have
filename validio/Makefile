@@ -98,13 +98,16 @@ snapshots:
 	$(UV) python -W ignore ../../scripts/snapshot_api.py
 
 # The public-deploy shape in a browser: one FastAPI process serves the built app and the API (no Vite),
-# the real agent places scenes 2 and 3, the owner approves on the phone view. Port SMOKE_PORT (8416).
+# login page to a demo copy, the real agent (agent.py --kitchen, paired on the Agent page) places scenes 2
+# and 3, the owner approves on the phone view. Port SMOKE_PORT (8416); SMOKE_BASE=https://... for a running one.
 demo-smoke:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c playwright.live.config.ts
 
 # The 10:00 click-through of docs/DEMO.md in a browser against the live backend: built app and API from
-# one process on E2E_PORT (8419), approve code on, the real agent for scenes 1 to 3. A page without the
-# data-testid a check needs makes that check a fixme (E2E_STRICT=1 makes it fail).
+# one process on E2E_PORT (8419), a demo copy from the plain seed, the real agent (agent.py --kitchen, paired
+# on the Agent page) for scenes 1 to 3. E2E_BASE=https://... runs it against a running server or the public
+# link (no build needed then: npx playwright test -c e2e-live/demo.config.ts in src/frontend). A page without
+# the data-testid a check needs makes that check a fixme (E2E_STRICT=1 makes it fail).
 e2e-live:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c e2e-live/demo.config.ts
 
