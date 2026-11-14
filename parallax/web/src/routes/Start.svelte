@@ -166,7 +166,7 @@
 </main>
 
 <style>
-  .split { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-areas: "intro ex" "topics ex"; column-gap: 96px; padding-top: 72px; align-items: start; }
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) 400px; grid-template-areas: "intro ex" "topics ex"; grid-template-rows: auto 1fr; column-gap: 96px; padding-top: 72px; align-items: start; }
   .intro { grid-area: intro; }
   .pre { grid-area: topics; margin-top: 40px; }
   .ex { grid-area: ex; display: block; padding-top: 8px; }

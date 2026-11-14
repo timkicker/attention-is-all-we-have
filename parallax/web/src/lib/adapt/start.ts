@@ -1,14 +1,28 @@
 // Start page, search and ingest: raw API -> view model. Owner: P1.
 import type { api as Api } from '../api/client'
-import type { IngestRes, SearchResultRaw, TopicsRes } from '../api/types'
-import { start as fixtureStart } from '../fixture'
-import { LANGS, type IngestEdition, type IngestVM, type Lang, type Result, type SearchResult, type SearchVM, type StartVM } from '../model'
+import type { CellRaw, CompareRes, IngestRes, SearchResultRaw, TopicsRes } from '../api/types'
+import { excerpt } from '../copy/shared'
+import { exampleTitle } from '../copy/start'
+import {
+  LANGS,
+  type ExampleLine,
+  type IngestEdition,
+  type IngestVM,
+  type Lang,
+  type MarkedText,
+  type Result,
+  type SearchResult,
+  type SearchVM,
+  type StartVM,
+  type TopicRef,
+} from '../model'
 import { paths } from '../router.svelte'
 import { forgetTopics } from './shared'
 
 type Client = typeof Api
 
-/** The example block links to this real seed v4 statement (Finnish: the Soviet Union staged the Mainila shots). */
+/** The example statement, a known seed v4 id: Finnish says the Soviet Union staged the Mainila shots.
+ *  Found by hand in /api/compare; there is no cheap way to pick the best example from data. */
 export const EXAMPLE_QID = 'Q134949'
 export const EXAMPLE_STATEMENT = { lang: 'fi', pageId: 1256, h: 'abe24bc5f22fda02' }
 
@@ -28,18 +42,69 @@ export async function loadStart(api: Client): Promise<Result<StartVM>> {
   const r = await api.topics()
   if (!r.ok) return r
   const prepared = toPrepared(r.data)
-  // The example text is the fixture's (the API has no English mark words); shown only when Winter War is loaded.
-  const fx = fixtureStart()
-  const winter = prepared.find((p) => p.qid === EXAMPLE_QID)
-  const example =
-    winter && fx.ok && fx.data.example
-      ? {
-          ...fx.data.example,
-          topic: { ...fx.data.example.topic, title: winter.title },
-          href: paths.statement(EXAMPLE_QID, EXAMPLE_STATEMENT.lang, EXAMPLE_STATEMENT.pageId, EXAMPLE_STATEMENT.h),
-        }
-      : null
+  const winter = r.data.topics.find((t) => t.wikidata_id === EXAMPLE_QID)
+  let example: StartVM['example'] = null
+  if (winter) {
+    const c = await api.compare({ topic: winter.topic_id, h: EXAMPLE_STATEMENT.h })
+    if (c.ok) example = toExample(c.data, { qid: EXAMPLE_QID, topicId: winter.topic_id, title: winter.label_en })
+  }
   return { ok: true, data: { prepared, example } }
+}
+
+/** At most this many other editions next to the Finnish line, as in the wireframe. */
+const EXAMPLE_OTHERS = 3
+const EXAMPLE_MAX = 160
+
+function englishOf(lang: string, cell: CellRaw): string | null {
+  return cell.gloss ?? (lang === 'en' ? cell.text : null)
+}
+
+/** Marks the first occurrence of each word, case-insensitively, and only when the words are really there. */
+function markIn(text: string, words: string[]): MarkedText {
+  const spans = words
+    .filter(Boolean)
+    .map((w) => {
+      const i = text.toLowerCase().indexOf(w.toLowerCase())
+      return i < 0 ? null : { start: i, end: i + w.length }
+    })
+    .filter((x): x is { start: number; end: number } => x !== null)
+  return { text, spans }
+}
+
+/**
+ * The Finnish example statement and up to three editions that word it differently (a term mark that the API
+ * can name in English). Finnish gets its English term marked; another edition gets a mark only where its own
+ * differing words appear in its English text (the English edition). null when fewer than two differ.
+ */
+export function toExample(raw: CompareRes, topic: TopicRef): StartVM['example'] {
+  const row = raw.rows[0]
+  const fi = row?.cells[raw.anchor]
+  const fiText = fi && englishOf(raw.anchor, fi)
+  if (!row || !fi?.h || !fi.page_id || !fiText) return null
+  const lines: ExampleLine[] = []
+  const fiTerms = new Set<string>()
+  for (const lang of LANGS) {
+    if (lang === raw.anchor) continue
+    const cell = row.cells[lang]
+    if (!cell || cell.status !== 'matched') continue
+    const terms = cell.marks.filter((m) => m.kind === 'term' && m.this_en)
+    const text = englishOf(lang, cell)
+    if (!terms.length || !text) continue
+    terms.forEach((m) => fiTerms.add(m.this_en as string))
+    if (lines.length < EXAMPLE_OTHERS) {
+      // A gloss can hold an elision marker "<…>"; the example shows only the part before it.
+      const cut = text.split('<…>')[0].trim()
+      const shown = cut.length < text.length ? `${excerpt(cut, EXAMPLE_MAX).replace(/[\s.,;:…]+$/, '')}…` : excerpt(text, EXAMPLE_MAX)
+      lines.push({ lang, say: markIn(shown, terms.map((m) => m.other)) })
+    }
+  }
+  if (lines.length < 2) return null
+  return {
+    topic,
+    title: exampleTitle(lines.length + 1),
+    lines: [{ lang: raw.anchor as Lang, say: markIn(excerpt(fiText, EXAMPLE_MAX), [...fiTerms]) }, ...lines],
+    href: paths.statement(topic.qid, raw.anchor, fi.page_id, fi.h),
+  }
 }
 
 /** Wikidata descriptions often start lowercase; the UI writes sentence case. */
