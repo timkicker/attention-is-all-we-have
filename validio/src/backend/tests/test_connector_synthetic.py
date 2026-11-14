@@ -69,3 +69,16 @@ def test_connector_answers_carry_no_supplier_text():
     opt = out["lines"][0]["options"][0]
     assert opt["name"] == "Milk drink" and [f["field"] for f in opt["facts"]] == ["price"]
     assert out["lines"][0]["note"].startswith("A description")  # the agent still learns one talks to agents
+
+
+@pytest.mark.parametrize("given, shown", [("Validio", "Agent"), ("  owner ", "Agent"), ("Evil\x1b\nBot", "Evil Bot"),
+                                          ("Claude Code", "Claude Code"), ("\u200b", "Agent")])
+def test_a_signing_agent_cannot_pose_as_someone_else(c, syn_ctx, given, shown):
+    from jwcrypto.jwk import JWK
+
+    assert c.post("/api/agent/disconnect").status_code == 200
+    code = c.post("/api/agent/pair").json()["pairing"]["code"]
+    key = JWK.generate(kty="EC", crv="P-256")
+    r = c.post("/agent/v1/pair", json={"code": code, "name": given, "publicJwk": key.export_public(as_dict=True)})
+    assert r.status_code == 202, r.text
+    assert c.get("/api/agent").json()["consent"]["name"] == shown
