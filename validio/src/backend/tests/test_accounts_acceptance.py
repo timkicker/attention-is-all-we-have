@@ -149,7 +149,7 @@ def test_03_connect_the_demo_agent(world):
     p = ok(a.post("/api/agent/pair"))
     assert p["state"] == "pairing"
     assert len(p["pairing"]["code"].replace("-", "")) == 8
-    assert p["pairing"]["mcpUrl"].endswith(f"/mcp/k/{aid}/")
+    assert re.search(r"/mcp/c/[A-Za-z0-9_-]{43}/$", p["pairing"]["mcpUrl"])  # any MCP agent; signing ones use the code
     assert p["pairing"]["apiUrl"].endswith(f"/agent/v1/k/{aid}")
     c = ok(a.post("/api/agent/demo"))
     assert c["state"] == "consent" and c["consent"]["name"] and c["consent"]["may"]

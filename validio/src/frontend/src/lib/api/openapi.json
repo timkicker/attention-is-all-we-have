@@ -80,6 +80,15 @@
             "title": "Keyid",
             "type": "string"
           },
+          "kind": {
+            "default": "agent",
+            "enum": [
+              "agent",
+              "mcp"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
           "lastUsedAt": {
             "anyOf": [
               {
