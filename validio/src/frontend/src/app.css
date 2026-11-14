@@ -2,73 +2,114 @@
 @import "../vendor/arlen-ui-kit/src/lib/theme-light.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
-/* Validio runs on the kit's Arlen Dark and its own light theme. The accent
-   slot stays monochrome as Arlen ships it. Validio's one theme deviation is a
-   steel blue focus ring (and the one highlight in a chart). Selection is the
-   kit's own fill. Nothing yellow, amber or ochre. */
+/* The kit's dark: utilities follow the theme the page chose, not only the system. */
+@custom-variant dark (&:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *));
+
+/* Validio: halbat's grammar on the kit's ramp, Valio blue as the one accent.
+   Port names are --v-*; no kit name is assigned here except the scoped list
+   in the plan (heights, text sizes on a selector, chip radius, row space,
+   card shadow, primary, ring). */
 :root {
   color-scheme: dark;
-  --v-select: #7f9fc4;
-  --ring: var(--v-select);
-  --font-size-base: 15px;
+  --valio: #009ddb;
+  --valio-ink: #009ddb;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --v-primary-hover: #e1e1e1;
+  --v-shell: var(--color-bg-shell);
+  --v-app: var(--color-bg-app);
+  --v-fg: var(--color-fg-primary);
+  --v-muted: var(--color-fg-secondary);
+  --v-ctx: var(--color-border-strong);
+  --v-faint: #85858e;
+  --v-line: #1f1f22;
+  --v-ok: #8fb38a;
+  --v-bad: #e5686c;
+  --v-ok-text: var(--v-ok);
+  --v-bad-text: var(--v-bad);
+  --v-wait-text: var(--valio-ink);
+
+  /* type: desktop 12/13/14/15/24, phone 12/14/16/24 */
+  --fs-cap: 12px;
+  --fs-meta: 13px;
+  --fs-head: 14px;
+  --fs-body: 15px;
+  --fs-title: 24px;
+  --lh-meta: 20px;
+  --lh-head: 20px;
+  --lh-body: 22px;
+  --height-control: 32px;
+  --height-control-prominent: 32px;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-
-  /* The kit sidebar reads these, as Arlen mail sets them. */
-  --sidebar: var(--color-bg-shell);
-  --sidebar-foreground: var(--color-fg-shell);
-  --sidebar-primary: var(--color-accent);
-  --sidebar-primary-foreground: var(--color-accent-foreground);
-  --sidebar-accent: color-mix(in srgb, var(--color-fg-shell) 10%, transparent);
-  --sidebar-accent-foreground: var(--color-fg-shell);
-  --sidebar-border: color-mix(in srgb, var(--color-fg-shell) 10%, transparent);
-  --sidebar-ring: var(--v-select);
-
-  /* The one page frame (Frame.svelte, the request pane): every title starts
-     at the same left edge. */
-  --frame-width: 56rem;
-  --frame-pad-x: 2rem;
-  --frame-pad-top: 1.5rem;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --valio: #007fb0;
+  --valio-ink: #002f6d;
+  --primary: #002f6d;
+  --primary-foreground: #ffffff;
+  --v-primary-hover: #002960;
+  --v-faint: #68686f;
+  --v-line: #e4e4e7;
+  --v-ok: #477142;
+  --v-bad: #c2393e;
+  --v-ok-text: color-mix(in srgb, var(--v-ok) 72%, #000);
+  --v-bad-text: color-mix(in srgb, var(--v-bad) 72%, #000);
 }
 @media (max-width: 760px) {
   :root {
-    --frame-pad-x: 1rem;
-    --frame-pad-top: 1rem;
-  }
-  /* Touch targets: every control on the phone is at least 44 px square
-     (WCAG 2.5.5); a link in running text keeps its line height. */
-  .content :is(button, [role="button"], input, select, a[href]:not(p a, li > a.inline)),
-  .bar :is(button, a[href]) {
-    min-height: 44px;
-    min-width: 44px;
+    --fs-meta: 14px;
+    --fs-head: 16px;
+    --fs-body: 16px;
+    --lh-head: 24px;
+    --lh-body: 24px;
+    --height-control: 44px;
+    --height-control-prominent: 44px;
   }
 }
-:root:root[data-theme="light"] {
-  color-scheme: light;
-  --v-select: #3d6590;
-  --ring: var(--v-select);
+
+/* Focus: one mark, outside every layer, so the kit's outline-none loses. */
+:root {
+  --ring: var(--valio);
+}
+:focus-visible {
+  outline: 2px solid var(--valio);
+  outline-offset: 2px;
+}
+[data-slot="button"]:focus-visible,
+[data-slot="input"]:focus-visible {
+  box-shadow: none;
+}
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
-@theme inline {
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+/* Buttons are 13 px (14 on the phone) in cards and out. */
+[data-slot="button"] {
+  --text-sm: var(--fs-meta);
+  line-height: var(--lh-meta);
+}
+:root[data-theme="light"] [data-slot="button"].bg-primary:hover {
+  background: var(--v-primary-hover);
+}
+:root:not([data-theme="light"]) [data-slot="button"].bg-primary:hover {
+  background: var(--v-primary-hover);
 }
 
-html,
+/* ---------- base ---------- */
+html {
+  scrollbar-gutter: stable;
+  background: var(--v-app);
+}
 body {
-  background: var(--color-bg-app);
-  color: var(--color-fg-primary);
+  margin: 0;
+  background: var(--v-app);
+  color: var(--v-fg);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: 1.5;
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
   font-feature-settings: "cv11", "ss01";
 }
-
 .num {
   font-variant-numeric: tabular-nums;
 }
@@ -76,16 +117,540 @@ body {
   font-family: var(--font-mono);
   font-feature-settings: normal;
 }
-/* Success and error as text, mixed toward the foreground as the kit's own
-   Badge does it, so both clear 4.5:1 in both themes. */
-.t-ok {
-  color: color-mix(in srgb, var(--color-success) 76%, var(--foreground));
+.muted {
+  color: var(--v-muted);
 }
-.t-bad {
-  color: var(--destructive-on-tint);
-}
-.t-quiet {
-  color: var(--color-fg-secondary);
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
+/* ---------- page column ---------- */
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 32px 80px;
+}
+.wrap.narrow > * {
+  max-width: 680px;
+}
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  margin-bottom: 8px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.crumbs a:hover {
+  color: var(--v-fg);
+}
+.head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: start;
+}
+.head-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+h1.v-title {
+  margin: 0 0 4px;
+  font-size: var(--fs-title);
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 24px;
+  min-height: 20px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.facts b {
+  color: var(--v-fg);
+  font-weight: 500;
+}
+.facts a,
+.lead a {
+  color: var(--v-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--v-faint);
+  text-underline-offset: 3px;
+  position: relative;
+}
+.lead {
+  margin: 12px 0 0;
+  max-width: 680px;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+.lead .rule,
+.rule,
+#request-rule {
+  white-space: nowrap;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.question {
+  margin: 12px 0 0;
+  max-width: 680px;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 500;
+}
+.q-sub {
+  margin: 4px 0 0;
+  max-width: 680px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.head-btn {
+  margin-top: 16px;
+}
+.blocks {
+  margin-top: 32px;
+}
+.sec + .sec,
+.blocks > * + * {
+  margin-top: 32px;
+}
+.v-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin: 0 0 8px;
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+  font-weight: 600;
+}
+.v-h em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--v-faint);
+  font-variant-numeric: tabular-nums;
+}
+.prose {
+  max-width: 680px;
+}
+.cap {
+  font-size: var(--fs-cap);
+  line-height: 16px;
+  color: var(--v-faint);
+}
 
+/* ---------- cards ---------- */
+.v-card {
+  --shadow-card: none;
+}
+.v-card .section-card {
+  overflow: visible;
+}
+.v-row {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) auto;
+  column-gap: 12px;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 16px;
+  color: inherit;
+  text-decoration: none;
+}
+.v-row.plain {
+  grid-template-columns: 128px minmax(0, 1fr) auto;
+}
+a.v-row:hover .v-row-title {
+  text-decoration: underline;
+  text-decoration-color: var(--v-faint);
+  text-underline-offset: 3px;
+}
+.v-row-lead {
+  align-self: start;
+  padding-top: 1px;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+}
+.v-row-title {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.v-row-sub {
+  margin-top: 4px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+/* A one-line row centres its pill on the title. */
+.v-row:not(:has(.v-row-sub, .v-row-more)) .v-row-lead {
+  align-self: center;
+  padding-top: 0;
+}
+/* With a second line the amount and the button sit on the title line. */
+.v-row:has(.v-row-sub, .v-row-more) .v-row-end {
+  align-self: start;
+  min-height: 22px;
+}
+.v-row:has(.v-row-sub, .v-row-more) .v-row-end [data-slot="button"] {
+  margin-block: -5px;
+}
+.v-row-end {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.v-row-end .go {
+  color: var(--v-faint);
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* ---------- pills ---------- */
+.v-pill {
+  --radius-chip: 999px;
+  --text-xs: var(--fs-cap);
+  font-weight: 500;
+}
+.v-pill.tone-ok {
+  background: color-mix(in srgb, var(--v-ok) 14%, transparent);
+  color: var(--v-ok-text);
+}
+.v-pill.tone-bad {
+  background: color-mix(in srgb, var(--v-bad) 14%, transparent);
+  color: var(--v-bad-text);
+}
+.v-pill.tone-wait {
+  background: color-mix(in srgb, var(--valio) 14%, transparent);
+  color: var(--v-wait-text);
+}
+.v-pill.tone-neutral {
+  background: color-mix(in srgb, var(--v-fg) 8%, transparent);
+  color: var(--v-muted);
+}
+.v-count {
+  --radius-chip: 999px;
+  --text-xs: var(--fs-cap);
+  height: 18px;
+  min-width: 18px;
+  padding: 0 5px;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--valio) 16%, transparent);
+  color: var(--v-wait-text);
+}
+
+/* ---------- tabs ---------- */
+.tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--v-line);
+}
+.tabs [role="tab"] {
+  padding: 0 0 12px;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+  color: var(--v-muted);
+  display: inline-flex;
+  gap: 8px;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tabs [role="tab"]:hover {
+  color: var(--v-fg);
+}
+.tabs [role="tab"][aria-selected="true"] {
+  color: var(--v-fg);
+  border-bottom-color: var(--valio);
+}
+.tabs em {
+  font-style: normal;
+  color: var(--v-faint);
+  font-variant-numeric: tabular-nums;
+}
+.pane {
+  padding-top: 24px;
+}
+
+/* ---------- record lanes ---------- */
+.rc-lane {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr);
+  column-gap: 24px;
+  align-items: center;
+  border-top: 1px solid var(--v-line);
+  min-height: 80px;
+}
+.rc-lane:last-of-type {
+  border-bottom: 1px solid var(--v-line);
+}
+.rc-lab {
+  padding: 12px 0;
+}
+.rc-n {
+  font-size: var(--fs-meta);
+  line-height: 20px;
+  color: var(--v-fg);
+}
+.rc-v {
+  font-size: var(--fs-head);
+  line-height: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.rc-s {
+  font-size: var(--fs-cap);
+  line-height: 16px;
+  color: var(--v-muted);
+  font-variant-numeric: tabular-nums;
+}
+.rc-plot {
+  position: relative;
+  min-width: 0;
+  height: 56px;
+}
+.rc-plot.narrow {
+  height: 72px;
+}
+.rc-plot svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 36px;
+  overflow: visible;
+}
+.rc-lbl {
+  position: absolute;
+  font-size: var(--fs-cap);
+  line-height: 16px;
+  color: var(--v-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- events (option rows, ledger) ---------- */
+.rc-ev {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rc-ev > li {
+  display: grid;
+  grid-template-columns: 176px minmax(0, 1fr) auto;
+  column-gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--v-line);
+}
+.ev-left {
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+  padding-top: 1px;
+}
+.ev-name {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 500;
+}
+.ev-sub {
+  margin-top: 4px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.ev-amt {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: right;
+}
+.ev-more {
+  grid-column: 2 / -1;
+}
+.day {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 24px 0 12px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  border-bottom: 1px solid var(--v-line);
+}
+.day b {
+  font-weight: 600;
+}
+.day span {
+  color: var(--v-muted);
+}
+.rc-diff {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--v-fg) 5%, transparent);
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+}
+.rc-diff p {
+  margin: 0;
+}
+.rc-diff p + p {
+  margin-top: 4px;
+}
+.rc-diff .top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--v-muted);
+}
+
+/* ---------- the one fold ---------- */
+details.fold > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  cursor: pointer;
+  min-height: 20px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+details.fold > summary::-webkit-details-marker {
+  display: none;
+}
+details.fold > summary:hover {
+  color: var(--v-fg);
+}
+details.fold > summary .chev {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--duration-fast) ease;
+}
+details.fold[open] > summary .chev {
+  transform: rotate(90deg);
+}
+details.fold .fold-body {
+  margin-top: 8px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+details.fold .fold-body p {
+  margin: 0;
+}
+details.fold .fold-body p + p {
+  margin-top: 4px;
+}
+
+@media (max-width: 760px) {
+  .wrap {
+    padding: 8px 16px calc(112px + env(safe-area-inset-bottom));
+  }
+  .crumbs {
+    display: none;
+  }
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .facts a::after,
+  .lead a::after {
+    content: "";
+    position: absolute;
+    inset: -12px 0;
+  }
+  .v-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 4px;
+  }
+  .v-row-lead {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .v-row-end {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .v-row-main {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+  .v-row-lead:empty {
+    display: none;
+  }
+  .rc-lane {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rc-lab {
+    padding: 12px 0 8px;
+  }
+  .rc-n {
+    font-size: 14px;
+  }
+  .rc-v {
+    margin-top: 4px;
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .rc-s {
+    margin-top: 4px;
+  }
+  .rc-plot {
+    margin-bottom: 12px;
+  }
+  .rc-ev > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 4px;
+  }
+  .rc-ev > li > .ev-left {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .rc-ev > li > .ev-amt {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .rc-ev > li > .ev-main {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+  .ev-more {
+    grid-column: 1 / -1;
+  }
+  .tabs [role="tab"] {
+    min-height: 44px;
+    align-items: center;
+    padding: 0;
+  }
+  details.fold > summary {
+    min-height: 44px;
+  }
+}

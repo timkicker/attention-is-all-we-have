@@ -54,9 +54,9 @@ export async function slop(page: Page): Promise<string[]> {
     for (const el of document.querySelectorAll("p, li, h1, h2, h3, td, dd, span")) {
       const e = el as HTMLElement;
       if (e.children.length || !e.offsetParent) continue;
-      // The same reason on two rows of a table is two rows; the inbox list and the
+      // The same reason on two rows of a table or an option list is two rows; the inbox list and the
       // bar title repeat the open request as list entry and breadcrumb.
-      if (e.closest("table, [role=table], [aria-label=Requests], [data-raw], #bar-title")) continue;
+      if (e.closest("table, [role=table], .rc-ev, [aria-label=Requests], [data-raw], #bar-title")) continue;
       for (const s of e.innerText.split(/(?<=[.?!])\s+/)) {
         const k = s.trim().toLowerCase();
         if (k.split(" ").length < 6) continue;
