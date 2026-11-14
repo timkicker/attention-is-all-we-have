@@ -108,7 +108,7 @@ def nonce_resource() -> str:
 @server.tool()
 async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
     """Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, the rest
-    wait for the chef with the reason. A second renewal in the same week orders nothing twice."""
+    wait for the owner with the reason. A second renewal in the same week orders nothing twice."""
     import httpx
 
     from .app import app
