@@ -76,7 +76,7 @@ def _said(c: dict) -> list[tuple[str, str]]:
     d = date.fromisoformat(str(c["deliverBy"]))
     split = c.get("split") or {}
     pct = float(split.get("maxExtraCostPct", 0))
-    return [("Alone up to", money(c["autoLimitCents"])), ("Never above", money(c["hardCapCents"])),
+    return [("Orders alone up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
             ("Diet", " and ".join(CLAIM_NAMES.get(x, x) for x in sorted(c.get("diet") or ())) or "none"),
             ("Delivered by", f"{d.day} {d:%b}"),
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none alone"),
