@@ -410,6 +410,7 @@ class SpendPassView(Model):
     valid_to: str
     auto_limit_cents: int | None = None
     hard_cap_cents: int | None = None
+    week_cap_cents: int | None = Field(None, description="the Rules' per week limit, all orders under the pass")
     diet: list[str] | None = None
     categories: list[str]
     deliver_by: str | None = None
