@@ -150,36 +150,47 @@ def present(mandate: str, disclose: set[str] | frozenset[str], agent: JWK, aud: 
 
 
 class NonceStore:
-    """Single-use nonces from /agent/v1/nonce. A nonce is good once and only for `ttl`."""
+    """Single-use nonces from /agent/v1/nonce. A nonce is good once and only for `ttl`.
 
-    def __init__(self, ttl: timedelta = timedelta(minutes=5), max_open: int = 10000):
+    The ttl holds on two clocks: `now` (Validio's decision clock, the frozen demo clock in the demo) and the
+    process's own monotonic clock. The demo clock only moves with the ledger, so on it alone an unused nonce
+    would never expire. When `max_open` nonces are open the oldest is dropped: a flood of unused nonces can
+    never stop issuing for the kitchen's own agent."""
+
+    def __init__(self, ttl: timedelta = timedelta(minutes=5), max_open: int = 10000,
+                 wall: Callable[[], float] = time.monotonic):
         self.ttl, self.max_open = ttl, max_open
-        self._issued: dict[str, datetime] = {}
+        self._wall = wall
+        self._issued: dict[str, tuple[datetime, float]] = {}  # insertion order is issue order
         self._lock = threading.Lock()
+
+    def _fresh(self, at: tuple[datetime, float], now: datetime) -> bool:
+        t, w = at
+        return now - t <= self.ttl and self._wall() - w <= self.ttl.total_seconds()
 
     def issue(self, now: datetime) -> str:
         nonce = secrets.token_urlsafe(24)
         with self._lock:
-            self._issued = {n: t for n, t in self._issued.items() if now - t <= self.ttl}
-            if len(self._issued) >= self.max_open:
-                raise MandateError("too many open nonces")
-            self._issued[nonce] = now
+            self._issued = {n: at for n, at in self._issued.items() if self._fresh(at, now)}
+            while len(self._issued) >= self.max_open:
+                del self._issued[next(iter(self._issued))]  # the oldest open nonce makes room
+            self._issued[nonce] = (now, self._wall())
         return nonce
 
     def check(self, nonce: str, now: datetime) -> None:
         with self._lock:
-            t = self._issued.get(nonce)
-        if t is None:
+            at = self._issued.get(nonce)
+        if at is None:
             raise MandateError("unknown or reused nonce")
-        if now - t > self.ttl:
+        if not self._fresh(at, now):
             raise MandateError("stale nonce")
 
     def consume(self, nonce: str, now: datetime) -> None:
         with self._lock:
-            t = self._issued.pop(nonce, None)
-        if t is None:
+            at = self._issued.pop(nonce, None)
+        if at is None:
             raise MandateError("unknown or reused nonce")
-        if now - t > self.ttl:
+        if not self._fresh(at, now):
             raise MandateError("stale nonce")
 
 

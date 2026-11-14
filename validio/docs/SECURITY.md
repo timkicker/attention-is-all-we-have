@@ -83,7 +83,7 @@ Not covered: the issued pass alone is useless, but the pass together with the ag
 
 ## Replay
 
-A presentation needs a fresh nonce from `GET /agent/v1/nonce`. The `NonceStore` in `policy/mandate.py` accepts each nonce once and only for a short time. A check that fails leaves the nonce unused. Every write carries an idempotency key, stored per Spend Pass in `orders/store.py`, so a retried request or order returns the first answer and never orders twice.
+A presentation needs a fresh nonce from `GET /agent/v1/nonce`. The `NonceStore` in `policy/mandate.py` accepts each nonce once and only for five minutes, on Validio's clock and on the wall clock, so an unused nonce expires even while the demo clock stands still. A full store drops its oldest nonce instead of refusing new ones, and `GET /agent/v1/nonce` answers at most 120 a minute per client and kitchen (`api/limits.py`). A check that fails leaves the nonce unused. Every write carries an idempotency key, stored per Spend Pass in `orders/store.py`, so a retried request or order returns the first answer and never orders twice.
 
 Proof:
 
@@ -91,11 +91,13 @@ Proof:
 - `test_spend_pass.py::test_stale_nonce_rejected`
 - `test_spend_pass.py::test_wrong_nonce_rejected`
 - `test_spend_pass.py::test_failed_check_keeps_the_nonce_unused`
-- `test_spend_pass.py::test_nonce_store_is_capped`
+- `test_spend_pass.py::test_nonce_store_is_capped_and_drops_the_oldest`
+- `test_spend_pass.py::test_nonce_expires_on_the_wall_clock_while_the_demo_clock_stands_still`
+- `test_api.py::test_nonce_route_is_rate_limited_per_client`
 - `test_api.py::test_retry_orders_once`
 - `test_orders.py::test_idempotent_submit`
 
-Not covered: nonces live in memory. A restart drops them, which fails closed. Running two server processes would need a shared nonce store. The store is capped and has no rate limit, so a flood of nonce requests can push out an honest agent's nonce.
+Not covered: nonces live in memory. A restart drops them, which fails closed. Running two server processes would need a shared nonce store. A flood from many addresses can still push out an honest agent's nonce in the seconds between fetching and using it; the agent then fetches a new one.
 
 ## Tampered ledger
 

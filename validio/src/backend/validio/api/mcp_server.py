@@ -166,7 +166,16 @@ def get_order(orderId: str, spendPass: str | None = None, mc: Context | None = N
 @server.resource("validio://nonce", mime_type="application/json")
 def nonce_resource() -> str:
     """A fresh single-use nonce for the Spend Pass key binding."""
+    _nonce_cap("local")
     return tools.nonce(get_ctx()).model_dump_json()
+
+
+def _nonce_cap(kitchen: str) -> None:
+    from .limits import MCP_NONCES
+
+    if MCP_NONCES.blocked(kitchen):
+        raise ValueError("too many nonces for this kitchen, try again in a minute")
+    MCP_NONCES.hit(kitchen)
 
 
 @server.resource("validio://k/{account}/nonce", mime_type="application/json")
@@ -176,9 +185,11 @@ def kitchen_nonce_resource(account: str) -> str:
     from .accounts import get_accounts
 
     try:
-        return tools.nonce(get_accounts().ctx(account)).model_dump_json()
+        ctx = get_accounts().ctx(account)
     except KeyError as e:
         raise ValueError(f"no kitchen {account}") from e
+    _nonce_cap(account)
+    return tools.nonce(ctx).model_dump_json()
 
 
 # Scene 4 for the kitchen's agent: the same renewal as the web app's button (POST /api/steady/{id}/renew),
