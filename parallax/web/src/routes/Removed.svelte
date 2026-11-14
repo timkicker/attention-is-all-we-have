@@ -111,7 +111,7 @@
   <TopicHeader qid={params.qid} {title} subtitle={copy.removed.SUB_REMOVED} active="removed" {counts} />
 
   <div class="ctl">
-    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
+    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} testid={TID.findStatement} oninput={onInput} />
     <div class="pair">
       <EditionPick value={edition} editions={res?.ok ? res.data.editions : []} onpick={(l) => router.setQuery({ edition: l, offset: null })} />
       <AsOf />
