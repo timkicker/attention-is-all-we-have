@@ -202,12 +202,12 @@ export const FOOT = {
 // ---------- Dates and lists ----------
 
 export const AS_OF_TODAY = 'As of today'
-export const LATEST_EDIT = 'Latest edit'
-/** "As of 1 Jan 2008"; without a date "Latest edit 3 Nov 2026" (the newest stored revision: data is not refreshed
+export const NEWEST_VERSION = 'Newest version'
+/** "As of 1 Jan 2008"; without a date "Newest version 3 Nov 2026" (the newest stored revision: data is not refreshed
  * after a load, so "today" would overstate it), or "As of today" when that day is unknown. */
 export function asOf(date: string | null, latest: string | null = null): string {
   if (date) return `As of ${fmtDate(date)}`
-  return latest ? `${LATEST_EDIT} ${fmtDate(latest)}` : AS_OF_TODAY
+  return latest ? `${NEWEST_VERSION} ${fmtDate(latest)}` : AS_OF_TODAY
 }
 export const TODAY = 'Today'
 export const DATE_LABEL = 'Show the article as it was on'
