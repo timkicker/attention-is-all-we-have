@@ -1,4 +1,5 @@
 // Typed fetch for the Parallax API. Types come from contract/openapi.yaml (npm run types).
+import { shallowRef } from 'vue'
 import type { components } from './schema'
 
 export type S = components['schemas']
@@ -30,6 +31,9 @@ export class ApiError extends Error {
   }
 }
 
+/** The SQL of the latest API response, for the panel under every view. */
+export const lastSql = shallowRef<{ path: string; method: string; statements: Statement[]; at: number } | null>(null)
+
 type Params = Record<string, string | number | undefined | null>
 
 export function url(path: string, params: Params = {}): string {
@@ -51,6 +55,8 @@ export async function getJson<T>(path: string, params: Params = {}, init?: Reque
     const err = body?.error ?? {}
     throw new ApiError(res.status, err.code ?? `http_${res.status}`, err.message ?? res.statusText)
   }
+  if (Array.isArray(body?.sql))
+    lastSql.value = { path, method: init?.method ?? 'GET', statements: body.sql as Statement[], at: Date.now() }
   return body as T
 }
 
