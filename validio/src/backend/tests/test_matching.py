@@ -199,3 +199,18 @@ def test_two_words_before_one_and_cream_is_dairy(catalog):
     assert kind_of(cream.kind).net == ("10401",)  # not ice cream, which most names with "cream" are
     kept, _ = screen(cream, catalog)
     assert kept and all(p.category.startswith("10401") for p in kept)
+
+
+@pytest.mark.parametrize("text,word,bad", [
+    ("200 litres of oat drink by Monday", "oat", r"cookie|chocolate|vanilla|caramel"),
+    ("200 litres of cream by Monday", "cream", r"alternative|blend|plant|\bice\b"),
+    ("50 kg of butter by Monday", "butter", r"peanut|escargo|squash"),
+])
+def test_the_word_means_the_plain_product(catalog, text, word, bad):
+    """Rerun 7: oat drink matched a cookie-flavoured drink, cream a cooking cream alternative."""
+    import re
+
+    kept, _ = screen(parse_need(text, TODAY, catalog), catalog)
+    assert kept
+    assert all(word in p.name_en.lower() and not re.search(bad, p.name_en.lower()) for p in kept), \
+        [p.name_en for p in kept]
