@@ -111,3 +111,38 @@ def test_every_account_has_its_own_kitchen_key_and_issuer(c, syn_ctx):
 
     with pytest.raises(MandateError):
         b.verify(holder.presentation())
+
+
+def test_wrong_codes_lock_for_15_minutes_not_for_good(c, syn_ctx, monkeypatch):
+    from validio.api import ui
+
+    clock = [1000.0]
+    monkeypatch.setattr(ui.time, "monotonic", lambda: clock[0])
+    for _ in range(5):
+        assert c.put("/api/rules", json=RULES, headers={"X-Approve-Code": "000000"}).status_code == 403
+    r = c.put("/api/rules", json=RULES, headers={"X-Approve-Code": "246810"})
+    assert r.status_code == 429 and r.headers["retry-after"] == "900"
+    clock[0] += 15 * 60 + 1
+    assert c.put("/api/rules", json=RULES, headers={"X-Approve-Code": "246810"}).status_code == 200
+
+
+def test_the_client_behind_a_trusted_proxy_is_the_forwarded_one(c, monkeypatch):
+    from types import SimpleNamespace
+
+    from validio.api.limits import client_ip
+
+    r = SimpleNamespace(headers={"x-forwarded-for": "198.51.100.4, 10.0.0.1"}, client=SimpleNamespace(host="10.0.0.1"))
+    assert client_ip(r) == "10.0.0.1"  # never trusted without the switch
+    monkeypatch.setenv("VALIDIO_TRUST_PROXY", "1")
+    assert client_ip(r) == "198.51.100.4"
+
+
+def test_changing_the_login_needs_the_password_and_is_rate_limited(c):
+    assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+    for _ in range(5):
+        assert c.put("/api/settings/login", json={"currentPassword": "wrong one", "password": "x" * 9}).status_code == 403
+    assert c.put("/api/settings/login", json={"currentPassword": SIGNUP["password"]}).status_code == 429
+
+
+RULES = {"aloneUpToCents": 100000, "approvalUpToCents": 200000, "substitutes": "listed", "maxExtraPct": 0,
+         "perWeekCents": None}
