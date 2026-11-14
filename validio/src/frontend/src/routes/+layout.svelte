@@ -9,11 +9,13 @@
   import { Input } from "@arlen/ui-kit/components/ui/input";
   import * as Tooltip from "@arlen/ui-kit/components/ui/tooltip";
   import { notePage } from "@arlen/ui-kit/components/ui/page/history";
-  import { CalendarSync, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
-  import { ApiError, api, LIVE } from "$lib/api/client";
+  import { CalendarSync, ChevronRight, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
+  import { api, LIVE, needsToken } from "$lib/api/client";
+  import { tokenPrompt } from "$lib/api/error";
   import type { AskOut } from "$lib/api/types";
+  import { askSummary } from "$lib/ask";
   import { owner } from "$lib/owner.svelte";
-  import { CLOCK, dayTime } from "$lib/format";
+  import { CLOCK, dayTime, nb } from "$lib/format";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
 
@@ -71,12 +73,32 @@
     api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
   });
 
-  // A demo switch the server refused for want of the token opens the token
-  // dialog and runs again once the presenter typed it.
+  // Any write the server refused for want of the token (a demo switch, or
+  // every write on the public link) opens the token dialog; the client sends
+  // the write again once the presenter typed it (api/client.ts, gated).
   let tokenOpen = $state(false);
   let tokenValue = $state("");
   let then = $state<null | (() => void)>(null);
   let demoProblem = $state("");
+  let answerToken: null | ((ok: boolean) => void) = null;
+  tokenPrompt.ask = () =>
+    new Promise<boolean>((resolve) => {
+      answerToken?.(false);
+      answerToken = resolve;
+      tokenValue = "";
+      demoProblem = owner.demoToken ? "That token is not right." : "";
+      then = () => {
+        answerToken = null;
+        resolve(true);
+      };
+      tokenOpen = true;
+    });
+  function closeToken() {
+    tokenOpen = false;
+    then = null;
+    answerToken?.(false);
+    answerToken = null;
+  }
 
   async function demo(fn: () => Promise<unknown>, next: string) {
     demoProblem = "";
@@ -85,14 +107,9 @@
       bump();
       await goto(next);
     } catch (e) {
-      if (e instanceof ApiError && e.status === 403) {
-        then = () => demo(fn, next);
-        tokenValue = "";
-        demoProblem = owner.demoToken ? "That token is not right." : "";
-      } else {
-        demoProblem = e instanceof Error ? e.message : String(e);
-        then = null;
-      }
+      if (needsToken(e)) return; // the presenter closed the token dialog
+      demoProblem = e instanceof Error ? e.message : String(e);
+      then = null;
       tokenOpen = true;
     }
   }
@@ -105,12 +122,14 @@
 
   // "Ask as the kitchen's agent": the owner's own text goes through the same
   // agent loop as `make agent`; the dialog shows its calls, then the request.
-  const EXAMPLES = ["500 litres of lactose-free milk by Monday", "1500 litres of lactose-free milk by Monday", "50 bags of lactose-free mozzarella by Monday"];
+  // One recorded example for each ending: ordered alone, waits for you, blocked.
+  const EXAMPLES = ["100 litres of whipping cream by Monday", "50 bags of lactose-free mozzarella by Monday", "20 kg of butter by Monday"];
   let askOpen = $state(false);
   let askText = $state("");
   let asking = $state(false);
   let askProblem = $state("");
   let answer = $state<AskOut | null>(null);
+  let summary = $state<string[]>([]);
   async function sendAsk(e?: SubmitEvent) {
     e?.preventDefault();
     const text = askText.trim();
@@ -118,16 +137,17 @@
     asking = true;
     askProblem = "";
     answer = null;
+    summary = [];
     try {
-      answer = await api.ask(text);
+      const a = await api.ask(text);
+      // The lines come from the request itself; without one, the agent's last sentence.
+      // Without a request, the first sentence of the agent's last words; the rest stays in the log.
+      const first = a.final.split(/(?<=\.)\s/)[0];
+      summary = a.requestId ? await api.request(a.requestId).then(askSummary, () => [first]) : [first];
+      answer = a;
       bump();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 403) {
-        then = () => void sendAsk();
-        tokenValue = "";
-        demoProblem = owner.demoToken ? "That token is not right." : "";
-        tokenOpen = true;
-      } else askProblem = err instanceof Error ? err.message : String(err);
+      if (!needsToken(err)) askProblem = err instanceof Error ? err.message : String(err);
     } finally {
       asking = false;
     }
@@ -135,6 +155,7 @@
   function closeAsk() {
     askOpen = false;
     answer = null;
+    summary = [];
     askProblem = "";
   }
   demoActions.reset = () => demo(() => api.reset(), "/");
@@ -221,7 +242,7 @@
   </nav>
 {/if}
 
-<Dialog open={tokenOpen} onClose={() => (tokenOpen = false)} labelledby="token-title" size="sm">
+<Dialog open={tokenOpen} onClose={closeToken} labelledby="token-title" size="sm">
   <form class="token" onsubmit={useToken}>
     <h2 id="token-title">{then || !demoProblem ? "Demo token" : "Demo control failed"}</h2>
     {#if then || !demoProblem}
@@ -230,7 +251,7 @@
     {/if}
     {#if demoProblem}<p class="bad">{demoProblem}</p>{/if}
     <div class="token-buttons">
-      <Button variant="outline" onclick={() => (tokenOpen = false)}>Cancel</Button>
+      <Button variant="outline" onclick={closeToken}>Cancel</Button>
       {#if then || !demoProblem}<Button type="submit">{then ? "Use and run" : "Use"}</Button>{/if}
     </div>
   </form>
@@ -247,12 +268,17 @@
     </p>
     {#if asking}<p role="status">The agent is asking Validio…</p>{/if}
     {#if answer}
+      <ul class="summary" data-testid="ask-summary" role="status">
+        {#each summary as l, i (i)}<li>{nb(l)}</li>{/each}
+      </ul>
       {#if answer.lines.length}
-        <ol class="lines" data-testid="ask-lines">
-          {#each answer.lines as l, i (i)}<li>{l}</li>{/each}
-        </ol>
+        <details class="fold ask-log" data-testid="ask-log">
+          <summary><ChevronRight class="chev" aria-hidden="true" />Agent log</summary>
+          <ol class="lines">
+            {#each answer.lines as l, i (i)}<li>{l}</li>{/each}
+          </ol>
+        </details>
       {/if}
-      <p class="final" data-testid="ask-final" role="status">{answer.final}</p>
       {#if answer.requestId}
         <a class="open" href="/requests/{answer.requestId}" data-testid="ask-open" onclick={closeAsk}>Open {answer.requestId} ›</a>
       {/if}
@@ -499,9 +525,9 @@
   }
   .lines {
     margin: 0;
-    padding: 12px 0 0;
+    padding: 8px 0 0;
     list-style: none;
-    border-top: 1px solid var(--v-line);
+    white-space: pre-wrap;
     font-size: 13px;
     line-height: 20px;
     color: var(--v-muted);
@@ -512,8 +538,17 @@
   .lines li + li {
     margin-top: 6px;
   }
-  .ask .final {
+  .summary {
+    margin: 0;
+    padding: 12px 0 0;
+    list-style: none;
+    border-top: 1px solid var(--v-line);
+    font-size: 13px;
+    line-height: 20px;
     color: var(--v-fg);
+  }
+  .summary li + li {
+    margin-top: 4px;
   }
   .ask .open {
     font-size: 13px;

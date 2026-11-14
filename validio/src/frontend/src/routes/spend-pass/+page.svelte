@@ -6,7 +6,7 @@
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { Info } from "@lucide/svelte";
   import { Input } from "@arlen/ui-kit/components/ui/input";
-  import { ApiError, api } from "$lib/api/client";
+  import { api, ApiError, needsToken } from "$lib/api/client";
   import type { SpendPassIn } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
@@ -74,6 +74,7 @@
       editing = false;
       bump();
     } catch (err) {
+      if (needsToken(err)) return; // the presenter closed the token dialog
       const msg = err instanceof Error ? err.message : String(err);
       formProblem = err instanceof ApiError && err.status === 403 ? "That approval code is not right." : err instanceof ApiError && err.status === 422 ? `${cap(msg)}.` : msg;
       if (err instanceof ApiError && err.status === 403) owner.code = "";

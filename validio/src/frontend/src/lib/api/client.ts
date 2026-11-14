@@ -2,7 +2,7 @@
 // backend under /api; anything else serves the answers the real backend gave,
 // recorded in snapshots/states.ts (see mock.ts).
 
-import { ApiError } from "./error";
+import { ApiError, needsToken, tokenPrompt } from "./error";
 import * as mock from "./mock";
 import { owner } from "../owner.svelte";
 import type {
@@ -18,7 +18,7 @@ import type {
   SupplyRequest,
 } from "./types";
 
-export { ApiError };
+export { ApiError, needsToken };
 export const LIVE = import.meta.env.VITE_API === "live";
 
 async function call<T>(method: "GET" | "POST", path: string, headers: Record<string, string> = {}, body?: unknown): Promise<T> {
@@ -42,10 +42,25 @@ async function call<T>(method: "GET" | "POST", path: string, headers: Record<str
 
 const get = <T>(path: string) => call<T>("GET", path);
 const post = <T>(path: string, headers?: Record<string, string>, body?: unknown) => call<T>("POST", path, headers, body);
-// Every write carries the approval code once the owner typed it; the demo
-// switches carry the presenter's token. A server with neither set ignores them.
-const write = <T>(path: string, body?: unknown) => post<T>(path, owner.code ? { "x-approve-code": owner.code } : {}, body);
-const demo = <T>(path: string, body?: unknown) => post<T>(path, owner.demoToken ? { "x-demo-token": owner.demoToken } : {}, body);
+// Every write carries the approval code once the owner typed it, and the
+// presenter's demo token once typed: on the public link that token opens the
+// kitchen gate for writes. A server with neither set ignores them.
+const token = (): Record<string, string> => (owner.demoToken ? { "x-demo-token": owner.demoToken } : {});
+const write = <T>(path: string, body?: unknown) => post<T>(path, { ...(owner.code ? { "x-approve-code": owner.code } : {}), ...token() }, body);
+const demo = <T>(path: string, body?: unknown) => post<T>(path, token(), body);
+
+/** A write the server refused for want of the token asks for it once and runs again. */
+async function gated<T>(run: () => Promise<T>): Promise<T> {
+  try {
+    return await run();
+  } catch (e) {
+    if (needsToken(e) && tokenPrompt.ask && (await tokenPrompt.ask())) return gated(run);
+    throw e;
+  }
+}
+// The fixture plays the same gate when a test sets a public token (mock.publicGate).
+const both = <T>(live: () => Promise<T>, fixture: () => Promise<T>) =>
+  gated(() => (LIVE ? live() : mock.publicGate(owner.demoToken).then(fixture)));
 const id = encodeURIComponent;
 
 export const api = {
@@ -56,23 +71,23 @@ export const api = {
     LIVE ? get(`/api/spend-passes/${id(pid)}`) : mock.spendPass(pid),
   order: (oid: string): Promise<Order> => (LIVE ? get(`/api/orders/${id(oid)}`) : mock.order(oid)),
   approve: (oid: string): Promise<Order> =>
-    LIVE ? write(`/api/orders/${id(oid)}/approve`) : mock.approve(oid, owner.code),
+    both(() => write(`/api/orders/${id(oid)}/approve`), () => mock.approve(oid, owner.code)),
   reject: (oid: string): Promise<Order> =>
-    LIVE ? write(`/api/orders/${id(oid)}/reject`) : mock.reject(oid, owner.code),
+    both(() => write(`/api/orders/${id(oid)}/reject`), () => mock.reject(oid, owner.code)),
   ledger: (): Promise<Ledger> => (LIVE ? get("/api/ledger") : mock.ledger()),
   steadyList: (): Promise<SteadyOrderSummary[]> => (LIVE ? get("/api/steady") : mock.steadyList()),
   steadyOrder: (sid: string): Promise<SteadyOrder> =>
     LIVE ? get(`/api/steady/${id(sid)}`) : mock.steadyOrder(sid),
   renew: (sid: string): Promise<SteadyOrder> =>
-    LIVE ? write(`/api/steady/${id(sid)}/renew`) : mock.renew(sid, owner.code),
+    both(() => write(`/api/steady/${id(sid)}/renew`), () => mock.renew(sid, owner.code)),
   acceptLine: (sid: string, pid: string): Promise<SteadyOrder> =>
-    LIVE ? write(`/api/steady/${id(sid)}/lines/${id(pid)}/accept`) : mock.acceptLine(sid, pid, owner.code),
+    both(() => write(`/api/steady/${id(sid)}/lines/${id(pid)}/accept`), () => mock.acceptLine(sid, pid, owner.code)),
   demoState: (): Promise<DemoState> => (LIVE ? get("/api/demo") : mock.demoState()),
   /** On by default; `false` ends the simulated stock-out. */
-  stockOut: (on = true): Promise<DemoState> => (LIVE ? demo("/api/demo/stock-out", { on }) : mock.stockOut(on)),
+  stockOut: (on = true): Promise<DemoState> => both(() => demo("/api/demo/stock-out", { on }), () => mock.stockOut(on)),
   /** The kitchen's agent on the owner's own text. */
-  ask: (text: string): Promise<AskOut> => (LIVE ? demo("/api/demo/ask", { text }) : mock.ask(text)),
+  ask: (text: string): Promise<AskOut> => both(() => demo("/api/demo/ask", { text }), () => mock.ask(text)),
   /** The owner signs Spend Pass M-1 again with new limits; the code goes as X-Approve-Code. */
-  signPass: (body: SpendPassIn): Promise<SpendPass> => (LIVE ? write("/api/spend-pass", body) : mock.signPass(body, owner.code)),
-  reset: (): Promise<DemoState> => (LIVE ? demo("/api/demo/reset") : mock.reset()),
+  signPass: (body: SpendPassIn): Promise<SpendPass> => both(() => write("/api/spend-pass", body), () => mock.signPass(body, owner.code)),
+  reset: (): Promise<DemoState> => both(() => demo("/api/demo/reset"), () => mock.reset()),
 };

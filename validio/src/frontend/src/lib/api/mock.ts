@@ -121,6 +121,17 @@ export async function signPass(body: SpendPassIn, code: string): Promise<SpendPa
   return spendPass("M-1");
 }
 
+/** A test sets localStorage "validio-mock-public" to a token: every write then needs it, as on the public link. */
+export async function publicGate(token: string): Promise<void> {
+  let want: string | null = null;
+  try {
+    want = localStorage.getItem("validio-mock-public");
+  } catch {
+    /* no storage, no gate */
+  }
+  if (want && token !== want) throw new ApiError(401, "wrong or missing kitchen token");
+}
+
 /** No agent runs without the backend: the fixture says so instead of inventing an answer. */
 export async function ask(text: string): Promise<AskOut> {
   if (!text.trim()) throw new ApiError(422, "say what the kitchen needs");
