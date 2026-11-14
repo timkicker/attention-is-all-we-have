@@ -117,7 +117,8 @@ Agent side (for any agent, documented in AGENTS.md as well):
 | | `/mcp/k/{account}/` | | the six MCP tools of today, per account |
 
 The old `/agent/v1/...` (with `/agent/v1/pair` and `/agent/v1/pass`) and `/mcp/` keep serving the
-local kitchen for `make agent` and the tests.
+local kitchen for `make agent` and the tests. An unknown account in the path answers 404. Over MCP the
+kitchen's nonce is the resource `validio://k/<account>/nonce` (the six tools read the account from the URL).
 
 ## Rules
 

@@ -19,7 +19,7 @@ For an MCP host the whole configuration is in `examples/mcp.json`:
 
 Keep the slash at the end of the URL. A POST to `/mcp` without it never reaches the MCP server and gets a 405.
 
-On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The kitchen's Agent page shows both. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
+On a hosted Validio every kitchen has its own address: `/mcp/k/<account>/` for MCP and `/agent/v1/k/<account>/...` for HTTP, with the same tools and paths as below. The kitchen's Agent page shows both. Over MCP that kitchen's nonce is the resource `validio://k/<account>/nonce`. An unknown account gets a 404. The local `/mcp/` and `/agent/v1/...` serve the one kitchen of `make demo`.
 
 ### Pairing
 
