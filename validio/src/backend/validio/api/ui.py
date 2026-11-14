@@ -18,6 +18,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
 
 from ..audit.log import head_signature_ok
+from ..demo.seed import SPEND_PASS_ID
 from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from . import display
@@ -169,10 +170,24 @@ def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
     return v
 
 
+def _show_issued(ctx: Ctx) -> dict:
+    """Spend Pass M-1 shown the way the agent shows it, as the kitchen last issued it. Right after Start over no
+    agent has shown it yet, and the page still has to work."""
+    from ..agent.holder import Holder
+    from ..orders.service import mandate_dict
+    from . import tools
+
+    m = ctx.verify(Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir).presentation())
+    ctx.store.remember_pass(m.id, mandate_dict(m))
+    return ctx.store.seen_pass(m.id)
+
+
 @router.get("/spend-passes/{pass_id}", response_model=SpendPassView, response_model_exclude_none=True)
 def spend_pass(ctx: CtxDep, pass_id: str):
     """The Spend Pass as the agent last showed it. Fields it did not disclose stay absent."""
     m = ctx.store.seen_pass(pass_id)
+    if m is None and pass_id == SPEND_PASS_ID:
+        m = _show_issued(ctx)
     if m is None:
         raise HTTPException(404, f"no agent has shown Spend Pass {pass_id} yet")
     shown = sorted(m["disclosed"])
@@ -193,12 +208,9 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
                     x_approve_code: Annotated[str | None, Header()] = None):
     """The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week
     already placed still counts; the copy the agent held before is refused from now on. One ledger entry."""
-    from ..agent.holder import Holder
     from ..demo import seed
-    from ..orders.service import mandate_dict
     from ..policy.mandate import SUBSTITUTES_LISTED
     from ..text.format import money
-    from . import tools
 
     check_code(ctx, request, "spend-pass", x_approve_code, body)
     if body.auto_limit_cents > body.hard_cap_cents:
@@ -211,16 +223,15 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
     with ctx.rt.lock:
         seed.sign_again(ctx.db_path, ctx.keys_dir, changes)
         # shown once, so the page and what the next request is judged against agree at once
-        m = ctx.verify(Holder.from_seed(lambda: tools.nonce(ctx), ctx.db_path, ctx.keys_dir).presentation())
-        ctx.store.remember_pass(m.id, mandate_dict(m))
+        m = _show_issued(ctx)
         d = body.deliver_by
         parts = [f"alone up to {money(body.auto_limit_cents)}", f"never above {money(body.hard_cap_cents)}",
                  " and ".join(CLAIM_NAMES.get(c, c) for c in diet) or "no diet rule", f"delivered by {d.day} {d:%b}",
                  "substitutes from Valio's list" if body.substitutes else "no substitutes alone"]
         ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass",
-                         sentence=f"Owner changed the limits of Spend Pass {m.id}: {', '.join(parts)}.",
-                         facts=[], mandate_id=m.id, disclosed={}, rule_ids=[], order_id=None)
-    return spend_pass(ctx, m.id)
+                         sentence=f"Owner changed the limits of Spend Pass {m['id']}: {', '.join(parts)}.",
+                         facts=[], mandate_id=m["id"], disclosed={}, rule_ids=[], order_id=None)
+    return spend_pass(ctx, m["id"])
 
 
 @router.get("/orders/{order_id}", response_model=OrderView, response_model_exclude_none=True)
