@@ -1,6 +1,6 @@
 # Parallax shared targets (contract). Track A owns pipeline/targets.mk, Track B owns api/targets.mk.
 SHELL := /bin/bash
-SEED ?= v1
+SEED ?= v4
 UV ?= uv
 LOAD := $(UV) run python scripts/load_sql.py
 
