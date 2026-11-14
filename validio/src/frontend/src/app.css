@@ -215,7 +215,9 @@ h1.v-title {
   display: grid;
   grid-template-columns: 128px minmax(0, 1fr) auto;
   column-gap: 12px;
-  align-items: center;
+  /* Pill, title and amount share the title's baseline; a one-line row sits in the middle of its 56 px. */
+  align-items: baseline;
+  align-content: center;
   min-height: 56px;
   padding: 12px 16px;
   color: inherit;
@@ -244,11 +246,7 @@ a.vr:hover {
   border-end-end-radius: max(0px, calc(var(--radius-card) - 1px));
 }
 .v-row-lead {
-  align-self: start;
-  padding-top: 1px;
   display: flex;
-  align-items: center;
-  min-height: 22px;
 }
 .v-row-title {
   font-size: var(--fs-body);
@@ -262,19 +260,6 @@ a.vr:hover {
   line-height: var(--lh-meta);
   color: var(--v-muted);
 }
-/* A one-line row centres its pill on the title. */
-.v-row:not(:has(.v-row-sub, .v-row-more)) .v-row-lead {
-  align-self: center;
-  padding-top: 0;
-}
-/* With a second line the amount and the button sit on the title line. */
-.v-row:has(.v-row-sub, .v-row-more) .v-row-end {
-  align-self: start;
-  min-height: 22px;
-}
-.v-row:has(.v-row-sub, .v-row-more) .v-row-end [data-slot="button"] {
-  margin-block: -5px;
-}
 .v-row-end {
   display: flex;
   align-items: center;
@@ -284,6 +269,10 @@ a.vr:hover {
   line-height: var(--lh-body);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+/* A button in the amount column sits on the title line without making the row taller. */
+.v-row-end [data-slot="button"] {
+  margin-block: calc((var(--lh-body) - var(--height-control)) / 2);
 }
 .v-row-end .go {
   color: var(--v-faint);
@@ -427,6 +416,7 @@ a.vr:hover {
   display: grid;
   grid-template-columns: 176px minmax(0, 1fr) auto;
   column-gap: 24px;
+  align-items: baseline;
   padding: 16px 0;
   border-bottom: 1px solid var(--v-line);
 }
@@ -434,7 +424,6 @@ a.vr:hover {
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--v-muted);
-  padding-top: 1px;
 }
 .ev-name {
   font-size: var(--fs-body);
