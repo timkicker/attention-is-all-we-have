@@ -74,6 +74,13 @@ class Catalog:
         args.append(limit)
         return [self.get(r["id"]) for r in self._all(sql, *args)]
 
+    def group_sizes(self) -> dict[str, int]:
+        """Products per top level category (the first three digits), counted once."""
+        if getattr(self, "_group_sizes", None) is None:
+            rows = self._all("select substr(category, 1, 3) g, count(*) n from product where deleted = 0 group by g")
+            self._group_sizes = {r["g"]: r["n"] for r in rows}
+        return self._group_sizes
+
     def substitutes_of(self, product_id: str) -> list[Product]:
         p = self.get(product_id)
         if p is None:

@@ -49,14 +49,19 @@ class Kind:
     categories: tuple[str, ...] | None  # Valio categories that hold this kind, None means any
     net: tuple[str, ...]  # category prefixes searched, wider than categories so look-alikes show
     off: str | None = None  # names that match the word but are another product
+    off_name: str | None = None  # what those are, when OFF_NAMES does not fit this kind
 
+
+# flavours: a plain drink asked for, these are another product
+FLAVOURS = (r"choco|cookie|vanilla|caramel|hazelnut|gingerbread|pumpkin|cardamom|strawberr|banana|coffee|ikaffe"
+            r"|protein|soy|cooking")
 
 KINDS = {
     "milk": Kind(("milk",), "L", ("10400",), ("10400", "10401"),
                  r"sour|ferment|curdl|coffee|caf[eè]|powder|pudding|condensed|acidofilus|vanilla|hyla|gefilus"
                  r"|cream|portion"),
     "mozzarella": Kind(("mozzarella",), "KG", None, ("",)),
-    "oat_drink": Kind(("oat",), "L", ("10402",), ("10402",)),
+    "oat_drink": Kind(("oat",), "L", ("10402",), ("10402",), FLAVOURS, "A flavoured oat drink"),
 }
 
 CLAIM_WORDS = {
@@ -83,8 +88,11 @@ FILLER = frozenset(["of", "a", "an", "the", "some", "please", "for", "by", "and"
 
 # kinds the parser found in the catalogue, by word: the categories most of the products with that word sit in
 GENERIC: dict[str, Kind] = {}
-# where counting names goes wrong: most names with "cream" are ice cream, Valio files cream under 10401
-CATEGORY_HINTS = {"cream": ("10401",)}
+# where counting names goes wrong: most names with "cream" are ice cream, Valio files cream under 10401,
+# and a plant blend or a powder there is not the cream a kitchen asks for
+CREAM_OFF = r"alternative|blend|plant|vegetable|coconut|powder|spray"
+HINTS = {w: Kind((w,), "L", None, ("10401",), CREAM_OFF, "A cream alternative or mix")
+         for w in ("cream", "cooking cream", "whipping cream")}
 
 
 def kind_of(name: str, unit: str = "PCS") -> Kind:
@@ -93,17 +101,22 @@ def kind_of(name: str, unit: str = "PCS") -> Kind:
 
 
 def _generic(word: str, cat: Catalog) -> Kind | None:
-    """Products whose name holds the word at a word start, kept to the top level categories that hold at
-    least half as many of them as the biggest one: "butter" stays with the butters, not peanut butter."""
+    """Products whose name holds the word at a word start, kept to the top level categories where the word is
+    densest, at least half the densest share: "butter" stays with the fats (32 of 200) and leaves the frozen
+    bakery (44 of 1,000 and more, croissants with butter), "oat drink" stays a drink."""
     rx = re.compile(rf"\b{re.escape(word)}")
     hits = [p for p in cat.search(text=word, limit=5000) if rx.search((p.name_en or "").lower())]
     if not hits:
         return None
-    if word in CATEGORY_HINTS:
-        return Kind((word,), "PCS", None, CATEGORY_HINTS[word])
+    if word in HINTS:
+        return HINTS[word]
     counts = Counter(p.category[:3] for p in hits)
-    top = max(counts.values())
-    return Kind((word,), "PCS", None, tuple(sorted(c for c, n in counts.items() if 2 * n >= top)))
+    sizes = cat.group_sizes()
+    share = {c: n / max(sizes.get(c, n), 1) for c, n in counts.items() if n >= 2}
+    if not share:  # a word with one product per group: where most of them are
+        return Kind((word,), "PCS", None, (counts.most_common(1)[0][0],))
+    top = max(share.values())
+    return Kind((word,), "PCS", None, tuple(sorted(c for c, s in share.items() if 2 * s >= top)))
 
 
 def _product_word(t: str, cat: Catalog) -> str | None:
@@ -234,7 +247,7 @@ def static_reasons(need: Need, p: Product) -> list[str]:
     reasons = []
     has_all = need.required_claims <= p.claims
     if kind.off and (m := re.search(kind.off, name)):
-        what = OFF_NAMES.get(m.group(0), f"A {m.group(0)} product")
+        what = kind.off_name or OFF_NAMES.get(m.group(0), f"A {m.group(0)} product")
         reasons.append(f"{what}, not plain {need.kind.replace('_', ' ')}")
     elif kind.categories and p.category not in kind.categories:
         claim = " and ".join(CLAIM_NAMES.get(c, c) for c in sorted(need.required_claims))
