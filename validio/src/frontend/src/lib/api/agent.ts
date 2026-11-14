@@ -106,6 +106,22 @@ function pairCode(): string {
   return `${s.slice(0, 4)}-${s.slice(4)}`;
 }
 
+function token(): string {
+  const b = new Uint8Array(24);
+  crypto.getRandomValues(b);
+  return Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+}
+
+/** Fixture only: an MCP agent made its first call on the pairing URL, as the server then shows it. */
+export function mockMcpCall(): void {
+  const m = load();
+  if (m.agent.state !== "pairing") return;
+  m.agent = { state: "consent", consent: { name: "MCP agent", keyId: "m4Rt8Kpz", may: mayWords(m.rules) }, versions: m.agent.versions };
+  store(m);
+}
+// In the browser console of the fixture build: validioMcpCall()
+if (!LIVE && typeof window !== "undefined") (window as unknown as { validioMcpCall: () => void }).validioMcpCall = mockMcpCall;
+
 const mock = {
   async agent(): Promise<AgentState> {
     return structuredClone(load().agent);
@@ -117,7 +133,8 @@ const mock = {
       pairing: {
         code: pairCode(),
         expiresAt: new Date(Date.now() + 10 * 60_000).toISOString(),
-        mcpUrl: `${HOST}/mcp/k/${ACCOUNT}/`,
+        // Any MCP agent: its first call asks for consent as "MCP agent".
+        mcpUrl: `${HOST}/mcp/c/${token()}/`,
         apiUrl: `${HOST}/agent/v1/k/${ACCOUNT}`,
       },
       versions: m.agent.versions,
