@@ -47,6 +47,8 @@ JUDGE_CLAIMS = int(os.environ.get("INGEST_JUDGE_CLAIMS") or 25)  # one Compare p
 JUDGE_CANDIDATES = 3
 GLOSS_BATCH = 20
 MAX_TRIES = 3  # per edition, for rate limits
+MAX_ACTIVE = int(os.environ.get("INGEST_MAX_ACTIVE") or 3)  # jobs queued or loading at once; more get IngestBusy
+MAX_JOB_FAILURES = 3  # a job that crashes the worker this often in a row is marked failed instead of retried forever
 log = logging.getLogger("parallax.ingest")
 
 ALIGN_SQL = (ROOT / "pipeline" / "align.sql").read_text(encoding="utf-8")
@@ -63,6 +65,10 @@ class NoFinnish(Exception):
 
 class UnknownItem(Exception):
     pass
+
+
+class IngestBusy(Exception):
+    """MAX_ACTIVE jobs are queued or loading already; a new one has to wait."""
 
 
 def topic_slug(qid: str) -> str:
@@ -113,9 +119,10 @@ def _q(cur, sql: str, params=()) -> list[dict]:
     return [dict(zip(cols, r, strict=False)) for r in cur.fetchall()]
 
 
-def create(cur, qid: str, since: str | None = None, ent: dict | None = None) -> str:
+def create(cur, qid: str, since: str | None = None, ent: dict | None = None, max_active: int | None = None) -> str:
     """Queue an ingest for qid unless one exists or the item is loaded already. Returns 'existing', 'loaded' or
-    'queued'. Raises UnknownItem, NoFinnish, or wapi.RateLimited when Wikidata cannot be asked now."""
+    'queued'. Raises UnknownItem, NoFinnish, IngestBusy when MAX_ACTIVE jobs are under way (max_active=None: no cap,
+    the command line), or wapi.RateLimited when Wikidata cannot be asked now."""
     if _q(cur, "SELECT 1 FROM topic WHERE wikidata_id=%s", (qid,)):
         return "loaded"
     job = _q(cur, "SELECT state, since FROM ingest_job WHERE qid=%s", (qid,))
@@ -126,6 +133,10 @@ def create(cur, qid: str, since: str | None = None, ent: dict | None = None) -> 
             cur.execute("UPDATE ingest_job SET since=%s, updated_at=%s WHERE qid=%s", (since, now(), qid))
             return "narrowed"
         return "existing"
+    if max_active is not None:
+        (active,) = _q(cur, "SELECT COUNT(*) AS n FROM ingest_job WHERE state IN ('queued','running','usable')")
+        if int(active["n"]) >= max_active:
+            raise IngestBusy(qid)
     if ent is None:
         if wapi.cooldown_left() > 0:
             raise wapi.RateLimited("cooling down", wapi.cooldown_left())
@@ -251,7 +262,7 @@ def fetch_edition(lang: str, title: str, since: dt.date | None, progress) -> dic
     if since_ts:
         params["rvstart"] = since_ts
     page_id, length, meta, n = None, None, [], 0
-    for body in wapi.query_all(lang, params):
+    for body in wapi.query_all(lang, params, max_age_s=wapi.DAY_S):  # history grows: a later load sees new edits
         pages = body["query"]["pages"]
         if not pages or "missing" in pages[0]:
             raise LookupError(f"{lang}: no page {title!r}")
@@ -274,6 +285,7 @@ def fetch_edition(lang: str, title: str, since: dt.date | None, progress) -> dic
                 "redirects": 1,
                 "formatversion": 2,
             },
+            max_age_s=wapi.DAY_S,
         )
         meta = [meta_row(r) for r in body["query"]["pages"][0].get("revisions", [])] + meta
     if not meta:
@@ -289,7 +301,9 @@ def fetch_edition(lang: str, title: str, since: dt.date | None, progress) -> dic
 
 def current_length(lang: str, title: str) -> int:
     body = wapi.get(
-        wapi.api_url(lang), {"action": "query", "prop": "info", "titles": title, "redirects": 1, "formatversion": 2}
+        wapi.api_url(lang),
+        {"action": "query", "prop": "info", "titles": title, "redirects": 1, "formatversion": 2},
+        max_age_s=wapi.DAY_S,
     )
     pages = body.get("query", {}).get("pages", [])
     return int(pages[0].get("length") or 0) if pages and "missing" not in pages[0] else 0
@@ -306,12 +320,12 @@ def embed(texts: list[str], progress) -> list[np.ndarray]:
     """bge-m3 through engine.embed (vectors kept under data/emb/), or sketch_embed with EMBED_BACKEND=fake."""
     if os.environ.get("EMBED_BACKEND") == "fake":
         return [np.asarray(v, dtype=np.float32) for v in sketch_embed(texts)]
-    from engine.embed import VectorStore, embed_texts
+    from engine.embed import embed_texts, writer
 
     global _STORE
     with _STORE_LOCK:
         if _STORE is None:
-            _STORE = VectorStore()
+            _STORE = writer()  # shares the API's vectors in memory instead of loading data/emb/ a second time
         return embed_texts(texts, _STORE, progress=progress)
 
 
@@ -736,6 +750,7 @@ class Worker:
         self.stop = threading.Event()
         self.wake = threading.Event()
         self.thread: threading.Thread | None = None
+        self.failures: dict[str, int] = {}  # qid -> crashes in a row
 
     def start(self) -> None:
         self.thread = threading.Thread(target=self._loop, name="ingest-worker", daemon=True)
@@ -763,19 +778,52 @@ class Worker:
         finally:
             conn.close()
 
+    def _crashed(self, qid: str) -> None:
+        """Count a crash of qid; after MAX_JOB_FAILURES in a row the job is marked failed so the worker moves on."""
+        n = self.failures.get(qid, 0) + 1
+        self.failures[qid] = n
+        log.warning("ingest %s crashed (%d of %d):\n%s", qid, n, MAX_JOB_FAILURES, traceback.format_exc())
+        if n < MAX_JOB_FAILURES:
+            return
+        self.failures.pop(qid, None)
+        conn = connect()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE ingest_job SET state='failed', error=%s, done_at=%s, updated_at=%s "
+                    "WHERE qid=%s AND state IN ('queued','running','usable')",
+                    ("The load stopped with an error.", now(), now(), qid),
+                )
+                slug = topic_slug(qid)  # a topic row without any page would list an empty article
+                cur.execute(
+                    "DELETE FROM topic WHERE topic_id=%s AND NOT EXISTS (SELECT 1 FROM page WHERE topic_id=%s)",
+                    (slug, slug),
+                )
+        finally:
+            conn.close()
+        log.error("ingest %s marked failed after %d crashes", qid, MAX_JOB_FAILURES)
+
     def _loop(self) -> None:
         while not self.stop.is_set():
+            qid = None
             try:
                 qid = self._next()
                 if qid:
                     try:
                         run_job(qid, self.stop)
+                        self.failures.pop(qid, None)
                     finally:
                         if self.after_job:
                             self.after_job()
                     continue
             except Exception:
-                log.warning("ingest worker:\n%s", traceback.format_exc())
+                if qid:
+                    try:
+                        self._crashed(qid)
+                    except Exception:
+                        log.warning("ingest worker could not mark %s:\n%s", qid, traceback.format_exc())
+                else:
+                    log.warning("ingest worker:\n%s", traceback.format_exc())
             self.wake.wait(5)
             self.wake.clear()
 

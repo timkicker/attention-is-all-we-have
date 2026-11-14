@@ -17,6 +17,11 @@ from api.routes import ask, atlas, check, compare, dropped, health, ingest, sear
 from contract.db import load_env
 
 load_env()
+logging.basicConfig(
+    level=os.environ.get("LOG_LEVEL", "INFO").upper(),
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+log = logging.getLogger("parallax.api")
 
 
 @asynccontextmanager
@@ -53,8 +58,7 @@ async def _with_sql(request: Request, call_next) -> tuple[Response, str | None, 
     data = json.loads(body)
     if response.status_code < 400 and isinstance(data, dict):
         data.setdefault("sql", statements)
-        if panel:
-            sqllog.LAST[panel] = statements
+        sqllog.remember(panel, statements)
     headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
     out = json.dumps(data, ensure_ascii=False).encode()
     return (
@@ -84,8 +88,7 @@ async def attach_sql(request: Request, call_next):
                 headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
                 cache.put(key, gen, body, headers, panel, statements)
             return response
-    if hit.panel:
-        sqllog.LAST[hit.panel] = hit.statements  # "Under the hood" shows the statements behind what was served
+    sqllog.remember(hit.panel, hit.statements)  # "Under the hood" shows the statements behind what was served
     return Response(hit.body, status_code=200, headers=hit.headers, media_type="application/json")
 
 
@@ -95,6 +98,13 @@ async def http_error(request: Request, exc: StarletteHTTPException):
         exc.detail if isinstance(exc.detail, dict) else {"code": f"http_{exc.status_code}", "message": str(exc.detail)}
     )
     return JSONResponse({"error": detail}, status_code=exc.status_code, headers=getattr(exc, "headers", None))
+
+
+@app.exception_handler(Exception)
+async def internal_error(request: Request, exc: Exception):
+    """Anything unexpected: logged with its trace, answered in the error shape of the contract, details stay here."""
+    log.exception("unhandled error on %s %s", request.method, request.url.path)
+    return JSONResponse({"error": {"code": "internal", "message": "Something went wrong on our side."}}, 500)
 
 
 @app.exception_handler(RequestValidationError)

@@ -14,11 +14,20 @@ export type WithoutCounts<T> = Omit<T, 'counts'>
 
 let topicsCache: Promise<Result<TopicRef[]>> | null = null
 
+/** The newest stored revision over a topic's editions, YYYY-MM-DD; null when the API does not say. */
+export function latestOf(editions: { last_ts?: string | null }[]): string | null {
+  const days = editions.map((e) => e.last_ts?.slice(0, 10)).filter((d): d is string => !!d)
+  return days.length ? days.sort().at(-1)! : null
+}
+
 /** qid (Wikidata id) -> TopicRef through /api/topics. Cached; call forgetTopics() after an ingest. */
 export async function resolveTopic(api: typeof Api, qid: string): Promise<Result<TopicRef>> {
   topicsCache ??= api.topics().then((r) =>
     r.ok
-      ? { ok: true as const, data: r.data.topics.map((t) => ({ qid: t.wikidata_id, topicId: t.topic_id, title: t.label_en })) }
+      ? {
+          ok: true as const,
+          data: r.data.topics.map((t) => ({ qid: t.wikidata_id, topicId: t.topic_id, title: t.label_en, latest: latestOf(t.editions) })),
+        }
       : r,
   )
   const r = await topicsCache

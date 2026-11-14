@@ -24,7 +24,7 @@ export default defineConfig({
     : {
         command:
           `${db} uv run python scripts/load_sql.py --create --reset contract/schema.sql contract/fixtures/seed-mini.sql` +
-          ` && ${db} uv run uvicorn api.main:app --host 127.0.0.1 --port ${port}`,
+          ` && ${db} RATE_LIMITS=0 uv run uvicorn api.main:app --host 127.0.0.1 --port ${port}`,
         cwd: '..',
         url: `http://127.0.0.1:${port}/api/health`,
         reuseExistingServer: false,

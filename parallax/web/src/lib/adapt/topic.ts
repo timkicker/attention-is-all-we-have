@@ -382,20 +382,30 @@ async function topicStarts(api: Client, topicId: string): Promise<Starts> {
   return out
 }
 
-/** Every Finnish statement of the date through /api/compare, in pages of 200 fetched side by side. */
+/** Pages of /api/compare asked at the same time. A page of a date the align cache lacks is an exact vector search
+ * on the server, so a long article must not fire all its pages at once. */
+export const COMPARE_PARALLEL = 2
+
+/** Every Finnish statement of the date through /api/compare, in pages of 200, at most COMPARE_PARALLEL at a time.
+ * Stops at the first failed page. */
 async function compareAll(api: Client, topic: string, asOf: string | null): Promise<Result<CompareRes>> {
   const q = { topic, as_of: asOf ?? undefined, limit: FETCH }
   const first = await api.compare({ ...q, offset: 0 })
   if (!first.ok) return first
-  const rest = await Promise.all(
-    Array.from({ length: Math.ceil(first.data.total_rows / FETCH) - 1 }, (_, i) => api.compare({ ...q, offset: (i + 1) * FETCH })),
-  )
-  const rows = [...first.data.rows]
-  for (const r of rest) {
-    if (!r.ok) return r
-    rows.push(...r.data.rows)
+  const offsets = Array.from({ length: Math.max(0, Math.ceil(first.data.total_rows / FETCH) - 1) }, (_, i) => (i + 1) * FETCH)
+  const pages: CompareRes['rows'][] = []
+  const run: { failed: Result<CompareRes> | null; next: number } = { failed: null, next: 0 }
+  async function worker() {
+    while (!run.failed && run.next < offsets.length) {
+      const i = run.next++
+      const r = await api.compare({ ...q, offset: offsets[i] })
+      if (!r.ok) run.failed = r
+      else pages[i] = r.data.rows
+    }
   }
-  return { ok: true, data: { ...first.data, rows } }
+  await Promise.all(Array.from({ length: Math.min(COMPARE_PARALLEL, offsets.length) }, worker))
+  if (run.failed) return run.failed
+  return { ok: true, data: { ...first.data, rows: [...first.data.rows, ...pages.flat()] } }
 }
 
 function load(api: Client, ctx: TopicCtx): Promise<Result<Loaded>> {

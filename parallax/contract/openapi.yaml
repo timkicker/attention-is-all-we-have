@@ -94,7 +94,9 @@ paths:
   /api/check:
     post:
       operationId: check
-      description: 503 embed_unavailable when the embedder for text the fixtures do not know is not answering.
+      description: >-
+        At most 20 statements of an answer are checked. 429 too_many per visitor, 503 embed_unavailable when the
+        embedder for text the fixtures do not know is not answering, 503 model_unavailable when the model fails.
       requestBody:
         required: true
         content:
@@ -105,7 +107,8 @@ paths:
               properties:
                 text: {type: string}
                 as_of: {type: string}
-                langs: {type: array, items: {type: string}}
+                langs: {type: array, maxItems: 16, items: {type: string}, description: 422 bad_lang for an edition the check does not cover}
+                topic: {type: string, description: "topic_id: evidence only from this topic (404 topic_not_found when unknown)"}
       responses:
         "200":
           description: The answer split into claims, each labelled per edition
@@ -113,7 +116,9 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check.json}}
+        "404": {$ref: "#/components/responses/Error"}
         "422": {$ref: "#/components/responses/Error"}
+        "429": {$ref: "#/components/responses/Error"}
         "503": {$ref: "#/components/responses/Error"}
   /api/check/recorded:
     get:
@@ -396,6 +401,9 @@ components:
                     history: {type: string, enum: [every, yearly, none]}
                     revisions: {type: integer}
                     first_ts: {$ref: "#/components/schemas/Ts"}
+                    last_ts:
+                      description: The newest stored revision. Data is not refreshed after a load, so this, not today, is what "latest" shows.
+                      $ref: "#/components/schemas/Ts"
         sql: {$ref: "#/components/schemas/Sql"}
     Cell:
       type: object

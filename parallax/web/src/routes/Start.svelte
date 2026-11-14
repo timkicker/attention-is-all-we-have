@@ -49,7 +49,12 @@
       active = 0
     } else {
       found = null
-      failed = r.error.code === 'rate_limited' && r.error.retryAfterS ? copy.ERR.rateLimited(r.error.retryAfterS) : copy.start.SEARCH_FAILED
+      failed =
+        r.error.code === 'rate_limited' && r.error.retryAfterS
+          ? copy.ERR.rateLimited(r.error.retryAfterS)
+          : r.error.code === 'too_many'
+            ? copy.ERR.tooMany(r.error.retryAfterS ?? 60)
+            : copy.start.SEARCH_FAILED
     }
     open = true
   }
@@ -76,6 +81,10 @@
       const s = await startIngest(r.qid)
       if (!s.ok && s.error.code === 'rate_limited') {
         failed = copy.ERR.rateLimited(s.error.retryAfterS ?? 120)
+        return
+      }
+      if (!s.ok && s.error.code === 'too_many') {
+        failed = copy.ERR.tooMany(s.error.retryAfterS ?? 60)
         return
       }
       if (!s.ok && s.error.code === 'no_finnish') {
