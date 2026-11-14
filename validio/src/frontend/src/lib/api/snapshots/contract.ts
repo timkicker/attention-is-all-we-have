@@ -34,6 +34,7 @@ export const scene1: Snapshot = {
       "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
       "moneyText": "1,010.00 €",
@@ -2795,7 +2796,7 @@ export const scene1: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -2822,6 +2823,7 @@ export const scene1: Snapshot = {
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -2858,13 +2860,13 @@ export const scene1: Snapshot = {
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {},
@@ -2891,10 +2893,11 @@ export const scene1: Snapshot = {
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -2917,10 +2920,11 @@ export const scene1: Snapshot = {
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -2945,16 +2949,23 @@ export const scene1: Snapshot = {
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       }
     ],
     "chain": {
       "ok": true,
       "count": 3
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      }
+    ]
   },
   "steadyList": [
     {
@@ -3068,11 +3079,12 @@ export const scene2: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
-      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
       "moneyText": "1,010.00 €",
       "timeText": "10:00"
     }
@@ -5832,7 +5844,7 @@ export const scene2: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -5840,8 +5852,8 @@ export const scene2: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -5860,6 +5872,7 @@ export const scene2: Snapshot = {
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -5896,13 +5909,13 @@ export const scene2: Snapshot = {
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {
@@ -5998,10 +6011,11 @@ export const scene2: Snapshot = {
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -6024,10 +6038,11 @@ export const scene2: Snapshot = {
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -6052,17 +6067,18 @@ export const scene2: Snapshot = {
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -6092,21 +6108,28 @@ export const scene2: Snapshot = {
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
         "actorText": "Agent",
         "timeText": "10:09",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       }
     ],
     "chain": {
       "ok": true,
       "count": 4
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      }
+    ]
   },
   "steadyList": [
     {
@@ -6223,6 +6246,7 @@ export const scene3: Snapshot = {
       "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010,
       "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
       "summary": "Placed order O-2.",
       "moneyText": "180.10 €",
@@ -6233,11 +6257,12 @@ export const scene3: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
-      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
       "moneyText": "1,010.00 €",
       "timeText": "10:00"
     }
@@ -6268,111 +6293,7 @@ export const scene3: Snapshot = {
             "qtyText": "200 bags",
             "deliverByText": "Mon 16 Nov"
           },
-          "options": [
-            {
-              "productId": "466375",
-              "name": "Gran Castelli mozzarella 125g lactose free",
-              "verdict": "rejected",
-              "quantity": 200,
-              "unit": "BAG",
-              "totalCents": 23200,
-              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
-              "facts": [
-                {
-                  "field": "quantity",
-                  "value": "0 BAG",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "Stock at Valio",
-                  "valueText": "0 bags",
-                  "noteText": "Stock at Valio"
-                },
-                {
-                  "field": "price",
-                  "value": "1.16 €",
-                  "grade": "attested",
-                  "source": "Valio price API",
-                  "note": "catalog price, no end date",
-                  "valueText": "1.16 €",
-                  "noteText": "catalog price, no end date"
-                },
-                {
-                  "field": "cutoff",
-                  "value": "2026-11-15T17:00:00+02:00",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "order cut-off",
-                  "valueText": "15 Nov 17:00",
-                  "noteText": "order cut-off"
-                },
-                {
-                  "field": "reliability",
-                  "value": "0.948",
-                  "grade": "attested",
-                  "source": "Valio delivery reliability file",
-                  "note": "share delivered as ordered",
-                  "valueText": "94.8 % of orders",
-                  "noteText": "share delivered as ordered"
-                },
-                {
-                  "field": "carbon",
-                  "value": "3.9 kg CO2e per kg",
-                  "grade": "attested",
-                  "source": "Valio carbon footprint file",
-                  "note": "group average for its product group",
-                  "valueText": "3.9 kg CO2e per kg",
-                  "noteText": "group average for its product group"
-                },
-                {
-                  "field": "allergens",
-                  "value": "AM",
-                  "grade": "attested",
-                  "source": "Valio product data",
-                  "note": "may contain: none",
-                  "valueText": "milk",
-                  "noteText": "may contain: none"
-                },
-                {
-                  "field": "claim:FREE_FROM_LACTOSE",
-                  "value": "FREE_FROM_LACTOSE",
-                  "grade": "unchecked",
-                  "source": "Valio product data",
-                  "note": "claims lactose free but gives no lactose value",
-                  "valueText": "free from lactose",
-                  "noteText": "claims lactose free but gives no lactose value"
-                },
-                {
-                  "field": "description",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "never used for a decision",
-                  "noteText": "never used for a decision"
-                },
-                {
-                  "field": "key_ingredients",
-                  "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "read only to find contradictions",
-                  "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "noteText": "read only to find contradictions"
-                }
-              ],
-              "isSubstitute": false,
-              "displayName": "Lactose-free mozzarella 125 g",
-              "shortName": "Lactose-free mozzarella 125 g",
-              "fullName": "Gran Castelli mozzarella 125 g lactose free",
-              "qtyText": "200 bags",
-              "moneyText": "232.00 €",
-              "reasons": [
-                "Out of stock at Valio, 200 bags needed.",
-                "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ],
-              "shortText": "Out of stock at Valio, 200 bags needed.",
-              "groupText": "Out of stock at Valio",
-              "groupOrder": 6
-            }
-          ],
+          "options": [],
           "substitutes": [
             {
               "productId": "466151",
@@ -7654,6 +7575,12 @@ export const scene3: Snapshot = {
       "moneyText": "180.10 €",
       "timeText": "10:14",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
+      "askedFor": {
+        "productId": "466375",
+        "displayName": "Lactose-free mozzarella 125 g",
+        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+      },
       "usedBeforeCents": 101000
     },
     "R-1": {
@@ -10410,7 +10337,7 @@ export const scene3: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -10418,8 +10345,8 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -10438,6 +10365,7 @@ export const scene3: Snapshot = {
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -10474,13 +10402,13 @@ export const scene3: Snapshot = {
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {
@@ -10653,10 +10581,11 @@ export const scene3: Snapshot = {
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -10679,10 +10608,11 @@ export const scene3: Snapshot = {
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -10707,17 +10637,18 @@ export const scene3: Snapshot = {
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -10747,15 +10678,16 @@ export const scene3: Snapshot = {
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
         "actorText": "Agent",
         "timeText": "10:09",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -10767,12 +10699,13 @@ export const scene3: Snapshot = {
         "disclosed": [],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
-        "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+        "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+        "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
         "actorText": "Demo",
         "timeText": "10:11",
         "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
-        "disclosedText": []
+        "disclosedText": [],
+        "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g."
       },
       {
         "seq": 6,
@@ -10789,16 +10722,17 @@ export const scene3: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
-        "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+        "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+        "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
         "actorText": "Agent",
         "timeText": "10:14",
         "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
       {
         "seq": 7,
@@ -10833,16 +10767,17 @@ export const scene3: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
-        "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+        "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+        "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
         "actorText": "Validio",
         "timeText": "10:16",
         "summary": "Spend Pass M-1 already placed 1,010.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked you: the substitute is not on Valio's list."
       },
       {
         "seq": 8,
@@ -10875,16 +10810,17 @@ export const scene3: Snapshot = {
         "ruleIds": [],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
-        "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+        "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+        "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
         "actorText": "Owner",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 9,
@@ -10919,22 +10855,33 @@ export const scene3: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
-        "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+        "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+        "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
         "actorText": "Validio",
         "timeText": "10:23",
         "summary": "Placed order O-2.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       }
     ],
     "chain": {
       "ok": true,
       "count": 9
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      },
+      {
+        "requestId": "R-2",
+        "titleText": "200 bags of lactose-free mozzarella 125 g"
+      }
+    ]
   },
   "steadyList": [
     {
@@ -11051,6 +10998,7 @@ export const scene4: Snapshot = {
       "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010,
       "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
       "summary": "Placed order O-2.",
       "moneyText": "180.10 €",
@@ -11061,11 +11009,12 @@ export const scene4: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
-      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
       "moneyText": "1,010.00 €",
       "timeText": "10:00"
     }
@@ -11096,111 +11045,7 @@ export const scene4: Snapshot = {
             "qtyText": "200 bags",
             "deliverByText": "Mon 16 Nov"
           },
-          "options": [
-            {
-              "productId": "466375",
-              "name": "Gran Castelli mozzarella 125g lactose free",
-              "verdict": "rejected",
-              "quantity": 200,
-              "unit": "BAG",
-              "totalCents": 23200,
-              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
-              "facts": [
-                {
-                  "field": "quantity",
-                  "value": "0 BAG",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "Stock at Valio",
-                  "valueText": "0 bags",
-                  "noteText": "Stock at Valio"
-                },
-                {
-                  "field": "price",
-                  "value": "1.16 €",
-                  "grade": "attested",
-                  "source": "Valio price API",
-                  "note": "catalog price, no end date",
-                  "valueText": "1.16 €",
-                  "noteText": "catalog price, no end date"
-                },
-                {
-                  "field": "cutoff",
-                  "value": "2026-11-15T17:00:00+02:00",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "order cut-off",
-                  "valueText": "15 Nov 17:00",
-                  "noteText": "order cut-off"
-                },
-                {
-                  "field": "reliability",
-                  "value": "0.948",
-                  "grade": "attested",
-                  "source": "Valio delivery reliability file",
-                  "note": "share delivered as ordered",
-                  "valueText": "94.8 % of orders",
-                  "noteText": "share delivered as ordered"
-                },
-                {
-                  "field": "carbon",
-                  "value": "3.9 kg CO2e per kg",
-                  "grade": "attested",
-                  "source": "Valio carbon footprint file",
-                  "note": "group average for its product group",
-                  "valueText": "3.9 kg CO2e per kg",
-                  "noteText": "group average for its product group"
-                },
-                {
-                  "field": "allergens",
-                  "value": "AM",
-                  "grade": "attested",
-                  "source": "Valio product data",
-                  "note": "may contain: none",
-                  "valueText": "milk",
-                  "noteText": "may contain: none"
-                },
-                {
-                  "field": "claim:FREE_FROM_LACTOSE",
-                  "value": "FREE_FROM_LACTOSE",
-                  "grade": "unchecked",
-                  "source": "Valio product data",
-                  "note": "claims lactose free but gives no lactose value",
-                  "valueText": "free from lactose",
-                  "noteText": "claims lactose free but gives no lactose value"
-                },
-                {
-                  "field": "description",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "never used for a decision",
-                  "noteText": "never used for a decision"
-                },
-                {
-                  "field": "key_ingredients",
-                  "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "read only to find contradictions",
-                  "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "noteText": "read only to find contradictions"
-                }
-              ],
-              "isSubstitute": false,
-              "displayName": "Lactose-free mozzarella 125 g",
-              "shortName": "Lactose-free mozzarella 125 g",
-              "fullName": "Gran Castelli mozzarella 125 g lactose free",
-              "qtyText": "200 bags",
-              "moneyText": "232.00 €",
-              "reasons": [
-                "Out of stock at Valio, 200 bags needed.",
-                "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ],
-              "shortText": "Out of stock at Valio, 200 bags needed.",
-              "groupText": "Out of stock at Valio",
-              "groupOrder": 6
-            }
-          ],
+          "options": [],
           "substitutes": [
             {
               "productId": "466151",
@@ -12482,6 +12327,12 @@ export const scene4: Snapshot = {
       "moneyText": "180.10 €",
       "timeText": "10:14",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
+      "askedFor": {
+        "productId": "466375",
+        "displayName": "Lactose-free mozzarella 125 g",
+        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+      },
       "usedBeforeCents": 101000
     },
     "R-1": {
@@ -15238,7 +15089,7 @@ export const scene4: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -15246,8 +15097,8 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -15266,6 +15117,7 @@ export const scene4: Snapshot = {
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -15302,13 +15154,13 @@ export const scene4: Snapshot = {
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {
@@ -15481,10 +15333,11 @@ export const scene4: Snapshot = {
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -15507,10 +15360,11 @@ export const scene4: Snapshot = {
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -15535,17 +15389,18 @@ export const scene4: Snapshot = {
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -15575,15 +15430,16 @@ export const scene4: Snapshot = {
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
         "actorText": "Agent",
         "timeText": "10:09",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -15595,12 +15451,13 @@ export const scene4: Snapshot = {
         "disclosed": [],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
-        "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+        "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+        "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
         "actorText": "Demo",
         "timeText": "10:11",
         "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
-        "disclosedText": []
+        "disclosedText": [],
+        "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g."
       },
       {
         "seq": 6,
@@ -15617,16 +15474,17 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
-        "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+        "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+        "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
         "actorText": "Agent",
         "timeText": "10:14",
         "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
       {
         "seq": 7,
@@ -15661,16 +15519,17 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
-        "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+        "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+        "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
         "actorText": "Validio",
         "timeText": "10:16",
         "summary": "Spend Pass M-1 already placed 1,010.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked you: the substitute is not on Valio's list."
       },
       {
         "seq": 8,
@@ -15703,16 +15562,17 @@ export const scene4: Snapshot = {
         "ruleIds": [],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
-        "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+        "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+        "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
         "actorText": "Owner",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 9,
@@ -15747,23 +15607,24 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
-        "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+        "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+        "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
         "actorText": "Validio",
         "timeText": "10:23",
         "summary": "Placed order O-2.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 10,
         "at": "2026-11-14T10:25:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -15792,23 +15653,24 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-3",
         "requestId": "S-1",
-        "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
-        "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+        "prevHash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+        "hash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
         "actorText": "Validio",
         "timeText": "10:25",
-        "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+        "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
       },
       {
         "seq": 11,
         "at": "2026-11-14T10:28:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+        "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you. Inside Spend Pass S-1-W46.",
         "facts": [
           {
             "field": "quantity",
@@ -15850,16 +15712,17 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-4",
         "requestId": "S-1",
-        "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
-        "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+        "prevHash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+        "hash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
         "actorText": "Validio",
         "timeText": "10:28",
         "summary": "Ordered 137 × 125 g of parmesan reggiano.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
       },
       {
         "seq": 12,
@@ -15876,16 +15739,17 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "S-1",
-        "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
-        "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+        "prevHash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+        "hash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
         "actorText": "Validio",
         "timeText": "10:30",
         "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30."
       },
       {
         "seq": 13,
@@ -15902,16 +15766,17 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "S-1",
-        "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
-        "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
+        "prevHash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+        "hash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio."
       },
       {
         "seq": 14,
@@ -15946,16 +15811,17 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
-        "hash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
+        "prevHash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
+        "hash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked you: 905.31 € would take the week to 1,980.80 €, past 1,200.00 €."
       },
       {
         "seq": 15,
@@ -15988,16 +15854,17 @@ export const scene4: Snapshot = {
         "ruleIds": [],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
-        "hash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
+        "prevHash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
+        "hash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
         "actorText": "Owner",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Accepted 27 cartons of vegan pancake 30 g for 905.31 €."
       },
       {
         "seq": 16,
@@ -16032,22 +15899,37 @@ export const scene4: Snapshot = {
         ],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
-        "hash": "e7747a8c86d44315ffd2e9e22398dbeca5de261aa2ca9690e67da59baf3d68a2",
+        "prevHash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
+        "hash": "3edaa1a4058c77910108156a3b718799418d8aee61a2b6ff133e7c1471e625e0",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Placed O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
       }
     ],
     "chain": {
       "ok": true,
       "count": 16
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      },
+      {
+        "requestId": "R-2",
+        "titleText": "200 bags of lactose-free mozzarella 125 g"
+      },
+      {
+        "requestId": "S-1",
+        "titleText": "Weekly Monday order"
+      }
+    ]
   },
   "steadyList": [
     {
@@ -16100,11 +15982,11 @@ export const scene4: Snapshot = {
           "thisWeekQuantity": 177,
           "totalCents": 77249,
           "result": "split_renewed",
-          "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+          "sentence": "137 from this product, 40 from a swap. The swap is 40 × 200 g of parmigiano reggiano block, on Valio's own substitute list. It costs 18.49 € (2.5 %) more, inside your 5 % split limit.",
           "flags": [
             {
               "kind": "stock_below",
-              "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+              "sentence": "137 from this product, 40 from a swap."
             }
           ],
           "split": {
@@ -16244,6 +16126,7 @@ export const scene5: Snapshot = {
       "sentence": "Placed order O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010,
       "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
       "summary": "Placed order O-2.",
       "moneyText": "180.10 €",
@@ -16254,11 +16137,12 @@ export const scene5: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
-      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
       "moneyText": "1,010.00 €",
       "timeText": "10:00"
     }
@@ -16289,111 +16173,7 @@ export const scene5: Snapshot = {
             "qtyText": "200 bags",
             "deliverByText": "Mon 16 Nov"
           },
-          "options": [
-            {
-              "productId": "466375",
-              "name": "Gran Castelli mozzarella 125g lactose free",
-              "verdict": "rejected",
-              "quantity": 200,
-              "unit": "BAG",
-              "totalCents": 23200,
-              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
-              "facts": [
-                {
-                  "field": "quantity",
-                  "value": "0 BAG",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "Stock at Valio",
-                  "valueText": "0 bags",
-                  "noteText": "Stock at Valio"
-                },
-                {
-                  "field": "price",
-                  "value": "1.16 €",
-                  "grade": "attested",
-                  "source": "Valio price API",
-                  "note": "catalog price, no end date",
-                  "valueText": "1.16 €",
-                  "noteText": "catalog price, no end date"
-                },
-                {
-                  "field": "cutoff",
-                  "value": "2026-11-15T17:00:00+02:00",
-                  "grade": "attested",
-                  "source": "Valio availability API",
-                  "note": "order cut-off",
-                  "valueText": "15 Nov 17:00",
-                  "noteText": "order cut-off"
-                },
-                {
-                  "field": "reliability",
-                  "value": "0.948",
-                  "grade": "attested",
-                  "source": "Valio delivery reliability file",
-                  "note": "share delivered as ordered",
-                  "valueText": "94.8 % of orders",
-                  "noteText": "share delivered as ordered"
-                },
-                {
-                  "field": "carbon",
-                  "value": "3.9 kg CO2e per kg",
-                  "grade": "attested",
-                  "source": "Valio carbon footprint file",
-                  "note": "group average for its product group",
-                  "valueText": "3.9 kg CO2e per kg",
-                  "noteText": "group average for its product group"
-                },
-                {
-                  "field": "allergens",
-                  "value": "AM",
-                  "grade": "attested",
-                  "source": "Valio product data",
-                  "note": "may contain: none",
-                  "valueText": "milk",
-                  "noteText": "may contain: none"
-                },
-                {
-                  "field": "claim:FREE_FROM_LACTOSE",
-                  "value": "FREE_FROM_LACTOSE",
-                  "grade": "unchecked",
-                  "source": "Valio product data",
-                  "note": "claims lactose free but gives no lactose value",
-                  "valueText": "free from lactose",
-                  "noteText": "claims lactose free but gives no lactose value"
-                },
-                {
-                  "field": "description",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "never used for a decision",
-                  "noteText": "never used for a decision"
-                },
-                {
-                  "field": "key_ingredients",
-                  "value": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "grade": "untrusted",
-                  "source": "supplier text",
-                  "note": "read only to find contradictions",
-                  "valueText": "Pasteurized cow's MILK, salt, acidity regulator (citric acid). Lactose <0,01 g/ 100 g.",
-                  "noteText": "read only to find contradictions"
-                }
-              ],
-              "isSubstitute": false,
-              "displayName": "Lactose-free mozzarella 125 g",
-              "shortName": "Lactose-free mozzarella 125 g",
-              "fullName": "Gran Castelli mozzarella 125 g lactose free",
-              "qtyText": "200 bags",
-              "moneyText": "232.00 €",
-              "reasons": [
-                "Out of stock at Valio, 200 bags needed.",
-                "Lactose free claim unchecked: claims lactose free but gives no lactose value."
-              ],
-              "shortText": "Out of stock at Valio, 200 bags needed.",
-              "groupText": "Out of stock at Valio",
-              "groupOrder": 6
-            }
-          ],
+          "options": [],
           "substitutes": [
             {
               "productId": "466151",
@@ -17675,6 +17455,12 @@ export const scene5: Snapshot = {
       "moneyText": "180.10 €",
       "timeText": "10:14",
       "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
+      "titleText": "200 bags of lactose-free mozzarella 125 g",
+      "askedFor": {
+        "productId": "466375",
+        "displayName": "Lactose-free mozzarella 125 g",
+        "stateText": "Out of stock at Valio (simulated, Valio really has 11,603 bags)"
+      },
       "usedBeforeCents": 101000
     },
     "R-1": {
@@ -20431,7 +20217,7 @@ export const scene5: Snapshot = {
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -20439,8 +20225,8 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -20459,6 +20245,7 @@ export const scene5: Snapshot = {
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -20495,13 +20282,13 @@ export const scene5: Snapshot = {
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {
@@ -20674,10 +20461,11 @@ export const scene5: Snapshot = {
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -20700,10 +20488,11 @@ export const scene5: Snapshot = {
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -20728,17 +20517,18 @@ export const scene5: Snapshot = {
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -20768,15 +20558,16 @@ export const scene5: Snapshot = {
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
         "actorText": "Agent",
         "timeText": "10:09",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       {
         "seq": 5,
@@ -20788,12 +20579,13 @@ export const scene5: Snapshot = {
         "disclosed": [],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
-        "hash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
+        "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+        "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
         "actorText": "Demo",
         "timeText": "10:11",
         "summary": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo.",
-        "disclosedText": []
+        "disclosedText": [],
+        "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g."
       },
       {
         "seq": 6,
@@ -20810,16 +20602,17 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "R-2",
-        "prevHash": "ada1e36d360ed16957954c08650adad88514fcc4fdb4f15ec1579a229aaf721a",
-        "hash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
+        "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+        "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
         "actorText": "Agent",
         "timeText": "10:14",
         "summary": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov."
       },
       {
         "seq": 7,
@@ -20854,16 +20647,17 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "44e207a25aa205643f702b661bdcb01419dbe256e0128e43bd39b3ddf437548a",
-        "hash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
+        "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+        "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
         "actorText": "Validio",
         "timeText": "10:16",
         "summary": "Spend Pass M-1 already placed 1,010.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked you: the substitute is not on Valio's list."
       },
       {
         "seq": 8,
@@ -20896,16 +20690,17 @@ export const scene5: Snapshot = {
         "ruleIds": [],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "6497837b4cb5e2b185b3c45ba00a80ee453fe32da481f85b7cc030f328aa0cae",
-        "hash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
+        "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+        "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
         "actorText": "Owner",
         "timeText": "10:19",
         "summary": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 9,
@@ -20940,23 +20735,24 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-2",
         "requestId": "R-2",
-        "prevHash": "cbb0f4befb774301b342946d950b08adbae8f480512bfb97ded6af8b241ea37f",
-        "hash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
+        "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+        "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
         "actorText": "Validio",
         "timeText": "10:23",
         "summary": "Placed order O-2.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Placed O-2: 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €."
       },
       {
         "seq": 10,
         "at": "2026-11-14T10:25:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -20985,23 +20781,24 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-3",
         "requestId": "S-1",
-        "prevHash": "a6a17be2ec7ee330c353fec3b83e19a96549634dda028abea01bc4560443aa1e",
-        "hash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
+        "prevHash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+        "hash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
         "actorText": "Validio",
         "timeText": "10:25",
-        "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without a person.",
+        "summary": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you."
       },
       {
         "seq": 11,
         "at": "2026-11-14T10:28:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without a person. Inside Spend Pass S-1-W46.",
+        "sentence": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you. Inside Spend Pass S-1-W46.",
         "facts": [
           {
             "field": "quantity",
@@ -21043,16 +20840,17 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-4",
         "requestId": "S-1",
-        "prevHash": "961a66cc4942a866f4da453a3255e21f117530b9d361716045ecde671d37e014",
-        "hash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
+        "prevHash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+        "hash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
         "actorText": "Validio",
         "timeText": "10:28",
         "summary": "Ordered 137 × 125 g of parmesan reggiano.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you."
       },
       {
         "seq": 12,
@@ -21069,16 +20867,17 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "S-1",
-        "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
-        "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+        "prevHash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+        "hash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
         "actorText": "Validio",
         "timeText": "10:30",
         "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30."
       },
       {
         "seq": 13,
@@ -21095,16 +20894,17 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "requestId": "S-1",
-        "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
-        "hash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
+        "prevHash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+        "hash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio."
       },
       {
         "seq": 14,
@@ -21139,16 +20939,17 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "eb58dc535fa012d7a5ee228c2d96f6b6ee48131c2718dcc5c05afc68a68ad3aa",
-        "hash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
+        "prevHash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
+        "hash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked you: 905.31 € would take the week to 1,980.80 €, past 1,200.00 €."
       },
       {
         "seq": 15,
@@ -21181,16 +20982,17 @@ export const scene5: Snapshot = {
         "ruleIds": [],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "e4490ac666d4c3dce5af4b16fe70f1f271960dae54550cc43cc65a0a842ee4e1",
-        "hash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
+        "prevHash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
+        "hash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
         "actorText": "Owner",
         "timeText": "10:39",
         "summary": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Accepted 27 cartons of vegan pancake 30 g for 905.31 €."
       },
       {
         "seq": 16,
@@ -21225,22 +21027,37 @@ export const scene5: Snapshot = {
         ],
         "orderId": "O-5",
         "requestId": "S-1",
-        "prevHash": "f970cf60fbef612e5fb797a98561ce42547cef650f65ba246a1bd90f55ff4689",
-        "hash": "e7747a8c86d44315ffd2e9e22398dbeca5de261aa2ca9690e67da59baf3d68a2",
+        "prevHash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
+        "hash": "3edaa1a4058c77910108156a3b718799418d8aee61a2b6ff133e7c1471e625e0",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Placed O-5: 27 cartons of vegan pancake 30 g for 905.31 €."
       }
     ],
     "chain": {
       "ok": true,
       "count": 16
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      },
+      {
+        "requestId": "R-2",
+        "titleText": "200 bags of lactose-free mozzarella 125 g"
+      },
+      {
+        "requestId": "S-1",
+        "titleText": "Weekly Monday order"
+      }
+    ]
   },
   "steadyList": [
     {
@@ -21293,11 +21110,11 @@ export const scene5: Snapshot = {
           "thisWeekQuantity": 177,
           "totalCents": 77249,
           "result": "split_renewed",
-          "sentence": "Only 137 × 125 g in stock, the usual line is 200. So 40 × 200 g of parmigiano reggiano block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
+          "sentence": "137 from this product, 40 from a swap. The swap is 40 × 200 g of parmigiano reggiano block, on Valio's own substitute list. It costs 18.49 € (2.5 %) more, inside your 5 % split limit.",
           "flags": [
             {
               "kind": "stock_below",
-              "sentence": "Only 137 × 125 g in stock, the usual line is 200."
+              "sentence": "137 from this product, 40 from a swap."
             }
           ],
           "split": {

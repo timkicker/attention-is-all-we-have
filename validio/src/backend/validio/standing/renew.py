@@ -121,10 +121,13 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
             added = and_list([qty_of(x.sales_qty, x.product)
                               for x in plan.parts if x.on_valio_list])
             limit = f"{mandate.split_max_extra_bp / 100:g}"
+            own = sum(x.sales_qty for x in plan.parts if x.product.id == pid)
+            where = f"{own} from this product, {got - own} from a swap."  # next to the 177 ordered, not the stock
+            kept = [replace(f, sentence=where) if f.kind is DriftKind.STOCK_BELOW else f for f in flags]
             return replace(base, this_week_qty=got, total_cents=plan.total_cents, result=LineResult.SPLIT_RENEWED,
-                           split=plan, decision=d,
-                           sentence=f"{short[0].sentence} So {added} come from Valio's own substitute list. "
-                                    f"They cost {eur(extra)} ({plan.extra_pct} %) more, inside your {limit} % "
+                           split=plan, decision=d, flags=kept,
+                           sentence=f"{where} The swap is {added}, on Valio's own substitute list. "
+                                    f"It costs {eur(extra)} ({plan.extra_pct} %) more, inside your {limit} % "
                                     "split limit.")
         result = LineResult.BLOCKED if d.outcome is Outcome.DENY else LineResult.WAITING
         return replace(base, this_week_qty=got, total_cents=plan.total_cents, result=result, split=plan,

@@ -161,12 +161,17 @@ test("scene 3 on screen: Simulated, and R-2 waits at 180.10", async ({ page }) =
   await expect(page.getByTestId("inbox-R-2")).toContainText(money("180.10"));
 });
 
-test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async ({ page }) => {
+test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async ({ page, request }) => {
+  // the asked-for product stands apart as askedFor, no longer among the options (one count everywhere)
+  const r2 = await json(request, "/api/requests/R-2");
+  expect(r2.askedFor).toEqual({ productId: "466375", displayName: "Lactose-free mozzarella 125 g",
+    stateText: "Out of stock at Valio (simulated, Valio really has 11,603 bags)" });
+  expect(r2.titleText).toBe("200 bags of lactose-free mozzarella 125 g");
   await page.goto("/requests/R-2");
   const subs = ["466151", "473986", "468526", "475908"];
   const beyond = ["465256", "463383", "465174"];
-  await needs(page, "request-rule", "live-checked", "option-466375", ...[...subs, ...beyond].map((p) => `option-${p}`));
-  await expect(page.getByTestId("option-466375")).toContainText("Out of stock at Valio, 200 bags needed");
+  await needs(page, "request-rule", "live-checked", ...[...subs, ...beyond].map((p) => `option-${p}`));
+  await expect(page.getByTestId("option-466375")).toHaveCount(0);
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
     await expect(page.getByTestId(`option-${p}`)).toContainText("Not lactose free");
@@ -196,6 +201,8 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
   });
   const led = (await json(request, "/api/ledger")).entries.map((e: { sentence: string }) => e.sentence).join("\n");
   expect(led).toContain("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €");
+  const shown = (await json(request, "/api/ledger")).entries.map((e: { displayText: string }) => e.displayText);
+  expect(shown).toContain("Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.");
   expect(led).toMatch(/Placed order O-2\b.*Valio was asked again: every line (?:can be delivered|is delivered by[^\n]*?) and no price rose more than 2 %/);
 });
 
@@ -246,6 +253,8 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   await expect(milk).toContainText(money("303.00"));
   const parm = page.getByTestId("line-463968");
   await expect(parm).toContainText("137");
+  expect(lines(await json(page.request, "/api/steady/S-1"))["463968"].sentence)
+    .toMatch(/^137 from this product, 40 from a swap\./);
   await expect(parm).toContainText("469648");
   await expect(parm).toContainText("177");
   await expect(parm).toContainText(money("772.49"));

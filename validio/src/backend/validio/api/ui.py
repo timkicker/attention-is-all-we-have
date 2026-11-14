@@ -21,6 +21,7 @@ from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from .schemas import (
     ApproveIn,
+    AskedFor,
     DemoState,
     InboxItem,
     LedgerHeadView,
@@ -111,13 +112,39 @@ def inbox(ctx: CtxDep):
         v = get_request(ctx, r["id"])
         sentence = v.question if v.status == "waiting" and v.question else (v.decision.sentence if v.decision else "")
         out.append(InboxItem(id=v.id, created_at=v.created_at, text=v.text, status=v.status, sentence=sentence,
-                             total_cents=v.total_cents, title=v.title))
+                             total_cents=v.total_cents, title=v.title, title_text=v.title_text))
     return out
 
 
 @router.get("/requests/{request_id}", response_model=SupplyRequestView, response_model_exclude_none=True)
 def request_detail(ctx: CtxDep, request_id: str):
-    return get_request(ctx, request_id)
+    return asked_apart(ctx, get_request(ctx, request_id))
+
+
+def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
+    """The product the request named, when Validio turned it down, leaves the option lists and stands as
+    `askedFor`: the lane count, the tabs and "Why not the others" then count the same options."""
+    from ..demo.seed import STOCKOUT_ID
+    from ..text.format import qty_text
+    from . import display
+
+    for ln in v.lines:
+        pid = ln.need.product_id
+        if not pid:
+            continue
+        lists = [ln.options, ln.substitutes or [], ln.beyond_list or []]
+        hit = next((o for xs in lists for o in xs if o.product_id == pid), None)
+        if hit is None or hit.verdict not in display.TURNED_DOWN:
+            continue
+        for xs in lists:
+            xs[:] = [o for o in xs if o.product_id != pid]
+        state = hit.group_text or "Turned down"
+        if pid == STOCKOUT_ID and ctx.stockout():
+            real = ctx.real_stock()
+            state = "Out of stock at Valio (simulated" + (f", Valio really has {qty_text(*real)})" if real else ")")
+        v.asked_for = AskedFor(product_id=pid, display_name=hit.short_name or hit.name, state_text=state)
+        break
+    return v
 
 
 @router.get("/spend-passes/{pass_id}", response_model=SpendPassView, response_model_exclude_none=True)
@@ -168,9 +195,23 @@ def ledger(ctx: CtxDep):
                 "facts": e.facts, "spend_pass_id": e.mandate_id, "disclosed": sorted(e.disclosed),
                 "rule_ids": e.rule_ids, "order_id": e.order_id, "prev_hash": e.prev_hash, "hash": e.hash}
                for e in ctx.audit.list()]
+    from . import display
+    from .steady import _steady
+
+    titles: dict[str, tuple[str, str]] = {}  # request id: (title with the date, without)
     for e, rid in zip(entries, _request_ids(ctx, entries), strict=True):
         e["request_id"] = rid
-    return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at})
+        if rid and rid not in titles:
+            if rid.startswith("R-"):
+                v = get_request(ctx, rid)
+                titles[rid] = (v.title, v.title_text or v.title)
+            else:
+                so = _steady()[0]
+                titles[rid] = (so.name, so.name) if so.id == rid else (rid, rid)
+        e["display_text"] = display.ledger_text(e["kind"], display.actor(e["actor"]), e["sentence"],
+                                                titles[rid][0] if rid and e["kind"] == "request" else None)
+    groups = [{"request_id": rid, "title_text": t[1]} for rid, t in titles.items()]
+    return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at}, groups=groups)
 
 
 def _request_ids(ctx: Ctx, entries: list[dict]) -> list[str | None]:

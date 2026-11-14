@@ -191,7 +191,7 @@ def test_scene2_ledger_sentence(svc, mandate):
     o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k13")
     (entry,) = [e for e in svc.audit.list(order_id=o["id"]) if e.kind == "order"]
     assert entry.sentence.startswith("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for ")
-    assert "for 1,010.00 € without a person. Valio attests the stock and the contract price until " \
+    assert "for 1,010.00 € without asking you. Valio attests the stock and the contract price until " \
            "31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €." \
            in entry.sentence
     assert entry.rule_ids == ["auto-order"]

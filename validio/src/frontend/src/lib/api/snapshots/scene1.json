@@ -8,6 +8,7 @@
       "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
       "moneyText": "1,010.00 €",
@@ -2769,7 +2770,7 @@
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -2796,6 +2797,7 @@
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -2832,13 +2834,13 @@
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {},
@@ -2865,10 +2867,11 @@
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -2891,10 +2894,11 @@
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -2919,16 +2923,23 @@
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       }
     ],
     "chain": {
       "ok": true,
       "count": 3
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      }
+    ]
   },
   "steadyList": [
     {

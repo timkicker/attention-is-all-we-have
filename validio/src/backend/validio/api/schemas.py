@@ -228,6 +228,12 @@ class SimulatedMark(Model):
     sentence: str
 
 
+class AskedFor(Model):
+    product_id: str
+    display_name: str
+    state_text: str
+
+
 class SupplyRequestView(Model):
     id: str
     request_id: str
@@ -249,6 +255,8 @@ class SupplyRequestView(Model):
     money_text: str | None = None
     time_text: str | None = None
     display_name: str | None = Field(None, description="the same as title, the name types.ts already reads")
+    title_text: str | None = Field(None, description="the title without the date: \"200 bags of ...\"")
+    asked_for: AskedFor | None = Field(None, description="the product the request named, kept out of the options")
 
     used_before_cents: int | None = Field(
         None, description="what orders placed under the same Spend Pass before this request add up to")
@@ -259,6 +267,7 @@ class SupplyRequestView(Model):
         self.agent_text = self.agent_text or self.text
         self.title = self.title or d.title(self.lines, self.deliver_by) or "Request"
         self.display_name = self.display_name or self.title
+        self.title_text = self.title_text or d.title(self.lines, None)
         if self.money_text is None and self.total_cents is not None:
             self.money_text = d.money(self.total_cents)
         self.time_text = self.time_text or d.time_text(self.created_at)
@@ -273,6 +282,7 @@ class InboxItem(Model):
     sentence: str
     total_cents: int | None = None
     title: str | None = None
+    title_text: str | None = None
     display_name: str | None = None
     summary: str | None = None
     money_text: str | None = None
@@ -419,6 +429,7 @@ class LedgerEntryView(Model):
     time_text: str | None = None
     summary: str | None = None
     disclosed_text: list[str] | None = None
+    display_text: str | None = Field(None, description="one short sentence with a verb, no actor, for the row")
 
     @model_validator(mode="after")
     def _text(self):
@@ -436,9 +447,15 @@ class ChainStatus(Model):
     broken_at: int | None = None
 
 
+class LedgerGroup(Model):
+    request_id: str
+    title_text: str
+
+
 class LedgerView(Model):
     entries: list[LedgerEntryView]
     chain: ChainStatus
+    groups: list[LedgerGroup] = Field([], description="one head per request or Steady Order, in ledger order")
 
 
 class RealStock(Model):

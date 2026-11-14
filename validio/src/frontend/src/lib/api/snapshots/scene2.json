@@ -5,11 +5,12 @@
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+      "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000,
       "title": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
-      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+      "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
       "moneyText": "1,010.00 €",
       "timeText": "10:00"
     }
@@ -2769,7 +2770,7 @@
             "isSubstitute": false,
             "onValioList": false
           },
-          "note": "All these products have the same footprint in Valio's data (1.1 kg CO2e per kg, a group average), so it does not change the choice."
+          "note": "Same footprint for all: 1.1 kg CO2e per kg, a group average."
         }
       ],
       "decision": {
@@ -2777,8 +2778,8 @@
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person."
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -2797,6 +2798,7 @@
       "moneyText": "1,010.00 €",
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
+      "titleText": "1,000 litres of lactose-free milk",
       "usedBeforeCents": 0
     }
   },
@@ -2833,13 +2835,13 @@
       "preferLabels"
     ],
     "disclosedText": [
-      "auto limit",
+      "orders alone up to",
       "diet",
       "never above"
     ],
     "hiddenText": [
-      "approvers",
-      "prefer labels"
+      "who approves",
+      "preferred labels"
     ]
   },
   "orders": {
@@ -2935,10 +2937,11 @@
         "timeText": "10:00",
         "summary": "The agent asked for 1000 litres of lactose-free milk by Monday, budget 1200 euro.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Asked for 1,000 litres of lactose-free milk by Mon 16 Nov, budget 1,200.00 €."
       },
       {
         "seq": 2,
@@ -2961,10 +2964,11 @@
         "timeText": "10:02",
         "summary": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents."
       },
       {
         "seq": 3,
@@ -2989,17 +2993,18 @@
         "timeText": "10:05",
         "summary": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Cleared it to order alone: 1,010.00 € is within 1,200.00 €."
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
+        "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -3029,21 +3034,28 @@
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "54116d3cac975cb269f71d521c053277d79078116f636faa542ca6c7fe5ccc80",
+        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
         "actorText": "Agent",
         "timeText": "10:09",
-        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person.",
+        "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
-          "auto limit",
+          "orders alone up to",
           "diet",
           "never above"
-        ]
+        ],
+        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       }
     ],
     "chain": {
       "ok": true,
       "count": 4
-    }
+    },
+    "groups": [
+      {
+        "requestId": "R-1",
+        "titleText": "1,000 litres of lactose-free milk"
+      }
+    ]
   },
   "steadyList": [
     {

@@ -35,7 +35,7 @@ from validio.audit.log import AuditLog
 from validio.config import DEFAULT_ENV, _read_env_file
 
 MAX_IDS = 40
-SCENE2_SENTENCE = ("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without a person. "
+SCENE2_SENTENCE = ("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. "
                    "Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. "
                    "Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. "
                    "Valio gives no real count of the stock, so Validio treats it as in stock.")
@@ -190,7 +190,7 @@ class Run:
         check(self.get(f"/api/requests/{req['id']}")["status"] == "ordered", "scene 3: request not ordered")
         placed = [e["sentence"] for e in self.get("/api/ledger")["entries"]
                   if e["kind"] == "order" and e["orderId"] == order["id"]]
-        check(len(placed) == 1 and "after the owner approved" in placed[0] and "without a person" not in placed[0],
+        check(len(placed) == 1 and "after the owner approved" in placed[0] and "without asking you" not in placed[0],
               f"scene 3: order sentence {placed}")
         texts = [o["sentence"] for o in line["substitutes"] + line.get("beyondList", [])]
         texts += [line["swapSentence"], req["question"], order["decision"]["sentence"], req["text"]]

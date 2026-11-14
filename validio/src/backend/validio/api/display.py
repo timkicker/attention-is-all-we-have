@@ -20,10 +20,11 @@ from ..text.format import (
 
 # the Spend Pass fields under the names a person reads
 PASS_FIELDS = {
-    "autoLimitCents": "auto limit", "auto_limit_cents": "auto limit", "hardCapCents": "never above",
+    "autoLimitCents": "orders alone up to", "auto_limit_cents": "orders alone up to", "hardCapCents": "never above",
     "hard_cap_cents": "never above", "diet": "diet", "categories": "product groups", "deliverBy": "deliver by",
     "deliver_by": "deliver by", "substitutes": "substitutes", "split": "split limit",
-    "split_max_extra_bp": "split limit", "splitMaxExtraBp": "split limit", "approvers": "approvers",
+    "preferLabels": "preferred labels", "prefer_labels": "preferred labels",
+    "split_max_extra_bp": "split limit", "splitMaxExtraBp": "split limit", "approvers": "who approves",
     "split_allow_listed": "substitutes in a split", "splitAllowListed": "substitutes in a split",
 }
 ACTORS = {"validio": "Validio", "presenter": "Demo", "demo": "Demo", "owner": "Owner"}
@@ -206,3 +207,56 @@ def short_text(verdict: str, reasons: list[str]) -> str | None:
     if _words(first) <= SHORT_WORDS:
         return first
     return " ".join(first.rstrip(".").split()[:SHORT_WORDS]) + " …"
+
+
+def _first(sentence: str) -> str:
+    return re.split(r"(?<=[.?!])\s+(?=[A-Z])", sentence.strip(), maxsplit=1)[0]
+
+
+def _end(s: str) -> str:
+    s = s.strip()
+    return s if s.endswith((".", "?", "!")) else s + "."
+
+
+def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | None = None) -> str:
+    """One short sentence with a verb for a ledger row. The actor has its own column, so it is not repeated;
+    an order id shows once; money reads "1,200.00 €". The raw sentence stays for the detail fold."""
+    s = sentence.strip()
+    if kind == "request":
+        budget = re.search(r"budget (\d[\d,.]*) ?(?:euro|EUR|€)", s)
+        what = title or re.sub(r"^The agent asked for |\.$", "", _first(s))
+        return _end(f"Asked for {what}" + (f", budget {money(round(float(budget.group(1).replace(',', '')) * 100))}"
+                                           if budget else ""))
+    steady = re.match(r"Steady Order S-\d+, (.+?): (.+)$", s)
+    if steady:
+        what, rest = steady.groups()
+        stop = re.match(r"Not renewed: ([^.]+)\.", rest)
+        if stop:
+            return f"Did not renew {what}: {stop.group(1)}."
+        wait = re.match(r"Waits for you: ([^.]+)\.", rest)
+        why = wait.group(1) if wait else _first(rest).rstrip(".")
+        return f"Held {what} for you: {why[:1].lower()}{why[1:]}."
+    asked = re.match(r"Spend Pass \S+ already placed ([\d,.]+ €), so this order of ([\d,.]+ €) counts as ([\d,.]+ €)\. "
+                     r"Needs a person: (.+)$", s)
+    if asked:
+        _, this, total, why = asked.groups()
+        over = re.match(r"[\d,.]+ € is over the auto limit of ([\d,.]+ €)", why)
+        if over:
+            return f"Asked you: {this} would take the week to {total}, past {over.group(1)}."
+        return f"Asked you: {_first(why).rstrip('.')}."
+    if s.startswith("Needs a person: "):
+        return f"Asked you: {_first(s[16:]).rstrip('.')}."
+    alone = re.match(r"May order it alone: ([\d,.]+ €) is inside the auto limit of ([\d,.]+ €)", s)
+    if alone:
+        return f"Cleared it to order alone: {alone.group(1)} is within {alone.group(2)}."
+    placed = re.match(r"Placed order (O-\d+): (.+?) after the \w+ \w+\.", s)
+    if placed:
+        return f"Placed {placed.group(1)}: {placed.group(2)}."
+    if actor_text and s.startswith(actor_text + " "):
+        s = s[len(actor_text) + 1:]
+        s = s[:1].upper() + s[1:]
+    first = _first(s)
+    first = re.sub(r" for the demo\.$", ".", first)
+    if _words(first) > 20:
+        return summary(first) or first
+    return _end(first)
