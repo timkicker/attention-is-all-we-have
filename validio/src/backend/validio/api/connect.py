@@ -202,11 +202,21 @@ def urls(ctx: Ctx, request: Request | None) -> tuple[str, str]:
 
 
 def may(ctx: Ctx) -> list[str]:
-    """The pass's limits in words, for the consent screen."""
-    c = seed.issued_claims(seed.issuance(ctx.db_path))
+    """The pass's limits in words for the consent screen, said as the Rules say them."""
+    from .settings import current_claims, rules_saved  # settings reaches the agent link through the pass
+
+    if not rules_saved(ctx.db_path):
+        return ["Ask you before every order"]
+    c = current_claims(ctx.db_path)
     out = [f"Order alone up to {money(c['autoLimitCents'])}", f"Ask you up to {money(c['hardCapCents'])}",
            f"Never above {money(c['hardCapCents'])}"]
-    out.append("Substitutes from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "No substitutes alone")
+    if c.get("weekCapCents") is not None:
+        out.append(f"At most {money(c['weekCapCents'])} a week")
+    pct = round(float((c.get("split") or {}).get("maxExtraCostPct", 0)))
+    if c.get("substitutes") != SUBSTITUTES_LISTED:
+        out.append("No substitutes")
+    else:
+        out.append(f"Substitutes up to {pct} % extra" if pct else "Substitutes from Valio's list")
     return out
 
 

@@ -245,3 +245,21 @@ def test_phone_link_opens_the_same_account_once(app_env):
         c.post("/api/account/demo")
         for bad in ("https://evil.example", "//evil", "/a//b"):
             assert c.post("/api/account/phone-link", json={"path": bad}).status_code == 422
+
+
+def test_login_change_needs_the_password_and_keeps_emails_unique(app_env):
+    with client(app_env) as one, client(app_env) as two:
+        one.post("/api/account/signup", json=SIGNUP)
+        two.post("/api/account/signup", json={**SIGNUP, "email": "b@example.org"})
+        assert one.put("/api/settings/login", json={"currentPassword": "wrong one", "email": "c@example.org"}).status_code == 403
+        assert one.put("/api/settings/login", json={"currentPassword": "correct horse", "email": "b@example.org"}).status_code == 409
+        assert one.put("/api/settings/login", json={"currentPassword": "correct horse", "password": "short"}).status_code == 422
+        r = one.put("/api/settings/login", json={"currentPassword": "correct horse", "email": "C@example.org",
+                                                 "password": "battery staple"})
+        assert r.status_code == 200 and r.json()["login"]["email"] == "c@example.org"
+    with client(app_env) as again:
+        assert again.post("/api/account/login", json={"email": "a@example.org", "password": "correct horse"}).status_code == 401
+        assert again.post("/api/account/login", json={"email": "c@example.org", "password": "battery staple"}).status_code == 200
+    with client(app_env) as d:
+        d.post("/api/account/demo")
+        assert d.put("/api/settings/login", json={"currentPassword": "x", "email": "d@example.org"}).status_code == 403

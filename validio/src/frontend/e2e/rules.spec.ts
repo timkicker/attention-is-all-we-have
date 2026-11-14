@@ -269,7 +269,7 @@ for (const v of VIEWS) {
 
       await fresh(page);
       await go("/");
-      await expect(page.getByTestId("inbox-R-1")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Inbox" })).toBeVisible();
       await check("inbox");
       await go("/requests/R-1");
       await expect(page.locator("#request-title")).toBeVisible();
@@ -554,20 +554,20 @@ test("rejected request shows the proposal, not a spend", async ({ page }) => {
   await expect(lane.locator("[data-plot-subject]")).toHaveCount(0);
 });
 
-// The inbox groups a request by the state its pill shows: nothing under
-// Handled may still be working or waiting. The fixture states here; scene 1
-// with R-1 still "working" in e2e-live (the fixtures have no working state).
+// The Inbox keeps only what is open: no row there carries a final pill (handled
+// requests live on Orders).
 const FINAL_PILLS = ["Ordered alone", "Ordered", "Rejected", "Blocked"];
-async function handledPills(page: Page): Promise<string[]> {
-  await expect(page.getByTestId("inbox-R-1")).toBeVisible();
-  const sec = page.locator("section", { has: page.locator("#h-Handled") });
-  return (await sec.count()) ? sec.locator(".v-pill").allInnerTexts() : [];
+async function inboxPills(page: Page): Promise<string[]> {
+  await expect(page.getByRole("heading", { name: "Inbox" })).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  return page.locator("main .v-pill").allInnerTexts();
 }
-test("handled rows carry only final pills", async ({ page }) => {
+test("the inbox holds no handled rows", async ({ page }) => {
   await fresh(page);
   await page.goto("/");
-  for (const p of await handledPills(page)) expect(FINAL_PILLS, p).toContain(p.trim());
+  for (const p of await inboxPills(page)) expect(FINAL_PILLS, p).not.toContain(p.trim());
   await stockOut(page);
   await page.goto("/");
-  for (const p of await handledPills(page)) expect(FINAL_PILLS, p).toContain(p.trim());
+  await expect(page.getByTestId("inbox-R-2")).toBeVisible();
+  for (const p of await inboxPills(page)) expect(FINAL_PILLS, p).not.toContain(p.trim());
 });
