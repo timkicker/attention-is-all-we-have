@@ -1,0 +1,18 @@
+{
+ "runs": [
+  {
+   "run_id": "rec000000001",
+   "question": "What happened at Mainila in November 1939?",
+   "answer_model": "example-model",
+   "answer_date": "2026-11-14"
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT run_id, question, answer_model, answer_date FROM check_run WHERE source = 'recorded'",
+   "ms": 0.3,
+   "rows": 1,
+   "index": "none"
+  }
+ ]
+}

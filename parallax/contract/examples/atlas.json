@@ -1,0 +1,33 @@
+{
+ "counts": {
+  "all": 1,
+  "fi+sv": 0,
+  "fi+en": 0,
+  "fi": 0
+ },
+ "topics": [
+  {
+   "wikidata_id": "Q134949",
+   "titles": {
+    "fi": "Talvisota",
+    "sv": "Vinterkriget",
+    "en": "Winter War"
+   },
+   "coverage": "all",
+   "dist": {
+    "fi_sv": 0.12,
+    "fi_en": 0.14,
+    "sv_en": 0.11
+   },
+   "topic_id": "winterwar"
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT wikidata_id, title_fi, title_sv, title_en, coverage FROM atlas_topic ORDER BY wikidata_id LIMIT 50",
+   "ms": 0.7,
+   "rows": 1,
+   "index": "none"
+  }
+ ]
+}

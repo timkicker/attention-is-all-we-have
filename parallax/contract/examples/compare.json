@@ -1,0 +1,332 @@
+{
+ "topic": "winterwar",
+ "as_of": "2026-11-14T00:00:00Z",
+ "anchor": "fi",
+ "langs": [
+  "fi",
+  "sv",
+  "de",
+  "en",
+  "ru",
+  "et"
+ ],
+ "editions": {
+  "de": {
+   "rev_id": 271092734,
+   "rev_ts": "2026-10-06T08:20:12Z"
+  },
+  "en": {
+   "rev_id": 1384334162,
+   "rev_ts": "2026-11-07T19:50:21Z"
+  },
+  "et": {
+   "rev_id": 7010191,
+   "rev_ts": "2025-11-03T16:25:52Z"
+  },
+  "fi": {
+   "rev_id": 24373824,
+   "rev_ts": "2026-11-13T10:39:22Z"
+  },
+  "ru": {
+   "rev_id": 155688701,
+   "rev_ts": "2026-10-18T18:22:09Z"
+  },
+  "sv": {
+   "rev_id": 59855895,
+   "rev_ts": "2026-11-12T13:18:44Z"
+  }
+ },
+ "total_rows": 2,
+ "rows": [
+  {
+   "row_id": "fi:1256:8519fbaf22d33984",
+   "section": "Suomen ja Neuvostoliiton neuvottelut aluemuutoksista",
+   "cells": {
+    "fi": {
+     "status": "anchor",
+     "h": "8519fbaf22d33984",
+     "page_id": 1256,
+     "text": "Neuvostoliitto lavasti 26. marraskuuta 1939 Mainilan laukaukset , joilla se perusteli sotaa puolustuksellisena toimenpiteenä.",
+     "gloss": "The Soviet Union staged the Mainila shots on 26 November 1939, with which it justified the war as a defensive measure.",
+     "dist": null,
+     "verdict": null,
+     "marks": [],
+     "born": "2026-11-13T10:39:22Z",
+     "died": null,
+     "born_rev": 24373824,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://fi.wikipedia.org/w/index.php?oldid=24373824"
+    },
+    "de": {
+     "status": "matched",
+     "h": "176471723f110570",
+     "page_id": 51245,
+     "text": "Am 26. November inszenierte die Rote Armee im Dorf Mainila ( russisch Майнило ) einen Grenzzwischenfall, bei dem angeblich sowjetische Truppen von finnischer Artillerie beschossen worden seien ( Mainila-Zwischenfall ).",
+     "gloss": "On 26 November the Red Army staged a border incident in the village of Mainila (Russian Майнило), in which Soviet troops were allegedly shelled by Finnish artillery.",
+     "dist": 0.21,
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "term",
+       "this": "lavasti",
+       "other": "inszenierte"
+      }
+     ],
+     "born": "2013-12-31T09:20:48Z",
+     "died": null,
+     "born_rev": 125967039,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://de.wikipedia.org/w/index.php?oldid=125967039"
+    },
+    "en": {
+     "status": "matched",
+     "h": "a3b291dafd10d41b",
+     "page_id": 33924,
+     "text": "On 26 November 1939, an incident was reported near the Soviet village of Mainila , near the border with Finland.",
+     "gloss": null,
+     "dist": 0.29,
+     "verdict": {
+      "label": "partial",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "term",
+       "this": "lavasti",
+       "other": "reported"
+      }
+     ],
+     "born": "2026-11-07T19:50:21Z",
+     "died": null,
+     "born_rev": 1384334162,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://en.wikipedia.org/w/index.php?oldid=1384334162"
+    },
+    "sv": {
+     "status": "matched",
+     "h": "fafe6f169258cd13",
+     "page_id": 23612,
+     "text": "Det har i efterhand kunnat bevisas att incidenten var en sovjetisk provokation, då bland annat inget finländskt artilleri kunde nå Mainila och sovjetiska fångar under fortsättningskriget kunde ge viktiga detaljer om hur intermezzot orkestrerats på den sovjetiska sidan.",
+     "gloss": "It has since been proven that the incident was a Soviet provocation, since among other things no Finnish artillery could reach Mainila and Soviet prisoners during the Continuation War could give important details of how the episode was orchestrated on the Soviet side.",
+     "dist": 0.33,
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "term",
+       "this": "lavasti",
+       "other": "kunnat bevisas"
+      }
+     ],
+     "born": "2017-12-06T15:25:40Z",
+     "died": null,
+     "born_rev": 42191553,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://sv.wikipedia.org/w/index.php?oldid=42191553"
+    },
+    "ru": {
+     "status": "matched",
+     "h": "d74b5b02e646bb53",
+     "page_id": 33700,
+     "text": "В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнила .",
+     "gloss": "On the same day an artillery shelling of USSR territory took place near the settlement of Mainila.",
+     "dist": 0.31,
+     "verdict": {
+      "label": "partial",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [],
+     "born": "2017-12-23T09:24:26Z",
+     "died": null,
+     "born_rev": 89813748,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://ru.wikipedia.org/w/index.php?oldid=89813748"
+    },
+    "et": {
+     "status": "matched",
+     "h": "b174df1b06bad0f0",
+     "page_id": 43646,
+     "text": "Nõukogude Liidu valitsus teatas, et Soome tulistas Mainila külas õppustel olnud punaväelasi.",
+     "gloss": "The government of the Soviet Union announced that Finland had fired on Red Army soldiers on exercises in the village of Mainila.",
+     "dist": 0.35,
+     "verdict": {
+      "label": "partial",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [],
+     "born": "2009-12-18T10:58:40Z",
+     "died": null,
+     "born_rev": 1796638,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://et.wikipedia.org/w/index.php?oldid=1796638"
+    }
+   }
+  },
+  {
+   "row_id": "fi:1256:6fcbf86eca6b8af2",
+   "section": "Osapuolten tappiot",
+   "cells": {
+    "fi": {
+     "status": "anchor",
+     "h": "6fcbf86eca6b8af2",
+     "page_id": 1256,
+     "text": "Suomalaisten tappiot talvisodassa olivat 26 662 sotatoimissa kuollutta ja noin 950 siviiliä.",
+     "gloss": "Finnish losses in the Winter War were 26,662 killed in action and about 950 civilians.",
+     "dist": null,
+     "verdict": null,
+     "marks": [],
+     "born": "2026-11-13T10:39:22Z",
+     "died": null,
+     "born_rev": 24373824,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://fi.wikipedia.org/w/index.php?oldid=24373824"
+    },
+    "de": {
+     "status": "matched",
+     "h": "1f3cc9d5435b2e2b",
+     "page_id": 51245,
+     "text": "Die finnische Geschichtswissenschaft zählt heute 26.662 gefallene Soldaten.",
+     "gloss": "Finnish historiography today counts 26,662 fallen soldiers.",
+     "dist": 0.18,
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "number",
+       "this": "26 662",
+       "other": "26.662"
+      }
+     ],
+     "born": "2013-12-31T09:20:48Z",
+     "died": null,
+     "born_rev": 125967039,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://de.wikipedia.org/w/index.php?oldid=125967039"
+    },
+    "en": {
+     "status": "matched",
+     "h": "aabfc471f2095919",
+     "page_id": 33924,
+     "text": "According to revised estimates in 2005 by Finnish historians, 25,904 people died or went missing and 43,557 were wounded on the Finnish side during the war. Finnish and Russian researchers have estimated that there were 800–1,100 Finnish prisoners of war , of whom between 10 and 20 per cent died.",
+     "gloss": null,
+     "dist": 0.27,
+     "verdict": {
+      "label": "contradicts",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "number",
+       "this": "26 662",
+       "other": "25,904"
+      }
+     ],
+     "born": "2026-11-07T19:50:21Z",
+     "died": null,
+     "born_rev": 1384334162,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://en.wikipedia.org/w/index.php?oldid=1384334162"
+    },
+    "et": {
+     "status": "matched",
+     "h": "3305d2b8a0f9e905",
+     "page_id": 43646,
+     "text": "Soome kaotas Talvesõjas langenutena 26 662 meest, haavatutena 39 886 meest, teadmata kadunutena ja vangi võetutena 1434 meest .",
+     "gloss": "In the Winter War Finland lost 26,662 men killed, 39,886 wounded and 1,434 missing or taken prisoner.",
+     "dist": 0.22,
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "number",
+       "this": "26 662",
+       "other": "26 662"
+      }
+     ],
+     "born": "2017-09-17T09:10:18Z",
+     "died": null,
+     "born_rev": 4745919,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://et.wikipedia.org/w/index.php?oldid=4745919"
+    },
+    "ru": {
+     "status": "matched",
+     "h": "b36db6e825131f80",
+     "page_id": 33700,
+     "text": "Итого погибло 26 662 финских военнослужащих .",
+     "gloss": "In total 26,662 Finnish servicemen died.",
+     "dist": 0.24,
+     "verdict": {
+      "label": "same",
+      "model": "fake-judge",
+      "prompt_version": "judge-v1"
+     },
+     "marks": [
+      {
+       "kind": "number",
+       "this": "26 662",
+       "other": "26 662"
+      }
+     ],
+     "born": "2026-10-18T18:22:09Z",
+     "died": null,
+     "born_rev": 155688701,
+     "died_rev": null,
+     "time_precision": "snapshot",
+     "oldid_url": "https://ru.wikipedia.org/w/index.php?oldid=155688701"
+    },
+    "sv": {
+     "status": "not_found",
+     "h": null,
+     "page_id": 23612,
+     "text": null,
+     "gloss": null,
+     "dist": null,
+     "verdict": null,
+     "marks": [],
+     "born": null,
+     "died": null,
+     "born_rev": null,
+     "died_rev": null,
+     "time_precision": null,
+     "oldid_url": null
+    }
+   }
+  }
+ ],
+ "sql": [
+  {
+   "text": "SELECT b.lang, b.h, b.text, VEC_DISTANCE_COSINE(b.emb, a.emb) AS dist FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP %s a JOIN claim FOR SYSTEM_TIME AS OF TIMESTAMP %s b ON b.lang = %s WHERE a.lang = 'fi' AND a.h = %s ORDER BY dist LIMIT 3",
+   "ms": 1.4,
+   "rows": 15,
+   "index": "emb"
+  }
+ ]
+}

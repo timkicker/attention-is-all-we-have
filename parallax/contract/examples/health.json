@@ -1,0 +1,19 @@
+{
+ "db": "ok",
+ "engine": "fake",
+ "model_id": "fake-judge",
+ "seed": "mini",
+ "counts": {
+  "claim": 413,
+  "claim_life_fi": 0,
+  "verdict": 12
+ },
+ "sql": [
+  {
+   "text": "SELECT COUNT(*) FROM claim FOR SYSTEM_TIME ALL",
+   "ms": 0.4,
+   "rows": 1,
+   "index": "none"
+  }
+ ]
+}

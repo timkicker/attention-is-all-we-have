@@ -1,0 +1,524 @@
+openapi: 3.1.0
+info:
+  title: Parallax API
+  version: "1"
+  description: >
+    Served by Track B, read by the web UI. Every JSON response carries `sql`, the statements behind it,
+    so "Under the hood" needs no extra call. Times are UTC in ISO 8601. Errors use the Error schema with
+    HTTP 4xx or 5xx. Each route has one example in contract/examples/, referenced by externalValue.
+paths:
+  /api/health:
+    get:
+      operationId: health
+      responses:
+        "200":
+          description: Database, engine and row counts
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Health"}
+              examples: {default: {externalValue: examples/health.json}}
+  /api/topics:
+    get:
+      operationId: topics
+      responses:
+        "200":
+          description: Topics with their editions
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Topics"}
+              examples: {default: {externalValue: examples/topics.json}}
+  /api/compare:
+    get:
+      operationId: compare
+      parameters:
+        - {name: topic, in: query, required: true, schema: {type: string}}
+        - {name: as_of, in: query, description: ISO date or datetime, default now, schema: {type: string}}
+        - {name: anchor, in: query, schema: {type: string, default: fi}}
+        - {name: langs, in: query, description: comma separated, schema: {type: string}}
+        - {name: section, in: query, schema: {type: string}}
+        - {name: offset, in: query, schema: {type: integer, default: 0}}
+        - {name: limit, in: query, schema: {type: integer, default: 25}}
+      responses:
+        "200":
+          description: Anchor claims with their matches in every edition at one instant
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Compare"}
+              examples: {default: {externalValue: examples/compare.json}}
+        "404": {$ref: "#/components/responses/Error"}
+  /api/claim/{lang}/{page_id}/{h}/timeline:
+    get:
+      operationId: timeline
+      parameters:
+        - {name: lang, in: path, required: true, schema: {type: string}}
+        - {name: page_id, in: path, required: true, schema: {type: integer}}
+        - {name: h, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Lives of the claim and of its matched rows in other editions
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Timeline"}
+              examples: {default: {externalValue: examples/timeline.json}}
+        "404": {$ref: "#/components/responses/Error"}
+  /api/dropped:
+    get:
+      operationId: dropped
+      parameters:
+        - {name: topic, in: query, schema: {type: string}}
+        - {name: lang, in: query, schema: {type: string}}
+        - {name: reason, in: query, schema: {$ref: "#/components/schemas/Reason"}}
+        - {name: min_days, in: query, schema: {type: integer, default: 365}}
+        - {name: offset, in: query, schema: {type: integer, default: 0}}
+        - {name: limit, in: query, schema: {type: integer, default: 25}}
+      responses:
+        "200":
+          description: Claims one edition removed while other editions still state them
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Dropped"}
+              examples: {default: {externalValue: examples/dropped.json}}
+  /api/sources:
+    get:
+      operationId: sources
+      parameters:
+        - {name: topic, in: query, required: true, schema: {type: string}}
+        - {name: as_of, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: Reference statistics per edition
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Sources"}
+              examples: {default: {externalValue: examples/sources.json}}
+  /api/check:
+    post:
+      operationId: check
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: {type: string}
+                as_of: {type: string}
+                langs: {type: array, items: {type: string}}
+      responses:
+        "200":
+          description: The answer split into claims, each labelled per edition
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Check"}
+              examples: {default: {externalValue: examples/check.json}}
+        "422": {$ref: "#/components/responses/Error"}
+  /api/check/recorded:
+    get:
+      operationId: checkRecorded
+      responses:
+        "200":
+          description: Recorded answers available offline
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/CheckRecorded"}
+              examples: {default: {externalValue: examples/check_recorded.json}}
+  /api/check/{run_id}:
+    get:
+      operationId: checkRun
+      parameters:
+        - {name: run_id, in: path, required: true, schema: {type: string}}
+        - {name: as_of, in: query, schema: {type: string}}
+      responses:
+        "200":
+          description: A stored run, same shape as POST /api/check
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Check"}
+              examples: {default: {externalValue: examples/check_run.json}}
+        "404": {$ref: "#/components/responses/Error"}
+  /api/ask:
+    get:
+      operationId: ask
+      parameters:
+        - {name: q, in: query, required: true, schema: {type: string}}
+        - {name: as_of, in: query, schema: {type: string}}
+        - {name: langs, in: query, schema: {type: string}}
+        - {name: k, in: query, schema: {type: integer, default: 3}}
+      responses:
+        "200":
+          description: Quotes per edition, no generated prose
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Ask"}
+              examples: {default: {externalValue: examples/ask.json}}
+  /api/atlas:
+    get:
+      operationId: atlas
+      parameters:
+        - {name: coverage, in: query, schema: {type: string, enum: [fi, fi+sv, fi+en, all]}}
+        - {name: offset, in: query, schema: {type: integer, default: 0}}
+        - {name: limit, in: query, schema: {type: integer, default: 50}}
+      responses:
+        "200":
+          description: S atlas topics in fi, sv and en
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Atlas"}
+              examples: {default: {externalValue: examples/atlas.json}}
+  /api/stats:
+    get:
+      operationId: stats
+      responses:
+        "200":
+          description: Numbers from table stat
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Stats"}
+              examples: {default: {externalValue: examples/stats.json}}
+  /api/sql/{panel_id}:
+    get:
+      operationId: sqlPanel
+      parameters:
+        - {name: panel_id, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: The statements of the last run of that panel
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SqlPanel"}
+              examples: {default: {externalValue: examples/sql_panel.json}}
+        "404": {$ref: "#/components/responses/Error"}
+components:
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: {$ref: "#/components/schemas/Error"}
+          examples: {default: {externalValue: examples/error.json}}
+  schemas:
+    Lang: {type: string, pattern: "^[a-z]{2,3}$"}
+    H: {type: string, pattern: "^[0-9a-f]{16}$"}
+    Ts: {type: [string, "null"], description: ISO 8601 UTC, null while alive}
+    Url: {type: [string, "null"], pattern: "^https://[a-z]{2,3}\\.wikipedia\\.org/"}
+    Reason: {type: string, enum: [none, unsourced, error, speculation, other]}
+    Statement:
+      type: object
+      required: [text, ms, rows, index]
+      properties:
+        text: {type: string}
+        ms: {type: number}
+        rows: {type: integer}
+        index: {type: string, enum: [emb, none]}
+    Sql: {type: array, items: {$ref: "#/components/schemas/Statement"}}
+    VerdictRef:
+      type: [object, "null"]
+      required: [label]
+      properties:
+        label: {type: string, enum: [same, partial, contradicts, different]}
+        model: {type: string}
+        prompt_version: {type: string}
+    Mark:
+      type: object
+      required: [kind, this, other]
+      properties:
+        kind: {type: string, enum: [number, term]}
+        this: {type: string}
+        other: {type: string}
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: {type: string}
+            message: {type: string}
+    Health:
+      type: object
+      required: [db, engine, model_id, seed, counts, sql]
+      properties:
+        db: {type: string}
+        engine: {type: string, enum: [fake, real]}
+        model_id: {type: string}
+        seed: {type: string}
+        counts:
+          type: object
+          required: [claim, claim_life_fi, verdict]
+          properties:
+            claim: {type: integer}
+            claim_life_fi: {type: integer}
+            verdict: {type: integer}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Topics:
+      type: object
+      required: [topics, sql]
+      properties:
+        topics:
+          type: array
+          items:
+            type: object
+            required: [topic_id, label_en, wikidata_id, depth, editions]
+            properties:
+              topic_id: {type: string}
+              label_en: {type: string}
+              wikidata_id: {type: string}
+              depth: {type: string, enum: [deep, atlas]}
+              editions:
+                type: array
+                items:
+                  type: object
+                  required: [lang, page_id, title, history, revisions, first_ts]
+                  properties:
+                    lang: {$ref: "#/components/schemas/Lang"}
+                    page_id: {type: integer}
+                    title: {type: string}
+                    history: {type: string, enum: [every, yearly, none]}
+                    revisions: {type: integer}
+                    first_ts: {$ref: "#/components/schemas/Ts"}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Cell:
+      type: object
+      required: [status, h, page_id, text, gloss, dist, verdict, marks, born, died, born_rev, died_rev, time_precision, oldid_url]
+      properties:
+        status: {type: string, enum: [anchor, matched, candidate, not_found]}
+        h: {type: [string, "null"]}
+        page_id: {type: [integer, "null"]}
+        text: {type: [string, "null"]}
+        gloss: {type: [string, "null"], description: machine translation into English}
+        dist: {type: [number, "null"]}
+        verdict: {$ref: "#/components/schemas/VerdictRef"}
+        marks: {type: array, items: {$ref: "#/components/schemas/Mark"}}
+        born: {$ref: "#/components/schemas/Ts"}
+        died: {$ref: "#/components/schemas/Ts"}
+        born_rev: {type: [integer, "null"]}
+        died_rev: {type: [integer, "null"]}
+        time_precision: {type: [string, "null"], enum: [exact, snapshot, null]}
+        oldid_url: {$ref: "#/components/schemas/Url"}
+    Compare:
+      type: object
+      required: [topic, as_of, anchor, langs, editions, total_rows, rows, sql]
+      properties:
+        topic: {type: string}
+        as_of: {type: string}
+        anchor: {$ref: "#/components/schemas/Lang"}
+        langs: {type: array, items: {$ref: "#/components/schemas/Lang"}}
+        editions:
+          type: object
+          additionalProperties:
+            type: object
+            required: [rev_id, rev_ts]
+            properties:
+              rev_id: {type: integer}
+              rev_ts: {type: string}
+        total_rows: {type: integer}
+        rows:
+          type: array
+          items:
+            type: object
+            required: [row_id, section, cells]
+            properties:
+              row_id: {type: string}
+              section: {type: string}
+              cells: {type: object, additionalProperties: {$ref: "#/components/schemas/Cell"}}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Life:
+      type: object
+      required: [lang, page_id, h, text, born, died, born_rev, died_rev, died_comment, time_precision, verdict]
+      properties:
+        lang: {$ref: "#/components/schemas/Lang"}
+        page_id: {type: integer}
+        h: {$ref: "#/components/schemas/H"}
+        text: {type: string}
+        born: {$ref: "#/components/schemas/Ts"}
+        died: {$ref: "#/components/schemas/Ts"}
+        born_rev: {type: integer}
+        died_rev: {type: [integer, "null"]}
+        died_comment: {type: [string, "null"]}
+        time_precision: {type: string, enum: [exact, snapshot]}
+        verdict: {$ref: "#/components/schemas/VerdictRef"}
+    Timeline:
+      type: object
+      required: [claim, lives, sql]
+      properties:
+        claim:
+          type: object
+          required: [lang, page_id, h, text]
+          properties:
+            lang: {$ref: "#/components/schemas/Lang"}
+            page_id: {type: integer}
+            h: {$ref: "#/components/schemas/H"}
+            text: {type: string}
+            section: {type: string}
+        lives: {type: array, items: {$ref: "#/components/schemas/Life"}}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Dropped:
+      type: object
+      required: [total, rows, scale, sql]
+      properties:
+        total: {type: integer}
+        rows:
+          type: array
+          items:
+            type: object
+            required: [lang, page_id, title, h, text, gloss, born, died, died_rev, died_comment, days, reason, alive_in]
+            properties:
+              lang: {$ref: "#/components/schemas/Lang"}
+              page_id: {type: integer}
+              title: {type: string}
+              h: {$ref: "#/components/schemas/H"}
+              text: {type: string}
+              gloss: {type: [string, "null"]}
+              born: {$ref: "#/components/schemas/Ts"}
+              died: {$ref: "#/components/schemas/Ts"}
+              died_rev: {type: integer}
+              died_comment: {type: [string, "null"]}
+              days: {type: integer}
+              reason: {$ref: "#/components/schemas/Reason"}
+              alive_in:
+                type: array
+                items:
+                  type: object
+                  required: [lang, h, text, verdict, oldid_url]
+                  properties:
+                    lang: {$ref: "#/components/schemas/Lang"}
+                    h: {$ref: "#/components/schemas/H"}
+                    text: {type: string}
+                    verdict: {$ref: "#/components/schemas/VerdictRef"}
+                    oldid_url: {$ref: "#/components/schemas/Url"}
+        scale:
+          type: object
+          required: [fi_lives, fi_dead, fi_dead_1y, fi_revisions]
+          properties:
+            fi_lives: {type: integer}
+            fi_dead: {type: integer}
+            fi_dead_1y: {type: integer}
+            fi_revisions: {type: integer}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Sources:
+      type: object
+      required: [editions, sql]
+      properties:
+        editions:
+          type: array
+          items:
+            type: object
+            required: [lang, rev_id, refs, isbn, domains]
+            properties:
+              lang: {$ref: "#/components/schemas/Lang"}
+              rev_id: {type: integer}
+              refs: {type: integer}
+              isbn: {type: object, additionalProperties: {type: integer}}
+              domains: {type: object, additionalProperties: {type: integer}}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Evidence:
+      type: object
+      required: [lang, page_id, h, text, born, died, died_rev, died_comment, dist, verdict, oldid_url]
+      properties:
+        lang: {$ref: "#/components/schemas/Lang"}
+        page_id: {type: integer}
+        h: {$ref: "#/components/schemas/H"}
+        text: {type: string}
+        born: {$ref: "#/components/schemas/Ts"}
+        died: {$ref: "#/components/schemas/Ts"}
+        died_rev: {type: [integer, "null"]}
+        died_comment: {type: [string, "null"]}
+        dist: {type: number}
+        verdict: {$ref: "#/components/schemas/VerdictRef"}
+        oldid_url: {$ref: "#/components/schemas/Url"}
+    Check:
+      type: object
+      required: [run_id, source, answer_model, answer_date, engine, claims, sql]
+      properties:
+        run_id: {type: string, pattern: "^[0-9a-z]{12}$"}
+        source: {type: string, enum: [recorded, live]}
+        answer_model: {type: [string, "null"]}
+        answer_date: {type: [string, "null"]}
+        engine: {type: string, enum: [fake, real]}
+        claims:
+          type: array
+          items:
+            type: object
+            required: [idx, text, per_lang]
+            properties:
+              idx: {type: integer}
+              text: {type: string}
+              per_lang:
+                type: object
+                additionalProperties:
+                  type: object
+                  required: [label, evidence]
+                  properties:
+                    label: {type: string, enum: [says, stopped_saying, contradicts, not_found]}
+                    evidence: {type: array, items: {$ref: "#/components/schemas/Evidence"}}
+        sql: {$ref: "#/components/schemas/Sql"}
+    CheckRecorded:
+      type: object
+      required: [runs, sql]
+      properties:
+        runs:
+          type: array
+          items:
+            type: object
+            required: [run_id, question, answer_model, answer_date]
+            properties:
+              run_id: {type: string}
+              question: {type: [string, "null"]}
+              answer_model: {type: [string, "null"]}
+              answer_date: {type: [string, "null"]}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Ask:
+      type: object
+      required: [q, as_of, quotes, sql]
+      properties:
+        q: {type: string}
+        as_of: {type: string}
+        quotes:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              required: [text, gloss, dist, born, died, oldid_url]
+              properties:
+                text: {type: string}
+                gloss: {type: [string, "null"]}
+                dist: {type: number}
+                born: {$ref: "#/components/schemas/Ts"}
+                died: {$ref: "#/components/schemas/Ts"}
+                oldid_url: {$ref: "#/components/schemas/Url"}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Atlas:
+      type: object
+      required: [counts, topics, sql]
+      properties:
+        counts:
+          type: object
+          required: [all, fi+sv, fi+en, fi]
+          additionalProperties: {type: integer}
+        topics:
+          type: array
+          items:
+            type: object
+            required: [wikidata_id, titles, coverage, dist, topic_id]
+            properties:
+              wikidata_id: {type: string}
+              titles: {type: object, additionalProperties: {type: [string, "null"]}}
+              coverage: {type: string, enum: [fi, fi+sv, fi+en, all]}
+              dist: {type: object, additionalProperties: {type: [number, "null"]}}
+              topic_id: {type: [string, "null"]}
+        sql: {$ref: "#/components/schemas/Sql"}
+    Stats:
+      type: object
+      required: [stats, sql]
+      properties:
+        stats: {type: object}
+        sql: {$ref: "#/components/schemas/Sql"}
+    SqlPanel:
+      type: object
+      required: [panel_id, statements]
+      properties:
+        panel_id: {type: string}
+        statements: {$ref: "#/components/schemas/Sql"}
