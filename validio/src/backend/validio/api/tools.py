@@ -78,8 +78,39 @@ def request_supply(ctx: Ctx, spend_pass: str, body: SupplyRequestIn) -> SupplyRe
     return _request_view(ctx, req)
 
 
+# Built views by (store, request id), each with the store's change count it was built at. The inbox, Activity and
+# the ledger are polled every two seconds and build a view per request, so a view is built again only after a
+# write to the kitchen's store (or a demo switch). Callers get a deep copy: some of them trim the lists.
+_VIEWS: dict[tuple[int, str], tuple[tuple, SupplyRequestView]] = {}
+_VIEWS_MAX = 5000
+
+
+def _generation(ctx: Ctx) -> int:
+    """Rows changed through the kitchen's one connection: every write, the ledger and the demo switches (each
+    switch writes a ledger entry) count."""
+    return ctx.store.con.total_changes
+
+
+def _copy(v: SupplyRequestView) -> SupplyRequestView:
+    """A copy whose own fields and option lists a caller may change (ui.asked_apart trims the lists); the
+    options themselves are shared and never changed in place."""
+    lines = [ln.model_copy(update={"options": list(ln.options),
+                                   "substitutes": None if ln.substitutes is None else list(ln.substitutes),
+                                   "beyond_list": None if ln.beyond_list is None else list(ln.beyond_list)})
+             for ln in v.lines]
+    return v.model_copy(update={"lines": lines})
+
+
 def get_request(ctx: Ctx, request_id: str) -> SupplyRequestView:
-    return _request_view(ctx, ctx.supply.get_request(request_id))
+    key, gen = (id(ctx.store), request_id), _generation(ctx)
+    hit = _VIEWS.get(key)
+    if hit is not None and hit[0] == gen:
+        return _copy(hit[1])
+    view = _request_view(ctx, ctx.supply.get_request(request_id))
+    if len(_VIEWS) >= _VIEWS_MAX:
+        _VIEWS.clear()
+    _VIEWS[key] = (gen, _copy(view))
+    return view
 
 
 def confirm_order(ctx: Ctx, spend_pass: str, body: ConfirmIn) -> OrderView:
