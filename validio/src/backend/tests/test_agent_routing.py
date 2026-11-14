@@ -5,7 +5,7 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
-from test_accounts import SIGNUP, app_env, connect_demo_agent  # noqa: F401
+from test_accounts import SIGNUP, app_env, ask_as_agent, connect_demo_agent  # noqa: F401
 
 from validio.agent.holder import Holder
 from validio.api.accounts import get_accounts
@@ -66,11 +66,13 @@ def test_an_unknown_kitchen_is_404(kitchens, account):
 
 
 def test_pairing_through_the_kitchen_path(kitchens):
+    import re
+
     from jwcrypto.jwk import JWK
 
     _, two, agent, _, b = kitchens
     s = two.post("/api/agent/pair").json()
-    assert s["pairing"]["mcpUrl"] == f"http://testserver/mcp/k/{b}/"
+    assert re.fullmatch(r"http://testserver/mcp/c/[A-Za-z0-9_-]{43}/", s["pairing"]["mcpUrl"])  # any MCP agent
     assert s["pairing"]["apiUrl"] == f"http://testserver/agent/v1/k/{b}"
     key = JWK.generate(kty="EC", crv="P-256")
     r = agent.post(f"/agent/v1/k/{b}/pair", json={"code": s["pairing"]["code"], "name": "Buyer B",
@@ -86,10 +88,10 @@ def test_pairing_through_the_kitchen_path(kitchens):
 # MCP over streamable HTTP, raw JSON-RPC
 
 
-def _init(i):
+def _init(i, name="test"):
     return {"jsonrpc": "2.0", "id": i, "method": "initialize",
             "params": {"protocolVersion": "2025-06-18", "capabilities": {},
-                       "clientInfo": {"name": "test", "version": "1"}}}
+                       "clientInfo": {"name": name, "version": "1"}}}
 
 
 def _answer(r) -> dict:
@@ -101,9 +103,9 @@ def _answer(r) -> dict:
 
 
 class Mcp:
-    def __init__(self, http, path):
+    def __init__(self, http, path, name="test"):
         self.http, self.path, self.n = http, path, 1
-        r = http.post(path, headers=MCP_HEADERS, json=_init(1))
+        r = http.post(path, headers=MCP_HEADERS, json=_init(1, name))
         _answer(r)
         self.headers = {**MCP_HEADERS, "mcp-session-id": r.headers.get("mcp-session-id", ""),
                         "mcp-protocol-version": "2025-06-18"}
@@ -153,11 +155,10 @@ def test_mcp_without_a_kitchen_stays_local(kitchens, ctx):
     assert ctx.store.requests()[-1]["id"] == res["structuredContent"]["id"]
 
 
-def test_example_request_runs_on_the_account(kitchens):
+def test_an_in_process_agent_runs_on_the_account(kitchens):
     one, two, *_ = kitchens
-    r = one.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    rid = r.json()["requestId"]
+    rid = ask_as_agent(one)
+    assert rid
     assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
     assert two.get("/api/inbox").json() == []
 

@@ -4,6 +4,7 @@ entry, the asked-for product apart from the options, user words for Spend Pass f
 
 import re
 
+from asking import stockout
 from conftest import CODE
 from test_api import ask_milk, ask_mozzarella, auth, client, holder  # noqa: F401
 
@@ -15,7 +16,7 @@ def _milk_and_mozzarella(client, holder):
     client.post("/agent/v1/orders", headers=auth(holder), json={
         "requestId": milk["id"], "idempotencyKey": "milk-order-1",
         "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
-    client.post("/api/demo/stock-out")
+    stockout()
     return milk, ask_mozzarella(client, holder)
 
 
@@ -43,7 +44,7 @@ def test_ledger_display_text(client, holder):
     placed = [e for e in entries if e["kind"] == "order"]
     assert [(e["actor"], e["actorText"]) for e in placed] == [("validio", "Validio")] * 2  # Validio places, the agent asks
     assert placed[0]["displayText"] == \
-        "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "Ordered O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
     assert "Asked you: the substitute is not on Valio's list." in shown
     assert "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €." in shown
     for e in entries:

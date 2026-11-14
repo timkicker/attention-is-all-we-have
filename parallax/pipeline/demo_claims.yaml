@@ -1,0 +1,8 @@
+# Claims the demo shows changing: (lang, regex over parsed sentences). A5 finds the exact edit for each.
+- {lang: en, regex: "staged the [Ss]helling of Mainila"}
+- {lang: ru, regex: "инсценированный советской стороной"}
+- {lang: ru, regex: "предположительно инсценированный"}
+- {lang: sv, regex: "rysk provokation"}
+- {lang: de, regex: "Vorwand"}
+- {lang: de, regex: "inszenierte"}
+- {lang: fi, regex: "tekaistuihin"}

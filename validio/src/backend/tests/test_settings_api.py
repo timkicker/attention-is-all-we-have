@@ -24,6 +24,7 @@ def fresh(client, ctx):  # noqa: F811
 
 def test_rules_read_the_seeded_pass(client):  # noqa: F811
     r = client.get("/api/rules").json()
+    assert r.pop("diet")["mustBe"] == ["lactose-free"]
     assert r == {"aloneUpToCents": 120000, "approvalUpToCents": 200000, "substitutes": "extra", "maxExtraPct": 5,
                  "perWeekCents": None, "saved": True, "passVersion": 1}
 
@@ -33,7 +34,8 @@ def test_rules_save_signs_a_new_version_that_decides(client, holder, ctx):  # no
         == "ask_human"
     r = put_rules(client)
     assert r.status_code == 200, r.text
-    assert r.json() == {**RULES, "perWeekCents": None, "saved": True, "passVersion": 2}
+    assert {k: v for k, v in r.json().items() if k != "diet"} == {**RULES, "perWeekCents": None, "saved": True,
+                                                                  "passVersion": 2}
     assert client.get("/api/rules").json()["passVersion"] == 2
     after = ask(client, fresh(client, ctx), "1500 litres of lactose-free milk by Monday", "b").json()
     assert after["decision"]["outcome"] == "auto_order", after["decision"]
@@ -45,8 +47,8 @@ def test_rules_save_writes_one_entry(client):  # noqa: F811
     assert put_rules(client).status_code == 200
     mine = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass"]
     assert len(mine) == 1
-    assert mine[0]["sentence"] == ("Owner changed Spend Pass M-1. Alone up to 1,200.00 € → 1,600.00 €. "
-                                   "Never above 2,000.00 € → 2,500.00 €. Extra for a split up to 5 % → none.")
+    assert mine[0]["sentence"] == ("Owner changed Spend Pass M-1. Orders alone up to 1,200.00 € → 1,600.00 €. "
+                                   "Blocked above 2,000.00 € → 2,500.00 €. Extra for a split up to 5 % → none.")
 
 
 def test_rules_keep_the_diet_and_diet_keeps_the_rules(client):  # noqa: F811

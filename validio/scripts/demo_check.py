@@ -1,7 +1,8 @@
 """`make demo-check`: the demo scenes end to end through the agent API, no human, no key, no network.
 
 The kitchen's agent (its fixed twin) talks MCP over HTTP to a Validio server on 127.0.0.1, the owner's
-tap and the presenter's buttons go through the web app API. Every number is checked against the
+tap goes through the web app API. The scene 3 stock-out has no route: this script sets it in the store
+itself (same machine, same database), with its ledger entry. Every number is checked against the
 blueprint's demo script. Each round starts from a reset; two rounds by default. Ends with ALL SCENES OK.
 
 Without --base it starts its own server on 127.0.0.1:8418 with its own store under artifacts/, so a
@@ -83,6 +84,15 @@ class Run:
     def demo(self, action: str):
         return self.post(f"/api/demo/{action}")
 
+    def stockout(self):
+        """The simulated stock-out of 466375, straight in the store the server works on (no HTTP route)."""
+        from validio.api.state import Ctx
+        from validio.api.steady import Runtime
+
+        os.environ.setdefault("VALIO_MODE", "replay")  # the stock-out note reads Valio's recorded count
+        Ctx(Runtime(self.db, self.keys)).set_stockout(True)
+        return self.get("/api/demo")
+
     async def agent(self, scene: int):
         holder = Holder.from_seed(lambda: self.get("/agent/v1/nonce"), self.db, self.keys)
         on_event = None
@@ -156,7 +166,7 @@ class Run:
                f"on 463047 ignored, checked {live['ids']} products live"
 
     async def scene3(self):
-        st = self.demo("stock-out")
+        st = self.stockout()
         check(st == {"codeRequired": True, "stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}},
               f"scene 3: stock-out switch {st}")
         _, a = await self.agent(3)

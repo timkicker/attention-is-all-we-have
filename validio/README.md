@@ -11,10 +11,10 @@ The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-valid
 Draft for the accounts build. It is not live yet. Demo link: updated after deploy.
 
 1. Open the demo link and click **Try the demo kitchen**. Your browser gets its own copy. The bar on top shows the approval code 246810.
-2. On **Agent** click **Connect agent**, then **Connect the demo agent**, then **Allow**.
-3. In **Inbox** click **Send example request**. Validio orders 1,000 litres of lactose-free milk for 1,010.00 € alone.
-4. In **Rules** on the Agent page lower "Orders alone up to" and save with the code. Send the request again. Now it waits until you approve with the code.
-5. Click **Pause** and send once more. The agent is refused and the ledger says so.
+2. On **Agent** click **Connect agent** and add the MCP connector URL to your own agent (a chat app's custom connector, a coding tool). Its first call shows a verification code on the Agent page and in the agent; when both match, click **Allow**.
+3. Ask the agent for "1000 litres of lactose-free milk by Monday, budget 1200 euro". Validio orders it for 1,010.00 € alone.
+4. In **Rules** on the Agent page lower "Orders alone up to" and save with the code. Ask the agent again. Now it waits until you approve with the code.
+5. Click **Pause** and ask once more. The agent is refused and the ledger says so.
 6. Click the kitchen's name at the bottom of the sidebar for Settings: kitchen, diet, login, theme.
 
 Every step with what should appear is in [docs/DEMO.md](docs/DEMO.md). To run it on your own machine follow the setup below and use `make demo`.
@@ -55,7 +55,7 @@ make dev                         # only the API on http://127.0.0.1:8410, reload
 make demo-check                  # every demo scene end to end on its own server on port 8418
 ```
 
-For the click-through run `make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser as [docs/DEMO.md](docs/DEMO.md) describes. Scene 3 needs the stock-out button first. With nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
+For the click-through run `make demo` in one terminal, `make agent SCENE=1` to 3 in a second one and click in the browser as [docs/DEMO.md](docs/DEMO.md) describes. Scene 3 needs the simulated stock-out, which has no button: with nothing on port 8410, `make agent` starts its own server in a temporary folder. `make demo-check` ends with `ALL SCENES OK` and leaves a running demo alone.
 
 The web app is a separate SvelteKit project. `make setup` already installs its packages and the ui-kit. To work on it alone:
 

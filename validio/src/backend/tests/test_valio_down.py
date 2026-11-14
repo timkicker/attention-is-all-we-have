@@ -7,6 +7,7 @@ from datetime import date
 import httpx
 import pytest
 import respx
+from asking import stockout
 from test_api import MILK, auth, client, holder  # noqa: F401
 
 from validio.valio.budget import CallBudget
@@ -80,7 +81,7 @@ def test_request_is_refused_and_nothing_placed(down, client, holder):  # noqa: F
 def test_approve_while_valio_is_down_places_nothing(ctx, client, holder):  # noqa: F811
     from conftest import CODE
     from test_api import ask_mozzarella
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     ctx.live.service.valio, _ = _down("5xx")
     r = client.post(f"/api/orders/{oid}/approve", headers={"X-Approve-Code": CODE})

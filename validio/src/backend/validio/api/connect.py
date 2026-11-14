@@ -9,6 +9,7 @@ cannot come back on the next connect.
 Everything lives in the kitchen's own database, so each account has its own agent. A store that never saw
 this table has the demo agent connected: the seed signs M-1 to the demo agent's key."""
 
+import hashlib
 import secrets
 import sqlite3
 from dataclasses import dataclass
@@ -23,23 +24,25 @@ from pydantic import Field
 from ..demo import seed
 from ..policy.mandate import DEMO_CLAIMS, SUBSTITUTES_LISTED, Mandate, MandateError, load_or_create_key
 from ..text.format import money
-from .schemas import AskIn, AskOut, Model
+from .schemas import Model
 from .state import Ctx
 
 ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"  # no 0, O, 1, I, L
 CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
 DEMO_AGENT = "Demo agent"
-EXAMPLE = "1000 litres of lactose-free milk by Monday, budget 1200 euro"
+MCP_NAME = "MCP agent"  # the name of a connector agent whose client sent no usable clientInfo.name
+RESERVED = frozenset({"you", "owner", "validio", "demo", "kitchen"})  # names the screens give someone else
+KNOWN_CLIENTS = {"claude-code": "Claude Code", "claude-ai": "Claude"}  # ids some clients send as their name
 PAUSED = "the kitchen paused this agent"
 NOT_CONNECTED = "no agent is connected to this kitchen"
 
 SCHEMA = """create table if not exists agent_link (
   id integer primary key check (id = 1), state text not null, name text, sub text, jwk text, key_id text,
   connected_at text, last_used_at text, pending_name text, pending_jwk text,
-  code text, code_expires text, code_status text, wrong_tries integer not null default 0)"""
+  code text, code_expires text, code_status text, wrong_tries integer not null default 0, verify_code text)"""
 COLUMNS = ("state", "name", "sub", "jwk", "key_id", "connected_at", "last_used_at", "pending_name", "pending_jwk",
-           "code", "code_expires", "code_status", "wrong_tries")
+           "code", "code_expires", "code_status", "wrong_tries", "verify_code")
 
 
 # shapes
@@ -56,10 +59,12 @@ class Consent(Model):
     name: str
     key_id: str
     may: list[str]
+    verify_code: str = Field(description="XXX-XXX, new for this connection; the agent shows the same code")
 
 
 class AgentInfo(Model):
     name: str
+    kind: Literal["agent", "mcp"] = "agent"
     key_id: str
     connected_at: str
     last_used_at: str | None
@@ -93,6 +98,8 @@ class PairIn(Model):
 
 class PairOut(Model):
     status: Literal["consent"]
+    verify_code: str = Field(description="XXX-XXX: show it to the user, it must match the code on the kitchen's "
+                                         "Agent page before the kitchen presses Allow")
 
 
 class PassOut(Model):
@@ -118,6 +125,7 @@ class Link:
     code_expires: str | None = None
     code_status: str | None = None
     wrong_tries: int = 0
+    verify_code: str | None = None
 
 
 def _wall() -> datetime:
@@ -138,9 +146,17 @@ def key_id(jwk: JWK) -> str:
     return jwk.thumbprint()[:8]
 
 
+def verify_code() -> str:
+    """A fresh verification code for one connection, XXX-XXX without look-alikes."""
+    c = "".join(secrets.choice(ALPHABET) for _ in range(6))
+    return f"{c[:3]}-{c[3:]}"
+
+
 def _con(ctx_or_path) -> sqlite3.Connection:
     con = sqlite3.connect(getattr(ctx_or_path, "db_path", ctx_or_path), timeout=10)
     con.execute(SCHEMA)
+    if "verify_code" not in {r[1] for r in con.execute("pragma table_info(agent_link)")}:
+        con.execute("alter table agent_link add column verify_code text")  # a store from before the code
     return con
 
 
@@ -172,6 +188,44 @@ def leave_unconnected(db_path: Path) -> None:
     save(Path(db_path), Link("none"))
 
 
+def clean_name(raw) -> str:
+    """The MCP client's clientInfo.name as the screens show it: printable, one line, at most 60 characters.
+    Nothing usable, or a name the screens use for someone else, reads "MCP agent"."""
+    if not isinstance(raw, str):
+        return MCP_NAME
+    name = " ".join("".join(ch if ch.isprintable() else " " for ch in raw).split())[:60].strip()
+    name = KNOWN_CLIENTS.get(name.lower(), name)
+    return name if name and name.lower() not in RESERVED else MCP_NAME
+
+
+NAMES_SCHEMA = "create table if not exists agent_name (sub text primary key, name text not null)"
+
+
+def _remember_name(ctx: Ctx, sub: str, name: str) -> None:
+    con = _con(ctx)
+    try:
+        con.execute(NAMES_SCHEMA)
+        con.execute("insert or replace into agent_name values (?, ?)", (sub, name))
+        con.commit()
+    finally:
+        con.close()
+
+
+def agent_names(ctx: Ctx) -> dict[str, str]:
+    """Every agent this kitchen allowed, by its ledger actor ("agent:claude-code"): the name it connected with.
+    The demo agent's key keeps its name in a store from before this table."""
+    con = _con(ctx)
+    try:
+        con.execute(NAMES_SCHEMA)
+        rows = dict(con.execute("select sub, name from agent_name").fetchall())
+    finally:
+        con.close()
+    link = load(ctx)
+    if link.sub and link.name:
+        rows.setdefault(link.sub, link.name)
+    return rows
+
+
 def _entry(ctx: Ctx, sentence: str, actor: str = "owner") -> None:
     ctx.audit.append(at=ctx.now(), actor=actor, kind="agent", sentence=sentence, facts=[],
                      mandate_id=seed.SPEND_PASS_ID, disclosed={}, rule_ids=[], order_id=None)
@@ -185,17 +239,17 @@ def account_id(ctx: Ctx) -> str | None:
     return ctx.account["id"] if ctx.account else None
 
 
-def is_demo(ctx: Ctx) -> bool:
-    """Demo copies only; the local kitchen when VALIDIO_DEMO=1."""
-    return bool(ctx.account["is_demo"]) if ctx.account else ctx.settings.demo
+def base_url(request: Request | None) -> str:
+    """Absolute on a request (https unless on this machine), else empty."""
+    if request is None:
+        return ""
+    local = request.url.hostname in ("127.0.0.1", "localhost", "::1", "testserver")
+    return f"{'http' if local else 'https'}://{request.url.netloc}"
 
 
 def urls(ctx: Ctx, request: Request | None) -> tuple[str, str]:
     """Absolute on a request (https unless on this machine), else from the root."""
-    base = ""
-    if request is not None:
-        local = request.url.hostname in ("127.0.0.1", "localhost", "::1", "testserver")
-        base = f"{'http' if local else 'https'}://{request.url.netloc}"
+    base = base_url(request)
     acct = account_id(ctx)
     k = f"/k/{acct}" if acct else ""
     return f"{base}/mcp{k}/", f"{base}/agent/v1{k}"
@@ -206,12 +260,12 @@ def may(ctx: Ctx) -> list[str]:
     from .settings import current_claims, rules_saved  # settings reaches the agent link through the pass
 
     if not rules_saved(ctx.db_path):
-        return ["Ask you before every order"]
+        return ["Every order needs approval"]
     c = current_claims(ctx.db_path)
-    out = [f"Order alone up to {money(c['autoLimitCents'])}", f"Ask you up to {money(c['hardCapCents'])}",
-           f"Never above {money(c['hardCapCents'])}"]
+    out = [f"Orders alone up to {money(c['autoLimitCents'])}", f"Needs approval up to {money(c['hardCapCents'])}",
+           f"Blocked above {money(c['hardCapCents'])}"]
     if c.get("weekCapCents") is not None:
-        out.append(f"At most {money(c['weekCapCents'])} a week")
+        out.append(f"Per week up to {money(c['weekCapCents'])}")
     pct = round(float((c.get("split") or {}).get("maxExtraCostPct", 0)))
     if c.get("substitutes") != SUBSTITUTES_LISTED:
         out.append("No substitutes")
@@ -220,19 +274,38 @@ def may(ctx: Ctx) -> list[str]:
     return out
 
 
+def last_used(ctx: Ctx, link: Link) -> str | None:
+    """The agent's last entry in the ledger (what it asked for, under its own name), so the Agent page and the
+    ledger tell the same time; the last verified call when the ledger has none of it yet."""
+    mine = [e.at for e in ctx.audit.list() if link.sub and e.actor == link.sub]
+    return max(mine, key=datetime.fromisoformat) if mine else link.last_used_at
+
+
 def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> AgentState:
     link = link or load(ctx)
     versions = [PassVersion(**v) for v in seed.pass_versions(ctx.db_path)]
     out = AgentState(state=link.state, versions=versions)
     if link.state == "pairing":
         mcp, api = urls(ctx, request)
+        held = _connector(ctx)
+        if not (held and held[2]):  # a pairing started before connector URLs existed gets one now
+            with ctx.rt.lock:
+                held = _connector(ctx)
+                if not (held and held[2]):
+                    token = secrets.token_urlsafe(32)
+                    _set_connector(ctx, JWK.generate(kty="EC", crv="P-256").export_private(), _token_hash(token), token)
+                    held = _connector(ctx)
+        if held and held[2]:  # any MCP agent: the connector URL; signing agents use the code and /mcp/k/
+            mcp = f"{base_url(request)}/mcp/c/{held[2]}/"
         code = link.code
         out.pairing = Pairing(code=f"{code[:4]}-{code[4:]}", expires_at=link.code_expires, mcp_url=mcp, api_url=api)
     if link.state == "consent":
-        out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx))
+        out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx),
+                              verify_code=consent_code(ctx))
     if link.state in ("active", "paused"):
         out.agent = AgentInfo(name=link.name, key_id=link.key_id, connected_at=link.connected_at,
-                              last_used_at=link.last_used_at, pass_id=seed.SPEND_PASS_ID,
+                              kind="mcp" if connector_key(ctx, link) else "agent",
+                              last_used_at=last_used(ctx, link), pass_id=seed.SPEND_PASS_ID,
                               pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID))
     return out
 
@@ -245,6 +318,10 @@ def pair(ctx: Ctx) -> Link:
         link = load(ctx)
         if link.state in ("active", "paused"):
             raise HTTPException(409, "disconnect the agent first")
+        drop_connector(ctx)
+        # any MCP agent can take the connector URL instead of the code: Validio holds its key
+        token = secrets.token_urlsafe(32)
+        _set_connector(ctx, JWK.generate(kty="EC", crv="P-256").export_private(), _token_hash(token), token)
         code = "".join(secrets.choice(ALPHABET) for _ in range(8))
         link = Link("pairing", code=code, code_expires=(_wall() + CODE_TTL).isoformat(),
                     code_status="pairing")
@@ -264,9 +341,9 @@ def _public(jwk: dict) -> JWK:
     return key
 
 
-def agent_pair(ctx: Ctx, body: PairIn) -> None:
+def agent_pair(ctx: Ctx, body: PairIn) -> str:
     """The agent answers the code with its name and key. 404 for a wrong or expired code; five wrong codes
-    end the pairing."""
+    end the pairing. Returns the verification code the consent screen shows."""
     key = _public(body.public_jwk)
     name = " ".join(body.name.split())
     with ctx.rt.lock:
@@ -281,7 +358,9 @@ def agent_pair(ctx: Ctx, body: PairIn) -> None:
             raise HTTPException(404, "wrong or expired pairing code")
         link.state, link.code_status = "consent", "consent"
         link.pending_name, link.pending_jwk = name, key.export_public()
+        link.verify_code = verify_code()
         save(ctx, link)
+    return link.verify_code
 
 
 def agent_pass(ctx: Ctx, code: str) -> PassOut:
@@ -294,13 +373,9 @@ def agent_pass(ctx: Ctx, code: str) -> PassOut:
     return PassOut(status=link.code_status)
 
 
-def answer_as_demo_agent(ctx: Ctx) -> None:
-    """The server's own demo agent answers a fresh code, so the person sees the consent screen."""
-    code = pair(ctx).code
-    agent_pair(ctx, PairIn(code=code, name=DEMO_AGENT, public_jwk=demo_key(ctx).export_public(as_dict=True)))
-
-
 def allow(ctx: Ctx) -> None:
+    """Sign M-1 to the waiting agent's key. When that is the key Validio holds for the connector URL, the URL
+    stays valid and its token is no longer kept in clear; any other agent ends the connector URL."""
     with ctx.rt.lock:
         link = load(ctx)
         if link.state != "consent":
@@ -314,6 +389,12 @@ def allow(ctx: Ctx) -> None:
         link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.now().isoformat(),
                     code=link.code, code_expires=link.code_expires, code_status="allowed")
         save(ctx, link)
+        _remember_name(ctx, sub, link.name)
+        held = _connector(ctx)
+        if held and JWK.from_json(held[0]).thumbprint() == key.thumbprint():
+            _set_connector(ctx, held[0], held[1], None)
+        else:
+            drop_connector(ctx)
         _entry(ctx, f"Connected {link.name}. Spend Pass {seed.SPEND_PASS_ID} is now version {ver}, signed to its key.")
 
 
@@ -323,6 +404,7 @@ def deny(ctx: Ctx) -> None:
         if link.state not in ("consent", "pairing"):
             raise HTTPException(409, "no agent waits for consent")
         save(ctx, Link("none", code=link.code, code_expires=link.code_expires, code_status="denied"))
+        drop_connector(ctx)
 
 
 def pause(ctx: Ctx, paused: bool) -> None:
@@ -347,6 +429,7 @@ def disconnect(ctx: Ctx, quiet: bool = False) -> None:
         seed.sign_again(ctx.db_path, ctx.keys_dir, {}, agent_pub=JWK.from_json(nobody.export_public()),
                         why="Agent disconnected", at=ctx.now())
         save(ctx, Link("none"))
+        drop_connector(ctx)
         if not quiet and link.state in ("active", "paused"):
             ver = seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID)
             _entry(ctx, f"Disconnected {link.name}. Spend Pass {seed.SPEND_PASS_ID} is now version {ver}, "
@@ -384,16 +467,174 @@ def _issued_jwt(ctx: Ctx, pass_id: str) -> str | None:
     return row[0].split("~", 1)[0] if row else None
 
 
-def demo_agent_active(ctx: Ctx) -> bool:
+# Any MCP agent, also one that cannot sign (a chat app connector, a coding tool, a script): pairing makes an
+# agent key Validio holds for this kitchen and a connector token, shown as /mcp/c/<token>/. The first request
+# there asks for consent as "MCP agent"; after Allow Validio signs the key binding itself on every call. The
+# token is kept in clear only while pairing waits; an index in the accounts db finds the kitchen by its hash.
+
+CONNECTOR_SCHEMA = """create table if not exists connector (
+  id integer primary key check (id = 1), private_jwk text not null, token_hash text not null, token text)"""
+INDEX_SCHEMA = "create table if not exists connector_index (token_hash text primary key, account_id text)"
+WAITING = ("Waiting for the kitchen to press Allow in Validio. Ask the user to open the Agent page in Validio "
+           "and press Allow, then call the tool again.")
+WAITING_CODE = ("Waiting for the kitchen to press Allow in Validio. Show the user this verification code: {code}. "
+                "It must match the code on the Validio Agent page. Ask the user to open the Agent page in Validio, "
+                "check that the codes match and press Allow, then call the tool again.")
+
+
+def _token_hash(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def _kcon(ctx: Ctx) -> sqlite3.Connection:
+    con = sqlite3.connect(ctx.db_path, timeout=10)
+    con.execute("pragma secure_delete = on")  # a token cleared after Allow leaves no copy in free pages
+    con.execute(CONNECTOR_SCHEMA)
+    return con
+
+
+def _connector(ctx: Ctx) -> tuple[str, str, str | None] | None:
+    """(private JWK json, token hash, token while pairing waits) of the key Validio holds, or None."""
+    con = _kcon(ctx)
+    try:
+        return con.execute("select private_jwk, token_hash, token from connector where id = 1").fetchone()
+    finally:
+        con.close()
+
+
+def _index(ctx: Ctx, token_hash: str | None) -> None:
+    """Point the token's hash at this kitchen (None drops the kitchen's entry). The local kitchen keeps no
+    index entry: a token not in the index is looked up in the local store."""
+    acct = account_id(ctx)
+    if acct is None:
+        return
+    from .accounts import get_accounts
+
+    with get_accounts()._db() as con:
+        con.execute(INDEX_SCHEMA)
+        con.execute("delete from connector_index where account_id = ?", (acct,))
+        if token_hash:
+            con.execute("insert into connector_index values (?, ?)", (token_hash, acct))
+
+
+def _set_connector(ctx: Ctx, private_jwk: str, token_hash: str, token: str | None) -> None:
+    con = _kcon(ctx)
+    try:
+        con.execute("insert or replace into connector (id, private_jwk, token_hash, token) values (1, ?, ?, ?)",
+                    (private_jwk, token_hash, token))
+        con.commit()
+    finally:
+        con.close()
+    _index(ctx, token_hash)
+
+
+def drop_connector(ctx: Ctx) -> None:
+    """Forget the held key and the token: /mcp/c/<token>/ answers 404 from now on."""
+    con = _kcon(ctx)
+    try:
+        had = con.execute("delete from connector").rowcount
+        con.commit()
+    finally:
+        con.close()
+    if had:
+        _index(ctx, None)
+
+
+def connector_key(ctx: Ctx, link: Link | None = None) -> JWK | None:
+    """The held private key when it is the connected agent's key, else None."""
+    link = link or load(ctx)
+    held = _connector(ctx)
+    if not held or link.state not in ("active", "paused"):
+        return None
+    key = JWK.from_json(held[0])
+    return key if key_id(key) == link.key_id else None
+
+
+def connector_ctx(token: str | None, touch: bool = False, name: str | None = None) -> Ctx | None:
+    """The kitchen a connector token belongs to while it lasts (pairing, consent, active or paused), else None.
+    `touch`: a request came in on the URL, so a waiting pairing turns into consent, named by `name` (the MCP
+    client's clientInfo.name on its initialize request) or "MCP agent". A consent still named "MCP agent" takes
+    the name of a later initialize on the same URL; an allowed agent keeps the name it was allowed with."""
+    from .accounts import get_accounts
+    from .state import get_ctx
+
+    if not token or len(token) > 128:
+        return None
+    h = _token_hash(token)
+    accounts = get_accounts()
+    with accounts._db() as con:
+        con.execute(INDEX_SCHEMA)
+        row = con.execute("select account_id from connector_index where token_hash = ?", (h,)).fetchone()
+    try:
+        ctx = accounts.ctx(row[0]) if row else get_ctx()
+    except KeyError:
+        return None
+    held = _connector(ctx)
+    if not held or not secrets.compare_digest(held[1], h):
+        return None
     link = load(ctx)
-    return link.state in ("active", "paused") and link.key_id == key_id(demo_key(ctx))
+    if link.state in ("active", "paused") and connector_key(ctx, link) is None:
+        return None
+    if link.state == "none":
+        return None
+    if touch and (link.state == "pairing" or (link.state == "consent" and name and link.pending_name == MCP_NAME)):
+        with ctx.rt.lock:
+            link = load(ctx)
+            if link.state == "pairing":
+                link.state, link.code_status = "consent", "consent"
+                link.pending_name = clean_name(name)
+                link.pending_jwk = JWK.from_json(held[0]).export_public()
+                link.verify_code = verify_code()  # new for this connection, shown in the agent and on the page
+                save(ctx, link)
+            elif (link.state == "consent" and link.pending_name == MCP_NAME
+                  and link.pending_jwk == JWK.from_json(held[0]).export_public()):
+                link.pending_name = clean_name(name)
+                save(ctx, link)
+    return ctx
+
+
+def connector_waiting(ctx: Ctx) -> bool:
+    """The kitchen has not allowed the connector's key yet."""
+    return connector_key(ctx) is None
+
+
+def consent_code(ctx: Ctx) -> str | None:
+    """The verification code of the connection that waits for consent, made now for a consent from before
+    codes existed; None when nothing waits."""
+    link = load(ctx)
+    if link.state != "consent":
+        return None
+    if not link.verify_code:
+        with ctx.rt.lock:
+            link = load(ctx)
+            if link.state == "consent" and not link.verify_code:
+                link.verify_code = verify_code()
+                save(ctx, link)
+    return link.verify_code
+
+
+def waiting_text(ctx: Ctx) -> str:
+    """What every connector tool answers while the kitchen has not pressed Allow."""
+    code = consent_code(ctx)
+    return WAITING_CODE.format(code=code) if code else WAITING
+
+
+def connector_presentation(ctx: Ctx) -> str:
+    """The Spend Pass presented with the held key and a fresh nonce, as the agent's own holder would."""
+    from ..agent.holder import Holder
+    from . import tools
+
+    key = connector_key(ctx)
+    if key is None:
+        raise MandateError(NOT_CONNECTED)
+    return Holder(seed.issuance(ctx.db_path), key, lambda: tools.nonce(ctx)).presentation()
 
 
 # routes
 
 
 def web_router() -> APIRouter:
-    """/api/agent/* and /api/demo/example behind the same gate and ctx as every /api route."""
+    """/api/agent/* behind the same gate and ctx as every /api route."""
     from . import ui
 
     r = APIRouter(prefix="/api", tags=["web"], dependencies=[Depends(ui.kitchen)])
@@ -406,13 +647,6 @@ def web_router() -> APIRouter:
     @r.post("/agent/pair", response_model=AgentState, response_model_exclude_none=True)
     def pair_route(ctx: Dep, request: Request):
         return view(ctx, request, pair(ctx))
-
-    @r.post("/agent/demo", response_model=AgentState, response_model_exclude_none=True)
-    def demo_route(ctx: Dep, request: Request):
-        if not is_demo(ctx):
-            raise HTTPException(404, "demo controls are off")
-        answer_as_demo_agent(ctx)
-        return view(ctx, request)
 
     @r.post("/agent/allow", response_model=AgentState, response_model_exclude_none=True)
     def allow_route(ctx: Dep, request: Request):
@@ -434,15 +668,6 @@ def web_router() -> APIRouter:
         disconnect(ctx)
         return view(ctx, request)
 
-    @r.post("/demo/example", response_model=AskOut, response_model_exclude_none=True)
-    def example(ctx: Dep, request: Request):
-        """The connected demo agent sends the challenge's sentence."""
-        if not is_demo(ctx):
-            raise HTTPException(404, "demo controls are off")
-        if not demo_agent_active(ctx):
-            raise HTTPException(409, "connect the demo agent first")
-        return ui.demo_ask(ctx, request, AskIn(text=EXAMPLE))
-
     return r
 
 
@@ -453,8 +678,7 @@ def agent_routes(r: APIRouter, Dep, suffix: str = "") -> None:
     def pair_agent(ctx: Dep, body: PairIn):
         """Answer the kitchen's pairing code with the agent's name and public P-256 key. The kitchen then
         sees the consent screen."""
-        agent_pair(ctx, body)
-        return PairOut(status="consent")
+        return PairOut(status="consent", verify_code=agent_pair(ctx, body))
 
     @r.get("/pass", response_model=PassOut, response_model_exclude_none=True, operation_id=f"get_pass{suffix}")
     def get_pass(ctx: Dep, code: str):

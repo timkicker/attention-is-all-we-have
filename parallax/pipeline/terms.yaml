@@ -1,0 +1,41 @@
+# Words each edition uses for the Mainila shots. term_hit marks claim lives using them that stood within three
+# sentences of an anchor sentence of the same section (pipeline/load.py near_anchor). Patterns are stems, matched
+# case-insensitively, so inflected forms count.
+concept: mainila_framing
+anchor: "Mainil|Майнил|Майніл"
+terms:
+  staged:
+    gloss_en: staged
+    fi: "lavast"
+    de: "inszenier"
+    en: "\\bstaged\\b"
+    ru: "инсценир"
+    uk: "інсцен"
+  fabricated:
+    gloss_en: fabricated
+    fi: "tekaist"
+    uk: "фальсифік|сфабрик"
+  pretext:
+    gloss_en: pretext
+    de: "Vorwand"
+  alleged:
+    gloss_en: allegedly
+    de: "angeblich"
+  provocation:
+    gloss_en: provocation
+    sv: "provokation"
+    ru: "провокац"
+    et: "provok|provots"
+    uk: "провокац"
+  proven:
+    gloss_en: proven
+    sv: "bevisas"
+  reported:
+    gloss_en: reported
+    en: "\\breported\\b"
+  false_flag:
+    gloss_en: false flag
+    en: "false.flag"
+  soviet_account:
+    gloss_en: by the Soviet side's account
+    ru: "по заявлению советской стороны"

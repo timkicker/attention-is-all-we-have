@@ -5,6 +5,7 @@ import threading
 from dataclasses import replace
 
 import pytest
+from asking import stockout
 from conftest import CODE
 from fastapi.testclient import TestClient
 
@@ -23,7 +24,7 @@ def client(ctx):
 def waiting(client, ctx):
     """Scene 3: the stock-out of 466375 sends a swap to the owner. Returns the waiting order id."""
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
-    assert client.post("/api/demo/stock-out").status_code == 200
+    stockout()
     r = client.post("/agent/v1/requests", headers={"Authorization": f"SD-JWT {h.presentation()}"}, json={
         "lines": [{"productId": "466375", "quantity": 200, "unit": "BAG"}], "deliverBy": "2026-11-16",
         "idempotencyKey": "mozz-abuse"})

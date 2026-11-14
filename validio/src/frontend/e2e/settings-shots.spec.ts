@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { CODE, demoLogin, slop } from "./helpers";
 
-// Settings, the Inbox checklist and the example request in every state, at
+// Settings and the Inbox checklist in every state, at
 // 1280 and 390, light and dark. Runs only with SETTINGS_SHOTS=<dir>.
 const OUT = process.env.SETTINGS_SHOTS;
 const VIEWS = [
@@ -77,12 +77,8 @@ for (const v of VIEWS) {
     await go("/login");
     await demoLogin(page);
     await go("/");
-    await expect(page.getByTestId("example")).toBeVisible();
-    await shoot("inbox-example");
-    await page.getByTestId("example-send").click();
-    // The fixture's answer is the recorded milk request, already in the list: no second row.
-    await expect(page.getByTestId("example-send")).toBeEnabled();
-    await shoot("inbox-example-sent");
+    await expect(page.locator("h1")).toHaveText("Inbox");
+    await shoot("inbox-demo");
 
     await go("/settings");
     await expect(page.getByTestId("diet-FREE_FROM_LACTOSE")).toHaveAttribute("aria-checked", "true");

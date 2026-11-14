@@ -3,6 +3,7 @@
   /// jumps to its section; on the phone the sections follow one another in
   /// one list, Log out last.
   import { onMount } from "svelte";
+  import { Button } from "@arlen/ui-kit/components/ui/button";
   import { chrome } from "$lib/chrome.svelte";
   import { session } from "$lib/owner.svelte";
   import { settingsApi, type Settings } from "$lib/settings";
@@ -73,7 +74,7 @@
         </section>
       {/each}
       {#if chrome.phone}
-        <button type="button" class="out-row" data-testid="log-out" onclick={logOut}>Log out</button>
+        <Button variant="outline" class="out-row" data-testid="log-out" onclick={logOut}>Log out</Button>
       {/if}
     {/if}
   </div>
@@ -136,22 +137,10 @@
   .sec + .sec {
     margin-top: 32px;
   }
-  .out-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  /* A plain secondary button: red stays for blocked, rejected and a broken chain. */
+  .set-body :global(.out-row) {
     width: 100%;
     min-height: 44px;
-    margin: 32px 0 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-button);
-    background: none;
-    font: inherit;
-    font-size: var(--fs-body);
-    color: var(--v-bad-text);
-    cursor: pointer;
-  }
-  .out-row:hover {
-    background: var(--v-tint-hover);
+    margin-top: 32px;
   }
 </style>

@@ -350,7 +350,9 @@ export type LedgerKind =
   | "order"
   | "approval"
   | "simulation"
-  | "renewal";
+  | "renewal"
+  | "spend_pass"
+  | "agent";
 
 export interface LedgerEntry {
   seq: number;
@@ -366,7 +368,7 @@ export interface LedgerEntry {
   orderId?: string;
   prevHash: string;
   hash: string;
-  /** "Validio", "Owner", "Agent", "Demo" */
+  /** "Validio", "You", "Agent", "Demo" */
   actorText?: string;
   /** "10:04" on the demo clock. */
   timeText?: string;
@@ -499,28 +501,6 @@ export interface SpendPassIn {
   code?: string;
 }
 
-/** POST /api/demo/ask: the kitchen's agent on any text. Kitchen token locally, demo token too when public. */
-export interface AskIn {
-  text: string;
-}
-
-export interface AskOut {
-  /** The request the agent made. Absent when Validio refused it, e.g. no recorded Valio answers. */
-  requestId?: string;
-  /** "Gemini gemini-3.8-flash" or "fake model (no Gemini key)". */
-  model: string;
-  /** The agent's calls and Validio's answers, as the terminal pane prints them. */
-  lines: string[];
-  /** The agent's last sentence. */
-  final: string;
-}
-
-/** POST /api/demo/stock-out body. Without a body it turns the stock-out on, as before. */
-export interface StockOutIn {
-  /** false ends the simulated stock-out of 466375. */
-  on: boolean;
-}
-
 export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;
@@ -553,8 +533,9 @@ export interface Account {
 export interface AgentState {
   state: "none" | "pairing" | "consent" | "active" | "paused";
   pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
-  consent?: { name: string; keyId: string; may: string[] };
-  agent?: { name: string; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
+  /** verifyCode: "XXX-XXX", the same code the MCP agent gets in its tool answer. */
+  consent?: { name: string; keyId: string; may: string[]; verifyCode: string };
+  agent?: { name: string; kind: "agent" | "mcp"; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
   /** Newest first. */
   versions: { version: number; at: string; why: string }[];
 }
