@@ -135,7 +135,8 @@ h1.v-title {
   font-weight: 500;
 }
 .facts a,
-.lead a {
+.lead a,
+a.v-link {
   color: var(--v-fg);
   text-decoration: underline;
   text-decoration-color: var(--v-faint);
@@ -144,7 +145,8 @@ h1.v-title {
 }
 /* An underlined link: the line takes the text colour under the pointer. */
 .facts a:hover,
-.lead a:hover {
+.lead a:hover,
+a.v-link:hover {
   text-decoration-color: currentColor;
 }
 .lead {
