@@ -2,7 +2,7 @@
 // Settings and Demo). `VITE_API=live` talks to the backend; the fixture keeps
 // the kitchen's settings in localStorage, as the backend would keep them.
 import { api, ApiError, LIVE } from "$lib/api/client";
-import type { AskOut, Diet, Settings } from "$lib/api/types";
+import type { Diet, Settings } from "$lib/api/types";
 import { session } from "$lib/owner.svelte";
 
 export type { Diet, Settings };
@@ -115,7 +115,4 @@ export const settingsApi = {
     if (!/^\d{6}$/.test(b.next)) throw new ApiError(422, "next must be 6 digits");
     await later(null);
   },
-  /** The demo agent sends the challenge's sentence. The fixture points at the recorded milk request. */
-  example: (): Promise<AskOut> =>
-    LIVE ? call("POST", "/api/demo/example") : later({ requestId: "R-1", model: "fixture", lines: [], final: "Ordered alone." }),
 };
