@@ -22,7 +22,11 @@ export function askSummary(r: SupplyRequest): string[] {
     const o = l.chosen && l.options.find((x) => x.productId === l.chosen!.productId);
     return o ? [`${o.quantity ?? l.chosen!.salesQty} × ${o.displayName ?? o.name}, ${o.moneyText ?? money(o.totalCents)}`] : [];
   });
-  if (head === "Blocked" || !picked.length) out.push(`${head}: ${(r.decision.summary ?? r.decision.sentence ?? "Nothing was ordered").replace(/\.?$/, ".")}`);
+  if (head === "Blocked" || !picked.length) {
+    const said = (r.decision.summary ?? r.decision.sentence ?? "Nothing was ordered").replace(/\.?$/, ".");
+    // A sentence that already starts with the ending ("Blocked: ...") is not prefixed twice.
+    out.push(said.toLowerCase().startsWith(head.toLowerCase()) ? said : `${head}: ${said}`);
+  }
   else out.push(`${head}: ${picked.join("; ")}.`);
   return out;
 }
