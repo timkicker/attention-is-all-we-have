@@ -10,6 +10,7 @@
   import VHead from "$lib/v/VHead.svelte";
   import VState from "$lib/v/VState.svelte";
   import VStatusRow from "$lib/v/VStatusRow.svelte";
+  import { shortReason } from "$lib/ask";
 
   const inbox = live(() => api.inbox());
   const pass = live(() => api.spendPass("M-1"));
@@ -59,7 +60,7 @@
                 id="inbox-{i.id}"
                 pill={requestPill(i.status)}
                 title={i.titleText ?? i.displayName ?? i.title ?? i.text}
-                sub={i.status === "waiting" ? (i.summary ?? simulated(i.id)) : undefined}
+                sub={i.status === "waiting" ? (i.summary ? shortReason(i.summary) : simulated(i.id)) : undefined}
                 subTestid={i.status === "waiting" ? `inbox-summary-${i.id}` : undefined}
                 end={i.moneyText ?? money(i.totalCents)}
               />
