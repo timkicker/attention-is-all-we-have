@@ -2,7 +2,7 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := eval bench l-scale
+A_STUBS := bench l-scale
 
 .PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load m-embed contested judge gloss checks-write dump release test-a $(A_STUBS)
 
@@ -75,4 +75,18 @@ atlas:
 
 sources-data:
 	$(PY) -m pipeline.sources --topic $(TOPIC)
+
+gold:
+	$(PY) -m eval.gold
+
+LABELLER ?= human
+label:
+	$(PY) -m eval.label --labeller $(LABELLER)
+
+JUDGE_PROMPTS ?= judge-v1
+eval:
+	$(PY) -m eval.score --judge $(JUDGE_PROMPTS)
+
+answers:
+	$(PY) -m pipeline.record_answers
 
