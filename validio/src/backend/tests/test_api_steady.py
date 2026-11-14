@@ -257,3 +257,12 @@ def test_steady_orders_placed_alone_are_placed_by_validio(client):
     assert alone and all(e["actor"] == "validio" for e in alone)
     assert alone[0]["displayText"].startswith("Placed O-")
     assert alone[0]["displayText"].endswith("for 303.00 € without asking you.")
+
+
+def test_steady_short_texts(client):
+    # D10, D11: one short line per held line, the long sentence stays for the fold and the ledger
+    seed.set_stockout(seed.db_path(), True)
+    got = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())
+    assert got["466375"]["shortText"] == "None in stock at Valio."
+    assert got["471376"]["shortText"] == "27 of 30 in stock."
+    assert "shortText" not in got["464306"]

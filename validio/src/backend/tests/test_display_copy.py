@@ -96,10 +96,10 @@ def test_chosen_swap_says_what_it_is(client, holder):
     opts = [*line["options"], *(line.get("substitutes") or []), *(line.get("beyondList") or [])]
     chosen = [o for o in opts if o["verdict"] == "chosen"]
     assert [o["productId"] for o in chosen] == ["465256"]
-    assert chosen[0]["shortText"] == "Cheapest lactose-free swap, delivered by 16 Nov."
+    assert chosen[0]["shortText"] == "Cheapest lactose-free swap."
     r1 = client.get("/api/requests/R-1").json()["lines"][0]
     assert [o["shortText"] for o in r1["options"] if o["verdict"] == "chosen"] == [
-        "Cheapest safe option, always delivered in full."]
+        "Cheapest, always delivered in full."]
 
 
 def test_spend_pass_says_what_the_agent_sees(client, holder):
@@ -125,10 +125,8 @@ def test_checked_facts_as_a_list(client, holder):
     ask_milk(client, holder)
     line = client.get("/api/requests/R-1").json()["lines"][0]
     milk = next(o for o in line["options"] if o["productId"] == "464306")
-    assert milk["checks"] == [
-        "Stock: Valio gives no real count", "Price 1.01 €", "Order cut-off 15 Nov 17:00",
-        "Delivered as ordered in 100 % of orders", "Footprint 1.1 kg CO2e per kg", "Label Hyvää Suomesta",
-        "Allergens: milk", "Free from lactose", "Vegetarian"]
+    assert milk["checks"] == ["Price 1.01 €", "Order cut-off 15 Nov 17:00", "Delivered in full in 100 % of orders",
+                              "Free from lactose"]
 
 
 def test_why_reasons_leave_out_the_short_text(client, holder):
@@ -153,3 +151,30 @@ def test_why_reasons_unit():
     assert d.why_reasons(["Order cut-off 12 Nov 15:00 has passed."], "Order cut-off 12 Nov 15:00 has passed.") == []
     assert d.why_reasons(["A.", "1,400.00 € is over the hard cap of 1,200.00 €."],
                          "1,400.00 € is over the 1,200.00 € hard cap.") == ["A."]
+
+
+def test_density_round_request_texts(client, holder):
+    _milk_and_mozzarella(client, holder)
+    r1 = client.get("/api/requests/R-1").json()
+    r2 = client.get("/api/requests/R-2").json()
+    # D1: when Valio was read live, and the asked-for live count for the chosen row's fold
+    assert r1["liveAt"] == "10:00" and r2["liveAt"] == "10:14"
+    assert r2["liveCountText"] == "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags."
+    assert "liveCountText" not in r1
+    # D2: the only place that names the stock-out, "simulated" once
+    assert r2["leadText"] == "Out of stock (simulated). Swap not on Valio's list."
+    assert "leadText" not in r1
+    shown = [r2["leadText"], r2["liveCountText"], r2["askedFor"]["stateText"]]
+    assert sum("simulated" in s.lower() for s in shown[:2]) == 1
+    # D5: price side and chosen rows
+    opts = {o["productId"]: o for o in r1["lines"][0]["options"]}
+    assert opts["464401"]["shortText"] == "+90.00 €"
+    assert opts["464306"]["shortText"] == "Cheapest, always delivered in full."
+    line = r2["lines"][0]
+    chosen = next(o for o in [*line["options"], *(line.get("beyondList") or [])] if o["verdict"] == "chosen")
+    assert chosen["shortText"] == "Cheapest lactose-free swap."
+    # D6: at most five facts in a fixed order, no CO2, labels, allergens or raw stock placeholder
+    assert opts["464306"]["checks"] == ["Price 1.01 €", "Order cut-off 15 Nov 17:00",
+                                        "Delivered in full in 100 % of orders", "Free from lactose"]
+    assert chosen["checks"] == ["Price 18.01 €", "Order cut-off 15 Nov 17:00",
+                                "Delivered in full in 100 % of orders", "Free from lactose"]

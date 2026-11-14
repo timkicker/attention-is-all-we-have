@@ -151,6 +151,13 @@ def asked_apart(ctx: Ctx, v: SupplyRequestView) -> SupplyRequestView:
         if pid == STOCKOUT_ID and ctx.stockout():
             real = ctx.real_stock()
             state = "Simulated stock-out for this demo." + (f" Valio's live count is {qty_text(*real)}." if real else "")
+            name = hit.short_name or hit.name
+            if real:
+                v.live_count_text = f"Valio's live count of {name[:1].lower()}{name[1:]}: {qty_text(*real)}."
+            chosen = next((o for xs in lists for o in xs if o.verdict == "chosen"), None)
+            swap = ("No swap found." if chosen is None or not chosen.is_substitute
+                    else "Swap from Valio's list." if chosen.on_valio_list else "Swap not on Valio's list.")
+            v.lead_text = f"Out of stock (simulated). {swap}"
         v.asked_for = AskedFor(product_id=pid, display_name=hit.short_name or hit.name, state_text=state)
         break
     return v

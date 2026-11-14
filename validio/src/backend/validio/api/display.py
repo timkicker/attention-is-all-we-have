@@ -195,14 +195,14 @@ def short_text(verdict: str, reasons: list[str]) -> str | None:
     text = " ".join(reasons)
     more = re.search(r"([\d,.]+ €) more than the cheapest", text)
     if more:
-        return f"{more.group(1)} more."
+        return f"+{more.group(1)}"
     if "Cheapest safe option" in text:
         if "every time" in text:
-            return "Cheapest safe option, always delivered in full."
+            return "Cheapest, always delivered in full."
         seen = re.search(r"as ordered (\d+) of (\d+) times", text)
         if seen:
-            return f"Cheapest safe option, {round(100 * int(seen.group(1)) / int(seen.group(2)))} % delivered in full."
-        return "Cheapest safe option."
+            return f"Cheapest, {round(100 * int(seen.group(1)) / int(seen.group(2)))} % delivered in full."
+        return "Cheapest."
     first = reasons[0]
     if _words(first) <= SHORT_WORDS:
         return first
@@ -215,11 +215,7 @@ def swap_text(reasons: list[str], diet: list[str], deliver_by: str | None) -> st
     if not any("Cheapest safe option" in r for r in reasons):
         return None
     kind = " and ".join(w.replace(" ", "-") for w in diet) or "safe"
-    when = ""
-    if deliver_by:
-        d = date.fromisoformat(deliver_by[:10])
-        when = f", delivered by {d.day} {d:%b}"
-    return f"Cheapest {kind} swap{when}."
+    return f"Cheapest {kind} swap."
 
 
 SEES = (("limits", ("autoLimitCents", "auto_limit_cents", "hardCapCents", "hard_cap_cents")),
@@ -245,24 +241,30 @@ def sees_text(disclosed: list[str], hidden: list[str]) -> str:
 
 CHECKED = ("attested", "attested_until", "consistent")
 CHECK_WORDS = {"quantity": "Stock: {}", "price": "Price {}", "cutoff": "Order cut-off {}",
-               "reliability": "Delivered as ordered in {}", "carbon": "Footprint {}", "label": "Label {}",
+               "reliability": "Delivered in full in {}", "carbon": "Footprint {}", "label": "Label {}",
                "allergens": "Allergens: {}"}
 
 
-def checks(facts) -> list[str]:
-    """The facts Validio confirmed, one short line each: "Price 1.01 €", "Free from lactose". Supplier text
-    and unchecked claims stay out."""
+CHECK_ORDER = ("price", "cutoff", "reliability")
+CHECK_MAX = 5
+
+
+def checks(facts, diet: list[str] | None = None) -> list[str]:
+    """At most five facts Validio confirmed, in a fixed order: price, order cut-off, delivered in full, then
+    the diet claims ("Free from lactose"). With `diet`, only the claims that diet asks for. Supplier text,
+    unchecked claims, the footprint, labels and allergens stay out."""
+    from ..matching.need import CLAIM_NAMES
+    ok = [f for f in facts if f.grade in CHECKED and (f.value_text or f.value)]
     out = []
-    for f in facts:
-        value = f.value_text or f.value
-        kind = f.field.split(":")[0]
-        if f.grade not in CHECKED or not value:
-            continue
-        if kind == "claim":
-            out.append(cap(str(value)))
-        elif kind in CHECK_WORDS:
-            out.append(CHECK_WORDS[kind].format(value))
-    return out
+    for kind in CHECK_ORDER:
+        for f in ok:
+            if f.field == kind:
+                out.append(CHECK_WORDS[kind].format(f.value_text or f.value))
+    for f in ok:
+        kind, _, code = f.field.partition(":")
+        if kind == "claim" and (diet is None or CLAIM_NAMES.get(code) in diet):
+            out.append(cap(str(f.value_text or f.value)))
+    return out[:CHECK_MAX]
 
 
 def asks_text(sentence: str | None) -> str | None:
@@ -279,9 +281,9 @@ def why_reasons(reasons: list[str], short: str | None) -> list[str]:
         return list(reasons)
     s = short.rstrip(".")
     marks = []
-    if s.endswith(" € more"):
+    if s.startswith("+") and s.endswith(" €"):
         marks.append("more than the cheapest")
-    if s.startswith("Cheapest "):
+    if s.startswith("Cheapest"):
         marks.append("Cheapest safe option")
     if s.endswith(" hard cap"):
         marks.append("is over the hard cap")
