@@ -1,4 +1,20 @@
-from eval.score import agreement, judge_report, kappa, recall_at
+from eval.score import agreement, headline, judge_report, kappa, recall_at
+
+
+def test_headline_has_the_keys_the_app_reads():
+    judge = {
+        "judge-v1": {"pairs": 50, "accuracy": 0.7, "kappa": 0.55, "model": "m"},
+        "judge-v2": {"pairs": 50, "accuracy": 0.8, "kappa": 0.66, "model": "m"},
+    }
+    assert headline(judge, "judge-v1") == {
+        "accuracy": 0.7,
+        "kappa": 0.55,
+        "n": 50,
+        "prompt_version": "judge-v1",
+        "model": "m",
+    }
+    assert headline(judge, "judge-v9")["prompt_version"] == "judge-v2"  # default not measured: best one
+    assert headline({"judge-v1": {"pairs": 0, "accuracy": None, "kappa": None, "model": None}}, "judge-v1") == {}
 
 
 def test_kappa_perfect_and_chance():
