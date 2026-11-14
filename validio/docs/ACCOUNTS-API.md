@@ -55,7 +55,7 @@ Account = {
   in 15 minutes answer 429.
 * Demo: a browser that already holds a demo session gets the same copy back (reload keeps the state). A
   new browser gets a fresh copy of the filled demo kitchen: the five scenes played, rules saved, no
-  agent connected yet (the person presses "Connect the demo agent", then Allow). Copies older than 48 h
+  agent connected yet (the person connects a real agent over MCP or the pairing code, then Allow). Copies older than 48 h
   are deleted.
 * Phone link: a one-time link, valid 10 minutes, that logs the phone into the same account and opens
   `path`. The web app turns `url` into a QR code or a copy button.
@@ -66,7 +66,7 @@ Account = {
 AgentState = {
   state: "none" | "pairing" | "consent" | "active" | "paused",
   pairing?: {code: string, expiresAt: string, mcpUrl: string, apiUrl: string},   // state "pairing"
-  consent?: {name: string, keyId: string, may: string[]},                          // state "consent"
+  consent?: {name: string, keyId: string, may: string[], verifyCode: string},      // state "consent"
   agent?: {name: string, kind: "agent" | "mcp", keyId: string, connectedAt: string,
            lastUsedAt: string | null, passId: string, passVersion: number},        // "active" / "paused"
   versions: [{version: number, at: string, why: string}]                           // newest first
@@ -81,13 +81,18 @@ AgentState = {
 * `may`: the Rules in words, e.g. `["Order alone up to 1,200.00 €", "Ask you up to 2,000.00 €",
   "Never above 2,000.00 €", "Substitutes from Valio's list"]`.
 * `keyId`: the JWK thumbprint of the agent's key, first 8 characters, for the Technical fold.
+* `verifyCode`: `XXX-XXX` from `A-Z` and `2-9` without `0 O 1 I L`, new for every connection, made when
+  the pairing turns into consent (the first request on the connector URL, or a signing agent's
+  `POST /agent/v1/.../pair`, which gets it back as `verifyCode`). While consent waits, every tool call on
+  `/mcp/c/<token>/` answers an error that starts "Waiting for the kitchen to press Allow in Validio. Show
+  the user this verification code: <CODE>. It must match the code on the Validio Agent page." The person
+  presses Allow only when the agent shows the same code. Cleared on allow, deny, cancel and disconnect.
 * `versions[].why`: "Agent connected", "Rules changed", "Diet changed", "Agent disconnected".
 
 | Method | Path | Body | Answer |
 | --- | --- | --- | --- |
 | GET | `/api/agent` | none | `AgentState` |
 | POST | `/api/agent/pair` | none | `AgentState` in `pairing` (a new code each time) |
-| POST | `/api/agent/demo` | none | `AgentState` in `consent`: the server's demo agent answered the code (demo copies only) |
 | POST | `/api/agent/allow` | none | `AgentState` in `active`; the pass is signed again to the agent's key, version +1 |
 | POST | `/api/agent/deny` | none | `AgentState` in `none` |
 | POST | `/api/agent/pause` | `{paused: boolean}` | `AgentState` in `paused` or `active` |
@@ -119,8 +124,9 @@ but cannot sign a key binding. The pairing screen serves them too, with no extra
   is kept in clear only while pairing waits (so a reload still shows the URL); from Allow on only its SHA-256
   is kept.
 * The first MCP request on that URL while pairing waits moves the kitchen to `consent` with
-  `consent.name` "MCP agent". Until Allow every tool answers "Waiting for the kitchen to press Allow in
-  Validio".
+  `consent.name` "MCP agent" and a fresh `consent.verifyCode`. Until Allow every tool answers an error that
+  starts "Waiting for the kitchen to press Allow in Validio. Show the user this verification code: <CODE>. It
+  must match the code on the Validio Agent page."
 * Allow signs M-1 again to the held key (version +1, ledger entry "Connected MCP agent..."); `agent.kind` is
   `"mcp"` (`"agent"` for an agent with its own key, which pairs with the code as before).
 * From then on `/mcp/c/<token>/` offers the same MCP tools as `/mcp/k/<account>/`, without `spendPass`;
@@ -208,13 +214,10 @@ then find nothing.
 
 | Method | Path | Body | Answer |
 | --- | --- | --- | --- |
-| POST | `/api/demo/example` | none | `AskOut` (today's shape): the connected demo agent sends "1000 litres of lactose-free milk by Monday, budget 1200 euro" |
-| POST | `/api/demo/ask` | `{text}` | `AskOut`, as today, through this account's agent |
-| POST | `/api/demo/stock-out` | `{on}` | `DemoState`, as today |
 | POST | `/api/demo/reset` | none | `DemoState`; this copy goes back to the filled demo kitchen |
 
-`/api/demo/example` answers 409 "connect the demo agent first" when no demo agent is active, and the
-agent's own refusal (in `lines` and `final`) when it is paused.
+There is no shortcut that orders or changes stock: requests come only from an agent over MCP or the
+agent API. The scene 3 stock-out is set by the template build (`scripts/demo_check.py`) in the store.
 
 ## Approvals
 
@@ -240,8 +243,8 @@ How backend code gets the current account's store (code in `src/backend/validio/
   `/agent/v1/k/{account}` and `/mcp/k/{account}/`. `get_accounts().get(id)` / `.update(id, **cols)` read
   and write the account row (add columns in `SCHEMA`; `create table if not exists` will not add them to an
   existing db, so add an `alter table` guard when you add one).
-* **Code without a request** (MCP tools, the in-process demo agent): `get_ctx()` returns the Ctx in the
-  contextvar `state.current` when set, else the local kitchen. `/api/demo/ask` sets it around its
+* **Code without a request** (MCP tools, an in-process MCP client in tests): `get_ctx()` returns the Ctx in
+  the contextvar `state.current` when set, else the local kitchen. An in-process client sets it around its
   `asyncio.run`, so the MCP tools in that run work on the account. The streamable-HTTP MCP sessions do
   not inherit a contextvar from middleware: read the account from the path there.
 * **Template:** `make template` plays the five scenes once into `data/template/` (validio.db plus keys).

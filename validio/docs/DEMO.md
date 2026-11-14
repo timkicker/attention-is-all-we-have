@@ -14,19 +14,19 @@ Each browser gets its own copy of the demo kitchen. Two jurors never click in ea
 
 A thin bar on top reads "Demo kitchen", the approval code 246810 and **Reset**. The code is shown on purpose. A juror has no other way to know it. The sidebar holds Inbox, Orders, Agent and Ledger. The kitchen's name at the bottom opens Settings.
 
-### 2 Connect the demo agent
+### 2 Connect an agent
 
-Click **Agent**, then **Connect agent**. The page shows a pairing code in large letters with **Copy**. A real agent would take that code. The MCP address sits in a closed fold.
+Click **Agent**, then **Connect agent**. The page shows the MCP connector URL and a pairing code. Validio has no built-in agent: add the connector URL to a real agent (a chat app's custom connector, a coding tool, `scripts/connector_check.py`), or let a signing agent answer the pairing code.
 
-Click **Connect the demo agent**. A consent screen replaces the code. It names the agent and lists what it may do in words, for example "Order alone up to 1,200.00 €" and "Never above 2,000.00 €". Click **Allow**.
+The agent's first request turns the page into a consent screen. It shows a verification code like `K7P-3QX`, names the agent and lists what it may do in words, for example "Order alone up to 1,200.00 €" and "Never above 2,000.00 €". Until Allow, every tool call of the agent answers "Waiting for the kitchen to press Allow in Validio. Show the user this verification code: K7P-3QX. ..." Check that the agent shows the same code, then click **Allow**.
 
 The Agent page now shows Active, when it was last used, its **Rules**, **Pause**, **Disconnect** and **See in ledger**. Validio signed the Spend Pass again to the agent's own key. The Technical fold shows the raw pass and its versions.
 
 If the demo copy opens with the agent already connected, click **Disconnect** and start this step again.
 
-### 3 Send the example request
+### 3 The agent sends the example request
 
-Click **Inbox**. The setup checklist (Kitchen, Rules, Connect agent) is ticked on the demo kitchen. Click **Send example request**. The demo agent sends the challenge's sentence: "1000 litres of lactose-free milk by Monday, budget 1200 euro".
+Click **Inbox**. The setup checklist (Kitchen, Rules, Connect agent) is ticked on the demo kitchen. Ask the connected agent for the challenge's sentence: "1000 litres of lactose-free milk by Monday, budget 1200 euro".
 
 What should appear: the request as "Ordered alone", 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €. That is under the 1,200.00 € the agent may spend alone. Open it to show the options and the planted line Validio ignored, as in scene 2 below.
 
@@ -34,11 +34,11 @@ What should appear: the request as "Ordered alone", 1,000 × 1 l of lactose-free
 
 Click **Agent**, then **Rules**. Set "Orders alone up to" to 500 €. Click **Save**. The page asks for the approval code. Type 246810. The pass gets a new version and the ledger a new entry.
 
-Back in **Inbox**, click **Send example request** again. This time the request says "Waiting for you". Open it and click **Open approval**. In the 390 px window type 246810 and tap **Approve**. Validio asks Valio again for price and stock before it places the order.
+Ask the agent for the same again. This time the request says "Waiting for you". Open it and click **Open approval**. In the 390 px window type 246810 and tap **Approve**. Validio asks Valio again for price and stock before it places the order.
 
 ### 5 Pause the agent
 
-On the Agent page click **Pause**. The status turns to Paused. In **Inbox** click **Send example request**. The agent is refused with "the kitchen paused this agent" and nothing is ordered.
+On the Agent page click **Pause**. The status turns to Paused. Ask the agent again. It is refused with "the kitchen paused this agent" and nothing is ordered.
 
 Click **See in ledger**. The ledger is filtered to this agent. It shows connected, pass replaced, paused and the refusal, each as one sentence. Click **Pause** again to resume. The same pass comes back without a new version.
 
@@ -67,7 +67,7 @@ Do the first run in the README once (`make setup`, the key in `.env`, `make reco
 make demo                      # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
 
-The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP to that running server, so each request shows up in the browser's Inbox. Scene 3 needs the stock-out switched on first in the page menu. Scenes 4 and 5 happen in the browser only. When nothing answers on port 8410 the agent starts its own server in a temporary folder and the browser stays empty.
+The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP to that running server, so each request shows up in the browser's Inbox. Scene 3 needs the simulated stock-out, which has no button any more: run it with `make agent SCENE=3` and nothing on port 8410 (the agent's own server switches it on), or use the template, which `make template` fills with scene 3 already played. Scenes 4 and 5 happen in the browser only. When nothing answers on port 8410 the agent starts its own server in a temporary folder and the browser stays empty.
 
 The server is ready when uvicorn prints `Uvicorn running on http://127.0.0.1:8410`. `make demo` always builds the web app against the API. Only `make demo-mock` and `npm run dev` without `VITE_API=live` show recorded answers from `src/frontend/src/lib/api/snapshots/` instead. Open http://127.0.0.1:8410 at 1280 px and keep a second window at 390 px for the phone page. `make demo-check` in another shell starts its own server on port 8418 and leaves the running demo alone, so it is safe as a last check (it should end with `ALL SCENES OK`).
 
@@ -94,7 +94,7 @@ The point to say out loud is that the planted line asks the agent to buy a milk 
 
 ### Scene 3, owner approves a swap (0:45)
 
-Open the page menu at the top right and click **Simulate stock-out of mozzarella**. The item then reads "Stock-out simulated" and cannot be clicked again. Run `make agent SCENE=3`. The pane ends with "Order O-2 waits for the owner's approval on the phone."
+The stock-out has no switch in the web app any more (see above). Run `make agent SCENE=3`. The pane ends with "Order O-2 waits for the owner's approval on the phone."
 
 The Inbox shows the mozzarella request as "Waiting for you" at 180.10 € with "Out of stock (simulated). The swap needs you." Click it. What must appear:
 
