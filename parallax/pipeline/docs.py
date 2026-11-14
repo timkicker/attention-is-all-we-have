@@ -15,7 +15,7 @@ def _get(cur, k):
 
 
 def gemini_md(cur) -> str:
-    jc, gl, ann = _get(cur, "judge_calls"), _get(cur, "gloss"), _get(cur, "align_ann_vs_exact")
+    jc, gl, ann = _get(cur, "judge_runs"), _get(cur, "gloss"), _get(cur, "align_ann_vs_exact")
     report = json.loads(REPORT.read_text(encoding="utf-8")) if REPORT.exists() else {}
     pairs = sum((x or {}).get("pairs", 0) for x in jc.values())
     calls = sum((x or {}).get("calls", 0) for x in jc.values())
@@ -100,7 +100,38 @@ def verda_md(cur) -> str:
         "",
     ]
     if v:
-        L += ["## The Verda GPU job", "", f"{v}", ""]
+        m, ls = v["m_long_lives"], v["l_sample"]
+        speedup = round(m["texts_per_s"] / v["laptop_ollama_texts_per_s"])
+        L += [
+            "## The Verda GPU job",
+            "",
+            f"- Instance: `{v['instance_type']}` ({v['gpu']}), spot at {v['spot_price_eur_h']} EUR/h in "
+            f"{v['location']}, created and deleted through the Verda Public API (`pipeline/verda.py`).",
+            f"- Setup: {v['setup']}.",
+            "- Job: `engine/embed_batch.py` on the GPU host, sentence-transformers `BAAI/bge-m3` in fp16, "
+            "texts sorted by "
+            "length, batch 256, vectors L2-normalised.",
+            "",
+            "| Work | Sentences | Seconds | Sentences/s |",
+            "|---|---|---|---|",
+            f"| Long-lived sentences of M (alive, or lived a year or more) | {m['texts']} | {m['seconds']} | "
+            f"{m['texts_per_s']} |",
+            f"| Sample of L ({ls['articles']} articles) | {ls['texts']} | {ls['seconds']} | {ls['texts_per_s']} |",
+            f"| Laptop, Ollama, same model | | | {v['laptop_ollama_texts_per_s']} |",
+            "",
+            f"The GPU is about {speedup} times faster than the laptop. Credits spent: {v['credits_spent_eur']} EUR.",
+            "",
+            f"What failed: {v['what_failed']}",
+            "",
+        ]
+        if lsc.get("distinct"):
+            hours = lsc["distinct"] / ls["texts_per_s"] / 3600
+            lsc = {
+                **lsc,
+                "embed_note": f"at the measured {ls['texts_per_s']} sentences/s one A100 embeds them in "
+                f"about {hours * 60:.0f} minutes, about {hours * v['spot_price_eur_h']:.2f} EUR "
+                "at the spot price",
+            }
     else:
         L += [
             "## Status",
