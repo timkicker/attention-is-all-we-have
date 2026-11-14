@@ -15,7 +15,6 @@
     { id: "dark", label: "Dark" },
   ];
   let sheet = $state(false);
-  const stockLabel = $derived(chrome.stockIsOut ? "Stock-out simulated" : "Simulate stock-out of mozzarella");
 
   // A radio group is one tab stop; the arrows move the choice (WAI-ARIA radio).
   function arrows(e: KeyboardEvent) {
@@ -46,7 +45,12 @@
     <div class="v-sheet">
       <div class="grab" aria-hidden="true"></div>
       {#if !LIVE}<p class="mi note">Demo data, recorded from the backend</p>{/if}
-      <button type="button" class="mi" id="stock-out" data-testid="stock-out" disabled={chrome.stockIsOut} onclick={() => run(demoActions.stockOut)}>{stockLabel}</button>
+      <button type="button" class="mi" id="menu-ask" data-testid="menu-ask" onclick={() => run(demoActions.ask)}>Ask as the kitchen's agent</button>
+      {#if chrome.stockIsOut}
+        <button type="button" class="mi" id="stock-back" data-testid="stock-back" onclick={() => run(demoActions.stockBack)}>End the stock-out</button>
+      {:else}
+        <button type="button" class="mi" id="stock-out" data-testid="stock-out" onclick={() => run(demoActions.stockOut)}>Simulate stock-out of mozzarella</button>
+      {/if}
       <button type="button" class="mi" id="menu-reset" onclick={() => run(demoActions.reset)}>Start over</button>
       <div class="msep" role="separator"></div>
       <p class="mlabel" id="theme-label">Theme</p>
@@ -72,7 +76,12 @@
     </DropdownMenu.Trigger>
     <DropdownMenu.Content align="end" class="v-menu">
       {#if !LIVE}<DropdownMenu.Item disabled>Demo data, recorded from the backend</DropdownMenu.Item>{/if}
-      <DropdownMenu.Item id="stock-out" data-testid="stock-out" disabled={chrome.stockIsOut} onSelect={() => void demoActions.stockOut()}>{stockLabel}</DropdownMenu.Item>
+      <DropdownMenu.Item id="menu-ask" data-testid="menu-ask" onSelect={() => void demoActions.ask()}>Ask as the kitchen's agent</DropdownMenu.Item>
+      {#if chrome.stockIsOut}
+        <DropdownMenu.Item id="stock-back" data-testid="stock-back" onSelect={() => void demoActions.stockBack()}>End the stock-out</DropdownMenu.Item>
+      {:else}
+        <DropdownMenu.Item id="stock-out" data-testid="stock-out" onSelect={() => void demoActions.stockOut()}>Simulate stock-out of mozzarella</DropdownMenu.Item>
+      {/if}
       <DropdownMenu.Item id="menu-reset" onSelect={() => void demoActions.reset()}>Start over</DropdownMenu.Item>
       <DropdownMenu.Separator />
       <DropdownMenu.Label>Theme</DropdownMenu.Label>

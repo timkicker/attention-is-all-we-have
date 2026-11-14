@@ -11,6 +11,7 @@
   import { notePage } from "@arlen/ui-kit/components/ui/page/history";
   import { CalendarSync, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { ApiError, api, LIVE } from "$lib/api/client";
+  import type { AskOut } from "$lib/api/types";
   import { owner } from "$lib/owner.svelte";
   import { CLOCK, dayTime } from "$lib/format";
   import { poll } from "$lib/poll";
@@ -96,7 +97,46 @@
     }
   }
   // The fixture answers at once; with the backend the kitchen's agent asks again first.
-  demoActions.stockOut = () => demo(() => api.stockOut(), "/");
+  demoActions.stockOut = () => demo(() => api.stockOut(true), "/");
+  demoActions.stockBack = () => demo(() => api.stockOut(false), page.url.pathname);
+  demoActions.ask = async () => {
+    askOpen = true;
+  };
+
+  // "Ask as the kitchen's agent": the owner's own text goes through the same
+  // agent loop as `make agent`; the dialog shows its calls, then the request.
+  const EXAMPLES = ["500 litres of lactose-free milk by Monday", "1500 litres of lactose-free milk by Monday", "50 bags of lactose-free mozzarella by Monday"];
+  let askOpen = $state(false);
+  let askText = $state("");
+  let asking = $state(false);
+  let askProblem = $state("");
+  let answer = $state<AskOut | null>(null);
+  async function sendAsk(e?: SubmitEvent) {
+    e?.preventDefault();
+    const text = askText.trim();
+    if (!text || asking) return;
+    asking = true;
+    askProblem = "";
+    answer = null;
+    try {
+      answer = await api.ask(text);
+      bump();
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 403) {
+        then = () => void sendAsk();
+        tokenValue = "";
+        demoProblem = owner.demoToken ? "That token is not right." : "";
+        tokenOpen = true;
+      } else askProblem = err instanceof Error ? err.message : String(err);
+    } finally {
+      asking = false;
+    }
+  }
+  function closeAsk() {
+    askOpen = false;
+    answer = null;
+    askProblem = "";
+  }
   demoActions.reset = () => demo(() => api.reset(), "/");
 
   function useToken(e: SubmitEvent) {
@@ -192,6 +232,35 @@
     <div class="token-buttons">
       <Button variant="outline" onclick={() => (tokenOpen = false)}>Cancel</Button>
       {#if then || !demoProblem}<Button type="submit">{then ? "Use and run" : "Use"}</Button>{/if}
+    </div>
+  </form>
+</Dialog>
+
+<Dialog open={askOpen} onClose={closeAsk} labelledby="ask-title" size="md">
+  <form class="token ask" onsubmit={sendAsk} data-testid="ask-dialog">
+    <h2 id="ask-title">Ask as the kitchen's agent</h2>
+    <label for="ask-input">What the kitchen needs. The agent sends it to Validio with the Spend Pass.</label>
+    <Input id="ask-input" data-testid="ask-input" bind:value={askText} maxlength={300} autocomplete="off" placeholder={EXAMPLES[0]} />
+    <p class="ex">
+      Recorded at Valio:
+      {#each EXAMPLES as x, i (x)}<button type="button" class="ex-btn" onclick={() => (askText = x)}>{x}</button>{i < EXAMPLES.length - 1 ? ", " : "."}{/each}
+    </p>
+    {#if asking}<p role="status">The agent is asking Validio…</p>{/if}
+    {#if answer}
+      {#if answer.lines.length}
+        <ol class="lines" data-testid="ask-lines">
+          {#each answer.lines as l, i (i)}<li>{l}</li>{/each}
+        </ol>
+      {/if}
+      <p class="final" data-testid="ask-final" role="status">{answer.final}</p>
+      {#if answer.requestId}
+        <a class="open" href="/requests/{answer.requestId}" data-testid="ask-open" onclick={closeAsk}>Open {answer.requestId} ›</a>
+      {/if}
+    {/if}
+    {#if askProblem}<p class="bad" role="alert">{askProblem}</p>{/if}
+    <div class="token-buttons">
+      <Button variant="outline" onclick={closeAsk}>Close</Button>
+      <Button type="submit" data-testid="ask-send" disabled={asking || !askText.trim()}>Send</Button>
     </div>
   </form>
 </Dialog>
@@ -414,6 +483,41 @@
   }
   .token p.bad {
     color: var(--v-bad-text);
+  }
+  .ask .ex {
+    font-size: 13px;
+  }
+  .ex-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--v-fg);
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .lines {
+    margin: 0;
+    padding: 12px 0 0;
+    list-style: none;
+    border-top: 1px solid var(--v-line);
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--v-muted);
+    max-height: 240px;
+    overflow: auto;
+    overflow-wrap: anywhere;
+  }
+  .lines li + li {
+    margin-top: 6px;
+  }
+  .ask .final {
+    color: var(--v-fg);
+  }
+  .ask .open {
+    font-size: 13px;
+    color: var(--v-fg);
   }
   .token-buttons {
     display: grid;

@@ -6,11 +6,13 @@ import { ApiError } from "./error";
 import * as mock from "./mock";
 import { owner } from "../owner.svelte";
 import type {
+  AskOut,
   DemoState,
   InboxItem,
   Ledger,
   Order,
   SpendPass,
+  SpendPassIn,
   SteadyOrder,
   SteadyOrderSummary,
   SupplyRequest,
@@ -19,8 +21,12 @@ import type {
 export { ApiError };
 export const LIVE = import.meta.env.VITE_API === "live";
 
-async function call<T>(method: "GET" | "POST", path: string, headers: Record<string, string> = {}): Promise<T> {
-  const res = await fetch(path, { method, headers: { accept: "application/json", ...headers } });
+async function call<T>(method: "GET" | "POST", path: string, headers: Record<string, string> = {}, body?: unknown): Promise<T> {
+  const res = await fetch(path, {
+    method,
+    headers: { accept: "application/json", ...(body === undefined ? {} : { "content-type": "application/json" }), ...headers },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
   if (!res.ok) {
     let detail = `${res.status} ${res.statusText}`;
     try {
@@ -35,11 +41,11 @@ async function call<T>(method: "GET" | "POST", path: string, headers: Record<str
 }
 
 const get = <T>(path: string) => call<T>("GET", path);
-const post = <T>(path: string, headers?: Record<string, string>) => call<T>("POST", path, headers);
+const post = <T>(path: string, headers?: Record<string, string>, body?: unknown) => call<T>("POST", path, headers, body);
 // Every write carries the approval code once the owner typed it; the demo
 // switches carry the presenter's token. A server with neither set ignores them.
-const write = <T>(path: string) => post<T>(path, owner.code ? { "x-approve-code": owner.code } : {});
-const demo = <T>(path: string) => post<T>(path, owner.demoToken ? { "x-demo-token": owner.demoToken } : {});
+const write = <T>(path: string, body?: unknown) => post<T>(path, owner.code ? { "x-approve-code": owner.code } : {}, body);
+const demo = <T>(path: string, body?: unknown) => post<T>(path, owner.demoToken ? { "x-demo-token": owner.demoToken } : {}, body);
 const id = encodeURIComponent;
 
 export const api = {
@@ -62,6 +68,11 @@ export const api = {
   acceptLine: (sid: string, pid: string): Promise<SteadyOrder> =>
     LIVE ? write(`/api/steady/${id(sid)}/lines/${id(pid)}/accept`) : mock.acceptLine(sid, pid, owner.code),
   demoState: (): Promise<DemoState> => (LIVE ? get("/api/demo") : mock.demoState()),
-  stockOut: (): Promise<DemoState> => (LIVE ? demo("/api/demo/stock-out") : mock.stockOut()),
+  /** On by default; `false` ends the simulated stock-out. */
+  stockOut: (on = true): Promise<DemoState> => (LIVE ? demo("/api/demo/stock-out", { on }) : mock.stockOut(on)),
+  /** The kitchen's agent on the owner's own text. */
+  ask: (text: string): Promise<AskOut> => (LIVE ? demo("/api/demo/ask", { text }) : mock.ask(text)),
+  /** The owner signs Spend Pass M-1 again with new limits; the code goes as X-Approve-Code. */
+  signPass: (body: SpendPassIn): Promise<SpendPass> => (LIVE ? write("/api/spend-pass", body) : mock.signPass(body, owner.code)),
   reset: (): Promise<DemoState> => (LIVE ? demo("/api/demo/reset") : mock.reset()),
 };
