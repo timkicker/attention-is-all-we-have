@@ -1,15 +1,14 @@
 @import "../vendor/arlen-ui-kit/src/app.css";
 @import "../vendor/arlen-ui-kit/src/lib/theme-light.css";
+@import "@fontsource-variable/figtree/index.css";
+@import "@fontsource/pacifico/400.css";
 @import "./lib/tokens.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
 /* The kit's dark: utilities follow the theme the page chose, not only the system. */
-@custom-variant dark (&:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *));
+@custom-variant dark (&:where(:root[data-theme="dark"], :root[data-theme="dark"] *));
 
-/* Focus: one mark, outside every layer, so the kit's outline-none loses. */
-:root {
-  --ring: var(--valio);
-}
+/* ---------- focus: one mark, outside every layer ---------- */
 :focus-visible {
   outline: 2px solid var(--valio);
   outline-offset: 2px;
@@ -22,16 +21,25 @@
   outline: none;
 }
 
-/* Buttons are 13 px (14 on the phone) in cards and out. */
+/* ---------- controls ---------- */
 [data-slot="button"] {
   --text-sm: var(--fs-meta);
+  font-family: var(--v-sans);
+  font-weight: 500;
   line-height: var(--lh-meta);
+  letter-spacing: 0.005em;
 }
-:root[data-theme="light"] [data-slot="button"].bg-primary:hover {
+[data-slot="button"].bg-primary {
+  background: var(--valio);
+  color: var(--primary-foreground);
+}
+[data-slot="button"].bg-primary:hover {
   background: var(--v-primary-hover);
 }
-:root:not([data-theme="light"]) [data-slot="button"].bg-primary:hover {
-  background: var(--v-primary-hover);
+[data-slot="button"].border-border {
+  background: var(--v-surface);
+  border-color: var(--v-line-strong);
+  color: var(--v-fg);
 }
 /* A pressed kit Chip fills with the foreground and inherits the background as
    its text, but the kit's `button.chip-body:hover` sets the text back to the
@@ -41,28 +49,67 @@
 .chip.on > button.chip-body:hover {
   color: var(--background);
 }
-
-/* The kit's dark outline border (--input) is nearly the card colour (O12). */
-:root:not([data-theme="light"]) [data-slot="button"].border-border:not(:focus-visible) {
-  border-color: var(--v-ctx);
+[data-slot="button"].border-border:hover {
+  border-color: var(--valio);
+  color: var(--valio);
+  background: var(--v-surface);
+}
+[data-slot="input"] {
+  font-family: var(--v-sans);
+  background: var(--v-surface);
+  border-color: var(--v-line-strong);
 }
 
 /* ---------- base ---------- */
+/* Tailwind 4 dropped the pointer from buttons (preflight leaves the default arrow), and the kit's
+   motion.css takes it off in-app links on purpose (an Arlen desktop app keeps the arrow). Validio is a
+   web page: everything that acts on a click shows the hand; a disabled control doesn't. */
+a[href],
+button,
+summary,
+select,
+label[for],
+[role="button"],
+[role="tab"],
+[role="radio"],
+[role="checkbox"],
+[role="switch"],
+[role="menuitem"],
+[role="option"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"],
+input[type="button"] {
+  cursor: pointer;
+}
+button:disabled,
+[aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: default;
+}
 html {
+  scroll-padding-top: 72px; /* an anchor lands below the sticky band */
   scrollbar-gutter: stable;
-  background: var(--v-app);
+  background: var(--v-ground);
+  font-family: var(--v-sans);
 }
 body {
   margin: 0;
-  background: var(--v-app);
+  background: var(--v-ground);
   color: var(--v-fg);
-  font-family: var(--font-sans);
-  font-size: var(--fs-head);
-  line-height: var(--lh-head);
-  font-feature-settings: "cv11", "ss01";
+  font-family: var(--v-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+a {
+  color: inherit;
 }
 .num {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .mono {
   font-family: var(--font-mono);
@@ -82,50 +129,75 @@ body {
   white-space: nowrap;
   border: 0;
 }
+/* A link in running text: petrol, underlined on hover. */
+.link,
+.facts a,
+.lead a,
+.prose a {
+  color: var(--valio);
+  text-decoration: underline;
+  text-decoration-color: var(--valio-underline);
+  text-underline-offset: 3px;
+}
+.link:hover,
+.facts a:hover,
+.lead a:hover,
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
 
-/* ---------- page column ---------- */
+/* ---------- the page column ---------- */
 .wrap {
-  max-width: 1120px;
+  max-width: var(--v-col);
   margin: 0 auto;
-  padding: 24px 32px 80px;
+  padding: 40px 40px 120px;
 }
 .crumbs {
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 20px;
-  margin-bottom: 8px;
+  gap: 6px;
+  min-height: 20px;
+  margin-bottom: 12px;
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--v-muted);
 }
+.crumbs a {
+  color: var(--valio);
+  text-decoration: none;
+}
 .crumbs a:hover {
-  color: var(--v-fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 24px;
-  align-items: start;
+  column-gap: 32px;
+  align-items: end;
 }
 .head-actions {
   display: flex;
   gap: 8px;
   align-items: center;
+  padding-bottom: 6px;
 }
 h1.v-title {
-  margin: 0 0 4px;
+  margin: 0;
+  font-family: var(--v-sans);
   font-size: var(--fs-title);
-  line-height: 32px;
+  line-height: var(--lh-title);
   font-weight: 600;
-  letter-spacing: -0.015em;
+    letter-spacing: var(--ls-title);
+  color: var(--v-fg);
+  text-wrap: balance;
 }
 .facts {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   gap: 4px 24px;
-  min-height: 20px;
+  margin-top: 8px;
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--v-muted);
@@ -134,28 +206,29 @@ h1.v-title {
   color: var(--v-fg);
   font-weight: 500;
 }
-.facts a,
-.lead a,
+/* An underlined text link (the Agent page's way to Rules). */
 a.v-link {
   color: var(--v-fg);
   text-decoration: underline;
   text-decoration-color: var(--v-faint);
   text-underline-offset: 3px;
-  position: relative;
 }
-/* An underlined link: the line takes the text colour under the pointer. */
-.facts a:hover,
-.lead a:hover,
 a.v-link:hover {
   text-decoration-color: currentColor;
 }
+/* The sentence that carries the decision, under the title; its outcome word in colour. */
 .lead {
-  margin: 12px 0 0;
-  max-width: 680px;
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
+  margin: 10px 0 0;
+  max-width: 760px;
+  font-size: 17px;
+  line-height: 26px;
+  font-weight: 400;
+  color: var(--v-fg);
+  text-wrap: pretty;
 }
-.lead .rule,
+.lead .word {
+  font-weight: 600;
+}
 .rule,
 #request-rule {
   white-space: nowrap;
@@ -164,42 +237,46 @@ a.v-link:hover {
   color: var(--v-muted);
 }
 .question {
-  margin: 12px 0 0;
-  max-width: 680px;
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  font-weight: 500;
+  margin: 10px 0 0;
+  max-width: 760px;
+  font-size: 17px;
+  line-height: 26px;
 }
 .q-sub {
-  margin: 4px 0 0;
-  max-width: 680px;
+  margin: 6px 0 0;
+  max-width: 720px;
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--v-muted);
 }
 .head-btn {
-  margin-top: 16px;
+  margin-top: 20px;
 }
 .blocks {
-  margin-top: 32px;
+  margin-top: 40px;
 }
 .sec + .sec,
 .blocks > * + * {
-  margin-top: 32px;
+  margin-top: 48px;
 }
+/* Section heads: sentence case, 600, a quiet count after it. */
 .v-h {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: baseline;
+  gap: 10px;
   min-height: 32px;
-  margin: 0 0 8px;
-  font-size: var(--fs-head);
-  line-height: var(--lh-head);
+  margin: 0 0 12px;
+  font-family: var(--v-sans);
+  font-size: var(--fs-section);
+  line-height: var(--lh-section);
   font-weight: 600;
+  letter-spacing: var(--ls-title);
 }
 .v-h em {
+  font-family: var(--v-sans);
   font-style: normal;
   font-weight: 400;
+  font-size: var(--fs-meta);
   color: var(--v-faint);
   font-variant-numeric: tabular-nums;
 }
@@ -211,47 +288,60 @@ a.v-link:hover {
   line-height: 16px;
   color: var(--v-faint);
 }
-
-/* ---------- cards ---------- */
-.v-card {
-  --shadow-card: none;
+/* Small caps labels: who did what, the chosen mark. */
+.smallcaps {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-variant-caps: all-small-caps;
+  color: var(--v-faint);
 }
-.v-card .section-card {
+/* Column heads: small sentence case over a 1px ink rule. */
+.v-th {
+  font-size: var(--fs-cap);
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--v-muted);
+}
+
+/* ---------- ruled lists (the kit Section, redrawn as a ruled block) ---------- */
+.section.v-card > .section-card {
   overflow: visible;
+  border: 0;
+  border-top: 1px solid var(--v-fg);
+  border-bottom: 1px solid var(--v-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.section.v-card > .section-card > * + * {
+  border-top: 1px solid var(--v-line);
+}
+.v-row:has(> .v-row-lead:empty) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.v-row > .v-row-lead:empty {
+  display: none;
 }
 .v-row {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr) auto;
-  column-gap: 12px;
-  /* Pill, title and amount share the title's baseline; a one-line row sits in the middle of its 56 px. */
+  grid-template-columns: 168px minmax(0, 1fr) auto;
+  column-gap: 24px;
   align-items: baseline;
   align-content: center;
   min-height: 56px;
-  padding: 12px 16px;
+  padding: 14px 0;
   color: inherit;
   text-decoration: none;
 }
-.v-row.plain {
-  grid-template-columns: 128px minmax(0, 1fr) auto;
-}
-/* One hover for every row that is a link (inbox, steady list, value rows,
-   ask results, ledger entries): the kit LinkCard's wash, no underline. In a
-   card the first and last row keep the card's inner corner. */
 a.v-row,
 a.vr {
   transition: background-color var(--duration-fast) ease;
 }
-a.v-row:hover,
-a.vr:hover {
-  background: var(--v-tint-hover);
-}
-.section-card > :is(a.v-row, a.vr):first-child {
-  border-start-start-radius: max(0px, calc(var(--radius-card) - 1px));
-  border-start-end-radius: max(0px, calc(var(--radius-card) - 1px));
-}
-.section-card > :is(a.v-row, a.vr):last-child {
-  border-end-start-radius: max(0px, calc(var(--radius-card) - 1px));
-  border-end-end-radius: max(0px, calc(var(--radius-card) - 1px));
+a.v-row:hover .v-row-title,
+a.vr:hover .vr-value {
+  color: var(--valio);
 }
 .v-row-lead {
   display: flex;
@@ -261,9 +351,10 @@ a.vr:hover {
   line-height: var(--lh-body);
   font-weight: 500;
   overflow-wrap: anywhere;
+  transition: color var(--duration-fast) ease;
 }
 .v-row-sub {
-  margin-top: 4px;
+  margin-top: 2px;
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--v-muted);
@@ -275,127 +366,298 @@ a.vr:hover {
   justify-content: flex-end;
   font-size: var(--fs-body);
   line-height: var(--lh-body);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
   white-space: nowrap;
 }
-/* A button in the amount column sits on the title line without making the row taller. */
 .v-row-end [data-slot="button"] {
   margin-block: calc((var(--lh-body) - var(--height-control)) / 2);
 }
 .v-row-end .go {
-  color: var(--v-faint);
-  width: 16px;
-  height: 16px;
-  flex: none;
+  display: none;
 }
 
-/* ---------- pills ---------- */
-.v-pill {
-  --text-xs: var(--fs-cap);
+/* The kit Row in a ruled list: the rule is the edge, no inset of its own. */
+.section.v-card .row {
+  padding-inline: 0;
+}
+
+/* The kit's chips and segments in the petrol hand: hairline outlines, the
+   chosen one petrol on its tint, no grey fills. */
+.chip.chip {
+  background: var(--v-surface);
+  box-shadow: inset 0 0 0 1px var(--v-line-strong);
+  color: var(--v-fg);
+}
+.chip.chip:has(> button.chip-body:hover) {
+  background: var(--v-surface);
+  box-shadow: inset 0 0 0 1px var(--valio);
+}
+.chip.chip.on,
+.chip.chip.on:has(> button.chip-body:hover) {
+  background: var(--valio-tint);
+  box-shadow: inset 0 0 0 1px var(--valio);
+  color: var(--valio);
+}
+.chip.chip.on .chip-body {
+  color: var(--valio);
   font-weight: 500;
 }
-.v-pill.tone-ok {
-  background: var(--v-wash-ok);
-  color: var(--v-ok-text);
+.seg.seg {
+  background: var(--v-surface);
+  border-color: var(--v-line-strong);
 }
-.v-pill.tone-bad {
-  background: var(--v-wash-bad);
-  color: var(--v-bad-text);
+.seg .seg-mark.seg-mark {
+  background: var(--valio-tint);
+  border-color: var(--valio);
 }
-.v-pill.tone-wait {
-  background: var(--v-wash-wait);
-  color: var(--v-wait-text);
-}
-.v-pill.tone-neutral {
-  background: var(--v-tint-fill);
-  color: var(--v-muted);
-}
-.v-count {
-  --text-xs: var(--fs-cap);
-  height: 18px;
-  min-width: 18px;
-  padding: 0 5px;
-  font-variant-numeric: tabular-nums;
-  background: var(--v-wash-wait);
-  color: var(--v-wait-text);
+.seg .seg-pill.active {
+  color: var(--valio);
 }
 
-/* ---------- tabs ---------- */
-.tabs {
+/* ---------- outcome marks: the word in its colour, nothing filled ---------- */
+.v-pill,
+.v-pill.v-pill {
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+  font-weight: 500;
+  color: var(--v-muted);
+  justify-content: flex-start;
+  overflow: visible;
+}
+.v-pill.tone-ok {
+  color: var(--v-ok-text);
+  background: transparent;
+}
+.v-pill.tone-bad {
+  color: var(--v-bad-text);
+  background: transparent;
+}
+.v-pill.tone-wait {
+  color: var(--valio);
+  font-weight: 600;
+  background: transparent;
+}
+.v-pill.tone-neutral {
+  color: var(--v-muted);
+  background: transparent;
+}
+.v-pill.v-count {
+  min-width: 0;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--radius-chip);
+  font-size: var(--fs-cap);
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+  background: var(--v-on-valio);
+  color: var(--valio);
+}
+.tone-ok-text {
+  color: var(--v-ok-text);
+}
+.tone-bad-text {
+  color: var(--v-bad-text);
+}
+.tone-wait-text {
+  color: var(--valio);
+}
+
+/* ---------- tabs and filters: words, the chosen one underlined in petrol ---------- */
+.tabs,
+.filters {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 28px;
   border-bottom: 1px solid var(--v-line);
 }
-.tabs [role="tab"] {
-  padding: 0 0 12px;
-  margin-bottom: -1px;
+.tabs [role="tab"],
+.filters button {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 0 10px;
+  margin: 0 0 -1px;
+  border: 0;
   border-bottom: 2px solid transparent;
+  background: none;
+  font: inherit;
   font-size: var(--fs-head);
   line-height: var(--lh-head);
   color: var(--v-muted);
-  display: inline-flex;
-  gap: 8px;
-  background: none;
-  cursor: pointer;
   white-space: nowrap;
+  cursor: pointer;
 }
-.tabs [role="tab"]:hover {
+.tabs [role="tab"]:hover,
+.filters button:hover {
   color: var(--v-fg);
 }
-.tabs [role="tab"][aria-selected="true"] {
+.tabs [role="tab"][aria-selected="true"],
+.filters button[aria-pressed="true"] {
   color: var(--v-fg);
+  font-weight: 500;
   border-bottom-color: var(--valio);
 }
-.tabs em {
+.tabs em,
+.filters em {
   font-style: normal;
+  font-weight: 400;
+  font-size: var(--fs-cap);
   color: var(--v-faint);
   font-variant-numeric: tabular-nums;
 }
 .pane {
-  padding-top: 24px;
+  padding-top: 8px;
 }
 
-/* ---------- record lanes ---------- */
-.rc-lane {
-  display: grid;
-  grid-template-columns: 176px minmax(0, 1fr);
-  column-gap: 24px;
-  align-items: center;
-  border-top: 1px solid var(--v-line);
-  /* 80 px inside the rules, with or without a sub line. */
-  box-sizing: content-box;
-  min-height: 80px;
+/* ---------- a grid table whose rows can be links ---------- */
+.grid-table {
+  border-top: 0;
 }
-.rc-lane:last-of-type {
+.grid-table .gt-row {
+  display: grid;
+  grid-template-columns: var(--gt-cols);
+  column-gap: 24px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--v-line);
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+}
+.grid-table .gt-head {
+  padding: 0 0 10px;
+  border-bottom-color: var(--v-fg);
+}
+.grid-table a.gt-row:hover {
+  background: var(--v-tint-hover);
+}
+.grid-table a.gt-row:hover .gt-main {
+  color: var(--valio);
+}
+.grid-table .gt-row > :first-child {
+  padding-left: 10px;
+}
+.grid-table .gt-row > :last-child {
+  padding-right: 10px;
+}
+.grid-table .gt-main {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 500;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  transition: color var(--duration-fast) ease;
+}
+.grid-table .gt-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  font-weight: 400;
+  color: var(--v-muted);
+}
+.grid-table .r {
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.grid-table .m {
+  color: var(--v-muted);
+  font-size: var(--fs-meta);
+}
+
+/* ---------- events (option rows, steady lines) ---------- */
+.rc-ev {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rc-ev > li {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr) auto;
+  column-gap: 24px;
+  align-items: baseline;
+  padding: 14px 0;
   border-bottom: 1px solid var(--v-line);
 }
-.rc-lab {
-  padding: 12px 0;
-}
-.rc-n {
+.ev-left {
   font-size: var(--fs-meta);
-  line-height: 20px;
-  color: var(--v-fg);
-}
-.rc-v {
-  font-size: var(--fs-head);
-  line-height: 20px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.rc-s {
-  font-size: var(--fs-cap);
-  line-height: 16px;
+  line-height: var(--lh-meta);
   color: var(--v-muted);
-  font-variant-numeric: tabular-nums;
 }
+.ev-name {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 500;
+}
+.ev-sub {
+  margin-top: 2px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  color: var(--v-muted);
+}
+.ev-amt {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+  text-align: right;
+}
+.ev-amt.none {
+  font-size: var(--fs-meta);
+  color: var(--v-muted);
+}
+.ev-more {
+  grid-column: 2 / -1;
+}
+.day {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 28px 0 8px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  border-bottom: 1px solid var(--v-line-strong);
+}
+.day b {
+  font-weight: 600;
+}
+.day span {
+  color: var(--v-muted);
+  white-space: nowrap;
+}
+.rc-diff {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--v-line-strong);
+  background: var(--v-tint-wash);
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+}
+.rc-diff p {
+  margin: 0;
+}
+.rc-diff p + p {
+  margin-top: 4px;
+}
+.rc-diff .top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--v-muted);
+}
+
+/* ---------- the record lanes (steady order chart only) ---------- */
 .rc-plot {
   position: relative;
   min-width: 0;
   height: 56px;
-}
-.rc-plot.narrow {
-  height: 72px;
 }
 .rc-plot svg {
   position: absolute;
@@ -414,87 +676,6 @@ a.vr:hover {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- events (option rows, ledger) ---------- */
-.rc-ev {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.rc-ev > li {
-  display: grid;
-  grid-template-columns: 176px minmax(0, 1fr) auto;
-  column-gap: 24px;
-  align-items: baseline;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--v-line);
-}
-.ev-left {
-  font-size: var(--fs-meta);
-  line-height: var(--lh-meta);
-  color: var(--v-muted);
-}
-.ev-name {
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  font-weight: 500;
-}
-.ev-sub {
-  margin-top: 4px;
-  font-size: var(--fs-meta);
-  line-height: var(--lh-meta);
-  color: var(--v-muted);
-}
-.ev-amt {
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  text-align: right;
-}
-.ev-amt.none {
-  font-size: var(--fs-meta);
-  color: var(--v-muted);
-}
-.ev-more {
-  grid-column: 2 / -1;
-}
-.day {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  padding: 24px 0 12px;
-  font-size: var(--fs-meta);
-  line-height: var(--lh-meta);
-  border-bottom: 1px solid var(--v-line);
-}
-.day b {
-  font-weight: 600;
-}
-.day span {
-  color: var(--v-muted);
-  white-space: nowrap;
-}
-.rc-diff {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: var(--radius-input);
-  background: var(--v-tint-wash);
-  font-size: var(--fs-meta);
-  line-height: var(--lh-meta);
-}
-.rc-diff p {
-  margin: 0;
-}
-.rc-diff p + p {
-  margin-top: 4px;
-}
-.rc-diff .top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--v-muted);
-}
-
 /* ---------- the one fold ---------- */
 details.fold > summary {
   display: inline-flex;
@@ -505,17 +686,18 @@ details.fold > summary {
   min-height: 20px;
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
-  color: var(--v-muted);
+  color: var(--valio);
 }
 details.fold > summary::-webkit-details-marker {
   display: none;
 }
 details.fold > summary:hover {
-  color: var(--v-fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 details.fold > summary .chev {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   transition: transform var(--duration-fast) ease;
 }
 details.fold[open] > summary .chev {
@@ -534,9 +716,46 @@ details.fold .fold-body p + p {
   margin-top: 4px;
 }
 
+/* ---------- a calm notice: a rule on the left, no box ---------- */
+.notice {
+  margin: 0;
+  padding: 2px 0 2px 16px;
+  border-left: 2px solid var(--valio);
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+}
+.notice.quiet {
+  border-left-color: var(--v-line-strong);
+  color: var(--v-muted);
+}
+.notice.bad {
+  border-left-color: var(--v-bad);
+}
+.notice b {
+  font-weight: 600;
+}
+
+/* The kit Notice drawn the same way: no frame or wash, the rule on the left, no icon. */
+p.notice.notice {
+  padding: 2px 0 2px 16px;
+  border: 0;
+  border-left: 2px solid var(--valio);
+  border-radius: 0;
+  background: transparent;
+  color: var(--v-fg);
+  font-size: var(--fs-head);
+  line-height: var(--lh-head);
+}
+p.notice.notice.error {
+  border-left-color: var(--v-bad);
+}
+p.notice.notice > svg {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .wrap {
-    padding: 8px 16px calc(112px + env(safe-area-inset-bottom));
+    padding: 20px 16px calc(96px + env(safe-area-inset-bottom));
   }
   .crumbs {
     display: none;
@@ -544,8 +763,18 @@ details.fold .fold-body p + p {
   .head {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* A facts link is a 44 px target without moving the line: its box grows by
-     12 above and below, and the negative margin gives that space back. */
+  .lead,
+  .question {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .blocks {
+    margin-top: 28px;
+  }
+  .sec + .sec,
+  .blocks > * + * {
+    margin-top: 36px;
+  }
   .facts a {
     display: inline-block;
     padding-block: 12px;
@@ -575,26 +804,6 @@ details.fold .fold-body p + p {
   .v-row-lead:empty {
     display: none;
   }
-  .rc-lane {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .rc-lab {
-    padding: 12px 0 8px;
-  }
-  .rc-n {
-    font-size: 14px;
-  }
-  .rc-v {
-    margin-top: 4px;
-    font-size: 16px;
-    line-height: 24px;
-  }
-  .rc-s {
-    margin-top: 4px;
-  }
-  .rc-plot {
-    margin-bottom: 12px;
-  }
   .rc-ev > li {
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 4px;
@@ -614,9 +823,19 @@ details.fold .fold-body p + p {
   .ev-more {
     grid-column: 1 / -1;
   }
-  .tabs [role="tab"] {
+  .tabs,
+  .filters {
+    gap: 20px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs [role="tab"],
+  .filters button {
     min-height: 44px;
+    min-width: 44px;
     align-items: center;
+    justify-content: center;
     padding: 0;
   }
   details.fold > summary {
@@ -638,10 +857,7 @@ details.fold .fold-body p + p {
   }
 }
 
-/* ---------- dialogs (P3) ---------- */
-/* A plain dim like the kit's, no blur, and it covers the whole width: the
-   page's reserved scrollbar gutter is dropped while a dialog is open, so no
-   light strip stays on the right. */
+/* ---------- dialogs ---------- */
 .dialog-backdrop {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
@@ -650,7 +866,6 @@ html:has(.dialog-backdrop) {
   scrollbar-gutter: auto;
   overflow: hidden;
 }
-/* Nothing fixed to the page (the phone dock, the approve bar) sits over an open dialog or sheet. */
 body:has(.dialog-backdrop) .dock,
 body:has(.dialog-backdrop) [data-bar] {
   visibility: hidden;
@@ -660,7 +875,7 @@ body:has(.dialog-backdrop) [data-bar] {
 .v-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 .v-buttons {
   display: flex;

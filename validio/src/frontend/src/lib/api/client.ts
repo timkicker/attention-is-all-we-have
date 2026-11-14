@@ -16,6 +16,7 @@ import type {
   LoginIn,
   Order,
   SignupIn,
+  SupplyRequest,
 } from "./types";
 
 export { ApiError, needsToken };
@@ -82,6 +83,9 @@ export const api = {
     LIVE ? get(`/api/activity?status=${status}`) : mock.activity(status),
   /** One request or standing order, top to bottom: asked, checked, rule, result, proof. */
   activityItem: (aid: string): Promise<ActivityDetail> => (LIVE ? get(`/api/activity/${id(aid)}`) : mock.activityItem(aid)),
+  /** The request as Validio decided it, with every option it compared (Activity's detail shows them as a table).
+   *  The fixture plays the v2 contract only and has none: 404, and the page goes without the table. */
+  request: (rid: string): Promise<SupplyRequest> => (LIVE ? get(`/api/requests/${id(rid)}`) : mock.request(rid)),
   /** Approve sends owner.code as X-Approve-Code; set it first. */
   approve: (oid: string): Promise<Order> =>
     both(() => write(`/api/orders/${id(oid)}/approve`), () => mock.approve(oid, owner.code)),
