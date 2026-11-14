@@ -350,7 +350,9 @@ export type LedgerKind =
   | "order"
   | "approval"
   | "simulation"
-  | "renewal";
+  | "renewal"
+  | "spend_pass"
+  | "agent";
 
 export interface LedgerEntry {
   seq: number;
@@ -366,7 +368,7 @@ export interface LedgerEntry {
   orderId?: string;
   prevHash: string;
   hash: string;
-  /** "Validio", "Owner", "Agent", "Demo" */
+  /** "Validio", "You", "Agent", "Demo" */
   actorText?: string;
   /** "10:04" on the demo clock. */
   timeText?: string;

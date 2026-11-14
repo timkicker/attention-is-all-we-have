@@ -36,7 +36,7 @@
   {#snippet facts()}
     {#if rules.data?.saved}
       <a href="/agent#rules" data-testid="spend-pass">
-        Orders alone up to <span data-testid="pass-auto" id="pass-auto">{money(rules.data.aloneUpToCents)}</span>, never above
+        Orders alone up to <span data-testid="pass-auto" id="pass-auto">{money(rules.data.aloneUpToCents)}</span>, blocked above
         <span data-testid="pass-cap" id="pass-cap">{money(rules.data.approvalUpToCents)}</span> ›
       </a>
     {/if}
