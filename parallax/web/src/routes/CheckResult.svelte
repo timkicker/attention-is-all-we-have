@@ -3,7 +3,6 @@
   import * as copy from '../lib/copy'
   import { getCheckRun, resolveTopic } from '../lib/data'
   import { dateState } from '../lib/date.svelte'
-  import type { CheckResultView } from '../lib/adapt/check'
   import type { CheckResultVM, Result, TabCounts } from '../lib/model'
   import { TID } from '../lib/testids'
   import Bar from '../lib/ui/Bar.svelte'
@@ -46,7 +45,7 @@
   {:else if !res.ok}
     <p class="msg sec" role="alert">{res.error.status === 404 ? copy.ERR.notFound : res.error.code === 'network' ? copy.ERR.network : copy.ERR.generic}</p>
   {:else}
-    {@const vm = res.data as CheckResultView}
+    {@const vm = res.data}
     <div class="meta" data-testid={TID.checkMeta}>
       <p class="sec">{vm.label ? copy.check.recordedOn(vm.label, vm.recordedOn) : copy.check.PASTED}</p>
       <a class="u sec" href={vm.againHref} data-testid={TID.checkAgain}>{copy.check.CHECK_ANOTHER}</a>
@@ -57,7 +56,7 @@
         <button type="button" class="u" aria-expanded={whole} data-testid={TID.checkWhole} onclick={() => (whole = !whole)}>{whole ? copy.check.SHOW_LESS : copy.check.SHOW_WHOLE}</button>
       {/if}
     </p>
-    <p class="sum t18" data-testid={TID.checkSummary}>{copy.check.summary(vm.summary, vm.mostBacked ?? true)}</p>
+    <p class="sum t18" data-testid={TID.checkSummary}>{copy.checkSummary(vm.summary, vm.mostBacked)}</p>
 
     <div class="list">
       {#each vm.rows as row (row.id)}
