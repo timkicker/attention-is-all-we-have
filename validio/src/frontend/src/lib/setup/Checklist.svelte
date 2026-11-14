@@ -7,7 +7,7 @@
 
   const setup = $derived(session.account?.setup);
   const STEPS = [
-    { key: "kitchen", title: "Kitchen", href: "/settings/kitchen" },
+    { key: "kitchen", title: "Kitchen", href: "/settings#kitchen" },
     { key: "rules", title: "Rules", href: "/agent#rules" },
     { key: "agent", title: "Connect agent", href: "/agent" },
   ] as const;

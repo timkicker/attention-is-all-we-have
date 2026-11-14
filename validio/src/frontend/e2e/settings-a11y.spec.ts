@@ -40,20 +40,12 @@ for (const v of VIEWS) {
     await go("/");
     await expect(page.getByTestId("example")).toBeVisible();
     await audit(page, "inbox", out, phone);
-    if (phone) {
-      await go("/settings");
-      await expect(page.getByTestId("set-row-kitchen")).toBeVisible();
-      await audit(page, "settings", out, phone);
-    }
-    for (const s of ["kitchen", "diet", "login", "theme"]) {
-      await go(`/settings/${s}`);
-      await expect(page.getByTestId(`settings-${s}`)).toBeVisible();
-      await audit(page, s, out, phone);
-    }
-    await go("/settings/kitchen");
+    await go("/settings");
+    await expect(page.getByTestId("settings-theme")).toBeVisible();
+    await audit(page, "settings", out, phone);
     await page.getByTestId("kitchen-edit").click();
     await audit(page, "kitchen edit", out, phone);
-    await go("/settings/diet");
+    await go("/settings");
     await page.getByTestId("diet-VEGAN").click();
     await page.getByTestId("diet-save").click();
     await audit(page, "diet code", out, phone);
