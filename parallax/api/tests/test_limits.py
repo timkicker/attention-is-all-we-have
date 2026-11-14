@@ -113,3 +113,16 @@ def test_failed_ingest_uses_no_token(client, monkeypatch):
         assert ratelimit._limit("ingest").take("testclient", spend=False) == 0
     finally:
         ratelimit.reset()
+
+
+def test_topic_nearest_through_the_index_matches_the_exact_search(monkeypatch):
+    from api import checker
+
+    monkeypatch.setattr(checker, "EXACT_MAX_LIVES", 0)  # seed-mini is small: send every edition through the index
+    (row,) = sqllog.run("SELECT VEC_ToText(emb) AS v FROM claim WHERE topic_id = 'winterwar' AND lang = 'en' LIMIT 1")
+    vec = json.loads(row["v"])
+    langs = ["fi", "sv", "de", "en", "ru", "et", "uk"]
+    fast = checker.nearest(vec, langs, "winterwar")
+    exact = checker._nearest_per_lang("check_nearest_topic_exact", vec, langs, "winterwar")
+    assert any(fast.values())
+    assert {k: [r["h"] for r in v] for k, v in fast.items()} == {k: [r["h"] for r in v] for k, v in exact.items()}
