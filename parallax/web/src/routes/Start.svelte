@@ -115,7 +115,8 @@
 
 <Bar right="none" />
 <main class="wide">
-  <div class="split">
+  <!-- While the results are open, what sits under them is hidden (layout kept), so no row peeks out below. -->
+  <div class="split" class:covered={open && !!q.trim()}>
     <section class="intro">
       <h1 class="hero">{copy.start.HERO}</h1>
       <p class="sec t18">{copy.start.LEAD}</p>
@@ -173,6 +174,7 @@
   .ex { grid-area: ex; display: block; padding-top: 8px; }
   .intro > .sec { margin-top: 12px; }
   .search { position: relative; margin-top: 32px; }
+  .covered .pre { visibility: hidden; }
   .topics { margin-top: 8px; border-top: 1px solid var(--line); }
   .topics a { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .ex .line { margin-top: 20px; }
@@ -181,6 +183,7 @@
   @media (max-width: 1000px) {
     .split { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "topics" "ex"; }
     .ex { margin-top: 48px; }
+    .covered .ex { visibility: hidden; }
     .pre { margin-top: 56px; }
   }
   @media (max-width: 600px) {
