@@ -5711,15 +5711,10 @@ export const answers: Answers = {
       "options": [
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.01 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Arki lactose-free semi-skimmed milk 1 l",
         "facts": [
@@ -5901,7 +5896,7 @@ export const answers: Answers = {
         ],
         "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Arki lactose-free semi-skimmed milk 1 l",
-        "shortText": "Cheapest safe option, always delivered in full.",
+        "shortText": "Cheapest, always delivered in full.",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -5916,16 +5911,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.10 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Heart Symbol",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Arki lactose-free skimmed milk 1 l",
         "facts": [
@@ -6116,7 +6105,7 @@ export const answers: Answers = {
         ],
         "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
         "shortName": "Arki lactose-free skimmed milk 1 l",
-        "shortText": "90.00 € more.",
+        "shortText": "+90.00 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6131,15 +6120,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.40 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Lactose-free milk 1 l",
         "facts": [
@@ -6312,7 +6296,7 @@ export const answers: Answers = {
         ],
         "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free milk 1 l",
-        "shortText": "390.00 € more.",
+        "shortText": "+390.00 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6327,15 +6311,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.56 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Lactose-free semi-skimmed milk 1 l",
         "facts": [
@@ -6516,7 +6495,7 @@ export const answers: Answers = {
         ],
         "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free semi-skimmed milk 1 l",
-        "shortText": "550.00 € more.",
+        "shortText": "+550.00 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6531,15 +6510,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.64 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Lactose-free whole milk 1 l",
         "facts": [
@@ -6712,7 +6686,7 @@ export const answers: Answers = {
         ],
         "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Lactose-free whole milk 1 l",
-        "shortText": "630.00 € more.",
+        "shortText": "+630.00 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6727,15 +6701,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 1.65 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
         "facts": [
@@ -6908,7 +6877,7 @@ export const answers: Answers = {
         ],
         "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
         "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
-        "shortText": "640.00 € more.",
+        "shortText": "+640.00 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -6925,11 +6894,7 @@ export const answers: Answers = {
         "checks": [
          "Price 27.39 €",
          "Order cut-off 12 Nov 15:00",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Lactose-free semi-skimmed milk 1.75 l",
         "facts": [
@@ -7125,13 +7090,8 @@ export const answers: Answers = {
         "checks": [
          "Price 13.32 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Heart Symbol",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Lactose-free skimmed milk 1 l",
         "facts": [
@@ -7339,12 +7299,8 @@ export const answers: Answers = {
         "checks": [
          "Price 6.86 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Eila lactose-free semi-skimmed milk 1 l",
         "facts": [
@@ -7543,13 +7499,8 @@ export const answers: Answers = {
         "checks": [
          "Price 7.62 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Heart Symbol",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Eila lactose-free skimmed milk 1 l",
         "facts": [
@@ -7756,11 +7707,7 @@ export const answers: Answers = {
         "checks": [
          "Price 31.31 €",
          "Order cut-off 12 Nov 15:00",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Lactose-free semi-skimmed milk 10 l",
         "facts": [
@@ -7949,13 +7896,8 @@ export const answers: Answers = {
         "checks": [
          "Price 10.97 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 1.1 kg CO2e per kg",
-         "Label EU organic",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Lactose-free organic semi-skimmed milk 1 l",
         "facts": [
@@ -8642,6 +8584,7 @@ export const answers: Answers = {
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"
      }
     ],
+    "liveAt": "10:00",
     "liveChecked": {
      "calls": 4,
      "ids": 12,
@@ -8686,20 +8629,16 @@ export const answers: Answers = {
     "deliverBy": "2026-11-16",
     "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
+    "leadText": "Out of stock (simulated). Swap not on Valio's list.",
     "lines": [
      {
       "beyondList": [
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 18.01 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
@@ -8856,7 +8795,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+        "shortText": "Cheapest lactose-free swap.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen",
@@ -8870,12 +8809,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 4,318 bags",
          "Price 19.66 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 96.9 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
+         "Delivered in full in 96.9 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella grated 2.5 kg",
@@ -8978,7 +8914,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
-        "shortText": "16.50 € more.",
+        "shortText": "+16.50 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -8995,15 +8931,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 23.49 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 97.8 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 97.8 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
@@ -9158,7 +9089,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
-        "shortText": "54.80 € more.",
+        "shortText": "+54.80 €",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked",
@@ -9171,12 +9102,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 154 pieces",
          "Price 5.31 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk"
+         "Delivered in full in 100 % of orders"
         ],
         "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
@@ -9278,7 +9206,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free sliced mozzarella stange 400 g",
-        "shortText": "154.43 € more.",
+        "shortText": "+154.43 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -9297,10 +9225,7 @@ export const answers: Answers = {
         "checks": [
          "Price 36.17 €",
          "Order cut-off 12 Nov 15:00",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 400 g",
         "facts": [
@@ -9465,11 +9390,7 @@ export const answers: Answers = {
         "checks": [
          "Price 18.29 €",
          "Order cut-off 12 Nov 15:00",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 150 g",
         "facts": [
@@ -9634,10 +9555,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 108.09 €",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
@@ -9754,10 +9672,7 @@ export const answers: Answers = {
         "checks": [
          "Price 76.33 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 94.1 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
-         "Free from gluten",
+         "Delivered in full in 94.1 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
@@ -9922,9 +9837,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 1.21 €",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella 100 g",
@@ -10070,6 +9983,7 @@ export const answers: Answers = {
       "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
+    "liveAt": "10:14",
     "liveChecked": {
      "calls": 10,
      "ids": 10,
@@ -10086,6 +10000,7 @@ export const answers: Answers = {
       1
      ]
     },
+    "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
     "moneyText": "180.10 €",
     "orderId": "O-2",
     "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
@@ -10125,20 +10040,16 @@ export const answers: Answers = {
     "deliverBy": "2026-11-16",
     "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
+    "leadText": "Out of stock (simulated). Swap not on Valio's list.",
     "lines": [
      {
       "beyondList": [
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 18.01 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
@@ -10295,7 +10206,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+        "shortText": "Cheapest lactose-free swap.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen",
@@ -10309,12 +10220,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 4,318 bags",
          "Price 19.66 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 96.9 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
+         "Delivered in full in 96.9 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella grated 2.5 kg",
@@ -10417,7 +10325,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
-        "shortText": "16.50 € more.",
+        "shortText": "+16.50 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10434,15 +10342,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 23.49 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 97.8 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 97.8 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
@@ -10597,7 +10500,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
-        "shortText": "54.80 € more.",
+        "shortText": "+54.80 €",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked",
@@ -10610,12 +10513,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 154 pieces",
          "Price 5.31 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk"
+         "Delivered in full in 100 % of orders"
         ],
         "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
@@ -10717,7 +10617,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free sliced mozzarella stange 400 g",
-        "shortText": "154.43 € more.",
+        "shortText": "+154.43 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -10736,10 +10636,7 @@ export const answers: Answers = {
         "checks": [
          "Price 36.17 €",
          "Order cut-off 12 Nov 15:00",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 400 g",
         "facts": [
@@ -10904,11 +10801,7 @@ export const answers: Answers = {
         "checks": [
          "Price 18.29 €",
          "Order cut-off 12 Nov 15:00",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 150 g",
         "facts": [
@@ -11073,10 +10966,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 108.09 €",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
@@ -11193,10 +11083,7 @@ export const answers: Answers = {
         "checks": [
          "Price 76.33 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 94.1 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
-         "Free from gluten",
+         "Delivered in full in 94.1 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
@@ -11361,9 +11248,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 1.21 €",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella 100 g",
@@ -11509,6 +11394,7 @@ export const answers: Answers = {
       "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
+    "liveAt": "10:14",
     "liveChecked": {
      "calls": 10,
      "ids": 10,
@@ -11525,6 +11411,7 @@ export const answers: Answers = {
       1
      ]
     },
+    "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
     "moneyText": "180.10 €",
     "orderId": "O-2",
     "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
@@ -11564,20 +11451,16 @@ export const answers: Answers = {
     "deliverBy": "2026-11-16",
     "displayName": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
     "id": "R-2",
+    "leadText": "Out of stock (simulated). Swap not on Valio's list.",
     "lines": [
      {
       "beyondList": [
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 18.01 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 100 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
         "facts": [
@@ -11734,7 +11617,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+        "shortText": "Cheapest lactose-free swap.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen",
@@ -11748,12 +11631,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 4,318 bags",
          "Price 19.66 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 96.9 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
+         "Delivered in full in 96.9 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella grated 2.5 kg",
@@ -11856,7 +11736,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free mozzarella grated 2.5 kg",
-        "shortText": "16.50 € more.",
+        "shortText": "+16.50 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -11873,15 +11753,10 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: Valio gives no real count",
          "Price 23.49 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 97.8 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Delivered in full in 97.8 % of orders",
+         "Free from lactose"
         ],
         "displayName": "Mozzarella crumbled cheese 2.5 kg",
         "facts": [
@@ -12036,7 +11911,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. 10 × 2.5 kg for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella crumbled cheese 2.5 kg",
-        "shortText": "54.80 € more.",
+        "shortText": "+54.80 €",
         "totalCents": 23490,
         "unit": "ST",
         "verdict": "ranked",
@@ -12049,12 +11924,9 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: 154 pieces",
          "Price 5.31 €",
          "Order cut-off 15 Nov 17:00",
-         "Delivered as ordered in 100 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk"
+         "Delivered in full in 100 % of orders"
         ],
         "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
@@ -12156,7 +12028,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Lactose-free sliced mozzarella stange 400 g",
-        "shortText": "154.43 € more.",
+        "shortText": "+154.43 €",
         "supplierText": {
          "grade": "untrusted",
          "planted": false,
@@ -12175,10 +12047,7 @@ export const answers: Answers = {
         "checks": [
          "Price 36.17 €",
          "Order cut-off 12 Nov 15:00",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 400 g",
         "facts": [
@@ -12343,11 +12212,7 @@ export const answers: Answers = {
         "checks": [
          "Price 18.29 €",
          "Order cut-off 12 Nov 15:00",
-         "Footprint 5.21 kg CO2e per kg",
-         "Label Hyvää Suomesta",
-         "Allergens: milk",
-         "Free from lactose",
-         "Vegetarian"
+         "Free from lactose"
         ],
         "displayName": "Mozzarella grated 150 g",
         "facts": [
@@ -12512,10 +12377,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 108.09 €",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
@@ -12632,10 +12494,7 @@ export const answers: Answers = {
         "checks": [
          "Price 76.33 €",
          "Order cut-off 12 Nov 15:00",
-         "Delivered as ordered in 94.1 % of orders",
-         "Footprint 5.21 kg CO2e per kg",
-         "Allergens: milk",
-         "Free from gluten",
+         "Delivered in full in 94.1 % of orders",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
@@ -12800,9 +12659,7 @@ export const answers: Answers = {
        },
        {
         "checks": [
-         "Stock: not deliverable",
          "Price 1.21 €",
-         "Allergens: milk",
          "Free from lactose"
         ],
         "displayName": "Lactose-free mozzarella 100 g",
@@ -12948,6 +12805,7 @@ export const answers: Answers = {
       "text": "200 bags of lactose-free mozzarella 125 g"
      }
     ],
+    "liveAt": "10:14",
     "liveChecked": {
      "calls": 10,
      "ids": 10,
@@ -12964,6 +12822,7 @@ export const answers: Answers = {
       1
      ]
     },
+    "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
     "moneyText": "180.10 €",
     "orderId": "O-2",
     "question": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
@@ -13260,6 +13119,7 @@ export const answers: Answers = {
       "result": "waiting",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -13421,6 +13281,7 @@ export const answers: Answers = {
       "result": "accepted",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -13582,6 +13443,7 @@ export const answers: Answers = {
       "result": "waiting",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -13743,6 +13605,7 @@ export const answers: Answers = {
       "result": "waiting",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -13780,6 +13643,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
@@ -13904,6 +13768,7 @@ export const answers: Answers = {
       "result": "accepted",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -13941,6 +13806,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
@@ -14065,6 +13931,7 @@ export const answers: Answers = {
       "result": "waiting",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -14102,6 +13969,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
@@ -14226,6 +14094,7 @@ export const answers: Answers = {
       "result": "accepted",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -14263,6 +14132,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
@@ -14387,6 +14257,7 @@ export const answers: Answers = {
       "result": "waiting",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -14424,6 +14295,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",
@@ -14548,6 +14420,7 @@ export const answers: Answers = {
       "result": "accepted",
       "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
       "shortName": "Vegan pancake 30 g",
+      "shortText": "27 of 30 in stock.",
       "thisWeekQuantity": 27,
       "totalCents": 90531,
       "unit": "cartons",
@@ -14585,6 +14458,7 @@ export const answers: Answers = {
       "result": "blocked",
       "sentence": "Not renewed: none in stock at Valio. Also 26 % more per guest than usual.",
       "shortName": "Lactose-free mozzarella 125 g",
+      "shortText": "None in stock at Valio.",
       "thisWeekQuantity": 98,
       "totalCents": 11368,
       "unit": "bags",

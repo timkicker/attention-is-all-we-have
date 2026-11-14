@@ -230,17 +230,12 @@
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -444,18 +439,12 @@
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -641,17 +630,12 @@
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -845,17 +829,12 @@
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1041,17 +1020,12 @@
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1237,17 +1211,12 @@
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1443,11 +1412,7 @@
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -1655,13 +1620,8 @@
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -1860,12 +1820,8 @@
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2072,13 +2028,8 @@
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2267,11 +2218,7 @@
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2479,13 +2426,8 @@
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -3006,7 +2948,8 @@
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {

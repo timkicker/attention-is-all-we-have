@@ -256,17 +256,12 @@ export const scene1: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -470,18 +465,12 @@ export const scene1: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -667,17 +656,12 @@ export const scene1: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -871,17 +855,12 @@ export const scene1: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1067,17 +1046,12 @@ export const scene1: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1263,17 +1237,12 @@ export const scene1: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -1469,11 +1438,7 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -1681,13 +1646,8 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -1886,12 +1846,8 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2098,13 +2054,8 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2293,11 +2244,7 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -2505,13 +2452,8 @@ export const scene1: Snapshot = {
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -3031,7 +2973,8 @@ export const scene1: Snapshot = {
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {
@@ -3512,17 +3455,12 @@ export const scene2: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -3726,18 +3664,12 @@ export const scene2: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -3923,17 +3855,12 @@ export const scene2: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -4127,17 +4054,12 @@ export const scene2: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -4323,17 +4245,12 @@ export const scene2: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -4519,17 +4436,12 @@ export const scene2: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -4725,11 +4637,7 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -4937,13 +4845,8 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -5142,12 +5045,8 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -5354,13 +5253,8 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -5549,11 +5443,7 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -5761,13 +5651,8 @@ export const scene2: Snapshot = {
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -6288,7 +6173,8 @@ export const scene2: Snapshot = {
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {
@@ -6825,9 +6711,7 @@ export const scene3: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 1.21 €",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -7039,17 +6923,12 @@ export const scene3: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "shortText": "Cheapest lactose-free swap.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 18.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -7168,14 +7047,11 @@ export const scene3: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more.",
+              "shortText": "+16.50 €",
               "checks": [
-                "Stock: 4,318 bags",
                 "Price 19.66 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 96.9 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
+                "Delivered in full in 96.9 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -7341,17 +7217,12 @@ export const scene3: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more.",
+              "shortText": "+54.80 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 23.49 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 97.8 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 97.8 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -7469,14 +7340,11 @@ export const scene3: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more.",
+              "shortText": "+154.43 €",
               "checks": [
-                "Stock: 154 pieces",
                 "Price 5.31 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk"
+                "Delivered in full in 100 % of orders"
               ],
               "whyReasons": [
                 "Lactose free, claim unchecked.",
@@ -7645,10 +7513,7 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -7815,11 +7680,7 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -7931,10 +7792,7 @@ export const scene3: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 108.09 €",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -8057,10 +7915,7 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 94.1 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
-                "Free from gluten",
+                "Delivered in full in 94.1 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -8121,7 +7976,10 @@ export const scene3: Snapshot = {
         "displayName": "Lactose-free mozzarella 125 g",
         "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
-      "usedBeforeCents": 101000
+      "usedBeforeCents": 101000,
+      "liveAt": "10:14",
+      "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
+      "leadText": "Out of stock (simulated). Swap not on Valio's list."
     },
     "R-1": {
       "id": "R-1",
@@ -8337,17 +8195,12 @@ export const scene3: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -8551,18 +8404,12 @@ export const scene3: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -8748,17 +8595,12 @@ export const scene3: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -8952,17 +8794,12 @@ export const scene3: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -9148,17 +8985,12 @@ export const scene3: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -9344,17 +9176,12 @@ export const scene3: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -9550,11 +9377,7 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -9762,13 +9585,8 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -9967,12 +9785,8 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -10179,13 +9993,8 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -10374,11 +10183,7 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -10586,13 +10391,8 @@ export const scene3: Snapshot = {
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -11113,7 +10913,8 @@ export const scene3: Snapshot = {
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {
@@ -11909,9 +11710,7 @@ export const scene4: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 1.21 €",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -12123,17 +11922,12 @@ export const scene4: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "shortText": "Cheapest lactose-free swap.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 18.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -12252,14 +12046,11 @@ export const scene4: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more.",
+              "shortText": "+16.50 €",
               "checks": [
-                "Stock: 4,318 bags",
                 "Price 19.66 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 96.9 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
+                "Delivered in full in 96.9 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -12425,17 +12216,12 @@ export const scene4: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more.",
+              "shortText": "+54.80 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 23.49 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 97.8 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 97.8 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -12553,14 +12339,11 @@ export const scene4: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more.",
+              "shortText": "+154.43 €",
               "checks": [
-                "Stock: 154 pieces",
                 "Price 5.31 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk"
+                "Delivered in full in 100 % of orders"
               ],
               "whyReasons": [
                 "Lactose free, claim unchecked.",
@@ -12729,10 +12512,7 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -12899,11 +12679,7 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -13015,10 +12791,7 @@ export const scene4: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 108.09 €",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -13141,10 +12914,7 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 94.1 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
-                "Free from gluten",
+                "Delivered in full in 94.1 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -13205,7 +12975,10 @@ export const scene4: Snapshot = {
         "displayName": "Lactose-free mozzarella 125 g",
         "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
-      "usedBeforeCents": 101000
+      "usedBeforeCents": 101000,
+      "liveAt": "10:14",
+      "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
+      "leadText": "Out of stock (simulated). Swap not on Valio's list."
     },
     "R-1": {
       "id": "R-1",
@@ -13421,17 +13194,12 @@ export const scene4: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -13635,18 +13403,12 @@ export const scene4: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -13832,17 +13594,12 @@ export const scene4: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -14036,17 +13793,12 @@ export const scene4: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -14232,17 +13984,12 @@ export const scene4: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -14428,17 +14175,12 @@ export const scene4: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -14634,11 +14376,7 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -14846,13 +14584,8 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -15051,12 +14784,8 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -15263,13 +14992,8 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -15458,11 +15182,7 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -15670,13 +15390,8 @@ export const scene4: Snapshot = {
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -16197,7 +15912,8 @@ export const scene4: Snapshot = {
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {
@@ -17134,7 +16850,8 @@ export const scene4: Snapshot = {
           "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons",
           "qtyText": "27 cartons",
-          "moneyText": "905.31 €"
+          "moneyText": "905.31 €",
+          "shortText": "27 of 30 in stock."
         },
         {
           "productId": "466375",
@@ -17171,7 +16888,8 @@ export const scene4: Snapshot = {
           "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags",
           "qtyText": "98 bags",
-          "moneyText": "113.68 €"
+          "moneyText": "113.68 €",
+          "shortText": "None in stock at Valio."
         }
       ],
       "steadyPass": {
@@ -17369,9 +17087,7 @@ export const scene5: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 1.21 €",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -17583,17 +17299,12 @@ export const scene5: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
+              "shortText": "Cheapest lactose-free swap.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 18.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -17712,14 +17423,11 @@ export const scene5: Snapshot = {
                 "16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "16.50 € more.",
+              "shortText": "+16.50 €",
               "checks": [
-                "Stock: 4,318 bags",
                 "Price 19.66 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 96.9 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
+                "Delivered in full in 96.9 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -17885,17 +17593,12 @@ export const scene5: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "54.80 € more.",
+              "shortText": "+54.80 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 23.49 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 97.8 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 97.8 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Lactose free and checked.",
@@ -18013,14 +17716,11 @@ export const scene5: Snapshot = {
                 "154.43 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "154.43 € more.",
+              "shortText": "+154.43 €",
               "checks": [
-                "Stock: 154 pieces",
                 "Price 5.31 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk"
+                "Delivered in full in 100 % of orders"
               ],
               "whyReasons": [
                 "Lactose free, claim unchecked.",
@@ -18189,10 +17889,7 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 36.17 €",
                 "Order cut-off 12 Nov 15:00",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -18359,11 +18056,7 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 18.29 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 5.21 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": []
             },
@@ -18475,10 +18168,7 @@ export const scene5: Snapshot = {
               "groupText": "No delivery date",
               "groupOrder": 7,
               "checks": [
-                "Stock: not deliverable",
                 "Price 108.09 €",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -18601,10 +18291,7 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 76.33 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 94.1 % of orders",
-                "Footprint 5.21 kg CO2e per kg",
-                "Allergens: milk",
-                "Free from gluten",
+                "Delivered in full in 94.1 % of orders",
                 "Free from lactose"
               ],
               "whyReasons": [
@@ -18665,7 +18352,10 @@ export const scene5: Snapshot = {
         "displayName": "Lactose-free mozzarella 125 g",
         "stateText": "Simulated stock-out for this demo. Valio's live count is 11,603 bags."
       },
-      "usedBeforeCents": 101000
+      "usedBeforeCents": 101000,
+      "liveAt": "10:14",
+      "liveCountText": "Valio's live count of lactose-free mozzarella 125 g: 11,603 bags.",
+      "leadText": "Out of stock (simulated). Swap not on Valio's list."
     },
     "R-1": {
       "id": "R-1",
@@ -18881,17 +18571,12 @@ export const scene5: Snapshot = {
                 "Cheapest safe option and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "Cheapest safe option, always delivered in full.",
+              "shortText": "Cheapest, always delivered in full.",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.01 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -19095,18 +18780,12 @@ export const scene5: Snapshot = {
                 "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
               ],
-              "shortText": "90.00 € more.",
+              "shortText": "+90.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.10 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for."
@@ -19292,17 +18971,12 @@ export const scene5: Snapshot = {
                 "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "390.00 € more.",
+              "shortText": "+390.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.40 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -19496,17 +19170,12 @@ export const scene5: Snapshot = {
                 "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "550.00 € more.",
+              "shortText": "+550.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.56 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -19692,17 +19361,12 @@ export const scene5: Snapshot = {
                 "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "630.00 € more.",
+              "shortText": "+630.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.64 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -19888,17 +19552,12 @@ export const scene5: Snapshot = {
                 "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records.",
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
               ],
-              "shortText": "640.00 € more.",
+              "shortText": "+640.00 €",
               "checks": [
-                "Stock: Valio gives no real count",
                 "Price 1.65 €",
                 "Order cut-off 15 Nov 17:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for."
@@ -20094,11 +19753,7 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 27.39 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -20306,13 +19961,8 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 13.32 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -20511,12 +20161,8 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 6.86 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -20723,13 +20369,8 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 7.62 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Heart Symbol",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -20918,11 +20559,7 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 31.31 €",
                 "Order cut-off 12 Nov 15:00",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Free from lactose"
               ],
               "whyReasons": [
                 "The quantity is unknown."
@@ -21130,13 +20767,8 @@ export const scene5: Snapshot = {
               "checks": [
                 "Price 10.97 €",
                 "Order cut-off 12 Nov 15:00",
-                "Delivered as ordered in 100 % of orders",
-                "Footprint 1.1 kg CO2e per kg",
-                "Label EU organic",
-                "Label Hyvää Suomesta",
-                "Allergens: milk",
-                "Free from lactose",
-                "Vegetarian"
+                "Delivered in full in 100 % of orders",
+                "Free from lactose"
               ],
               "whyReasons": [
                 "Order cut-off 12 Nov 15:00 has passed.",
@@ -21657,7 +21289,8 @@ export const scene5: Snapshot = {
       "timeText": "10:00",
       "displayName": "1,000 litres of lactose-free milk by Mon 16 Nov",
       "titleText": "1,000 litres of lactose-free milk",
-      "usedBeforeCents": 0
+      "usedBeforeCents": 0,
+      "liveAt": "10:00"
     }
   },
   "spendPass": {
@@ -22594,7 +22227,8 @@ export const scene5: Snapshot = {
           "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons",
           "qtyText": "27 cartons",
-          "moneyText": "905.31 €"
+          "moneyText": "905.31 €",
+          "shortText": "27 of 30 in stock."
         },
         {
           "productId": "466375",
@@ -22631,7 +22265,8 @@ export const scene5: Snapshot = {
           "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags",
           "qtyText": "98 bags",
-          "moneyText": "113.68 €"
+          "moneyText": "113.68 €",
+          "shortText": "None in stock at Valio."
         }
       ],
       "steadyPass": {

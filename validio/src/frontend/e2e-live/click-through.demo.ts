@@ -126,7 +126,7 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
   await expect(page.getByTestId("live-checked")).toContainText("Read live from Valio at");
   const milk = page.getByTestId("option-464306");
   await expect(milk).toContainText(money("1,010.00"));
-  await expect(milk).toContainText("Cheapest safe option");
+  await expect(milk).toContainText("Cheapest, always delivered in full");
   await expect(milk).toContainText("always delivered in full");
   await expect(page.getByTestId("option-464401")).toContainText(money("1,100.00"));
   await expect(page.getByTestId("option-464401")).toContainText(money("90.00"));

@@ -14,6 +14,7 @@ resets it too; the stores notice the new seed token and reopen.
 """
 
 import json
+import re
 import sqlite3
 import threading
 from dataclasses import dataclass
@@ -37,7 +38,7 @@ from ..standing.drift import unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
-from ..text.format import display_name, money, product_qty, qty_of, short_name
+from ..text.format import cap, display_name, money, product_qty, qty_of, short_name
 from ..text.format import unit_word as fmt_unit_word
 from ..valio.client import ValioClient
 from .schemas import ApproveIn
@@ -101,6 +102,18 @@ class SplitOut(Camel):
     extra_cost_pct: float
 
 
+def _line_short(sentence: str, flags) -> str | None:
+    """One short line for a held steady line: "None in stock at Valio.", "27 of 30 in stock."."""
+    stop = re.match(r"Not renewed: ([^.]+)\.", sentence)
+    if stop:
+        return cap(stop.group(1)) + "."
+    for f in flags:
+        few = re.match(r"Only ([\d,]+) .*?in stock, the usual line is ([\d,]+)", f.sentence or "")
+        if few:
+            return f"{few.group(1)} of {few.group(2)} in stock."
+    return None
+
+
 class SteadyLineOut(Camel):
     product_id: str
     name: str
@@ -123,9 +136,11 @@ class SteadyLineOut(Camel):
     usual_qty_text: str | None = None
     qty_text: str | None = None
     money_text: str | None = None
+    short_text: str | None = None
 
     def _texts(self) -> dict:
-        return {"display_name": short_name(self.name), "short_name": short_name(self.name),
+        return {"short_text": _line_short(self.sentence, self.flags),
+                "display_name": short_name(self.name), "short_name": short_name(self.name),
                 "full_name": display_name(self.name), "usual_qty_text": _qty(self.usual_quantity, self.product_id),
                 "qty_text": None if self.this_week_quantity is None else _qty(self.this_week_quantity, self.product_id),
                 "money_text": None if self.total_cents is None else money(self.total_cents)}
