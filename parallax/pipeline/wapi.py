@@ -20,7 +20,7 @@ CACHE_DIR = ROOT / "data" / "raw"
 USER_AGENT = (
     f"Parallax/0.1 (https://github.com/timkicker/attention-is-all-we-have) python-requests/{requests.__version__}"
 )
-READ_ACTIONS = {"query", "parse", "compare", "sitematrix"}
+READ_ACTIONS = {"query", "parse", "compare", "sitematrix", "wbgetentities"}
 MAX_429_TRIES = 6
 MAX_5XX_RETRIES = 3
 
@@ -32,6 +32,29 @@ _STATS_LOCK = threading.Lock()
 
 class WikiError(RuntimeError):
     pass
+
+
+class RateLimited(WikiError):
+    """Wikimedia kept answering 429 (or maxlag) after every retry; wait retry_after_s before asking again."""
+
+    def __init__(self, msg: str, retry_after_s: float) -> None:
+        super().__init__(msg)
+        self.retry_after_s = retry_after_s
+
+
+GIVE_UP_COOLDOWN_S = 120.0  # after a give-up, callers wait this long before the next try
+_cooldown_until = 0.0
+_local = threading.local()
+
+
+def on_wait(callback) -> None:
+    """Set (or clear with None) a callback(seconds) for this thread, called before each 429/maxlag sleep."""
+    _local.on_wait = callback
+
+
+def cooldown_left() -> float:
+    """Seconds until the client wants to be asked again after it gave up on a 429, 0 when free."""
+    return max(0.0, _cooldown_until - time.monotonic())
 
 
 def reset_stats() -> None:
@@ -102,12 +125,18 @@ def get(url: str, params: dict | None = None, *, backoff: float = 5.0, timeout: 
         if resp.status_code == 429 or lagged:
             tries_429 += 1
             _bump("r429")
-            if tries_429 >= MAX_429_TRIES:
-                raise WikiError(f"429/maxlag {tries_429} times for {url}")
             ra = resp.headers.get("Retry-After")
             sleep_s = float(ra) if ra and ra.replace(".", "", 1).isdigit() else wait
+            if tries_429 >= MAX_429_TRIES:
+                global _cooldown_until
+                retry_after = max(sleep_s, GIVE_UP_COOLDOWN_S)
+                _cooldown_until = max(_cooldown_until, time.monotonic() + retry_after)
+                raise RateLimited(f"429/maxlag {tries_429} times for {url}", retry_after)
             wait *= 2
             _bump("wait_s", sleep_s)
+            hook = getattr(_local, "on_wait", None)
+            if hook:
+                hook(sleep_s)
             time.sleep(sleep_s)
             continue
         if resp.status_code >= 500:
