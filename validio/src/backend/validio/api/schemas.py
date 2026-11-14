@@ -154,6 +154,8 @@ class RankedOptionView(Model):
     short_text: str | None = Field(None, description="at most about eight words: \"90.00 € more.\"")
     group_text: str | None = Field(None, description="turned-down options only: their heading, \"Order cut-off passed\"")
     group_order: int | None = Field(None, description="turned-down options only: the heading's place, lowest first")
+    checks: list[str] | None = Field(None, description="the facts Validio confirmed, one short fact each")
+    why_reasons: list[str] | None = Field(None, description="the reasons without the one shortText already says")
 
     @model_validator(mode="after")
     def _text(self):
@@ -167,6 +169,10 @@ class RankedOptionView(Model):
             self.money_text = d.money(self.total_cents)
         self.reasons = self.reasons if self.reasons is not None else d.reasons(self.sentence)
         self.short_text = self.short_text or d.short_text(self.verdict, self.reasons)
+        if self.why_reasons is None:
+            self.why_reasons = d.why_reasons(self.reasons, self.short_text)
+        if self.checks is None:
+            self.checks = d.checks(self.facts)
         if self.verdict in d.TURNED_DOWN and self.group_text is None:
             self.group_text, self.group_order, _ = d.group(self.reasons)
         return self
@@ -223,6 +229,7 @@ class RequestLineView(Model):
             o.short_name = o.display_name = n
             if o.verdict == "chosen" and o.is_substitute:
                 o.short_text = d.swap_text(o.reasons or [], self.need.diet, self.need.deliver_by) or o.short_text
+            o.why_reasons = d.why_reasons(o.reasons or [], o.short_text)
         return self
 
 

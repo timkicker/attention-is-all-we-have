@@ -1269,6 +1269,21 @@
       },
       "RankedOptionView": {
         "properties": {
+          "checks": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the facts Validio confirmed, one short fact each",
+            "title": "Checks"
+          },
           "displayName": {
             "anyOf": [
               {
@@ -1482,6 +1497,21 @@
             ],
             "title": "Verdict",
             "type": "string"
+          },
+          "whyReasons": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the reasons without the one shortText already says",
+            "title": "Whyreasons"
           }
         },
         "required": [

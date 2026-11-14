@@ -243,12 +243,52 @@ def sees_text(disclosed: list[str], hidden: list[str]) -> str:
     return f"The agent sees {shown}" + (f", not {kept}." if kept else ".")
 
 
+CHECKED = ("attested", "attested_until", "consistent")
+CHECK_WORDS = {"quantity": "Stock: {}", "price": "Price {}", "cutoff": "Order cut-off {}",
+               "reliability": "Delivered as ordered in {}", "carbon": "Footprint {}", "label": "Label {}",
+               "allergens": "Allergens: {}"}
+
+
+def checks(facts) -> list[str]:
+    """The facts Validio confirmed, one short line each: "Price 1.01 €", "Free from lactose". Supplier text
+    and unchecked claims stay out."""
+    out = []
+    for f in facts:
+        value = f.value_text or f.value
+        kind = f.field.split(":")[0]
+        if f.grade not in CHECKED or not value:
+            continue
+        if kind == "claim":
+            out.append(cap(str(value)))
+        elif kind in CHECK_WORDS:
+            out.append(CHECK_WORDS[kind].format(value))
+    return out
+
+
 def asks_text(sentence: str | None) -> str | None:
     """Why a waiting request waits for you, for its inbox row: "Asks you: the swap is not on Valio's list."."""
     said = ledger_text("approval", "", sentence or "")
     if not said or not said.startswith("Asked you: "):
         return None
     return "Asks you: " + said[11:].replace("the substitute", "the swap")
+
+
+def why_reasons(reasons: list[str], short: str | None) -> list[str]:
+    """The reasons for the Why fold without the one the short text already says."""
+    if not short:
+        return list(reasons)
+    s = short.rstrip(".")
+    marks = []
+    if s.endswith(" € more"):
+        marks.append("more than the cheapest")
+    if s.startswith("Cheapest "):
+        marks.append("Cheapest safe option")
+    if s.endswith(" hard cap"):
+        marks.append("is over the hard cap")
+    for i, r in enumerate(reasons):
+        if r.rstrip(".") == s or any(m in r for m in marks):
+            return reasons[:i] + reasons[i + 1:]
+    return list(reasons)
 
 
 def _first(sentence: str) -> str:
