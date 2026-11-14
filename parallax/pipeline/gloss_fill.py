@@ -135,7 +135,8 @@ def run(topic: str, dry_run: bool, scope: str) -> None:
         have = glossed(cur, found)
         new = {k: t for k, t in found.items() if k not in have and k not in seen}
         seen |= set(found)
-        print(f"{part}: {len(found)} non-English sentences, {len(found) - len(new)} glossed or counted, {len(new)} to gloss")
+        done = len(found) - len(new)
+        print(f"{part}: {len(found)} non-English sentences, {done} glossed or counted, {len(new)} to gloss")
         for (lang, h), t in new.items():
             todo.setdefault(lang, {})[h] = t
     total = sum(len(v) for v in todo.values())
