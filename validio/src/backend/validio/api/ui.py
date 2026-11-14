@@ -59,6 +59,8 @@ def kitchen(request: Request, ctx: CtxDep) -> None:
         return
     if ctx.public_read and request.method in ("GET", "HEAD"):
         return  # VALIDIO_PUBLIC_READ=1: anyone may look; writes still need the token, approve the code
+    if ctx.public_read and ctx.demo_token and _same(request.headers.get("x-demo-token"), ctx.demo_token):
+        return  # the public demo writes with the demo token the web app asks for; codes still count
     if not ctx.kitchen_token:
         raise HTTPException(403, "this server has no VALIDIO_KITCHEN_TOKEN, so the web API is closed to "
                                  "callers that are not on this machine")

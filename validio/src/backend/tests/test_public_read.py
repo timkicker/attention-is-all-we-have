@@ -1,6 +1,6 @@
 """VALIDIO_PUBLIC_READ=1: a stranger on the public deploy reads the UI API without the kitchen token.
-Every write stays closed: the kitchen token for any POST, the 6 digit code for approve, the demo token for
-the demo switches."""
+Every write stays closed: the kitchen token or, on a public read deploy, the demo token for any POST, the
+6 digit code for approve, renew and the limits, the demo token for the demo switches."""
 
 import pytest
 from conftest import CODE, TOKEN
@@ -45,7 +45,8 @@ def test_reads_are_open_with_public_read(public, monkeypatch):
 def test_writes_without_a_token_stay_401_with_public_read(public, monkeypatch, path):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
     with stranger() as c:
-        assert c.post(path, json={"code": CODE}, headers={"X-Demo-Token": TOKEN}).status_code == 401
+        assert c.post(path, json={"code": CODE}).status_code == 401
+        assert c.post(path, json={"code": CODE}, headers={"X-Demo-Token": "nope"}).status_code == 401
         assert c.post(path, json={"code": CODE}, headers={"X-Kitchen-Token": "nope"}).status_code == 401
     assert public.store.requests() == []  # nothing changed
 
@@ -63,3 +64,25 @@ def test_public_read_is_only_the_exact_value_1(public, monkeypatch):
     monkeypatch.setenv("VALIDIO_PUBLIC_READ", "true")
     with stranger() as c:
         assert c.get("/api/inbox").status_code == 401
+
+
+
+def test_the_demo_token_opens_ui_writes_with_public_read(public, monkeypatch):
+    """The web app has a field for the demo token, not for the kitchen token."""
+    monkeypatch.setenv("VALIDIO_PUBLIC_READ", "1")
+    with TestClient(app, client=REMOTE, headers={"X-Demo-Token": TOKEN}) as c:
+        assert c.post("/api/demo/stock-out").status_code == 200
+        r = c.post("/api/demo/ask", json={"text": "1500 litres of lactose-free milk by Monday"})
+        assert r.status_code == 200, r.text
+        oid = c.get(f"/api/requests/{r.json()['requestId']}").json()["orderId"]
+        assert c.post(f"/api/orders/{oid}/approve").status_code == 403  # the code still counts
+        assert c.post(f"/api/orders/{oid}/approve", json={"code": CODE}).status_code == 200
+        limits = {"autoLimitCents": 1, "hardCapCents": 2, "deliverBy": "2026-11-16"}
+        assert c.post("/api/spend-pass", json=limits).status_code == 403
+        assert c.post("/agent/v1/requests", json={"lines": [{"text": "1 l of milk"}],
+                                                  "idempotencyKey": "x"}).status_code == 401  # Spend Pass
+
+
+def test_the_demo_token_opens_nothing_without_public_read(public):
+    with stranger() as c:
+        assert c.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN}).status_code == 401
