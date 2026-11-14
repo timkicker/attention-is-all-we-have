@@ -1,15 +1,32 @@
 from dataclasses import dataclass
 from datetime import date, datetime
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 NO_END = date(9999, 12, 31)
 
 
 def _cents(price: dict | None) -> int | None:
-    return None if not price or price.get("value") is None else round(price["value"] * 100)
+    """Whole cents, rounded half up from the decimal Valio wrote: 1.005 € is 101 cents, never 100 by float error."""
+    if not price or price.get("value") is None:
+        return None
+    v = price["value"]
+    if isinstance(v, bool) or not isinstance(v, (int, float, str)):
+        raise TypeError(f"price value {v!r} is not a number")
+    try:
+        return int((Decimal(str(v)) * 100).quantize(Decimal(1), rounding=ROUND_HALF_UP))
+    except InvalidOperation as e:
+        raise ValueError(f"price value {v!r} is not a number") from e
 
 
 def _ts(s: str | None) -> datetime | None:
-    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%S%z") if s else None
+    """Valio's time stamps: 2026-11-15T12:00:00+0200, also with fractions of a second, a colon in the offset
+    or Z. A time without an offset is refused, since cut-offs compare with an aware clock."""
+    if not s:
+        return None
+    t = datetime.fromisoformat(s)
+    if t.tzinfo is None:
+        raise ValueError(f"time {s!r} has no offset")
+    return t
 
 
 @dataclass(frozen=True)
@@ -72,8 +89,11 @@ class Availability:
         return cls(
             product_id=x["productId"], logistic_model=x.get("logisticModel"),
             closing_time=_ts(x.get("closingTime")), sales_block=bool(x.get("salesBlock")),
-            lines=[ScheduleLine(amount=ln["availableAmount"], available=date.fromisoformat(ln["availableDate"]),
-                                sales_unit=ln["salesUnit"], sales_block=bool(ln.get("salesBlock")))
-                   for ln in x.get("scheduleLines") or [] if ln.get("availableDate")],  # none: no date given
+            # earliest first: the first line is the one every check reads; a line without a date gives none
+            lines=sorted((ScheduleLine(amount=float(ln["availableAmount"]),
+                                       available=date.fromisoformat(ln["availableDate"][:10]),
+                                       sales_unit=ln["salesUnit"], sales_block=bool(ln.get("salesBlock")))
+                          for ln in x.get("scheduleLines") or [] if ln.get("availableDate")),
+                         key=lambda ln: ln.available),
             time_now=_ts(time_now),
         )

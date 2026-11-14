@@ -245,12 +245,13 @@ def test_consume_stale_nonce_says_stale():
 
 
 def test_nonce_store_limit_is_exact():
-    # max_open 10000 -> 10001: the cap counts open nonces exactly
+    # max_open 10000 -> 10001: the cap counts open nonces exactly; a full store drops its oldest
     ns = NonceStore(max_open=3)
+    first = ns.issue(NOW)
     for _ in range(3):
         ns.issue(NOW)
-    with pytest.raises(MandateError, match="too many open nonces"):
-        ns.issue(NOW)
+        assert len(ns._issued) <= 3
+    assert len(ns._issued) == 3 and first not in ns._issued
     assert NonceStore().max_open == 10000
 
 

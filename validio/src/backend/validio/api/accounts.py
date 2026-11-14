@@ -25,6 +25,7 @@ from pydantic import Field
 
 from ..demo import seed
 from .connect import AgentState
+from .limits import NEW_KITCHENS, client_ip, secure_cookies
 from .schemas import Model
 from .state import Ctx, get_ctx
 from .steady import Runtime
@@ -35,6 +36,7 @@ DEMO_CODE = "246810"
 DEMO_NAME = "Hotel Espoo kitchen"
 DEMO_CUSTOMER = "hotel-espoo"
 DEMO_MAX_AGE = 48 * 3600
+MAX_DEMO_COPIES = 200  # demo kitchens on disk at once; the oldest goes first
 MAX_OPEN = 64
 LOGIN_TRIES, LOGIN_WINDOW = 5, 15 * 60
 
@@ -148,13 +150,18 @@ class Accounts:
             con.execute("delete from account where id = ?", (account_id,))
         shutil.rmtree(self.root / account_id, ignore_errors=True)
 
-    def sweep(self, now: float | None = None) -> list[str]:
-        """Demo copies older than 48 h go, with their sessions and files, and demo copies with the short ids of
-        before (32 bits, guessable)."""
+    def sweep(self, now: float | None = None, keep: int | None = None) -> list[str]:
+        """Demo copies older than 48 h go, with their sessions and files, demo copies with the short ids of
+        before (32 bits, guessable), and the oldest copies beyond `keep - 1`, so a new one always fits under the
+        cap on disk."""
+        keep = MAX_DEMO_COPIES if keep is None else keep
         cutoff = (now or time.time()) - DEMO_MAX_AGE
         with self._db() as con:
             old = [r[0] for r in con.execute("select id from account where is_demo = 1 and (created_at < ? or "
                                              "length(id) < 34)", (cutoff,))]
+            rest = [r[0] for r in con.execute("select id from account where is_demo = 1 order by created_at desc")
+                    if r[0] not in old]
+            old += rest[max(keep - 1, 0):]
             con.execute("delete from session where expires < ?", (now or time.time(),))
         for a in old:
             self.delete(a)
@@ -174,6 +181,8 @@ class Accounts:
         from .connect import leave_unconnected
 
         self._copy_files(db, keys)
+        # its own kitchen key, agent key and issuer: no copy shares a signing key with the template or another
+        seed.rekey(db, keys, f"kitchen:{account_id}")
         leave_unconnected(db)
 
     def _copy_files(self, db: Path, keys: Path) -> None:
@@ -206,12 +215,14 @@ class Accounts:
             c = self.open.get(account_id)
             if c is not None:
                 self.open.move_to_end(account_id)
+                self._keep_window(c)
                 return c
             row = self.get(account_id)
             if row is None:
                 raise KeyError(account_id)
             db, keys = self.paths(account_id)
-            rt = Runtime(db, keys, shared=self.shared)
+            # a kitchen's own account decides on the wall clock; a demo copy keeps the demo story's clock
+            rt = Runtime(db, keys, shared=self.shared, real_clock=not row["is_demo"])
 
             def code_ok(given: str, _id=account_id) -> bool:
                 return bool(re.fullmatch(r"\d{6}", given)) and secret_ok(given, (self.get(_id) or {}).get("code_hash"))
@@ -221,11 +232,26 @@ class Accounts:
                 self._copy_store(_id)
 
             c = Ctx(rt, account=row, code_ok=code_ok, reseed=reseed)
+            self._keep_window(c)
             self.open[account_id] = c
             while len(self.open) > MAX_OPEN:
-                _, old = self.open.popitem(last=False)
-                old.rt.close()
+                # dropped from the cache, never closed here: a request may still be working on it. Its
+                # connection closes once nothing holds the runtime; SQLite's own locking keeps two
+                # connections to one file safe meanwhile
+                self.open.popitem(last=False)
             return c
+
+    WINDOW_CHECK = 3600  # seconds between two looks at the pass's validity of one open account
+
+    def _keep_window(self, c: Ctx) -> None:
+        """A kitchen's own account: sign M-1 again on its own window when it is not on one yet or runs out within
+        seed.RENEW_BEFORE. Looked at once an hour per open account."""
+        if c.account["is_demo"] or time.monotonic() - getattr(c, "_window_at", -1e9) < self.WINDOW_CHECK:
+            return
+        from .settings import renew_window
+
+        renew_window(c)
+        c._window_at = time.monotonic()
 
     # sessions
 
@@ -234,6 +260,12 @@ class Accounts:
         with self._db() as con:
             con.execute("insert into session values (?, ?, ?)", (_sid_hash(sid), account_id, time.time() + SESSION_SECONDS))
         return sid
+
+    def end_other_sessions(self, account_id: str, keep_sid: str | None) -> None:
+        """Every session of the account but `keep_sid` ends (a new password: whoever knew the old one is out)."""
+        with self._db() as con:
+            con.execute("delete from session where account_id = ? and id_hash != ?",
+                        (account_id, _sid_hash(keep_sid) if keep_sid else ""))
 
     def end_session(self, sid: str) -> None:
         with self._db() as con:
@@ -356,9 +388,12 @@ def _signed_in(request: Request, row: dict, status: int = 200) -> Response:
     sid = get_accounts().start_session(row["id"])
     r = Response(view(row).model_dump_json(by_alias=True, exclude_none=True), status_code=status,
                  media_type="application/json")
-    r.set_cookie(COOKIE, sid, httponly=True, samesite="lax", secure=request.url.scheme == "https",
+    r.set_cookie(COOKIE, sid, httponly=True, samesite="lax", secure=secure_cookies(request),
                  max_age=SESSION_SECONDS, path="/")
     return r
+
+
+_DUMMY_HASH = hash_secret(secrets.token_hex(16))
 
 
 def _too_many(keys: list[str]) -> bool:
@@ -377,6 +412,7 @@ def _miss(keys: list[str]) -> None:
 
 @router.post("/signup", response_model=AccountView, status_code=201, response_model_exclude_none=True)
 def signup(request: Request, body: SignupIn):
+    NEW_KITCHENS.check(f"client:{client_ip(request)}", "new kitchens from this address")
     try:
         row = get_accounts().create(name=body.name.strip(), email=body.email.strip(), password=body.password,
                                     customer=body.customer_number, code=body.approval_code)
@@ -388,11 +424,12 @@ def signup(request: Request, body: SignupIn):
 @router.post("/login", response_model=AccountView, response_model_exclude_none=True)
 def login(request: Request, body: LoginIn):
     email = body.email.strip().lower()
-    keys = [f"email:{email}", f"client:{request.client.host if request.client else '?'}"]
+    keys = [f"email:{email}", f"client:{client_ip(request)}"]
     if _too_many(keys):
         raise HTTPException(429, "too many wrong logins, wait 15 minutes")
     row = get_accounts().by_email(email)
-    if row is None or not secret_ok(body.password, row["pw_hash"]):
+    # an unknown email costs one scrypt as well, so the time of the answer never tells whether it exists
+    if not secret_ok(body.password, row["pw_hash"] if row else _DUMMY_HASH) or row is None:
         _miss(keys)
         raise HTTPException(401, "wrong email or password")
     return _signed_in(request, row)
@@ -415,6 +452,7 @@ def demo(request: Request):
     a = session_account_id(request)
     if a is not None and acc.get(a)["is_demo"]:
         return view(acc.get(a))
+    NEW_KITCHENS.check(f"client:{client_ip(request)}", "new kitchens from this address")
     acc.sweep()
     row = acc.create(name=DEMO_NAME, email=None, password=None, customer=DEMO_CUSTOMER, code=DEMO_CODE,
                      is_demo=True)
@@ -451,5 +489,5 @@ def open_link(request: Request, token: str):
         raise HTTPException(404, "this link is used or expired")
     r = RedirectResponse(row["path"], status_code=303)
     r.set_cookie(COOKIE, acc.start_session(row["account_id"]), httponly=True, samesite="lax",
-                 secure=request.url.scheme == "https", max_age=SESSION_SECONDS, path="/")
+                 secure=secure_cookies(request), max_age=SESSION_SECONDS, path="/")
     return r

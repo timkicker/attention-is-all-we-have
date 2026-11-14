@@ -16,7 +16,7 @@ import base64
 import json
 import re
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -76,12 +76,12 @@ def current_claims(path: Path) -> dict:
 
 
 def _said(c: dict) -> list[tuple[str, str]]:
-    d = date.fromisoformat(str(c["deliverBy"]))
+    d = date.fromisoformat(str(c["deliverBy"])) if c.get("deliverBy") else None
     split = c.get("split") or {}
     pct = float(split.get("maxExtraCostPct", 0))
     return [("Orders alone up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
             ("Diet", " and ".join(CLAIM_NAMES.get(x, x) for x in sorted(c.get("diet") or ())) or "none"),
-            ("Delivered by", f"{d.day} {d:%b}"),
+            ("Delivered by", f"{d.day} {d:%b}" if d else "the day each request names"),
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none alone"),
             ("Extra for a split", f"up to {pct:g} %" if pct else "none"),
             ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none"),
@@ -93,6 +93,8 @@ def resign(ctx: Ctx, changes: dict, why: str) -> dict:
     one ledger entry by the owner. `why` names the version ("Rules changed", "Diet changed")."""
     with ctx.rt.lock:
         before = current_claims(ctx.db_path)
+        if own_account(ctx):  # every signing starts a fresh window on the wall clock
+            changes = {**changes, **seed.own_window(ctx.now())}
         seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **changes}, why=why, at=ctx.stamp())
         after = current_claims(ctx.db_path)
         changed = [f"{k} {a} → {b}." for (k, a), (_, b) in zip(_said(before), _said(after), strict=True) if a != b]
@@ -102,6 +104,27 @@ def resign(ctx: Ctx, changes: dict, why: str) -> dict:
         ctx.audit.append(at=ctx.stamp(), actor="owner", kind="spend_pass", sentence=sentence,
                          facts=[], mandate_id=pid, disclosed={}, rule_ids=[], order_id=None)
     return after
+
+
+def own_account(ctx: Ctx) -> bool:
+    """A kitchen's own account (not the local kitchen, not a demo copy): it runs on the wall clock."""
+    return ctx.account is not None and not ctx.account["is_demo"]
+
+
+def renew_window(ctx: Ctx) -> bool:
+    """Sign M-1 again on the account's own window when it has none or it runs out soon. True when it signed."""
+    with ctx.rt.lock:
+        if seed.window_ok(ctx.db_path, ctx.now()):
+            return False
+        before = current_claims(ctx.db_path)
+        seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **seed.own_window(ctx.now())},
+                        why="Validity renewed", at=ctx.stamp())
+        end = datetime.fromtimestamp(current_claims(ctx.db_path)["exp"], ctx.now().tzinfo)
+        ctx.audit.append(at=ctx.stamp(), actor="validio", kind="spend_pass",
+                         sentence=f"Validio signed Spend Pass {seed.SPEND_PASS_ID} again for 30 more days, "
+                                  f"valid until {end:%d %b %Y}. Its limits did not change.",
+                         facts=[], mandate_id=seed.SPEND_PASS_ID, disclosed={}, rule_ids=[], order_id=None)
+    return True
 
 
 # small values next to the pass, in the kitchen's own store
@@ -319,15 +342,22 @@ def put_approval_code(ctx: CtxDep, request: Request, body: Annotated[ApprovalCod
 
 
 @router.put("/settings/login", response_model=SettingsOut)
-def put_login(ctx: CtxDep, body: LoginChangeIn):
+def put_login(ctx: CtxDep, request: Request, body: LoginChangeIn):
     """A new email, a new password, or both, with the current password. Demo copies have no login."""
     from .accounts import get_accounts, hash_secret, secret_ok
 
     if ctx.account is None or ctx.account["is_demo"]:
         raise HTTPException(403, "this kitchen has no login to change")
+    from .accounts import _miss, _too_many
+    from .limits import client_ip
+
     acc = get_accounts()
     row = acc.get(ctx.account["id"])
+    keys = [f"password:{row['id']}", f"client:{client_ip(request)}"]  # as many tries as the login allows
+    if _too_many(keys):
+        raise HTTPException(429, "too many wrong passwords, wait 15 minutes")
     if not secret_ok(body.current_password, row["pw_hash"]):
+        _miss(keys)
         raise HTTPException(403, "wrong password")
     fields: dict = {}
     if body.email:
@@ -340,4 +370,8 @@ def put_login(ctx: CtxDep, body: LoginChangeIn):
         except sqlite3.IntegrityError as e:
             raise HTTPException(409, "an account with this email exists") from e
         ctx.account.update(fields)  # the open account's row, cached with its store
+        if "pw_hash" in fields:  # a new password ends every other session of the account
+            from .accounts import COOKIE
+
+            acc.end_other_sessions(row["id"], request.cookies.get(COOKIE))
     return _settings(ctx)

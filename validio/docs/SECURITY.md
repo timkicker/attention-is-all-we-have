@@ -40,6 +40,8 @@ Proof:
 - `test_reader.py::test_deciding_code_never_imports_reader`
 - `test_reader.py::test_reader_output_cannot_change_decision` with its control `test_reader.py::test_control_wired_reader_would_be_caught`, which wires a lying reader into grading and shows the decision would move
 
+The connector URL (`/mcp/c/<token>/`, chat apps and coding tools that cannot sign) answers through the same `redact` in `api/mcp_server.py`, since those agents have no holder of their own to strip it (`test_connector_synthetic.py::test_connector_answers_carry_no_supplier_text`). `/mcp` and `/agent/v1` still return supplier text under `supplierText` and `descriptionUntrusted`, for agents built on Validio's holder, which strip it themselves; any other agent there must drop those fields before its model reads them.
+
 Not covered: `redact` works on field names. A new API field that carries supplier text under an unknown name would reach the model until someone adds it to the list. Product names and the chef's own request text go to the model as they are. The fake reader's patterns are English, so an instruction in Finnish gets no flag on screen. It still cannot change a decision. The owner sees the reader's note and can be talked into something by text on a screen. No code stops that.
 
 ## Valio data wrong
@@ -83,7 +85,7 @@ Not covered: the issued pass alone is useless, but the pass together with the ag
 
 ## Replay
 
-A presentation needs a fresh nonce from `GET /agent/v1/nonce`. The `NonceStore` in `policy/mandate.py` accepts each nonce once and only for a short time. A check that fails leaves the nonce unused. Every write carries an idempotency key, stored per Spend Pass in `orders/store.py`, so a retried request or order returns the first answer and never orders twice.
+A presentation needs a fresh nonce from `GET /agent/v1/nonce`. The `NonceStore` in `policy/mandate.py` accepts each nonce once and only for five minutes, on Validio's clock and on the wall clock, so an unused nonce expires even while the demo clock stands still. A full store drops its oldest nonce instead of refusing new ones, and `GET /agent/v1/nonce` answers at most 120 a minute per client and kitchen (`api/limits.py`). A check that fails leaves the nonce unused. Every write carries an idempotency key, stored per Spend Pass in `orders/store.py`, so a retried request or order returns the first answer and never orders twice.
 
 Proof:
 
@@ -91,15 +93,17 @@ Proof:
 - `test_spend_pass.py::test_stale_nonce_rejected`
 - `test_spend_pass.py::test_wrong_nonce_rejected`
 - `test_spend_pass.py::test_failed_check_keeps_the_nonce_unused`
-- `test_spend_pass.py::test_nonce_store_is_capped`
+- `test_spend_pass.py::test_nonce_store_is_capped_and_drops_the_oldest`
+- `test_spend_pass.py::test_nonce_expires_on_the_wall_clock_while_the_demo_clock_stands_still`
+- `test_app_synthetic.py::test_nonce_route_is_rate_limited_per_client`
 - `test_api.py::test_retry_orders_once`
 - `test_orders.py::test_idempotent_submit`
 
-Not covered: nonces live in memory. A restart drops them, which fails closed. Running two server processes would need a shared nonce store. The store is capped and has no rate limit, so a flood of nonce requests can push out an honest agent's nonce.
+Not covered: nonces live in memory. A restart drops them, which fails closed. Running two server processes would need a shared nonce store. A flood from many addresses can still push out an honest agent's nonce in the seconds between fetching and using it; the agent then fetches a new one.
 
 ## Tampered ledger
 
-The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON. A head row with the entry count, the last hash and the time of the last entry moves in the same transaction as each append, so deleting the newest entries is caught as well. The kitchen's key signs that head on every append and verify checks the signature, so a rewrite of every hash and the head row is caught too. `GET /api/ledger/head` returns the signed head with the kitchen's public key, so Valio can pin it. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
+The Open Ledger in `audit/log.py` chains every entry to the one before by SHA-256 over its canonical JSON: keys sorted, no spaces, UTF-8, and no floats in an entry, which makes it RFC 8785 (JCS), so Valio can check the chain with any JCS library (`audit/log.py`, `canonical`). A head row with the entry count, the last hash and the time of the last entry moves in the same transaction as each append, so deleting the newest entries is caught as well. The kitchen's key signs that head on every append and verify checks the signature, so a rewrite of every hash and the head row is caught too. `GET /api/ledger/head` returns the signed head with the kitchen's public key, so Valio can pin it. Hidden Spend Pass fields are dropped before anything is written. `GET /api/ledger` verifies the chain on every read.
 
 Proof:
 
@@ -118,7 +122,7 @@ Not covered: the kitchen's key sits in `data/keys/` on the same machine. Someone
 
 ## Approve abuse
 
-Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes lock that order, and five from one client lock that client (`api/state.py`). Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The alone and approval limits hold per order, the per week limit across the pass's placed orders; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. The demo switches answer a demo copy's session (docs/ACCOUNTS-API.md) and callers on this machine, nobody else.
+Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes within 15 minutes lock that order or button, and five from one client lock that client, each for 15 minutes (`api/ui.py`). The client is the TCP peer, or with `VALIDIO_TRUST_PROXY=1` the right-most `X-Forwarded-For` entry, the one the trusted proxy appended; entries left of it come from the caller and are never used (`api/limits.py`). On Modal the switch stays off: Modal hands the visitor's own address to the app as the peer (`request.client.host`, Modal's web endpoint docs), so the login lock, the code lock and the limit of 10 new kitchens an hour count per visitor, not for everyone behind one shared address. Changing the login needs the current password, with the login's limit of five tries in 15 minutes. Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The alone and approval limits hold per order, the per week limit across the pass's placed orders; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. The demo switches answer a demo copy's session (docs/ACCOUNTS-API.md) and callers on this machine, nobody else.
 
 Proof:
 
@@ -170,4 +174,6 @@ In the recorded test API answers, 16 products have an available amount of 999999
 
 If the value means "made to order, no limit", that is right. If it means "nobody knows", Validio orders alone on stock nobody has counted. We do not know which one it is and have to ask the Valio mentors. Until they answer, the decision stays as it is and the number is marked. The quantity fact and the order's ledger sentence say "Valio reports 9999999999, a placeholder, not a real count; treated as in stock" (`orders/service.py`, `trust/levels.py`). The switch `STRICT_PLACEHOLDER_STOCK=1` in `.env` treats both placeholder values as no real count, so scene 2 goes to a person instead (`config.py`). It is off by default.
 
-Proof: `test_orders.py::test_placeholder_stock_shown_in_facts_and_ledger`, `test_trust.py::test_placeholder_stock_is_marked`, `test_trust.py::test_strict_placeholder_stock_is_unknown`, `test_trust.py::test_real_count_has_no_placeholder_note` and `test_policy.py::test_graded_placeholder_stock_strict_switch`.
+A kitchen's own account (not a demo copy, not the local kitchen) always treats both placeholder values as no real count, whatever the switch says: it orders with real money, so it never orders alone on stock nobody counted (`config.strict_stock`, set by `OrderService(strict_stock=True)` in `api/steady.py`). The demo keeps the switch, so its scenes play as recorded.
+
+Proof: `test_synthetic.py::test_an_own_account_never_orders_alone_on_placeholder_stock`, `test_orders.py::test_placeholder_stock_shown_in_facts_and_ledger`, `test_trust.py::test_placeholder_stock_is_marked`, `test_trust.py::test_strict_placeholder_stock_is_unknown`, `test_trust.py::test_real_count_has_no_placeholder_note` and `test_policy.py::test_graded_placeholder_stock_strict_switch`.

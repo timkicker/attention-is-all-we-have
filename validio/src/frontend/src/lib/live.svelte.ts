@@ -11,16 +11,19 @@ export function live<T>(fn: () => Promise<T>, ms = 2000) {
   const s = $state({ data: undefined as T | undefined, error: "", status: 0, loaded: false });
   $effect(() => {
     void chrome.version;
-    return poll(async () => {
+    return poll(async (alive) => {
       try {
-        s.data = await fn();
+        const data = await fn();
+        if (!alive()) return; // the page moved on (a new param): this answer is for the old one
+        s.data = data;
         s.error = "";
         s.status = 0;
       } catch (e) {
+        if (!alive()) return;
         s.error = e instanceof Error ? e.message : String(e);
         s.status = e instanceof ApiError ? e.status : 0;
       } finally {
-        s.loaded = true;
+        if (alive()) s.loaded = true;
       }
     }, ms);
   });

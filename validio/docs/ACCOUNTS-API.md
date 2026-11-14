@@ -51,6 +51,8 @@ Account = {
 * Signup: `password` at least 8 characters, `approvalCode` exactly 6 digits, `customerNumber` 1 to 20
   digits, `email` unique (409 "an account with this email exists"). 422 for a field that does not fit,
   `detail` names the field.
+* Signup and new demo copies: at most 10 an hour per client (429), and at most 200 demo copies on disk; the
+  oldest copy goes first.
 * Login: 401 "wrong email or password" for both cases. Five wrong tries from one client or for one email
   in 15 minutes answer 429.
 * Demo: a browser that already holds a demo session gets the same copy back (reload keeps the state). A
@@ -142,7 +144,10 @@ but cannot sign a key binding. The pairing screen serves them too, with no extra
   (401 with one ledger entry) are unchanged. `agent.name`, the ledger's `actorText` of the agent's entries,
   Home's `agent.name` and Activity's `asked.agentName` all show that name (actor `agent:claude-code`).
 * Only the code expires after 10 minutes; the URL stays valid until Cancel, Deny, Disconnect, a new pairing
-  or another agent allowed with the code. Then `/mcp/c/<token>/` answers 404, as does an unknown token.
+  or another agent allowed with the code, or until nobody used it for 30 days (one ledger entry, the agent
+  is disconnected). Then `/mcp/c/<token>/` answers 404, as does an unknown token. The URL is a bearer
+  secret: whoever holds it orders as the kitchen's agent within the Rules, and the verification code only
+  tells the person which connection waits, not who holds the URL. Access logs show it as `/mcp/c/***/`.
   The host allowlist (`VALIDIO_MCP_HOSTS`, DNS rebinding protection) is the same as for `/mcp/k/`.
 * Use: add the URL as a remote MCP server (streamable HTTP, no OAuth) in the agent's settings, for example
   a custom connector in a chat app or `<tool> mcp add --transport http validio <URL>` in a coding tool.
@@ -196,7 +201,7 @@ Rules = {
 | PUT | `/api/rules` | `{aloneUpToCents, approvalUpToCents, substitutes, maxExtraPct, perWeekCents?, diet?: {mustBe, never}, code}` | `Rules`, one new pass version, one ledger entry |
 
 * `code`: the account's 6 digit approval code (also accepted as `X-Approve-Code`). 403 wrong code, 429
-  after five wrong codes.
+  after five wrong codes within 15 minutes, for 15 minutes.
 * 422 when `aloneUpToCents > approvalUpToCents`, `perWeekCents < approvalUpToCents`, or a value is below 0
   or above 100,000.00 €.
 * Without a connected agent the Rules are saved and signed into the pass the next agent will get.
@@ -315,6 +320,15 @@ How backend code gets the current account's store (code in `src/backend/validio/
   `email`, `customer`, `address`, `is_demo`, `rules_saved`, `created_at`, ...) or `None` for the local
   kitchen. `ctx.code_ok(code)` checks the account's approval code (scrypt hash; the env code for the local
   kitchen), `ctx.has_code` says whether one is set. `ctx.reset()` copies the template again for an account.
+* **Keys:** every account, demo copies too, gets its own kitchen key, agent key and issuer
+  (`kitchen:<account id>`) when it is made or reset (`seed.rekey`): its passes are signed again by the new key
+  and so is the ledger head. No account shares a signing key with the template or with another account.
+  Accounts made before this change keep the template's shared demo keys until their next reset: nothing
+  rekeys them on open (left as is on purpose, a reset or a new account gets its own).
+* **Clock and pass window:** a kitchen's own account (`is_demo` false) decides on the wall clock
+  (`Runtime(real_clock=True)`). Its Spend Pass M-1 names no fixed delivery day and is valid for 30 days from
+  each signing; `Accounts.ctx` signs it again, with one ledger entry, once fewer than seven days are left
+  (`settings.renew_window`). Demo copies and the local kitchen keep the demo clock and the demo window.
 * **By id, no request:** `get_accounts().ctx(account_id)` (LRU of 64 open accounts). Use this for
   `/agent/v1/k/{account}` and `/mcp/k/{account}/`. `get_accounts().get(id)` / `.update(id, **cols)` read
   and write the account row (add columns in `SCHEMA`; `create table if not exists` will not add them to an
