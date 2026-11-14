@@ -95,3 +95,8 @@ def test_cache_parses_same_sha1_once():
     b = c.get("abc", "ignored, the sha1 decides")
     c.get("def", "Second version of the article text here.")
     assert a is b and c.parsed == 2 and c.cache_hits == 1
+
+
+def test_infobox_values_on_one_line():
+    p = parse("{{Infobox military conflict\n| casualties1 = 25,904 dead<br />\n43,557 wounded\n}}\nText.")
+    assert p.infobox["casualties1"] == "25,904 dead, 43,557 wounded"
