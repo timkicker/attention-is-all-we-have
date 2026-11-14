@@ -10,15 +10,17 @@ from mcp import Client
 from .tools import PASS_TOOLS, WRITE_TOOLS
 
 
-def idempotency_key(name: str, args: dict[str, Any]) -> str:
-    """Same tool and arguments give the same key, so a retried run never orders twice."""
-    return hashlib.sha256(f"{name}|{json.dumps(args, sort_keys=True)}".encode()).hexdigest()[:24]
+def idempotency_key(name: str, args: dict[str, Any], salt: str = "") -> str:
+    """Same tool and arguments give the same key, so a retried run never orders twice. A salt makes one
+    run's keys its own: the demo's ask button means a new request each time it is pressed."""
+    return hashlib.sha256(f"{salt}{name}|{json.dumps(args, sort_keys=True)}".encode()).hexdigest()[:24]
 
 
 class McpPort:
-    def __init__(self, server: Any, spend_pass: Callable[[], str] | None = None):
+    def __init__(self, server: Any, spend_pass: Callable[[], str] | None = None, salt: str = ""):
         self._client = Client(server)
         self._spend_pass = spend_pass
+        self._salt = salt
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -33,7 +35,7 @@ class McpPort:
     async def call(self, name: str, args: dict[str, Any]) -> dict[str, Any]:
         sent = dict(args)
         if name in WRITE_TOOLS:
-            sent["idempotencyKey"] = idempotency_key(name, args)
+            sent["idempotencyKey"] = idempotency_key(name, args, self._salt)
         if name in PASS_TOOLS and self._spend_pass:
             sent["spendPass"] = self._spend_pass()
         r = await self._client.call_tool(name, sent)
