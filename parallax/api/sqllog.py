@@ -51,16 +51,22 @@ def current_panel() -> str | None:
 _VEC = re.compile(r"VEC_DISTANCE", re.I)
 
 
+_INDEX_SEEN: dict[str, str] = {}  # statement text -> index; the plan of a statement text does not change
+
+
 def _index_used(cur, text: str, params) -> str:
     if not _VEC.search(text):
         return "none"
+    if text in _INDEX_SEEN:
+        return _INDEX_SEEN[text]
     try:
         cur.execute("EXPLAIN " + text, params)
         cols = [d[0] for d in cur.description]
         keys = [dict(zip(cols, row, strict=False)).get("key") for row in cur.fetchall()]
-        return "emb" if "emb" in keys else "none"
+        _INDEX_SEEN[text] = "emb" if "emb" in keys else "none"
     except Exception:
         return "none"
+    return _INDEX_SEEN[text]
 
 
 def run(text: str, params=None) -> list[dict]:
