@@ -228,10 +228,10 @@ function measure(page: Page, name: string) {
 
     // 17. Bottom clearance at 390.
     if (W <= 760) {
-      const dock = document.querySelector("nav.dock, .bar");
-      if (dock) {
+      const bars = all("nav.dock, .bar").filter((e) => getComputedStyle(e).position === "fixed");
+      if (bars.length) {
         scrollTo(0, document.documentElement.scrollHeight);
-        const top = box(dock).top;
+        const top = Math.min(...bars.map((e) => box(e).top));
         const last = leaves(main).filter((e) => !e.closest(".bar")).reduce((m, e) => Math.max(m, box(e).bottom), 0);
         if (last > top - 16 + 1) fail("17", `content ends at ${Math.round(last)}, bar at ${Math.round(top)}`);
         scrollTo(0, 0);
@@ -404,4 +404,94 @@ test("options lane, tabs and approve agree on the count", async ({ page }) => {
   expect(tabs.length).toBe(2);
   expect(tabs[0] + tabs[1]).toBe(lane);
   expect(others + 1).toBe(lane);
+});
+
+// The Options strip draws one dot per priced option, and its sub says how many that is.
+test("options dots match the priced count", async ({ page }) => {
+  await fresh(page);
+  for (const [path, before] of [["/requests/R-1", false], ["/requests/R-2", true]] as const) {
+    if (before) await stockOut(page);
+    await page.goto(path);
+    const lane = page.getByTestId("lane-options");
+    const sub = await lane.locator(".rc-s").innerText();
+    const m = /^(\d+) with a price, (\d+) without$/.exec(sub.replace(/\s+/g, " "));
+    expect(m, sub).not.toBeNull();
+    await expect(lane.locator("[data-dot]")).toHaveCount(Number(m![1]));
+    expect(Number(m![1]) + Number(m![2])).toBe(Number(await lane.locator(".rc-v").innerText()));
+  }
+});
+
+// The dock and the pinned bar never cover the end of a page: at the real
+// 390 × 844 viewport, scrolled to the bottom, the last thing shown ends 16 px
+// above whichever bar is fixed there. Every route and state, one by one.
+test("phone bars never cover the page end", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const problems: string[] = [];
+  const check = async (name: string) => {
+    await page.waitForTimeout(150);
+    const r = await page.evaluate(() => {
+      scrollTo(0, document.documentElement.scrollHeight);
+      const fixed = [...document.querySelectorAll("nav.dock, .bar")].filter((e) => getComputedStyle(e).position === "fixed" && e.getBoundingClientRect().height > 0);
+      if (!fixed.length) return null;
+      const top = Math.min(...fixed.map((e) => e.getBoundingClientRect().top));
+      const shown = [...document.querySelectorAll("main *")].filter((e) => {
+        const b = e.getBoundingClientRect();
+        return b.height > 0 && !e.closest(".bar, nav.dock, [hidden], details:not([open]) > :not(summary)") && (e.matches("svg, input, [data-slot=button]") || [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim()));
+      });
+      const last = Math.max(...shown.map((e) => e.getBoundingClientRect().bottom));
+      return { top, last };
+    });
+    // Approve's done view has neither dock nor bar: nothing can cover it.
+    if (!r) {
+      if (name !== "approve done") problems.push(`${name}: no fixed bar`);
+    } else if (r.last > r.top - 16 + 0.5) problems.push(`${name}: ends at ${Math.round(r.last)}, bar at ${Math.round(r.top)}`);
+  };
+  await fresh(page);
+  await page.goto("/");
+  await check("inbox");
+  await page.goto("/requests/R-1");
+  await check("R-1");
+  await page.getByTestId("why-464306").click();
+  await check("R-1 why open");
+  await stockOut(page);
+  await page.goto("/");
+  await check("inbox waiting");
+  await page.goto("/requests/R-2");
+  await check("R-2");
+  await page.goto("/approve/R-2");
+  // Before any scroll, the whole decision down to "Why not the others" sits above the bar.
+  await page.waitForTimeout(150);
+  const first = await page.evaluate(() => ({ fold: document.querySelector("#others summary")!.getBoundingClientRect().bottom, bar: document.querySelector(".bar")!.getBoundingClientRect().top }));
+  if (first.fold > first.bar - 16 + 0.5) problems.push(`approve unscrolled: fold ends at ${Math.round(first.fold)}, bar at ${Math.round(first.bar)}`);
+  await check("approve");
+  await page.getByTestId("approve").click();
+  await check("approve code");
+  await code(page);
+  await expect(page.getByTestId("order-steps")).toBeVisible();
+  await check("approve done");
+  await page.goto("/steady");
+  await check("steady list");
+  await page.goto("/steady/S-1");
+  await check("steady before");
+  await page.getByTestId("renew").click();
+  await code(page);
+  await expect(page.getByTestId("accept-471376")).toBeVisible();
+  await check("steady after");
+  await page.goto("/spend-pass");
+  await check("spend pass");
+  await page.goto("/ledger");
+  await check("ledger");
+  expect(problems, problems.join("\n")).toEqual([]);
+});
+
+// The chosen option's "Why this product" opens with one click and gives the API's reasons in full.
+test("chosen milk has a why fold with the full reasons", async ({ page }) => {
+  await fresh(page);
+  await page.goto("/requests/R-1");
+  await page.getByTestId("why-464306").click();
+  const body = page.getByTestId("why-body-464306");
+  await expect(body).toBeVisible();
+  await expect(body).toContainText("Cheapest safe option and Valio delivered it as ordered every time in its records.");
+  await expect(body).toContainText("Has the Hyvää Suomesta label, which your Spend Pass does not ask for.");
+  await expect(body).toContainText("Checked:");
 });

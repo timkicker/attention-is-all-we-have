@@ -29,7 +29,7 @@ test("app and API from one process", async ({ page, request }) => {
   await page.locator("#inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l of lactose-free semi-skimmed milk");
-  await expect(page.locator("#live-checked")).toContainText("12 products");
+  await expect(page.locator("#live-checked")).toContainText("Read live from Valio at");
   await expect(page.locator("#option-464306")).toContainText("1,010.00");
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.reload(); // served by FastAPI's fallback

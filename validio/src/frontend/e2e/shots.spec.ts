@@ -34,6 +34,12 @@ for (const v of VIEWS) {
     await go("/requests/R-1");
     await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l");
     await shoot("request-r1");
+    if (v.width === 390) {
+      await page.getByTestId("why-464306").click();
+      await page.getByTestId("why-body-464306").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: `${OUT}/request-r1-why-viewport-${v.width}-${v.theme}.png` });
+    }
     await stockOut(page);
     await go("/");
     await expect(page.getByTestId("inbox-R-2")).toContainText("Waiting for you");
@@ -45,6 +51,8 @@ for (const v of VIEWS) {
     await go("/approve/R-2");
     await expect(page.getByTestId("approve-question")).toContainText("180.10");
     await shoot("approve");
+    // What the phone shows before any scroll: the pinned bar over the page.
+    if (v.width === 390) await page.screenshot({ path: `${OUT}/approve-viewport-${v.width}-${v.theme}.png` });
     if (v.width === 1280) {
       // The focus mark: a keyboard Tab, then the outline button.
       await page.keyboard.press("Tab");
@@ -56,6 +64,7 @@ for (const v of VIEWS) {
     await page.getByTestId("approve").click();
     await expect(page.getByTestId("code-input")).toBeFocused();
     await shoot("approve-code");
+    if (v.width === 390) await page.screenshot({ path: `${OUT}/approve-code-viewport-${v.width}-${v.theme}.png` });
     await code(page);
     await expect(page.locator("#order-steps")).toContainText("Validio placed the order");
     await shoot("approve-done");
@@ -70,6 +79,11 @@ for (const v of VIEWS) {
     await code(page);
     await expect(page.locator("#line-466375")).toContainText("26 %");
     await shoot("steady-renewed");
+    if (v.width === 390) {
+      await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+      await page.waitForTimeout(150);
+      await page.screenshot({ path: `${OUT}/steady-renewed-bottom-viewport-${v.width}-${v.theme}.png` });
+    }
 
     await go("/spend-pass");
     await expect(page.locator("#pass-auto")).toContainText("1,200.00");
@@ -78,6 +92,17 @@ for (const v of VIEWS) {
     await go("/ledger");
     await expect(page.locator("#chain-status")).toContainText("Verified");
     await shoot("ledger");
+
+    // The end of scene 5: the chef orders the 27 pancakes, the ledger has 16 entries.
+    await go("/steady/S-1");
+    await page.getByTestId("accept-471376").click();
+    // The code was given before a reload; the page may ask again.
+    const asked = await page.getByTestId("code-input").waitFor({ timeout: 2000 }).then(() => true, () => false);
+    if (asked) await code(page);
+    await expect(page.getByTestId("line-471376")).toContainText("Accepted");
+    await go("/ledger");
+    await expect(page.locator("#chain-status")).toContainText("16 entries");
+    await shoot("ledger-end");
 
     // The other ending: the owner rejects R-2.
     await fresh(page);
