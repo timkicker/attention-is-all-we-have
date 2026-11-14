@@ -1183,6 +1183,47 @@
         "title": "LiveChecked",
         "type": "object"
       },
+      "LoginChangeIn": {
+        "properties": {
+          "currentPassword": {
+            "maxLength": 200,
+            "title": "Currentpassword",
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 3,
+                "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "password": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 8,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password"
+          }
+        },
+        "required": [
+          "currentPassword"
+        ],
+        "title": "LoginChangeIn",
+        "type": "object"
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -3834,6 +3875,24 @@
               "title": "Order Id",
               "type": "string"
             }
+          },
+          {
+            "description": "SD-JWT <presentation>",
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "SD-JWT <presentation>",
+              "title": "Authorization"
+            }
           }
         ],
         "responses": {
@@ -4123,6 +4182,24 @@
             "schema": {
               "title": "Request Id",
               "type": "string"
+            }
+          },
+          {
+            "description": "SD-JWT <presentation>",
+            "in": "header",
+            "name": "Authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "SD-JWT <presentation>",
+              "title": "Authorization"
             }
           }
         ],
@@ -4525,26 +4602,8 @@
     },
     "/api/demo/ask": {
       "post": {
-        "description": "The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when\nGEMINI_API_KEY is set, the fake model otherwise. On a public deploy the demo token guards it too.",
+        "description": "The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when\nGEMINI_API_KEY is set, the fake model otherwise. On a public read deploy only a demo copy may use it.",
         "operationId": "demo_ask_api_demo_ask_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-demo-token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Demo-Token"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -4609,24 +4668,6 @@
       "post": {
         "description": "Back to the state `make demo` starts from: drops every table, seeds again.",
         "operationId": "reset_api_demo_reset_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-demo-token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Demo-Token"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "content": {
@@ -4637,16 +4678,6 @@
               }
             },
             "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
           }
         },
         "summary": "Reset",
@@ -4659,24 +4690,6 @@
       "post": {
         "description": "Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {\"on\": false} ends\nit. A change writes one simulation entry, the same state again writes none.",
         "operationId": "stock_out_api_demo_stock_out_post",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "x-demo-token",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Demo-Token"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -5310,6 +5323,48 @@
           }
         },
         "summary": "Put Kitchen",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/api/settings/login": {
+      "put": {
+        "description": "A new email, a new password, or both, with the current password. Demo copies have no login.",
+        "operationId": "put_login_api_settings_login_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginChangeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Login",
         "tags": [
           "settings"
         ]

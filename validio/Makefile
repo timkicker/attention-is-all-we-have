@@ -4,7 +4,7 @@ UV := cd $(BACKEND) && uv run
 # the raw Valio export (fetch_data.py --from-dir); set RAW=... to point elsewhere
 RAW ?= data/raw
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check template demo-web demo-smoke e2e-live a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed modal-fill
+.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check template demo-web demo-smoke e2e-live accounts-e2e a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed modal-fill
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -29,6 +29,7 @@ test-backend: guards
 
 test-web:
 	cd src/frontend && npm run check && npx playwright test
+	$(MAKE) accounts-e2e
 
 # mutation testing on the deciding modules, see docs/TESTING.md (slow: one worker)
 mutate:
@@ -106,6 +107,11 @@ demo-smoke:
 # data-testid a check needs makes that check a fixme (E2E_STRICT=1 makes it fail).
 e2e-live:
 	cd src/frontend && VITE_API=live npm run build && npx playwright test -c e2e-live/demo.config.ts
+
+# The accounts plan's "Done means" in a fresh browser against the real backend (port ACCOUNTS_PORT, 8417):
+# demo kitchen, connect the demo agent, example ordered, lower Rules, wait, approve, pause, refusal, diet.
+accounts-e2e:
+	cd src/frontend && npx playwright test -c playwright.accounts.config.ts
 
 # Accessibility over every route at 1280 and 390 px, light and dark: axe-core WCAG 2.2 AA (contrast
 # included), visible focus, 44 px targets on the phone, keyboard-only approve, renew and accept.
