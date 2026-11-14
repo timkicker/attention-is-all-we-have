@@ -122,7 +122,7 @@
 
       <div class="demo">
         <p class="d-head">Just looking?</p>
-        <p class="d-text demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
+        <p class="d-text demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code: <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
         <Button variant="outline" class="wide" id="try-demo" data-testid="try-demo" disabled={busy} aria-describedby="demo-what" onclick={() => run(() => api.demoLogin())}>
           Try the demo kitchen
         </Button>
