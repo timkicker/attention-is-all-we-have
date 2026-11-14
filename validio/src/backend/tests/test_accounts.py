@@ -31,6 +31,12 @@ def client(app):
     return TestClient(app)
 
 
+def connect_demo_agent(c):
+    """A demo copy starts without an agent: "Connect the demo agent", then Allow."""
+    assert c.post("/api/agent/demo").json()["state"] == "consent"
+    assert c.post("/api/agent/allow").json()["state"] == "active"
+
+
 def test_signup_sets_cookie_and_account(app_env):
     with client(app_env) as c:
         r = c.post("/api/account/signup", json=SIGNUP)
@@ -91,7 +97,10 @@ def test_password_and_code_stored_hashed(app_env, tmp_path):
 def test_demo_same_copy_per_browser_new_copy_elsewhere(app_env):
     with client(app_env) as c:
         a = c.post("/api/account/demo").json()
-        assert a["isDemo"] is True and a["demoCode"] == "246810" and a["setup"]["done"] is True
+        assert a["isDemo"] is True and a["demoCode"] == "246810"
+        assert a["setup"] == {"kitchen": True, "rules": True, "agent": False, "done": False}  # connect first
+        connect_demo_agent(c)
+        assert c.get("/api/account").json()["setup"]["done"] is True
         assert c.post("/api/account/demo").json()["id"] == a["id"]  # reload: the same copy
     with client(app_env) as other:
         assert other.post("/api/account/demo").json()["id"] != a["id"]
@@ -101,6 +110,7 @@ def test_accounts_are_isolated(app_env, ctx):
     """An order approved in one kitchen leaves the other kitchen and the local store untouched."""
     with client(app_env) as one, client(app_env) as two:
         one.post("/api/account/demo")
+        connect_demo_agent(one)
         two.post("/api/account/signup", json=SIGNUP)
         local_before = len(ctx.audit.list())
         led_two = len(two.get("/api/ledger").json()["entries"])
@@ -154,6 +164,7 @@ def test_steady_routes_use_the_account(app_env, ctx):
 def test_reset_of_demo_copy_restores_it(app_env):
     with client(app_env) as c:
         c.post("/api/account/demo")
+        connect_demo_agent(c)
         c.post("/api/demo/ask", json={"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"})
         assert c.get("/api/inbox").json()
         assert c.post("/api/demo/reset").status_code == 200

@@ -23,6 +23,7 @@ from fastapi import APIRouter, HTTPException, Request, Response
 from pydantic import Field
 
 from ..demo import seed
+from .connect import AgentState
 from .schemas import Model
 from .state import Ctx, get_ctx
 from .steady import Runtime
@@ -163,8 +164,15 @@ class Accounts:
 
     def _copy_store(self, account_id: str) -> None:
         """The template's db and keys (the ledger head and the pass are signed with that kitchen key, so they go
-        together), or a fresh seed when no template was built."""
+        together), or a fresh seed when no template was built. Either way no agent is connected yet:
+        the person connects one (the demo copy too, "Connect the demo agent")."""
         db, keys = self.paths(account_id)
+        from .connect import leave_unconnected
+
+        self._copy_files(db, keys)
+        leave_unconnected(db)
+
+    def _copy_files(self, db: Path, keys: Path) -> None:
         db.parent.mkdir(parents=True, exist_ok=True)
         if keys.exists():
             shutil.rmtree(keys)
@@ -288,11 +296,6 @@ class SetupView(Model):
     done: bool
 
 
-class AgentStateView(Model):
-    state: str = "none"
-    versions: list[dict] = Field(default_factory=list)
-
-
 class AccountView(Model):
     id: str
     name: str
@@ -302,7 +305,7 @@ class AccountView(Model):
     is_demo: bool
     demo_code: str | None = None
     setup: SetupView
-    agent: AgentStateView
+    agent: AgentState
     created_at: str
 
 
@@ -311,9 +314,11 @@ _tries: dict[str, list[float]] = {}
 _tries_lock = threading.Lock()
 
 
-def agent_state(row: dict) -> AgentStateView:
-    """Builder of the agent connection (B4) replaces this; until then no agent is connected."""
-    return AgentStateView()
+def agent_state(row: dict):
+    """The agent connection as the Agent page shows it (api/connect.py)."""
+    from . import connect
+
+    return connect.view(get_accounts().ctx(row["id"]))
 
 
 def view(row: dict) -> AccountView:
@@ -326,7 +331,7 @@ def view(row: dict) -> AccountView:
     agent = agent_state(row)
     kitchen = bool(row["name"]) and (bool(row["address"]) or bool(row["is_demo"]))
     rules = rules_saved(db)
-    connected = agent.state in ("active", "paused") or bool(row["is_demo"])
+    connected = agent.state in ("active", "paused")
     return AccountView(
         id=row["id"], name=row["name"], email=row["email"], customer_number=row["customer"],
         delivery_address=row["address"], is_demo=bool(row["is_demo"]),

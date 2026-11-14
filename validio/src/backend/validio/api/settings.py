@@ -84,9 +84,8 @@ def resign(ctx: Ctx, changes: dict, why: str) -> dict:
     one ledger entry by the owner. `why` names the version ("Rules changed", "Diet changed")."""
     with ctx.rt.lock:
         before = current_claims(ctx.db_path)
-        seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **changes})
+        seed.sign_again(ctx.db_path, ctx.keys_dir, {**before, **changes}, why=why, at=ctx.now())
         after = current_claims(ctx.db_path)
-        _note_version(ctx, why)
         changed = [f"{k} {a} → {b}." for (k, a), (_, b) in zip(_said(before), _said(after), strict=True) if a != b]
         pid = seed.SPEND_PASS_ID
         sentence = (f"Owner changed Spend Pass {pid}. " + " ".join(changed) if changed
@@ -94,13 +93,6 @@ def resign(ctx: Ctx, changes: dict, why: str) -> dict:
         ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass", sentence=sentence,
                          facts=[], mandate_id=pid, disclosed={}, rule_ids=[], order_id=None)
     return after
-
-
-def _note_version(ctx: Ctx, why: str) -> None:
-    """The version list of the Agent page, when the store keeps one (the connect step adds it)."""
-    note = getattr(seed, "note_pass_version", None)
-    if note is not None:
-        note(ctx.db_path, seed.SPEND_PASS_ID, why)
 
 
 # small values next to the pass, in the kitchen's own store
