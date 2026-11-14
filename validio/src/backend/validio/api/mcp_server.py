@@ -49,7 +49,7 @@ def _read_gate(ctx: Ctx, mc: Context | None, spend_pass: str | None) -> None:
 def kitchen(mc: Context | None) -> Ctx:
     """The kitchen a tool call works on: the account in the URL (/mcp/k/{account}/), read from the HTTP request
     of this call, because a streamable-HTTP session runs in its own task and sees no contextvar from the
-    request. In process (demo/ask) there is no request: `get_ctx()`, which the caller set."""
+    request. In process (an in-process client) there is no request: `get_ctx()`, which the caller set."""
     request = None
     if mc is not None:
         try:

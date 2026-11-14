@@ -5,7 +5,7 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
-from test_accounts import SIGNUP, app_env, connect_demo_agent  # noqa: F401
+from test_accounts import SIGNUP, app_env, ask_as_agent, connect_demo_agent  # noqa: F401
 
 from validio.agent.holder import Holder
 from validio.api.accounts import get_accounts
@@ -155,11 +155,10 @@ def test_mcp_without_a_kitchen_stays_local(kitchens, ctx):
     assert ctx.store.requests()[-1]["id"] == res["structuredContent"]["id"]
 
 
-def test_example_request_runs_on_the_account(kitchens):
+def test_an_in_process_agent_runs_on_the_account(kitchens):
     one, two, *_ = kitchens
-    r = one.post("/api/demo/example")
-    assert r.status_code == 200, r.text
-    rid = r.json()["requestId"]
+    rid = ask_as_agent(one)
+    assert rid
     assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
     assert two.get("/api/inbox").json() == []
 

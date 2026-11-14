@@ -7,6 +7,7 @@ import sqlite3
 import time
 
 import pytest
+from asking import EXAMPLE, ask, pair_demo_agent, stockout
 from fastapi.testclient import TestClient
 
 from validio.api import accounts as acc_mod
@@ -31,10 +32,21 @@ def client(app):
     return TestClient(app)
 
 
+def account_ctx(c):
+    """The Ctx of the kitchen this browser is logged in to."""
+    return acc_mod.get_accounts().ctx(c.get("/api/account").json()["id"])
+
+
 def connect_demo_agent(c):
-    """A demo copy starts without an agent: "Connect the demo agent", then Allow."""
-    assert c.post("/api/agent/demo").json()["state"] == "consent"
+    """A demo copy starts without an agent: the demo agent's key pairs like any signing agent, then Allow."""
+    pair_demo_agent(account_ctx(c))
+    assert c.get("/api/agent").json()["state"] == "consent"
     assert c.post("/api/agent/allow").json()["state"] == "active"
+
+
+def ask_as_agent(c, text=EXAMPLE):
+    """The kitchen's agent asks over MCP for this browser's kitchen; the request id."""
+    return ask(account_ctx(c), text).request_id
 
 
 def test_signup_sets_cookie_and_account(app_env):
@@ -115,9 +127,7 @@ def test_accounts_are_isolated(app_env, ctx):
         local_before = len(ctx.audit.list())
         led_two = len(two.get("/api/ledger").json()["entries"])
 
-        r = one.post("/api/demo/ask", json={"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"})
-        assert r.status_code == 200, r.text
-        rid = r.json()["requestId"]
+        rid = ask_as_agent(one)
         assert rid
         assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
         assert two.get("/api/inbox").json() == []
@@ -165,7 +175,7 @@ def test_reset_of_demo_copy_restores_it(app_env):
     with client(app_env) as c:
         c.post("/api/account/demo")
         connect_demo_agent(c)
-        c.post("/api/demo/ask", json={"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"})
+        assert ask_as_agent(c)
         assert c.get("/api/inbox").json()
         assert c.post("/api/demo/reset").status_code == 200
         assert c.get("/api/inbox").json() == []
@@ -270,14 +280,15 @@ def test_fresh_reset_seeds_the_demo_copy_without_an_agent(app_env):
     with client(app_env) as d:
         d.post("/api/account/demo")
         connect_demo_agent(d)
-        assert d.post("/api/demo/example").json()["requestId"] == "R-1"
-        assert d.post("/api/demo/stock-out").json()["stockOut466375"] is True
+        assert ask_as_agent(d) == "R-1"
+        stockout(account_ctx(d))
+        assert d.get("/api/demo").json()["stockOut466375"] is True
         r = d.post("/api/demo/reset", json={"fresh": True})
         assert r.status_code == 200 and r.json()["stockOut466375"] is False
         assert d.get("/api/inbox").json() == []
         assert d.get("/api/agent").json()["state"] == "none"
         connect_demo_agent(d)
-        r = d.post("/api/demo/example"); assert r.json().get("requestId") == "R-1", r.text
+        assert ask_as_agent(d) == "R-1"
     with client(app_env) as c:
         c.post("/api/account/signup", json=SIGNUP)
         assert c.post("/api/demo/reset", json={"fresh": True}).status_code == 404

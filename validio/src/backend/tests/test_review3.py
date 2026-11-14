@@ -4,6 +4,7 @@ import threading
 import time
 
 import pytest
+from asking import stockout
 from conftest import CODE
 from fastapi.testclient import TestClient
 from test_api import ask_milk, ask_mozzarella, auth
@@ -50,7 +51,7 @@ def test_h1_unknown_order_gives_404_before_any_code_check(client, ctx):
 
 
 def test_h1_id_variants_are_unknown(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     for _ in range(5):
         client.post(f"/api/orders/{oid}/approve", json={"code": "111111"})
@@ -59,7 +60,7 @@ def test_h1_id_variants_are_unknown(client, holder):
 
 
 def test_h1_wrong_codes_count_per_client_across_orders(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     a, b = mozz(client, holder, "m-a")["orderId"], mozz(client, holder, "m-b")["orderId"]
     assert a != b
     for oid in (a, a, a, b, b):
@@ -75,7 +76,7 @@ def test_h1_wrong_codes_count_per_client_across_orders(client, holder):
 @pytest.mark.parametrize("now, why", [("2026-11-15T18:00:00+02:00", "cut-off"),
                                       ("2026-11-17T01:00:00+02:00", "expired")])
 def test_h3_approve_refuses_after_cutoff_or_expiry(client, holder, monkeypatch, now, why):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     monkeypatch.setenv("VALIDIO_NOW", now)
     r = client.post(f"/api/orders/{oid}/approve", json={"code": CODE})
@@ -87,7 +88,7 @@ def test_h3_approve_refuses_after_cutoff_or_expiry(client, holder, monkeypatch, 
 
 
 def test_h3_placed_sentence_names_what_was_checked(client, holder):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     client.post(f"/api/orders/{oid}/approve", json={"code": CODE})
     (s,) = [e["sentence"] for e in entries(client) if e.get("orderId") == oid and e["kind"] == "order"]
@@ -212,7 +213,7 @@ class Slow:
 
 
 def test_m7_reset_during_approve_is_clean(client, holder, ctx):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     ctx.orders.valio = Slow(ctx.orders.valio, 0.5)
     out = {}
@@ -233,7 +234,7 @@ def test_m7_reset_during_approve_is_clean(client, holder, ctx):
 
 
 def test_m7_order_and_ledger_entry_are_one_write(client, holder, ctx, monkeypatch):
-    client.post("/api/demo/stock-out")
+    stockout()
     oid = ask_mozzarella(client, holder)["orderId"]
     before = ctx.audit.verify().count
     real = ctx.audit.append
@@ -262,7 +263,7 @@ def test_m8_demo_is_off_by_default(monkeypatch):
 
 def test_m8_remote_approve_and_demo_closed_without_code_and_token(ctx, holder, monkeypatch):
     with TestClient(app) as local:
-        local.post("/api/demo/stock-out")
+        stockout()
         oid = ask_mozzarella(local, holder)["orderId"]
     monkeypatch.setenv("VALIDIO_KITCHEN_TOKEN", "kt")
     ctx.approve_code = ""

@@ -24,14 +24,13 @@ from pydantic import Field
 from ..demo import seed
 from ..policy.mandate import DEMO_CLAIMS, SUBSTITUTES_LISTED, Mandate, MandateError, load_or_create_key
 from ..text.format import money
-from .schemas import AskIn, AskOut, Model
+from .schemas import Model
 from .state import Ctx
 
 ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"  # no 0, O, 1, I, L
 CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
 DEMO_AGENT = "Demo agent"
-EXAMPLE = "1000 litres of lactose-free milk by Monday, budget 1200 euro"
 MCP_NAME = "MCP agent"  # the name on the consent screen and in the ledger for an MCP agent Validio signs for
 PAUSED = "the kitchen paused this agent"
 NOT_CONNECTED = "no agent is connected to this kitchen"
@@ -188,11 +187,6 @@ def account_id(ctx: Ctx) -> str | None:
     return ctx.account["id"] if ctx.account else None
 
 
-def is_demo(ctx: Ctx) -> bool:
-    """Demo copies only; the local kitchen when VALIDIO_DEMO=1."""
-    return bool(ctx.account["is_demo"]) if ctx.account else ctx.settings.demo
-
-
 def base_url(request: Request | None) -> str:
     """Absolute on a request (https unless on this machine), else empty."""
     if request is None:
@@ -324,12 +318,6 @@ def agent_pass(ctx: Ctx, code: str) -> PassOut:
     return PassOut(status=link.code_status)
 
 
-def answer_as_demo_agent(ctx: Ctx) -> None:
-    """The server's own demo agent answers a fresh code, so the person sees the consent screen."""
-    code = pair(ctx).code
-    agent_pair(ctx, PairIn(code=code, name=DEMO_AGENT, public_jwk=demo_key(ctx).export_public(as_dict=True)))
-
-
 def allow(ctx: Ctx) -> None:
     """Sign M-1 to the waiting agent's key. When that is the key Validio holds for the connector URL, the URL
     stays valid and its token is no longer kept in clear; any other agent ends the connector URL."""
@@ -421,11 +409,6 @@ def _issued_jwt(ctx: Ctx, pass_id: str) -> str | None:
     finally:
         con.close()
     return row[0].split("~", 1)[0] if row else None
-
-
-def demo_agent_active(ctx: Ctx) -> bool:
-    link = load(ctx)
-    return link.state in ("active", "paused") and link.key_id == key_id(demo_key(ctx))
 
 
 # Any MCP agent, also one that cannot sign (a chat app connector, a coding tool, a script): pairing makes an
@@ -564,7 +547,7 @@ def connector_presentation(ctx: Ctx) -> str:
 
 
 def web_router() -> APIRouter:
-    """/api/agent/* and /api/demo/example behind the same gate and ctx as every /api route."""
+    """/api/agent/* behind the same gate and ctx as every /api route."""
     from . import ui
 
     r = APIRouter(prefix="/api", tags=["web"], dependencies=[Depends(ui.kitchen)])
@@ -577,13 +560,6 @@ def web_router() -> APIRouter:
     @r.post("/agent/pair", response_model=AgentState, response_model_exclude_none=True)
     def pair_route(ctx: Dep, request: Request):
         return view(ctx, request, pair(ctx))
-
-    @r.post("/agent/demo", response_model=AgentState, response_model_exclude_none=True)
-    def demo_route(ctx: Dep, request: Request):
-        if not is_demo(ctx):
-            raise HTTPException(404, "demo controls are off")
-        answer_as_demo_agent(ctx)
-        return view(ctx, request)
 
     @r.post("/agent/allow", response_model=AgentState, response_model_exclude_none=True)
     def allow_route(ctx: Dep, request: Request):
@@ -604,15 +580,6 @@ def web_router() -> APIRouter:
     def disconnect_route(ctx: Dep, request: Request):
         disconnect(ctx)
         return view(ctx, request)
-
-    @r.post("/demo/example", response_model=AskOut, response_model_exclude_none=True)
-    def example(ctx: Dep, request: Request):
-        """The connected demo agent sends the challenge's sentence."""
-        if not is_demo(ctx):
-            raise HTTPException(404, "demo controls are off")
-        if not demo_agent_active(ctx):
-            raise HTTPException(409, "connect the demo agent first")
-        return ui.demo_ask(ctx, request, AskIn(text=EXAMPLE))
 
     return r
 
