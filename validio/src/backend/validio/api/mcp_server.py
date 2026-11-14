@@ -104,25 +104,22 @@ def nonce_resource() -> str:
     return tools.nonce(get_ctx()).model_dump_json()
 
 
-# Lane A2, additive: scene 4 for the kitchen's agent. The renewal itself stays in lane D's route
-# POST /api/steady/{id}/renew, called over HTTP through the app in process (no socket, same code path
-# as the web app's button). The Spend Pass is checked first, so only the kitchen's agent can press it.
+# Scene 4 for the kitchen's agent: the same renewal as the web app's button (POST /api/steady/{id}/renew),
+# called as a function. The Spend Pass is checked first and stands in for the approve code, so only the
+# kitchen's agent can press it and no code travels anywhere.
 @server.tool()
 async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
     """Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, the rest
     wait for the owner with the reason. A second renewal in the same week orders nothing twice."""
-    import httpx
+    import anyio
+    from fastapi import HTTPException
 
-    from .app import app
+    from .steady import renew
 
     ctx = get_ctx()
     _errors(ctx.verify)(spendPass)
-    # the Spend Pass stands in for the approve code here, the route asks for the code (review 3 H2)
-    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://validio") as c:
-        r = await c.post(f"/api/steady/{orderId}/renew", headers={"X-Approve-Code": ctx.approve_code,
-                                                                   "X-Kitchen-Token": ctx.kitchen_token})
-    if r.status_code != 200:
-        detail = r.json().get("detail", r.text) if r.headers.get("content-type", "").startswith("application/json") \
-            else r.text
-        raise ToolError(f"{r.status_code}: {detail}")
-    return r.json()
+    try:
+        view = await anyio.to_thread.run_sync(renew, orderId)
+    except HTTPException as e:
+        raise ToolError(f"{e.status_code}: {e.detail}") from e
+    return view.model_dump(mode="json", by_alias=True, exclude_none=True)
