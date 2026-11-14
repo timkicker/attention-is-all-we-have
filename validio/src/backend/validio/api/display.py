@@ -154,10 +154,11 @@ __all__ = [
 # this order: what a rule forbids first, then what Valio cannot deliver, then what does not fit the need.
 GROUPS: tuple[tuple[str, str], ...] = (
     ("Over the hard cap", r"over the hard cap"),
-    ("Breaks a Spend Pass rule", r"^Blocked:"),
-    ("Not lactose free", r"not lactose free|no lactose-free claim"),
-    ("Not gluten free", r"not gluten free|no gluten-free claim"),
+    ("Not lactose free", r"not lactose free|no lactose-free claim|no lactose free claim"),
+    ("Not gluten free", r"not gluten free|no gluten-free claim|no gluten free claim"),
     ("Not vegan", r"not vegan|no vegan claim"),
+    ("Outside the pass's product groups", r"outside the Spend Pass's product groups"),
+    ("Sales block at Valio", r"sales block on it"),
     ("Out of stock at Valio", r"Out of stock at Valio|^Only .* in stock"),
     ("No delivery date", r"no delivery date"),
     ("Order cut-off passed", r"cut-off .*has passed"),
@@ -165,6 +166,7 @@ GROUPS: tuple[tuple[str, str], ...] = (
     ("Packs too small", r"too small for"),
     ("Pack size unknown", r"^Pack size unknown"),
     ("Quantity unknown", r"quantity is unknown"),
+    ("Breaks a Spend Pass rule", r"^Blocked:"),  # only when nothing above names the rule
 )
 TURNED_DOWN = ("rejected", "blocked", "not_deliverable")
 SHORT_WORDS = 8

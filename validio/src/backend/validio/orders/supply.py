@@ -37,6 +37,12 @@ ACCEPTED = ("chosen", "ranked")  # the only verdicts an agent may confirm
 NEAR = {"FREE_FROM_LACTOSE": "LOW_LACTOSE"}
 
 
+def _none_of(need: Need) -> str:
+    """"lactose-free parmesan", for "Valio has no ..."."""
+    diet = " ".join(CLAIM_NAMES.get(c, c).replace(" ", "-") for c in sorted(need.required_claims))
+    return f"{diet} {need.kind.replace('_', ' ')}".strip()
+
+
 @dataclass(frozen=True)
 class LineRequest:
     text: str | None = None
@@ -263,8 +269,13 @@ class SupplyService:
                                       f"which talks to AI agents. "
                                       f"Descriptions are never used for decisions. {o['sentence']}", [], None)
                 if missing and not proposals:
-                    req["decision"] = {"outcome": "block", "ruleIds": [],
-                                       "sentence": "No option keeps every rule and can be delivered, nothing was ordered."}
+                    # a line with no product at all says what Valio does not have, not that rules were broken
+                    empty = [b for b in built if b["proposal"] is None and not b["line"]["options"]]
+                    sentence = ("No option keeps every rule and can be delivered, nothing was ordered."
+                                if len(empty) < len(missing) else
+                                " ".join(f"Valio has no {_none_of(b['need'])}." for b in empty)
+                                + " Nothing was ordered.")
+                    req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": sentence}
                     req["status"] = "blocked"
                     self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)
                 else:
