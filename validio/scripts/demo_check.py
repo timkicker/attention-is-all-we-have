@@ -157,7 +157,7 @@ class Run:
 
     async def scene3(self):
         st = self.demo("stock-out")
-        check(st == {"stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}},
+        check(st == {"codeRequired": True, "stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}},
               f"scene 3: stock-out switch {st}")
         _, a = await self.agent(3)
         req = self.get(f"/api/requests/{a['request_supply']['id']}")

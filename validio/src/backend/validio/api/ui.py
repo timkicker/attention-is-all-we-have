@@ -134,7 +134,7 @@ def spend_pass(ctx: CtxDep, pass_id: str):
         diet=[CLAIM_NAMES.get(d, d) for d in m["diet"]] if m["diet"] is not None else None,
         categories=m["categories"], deliver_by=m["deliver_by"], substitutes=m["substitutes"],
         split={"max_extra_cost_pct": m["split_max_extra_bp"] / 100, "allow_listed_substitutes": m["split_allow_listed"]},
-        disclosed=shown, hidden=sorted(DEMO_SD_FIELDS - set(shown)),
+        disclosed=shown, hidden=sorted(DEMO_SD_FIELDS - set(shown)), used_cents=ctx.orders.used_cents(pass_id),
     )
 
 
@@ -185,7 +185,7 @@ def ledger_head(ctx: CtxDep):
 
 def _demo_state(ctx: Ctx, on: bool) -> DemoState:
     real = ctx.real_stock()
-    return DemoState(stock_out_466375=on,
+    return DemoState(stock_out_466375=on, code_required=bool(ctx.approve_code),
                      real_stock_466375={"quantity": real[0], "unit": real[1]} if real else None)
 
 

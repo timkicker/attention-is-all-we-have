@@ -246,8 +246,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free semi-skimmed milk 1 l",
               "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,010.00 €",
               "reasons": [
@@ -444,8 +445,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free skimmed milk 1 l",
               "shortName": "Arki lactose-free skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,100.00 €",
               "reasons": [
@@ -624,8 +626,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila 3 % milk drink 1 l lactose free",
+              "displayName": "Lactose-free milk 1 l",
               "shortName": "Lactose-free milk 1 l",
+              "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,400.00 €",
               "reasons": [
@@ -812,8 +815,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 1 l",
               "shortName": "Lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,560.00 €",
               "reasons": [
@@ -992,8 +996,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio whole milk 1 l lactose free UHT",
+              "displayName": "Lactose-free whole milk 1 l",
               "shortName": "Lactose-free whole milk 1 l",
+              "fullName": "Valio whole milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,640.00 €",
               "reasons": [
@@ -1172,8 +1177,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
-              "shortName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,650.00 €",
               "reasons": [
@@ -1356,8 +1362,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 1.75 l",
               "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
               "qtyText": "48 cartons",
               "moneyText": "1,314.72 €",
               "reasons": [
@@ -1552,8 +1559,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free skimmed milk 1 l",
               "shortName": "Lactose-free skimmed milk 1 l",
+              "fullName": "Valio skimmed milk 1 l lactose free UHT",
               "qtyText": "100 cartons",
               "moneyText": "1,332.00 €",
               "reasons": [
@@ -1739,8 +1747,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l",
               "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,372.00 €",
               "reasons": [
@@ -1934,8 +1943,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free skimmed milk 1 l",
               "shortName": "Eila lactose-free skimmed milk 1 l",
+              "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,524.00 €",
               "reasons": [
@@ -2111,8 +2121,9 @@ export const scene1: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 10 l",
               "shortName": "Lactose-free semi-skimmed milk 10 l",
+              "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
               "qtyText": "50 cartons",
               "moneyText": "1,565.50 €",
               "reasons": [
@@ -2306,8 +2317,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+              "displayName": "Lactose-free organic semi-skimmed milk 1 l",
               "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+              "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
               "qtyText": "200 cartons",
               "moneyText": "2,194.00 €",
               "reasons": [
@@ -2328,8 +2340,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 5 dl lactose free",
+              "displayName": "Lactose-free coffee milk 5 dl",
               "shortName": "Lactose-free coffee milk 5 dl",
+              "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -2363,8 +2376,9 @@ export const scene1: Snapshot = {
                   "summary": "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions."
                 }
               },
-              "displayName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+              "displayName": "Low-lactose whole milk 1 l",
               "shortName": "Low-lactose whole milk 1 l",
+              "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -2381,8 +2395,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+              "displayName": "Lactose-free portion milk 100 x 2 cl",
               "shortName": "Lactose-free portion milk 100 x 2 cl",
+              "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
               ]
@@ -2399,8 +2414,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Cafè milk 1 l UHT lactose free",
+              "displayName": "Lactose-free cafè milk 1 l",
               "shortName": "Lactose-free cafè milk 1 l",
+              "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
               ]
@@ -2417,8 +2433,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -2435,8 +2452,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 5 dl",
               "shortName": "Lactose-free semi-skimmed milk 5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -2453,8 +2471,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk 1 l",
               "shortName": "Lactose-free coffee milk 1 l",
+              "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -2471,8 +2490,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+              "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
               "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+              "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
               ]
@@ -2489,8 +2509,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 0.5 l",
               "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+              "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -2507,8 +2528,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+              "displayName": "Lactose-free low fat milk 6 × 5 dl",
               "shortName": "Lactose-free low fat milk 6 × 5 dl",
+              "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -2525,8 +2547,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -2543,8 +2566,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+              "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
               "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+              "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -2561,8 +2585,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+              "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
               "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+              "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -2579,8 +2604,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 5 kg lactose free",
+              "displayName": "Lactose-free skimmed sour milk 5 kg",
               "shortName": "Lactose-free skimmed sour milk 5 kg",
+              "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -2597,8 +2623,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk vanilla 1 l",
               "shortName": "Lactose-free coffee milk vanilla 1 l",
+              "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -2615,8 +2642,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 1 l Hyla",
+              "displayName": "Skimmed sour milk 1 l",
               "shortName": "Skimmed sour milk 1 l",
+              "fullName": "Valio skimmed sour milk 1 l Hyla",
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
@@ -2634,8 +2662,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+              "displayName": "Lactose-free AB sour milk 1 l",
               "shortName": "Lactose-free AB sour milk 1 l",
+              "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -2652,8 +2681,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed sour milk 1 l lactose free",
+              "displayName": "Lactose-free skimmed sour milk 1 l",
               "shortName": "Lactose-free skimmed sour milk 1 l",
+              "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -2670,8 +2700,9 @@ export const scene1: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+              "displayName": "Lactose-free ruoka milk vegetable 10 l",
               "shortName": "Lactose-free ruoka milk vegetable 10 l",
+              "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
               ]
@@ -2734,6 +2765,7 @@ export const scene1: Snapshot = {
       "maxExtraCostPct": 5.0,
       "allowListedSubstitutes": true
     },
+    "usedCents": 0,
     "disclosed": [
       "autoLimitCents",
       "diet",
@@ -2867,7 +2899,9 @@ export const scene1: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "usualQtyText": "300 × 1 l"
         },
         {
@@ -2878,7 +2912,9 @@ export const scene1: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Parmesan reggiano 125 g",
           "shortName": "Parmesan reggiano 125 g",
+          "fullName": "Castelli Parmesan Reggiano 125 g PDO",
           "usualQtyText": "200 × 125 g"
         },
         {
@@ -2889,7 +2925,9 @@ export const scene1: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Vegan pancake 30 g",
           "shortName": "Vegan pancake 30 g",
+          "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons"
         },
         {
@@ -2910,7 +2948,9 @@ export const scene1: Snapshot = {
             116,
             120
           ],
+          "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
+          "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags"
         }
       ],
@@ -2927,6 +2967,7 @@ export const scene1: Snapshot = {
     }
   },
   "demo": {
+    "codeRequired": true,
     "stockOut466375": false,
     "realStock466375": {
       "quantity": 11603.0,
@@ -3157,8 +3198,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free semi-skimmed milk 1 l",
               "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,010.00 €",
               "reasons": [
@@ -3355,8 +3397,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free skimmed milk 1 l",
               "shortName": "Arki lactose-free skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,100.00 €",
               "reasons": [
@@ -3535,8 +3578,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila 3 % milk drink 1 l lactose free",
+              "displayName": "Lactose-free milk 1 l",
               "shortName": "Lactose-free milk 1 l",
+              "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,400.00 €",
               "reasons": [
@@ -3723,8 +3767,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 1 l",
               "shortName": "Lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,560.00 €",
               "reasons": [
@@ -3903,8 +3948,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio whole milk 1 l lactose free UHT",
+              "displayName": "Lactose-free whole milk 1 l",
               "shortName": "Lactose-free whole milk 1 l",
+              "fullName": "Valio whole milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,640.00 €",
               "reasons": [
@@ -4083,8 +4129,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
-              "shortName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,650.00 €",
               "reasons": [
@@ -4267,8 +4314,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 1.75 l",
               "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
               "qtyText": "48 cartons",
               "moneyText": "1,314.72 €",
               "reasons": [
@@ -4463,8 +4511,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free skimmed milk 1 l",
               "shortName": "Lactose-free skimmed milk 1 l",
+              "fullName": "Valio skimmed milk 1 l lactose free UHT",
               "qtyText": "100 cartons",
               "moneyText": "1,332.00 €",
               "reasons": [
@@ -4650,8 +4699,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l",
               "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,372.00 €",
               "reasons": [
@@ -4845,8 +4895,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free skimmed milk 1 l",
               "shortName": "Eila lactose-free skimmed milk 1 l",
+              "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,524.00 €",
               "reasons": [
@@ -5022,8 +5073,9 @@ export const scene2: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 10 l",
               "shortName": "Lactose-free semi-skimmed milk 10 l",
+              "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
               "qtyText": "50 cartons",
               "moneyText": "1,565.50 €",
               "reasons": [
@@ -5217,8 +5269,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+              "displayName": "Lactose-free organic semi-skimmed milk 1 l",
               "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+              "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
               "qtyText": "200 cartons",
               "moneyText": "2,194.00 €",
               "reasons": [
@@ -5239,8 +5292,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 5 dl lactose free",
+              "displayName": "Lactose-free coffee milk 5 dl",
               "shortName": "Lactose-free coffee milk 5 dl",
+              "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -5274,8 +5328,9 @@ export const scene2: Snapshot = {
                   "summary": "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions."
                 }
               },
-              "displayName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+              "displayName": "Low-lactose whole milk 1 l",
               "shortName": "Low-lactose whole milk 1 l",
+              "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -5292,8 +5347,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+              "displayName": "Lactose-free portion milk 100 x 2 cl",
               "shortName": "Lactose-free portion milk 100 x 2 cl",
+              "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
               ]
@@ -5310,8 +5366,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Cafè milk 1 l UHT lactose free",
+              "displayName": "Lactose-free cafè milk 1 l",
               "shortName": "Lactose-free cafè milk 1 l",
+              "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
               ]
@@ -5328,8 +5385,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -5346,8 +5404,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 5 dl",
               "shortName": "Lactose-free semi-skimmed milk 5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -5364,8 +5423,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk 1 l",
               "shortName": "Lactose-free coffee milk 1 l",
+              "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -5382,8 +5442,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+              "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
               "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+              "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
               ]
@@ -5400,8 +5461,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 0.5 l",
               "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+              "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -5418,8 +5480,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+              "displayName": "Lactose-free low fat milk 6 × 5 dl",
               "shortName": "Lactose-free low fat milk 6 × 5 dl",
+              "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -5436,8 +5499,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -5454,8 +5518,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+              "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
               "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+              "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -5472,8 +5537,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+              "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
               "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+              "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -5490,8 +5556,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 5 kg lactose free",
+              "displayName": "Lactose-free skimmed sour milk 5 kg",
               "shortName": "Lactose-free skimmed sour milk 5 kg",
+              "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -5508,8 +5575,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk vanilla 1 l",
               "shortName": "Lactose-free coffee milk vanilla 1 l",
+              "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -5526,8 +5594,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 1 l Hyla",
+              "displayName": "Skimmed sour milk 1 l",
               "shortName": "Skimmed sour milk 1 l",
+              "fullName": "Valio skimmed sour milk 1 l Hyla",
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
@@ -5545,8 +5614,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+              "displayName": "Lactose-free AB sour milk 1 l",
               "shortName": "Lactose-free AB sour milk 1 l",
+              "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -5563,8 +5633,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed sour milk 1 l lactose free",
+              "displayName": "Lactose-free skimmed sour milk 1 l",
               "shortName": "Lactose-free skimmed sour milk 1 l",
+              "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -5581,8 +5652,9 @@ export const scene2: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+              "displayName": "Lactose-free ruoka milk vegetable 10 l",
               "shortName": "Lactose-free ruoka milk vegetable 10 l",
+              "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
               ]
@@ -5646,6 +5718,7 @@ export const scene2: Snapshot = {
       "maxExtraCostPct": 5.0,
       "allowListedSubstitutes": true
     },
+    "usedCents": 101000,
     "disclosed": [
       "autoLimitCents",
       "diet",
@@ -5704,8 +5777,9 @@ export const scene2: Snapshot = {
               "noteText": "until 31 Dec 2026"
             }
           ],
-          "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "qtyText": "1,000 × 1 l",
           "moneyText": "1,010.00 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -5889,7 +5963,9 @@ export const scene2: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "usualQtyText": "300 × 1 l"
         },
         {
@@ -5900,7 +5976,9 @@ export const scene2: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Parmesan reggiano 125 g",
           "shortName": "Parmesan reggiano 125 g",
+          "fullName": "Castelli Parmesan Reggiano 125 g PDO",
           "usualQtyText": "200 × 125 g"
         },
         {
@@ -5911,7 +5989,9 @@ export const scene2: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Vegan pancake 30 g",
           "shortName": "Vegan pancake 30 g",
+          "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons"
         },
         {
@@ -5932,7 +6012,9 @@ export const scene2: Snapshot = {
             116,
             120
           ],
+          "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
+          "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags"
         }
       ],
@@ -5949,6 +6031,7 @@ export const scene2: Snapshot = {
     }
   },
   "demo": {
+    "codeRequired": true,
     "stockOut466375": false,
     "realStock466375": {
       "quantity": 11603.0,
@@ -6103,8 +6186,9 @@ export const scene3: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Gran Castelli mozzarella 125 g lactose free",
+              "displayName": "Lactose-free mozzarella 125 g",
               "shortName": "Lactose-free mozzarella 125 g",
+              "fullName": "Gran Castelli mozzarella 125 g lactose free",
               "qtyText": "200 bags",
               "moneyText": "232.00 €",
               "reasons": [
@@ -6122,8 +6206,9 @@ export const scene3: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Pasta Filata Mozzarella 125 g",
+              "displayName": "Pasta filata mozzarella 125 g",
               "shortName": "Pasta filata mozzarella 125 g",
+              "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -6210,8 +6295,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Galbani Mozzarella Lactose free 100 g",
+              "displayName": "Lactose-free mozzarella 100 g",
               "shortName": "Lactose-free mozzarella 100 g",
+              "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
               ]
@@ -6224,8 +6310,9 @@ export const scene3: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+              "displayName": "Mozzarella bufala cheese buffalo 125 g",
               "shortName": "Mozzarella bufala cheese buffalo 125 g",
+              "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -6238,8 +6325,9 @@ export const scene3: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella 125 g",
+              "displayName": "Mozzarella 125 g",
               "shortName": "Mozzarella 125 g",
+              "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -6392,8 +6480,9 @@ export const scene3: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
               "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "180.10 €",
               "reasons": [
@@ -6503,8 +6592,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
+              "displayName": "Lactose-free mozzarella grated 2.5 kg",
               "shortName": "Lactose-free mozzarella grated 2.5 kg",
+              "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
               "qtyText": "10 bags",
               "moneyText": "196.60 €",
               "reasons": [
@@ -6659,8 +6749,9 @@ export const scene3: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella crumbled cheese 2.5 kg",
               "shortName": "Mozzarella crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "234.90 €",
               "reasons": [
@@ -6769,8 +6860,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
+              "displayName": "Lactose-free mozzarella stange sliced 400 g",
               "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
               "reasons": [
@@ -6927,8 +7019,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 400 g grated",
+              "displayName": "Mozzarella grated 400 g",
               "shortName": "Mozzarella grated 400 g",
+              "fullName": "Valio mozzarella 400 g grated",
               "qtyText": "8 cartons",
               "moneyText": "289.36 €",
               "reasons": [
@@ -7084,8 +7177,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 150 g grated",
+              "displayName": "Mozzarella grated 150 g",
               "shortName": "Mozzarella grated 150 g",
+              "fullName": "Valio mozzarella 150 g grated",
               "qtyText": "17 cartons",
               "moneyText": "310.93 €",
               "reasons": [
@@ -7188,8 +7282,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+              "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
               "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+              "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
               "qtyText": "5 cartons",
               "moneyText": "540.45 €",
               "reasons": [
@@ -7299,8 +7394,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+              "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
               "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+              "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
@@ -7560,8 +7656,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free semi-skimmed milk 1 l",
               "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,010.00 €",
               "reasons": [
@@ -7758,8 +7855,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free skimmed milk 1 l",
               "shortName": "Arki lactose-free skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,100.00 €",
               "reasons": [
@@ -7938,8 +8036,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila 3 % milk drink 1 l lactose free",
+              "displayName": "Lactose-free milk 1 l",
               "shortName": "Lactose-free milk 1 l",
+              "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,400.00 €",
               "reasons": [
@@ -8126,8 +8225,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 1 l",
               "shortName": "Lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,560.00 €",
               "reasons": [
@@ -8306,8 +8406,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio whole milk 1 l lactose free UHT",
+              "displayName": "Lactose-free whole milk 1 l",
               "shortName": "Lactose-free whole milk 1 l",
+              "fullName": "Valio whole milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,640.00 €",
               "reasons": [
@@ -8486,8 +8587,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
-              "shortName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,650.00 €",
               "reasons": [
@@ -8670,8 +8772,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 1.75 l",
               "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
               "qtyText": "48 cartons",
               "moneyText": "1,314.72 €",
               "reasons": [
@@ -8866,8 +8969,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free skimmed milk 1 l",
               "shortName": "Lactose-free skimmed milk 1 l",
+              "fullName": "Valio skimmed milk 1 l lactose free UHT",
               "qtyText": "100 cartons",
               "moneyText": "1,332.00 €",
               "reasons": [
@@ -9053,8 +9157,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l",
               "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,372.00 €",
               "reasons": [
@@ -9248,8 +9353,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free skimmed milk 1 l",
               "shortName": "Eila lactose-free skimmed milk 1 l",
+              "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,524.00 €",
               "reasons": [
@@ -9425,8 +9531,9 @@ export const scene3: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 10 l",
               "shortName": "Lactose-free semi-skimmed milk 10 l",
+              "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
               "qtyText": "50 cartons",
               "moneyText": "1,565.50 €",
               "reasons": [
@@ -9620,8 +9727,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+              "displayName": "Lactose-free organic semi-skimmed milk 1 l",
               "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+              "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
               "qtyText": "200 cartons",
               "moneyText": "2,194.00 €",
               "reasons": [
@@ -9642,8 +9750,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 5 dl lactose free",
+              "displayName": "Lactose-free coffee milk 5 dl",
               "shortName": "Lactose-free coffee milk 5 dl",
+              "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -9677,8 +9786,9 @@ export const scene3: Snapshot = {
                   "summary": "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions."
                 }
               },
-              "displayName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+              "displayName": "Low-lactose whole milk 1 l",
               "shortName": "Low-lactose whole milk 1 l",
+              "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -9695,8 +9805,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+              "displayName": "Lactose-free portion milk 100 x 2 cl",
               "shortName": "Lactose-free portion milk 100 x 2 cl",
+              "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
               ]
@@ -9713,8 +9824,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Cafè milk 1 l UHT lactose free",
+              "displayName": "Lactose-free cafè milk 1 l",
               "shortName": "Lactose-free cafè milk 1 l",
+              "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
               ]
@@ -9731,8 +9843,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -9749,8 +9862,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 5 dl",
               "shortName": "Lactose-free semi-skimmed milk 5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -9767,8 +9881,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk 1 l",
               "shortName": "Lactose-free coffee milk 1 l",
+              "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -9785,8 +9900,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+              "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
               "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+              "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
               ]
@@ -9803,8 +9919,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 0.5 l",
               "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+              "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -9821,8 +9938,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+              "displayName": "Lactose-free low fat milk 6 × 5 dl",
               "shortName": "Lactose-free low fat milk 6 × 5 dl",
+              "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -9839,8 +9957,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -9857,8 +9976,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+              "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
               "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+              "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -9875,8 +9995,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+              "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
               "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+              "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -9893,8 +10014,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 5 kg lactose free",
+              "displayName": "Lactose-free skimmed sour milk 5 kg",
               "shortName": "Lactose-free skimmed sour milk 5 kg",
+              "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -9911,8 +10033,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk vanilla 1 l",
               "shortName": "Lactose-free coffee milk vanilla 1 l",
+              "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -9929,8 +10052,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 1 l Hyla",
+              "displayName": "Skimmed sour milk 1 l",
               "shortName": "Skimmed sour milk 1 l",
+              "fullName": "Valio skimmed sour milk 1 l Hyla",
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
@@ -9948,8 +10072,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+              "displayName": "Lactose-free AB sour milk 1 l",
               "shortName": "Lactose-free AB sour milk 1 l",
+              "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -9966,8 +10091,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed sour milk 1 l lactose free",
+              "displayName": "Lactose-free skimmed sour milk 1 l",
               "shortName": "Lactose-free skimmed sour milk 1 l",
+              "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -9984,8 +10110,9 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+              "displayName": "Lactose-free ruoka milk vegetable 10 l",
               "shortName": "Lactose-free ruoka milk vegetable 10 l",
+              "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
               ]
@@ -10049,6 +10176,7 @@ export const scene3: Snapshot = {
       "maxExtraCostPct": 5.0,
       "allowListedSubstitutes": true
     },
+    "usedCents": 119010,
     "disclosed": [
       "autoLimitCents",
       "diet",
@@ -10105,8 +10233,9 @@ export const scene3: Snapshot = {
               "noteText": "catalog price, no end date"
             }
           ],
-          "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+          "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
           "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+          "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
           "qtyText": "10 × 2.5 kg",
           "moneyText": "180.10 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -10181,8 +10310,9 @@ export const scene3: Snapshot = {
               "noteText": "until 31 Dec 2026"
             }
           ],
-          "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "qtyText": "1,000 × 1 l",
           "moneyText": "1,010.00 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -10534,7 +10664,9 @@ export const scene3: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "usualQtyText": "300 × 1 l"
         },
         {
@@ -10545,7 +10677,9 @@ export const scene3: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Parmesan reggiano 125 g",
           "shortName": "Parmesan reggiano 125 g",
+          "fullName": "Castelli Parmesan Reggiano 125 g PDO",
           "usualQtyText": "200 × 125 g"
         },
         {
@@ -10556,7 +10690,9 @@ export const scene3: Snapshot = {
           "result": "pending",
           "sentence": "",
           "flags": [],
+          "displayName": "Vegan pancake 30 g",
           "shortName": "Vegan pancake 30 g",
+          "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons"
         },
         {
@@ -10577,7 +10713,9 @@ export const scene3: Snapshot = {
             116,
             120
           ],
+          "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
+          "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags"
         }
       ],
@@ -10594,6 +10732,7 @@ export const scene3: Snapshot = {
     }
   },
   "demo": {
+    "codeRequired": true,
     "stockOut466375": true,
     "realStock466375": {
       "quantity": 11603.0,
@@ -10748,8 +10887,9 @@ export const scene4: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Gran Castelli mozzarella 125 g lactose free",
+              "displayName": "Lactose-free mozzarella 125 g",
               "shortName": "Lactose-free mozzarella 125 g",
+              "fullName": "Gran Castelli mozzarella 125 g lactose free",
               "qtyText": "200 bags",
               "moneyText": "232.00 €",
               "reasons": [
@@ -10767,8 +10907,9 @@ export const scene4: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Pasta Filata Mozzarella 125 g",
+              "displayName": "Pasta filata mozzarella 125 g",
               "shortName": "Pasta filata mozzarella 125 g",
+              "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -10855,8 +10996,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Galbani Mozzarella Lactose free 100 g",
+              "displayName": "Lactose-free mozzarella 100 g",
               "shortName": "Lactose-free mozzarella 100 g",
+              "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
               ]
@@ -10869,8 +11011,9 @@ export const scene4: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+              "displayName": "Mozzarella bufala cheese buffalo 125 g",
               "shortName": "Mozzarella bufala cheese buffalo 125 g",
+              "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -10883,8 +11026,9 @@ export const scene4: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella 125 g",
+              "displayName": "Mozzarella 125 g",
               "shortName": "Mozzarella 125 g",
+              "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -11037,8 +11181,9 @@ export const scene4: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
               "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "180.10 €",
               "reasons": [
@@ -11148,8 +11293,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
+              "displayName": "Lactose-free mozzarella grated 2.5 kg",
               "shortName": "Lactose-free mozzarella grated 2.5 kg",
+              "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
               "qtyText": "10 bags",
               "moneyText": "196.60 €",
               "reasons": [
@@ -11304,8 +11450,9 @@ export const scene4: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella crumbled cheese 2.5 kg",
               "shortName": "Mozzarella crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "234.90 €",
               "reasons": [
@@ -11414,8 +11561,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
+              "displayName": "Lactose-free mozzarella stange sliced 400 g",
               "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
               "reasons": [
@@ -11572,8 +11720,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 400 g grated",
+              "displayName": "Mozzarella grated 400 g",
               "shortName": "Mozzarella grated 400 g",
+              "fullName": "Valio mozzarella 400 g grated",
               "qtyText": "8 cartons",
               "moneyText": "289.36 €",
               "reasons": [
@@ -11729,8 +11878,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 150 g grated",
+              "displayName": "Mozzarella grated 150 g",
               "shortName": "Mozzarella grated 150 g",
+              "fullName": "Valio mozzarella 150 g grated",
               "qtyText": "17 cartons",
               "moneyText": "310.93 €",
               "reasons": [
@@ -11833,8 +11983,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+              "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
               "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+              "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
               "qtyText": "5 cartons",
               "moneyText": "540.45 €",
               "reasons": [
@@ -11944,8 +12095,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+              "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
               "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+              "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
@@ -12205,8 +12357,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free semi-skimmed milk 1 l",
               "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,010.00 €",
               "reasons": [
@@ -12403,8 +12556,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free skimmed milk 1 l",
               "shortName": "Arki lactose-free skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,100.00 €",
               "reasons": [
@@ -12583,8 +12737,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila 3 % milk drink 1 l lactose free",
+              "displayName": "Lactose-free milk 1 l",
               "shortName": "Lactose-free milk 1 l",
+              "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,400.00 €",
               "reasons": [
@@ -12771,8 +12926,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 1 l",
               "shortName": "Lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,560.00 €",
               "reasons": [
@@ -12951,8 +13107,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio whole milk 1 l lactose free UHT",
+              "displayName": "Lactose-free whole milk 1 l",
               "shortName": "Lactose-free whole milk 1 l",
+              "fullName": "Valio whole milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,640.00 €",
               "reasons": [
@@ -13131,8 +13288,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
-              "shortName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,650.00 €",
               "reasons": [
@@ -13315,8 +13473,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 1.75 l",
               "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
               "qtyText": "48 cartons",
               "moneyText": "1,314.72 €",
               "reasons": [
@@ -13511,8 +13670,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free skimmed milk 1 l",
               "shortName": "Lactose-free skimmed milk 1 l",
+              "fullName": "Valio skimmed milk 1 l lactose free UHT",
               "qtyText": "100 cartons",
               "moneyText": "1,332.00 €",
               "reasons": [
@@ -13698,8 +13858,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l",
               "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,372.00 €",
               "reasons": [
@@ -13893,8 +14054,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free skimmed milk 1 l",
               "shortName": "Eila lactose-free skimmed milk 1 l",
+              "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,524.00 €",
               "reasons": [
@@ -14070,8 +14232,9 @@ export const scene4: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 10 l",
               "shortName": "Lactose-free semi-skimmed milk 10 l",
+              "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
               "qtyText": "50 cartons",
               "moneyText": "1,565.50 €",
               "reasons": [
@@ -14265,8 +14428,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+              "displayName": "Lactose-free organic semi-skimmed milk 1 l",
               "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+              "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
               "qtyText": "200 cartons",
               "moneyText": "2,194.00 €",
               "reasons": [
@@ -14287,8 +14451,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 5 dl lactose free",
+              "displayName": "Lactose-free coffee milk 5 dl",
               "shortName": "Lactose-free coffee milk 5 dl",
+              "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -14322,8 +14487,9 @@ export const scene4: Snapshot = {
                   "summary": "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions."
                 }
               },
-              "displayName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+              "displayName": "Low-lactose whole milk 1 l",
               "shortName": "Low-lactose whole milk 1 l",
+              "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -14340,8 +14506,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+              "displayName": "Lactose-free portion milk 100 x 2 cl",
               "shortName": "Lactose-free portion milk 100 x 2 cl",
+              "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
               ]
@@ -14358,8 +14525,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Cafè milk 1 l UHT lactose free",
+              "displayName": "Lactose-free cafè milk 1 l",
               "shortName": "Lactose-free cafè milk 1 l",
+              "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
               ]
@@ -14376,8 +14544,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -14394,8 +14563,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 5 dl",
               "shortName": "Lactose-free semi-skimmed milk 5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -14412,8 +14582,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk 1 l",
               "shortName": "Lactose-free coffee milk 1 l",
+              "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -14430,8 +14601,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+              "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
               "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+              "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
               ]
@@ -14448,8 +14620,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 0.5 l",
               "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+              "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -14466,8 +14639,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+              "displayName": "Lactose-free low fat milk 6 × 5 dl",
               "shortName": "Lactose-free low fat milk 6 × 5 dl",
+              "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -14484,8 +14658,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -14502,8 +14677,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+              "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
               "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+              "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -14520,8 +14696,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+              "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
               "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+              "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -14538,8 +14715,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 5 kg lactose free",
+              "displayName": "Lactose-free skimmed sour milk 5 kg",
               "shortName": "Lactose-free skimmed sour milk 5 kg",
+              "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -14556,8 +14734,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk vanilla 1 l",
               "shortName": "Lactose-free coffee milk vanilla 1 l",
+              "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -14574,8 +14753,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 1 l Hyla",
+              "displayName": "Skimmed sour milk 1 l",
               "shortName": "Skimmed sour milk 1 l",
+              "fullName": "Valio skimmed sour milk 1 l Hyla",
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
@@ -14593,8 +14773,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+              "displayName": "Lactose-free AB sour milk 1 l",
               "shortName": "Lactose-free AB sour milk 1 l",
+              "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -14611,8 +14792,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed sour milk 1 l lactose free",
+              "displayName": "Lactose-free skimmed sour milk 1 l",
               "shortName": "Lactose-free skimmed sour milk 1 l",
+              "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -14629,8 +14811,9 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+              "displayName": "Lactose-free ruoka milk vegetable 10 l",
               "shortName": "Lactose-free ruoka milk vegetable 10 l",
+              "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
               ]
@@ -14694,6 +14877,7 @@ export const scene4: Snapshot = {
       "maxExtraCostPct": 5.0,
       "allowListedSubstitutes": true
     },
+    "usedCents": 119010,
     "disclosed": [
       "autoLimitCents",
       "diet",
@@ -14750,8 +14934,9 @@ export const scene4: Snapshot = {
               "noteText": "catalog price, no end date"
             }
           ],
-          "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+          "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
           "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+          "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
           "qtyText": "10 × 2.5 kg",
           "moneyText": "180.10 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -14826,8 +15011,9 @@ export const scene4: Snapshot = {
               "noteText": "until 31 Dec 2026"
             }
           ],
-          "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "qtyText": "1,000 × 1 l",
           "moneyText": "1,010.00 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -15251,7 +15437,7 @@ export const scene4: Snapshot = {
         "at": "2026-11-14T10:30:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+        "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
         "facts": [],
         "spendPassId": "S-1-W46",
         "disclosed": [
@@ -15261,7 +15447,7 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
-        "hash": "010849e515906e2afd9f4b5d1f54b6fc0e8f80c82162fbfc3fa6d787c5ad9ac8",
+        "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "actorText": "Validio",
         "timeText": "10:30",
         "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
@@ -15287,8 +15473,8 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "010849e515906e2afd9f4b5d1f54b6fc0e8f80c82162fbfc3fa6d787c5ad9ac8",
-        "hash": "d493dd317358066d832b77b7f0849455f475045692723187c96275616afb6f06",
+        "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+        "hash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -15330,8 +15516,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "d493dd317358066d832b77b7f0849455f475045692723187c96275616afb6f06",
-        "hash": "b6ebaf611ff1627ae96910ade23f1eb52b34d424362bf1c92224bf67f6778fca",
+        "prevHash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
+        "hash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
@@ -15371,8 +15557,8 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "b6ebaf611ff1627ae96910ade23f1eb52b34d424362bf1c92224bf67f6778fca",
-        "hash": "b334f744f5828844928645917ee331ebe8a88a73ba4d89fa2636e0ae61416a91",
+        "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
+        "hash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
         "actorText": "Chef",
         "timeText": "10:39",
         "summary": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -15414,8 +15600,8 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "b334f744f5828844928645917ee331ebe8a88a73ba4d89fa2636e0ae61416a91",
-        "hash": "a58dc12d663d39ed028a4a295375587b8d90eefda678ddbabc24a20eb8ab44ed",
+        "prevHash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
+        "hash": "15118eea940afd5418e420b0403e586724eee0b067729b88efdbea95bbe49627",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
@@ -15467,7 +15653,9 @@ export const scene4: Snapshot = {
           "ruleIds": [
             "auto-order"
           ],
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "usualQtyText": "300 × 1 l",
           "qtyText": "300 × 1 l",
           "moneyText": "303.00 €"
@@ -15496,7 +15684,9 @@ export const scene4: Snapshot = {
                 "unit": "pieces",
                 "totalCents": 51649,
                 "onValioList": false,
+                "displayName": "Parmesan reggiano 125 g",
                 "shortName": "Parmesan reggiano 125 g",
+                "fullName": "Castelli Parmesan Reggiano 125 g PDO",
                 "qtyText": "137 × 125 g",
                 "moneyText": "516.49 €"
               },
@@ -15507,7 +15697,9 @@ export const scene4: Snapshot = {
                 "unit": "pieces",
                 "totalCents": 25600,
                 "onValioList": true,
+                "displayName": "Parmigiano reggiano block 200 g",
                 "shortName": "Parmigiano reggiano block 200 g",
+                "fullName": "Castelli parmigiano reggiano 200 g block",
                 "qtyText": "40 × 200 g",
                 "moneyText": "256.00 €"
               }
@@ -15520,7 +15712,9 @@ export const scene4: Snapshot = {
           "ruleIds": [
             "auto-order"
           ],
+          "displayName": "Parmesan reggiano 125 g",
           "shortName": "Parmesan reggiano 125 g",
+          "fullName": "Castelli Parmesan Reggiano 125 g PDO",
           "usualQtyText": "200 × 125 g",
           "qtyText": "177 × 125 g",
           "moneyText": "772.49 €"
@@ -15533,7 +15727,7 @@ export const scene4: Snapshot = {
           "thisWeekQuantity": 27,
           "totalCents": 90531,
           "result": "accepted",
-          "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+          "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
           "flags": [
             {
               "kind": "stock_below",
@@ -15541,7 +15735,9 @@ export const scene4: Snapshot = {
             }
           ],
           "orderId": "O-5",
+          "displayName": "Vegan pancake 30 g",
           "shortName": "Vegan pancake 30 g",
+          "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons",
           "qtyText": "27 cartons",
           "moneyText": "905.31 €"
@@ -15580,7 +15776,9 @@ export const scene4: Snapshot = {
           "ruleIds": [
             "ask-human"
           ],
+          "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
+          "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags",
           "qtyText": "98 bags",
           "moneyText": "113.68 €"
@@ -15599,6 +15797,7 @@ export const scene4: Snapshot = {
     }
   },
   "demo": {
+    "codeRequired": true,
     "stockOut466375": true,
     "realStock466375": {
       "quantity": 11603.0,
@@ -15753,8 +15952,9 @@ export const scene5: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Gran Castelli mozzarella 125 g lactose free",
+              "displayName": "Lactose-free mozzarella 125 g",
               "shortName": "Lactose-free mozzarella 125 g",
+              "fullName": "Gran Castelli mozzarella 125 g lactose free",
               "qtyText": "200 bags",
               "moneyText": "232.00 €",
               "reasons": [
@@ -15772,8 +15972,9 @@ export const scene5: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Pasta Filata Mozzarella 125 g",
+              "displayName": "Pasta filata mozzarella 125 g",
               "shortName": "Pasta filata mozzarella 125 g",
+              "fullName": "Pasta Filata Mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -15860,8 +16061,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Galbani Mozzarella Lactose free 100 g",
+              "displayName": "Lactose-free mozzarella 100 g",
               "shortName": "Lactose-free mozzarella 100 g",
+              "fullName": "Galbani Mozzarella Lactose free 100 g",
               "reasons": [
                 "Lactose free and checked, but Valio gives no delivery date for it."
               ]
@@ -15874,8 +16076,9 @@ export const scene5: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
+              "displayName": "Mozzarella bufala cheese buffalo 125 g",
               "shortName": "Mozzarella bufala cheese buffalo 125 g",
+              "fullName": "Castelli mozzarella bufala 125 g mozzarella cheese from buffalo milk",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -15888,8 +16091,9 @@ export const scene5: Snapshot = {
               "facts": [],
               "onValioList": true,
               "isSubstitute": true,
-              "displayName": "Castelli mozzarella 125 g",
+              "displayName": "Mozzarella 125 g",
               "shortName": "Mozzarella 125 g",
+              "fullName": "Castelli mozzarella 125 g",
               "reasons": [
                 "Lists milk and has no lactose-free claim in Valio's data."
               ]
@@ -16042,8 +16246,9 @@ export const scene5: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
               "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "180.10 €",
               "reasons": [
@@ -16153,8 +16358,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
+              "displayName": "Lactose-free mozzarella grated 2.5 kg",
               "shortName": "Lactose-free mozzarella grated 2.5 kg",
+              "fullName": "Maestrella Mozzarella grated 21% 2.5 kg lactose free",
               "qtyText": "10 bags",
               "moneyText": "196.60 €",
               "reasons": [
@@ -16309,8 +16515,9 @@ export const scene5: Snapshot = {
               ],
               "onValioList": false,
               "isSubstitute": true,
-              "displayName": "Valio mozzarella 2.5 kg crumbled cheese",
+              "displayName": "Mozzarella crumbled cheese 2.5 kg",
               "shortName": "Mozzarella crumbled cheese 2.5 kg",
+              "fullName": "Valio mozzarella 2.5 kg crumbled cheese",
               "qtyText": "10 × 2.5 kg",
               "moneyText": "234.90 €",
               "reasons": [
@@ -16419,8 +16626,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
+              "displayName": "Lactose-free mozzarella stange sliced 400 g",
               "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
               "reasons": [
@@ -16577,8 +16785,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 400 g grated",
+              "displayName": "Mozzarella grated 400 g",
               "shortName": "Mozzarella grated 400 g",
+              "fullName": "Valio mozzarella 400 g grated",
               "qtyText": "8 cartons",
               "moneyText": "289.36 €",
               "reasons": [
@@ -16734,8 +16943,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio mozzarella 150 g grated",
+              "displayName": "Mozzarella grated 150 g",
               "shortName": "Mozzarella grated 150 g",
+              "fullName": "Valio mozzarella 150 g grated",
               "qtyText": "17 cartons",
               "moneyText": "310.93 €",
               "reasons": [
@@ -16838,8 +17048,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
+              "displayName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
               "shortName": "Lactose-free edam-emmental-mozzarella grated cheese 4 × 1.5 kg",
+              "fullName": "4 x Arla Pro 1.5 kg 25% lactose free Edam-Emmental-Mozzarella grated cheese",
               "qtyText": "5 cartons",
               "moneyText": "540.45 €",
               "reasons": [
@@ -16949,8 +17160,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
+              "displayName": "Lactose-free mozzarella pearl 2 × 5 g",
               "shortName": "Lactose-free mozzarella pearl 2 × 5 g",
+              "fullName": "2xTopfoods mozzarella pearl lactose free 5 g 3 kg frozen",
               "reasons": [
                 "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079).",
                 "Order cut-off 12 Nov 15:00 has passed."
@@ -17210,8 +17422,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free semi-skimmed milk 1 l",
               "shortName": "Arki lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,010.00 €",
               "reasons": [
@@ -17408,8 +17621,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Arki lactose-free skimmed milk 1 l",
               "shortName": "Arki lactose-free skimmed milk 1 l",
+              "fullName": "Valio Hyvä suomalainen Arki Eila skimmed milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,100.00 €",
               "reasons": [
@@ -17588,8 +17802,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila 3 % milk drink 1 l lactose free",
+              "displayName": "Lactose-free milk 1 l",
               "shortName": "Lactose-free milk 1 l",
+              "fullName": "Valio Eila 3 % milk drink 1 l lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,400.00 €",
               "reasons": [
@@ -17776,8 +17991,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 1 l",
               "shortName": "Lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio semi skimmed milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,560.00 €",
               "reasons": [
@@ -17956,8 +18172,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio whole milk 1 l lactose free UHT",
+              "displayName": "Lactose-free whole milk 1 l",
               "shortName": "Lactose-free whole milk 1 l",
+              "fullName": "Valio whole milk 1 l lactose free UHT",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,640.00 €",
               "reasons": [
@@ -18136,8 +18353,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
-              "shortName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "shortName": "Eila lactose-free semi-skimmed milk 1 l UHT",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l UHT lactose free",
               "qtyText": "1,000 × 1 l",
               "moneyText": "1,650.00 €",
               "reasons": [
@@ -18320,8 +18538,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 1.75 l",
               "shortName": "Lactose-free semi-skimmed milk 1.75 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1.75 l lactose free",
               "qtyText": "48 cartons",
               "moneyText": "1,314.72 €",
               "reasons": [
@@ -18516,8 +18735,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed milk 1 l lactose free UHT",
+              "displayName": "Lactose-free skimmed milk 1 l",
               "shortName": "Lactose-free skimmed milk 1 l",
+              "fullName": "Valio skimmed milk 1 l lactose free UHT",
               "qtyText": "100 cartons",
               "moneyText": "1,332.00 €",
               "reasons": [
@@ -18703,8 +18923,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 1 l",
               "shortName": "Eila lactose-free semi-skimmed milk 1 l",
+              "fullName": "Valio Eila semi skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,372.00 €",
               "reasons": [
@@ -18898,8 +19119,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed milk drink 1 l lactose free",
+              "displayName": "Eila lactose-free skimmed milk 1 l",
               "shortName": "Eila lactose-free skimmed milk 1 l",
+              "fullName": "Valio Eila skimmed milk drink 1 l lactose free",
               "qtyText": "200 cartons",
               "moneyText": "1,524.00 €",
               "reasons": [
@@ -19075,8 +19297,9 @@ export const scene5: Snapshot = {
                 }
               ],
               "isSubstitute": false,
-              "displayName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 10 l",
               "shortName": "Lactose-free semi-skimmed milk 10 l",
+              "fullName": "Valio Eila semi skimmed milk drink 10 l novobox lactose free",
               "qtyText": "50 cartons",
               "moneyText": "1,565.50 €",
               "reasons": [
@@ -19270,8 +19493,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
+              "displayName": "Lactose-free organic semi-skimmed milk 1 l",
               "shortName": "Lactose-free organic semi-skimmed milk 1 l",
+              "fullName": "Valio Eila Luomu semi skimmed milk drink 1 l lactose free, organic",
               "qtyText": "200 cartons",
               "moneyText": "2,194.00 €",
               "reasons": [
@@ -19292,8 +19516,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 5 dl lactose free",
+              "displayName": "Lactose-free coffee milk 5 dl",
               "shortName": "Lactose-free coffee milk 5 dl",
+              "fullName": "Valio coffee milk 5 dl lactose free",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -19327,8 +19552,9 @@ export const scene5: Snapshot = {
                   "summary": "This description talks to AI agents and tells them what to do. Descriptions are never used for decisions."
                 }
               },
-              "displayName": "Arla Whole milk 1 l Suomesta low lactose Uht",
+              "displayName": "Low-lactose whole milk 1 l",
               "shortName": "Low-lactose whole milk 1 l",
+              "fullName": "Arla Whole milk 1 l Suomesta low lactose Uht",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -19345,8 +19571,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
+              "displayName": "Lactose-free portion milk 100 x 2 cl",
               "shortName": "Lactose-free portion milk 100 x 2 cl",
+              "fullName": "Arla Portion milk 100x2 cl lactose free 1,5% UHT",
               "reasons": [
                 "Portion packs, not plain milk."
               ]
@@ -19363,8 +19590,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Cafè milk 1 l UHT lactose free",
+              "displayName": "Lactose-free cafè milk 1 l",
               "shortName": "Lactose-free cafè milk 1 l",
+              "fullName": "Arla Cafè milk 1 l UHT lactose free",
               "reasons": [
                 "Café milk, not plain milk."
               ]
@@ -19381,8 +19609,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
+              "displayName": "Eila lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Eila lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 2.5 dl UHT lactose free",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -19399,8 +19628,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
+              "displayName": "Lactose-free semi-skimmed milk 5 dl",
               "shortName": "Lactose-free semi-skimmed milk 5 dl",
+              "fullName": "Valio Eila semi skimmed milk drink 5 dl lactose free",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -19417,8 +19647,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk 1 l",
               "shortName": "Lactose-free coffee milk 1 l",
+              "fullName": "Valio coffee milk 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -19435,8 +19666,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
+              "displayName": "Lactose-free low fat milkdrink 14 × 2 dl",
               "shortName": "Lactose-free low fat milkdrink 14 × 2 dl",
+              "fullName": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "reasons": [
                 "0.2 l packs, too small for 1,000 litres."
               ]
@@ -19453,8 +19685,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 0.5 l lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 0.5 l",
               "shortName": "Lactose-free semi-skimmed milk 0.5 l",
+              "fullName": "Valio semi skimmed milk 0.5 l lactose free UHT",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -19471,8 +19704,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
+              "displayName": "Lactose-free low fat milk 6 × 5 dl",
               "shortName": "Lactose-free low fat milk 6 × 5 dl",
+              "fullName": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "reasons": [
                 "0.5 l packs, too small for 1,000 litres."
               ]
@@ -19489,8 +19723,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
+              "displayName": "Lactose-free semi-skimmed milk 2.5 dl",
               "shortName": "Lactose-free semi-skimmed milk 2.5 dl",
+              "fullName": "Valio semi skimmed milk 2.5 dl lactose free UHT",
               "reasons": [
                 "0.25 l packs, too small for 1,000 litres."
               ]
@@ -19507,8 +19742,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
+              "displayName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
               "shortName": "Lactose-free acidofilus-bifidus sour milk fatfree 5 × 1 l",
+              "fullName": "5 x Arla Acidofilus-Bifidus sour milk 1 l lactose free fatfree Suomi",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -19525,8 +19761,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
+              "displayName": "Low-lactose semi-skimmed milk 12 × 1 l",
               "shortName": "Low-lactose semi-skimmed milk 12 × 1 l",
+              "fullName": "12 x Arla Semi skimmed milk 1 l Suomi low lactose UHT",
               "reasons": [
                 "Low lactose is not lactose free."
               ]
@@ -19543,8 +19780,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 5 kg lactose free",
+              "displayName": "Lactose-free skimmed sour milk 5 kg",
               "shortName": "Lactose-free skimmed sour milk 5 kg",
+              "fullName": "Valio skimmed sour milk 5 kg lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -19561,8 +19799,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
+              "displayName": "Lactose-free coffee milk vanilla 1 l",
               "shortName": "Lactose-free coffee milk vanilla 1 l",
+              "fullName": "Valio coffee milk drink vanilla 1 l lactose free UHT",
               "reasons": [
                 "Coffee milk, not plain milk."
               ]
@@ -19579,8 +19818,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio skimmed sour milk 1 l Hyla",
+              "displayName": "Skimmed sour milk 1 l",
               "shortName": "Skimmed sour milk 1 l",
+              "fullName": "Valio skimmed sour milk 1 l Hyla",
               "reasons": [
                 "Sour milk, not plain milk.",
                 "Low lactose is not lactose free."
@@ -19598,8 +19838,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
+              "displayName": "Lactose-free AB sour milk 1 l",
               "shortName": "Lactose-free AB sour milk 1 l",
+              "fullName": "Valio Gefilus AB sour milk 1% 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -19616,8 +19857,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Valio Eila skimmed sour milk 1 l lactose free",
+              "displayName": "Lactose-free skimmed sour milk 1 l",
               "shortName": "Lactose-free skimmed sour milk 1 l",
+              "fullName": "Valio Eila skimmed sour milk 1 l lactose free",
               "reasons": [
                 "Sour milk, not plain milk."
               ]
@@ -19634,8 +19876,9 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
+              "displayName": "Lactose-free ruoka milk vegetable 10 l",
               "shortName": "Lactose-free ruoka milk vegetable 10 l",
+              "fullName": "Arla Ruoka 10 l 15% lactose free based on milk vegetable mix UHT",
               "reasons": [
                 "Lactose free but a cooking fat mix, not milk."
               ]
@@ -19699,6 +19942,7 @@ export const scene5: Snapshot = {
       "maxExtraCostPct": 5.0,
       "allowListedSubstitutes": true
     },
+    "usedCents": 119010,
     "disclosed": [
       "autoLimitCents",
       "diet",
@@ -19755,8 +19999,9 @@ export const scene5: Snapshot = {
               "noteText": "catalog price, no end date"
             }
           ],
-          "displayName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
+          "displayName": "Mozzarella-fontal crumbled cheese 2.5 kg",
           "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
+          "fullName": "Valio mozzarella-fontal 2.5 kg crumbled cheese",
           "qtyText": "10 × 2.5 kg",
           "moneyText": "180.10 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -19831,8 +20076,9 @@ export const scene5: Snapshot = {
               "noteText": "until 31 Dec 2026"
             }
           ],
-          "displayName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "qtyText": "1,000 × 1 l",
           "moneyText": "1,010.00 €",
           "deliveryText": "delivery Mon 16 Nov"
@@ -20256,7 +20502,7 @@ export const scene5: Snapshot = {
         "at": "2026-11-14T10:30:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+        "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
         "facts": [],
         "spendPassId": "S-1-W46",
         "disclosed": [
@@ -20266,7 +20512,7 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "de38b4e5ce5d4e4a31107915900de6b4d679aacbcdc184955e6cd0f969061bed",
-        "hash": "010849e515906e2afd9f4b5d1f54b6fc0e8f80c82162fbfc3fa6d787c5ad9ac8",
+        "hash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
         "actorText": "Validio",
         "timeText": "10:30",
         "summary": "Steady Order S-1, 30 cartons of vegan pancake 30 g.",
@@ -20292,8 +20538,8 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "010849e515906e2afd9f4b5d1f54b6fc0e8f80c82162fbfc3fa6d787c5ad9ac8",
-        "hash": "d493dd317358066d832b77b7f0849455f475045692723187c96275616afb6f06",
+        "prevHash": "8f12fba7f167e2cb6bae7e24a0bdda351174c84ec2d036d58706d5c23c26fa52",
+        "hash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
         "actorText": "Validio",
         "timeText": "10:33",
         "summary": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g.",
@@ -20335,8 +20581,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "d493dd317358066d832b77b7f0849455f475045692723187c96275616afb6f06",
-        "hash": "b6ebaf611ff1627ae96910ade23f1eb52b34d424362bf1c92224bf67f6778fca",
+        "prevHash": "cae5ae2171b0bdca0cdfff54621416a4ebcd772148ead66087a8afd95c6c13a9",
+        "hash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
         "actorText": "Validio",
         "timeText": "10:37",
         "summary": "Spend Pass S-1-W46 already placed 1,075.49 €.",
@@ -20376,8 +20622,8 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "b6ebaf611ff1627ae96910ade23f1eb52b34d424362bf1c92224bf67f6778fca",
-        "hash": "b334f744f5828844928645917ee331ebe8a88a73ba4d89fa2636e0ae61416a91",
+        "prevHash": "df31d4c6387ad269bb86d2c3ba095ea591136c6044505abdc28aa8819d9927be",
+        "hash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
         "actorText": "Chef",
         "timeText": "10:39",
         "summary": "Chef accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -20419,8 +20665,8 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "b334f744f5828844928645917ee331ebe8a88a73ba4d89fa2636e0ae61416a91",
-        "hash": "a58dc12d663d39ed028a4a295375587b8d90eefda678ddbabc24a20eb8ab44ed",
+        "prevHash": "0d07c61dcb76ec98598920131dd1ab0b616b070e46bf5c52bdc2ad679da0f65e",
+        "hash": "15118eea940afd5418e420b0403e586724eee0b067729b88efdbea95bbe49627",
         "actorText": "Validio",
         "timeText": "10:42",
         "summary": "Placed order O-5.",
@@ -20472,7 +20718,9 @@ export const scene5: Snapshot = {
           "ruleIds": [
             "auto-order"
           ],
+          "displayName": "Lactose-free semi-skimmed milk 1 l",
           "shortName": "Lactose-free semi-skimmed milk 1 l",
+          "fullName": "Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free",
           "usualQtyText": "300 × 1 l",
           "qtyText": "300 × 1 l",
           "moneyText": "303.00 €"
@@ -20501,7 +20749,9 @@ export const scene5: Snapshot = {
                 "unit": "pieces",
                 "totalCents": 51649,
                 "onValioList": false,
+                "displayName": "Parmesan reggiano 125 g",
                 "shortName": "Parmesan reggiano 125 g",
+                "fullName": "Castelli Parmesan Reggiano 125 g PDO",
                 "qtyText": "137 × 125 g",
                 "moneyText": "516.49 €"
               },
@@ -20512,7 +20762,9 @@ export const scene5: Snapshot = {
                 "unit": "pieces",
                 "totalCents": 25600,
                 "onValioList": true,
+                "displayName": "Parmigiano reggiano block 200 g",
                 "shortName": "Parmigiano reggiano block 200 g",
+                "fullName": "Castelli parmigiano reggiano 200 g block",
                 "qtyText": "40 × 200 g",
                 "moneyText": "256.00 €"
               }
@@ -20525,7 +20777,9 @@ export const scene5: Snapshot = {
           "ruleIds": [
             "auto-order"
           ],
+          "displayName": "Parmesan reggiano 125 g",
           "shortName": "Parmesan reggiano 125 g",
+          "fullName": "Castelli Parmesan Reggiano 125 g PDO",
           "usualQtyText": "200 × 125 g",
           "qtyText": "177 × 125 g",
           "moneyText": "772.49 €"
@@ -20538,7 +20792,7 @@ export const scene5: Snapshot = {
           "thisWeekQuantity": 27,
           "totalCents": 90531,
           "result": "accepted",
-          "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
+          "sentence": "Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
           "flags": [
             {
               "kind": "stock_below",
@@ -20546,7 +20800,9 @@ export const scene5: Snapshot = {
             }
           ],
           "orderId": "O-5",
+          "displayName": "Vegan pancake 30 g",
           "shortName": "Vegan pancake 30 g",
+          "fullName": "Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen",
           "usualQtyText": "30 cartons",
           "qtyText": "27 cartons",
           "moneyText": "905.31 €"
@@ -20585,7 +20841,9 @@ export const scene5: Snapshot = {
           "ruleIds": [
             "ask-human"
           ],
+          "displayName": "Lactose-free mozzarella 125 g",
           "shortName": "Lactose-free mozzarella 125 g",
+          "fullName": "Gran Castelli mozzarella 125 g lactose free",
           "usualQtyText": "98 bags",
           "qtyText": "98 bags",
           "moneyText": "113.68 €"
@@ -20604,6 +20862,7 @@ export const scene5: Snapshot = {
     }
   },
   "demo": {
+    "codeRequired": true,
     "stockOut466375": true,
     "realStock466375": {
       "quantity": 11603.0,

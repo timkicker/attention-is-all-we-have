@@ -84,9 +84,16 @@ def test_split_skips_undeliverable(catalog, valio):
 def test_split_over_cost_limit_escalates(catalog, valio):
     p = fill(catalog, valio, "463968", 200, max_extra_bp=200)
     assert [x.product.id for x in p.parts] == ["463968"]
-    assert p.breaks == [("Parmigiano reggiano block 200 g would break a rule. "
-                         "The split would cost 2.5 % more, over your 2 % split limit")]
+    assert p.breaks == [("Parmigiano reggiano block 200 g would break a rule: "
+                         "the split would cost 2.5 % more, over your 2 % split limit")]
     assert p.needs_person
+
+
+def test_broken_rule_comes_right_after_the_colon():
+    # the steady page reads the rule from "would break a rule: (...)"
+    from validio.matching.split import _broke
+    assert _broke("Vegan pancake 100 x 60 g", "Not gluten free: lists wheat as contained") == (
+        "Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists wheat as contained")
 
 
 def test_no_split_when_stock_enough(catalog, valio):

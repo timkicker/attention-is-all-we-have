@@ -178,6 +178,12 @@ def short_names(names: list[str]) -> list[str]:
             if own:
                 out[i] = f"{own[-1]} {s[:1].lower()}{s[1:]}"
     for i, s in enumerate(out):
+        if out.count(s) > 1:  # a word only this name has, such as "UHT", tells it apart without the whole name
+            rivals = [names[j].lower() for j in range(len(out)) if j != i and out[j] == s]
+            own = [w for w in re.findall(r"[A-Za-z]{3,}", names[i]) if not any(w.lower() in r for r in rivals)
+                   and w.lower() not in s.lower()]
+            out[i] = f"{s} {own[0]}" if own else display_name(names[i])
+    for i, s in enumerate(out):
         if out.count(s) > 1:
             out[i] = display_name(names[i])
     return out
