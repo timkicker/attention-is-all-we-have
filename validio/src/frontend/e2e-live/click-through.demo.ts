@@ -139,11 +139,10 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
 
 // Scene 3, owner approves a swap
 
-test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ page, request, kitchen }) => {
-  await page.goto("/");
-  await page.locator("#page-menu").click(); // the switch sits in the bar's demo menu
-  await act(page, "stock-out", async () => (await json(request, "/api/demo")).stockOut466375 === true,
-    async () => { expect((await request.post("/api/demo/stock-out")).status()).toBe(200); });
+test("scene 3: Simulate the stock-out, the agent's swap waits for the owner", async ({ request, kitchen }) => {
+  // The presenter's stock-out has no control in the app: the demo API sets it.
+  expect((await request.post("/api/demo/stock-out")).status()).toBe(200);
+  expect((await json(request, "/api/demo")).stockOut466375).toBe(true);
   agent(kitchen, 3);
   const r2 = await json(request, "/api/requests/R-2");
   expect([r2.status, r2.totalCents, r2.orderId]).toEqual(["waiting", 18010, "O-2"]);
