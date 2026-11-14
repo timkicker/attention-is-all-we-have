@@ -39,8 +39,8 @@ async def test_pane_scene1_request_arrives(ctx):
 async def test_pane_scene2_orders_464306_alone(ctx):
     text, t, llm = await pane(ctx, 2)
     assert "checked 12 products live" in text
-    assert "464306" in text and "1000 ST  1010.00 EUR" in text
-    assert "order O-1: placed, 1010.00 EUR" in text
+    assert "464306" in text and "1,000 × 1 l  1,010.00 €" in text and " ST " not in text and "EUR" not in text
+    assert "order O-1: placed, 1,010.00 €" in text
     assert "supplier text fields withheld from the agent's model" in text
     assert t.final == "Order O-1 is placed."
     raw = json.dumps([e.data for e in t.events])
@@ -55,6 +55,16 @@ async def test_pane_scene3_owner_decides(ctx):
     assert "simulated: Stock-out simulated" in text
     assert "not_deliverable" in text and "473986" in text
     assert "mozzarella-fontal blend" in text
-    assert "order O-1: waiting, 180.10 EUR" in text
+    assert "order O-1: waiting, 180.10 €" in text and "10 × 2.5 kg" in text
     assert t.final == "Order O-1 waits for the owner's approval on the phone."
     assert "supplierText" not in json.dumps(llm.inputs)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("n", [1, 2, 3, 4])
+async def test_pane_speaks_like_the_web_app(ctx, n):
+    import re
+    text, _, _ = await pane(ctx, n)
+    shown = "\n".join(ln for ln in text.splitlines() if "agent -> " not in ln and not ln.startswith("kitchen"))
+    assert not re.search(r"\b(?:ST|BAG|KI|PAK|PCS|EUR)\b", shown), shown
+    assert not re.search(r"\b\d{4,}\.\d\d\b", shown)  # 1,010.00 €, never 1010.00

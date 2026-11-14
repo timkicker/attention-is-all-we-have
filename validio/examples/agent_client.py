@@ -63,7 +63,7 @@ def scene2(http: httpx.Client, issuance: str, key_json: str) -> dict:
     order = ok(http.post("/agent/v1/orders", headers=auth(), json={
         "requestId": req["id"], "choice": choice, "idempotencyKey": "example-scene2-order"}))
     order = ok(http.get(f"/agent/v1/orders/{order['id']}"))
-    print(f"order {order['id']}: {order['state']}, {order['totalCents'] / 100:.2f} EUR")
+    print(f"order {order['id']}: {order['state']}, {order['moneyText']}")
     return order
 
 
