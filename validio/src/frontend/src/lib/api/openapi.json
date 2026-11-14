@@ -2556,6 +2556,18 @@
         "title": "SteadyPassOut",
         "type": "object"
       },
+      "StockOutIn": {
+        "properties": {
+          "on": {
+            "default": true,
+            "description": "true simulates the stock-out of 466375, false ends it",
+            "title": "On",
+            "type": "boolean"
+          }
+        },
+        "title": "StockOutIn",
+        "type": "object"
+      },
       "SupplierTextView": {
         "properties": {
           "grade": {
@@ -3470,7 +3482,7 @@
     },
     "/api/demo/stock-out": {
       "post": {
-        "description": "Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock.",
+        "description": "Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {\"on\": false} ends\nit. A change writes one simulation entry, the same state again writes none.",
         "operationId": "stock_out_api_demo_stock_out_post",
         "parameters": [
           {
@@ -3490,6 +3502,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/StockOutIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {

@@ -34,6 +34,7 @@ from .schemas import (
     SessionIn,
     SpendPassIn,
     SpendPassView,
+    StockOutIn,
     SupplyRequestView,
 )
 from .state import MAX_CODE_TRIES, Ctx, get_ctx
@@ -324,12 +325,15 @@ def demo_state(ctx: CtxDep):
 
 
 @router.post("/demo/stock-out", response_model=DemoState, response_model_exclude_none=True)
-def stock_out(ctx: CtxDep, request: Request, x_demo_token: Annotated[str | None, Header()] = None):
-    """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock."""
+def stock_out(ctx: CtxDep, request: Request, body: Annotated[StockOutIn | None, Body()] = None,
+              x_demo_token: Annotated[str | None, Header()] = None):
+    """Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {"on": false} ends
+    it. A change writes one simulation entry, the same state again writes none."""
     _demo(ctx, request, x_demo_token)
-    if not ctx.stockout():
-        ctx.set_stockout(True)
-    return _demo_state(ctx, True)
+    on = body.on if body else True
+    if ctx.stockout() != on:
+        ctx.set_stockout(on)
+    return _demo_state(ctx, on)
 
 
 @router.post("/demo/ask", response_model=AskOut, response_model_exclude_none=True)

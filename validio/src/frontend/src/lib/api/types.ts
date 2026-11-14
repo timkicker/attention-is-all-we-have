@@ -513,6 +513,12 @@ export interface AskOut {
   final: string;
 }
 
+/** POST /api/demo/stock-out body. Without a body it turns the stock-out on, as before. */
+export interface StockOutIn {
+  /** false ends the simulated stock-out of 466375. */
+  on: boolean;
+}
+
 export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;
