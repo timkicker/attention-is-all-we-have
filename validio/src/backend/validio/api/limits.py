@@ -69,3 +69,5 @@ class RateLimiter:
 NONCES = RateLimiter(120, 60)
 # the MCP nonce resources cannot see the caller's address: a cap per kitchen
 MCP_NONCES = RateLimiter(600, 60)
+# a signup or a demo copy writes a whole kitchen (db and keys): 10 an hour per client
+NEW_KITCHENS = RateLimiter(10, 3600)

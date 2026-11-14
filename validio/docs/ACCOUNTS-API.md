@@ -51,6 +51,8 @@ Account = {
 * Signup: `password` at least 8 characters, `approvalCode` exactly 6 digits, `customerNumber` 1 to 20
   digits, `email` unique (409 "an account with this email exists"). 422 for a field that does not fit,
   `detail` names the field.
+* Signup and new demo copies: at most 10 an hour per client (429), and at most 200 demo copies on disk; the
+  oldest copy goes first.
 * Login: 401 "wrong email or password" for both cases. Five wrong tries from one client or for one email
   in 15 minutes answer 429.
 * Demo: a browser that already holds a demo session gets the same copy back (reload keeps the state). A
