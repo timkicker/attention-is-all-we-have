@@ -95,7 +95,7 @@ test("approving a blocked request: a plain state, not an outage", async ({ page 
 test("rules: 422 and 403 inline, then signed", async ({ page }) => {
   await page.goto("/agent");
   await page.getByTestId("rules-edit").click();
-  await page.getByTestId("r-alone").fill("2300");
+  await page.getByTestId("r-alone").fill("6000");
   await page.getByTestId("code-input").fill(CODE);
   await page.getByTestId("code-submit").click();
   await expect(page.locator("#r-alone-problem")).toHaveText("Above needs approval.");

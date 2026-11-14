@@ -145,7 +145,7 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
 
     await page.goto("/agent");
     await page.getByTestId("rules-edit").click();
-    await page.getByTestId("r-alone").fill("2500");
+    await page.getByTestId("r-alone").fill("6000");
     await page.getByTestId("code-input").fill("246810");
     await page.getByTestId("code-submit").click();
     await expect(page.locator("#r-alone-problem")).toBeVisible();

@@ -67,11 +67,11 @@
 
   let editing = $state(false);
   let saving = $state(false);
-  const f = $state({ alone: "", approval: "", subs: "listed" as Substitutes, pct: "5", code: "" });
-  let bad = $state<{ alone?: string; approval?: string; pct?: string; code?: string; form?: string }>({});
+  const f = $state({ alone: "", approval: "", week: "", subs: "listed" as Substitutes, pct: "5", code: "" });
+  let bad = $state<{ alone?: string; approval?: string; week?: string; pct?: string; code?: string; form?: string }>({});
   const euros = (c: number) => (c / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const cents = (t: string) => (/^\s*[\d,]*\.?\d*\s*$/.test(t) && /\d/.test(t) ? Math.round(Number(t.replace(/[,\s]/g, "")) * 100) : NaN);
-  const tidy = (k: "alone" | "approval") => {
+  const tidy = (k: "alone" | "approval" | "week") => {
     const c = cents(f[k]);
     if (c >= 0) f[k] = euros(c);
   };
@@ -81,6 +81,7 @@
     if (!r) return;
     f.alone = euros(r.aloneUpToCents);
     f.approval = euros(r.approvalUpToCents);
+    f.week = r.perWeekCents == null ? "" : euros(r.perWeekCents);
     f.subs = r.substitutes;
     f.pct = String(r.maxExtraPct || 5);
     f.code = owner.code;
@@ -93,10 +94,14 @@
     const alone = cents(f.alone);
     const approval = cents(f.approval);
     const pct = Number(f.pct);
+    // An empty week field is no weekly limit.
+    const week = f.week.trim() ? cents(f.week) : null;
     const next: typeof bad = {};
     if (!(alone >= 0)) next.alone = "Type an amount in euros.";
     if (!(approval >= 0)) next.approval = "Type an amount in euros.";
     else if (alone > approval) next.alone = "Above needs approval.";
+    if (week !== null && !(week >= 0)) next.week = "Type an amount in euros.";
+    else if (week !== null && approval >= 0 && week < approval) next.week = "Below needs approval.";
     if (f.subs === "extra" && !(Number.isInteger(pct) && pct >= 0 && pct <= 20)) next.pct = "0 to 20.";
     if (!/^\d{6}$/.test(f.code)) next.code = "Type the 6 digit code.";
     bad = next;
@@ -106,6 +111,7 @@
       rl.data = await agentApi.saveRules({
         aloneUpToCents: alone,
         approvalUpToCents: approval,
+        perWeekCents: week,
         substitutes: f.subs,
         maxExtraPct: f.subs === "extra" ? pct : (r?.maxExtraPct ?? 5),
         code: f.code,
@@ -126,7 +132,7 @@
   }
 </script>
 
-{#snippet money_field(k: "alone" | "approval", label: string)}
+{#snippet money_field(k: "alone" | "approval" | "week", label: string)}
   <span class="money">
     <span class="euro">
       <Input
@@ -136,7 +142,7 @@
         bind:value={f[k]}
         onblur={() => tidy(k)}
         autocomplete="off"
-        aria-label="{label}, up to, in euros"
+        aria-label="{label}, in euros"
         aria-invalid={bad[k] ? true : undefined}
         aria-describedby={bad[k] ? `r-${k}-problem` : undefined}
       />
@@ -243,7 +249,7 @@
 
     <section class="sec" aria-labelledby="h-rules" id="rules">
       <h2 class="v-h" id="h-rules">
-        Rules <em>per week</em>
+        Rules
         <span class="grow"></span>
         {#if r && !editing}
           <Button variant="outline" data-testid="rules-edit" id="rules-edit" onclick={startEdit}>{r.saved ? "Edit" : "Set rules"}</Button>
@@ -257,6 +263,7 @@
             <VValueRow label="Orders alone">{@render money_field("alone", "Orders alone")}</VValueRow>
             <VValueRow label="Needs approval">{@render money_field("approval", "Needs approval")}</VValueRow>
             <VValueRow label="Blocked" value={above ? `Above ${above}` : "—"} testid="r-blocked" />
+            <VValueRow label="Per week">{@render money_field("week", "Per week")}</VValueRow>
             <VValueRow label="Substitutes">
               <span class="subs">
                 <SegmentedControl ariaLabel="Substitutes" options={SUBS} bind:value={f.subs} id="r-subs" />
@@ -289,6 +296,7 @@
             <VValueRow label="Orders alone" value="Up to {money(r.aloneUpToCents)}" testid="rules-alone" />
             <VValueRow label="Needs approval" value="Up to {money(r.approvalUpToCents)}" testid="rules-approval" />
             <VValueRow label="Blocked" value="Above {money(r.approvalUpToCents)}" testid="rules-blocked" />
+            <VValueRow label="Per week" value={r.perWeekCents == null ? "No limit" : `Up to ${money(r.perWeekCents)}`} testid="rules-week" />
             <VValueRow label="Substitutes" value={subsWord(r)} testid="rules-subs" />
             {#if pass.data?.usedCents !== undefined}
               <VValueRow label="Ordered" value={money(pass.data.usedCents)} testid="rules-used" />
