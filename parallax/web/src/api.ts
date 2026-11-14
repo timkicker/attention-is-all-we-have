@@ -49,7 +49,10 @@ export async function getJson<T>(path: string, params: Params = {}, init?: Reque
 export const api = {
   health: () => getJson<Health>('/api/health'),
   topics: () => getJson<Topics>('/api/topics'),
-  compare: (p: { topic: string; as_of?: string; anchor?: string; langs?: string; offset?: number; limit?: number }, init?: RequestInit) =>
+  compare: (
+    p: { topic: string; as_of?: string; anchor?: string; langs?: string; section?: string; offset?: number; limit?: number },
+    init?: RequestInit,
+  ) =>
     getJson<Compare>('/api/compare', p, init),
   timeline: (lang: string, pageId: number, h: string) =>
     getJson<Timeline>(`/api/claim/${encodeURIComponent(lang)}/${pageId}/${encodeURIComponent(h)}/timeline`),

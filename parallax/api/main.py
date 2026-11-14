@@ -10,7 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import sqllog
 from api.db import close_all
-from api.routes import health, topics
+from api.routes import compare, health, topics
 from contract.db import load_env
 
 load_env()
@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Parallax API", version="1", lifespan=lifespan)
-for module in (health, topics):
+for module in (health, topics, compare):
     app.include_router(module.router)
 
 
