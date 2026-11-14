@@ -38,7 +38,7 @@ def _strict(node):
 def _openapi_schema(method, path, part):
     spec = _strict(copy.deepcopy(app.openapi()))
     op = spec["paths"][path][method.lower()]
-    node = op["requestBody"] if part == "body" else op["responses"]["200"]
+    node = op["requestBody"] if part == "body" else next(v for k, v in op["responses"].items() if k in ("200", "202"))
     return {**node["content"]["application/json"]["schema"], "components": spec["components"]}
 
 

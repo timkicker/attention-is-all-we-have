@@ -27,7 +27,7 @@ Account = {
   deliveryAddress: string,    // "" until set
   isDemo: boolean,
   demoCode?: "246810",        // only on demo copies: the approval code, shown in the demo bar on purpose
-  setup: {                    // the Inbox checklist; a demo copy has all three true
+  setup: {                    // the Inbox checklist; a fresh demo copy has kitchen and rules true
     kitchen: boolean,         // name and delivery address saved
     rules: boolean,           // Rules saved once (until then every order needs approval)
     agent: boolean,           // an agent is connected (active or paused)
@@ -54,8 +54,9 @@ Account = {
 * Login: 401 "wrong email or password" for both cases. Five wrong tries from one client or for one email
   in 15 minutes answer 429.
 * Demo: a browser that already holds a demo session gets the same copy back (reload keeps the state). A
-  new browser gets a fresh copy of the filled demo kitchen: the five scenes played, rules saved, the
-  demo agent connected. Copies older than 48 h are deleted.
+  new browser gets a fresh copy of the filled demo kitchen: the five scenes played, rules saved, no
+  agent connected yet (the person presses "Connect the demo agent", then Allow). Copies older than 48 h
+  are deleted.
 * Phone link: a one-time link, valid 10 minutes, that logs the phone into the same account and opens
   `path`. The web app turns `url` into a QR code or a copy button.
 
@@ -94,9 +95,17 @@ AgentState = {
   Rules). 409 when there is nothing to allow.
 * Paused: every agent call with the pass answers 401 "the kitchen paused this agent" and writes one
   ledger entry. Unpause brings the same pass back, no new version.
+* No agent connected (state `none`, `pairing` or `consent`): every agent call with the pass answers 401
+  "no agent is connected to this kitchen", no ledger entry.
+* The pairing code is kept until it expires, so `GET /api/agent` after a reload still shows it.
+  `POST /api/agent/pair` answers 409 while an agent is connected (disconnect first).
 * Ledger entries (`kind`): `agent` for connected, paused, resumed, disconnected and refused because
-  paused; `spend_pass` for a new pass version. `spendPassId` set on all of them, so the Agent page's
-  "See in ledger" filters on it.
+  paused (connected and disconnected name the new pass version in the sentence); `spend_pass` for a
+  version from Rules or Diet. `spendPassId` set on all of them, so the Agent page's "See in ledger"
+  filters on it.
+* Every version, its time and `why` is kept in the kitchen's store (`pass_version`), newest first in
+  `versions`. Disconnect signs M-1 again to a key nobody keeps; it never revokes, so the next agent gets
+  M-1 back.
 
 Agent side (for any agent, documented in AGENTS.md as well):
 
@@ -107,7 +116,8 @@ Agent side (for any agent, documented in AGENTS.md as well):
 | any | `/agent/v1/k/{account}/...` | | the six agent routes of today, per account |
 | | `/mcp/k/{account}/` | | the six MCP tools of today, per account |
 
-The old `/agent/v1/...` and `/mcp/` keep serving the local kitchen for `make agent` and the tests.
+The old `/agent/v1/...` (with `/agent/v1/pair` and `/agent/v1/pass`) and `/mcp/` keep serving the
+local kitchen for `make agent` and the tests.
 
 ## Rules
 

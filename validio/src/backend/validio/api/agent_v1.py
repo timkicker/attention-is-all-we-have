@@ -4,7 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, Query
 
-from . import tools
+from . import connect, tools
 from .schemas import ConfirmIn, NonceView, OrderView, ProductSummary, SupplyRequestIn, SupplyRequestView
 from .state import Ctx, get_ctx
 
@@ -50,3 +50,6 @@ def confirm_order(ctx: CtxDep, body: ConfirmIn, authorization: Auth = None):
 @router.get("/orders/{order_id}", response_model=OrderView, operation_id="get_order")
 def get_order(ctx: CtxDep, order_id: str):
     return tools.get_order(ctx, order_id)
+
+
+connect.agent_routes(router, CtxDep)
