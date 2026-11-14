@@ -2767,6 +2767,14 @@
           "orderId": {
             "title": "Orderid",
             "type": "string"
+          },
+          "orderIds": {
+            "description": "every order placed: one for a request, one per renewed line for the Steady Order",
+            "items": {
+              "type": "string"
+            },
+            "title": "Orderids",
+            "type": "array"
           }
         },
         "required": [

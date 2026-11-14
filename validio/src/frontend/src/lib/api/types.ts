@@ -644,7 +644,8 @@ export interface ActivityDetail {
   asked: { text: string; agentName: string };
   checks: ActivityCheck[];
   rule: { text: string; version: number };
-  result: { orderId: string; delivery: string } | null;
+  /** orderIds: every order placed (the Steady Order places one per renewed line); orderId is the first. */
+  result: { orderId: string; orderIds: string[]; delivery: string | null } | null;
   /** Only while waiting. Approve and reject go to /api/orders/{orderId}/approve|reject. */
   approval: { orderId: string; holdUntil: string } | null;
   proof: ProofEntry[];
