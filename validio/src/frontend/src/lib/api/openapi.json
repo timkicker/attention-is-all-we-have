@@ -3039,7 +3039,7 @@
                 "type": "null"
               }
             ],
-            "description": "all orders under the pass together; with it the two limits above hold per order. null: no weekly limit, the two limits hold for the pass as a whole",
+            "description": "all orders under the pass together; the two limits above always hold per order. null: no weekly limit",
             "title": "Perweekcents"
           },
           "substitutes": {
@@ -6177,7 +6177,7 @@
     },
     "/api/spend-pass": {
       "post": {
-        "description": "The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week\nalready placed still counts; the copy the agent held before is refused from now on. One ledger entry.",
+        "description": "The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week\nalready placed still counts against a per week limit; the copy the agent held before is refused from now on. One ledger entry.",
         "operationId": "sign_spend_pass_api_spend_pass_post",
         "parameters": [
           {

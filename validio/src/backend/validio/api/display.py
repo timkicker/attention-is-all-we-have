@@ -359,14 +359,6 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
         wait = re.match(r"Waits for you: ([^.]+)\.", rest)
         why = wait.group(1) if wait else _first(rest).rstrip(".")
         return f"Held {what} for you: {why[:1].lower()}{why[1:]}."
-    asked = re.match(r"Spend Pass \S+ already placed ([\d,.]+ €), so this order of ([\d,.]+ €) counts as ([\d,.]+ €)\. "
-                     r"Needs a person: (.+)$", s)
-    if asked:
-        _, this, total, why = asked.groups()
-        over = re.match(r"[\d,.]+ € is over the auto limit of ([\d,.]+ €)", why)
-        if over:
-            return f"Asked you: {this} would take the week to {total}, past {over.group(1)}."
-        return f"Asked you: {_first(why).rstrip('.')}."
     if s.startswith("Needs a person: "):
         why = _first(s[16:]).rstrip(".")
         return f"Asked you: {_over_alone(why) or why}."

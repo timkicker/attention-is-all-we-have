@@ -41,19 +41,13 @@ def reason(decision: dict, diet: list[str] | tuple[str, ...] = (), deliver_by: s
     s = decision.get("sentence") or ""
     rules = decision.get("ruleIds") or []
     outcome = decision.get("outcome")
-    already = re.search(rf"already placed {MONEY}, so this order of {MONEY} counts as {MONEY}", s)
-    before = f"with {already.group(1)} already ordered, this order counts as {already.group(3)}, " if already else ""
     if outcome == "auto_order":
         m = re.search(rf"May order it alone: {MONEY} is inside the auto limit of {MONEY}", s)
         if m:
-            if before:
-                return "auto_ok", f"{before}under your {m.group(2)} limit for buying alone"
             return "auto_ok", f"{m.group(1)} is under your {m.group(2)} limit for buying alone"
         return "auto_ok", "it is inside your limit for buying alone"
     if outcome == "ask_human":
         if m := re.search(rf"{MONEY} is over the auto limit of {MONEY}", s):
-            if before:
-                return "over_alone", f"{before}over your {m.group(2)} limit for buying alone"
             return "over_alone", f"{m.group(1)} is over your {m.group(2)} limit for buying alone"
         if "over-budget" in rules and (m := re.search(rf"{MONEY} is over the budget of {MONEY}", s)):
             return "over_budget", f"{m.group(1)} is over the {m.group(2)} budget the request names"

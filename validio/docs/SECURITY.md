@@ -118,7 +118,7 @@ Not covered: the kitchen's key sits in `data/keys/` on the same machine. Someone
 
 ## Approve abuse
 
-Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes lock that order, and five from one client lock that client (`api/state.py`). Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The limits of a Spend Pass hold across its placed orders, not per order; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. The demo switches answer a demo copy's session (docs/ACCOUNTS-API.md) and callers on this machine, nobody else.
+Only a waiting order can be approved. `api/ui.py` looks the order up first, so an unknown id answers 404 whatever the code, then compares the 6 digit code in constant time. Five wrong codes lock that order, and five from one client lock that client (`api/state.py`). Approve asks Valio again. It refuses when a price rose more than 2 %, a line can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no longer valid. The alone and approval limits hold per order, the per week limit across the pass's placed orders; Steady Orders run on their own weekly pass (`demo/seed.py`, `STEADY_PASS_ID`). It also asks Cedar again: a person may lift "ask a person" but never a block. On a Steady Order a person can let a waiting line through, never a blocked one. The demo switches answer a demo copy's session (docs/ACCOUNTS-API.md) and callers on this machine, nobody else.
 
 Proof:
 
@@ -131,7 +131,7 @@ Proof:
 - `test_api.py::test_demo_controls_answer_this_machine_and_nobody_else`
 - `test_review3.py::test_h1_wrong_codes_count_per_client_across_orders`
 - `test_review3.py::test_h3_approve_refuses_after_cutoff_or_expiry`
-- `test_orders.py::test_approve_counts_what_was_placed_meanwhile`
+- `test_orders.py::test_approve_checks_the_week_limit_again`
 - `test_review3.py::test_m9_remote_reads_need_the_kitchen_token`
 
 Not covered. This is the weakest part:

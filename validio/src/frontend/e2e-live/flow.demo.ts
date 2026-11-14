@@ -48,14 +48,12 @@ test("the client orders 1,000 l lactose-free milk alone: Home Latest and Activit
   await expect(page.getByTestId("approval")).toHaveCount(0);
 });
 
-test("Rules: lower the alone limit (and room above it) with the code", async ({ page }) => {
+test("Rules: lower the alone limit with the code", async ({ page }) => {
   await page.goto("/rules");
   const before = Number(((await page.getByTestId("rules-version").textContent()) ?? "").match(/\d+/)?.[0]);
   await page.getByTestId("rules-edit").click();
   await expect(page).toHaveURL(/\/rules\/edit$/);
   await page.getByTestId("f-alone").fill("500");
-  // The seed's hard cap counts what the pass already placed (1,010 €): room for a second 1,010 € order.
-  await page.getByTestId("f-waiting").fill("5000");
   await expect(page.getByTestId("rules-changes")).not.toBeEmpty();
   await page.getByTestId("code-input").fill(CODE);
   await page.getByTestId("code-submit").click();
@@ -63,7 +61,7 @@ test("Rules: lower the alone limit (and room above it) with the code", async ({ 
   await expect(page.getByTestId("rules-version")).toContainText(`Version ${before + 1}`);
   const rules = await (await page.request.get("/api/rules")).json();
   expect(rules.aloneUpToCents).toBe(50000);
-  expect(rules.approvalUpToCents).toBe(500000);
+  expect(rules.approvalUpToCents).toBe(200000); // per order: the second 1,010 € order waits, not blocked
 });
 
 test("the same order now needs the owner: Home Needs you, Approve with the code", async ({ page }) => {

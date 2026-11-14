@@ -217,7 +217,7 @@ def spend_pass(ctx: CtxDep, pass_id: str):
 def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
                     x_approve_code: Annotated[str | None, Header()] = None):
     """The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week
-    already placed still counts; the copy the agent held before is refused from now on. One ledger entry."""
+    already placed still counts against a per week limit; the copy the agent held before is refused from now on. One ledger entry."""
     from ..policy.mandate import SUBSTITUTES_LISTED
     from ..text.format import money
     from .settings import resign

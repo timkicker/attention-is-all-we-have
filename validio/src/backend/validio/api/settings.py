@@ -163,8 +163,7 @@ class RulesIn(Model):
                                                            "with a split that may cost up to maxExtraPct more")
     max_extra_pct: int = Field(0, ge=0, le=20, description="only with substitutes 'extra'")
     per_week_cents: int | None = Field(None, ge=0, le=MAX_CENTS, description="all orders under the pass together; "
-                                       "with it the two limits above hold per order. null: no weekly limit, the two "
-                                       "limits hold for the pass as a whole")
+                                       "the two limits above always hold per order. null: no weekly limit")
     diet: DietRules | None = Field(None, description="left out: the diet stays as it is")
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
