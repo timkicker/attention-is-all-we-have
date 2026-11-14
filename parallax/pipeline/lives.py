@@ -2,6 +2,11 @@
 
 Exact lives (every revision) get the noise rule from PLAN section 2: gaps under 24 hours or closed by a revert
 are healed, then lives under 24 hours or ended by a revert to a revision older than their birth are dropped.
+
+Snapshot editions walk the yearly snapshots plus the extra revisions A5 (pipeline/bisect.py) fetched around each
+demo edit. A sample that directly follows the previous sample in page history is "adjacent": a sentence born or
+gone there changed in exactly that edit. Because every sample is a whole page, the sentence that replaces a claim
+is born at the same instant the claim dies, so an edition never goes silent between two samples.
 """
 
 import argparse
@@ -10,7 +15,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
-from pipeline.fetch import DATA, hist_dir, write_jsonl
+from pipeline.fetch import DATA, hist_dir, read_jsonl, write_jsonl
 from pipeline.parse import ParseCache, revisions
 
 NOISE = timedelta(hours=24)
@@ -47,8 +52,13 @@ def revert_targets(sha1s: list[str | None]) -> dict[int, int]:
 
 
 def walk(revs: list[dict], exact: bool) -> Walk:
-    """revs: time-ordered dicts with rev_id, ts, sha1, comment, sentences [{h, text, section, has_ref}]."""
+    """revs: time-ordered dicts with rev_id, ts, sha1, comment, sentences [{h, text, section, has_ref}].
+
+    With exact=False a rev may carry adjacent=True (it is the direct successor of the previous rev in page history).
+    A life whose death is at an adjacent rev, or that is alive and was born at one, gets time_precision 'exact' and
+    the died_comment of that rev; every other snapshot life keeps 'snapshot'."""
     out = Walk()
+    adj = [True if exact else bool(r.get("adjacent")) for r in revs]
     ts: list[datetime] = []
     for r in revs:
         t = parse_ts(r["ts"])
@@ -128,6 +138,8 @@ def walk(revs: list[dict], exact: bool) -> Walk:
         final.extend((h, lv) for lv in lives)
 
     for h, (b, d, text, section, had_ref, has_ref) in final:
+        died_exact = d is not None and adj[d]
+        precise = died_exact or (d is None and adj[b])
         out.lives.append(
             {
                 "h": h,
@@ -137,8 +149,8 @@ def walk(revs: list[dict], exact: bool) -> Walk:
                 "row_start": fmt(ts[b]),
                 "died_rev": revs[d]["rev_id"] if d is not None else None,
                 "row_end": fmt(ts[d]) if d is not None else None,
-                "died_comment": (revs[d].get("comment") or None) if (d is not None and exact) else None,
-                "time_precision": "exact" if exact else "snapshot",
+                "died_comment": (revs[d].get("comment") or None) if died_exact else None,
+                "time_precision": "exact" if precise else "snapshot",
                 "has_ref": int(has_ref),
                 "had_ref": int(had_ref),
             }
@@ -171,12 +183,46 @@ def walk(revs: list[dict], exact: bool) -> Walk:
     return out
 
 
-def page_walk(topic: str, lang: str, exact: bool) -> tuple[Walk, ParseCache]:
+def meta_order(topic: str, lang: str) -> list[dict]:
+    """Revision metadata of one edition in page-history order (the order bisect and the samples use)."""
+    return sorted(read_jsonl(hist_dir(topic) / f"{lang}.meta.jsonl.gz"), key=lambda r: r["ts"])
+
+
+def extra_path(topic: str, lang: str):
+    return hist_dir(topic) / f"{lang}.extra.jsonl.gz"
+
+
+def samples(topic: str, lang: str, exact: bool, extra: list[dict] | None = None) -> list[dict]:
+    """Revisions with text the walk goes over, in page-history order. Snapshot editions add the extra revisions
+    (from `extra`, else from <lang>.extra.jsonl.gz written by bisect) and mark each sample adjacent or not."""
+    revs = list(revisions(topic, lang))
+    if exact:
+        return revs
+    if extra is None:
+        p = extra_path(topic, lang)
+        extra = list(read_jsonl(p)) if p.exists() else []
+    if not extra:
+        return revs
+    pos = {r["rev_id"]: i for i, r in enumerate(meta_order(topic, lang))}
+    by_id = {r["rev_id"]: r for r in revs}
+    for r in extra:
+        by_id.setdefault(r["rev_id"], r)
+    out = [dict(r) for r in sorted(by_id.values(), key=lambda r: (pos.get(r["rev_id"], -1), r["ts"]))]
+    prev = None
+    for r in out:
+        q = pos.get(r["rev_id"])
+        r["adjacent"] = prev is not None and q is not None and q == prev + 1
+        prev = q
+    return out
+
+
+def page_walk(topic: str, lang: str, exact: bool, extra: list[dict] | None = None) -> tuple[Walk, ParseCache]:
     cache = ParseCache()
     revs = []
-    for r in revisions(topic, lang):
+    for r in samples(topic, lang, exact, extra):
         p = cache.get(r.get("sha1"), r["text"])
-        revs.append({**{k: r.get(k) for k in ("rev_id", "ts", "sha1", "comment")}, "sentences": p.sentences})
+        keep = {k: r.get(k) for k in ("rev_id", "ts", "sha1", "comment", "adjacent")}
+        revs.append({**keep, "sentences": p.sentences})
     return walk(revs, exact), cache
 
 

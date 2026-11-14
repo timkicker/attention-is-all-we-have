@@ -109,3 +109,28 @@ def test_section_versions():
     out = walk(revs, exact=True)
     lead = [s for s in out.sections if s["section"] == "[lead]"]
     assert len(lead) == 2 and lead[0]["n_sent"] == 1 and lead[1]["n_sent"] == 2 and lead[1]["row_end"] is None
+
+
+def test_extra_samples_make_the_replacement_continuous():
+    # yearly snapshots 1 and 4; the claim c was rewritten to d in edit 3 (rev 2 is the one before it)
+    revs = [
+        rev(1, 0, ["a", "c"]),
+        {**rev(2, 200 * DAY, ["a", "c"]), "adjacent": False},
+        {**rev(3, 200 * DAY + 5, ["a", "d"], comment="rewrote c"), "adjacent": True},
+        {**rev(4, 365 * DAY, ["a", "d"]), "adjacent": False},
+    ]
+    out = walk(revs, exact=False)
+    (c,) = lives_of(out, "c")
+    (d,) = lives_of(out, "d")
+    assert c["died_rev"] == 3 and c["time_precision"] == "exact" and c["died_comment"] == "rewrote c"
+    assert d["born_rev"] == 3 and d["row_start"] == c["row_end"]  # no gap between claim and replacement
+    assert d["died_rev"] is None and d["time_precision"] == "exact"
+    (a,) = lives_of(out, "a")
+    assert a["time_precision"] == "snapshot" and a["died_comment"] is None
+
+
+def test_snapshot_walk_without_adjacency_stays_snapshot():
+    revs = [rev(1, 0, ["a", "c"]), rev(2, 365 * DAY, ["a"])]
+    out = walk(revs, exact=False)
+    (c,) = lives_of(out, "c")
+    assert c["time_precision"] == "snapshot" and c["died_comment"] is None

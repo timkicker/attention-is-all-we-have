@@ -50,3 +50,45 @@ def test_ollama_backend_normalises(monkeypatch):
     v = be(["a"])
     assert abs(np.linalg.norm(v[0]) - 1) < 1e-6
     assert sent["model"] == "bge-m3" and sent["options"]["num_ctx"] == 8192
+
+
+def test_shared_store_loads_once_and_never_writes(tmp_path, monkeypatch):
+    import threading
+
+    seed = E.VectorStore(tmp_path)
+    E.embed_texts(["Known sentence."], seed, FakeBackend())
+    assert len(list(tmp_path.glob("shard-*.npz"))) == 1
+
+    loads = []
+    real_init = E.VectorStore.__init__
+
+    def counting_init(self, root=None, persist=True):
+        loads.append(persist)
+        real_init(self, root, persist)
+
+    monkeypatch.setattr(E, "EMB_DIR", tmp_path)
+    monkeypatch.setattr(E, "_SHARED", None)
+    monkeypatch.setattr(E.VectorStore, "__init__", counting_init)
+    be = FakeBackend()
+    monkeypatch.setattr(E, "backend", lambda: be)
+
+    from engine.real import GeminiEngine
+
+    eng = GeminiEngine()
+    errors = []
+
+    def call(i):
+        try:
+            eng.embed(["Known sentence.", f"New text number {i}."])
+        except Exception as e:  # pragma: no cover - surfaced below
+            errors.append(e)
+
+    threads = [threading.Thread(target=call, args=(i,)) for i in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert not errors
+    assert loads == [False]  # one read-only load for the whole process
+    assert len(list(tmp_path.glob("shard-*.npz"))) == 1  # the API path wrote nothing
+    assert claim_hash("New text number 3.") in E.shared_store()  # new vectors kept in memory

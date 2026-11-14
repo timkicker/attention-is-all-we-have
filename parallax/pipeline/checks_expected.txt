@@ -1,11 +1,20 @@
 claims_current_per_lang: de, 481 | en, 623 | et, 188 | fi, 549 | ru, 758 | sv, 154 | uk, 467
-claims_all_per_lang: de, 1036 | en, 2688 | et, 527 | fi, 2457 | ru, 2696 | sv, 386 | uk, 842
-sections_all_per_lang: de, 200 | en, 502 | et, 137 | fi, 2269 | ru, 473 | sv, 127 | uk, 206
-revisions_per_lang: de, 1197, 24 | en, 6720, 26 | et, 253, 20 | fi, 2143, 2143 | ru, 3885, 22 | sv, 781, 24 | uk, 660, 21
+claims_all_per_lang: de, 1332 | en, 3882 | et, 527 | fi, 2457 | ru, 2792 | sv, 402 | uk, 842
+sections_all_per_lang: de, 238 | en, 726 | et, 137 | fi, 2268 | ru, 535 | sv, 141 | uk, 206
+revisions_per_lang: de, 1197, 32 | en, 6720, 43 | et, 253, 20 | fi, 2143, 2143 | ru, 3885, 30 | sv, 781, 28 | uk, 660, 21
 set_probe_vector: 
 probe_en_2008_nearest: On November 26, the Soviets staged the Shelling of Mainila, 
 probe_en_2012_nearest: On 26 November, a border incident was reported near the vill
 probe_de_today_nearest: Am 26. November inszenierte die Rote Armee im Dorf Mainila e
 exact_staged_death: 309285088, 2009-08-21 18:00:56, exact
 ru_staged_term_2012_vs_2016: 1, 0
+probe_en_2009_10_nearest: On 26 November, there was a border incident near the village
+en_mainila_2009_10_after_bisect: exact, On 26 November, there was a border incident near the village of Mainil
+ru_mainila_2014_09_after_bisect: exact, В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнил
+ru_mainila_2010_11_after_bisect: snapshot, В тот же день произошёл артиллерийский обстрел территории СССР у населённого пункта Майнила, инсценированный советской с
+en_staged_last_life_born: 308052744, 2009-08-15 01:58:41, exact
+mainila_gap_after_exact_death: 0
+exact_died_with_comment_per_lang: de, 53, 53 | en, 184, 184 | fi, 1908, 1647 | ru, 9, 9 | sv, 15, 12
+term_hits_current_per_lang: de, 2 | en, 2 | et, 1 | fi, 2 | ru, 4 | sv, 4 | uk, 2
+term_hits_all_per_lang: de, 7 | en, 14 | et, 6 | fi, 10 | ru, 19 | sv, 11 | uk, 2
 explain_ann_uses_emb: key=emb
