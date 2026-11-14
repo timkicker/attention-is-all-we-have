@@ -20,7 +20,7 @@ from validio.policy.mandate import MandateError
 from validio.valio.budget import CallBudgetExceeded
 from validio.valio.client import ReplayMiss, ValioUnavailable
 
-from . import agent_v1, ui
+from . import agent_v1, settings, ui
 from .mcp_server import server as mcp_server
 from .state import get_ctx
 
@@ -79,6 +79,7 @@ def health() -> dict[str, str]:
 
 app.include_router(agent_v1.router)
 app.include_router(ui.router)
+app.include_router(settings.router)
 app.include_router(ui.session_router)
 app.mount("/mcp", mcp_app)
 
