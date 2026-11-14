@@ -1,5 +1,6 @@
 import { execFile, execFileSync } from "node:child_process";
 import { test as base, expect, type BrowserContext, type Page } from "@playwright/test";
+import { connectMcp } from "./connector";
 
 // The live e2e works on a demo copy, as a juror does: one browser context per worker logs in through the
 // login page ("Try the demo kitchen"), and every test's page and API calls share its session. Each file
@@ -71,8 +72,20 @@ export async function pairAgent(k: Kitchen, page: Page) {
   await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
 }
 
-/** The server's own demo agent, as "Connect the demo agent" and Allow do (the menu's Ask uses it). */
-export async function connectDemoAgent(k: Kitchen) {
-  expect((await k.ctx.request.post("/api/agent/demo")).status()).toBe(200);
-  expect((await k.ctx.request.post("/api/agent/allow")).status()).toBe(200);
+/**
+ * The scene 3 stock-out of 466375 on this copy. It has no HTTP route (nothing in Validio orders or simulates
+ * for the owner); as scripts/demo_check.py does, it is set in the copy's store on this machine, with its
+ * ledger entry. Needs the server's store here: not against E2E_BASE / SMOKE_BASE.
+ */
+export function stockOut(k: Kitchen) {
+  const py = `from validio.api.accounts import get_accounts; get_accounts().ctx(${JSON.stringify(k.id)}).set_stockout(True)`;
+  execFileSync("uv", ["run", "python", "-W", "ignore", "-c", py], { cwd: "../backend", env: process.env, stdio: "pipe" });
+}
+
+/** The kitchen's agent as any MCP agent connects: the connector on the Agent page's URL, then Allow. */
+export async function connectMcpAgent(k: Kitchen) {
+  const page = await k.ctx.newPage();
+  const url = await connectMcp(page);
+  await page.close();
+  return url;
 }

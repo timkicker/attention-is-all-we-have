@@ -31,7 +31,9 @@ ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"  # no 0, O, 1, I, L
 CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
 DEMO_AGENT = "Demo agent"
-MCP_NAME = "MCP agent"  # the name on the consent screen and in the ledger for an MCP agent Validio signs for
+MCP_NAME = "MCP agent"  # the name of a connector agent whose client sent no usable clientInfo.name
+RESERVED = frozenset({"you", "owner", "validio", "demo", "kitchen"})  # names the screens give someone else
+KNOWN_CLIENTS = {"claude-code": "Claude Code", "claude-ai": "Claude"}  # ids some clients send as their name
 PAUSED = "the kitchen paused this agent"
 NOT_CONNECTED = "no agent is connected to this kitchen"
 
@@ -184,6 +186,44 @@ def leave_unconnected(db_path: Path) -> None:
     """A kitchen that starts without an agent (the demo template after its scenes, a new account): no ledger
     entry, no new version. Until the person connects one, every pass is refused at verify."""
     save(Path(db_path), Link("none"))
+
+
+def clean_name(raw) -> str:
+    """The MCP client's clientInfo.name as the screens show it: printable, one line, at most 60 characters.
+    Nothing usable, or a name the screens use for someone else, reads "MCP agent"."""
+    if not isinstance(raw, str):
+        return MCP_NAME
+    name = " ".join("".join(ch if ch.isprintable() else " " for ch in raw).split())[:60].strip()
+    name = KNOWN_CLIENTS.get(name.lower(), name)
+    return name if name and name.lower() not in RESERVED else MCP_NAME
+
+
+NAMES_SCHEMA = "create table if not exists agent_name (sub text primary key, name text not null)"
+
+
+def _remember_name(ctx: Ctx, sub: str, name: str) -> None:
+    con = _con(ctx)
+    try:
+        con.execute(NAMES_SCHEMA)
+        con.execute("insert or replace into agent_name values (?, ?)", (sub, name))
+        con.commit()
+    finally:
+        con.close()
+
+
+def agent_names(ctx: Ctx) -> dict[str, str]:
+    """Every agent this kitchen allowed, by its ledger actor ("agent:claude-code"): the name it connected with.
+    The demo agent's key keeps its name in a store from before this table."""
+    con = _con(ctx)
+    try:
+        con.execute(NAMES_SCHEMA)
+        rows = dict(con.execute("select sub, name from agent_name").fetchall())
+    finally:
+        con.close()
+    link = load(ctx)
+    if link.sub and link.name:
+        rows.setdefault(link.sub, link.name)
+    return rows
 
 
 def _entry(ctx: Ctx, sentence: str, actor: str = "owner") -> None:
@@ -349,6 +389,7 @@ def allow(ctx: Ctx) -> None:
         link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.now().isoformat(),
                     code=link.code, code_expires=link.code_expires, code_status="allowed")
         save(ctx, link)
+        _remember_name(ctx, sub, link.name)
         held = _connector(ctx)
         if held and JWK.from_json(held[0]).thumbprint() == key.thumbprint():
             _set_connector(ctx, held[0], held[1], None)
@@ -509,9 +550,11 @@ def connector_key(ctx: Ctx, link: Link | None = None) -> JWK | None:
     return key if key_id(key) == link.key_id else None
 
 
-def connector_ctx(token: str | None, touch: bool = False) -> Ctx | None:
+def connector_ctx(token: str | None, touch: bool = False, name: str | None = None) -> Ctx | None:
     """The kitchen a connector token belongs to while it lasts (pairing, consent, active or paused), else None.
-    `touch`: a request came in on the URL, so a waiting pairing turns into consent for "MCP agent"."""
+    `touch`: a request came in on the URL, so a waiting pairing turns into consent, named by `name` (the MCP
+    client's clientInfo.name on its initialize request) or "MCP agent". A consent still named "MCP agent" takes
+    the name of a later initialize on the same URL; an allowed agent keeps the name it was allowed with."""
     from .accounts import get_accounts
     from .state import get_ctx
 
@@ -534,14 +577,18 @@ def connector_ctx(token: str | None, touch: bool = False) -> Ctx | None:
         return None
     if link.state == "none":
         return None
-    if touch and link.state == "pairing":
+    if touch and (link.state == "pairing" or (link.state == "consent" and name and link.pending_name == MCP_NAME)):
         with ctx.rt.lock:
             link = load(ctx)
             if link.state == "pairing":
                 link.state, link.code_status = "consent", "consent"
-                link.pending_name = MCP_NAME
+                link.pending_name = clean_name(name)
                 link.pending_jwk = JWK.from_json(held[0]).export_public()
                 link.verify_code = verify_code()  # new for this connection, shown in the agent and on the page
+                save(ctx, link)
+            elif (link.state == "consent" and link.pending_name == MCP_NAME
+                  and link.pending_jwk == JWK.from_json(held[0]).export_public()):
+                link.pending_name = clean_name(name)
                 save(ctx, link)
     return ctx
 

@@ -82,3 +82,21 @@ def test_ordered_then_waits_then_approved(juror):
     done = juror.post(f"/api/orders/{o2}/approve", json={"code": "246810"})
     assert done.status_code == 200, done.text
     assert done.json()["state"] == "placed"
+
+
+def test_a_fresh_demo_copy_has_its_activity(juror):
+    """Home and Activity on a fresh copy of the template: the five scenes left R-1 ordered alone and R-2 approved,
+    and the week counts what they placed."""
+    juror.post("/api/account/demo")
+    out = juror.get("/api/activity").json()
+    by_id = {it["id"]: it for it in out["items"]}
+    assert by_id["R-1"]["status"] == "ordered" and by_id["R-1"]["orderId"], by_id.get("R-1")
+    assert by_id["R-1"]["why"] == "Under your 1,200.00 € limit, ordered alone"
+    assert (by_id["R-2"]["status"], by_id["R-2"]["why"]) == ("ordered", "You approved it"), by_id.get("R-2")
+    assert out["counts"] == {"all": 3, "ordered": 2, "waiting": 0, "blocked": 0, "standing": 1}
+    for rid in ("R-1", "R-2"):
+        d = juror.get(f"/api/activity/{rid}").json()
+        assert d["item"]["id"] == rid and d["proof"], d
+    home = juror.get("/api/home").json()
+    assert home["agent"]["state"] == "none" and home["setup"]["rulesSaved"] is True
+    assert home["week"] == {"usedCents": 119010, "capCents": DEMO_RULES["perWeekCents"]}
