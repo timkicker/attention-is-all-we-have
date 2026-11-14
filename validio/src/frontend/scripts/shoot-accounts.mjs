@@ -100,13 +100,14 @@ async function walk(browser, v) {
     if (loc) await loc.click();
     return !!loc;
   };
+  // the code prompt: shot, typed when the page asks (a page that remembers it this visit does not), submitted
   const code = async (state) => {
-    const box = page.getByTestId("code-input").or(page.getByLabel(/approval code/i)).filter({ visible: true }).first();
-    if (!(await box.waitFor({ timeout: 4000 }).then(() => true, () => false))) return missing.add(`${state}: code-input`);
+    const box = page.getByTestId("code-input").filter({ visible: true }).first();
+    const asks = await box.waitFor({ timeout: 3000 }).then(() => true, () => false);
     await shoot(`${state}-code`);
-    await box.fill(CODE);
-    await page.getByTestId("code-submit").or(page.getByRole("button", { name: /^(confirm|save|approve|ok)$/i }))
-      .filter({ visible: true }).first().click().catch(() => missing.add(`${state}: code-submit`));
+    if (asks) await box.fill(CODE);
+    await page.getByTestId("code-submit").filter({ visible: true }).first().click()
+      .catch(() => missing.add(`${state}: code-submit`));
   };
   const nav = (state, id, name) => click(state, id, "link", name);
   const example = async (state) => {
@@ -151,13 +152,13 @@ async function walk(browser, v) {
     await shoot("agent-none");
     if (await click("agent-pairing", "agent-connect", "button", /^connect agent$/i)) await shoot("agent-pairing");
     if (await click("agent-consent", "agent-demo", "button", /connect the demo agent/i)) await shoot("agent-consent");
-    if (await click("agent-active", "agent-allow", "button", /^allow$/i)) await shoot("agent-active");
-    const tech = page.getByText(/^technical$/i).filter({ visible: true }).first();
+    if (await click("agent-active", "consent-allow", "button", /^allow$/i)) await shoot("agent-active");
+    const tech = page.getByTestId("tech-fold").locator("summary").filter({ visible: true }).first();
     if (await tech.count()) {
       await tech.click();
       await shoot("agent-technical");
       await tech.click();
-    } else missing.add("agent-technical: Technical fold");
+    } else missing.add("agent-technical: tech-fold");
   }
 
   // the example request, ordered alone, and its page
@@ -170,18 +171,14 @@ async function walk(browser, v) {
 
   // Rules: lower the alone limit, the code prompt, saved
   if (await nav("rules", "nav-agent", /^agent$/i)) {
-    const rules = page.getByTestId("agent-rules").or(page.getByRole("link", { name: /^rules$/i }))
-      .or(page.getByRole("button", { name: /^rules$/i })).filter({ visible: true }).first();
-    if (await rules.count()) await rules.click();
-    const alone = page.getByTestId("rules-alone").or(page.getByLabel(/orders? alone up to/i)).filter({ visible: true }).first();
-    if (await alone.waitFor({ timeout: 4000 }).then(() => true, () => false)) {
-      await shoot("rules");
-      if (!(await alone.fill("800").then(() => true, () => false))) missing.add("rules: rules-alone not editable");
-      else if (await click("rules", "rules-save", "button", /^save$/i)) {
+    await page.locator("#rules").scrollIntoViewIfNeeded().catch(() => {});
+    if (await click("rules", "rules-edit", "button", /^(edit|set rules)$/i)) {
+      const alone = page.getByTestId("r-alone");
+      if (await alone.fill("800").then(() => true, () => false)) {
         await code("rules");
         await shoot("rules-saved");
-      }
-    } else missing.add("rules: rules-alone");
+      } else missing.add("rules: r-alone");
+    }
   }
 
   // the same request waits; its page; the approval page with the code
@@ -190,14 +187,13 @@ async function walk(browser, v) {
   if (await waiting.count()) {
     await waiting.click();
     await shoot("request-waiting");
-    const open = page.getByTestId("open-approval").or(page.getByRole("link", { name: /open approval/i }))
-      .or(page.getByRole("button", { name: /open approval/i })).filter({ visible: true }).first();
-    if (await open.count()) {
-      await open.click();
+    if (await click("approve", "open-approve", "link", /open approval/i)) {
       await shoot("approve");
-      await code("approve");
-      await shoot("approve-done");
-    } else missing.add("approve: open-approval");
+      if (await click("approve", "approve", "button", /^approve$/i)) {
+        await code("approve");
+        await shoot("approve-done");
+      }
+    }
   } else missing.add("inbox-waiting: no waiting request");
 
   // pause, the refusal, the ledger filtered to the agent
