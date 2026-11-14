@@ -2,7 +2,7 @@
 TOPIC ?= winterwar
 PY := $(UV) run python
 
-A_STUBS := eval atlas bench sources-data l-scale
+A_STUBS := eval bench sources-data l-scale
 
 .PHONY: fetch-smoke fetch parse lives bisect embed load checks align m-lives m-lives-load m-embed contested judge gloss checks-write dump release test-a $(A_STUBS)
 
@@ -69,4 +69,7 @@ judge:
 
 gloss:
 	$(PY) -m pipeline.gloss --topic $(TOPIC)
+
+atlas:
+	$(PY) -m pipeline.atlas
 
