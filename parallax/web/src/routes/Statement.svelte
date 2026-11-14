@@ -115,7 +115,8 @@
       <div class="list">
         {#each allChanges ? vm.changes : vm.changes.slice(0, SHOWN) as c, i (i)}
           <div class="item" data-testid={TID.changeRow}>
-            <p class="parts">{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}<span>{copy.topic.changeDate(c.date, c.approx)}</span>{/if}<span>{changeRest(c)}</span></p>
+            <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}</p>
+            <p>{changeRest(c)}</p>
             {#if c.comment}<p class="t13 muted one-line" title={c.comment}>{copy.editComment(c.comment)}</p>{/if}
           </div>
         {:else}
