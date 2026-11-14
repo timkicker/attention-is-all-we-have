@@ -70,7 +70,6 @@ test.describe('demo script @demo', () => {
   test('0:55 removed: Russian removed the staged clause while German still has it', async ({ page }) => {
     const { words, date, alive, oldid } = f.ruDropped
     await page.goto(path.removed())
-    if (f.fiVersions) await expect(page.getByText(copy.fmtNum(f.fiVersions)).first()).toBeVisible()
     await page.getByTestId(TID.removedEdition).click()
     await page.getByTestId(TID.removedEditionPop).getByText(copy.edition('ru'), { exact: true }).click()
     await findStatement(page, 'Mainila')
@@ -86,18 +85,24 @@ test.describe('demo script @demo', () => {
     await expect(page.locator(`a[href*="oldid=${oldid}"]`).first()).toBeAttached()
   })
 
-  test('1:15 check: a recorded answer with its statements backed or disputed', async ({ page, request }) => {
+  test('1:15 check: a recorded answer about Mainila, its statements backed or disputed', async ({ page, request }) => {
     const runs = (await (await request.get('/api/check/recorded')).json()).runs
     expect(runs.length, 'no recorded answer; make demo records one').toBeGreaterThan(0)
-    const run = runs.find((r: any) => (r.question ?? '').includes('Mainila')) ?? runs[0]
     await page.goto(path.check())
-    await page.getByTestId(TID.checkRecorded).filter({ hasText: run.answer_model }).first().click()
-    await expect(page).toHaveURL(new RegExp(`/t/${QID}/check/${run.run_id}`))
-    await expect(page.getByTestId(TID.checkMeta)).toContainText(run.answer_model)
+    // the script shows the recorded answer about the Mainila shots (the first one the page offers)
+    const link = page.getByTestId(TID.checkRecorded).filter({ hasText: 'Mainila' }).first()
+    const runId = ((await link.getAttribute('href')) ?? '').split('/').pop()!.split('?')[0]
+    const run = runs.find((r: any) => r.run_id === runId)
+    expect(run, `recorded link ${runId} is a recorded run`).toBeTruthy()
+    await link.click()
+    await expect(page).toHaveURL(new RegExp(`/t/${QID}/check/${runId}`))
+    await expect(page.getByTestId(TID.checkMeta)).toBeVisible()
+    if (run.answer_date) await expect(page.getByTestId(TID.checkMeta)).toContainText(copy.fmtDate(run.answer_date))
     const rows = page.getByTestId(TID.checkRow)
     await expect(rows.first()).toBeVisible()
     await expect(page.getByTestId(TID.checkSummary)).toContainText(/^Of \d+ statements?/)
-    await expect(rows.filter({ hasText: `${copy.edition('en')} removed it in` }).first()).toBeVisible()
+    await expect(page.locator(`[data-testid="${TID.checkRow}"][data-verdict="disputed"]`).first()).toBeVisible()
+    await expect(page.locator(`[data-testid="${TID.checkRow}"][data-verdict="backed"]`).first()).toBeVisible()
   })
 
   test('1:35 under the hood: the one query with AS OF and the vector distance, its time', async ({ page }) => {

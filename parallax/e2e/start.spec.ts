@@ -23,7 +23,10 @@ test('start shows the search field, the example and the prepared articles', asyn
   await expectFooter(page)
 })
 
-test('the example opens the Winter War comparison', async ({ page }) => {
+test('the example opens the Winter War comparison', async ({ page, request }) => {
+  // the example is a known seed v4 statement; seed-mini has no example block (the demo walk checks it on v4)
+  const seed = (await (await request.get('/api/health')).json()).seed
+  test.skip(seed !== 'v4', `no example statement on seed ${seed}`)
   await page.goto(path.start)
   const open = page.getByTestId(TID.startExampleOpen)
   await expect(open).toHaveText(copy.start.OPEN_EXAMPLE)
