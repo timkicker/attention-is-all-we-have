@@ -1,6 +1,7 @@
 """Dropped here, alive there: sentences one edition removed while other editions still state them."""
 
 import json
+import re
 
 from fastapi import APIRouter, Query
 
@@ -59,7 +60,67 @@ def alive_in(dead: dict, pairs: dict, alive: dict) -> list[dict]:
     ]
 
 
-def _row(r: dict, gloss: str | None, alive: list[dict]) -> dict:
+TOKEN = re.compile(r"\S+")
+PUNCT = ".,;:!?\"'“”„«»()[]—–-"
+
+
+def _norm(word: str) -> str:
+    return word.strip(PUNCT).lower()
+
+
+def cut_span(text: str, after: str) -> dict | None:
+    """{start, end} character range of `text` that `after` leaves out, when `after` is `text` minus one run of words.
+
+    None when nothing or everything was cut, or when `after` changed more than one cut.
+    """
+    a = list(TOKEN.finditer(text))
+    na = [_norm(m.group()) for m in a]
+    nb = [_norm(w) for w in TOKEN.findall(after)]
+    if not nb or len(nb) >= len(na):
+        return None
+    head = 0
+    while head < len(nb) and na[head] == nb[head]:
+        head += 1
+    tail = 0
+    while tail < len(nb) - head and na[-1 - tail] == nb[-1 - tail]:
+        tail += 1
+    if head + tail < len(nb):
+        return None
+    cut = a[head : len(a) - tail]
+    if not any(na[head : len(a) - tail]):  # nothing, or only punctuation
+        return None
+    return {"start": cut[0].start(), "end": len(text) if tail == 0 else cut[-1].end()}
+
+
+def removed_parts(topic: str, rows: list[dict]) -> dict[tuple, dict]:
+    """{(lang, page_id, h): {start, end}} for dropped sentences the same edit kept with only some words cut.
+
+    A cut of three words or more that the edit moved into another sentence of the same page does not count.
+    """
+    keys = tuple({(r["lang"], r["page_id"], r["row_end"]) for r in rows})
+    if not keys:
+        return {}
+    born: dict[tuple, list[str]] = {}
+    for s in sqllog.run_file("dropped_successors", {"topic": topic, "keys": keys}):
+        born.setdefault((s["lang"], s["page_id"], s["row_start"]), []).append(s["text"])
+    out = {}
+    for r in rows:
+        texts = born.get((r["lang"], r["page_id"], r["row_end"]), [])
+        for t in texts:
+            span = cut_span(r["text"], t)
+            if span is None:
+                continue
+            words = [_norm(w) for w in TOKEN.findall(r["text"][span["start"] : span["end"]])]
+            part = f" {' '.join(words)} "
+            others = [f" {' '.join(_norm(w) for w in TOKEN.findall(o))} " for o in texts if o != t]
+            moved = len(words) >= 3 and any(part in o for o in others)
+            if not moved:
+                out[(r["lang"], r["page_id"], r["h"])] = span
+            break
+    return out
+
+
+def _row(r: dict, gloss: str | None, alive: list[dict], removed: dict | None = None) -> dict:
     return {
         "lang": r["lang"],
         "page_id": r["page_id"],
@@ -77,15 +138,17 @@ def _row(r: dict, gloss: str | None, alive: list[dict]) -> dict:
         "last_rev": r["last_rev"],
         "last_url": oldid_url(r["lang"], r["last_rev"]),
         "alive_in": alive,
+        "removed": removed,
     }
 
 
 def scale() -> dict:
+    """The Finnish scale line. Stored stat keys win (pipeline.seed_stats); only missing keys are counted."""
     stored = {r["k"]: json.loads(r["v"]) for r in sqllog.run_file("dropped_stat")}
     if all(k in stored for k in SCALE_KEYS):
         return {k: int(stored[k]) for k in SCALE_KEYS}
     (counted,) = sqllog.run_file("dropped_scale")
-    return {k: int(counted[k]) for k in SCALE_KEYS}
+    return {k: int(stored[k]) if k in stored else int(counted[k]) for k in SCALE_KEYS}
 
 
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
@@ -125,7 +188,10 @@ def dropped(
         found = topic_rows(topic, lang, min_days)
         page = found[offset : offset + limit]
         glosses = match.glosses([(r["lang"], r["h"]) for r, _ in page])
-        rows = [_row(r, glosses.get((r["lang"], r["h"])), a) for r, a in page]
+        cuts = removed_parts(topic, [r for r, _ in page])
+        rows = [
+            _row(r, glosses.get((r["lang"], r["h"])), a, cuts.get((r["lang"], r["page_id"], r["h"]))) for r, a in page
+        ]
         total = len(found)
     else:
         if lang not in (None, "fi"):
