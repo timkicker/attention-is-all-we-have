@@ -1,6 +1,25 @@
 {
   "components": {
     "schemas": {
+      "ApprovalCodeIn": {
+        "properties": {
+          "current": {
+            "title": "Current",
+            "type": "string"
+          },
+          "next": {
+            "description": "the new 6 digit code",
+            "title": "Next",
+            "type": "string"
+          }
+        },
+        "required": [
+          "current",
+          "next"
+        ],
+        "title": "ApprovalCodeIn",
+        "type": "object"
+      },
       "ApproveIn": {
         "properties": {
           "code": {
@@ -320,6 +339,40 @@
         "title": "DemoState",
         "type": "object"
       },
+      "DietIn": {
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the 6 digit approval code, or the X-Approve-Code header",
+            "title": "Code"
+          },
+          "diet": {
+            "description": "every line must keep these",
+            "items": {
+              "enum": [
+                "FREE_FROM_LACTOSE",
+                "FREE_FROM_GLUTEN",
+                "VEGAN"
+              ],
+              "type": "string"
+            },
+            "title": "Diet",
+            "type": "array"
+          }
+        },
+        "required": [
+          "diet"
+        ],
+        "title": "DietIn",
+        "type": "object"
+      },
       "DriftFlagOut": {
         "properties": {
           "kind": {
@@ -594,6 +647,49 @@
           "sentence"
         ],
         "title": "InboxItem",
+        "type": "object"
+      },
+      "KitchenIn": {
+        "properties": {
+          "deliveryAddress": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Deliveryaddress",
+            "type": "string"
+          },
+          "name": {
+            "description": "the kitchen's name, 1 to 80 characters",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "KitchenIn",
+        "type": "object"
+      },
+      "KitchenOut": {
+        "properties": {
+          "customerNumber": {
+            "title": "Customernumber",
+            "type": "string"
+          },
+          "deliveryAddress": {
+            "title": "Deliveryaddress",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "customerNumber",
+          "deliveryAddress"
+        ],
+        "title": "KitchenOut",
         "type": "object"
       },
       "LedgerEntryView": {
@@ -887,6 +983,23 @@
           "idsPerCall"
         ],
         "title": "LiveChecked",
+        "type": "object"
+      },
+      "LoginOut": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          }
+        },
+        "title": "LoginOut",
         "type": "object"
       },
       "NeedView": {
@@ -1735,6 +1848,104 @@
         "title": "RequestLineView",
         "type": "object"
       },
+      "RulesIn": {
+        "properties": {
+          "aloneUpToCents": {
+            "description": "the agent orders alone up to this",
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Aloneuptocents",
+            "type": "integer"
+          },
+          "approvalUpToCents": {
+            "description": "needs approval up to this, blocked above",
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Approvaluptocents",
+            "type": "integer"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the 6 digit approval code, or the X-Approve-Code header",
+            "title": "Code"
+          },
+          "maxExtraPct": {
+            "default": 0,
+            "description": "only with substitutes 'extra'",
+            "maximum": 20.0,
+            "minimum": 0.0,
+            "title": "Maxextrapct",
+            "type": "integer"
+          },
+          "substitutes": {
+            "description": "off, Valio's list, or Valio's list with a split that may cost up to maxExtraPct more",
+            "enum": [
+              "off",
+              "listed",
+              "extra"
+            ],
+            "title": "Substitutes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "aloneUpToCents",
+          "approvalUpToCents",
+          "substitutes"
+        ],
+        "title": "RulesIn",
+        "type": "object"
+      },
+      "RulesOut": {
+        "properties": {
+          "aloneUpToCents": {
+            "title": "Aloneuptocents",
+            "type": "integer"
+          },
+          "approvalUpToCents": {
+            "title": "Approvaluptocents",
+            "type": "integer"
+          },
+          "maxExtraPct": {
+            "title": "Maxextrapct",
+            "type": "integer"
+          },
+          "passVersion": {
+            "title": "Passversion",
+            "type": "integer"
+          },
+          "saved": {
+            "title": "Saved",
+            "type": "boolean"
+          },
+          "substitutes": {
+            "enum": [
+              "off",
+              "listed",
+              "extra"
+            ],
+            "title": "Substitutes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "aloneUpToCents",
+          "approvalUpToCents",
+          "substitutes",
+          "maxExtraPct",
+          "saved",
+          "passVersion"
+        ],
+        "title": "RulesOut",
+        "type": "object"
+      },
       "SessionIn": {
         "properties": {
           "token": {
@@ -1747,6 +1958,30 @@
           "token"
         ],
         "title": "SessionIn",
+        "type": "object"
+      },
+      "SettingsOut": {
+        "properties": {
+          "diet": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Diet",
+            "type": "array"
+          },
+          "kitchen": {
+            "$ref": "#/components/schemas/KitchenOut"
+          },
+          "login": {
+            "$ref": "#/components/schemas/LoginOut"
+          }
+        },
+        "required": [
+          "kitchen",
+          "diet",
+          "login"
+        ],
+        "title": "SettingsOut",
         "type": "object"
       },
       "SimulatedMark": {
@@ -3872,6 +4107,84 @@
         ]
       }
     },
+    "/api/rules": {
+      "get": {
+        "operationId": "get_rules_api_rules_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RulesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Rules",
+        "tags": [
+          "settings"
+        ]
+      },
+      "put": {
+        "operationId": "put_rules_api_rules_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RulesIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RulesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Rules",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
     "/api/session": {
       "post": {
         "description": "Trade the kitchen token for a cookie, so the web app need not send the header itself.",
@@ -3904,6 +4217,161 @@
         "summary": "Session",
         "tags": [
           "web"
+        ]
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "operationId": "get_settings_api_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Settings",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/api/settings/approval-code": {
+      "put": {
+        "operationId": "put_approval_code_api_settings_approval_code_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalCodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Approval Code",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/api/settings/diet": {
+      "put": {
+        "operationId": "put_diet_api_settings_diet_put",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DietIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Diet",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/api/settings/kitchen": {
+      "put": {
+        "operationId": "put_kitchen_api_settings_kitchen_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KitchenIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Kitchen",
+        "tags": [
+          "settings"
         ]
       }
     },
