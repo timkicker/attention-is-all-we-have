@@ -11,7 +11,7 @@
   import { ApiError, api } from "$lib/api/client";
   import type { Order } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
-  import { day, money } from "$lib/format";
+  import { day, money, nb } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
   import { optionLine } from "$lib/v";
@@ -49,10 +49,19 @@
   const rid = $derived(o?.requestId ?? r?.id ?? id);
   const need = $derived(r?.lines[0]);
   const all = $derived(need ? [...need.options, ...(need.substitutes ?? []), ...(need.beyondList ?? [])] : []);
-  const askedOpt = $derived(all.find((x) => x.productId === need?.need.productId));
+  // The asked-for product stands apart (askedFor); older answers still list it among the options.
+  const askedName = $derived(r?.askedFor?.displayName ?? (() => { const a = all.find((x) => x.productId === need?.need.productId); return a ? (a.displayName ?? a.name) : undefined; })());
   const chosenOpt = $derived(all.find((x) => x.productId === l?.productId));
   const others = $derived(all.filter((x) => x.productId !== l?.productId && x.productId !== need?.need.productId));
   // The lactose fact: a measured value when Valio gives one, else its lactose-free claim.
+  /** The done heading names the product: "10 × 2.5 kg of mozzarella-fontal
+   *  crumbled cheese", from the question, or the line's name. */
+  function doneWhat(x: Order): string {
+    const q = /^Order (.+?) for .+\?$/.exec(x.questionText ?? "")?.[1];
+    if (q) return q;
+    const n = x.lines[0]?.displayName ?? x.lines[0]?.name ?? "the order";
+    return /^\S+ [a-z]/.test(n) ? n.charAt(0).toLowerCase() + n.slice(1) : n;
+  }
   const lactose = $derived(chosenOpt?.facts.find((f) => f.field === "lactose") ?? chosenOpt?.facts.find((f) => f.field === "claim:FREE_FROM_LACTOSE"));
   const upper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
   const sim = $derived(r?.simulated?.[0]);
@@ -122,8 +131,9 @@
   {/if}
 {:else if !waiting}
   {@const placed = o.state === "placed" || o.state === "approved"}
+  {@const what = doneWhat(o)}
   <VHead
-    title={placed ? "Ordered" : "Not ordered"}
+    title={placed ? `Ordered ${what}` : `Not ordered: ${what}`}
     crumbs={[{ href: "/", label: "Inbox" }, { href: `/requests/${rid}`, label: rid }]}
     here="Approve"
     back={{ href: `/requests/${rid}`, label: "Request" }}
@@ -174,8 +184,8 @@
     {#if l}
       <Section class="v-card">
         <VValueRow label="Product" value={l.displayName ?? l.name} sub={l.qtyText} />
-        {#if askedOpt}
-          <VValueRow label="Instead of" value="{askedOpt.displayName ?? askedOpt.name}{sim ? ', out of stock (simulated)' : ''}" />
+        {#if askedName}
+          <VValueRow label="Instead of" value="{askedName}{sim ? ', out of stock (simulated)' : ''}" testid="instead-of" />
         {/if}
         {#if lactose}
           <VValueRow label="Lactose" value="{upper(lactose.valueText ?? String(lactose.value ?? ''))}{lactose.grade === 'attested' || lactose.grade === 'consistent' ? ', checked' : ''}" />
@@ -184,11 +194,11 @@
     {/if}
 
     {#if others.length}
-      <details class="fold others">
+      <details class="fold others" data-testid="others" id="others">
         <summary><ChevronRight class="chev" aria-hidden="true" />Why not the others <span class="num">{others.length}</span></summary>
         <ul class="fold-body">
           {#each others as x (x.productId)}
-            <li><b>{x.displayName ?? x.name}</b> {optionLine(x)}</li>
+            <li><b>{nb(x.displayName ?? x.name)}</b> {optionLine(x)}</li>
           {/each}
         </ul>
       </details>

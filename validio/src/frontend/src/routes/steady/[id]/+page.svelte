@@ -10,7 +10,7 @@
   import { ApiError, api } from "$lib/api/client";
   import type { SteadyLine, SteadyOrder } from "$lib/api/types";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { money } from "$lib/format";
+  import { money, nb } from "$lib/format";
   import { live } from "$lib/live.svelte";
   import { isCode, owner } from "$lib/owner.svelte";
   import type { Pill } from "$lib/v";
@@ -114,9 +114,9 @@
     {/snippet}
     {#snippet facts()}
       {#if !pending && s.steadyPass}<span><b class="num">{money(s.steadyPass.usedCents)}</b> ordered</span>{/if}
-      <span>{s.guestsPerWeek} guests a week</span>
+      <span>{s.guestsPerWeek} guests a week</span>
       {#if pending}<span>{s.lines.length} lines</span>{/if}
-      {#if s.simulatedHistory}<span data-testid="simulated-history" id="simulated-history">History of {s.weeksLearned} weeks, simulated</span>{/if}
+      {#if s.simulatedHistory}<span data-testid="simulated-history" id="simulated-history">History of {s.weeksLearned} weeks, simulated</span>{/if}
     {/snippet}
   </VHead>
   <div class="renew-code">{@render codeFor("renew")}</div>
@@ -146,7 +146,7 @@
                   {#snippet more()}
                     <details class="fold">
                       <summary><ChevronRight class="chev" aria-hidden="true" />Why no substitute</summary>
-                      <div class="fold-body"><p>{l.fullName ?? l.name}, product {l.productId}.</p><p>{l.sentence}</p></div>
+                      <div class="fold-body"><p>{l.fullName ?? l.name}, product {l.productId}.</p><p>{nb(l.sentence)}</p></div>
                     </details>
                   {/snippet}
                   {#snippet right()}{@render amountAct(l, true)}{/snippet}
@@ -183,19 +183,19 @@
             {#each renewed as l (l.productId)}
               <div class="line" data-testid="line-{l.productId}" id="line-{l.productId}">
                 <VStatusRow pill={pillOf(l)} title={l.displayName ?? l.name} sub={l.split ? l.flags[0]?.sentence : undefined}>
-                  {#snippet middle()}<span class="qty num">{l.qtyText}</span>{/snippet}
+                  {#snippet middle()}{#if !chrome.phone}<span class="qty num">{nb(l.qtyText)}</span>{/if}{/snippet}
                   {#snippet more()}
                     {#if l.split}
                       <details class="fold">
                         <summary><ChevronRight class="chev" aria-hidden="true" />Swap</summary>
                         <div class="fold-body">
-                          {#each l.split.parts as p (p.productId)}<p>{p.qtyText} {p.fullName ?? p.name}, product {p.productId}, {p.moneyText}.</p>{/each}
+                          {#each l.split.parts as p (p.productId)}<p>{nb(`${p.qtyText} ${p.fullName ?? p.name}, product ${p.productId}, ${p.moneyText}.`)}</p>{/each}
                           <p>{money(l.split.extraCostCents)} ({l.split.extraCostPct} %) more than the usual line.</p>
                         </div>
                       </details>
                     {/if}
                   {/snippet}
-                  {#snippet right()}{@render amountAct(l, false)}{/snippet}
+                  {#snippet right()}{#if chrome.phone}<span class="qty num">{nb(l.qtyText)}</span>{/if}{@render amountAct(l, false)}{/snippet}
                 </VStatusRow>
               </div>
             {/each}
@@ -247,6 +247,14 @@
     }
     .line :global(.v-row-end) {
       flex-wrap: wrap;
+    }
+    /* On the phone the quantity sits on the pill line, before the amount. */
+    .qty {
+      min-width: 0;
+      margin-right: 12px;
+    }
+    .line :global(.v-row-mid:empty) {
+      display: none;
     }
   }
 </style>

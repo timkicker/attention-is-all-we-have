@@ -9,7 +9,7 @@
   import { api } from "$lib/api/client";
   import type { RankedOption } from "$lib/api/types";
   import { live } from "$lib/live.svelte";
-  import { day, money } from "$lib/format";
+  import { day, money, nb } from "$lib/format";
   import { optionLine, optionPill, requestPill, turnedDownGroups } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import VLane from "$lib/v/VLane.svelte";
@@ -77,14 +77,14 @@
   <li data-testid="option-{o.productId}" id="option-{o.productId}">
     <span class="ev-left">{#if p}<VPill label={p.label} tone={p.tone} />{:else if left}{left}{/if}</span>
     <span class="ev-main">
-      <span class="ev-name">{o.displayName ?? o.name}</span>
+      <span class="ev-name">{nb(o.displayName ?? o.name)}</span>
       <span class="ev-sub">{optionLine(o)}</span>
       {#if o.verdict === "chosen"}
         <details class="fold">
           <summary><ChevronRight class="chev" aria-hidden="true" />Why</summary>
           <div class="fold-body">
             <p>{o.fullName ?? o.name}, product {o.productId}.</p>
-            <p>{o.sentence}</p>
+            <p>{nb(o.sentence)}</p>
           </div>
         </details>
       {/if}
@@ -96,7 +96,7 @@
           </span>
           <q class="quote">{o.supplierText.text}</q>
           {#if o.supplierText.reader}
-            <span class="reader" data-testid="reader-{o.productId}" id="reader-{o.productId}">{o.supplierText.reader.summary}</span>
+            <span class="reader" data-testid="reader-{o.productId}" id="reader-{o.productId}">{nb(o.supplierText.reader.summary)}</span>
           {/if}
         </span>
       {/if}
@@ -123,7 +123,7 @@
   {/if}
 {:else}
   <VHead
-    title={r.displayName ?? r.title ?? r.text}
+    title={r.titleText ?? r.displayName ?? r.title ?? r.text}
     titleId="request-title"
     crumbs={[{ href: "/", label: "Inbox" }]}
     here={r.id}
@@ -136,10 +136,10 @@
       {#if r.orderId && r.status !== "waiting" && r.status !== "rejected"}<a href="/ledger">Order {r.orderId} ›</a>{/if}
     {/snippet}
     {#if r.status === "waiting"}
-      <p class="question">{r.question}</p>
+      <p class="question">{nb(r.question)}</p>
       <p class="q-sub" id="request-why">
-        {#if sim}{sim.sentence}{/if}
-        {#if chosen?.isSubstitute && !chosen.onValioList}The swap is not on Valio's list.{/if}
+        {#if r.askedFor}Not on Valio's substitute list.{:else}{#if sim}{nb(sim.sentence)}{/if}
+        {#if chosen?.isSubstitute && !chosen.onValioList}The swap is not on Valio's list.{/if}{/if}
         <span data-testid="request-rule" id="request-rule">Rule: {rule}</span>
       </p>
       <div class="head-btn">
@@ -153,7 +153,7 @@
       <p class="q-sub">Nothing was ordered. <span data-testid="request-rule" id="request-rule">Rule: {rule}</span></p>
     {:else}
       <p class="lead" id="decision-sentence">
-        {r.decision.summary ?? r.decision.sentence}
+        {nb(r.decision.summary ?? r.decision.sentence)}
         <span class="rule" data-testid="request-rule" id="request-rule">Rule: {rule}</span>
       </p>
     {/if}
@@ -170,7 +170,7 @@
           <VPlotTotal before={r.usedBeforeCents ?? 0} amount={r.totalCents ?? 0} auto={pass.data?.autoLimitCents} cap={pass.data?.hardCapCents} />
         {/snippet}
       </VLane>
-      <VLane name="Options" value={String(counted.length)} sub="{possible.length} possible, {down.length} turned down">
+      <VLane name="Options" testid="lane-options" value={String(counted.length)} sub="{possible.length} possible, {down.length} turned down">
         {#snippet plot()}
           <VPlotOptions
             {prices}
@@ -182,7 +182,10 @@
     </div>
 
     <Section class="v-card">
-      <VValueRow label="Checked live" value="{r.liveChecked.ids} products" sub="Stock, price and delivery, read from Valio at {r.timeText ?? '10:00'}." testid="live-checked" />
+      {#if r.askedFor}
+        <VValueRow label="Asked for" value={r.askedFor.displayName} sub={r.askedFor.stateText} testid="asked-for" />
+      {/if}
+      <VValueRow label="Checked live" value="{r.liveChecked.ids} products" sub="Stock, price and delivery, read from Valio at {nb(r.timeText ?? '10:00')}." testid="live-checked" />
       {#if planted}
         <VValueRow label="Ignored" value="Written to steer AI agents" sub={planted.supplierText?.planted ? "Planted by the team for the demo." : undefined} href="#supplier-{planted.productId}" onclick={toIgnored} testid="ignored-note" />
       {/if}
@@ -207,7 +210,7 @@
           <ul class="rc-ev">
             {#each possible as o (o.productId)}{@render optionRow(o, rank(possible, o))}{/each}
           </ul>
-          {#if line?.note}<p class="cap note">{line.note}</p>{/if}
+          {#if line?.note}<p class="cap note">{nb(line.note)}</p>{/if}
         </div>
         <div class="pane" role="tabpanel" id="panel-down" aria-labelledby="tab-down" hidden={selected !== "down"}>
           {@render groups(down)}

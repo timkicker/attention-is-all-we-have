@@ -120,6 +120,11 @@ function measure(page: Page, name: string) {
       const fs = getComputedStyle(e).fontSize;
       if (!sizes.has(fs)) fail("8", `${label(e)} ${fs}`);
     }
+    // 8b. Labels in the value column: card labels and lane labels are one size.
+    const labelSizes = new Set(all("main .vr-label, main .rc-n").map((e) => getComputedStyle(e).fontSize));
+    if (labelSizes.size > 1) fail("8b", `value-column labels in ${[...labelSizes].join(" and ")}`);
+    // 8c. The spark keeps its width on every screen.
+    for (const sp of all("main svg.spark")) if (Math.round(box(sp).width) !== Number(sp.getAttribute("width"))) fail("8c", `spark ${Math.round(box(sp).width)} wide, not ${sp.getAttribute("width")}`);
     for (const b of all("[data-slot=button]")) {
       const fs = getComputedStyle(b).fontSize;
       if (fs !== (W <= 760 ? "14px" : "13px")) fail("8", `button ${label(b)} ${fs}`);
@@ -195,6 +200,9 @@ function measure(page: Page, name: string) {
     for (const m of text.matchAll(/\b(ST|BAG|EUR|KI|PCS|KPL)\b/g)) fail("14", `unit code ${m[0]}`);
     // Money is "1,010.00 €": no euro sign in front, none glued to the number, no EUR.
     for (const m of text.matchAll(/€\d|\d€|\bEUR\b|\d\.\d{2} ?e\b/g)) fail("14", `money "${m[0]}"`);
+    // 14b. A number never parts from its unit, a day never from its month (halbat's NB rule).
+    const NBU = /\d (?:g|kg|l|ml|litres?|cartons?|bags?|packs?|boxes|pieces?|guests|weeks?|€|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b|\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d|\d ×|× \d/g;
+    for (const m of text.matchAll(NBU)) fail("14b", `breakable space in "${text.slice(Math.max(0, m.index! - 12), m.index! + 12).replace(/\s+/g, " ")}"`);
     if ((text.match(/out of stock/gi) ?? []).length > 1) fail("14", `"Out of stock" ${(text.match(/out of stock/gi) ?? []).length} times`);
 
     // 15. Nav names.
@@ -357,9 +365,43 @@ test("plan rules can fail", async ({ page }) => {
     const w = document.querySelector("main .wrap")!;
     w.insertAdjacentHTML(
       "beforeend",
-      '<p style="color:var(--valio)">accent text</p><p style="font-size:17px">odd size</p><p style="color:rgb(230,140,40)">orange</p><p>Order 466375 · now</p>',
+      '<p style="color:var(--valio)">accent text</p><p style="font-size:17px">odd size</p><p style="color:rgb(230,140,40)">orange</p><p>Order 466375 · now, 10 kg by Mon 16 Nov</p>',
     );
   });
   const out = (await measure(page, "control")).join("\n");
-  for (const rule of ["§6.11", "§6.8", "§6.13", "§6.14"]) expect(out).toContain(rule);
+  for (const rule of ["§6.11", "§6.8", "§6.13", "§6.14", "§6.14b"]) expect(out).toContain(rule);
+});
+
+// The theme choice in the phone sheet is one tab stop; the arrows move it.
+test("theme radio group takes the arrow keys", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await fresh(page);
+  await page.getByTestId("page-menu").click();
+  const radios = page.getByRole("radio");
+  await expect(radios).toHaveCount(3);
+  const checked = page.getByRole("radio", { checked: true });
+  await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
+  const before = await checked.innerText();
+  await checked.focus();
+  await page.keyboard.press("ArrowDown");
+  const after = page.getByRole("radio", { checked: true });
+  await expect(after).not.toHaveText(before);
+  await expect(after).toBeFocused();
+  await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
+});
+
+// One count for the alternatives: the Options lane, the two tabs, and Approve's
+// "Why not the others" plus the chosen one all name the same number.
+test("options lane, tabs and approve agree on the count", async ({ page }) => {
+  await fresh(page);
+  await stockOut(page);
+  await page.goto("/requests/R-2");
+  const lane = Number(await page.getByTestId("lane-options").locator(".rc-v").innerText());
+  const tabs = (await page.getByRole("tab").locator("em").allInnerTexts()).map(Number);
+  await expect(page.getByTestId("asked-for")).toContainText("Lactose-free mozzarella 125");
+  await page.goto("/approve/R-2");
+  const others = Number(await page.getByTestId("others").locator("summary .num").innerText());
+  expect(tabs.length).toBe(2);
+  expect(tabs[0] + tabs[1]).toBe(lane);
+  expect(others + 1).toBe(lane);
 });
