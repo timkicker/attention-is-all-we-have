@@ -12,6 +12,7 @@ this table has the demo agent connected: the seed signs M-1 to the demo agent's 
 import hashlib
 import secrets
 import sqlite3
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -479,7 +480,11 @@ def _issued_jwt(ctx: Ctx, pass_id: str) -> str | None:
 # token is kept in clear only while pairing waits; an index in the accounts db finds the kitchen by its hash.
 
 CONNECTOR_SCHEMA = """create table if not exists connector (
-  id integer primary key check (id = 1), private_jwk text not null, token_hash text not null, token text)"""
+  id integer primary key check (id = 1), private_jwk text not null, token_hash text not null, token text,
+  used_at real)"""
+# A connector URL is a bearer secret for as long as it lasts: one nobody used for this long is dropped and the
+# kitchen connects again. Counted on the wall clock from the last call that came in on the URL.
+CONNECTOR_IDLE = 30 * 24 * 3600
 INDEX_SCHEMA = "create table if not exists connector_index (token_hash text primary key, account_id text)"
 WAITING = ("Waiting for the kitchen to press Allow in Validio. Ask the user to open the Agent page in Validio "
            "and press Allow, then call the tool again.")
@@ -496,7 +501,27 @@ def _kcon(ctx: Ctx) -> sqlite3.Connection:
     con = sqlite3.connect(ctx.db_path, timeout=10)
     con.execute("pragma secure_delete = on")  # a token cleared after Allow leaves no copy in free pages
     con.execute(CONNECTOR_SCHEMA)
+    if "used_at" not in {r[1] for r in con.execute("pragma table_info(connector)")}:
+        con.execute("alter table connector add column used_at real")  # a store from before the idle limit
     return con
+
+
+def _used_at(ctx: Ctx) -> float | None:
+    con = _kcon(ctx)
+    try:
+        row = con.execute("select used_at from connector where id = 1").fetchone()
+    finally:
+        con.close()
+    return row[0] if row else None
+
+
+def _touch_connector(ctx: Ctx) -> None:
+    con = _kcon(ctx)
+    try:
+        con.execute("update connector set used_at = ? where id = 1", (time.time(),))
+        con.commit()
+    finally:
+        con.close()
 
 
 def _connector(ctx: Ctx) -> tuple[str, str, str | None] | None:
@@ -583,6 +608,15 @@ def connector_ctx(token: str | None, touch: bool = False, name: str | None = Non
         return None
     if link.state == "none":
         return None
+    used = _used_at(ctx)
+    if link.state in ("active", "paused") and used is not None and time.time() - used > CONNECTOR_IDLE:
+        with ctx.rt.lock:  # unused for 30 days: the URL ends, as Disconnect ends it
+            disconnect(ctx, quiet=True)
+            _entry(ctx, f"Ended the connection link of {link.name}: unused for 30 days. Connect it again on the "
+                        "Agent page.", actor="validio")
+        return None
+    if touch:
+        _touch_connector(ctx)
     if touch and (link.state == "pairing" or (link.state == "consent" and name and link.pending_name == MCP_NAME)):
         with ctx.rt.lock:
             link = load(ctx)
