@@ -1,0 +1,62 @@
+[
+ {
+  "question": "Who fired the shots at Mainila in November 1939?",
+  "model": "gemini-3.8-flash",
+  "date": "2026-11-14",
+  "answer": "The shots at Mainila on November 26, 1939, were fired by the Soviet Union's own military forces, orchestrated by the Soviet secret police (NKVD). The Soviet leadership staged the artillery shelling against its own border village as a false-flag operation to manufacture a *casus belli* against Finland. Although Moscow publicly blamed Finnish artillery for the attack and demanded Finnish troops withdraw, Finnish border observers confirmed the firing originated from inside Soviet territory. Declassified Soviet archives in the 1990s formally confirmed that the incident was an orchestrated Soviet provocation used to justify launching the Winter War four days later."
+ },
+ {
+  "question": "How many Finnish soldiers died in the Winter War?",
+  "model": "gemini-3.8-flash",
+  "date": "2026-11-14",
+  "answer": "During the Winter War of 1939–1940, approximately 25,900 to 26,600 Finnish soldiers lost their lives defending their country. This total encompasses personnel who were killed in action, those who succumbed to wounds or illness, and troops who went missing and were presumed dead. In addition to these fatalities, more than 43,000 Finnish service members were wounded during the 105-day conflict. Despite being heavily outnumbered, Finland managed to keep its losses far below those of the invading Soviet Red Army, which suffered over 126,000 combat deaths."
+ },
+ {
+  "question": "How much territory did Finland cede to the Soviet Union after the Winter War?",
+  "model": "gemini-3.8-flash",
+  "date": "2026-11-14",
+  "answer": "Under the 1940 Moscow Peace Treaty that concluded the Winter War, Finland ceded approximately 35,000 square kilometers (about 13,500 square miles) of land to the Soviet Union. This territorial loss represented roughly 9 to 11 percent of Finland's pre-war land area and included Finnish Karelia, along with Viipuri, which was the nation's second-largest city at the time. Finland was also forced to surrender parts of the Salla and Kuusamo municipalities, several islands in the Gulf of Finland, and portions of the Rybachy Peninsula in the Arctic north. Additionally, the treaty required Finland to lease the Hanko Peninsula to the Soviet Union for 30 years to serve as a naval base."
+ },
+ {
+  "question": "When did the Winter War end?",
+  "model": "gemini-3.8-flash",
+  "date": "2026-11-14",
+  "answer": "The Winter War between Finland and the Soviet Union officially ended on March 13, 1940. The cessation of fighting was brought about by the Moscow Peace Treaty, which representatives from both nations signed the previous evening on March 12. Under the terms of the treaty, Finland was forced to cede roughly 11 percent of its territory to the Soviet Union, including the Karelian Isthmus and the city of Viipuri. Despite these severe territorial losses, the conclusion of the war allowed Finland to successfully preserve its national independence."
+ },
+ {
+  "question": "What was the Terijoki government?",
+  "model": "gemini-3.8-flash",
+  "date": "2026-11-14",
+  "answer": "The Terijoki Government, officially known as the Finnish Democratic Republic, was a short-lived puppet regime established by the Soviet Union on December 1, 1939, at the onset of the Winter War. Headed by Finnish communist exile Otto Wille Kuusinen, it was based in the occupied Finnish border town of Terijoki (now Zelenogorsk, Russia). Joseph Stalin intended for this administration to replace the legitimate government of Finland following a planned Soviet conquest of the country. However, after fierce Finnish resistance forced the Soviets to negotiate with the actual Finnish leadership, the puppet government was dissolved in March 1940."
+ },
+ {
+  "question": "Who fired the shots at Mainila in November 1939?",
+  "model": "gemma-4-31b-it",
+  "date": "2026-11-14",
+  "answer": "The shots fired at Mainila on November 26, 1939, were fired by the Soviet Union. Although the Soviet government claimed that Finnish artillery had attacked them, it was actually a false flag operation orchestrated by the NKVD. This staged incident was used as a pretext for the Soviet Union to launch an invasion of Finland, starting the Winter War. Historical evidence and later admissions confirm that the shelling was carried out by Soviet forces to justify the aggression."
+ },
+ {
+  "question": "How many Finnish soldiers died in the Winter War?",
+  "model": "gemma-4-31b-it",
+  "date": "2026-11-14",
+  "answer": "During the Winter War, which took place from 1939 to 1940, approximately 25,900 Finnish soldiers died. These casualties occurred during the defensive struggle against the invading Soviet Union. In addition to the fatalities, thousands of other Finnish soldiers were wounded or went missing. Despite these losses, Finland managed to maintain its independence through the Moscow Peace Treaty."
+ },
+ {
+  "question": "How much territory did Finland cede to the Soviet Union after the Winter War?",
+  "model": "gemma-4-31b-it",
+  "date": "2026-11-14",
+  "answer": "Following the Winter War, Finland ceded approximately 11% of its territory to the Soviet Union under the Moscow Peace Treaty of 1940. This loss included the Karelian Isthmus, the city of Viipuri, and parts of Salla and Petsamo. The ceded land totaled roughly 36,000 to 40,000 square kilometers. As a result of these territorial losses, about 400,000 Finnish citizens were forced to evacuate and relocate within Finland."
+ },
+ {
+  "question": "When did the Winter War end?",
+  "model": "gemma-4-31b-it",
+  "date": "2026-11-14",
+  "answer": "The Winter War ended on March 13, 1940. The conflict concluded with the signing of the Moscow Peace Treaty between Finland and the Soviet Union. As a result of the agreement, Finland was forced to cede significant portions of its territory to the Soviet Union. Despite these territorial losses, Finland successfully maintained its national independence."
+ },
+ {
+  "question": "What was the Terijoki government?",
+  "model": "gemma-4-31b-it",
+  "date": "2026-11-14",
+  "answer": "The Terijoki government, officially known as the Finnish Democratic Republic, was a puppet government established by the Soviet Union during the Winter War in 1939. Led by Otto Wille Kuusinen, it consisted primarily of Finnish communists who had lived in exile in the Soviet Union. The Soviet Union intended for this entity to replace the legitimate Finnish government and provide a political justification for their invasion. However, the Terijoki government was never recognized by the Finnish people or the international community. It was eventually dissolved in early 1940 as the Soviet Union shifted toward negotiating a peace treaty with the actual Finnish government."
+ }
+]
