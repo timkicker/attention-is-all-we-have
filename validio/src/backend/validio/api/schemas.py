@@ -505,6 +505,10 @@ class SpendPassIn(Model):
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
 
+class StockOutIn(Model):
+    on: bool = Field(True, description="true simulates the stock-out of 466375, false ends it")
+
+
 class AskIn(Model):
     text: str = Field(min_length=1, max_length=300, description="what the kitchen asks its agent for")
 
