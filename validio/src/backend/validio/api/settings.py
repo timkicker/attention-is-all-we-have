@@ -28,10 +28,11 @@ from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import SUBSTITUTES_LISTED
 from ..text.format import money
 from . import codes
+from .accounts import request_ctx
 from .schemas import Model
-from .state import Ctx, get_ctx
+from .state import Ctx
 
-CtxDep = Annotated[Ctx, Depends(get_ctx)]
+CtxDep = Annotated[Ctx, Depends(request_ctx)]
 MAX_CENTS = 10_000_000  # 100,000.00 €
 DIETS = Literal["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN", "VEGAN"]
 DEFAULT_NAME = "Hotel Espoo kitchen"
@@ -225,9 +226,10 @@ def _settings(ctx: Ctx) -> SettingsOut:
     path = ctx.db_path
     return SettingsOut(
         kitchen=KitchenOut(name=_get(path, "kitchen_name") or DEFAULT_NAME,
-                           customer_number=ctx.settings.valio_customer,
+                           customer_number=ctx.account["customer"] if ctx.account else ctx.settings.valio_customer,
                            delivery_address=_get(path, "delivery_address") or ""),
-        diet=sorted(current_claims(path).get("diet") or []), login=LoginOut(email=None))
+        diet=sorted(current_claims(path).get("diet") or []),
+        login=LoginOut(email=ctx.account["email"] if ctx.account else None))
 
 
 @router.get("/settings", response_model=SettingsOut)

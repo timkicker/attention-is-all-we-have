@@ -22,6 +22,7 @@ from ..demo.seed import SPEND_PASS_ID
 from ..matching.need import CLAIM_NAMES
 from ..policy.mandate import DEMO_SD_FIELDS
 from . import display
+from .accounts import request_ctx
 from .schemas import (
     ApproveIn,
     AskedFor,
@@ -38,10 +39,10 @@ from .schemas import (
     StockOutIn,
     SupplyRequestView,
 )
-from .state import MAX_CODE_TRIES, Ctx, get_ctx
+from .state import MAX_CODE_TRIES, Ctx
 from .tools import get_order, get_request
 
-CtxDep = Annotated[Ctx, Depends(get_ctx)]
+CtxDep = Annotated[Ctx, Depends(request_ctx)]
 HELSINKI = timezone(timedelta(hours=2))
 COOKIE = "validio_kitchen"
 
@@ -55,7 +56,9 @@ def _host(request: Request) -> str | None:
 
 
 def kitchen(request: Request, ctx: CtxDep) -> None:
-    """The gate in front of every /api route but health and session."""
+    """The gate in front of every /api route but health, session and the account routes."""
+    if ctx.account is not None:
+        return  # a logged-in kitchen works on its own store
     if ctx.is_local(_host(request)):
         return
     if ctx.public_read and request.method in ("GET", "HEAD"):
@@ -91,7 +94,7 @@ def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: A
     from . import codes
 
     own = codes.stored(ctx.db_path)
-    if not own and not ctx.approve_code:
+    if not own and not ctx.has_code:
         if ctx.is_local(_host(request)):
             return
         raise HTTPException(403, "this server has no VALIDIO_APPROVE_CODE, so approval is closed")
@@ -99,7 +102,7 @@ def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: A
     if any(ctx.code_tries.get(k, 0) >= MAX_CODE_TRIES for k in keys):
         raise HTTPException(429, "too many wrong codes, approval is locked")
     given = header or (body.code if body else None)
-    if not (codes.matches(own, given) if own else _same(given, ctx.approve_code)):
+    if not (codes.matches(own, given) if own else ctx.code_ok(given)):
         for k in keys:
             ctx.code_tries[k] = ctx.code_tries.get(k, 0) + 1
         raise HTTPException(403, "wrong or missing approval code")
@@ -111,6 +114,10 @@ def _code(ctx: Ctx, request: Request, order_id: str, header: str | None, body: A
 
 
 def _demo(ctx: Ctx, request: Request, token: str | None) -> None:
+    if ctx.account is not None:
+        if not ctx.account["is_demo"]:
+            raise HTTPException(404, "demo controls are only on the demo kitchen")
+        return
     if not ctx.settings.demo:
         raise HTTPException(404, "demo controls are off")
     if ctx.demo_token:
@@ -324,7 +331,7 @@ def ledger_head(ctx: CtxDep):
 
 def _demo_state(ctx: Ctx, on: bool) -> DemoState:
     real = ctx.real_stock()
-    return DemoState(stock_out_466375=on, code_required=bool(ctx.approve_code),
+    return DemoState(stock_out_466375=on, code_required=ctx.has_code,
                      real_stock_466375={"quantity": real[0], "unit": real[1]} if real else None)
 
 
@@ -360,7 +367,7 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
     from . import tools
     from .mcp_server import server
 
-    if ctx.public_read:
+    if ctx.public_read or ctx.account is not None:
         _demo(ctx, request, x_demo_token)
     text = " ".join(body.text.split())
     if not text:
@@ -372,7 +379,13 @@ def demo_ask(ctx: CtxDep, request: Request, body: AskIn, x_demo_token: Annotated
         async with McpPort(server, spend_pass=holder.presentation, salt=secrets.token_hex(8)) as port:
             return await run(task_for_text(text), make_llm(2), port)
 
-    t = asyncio.run(go())
+    from .state import current
+
+    token = current.set(ctx)  # the MCP tools in this run work on this account (asyncio.run copies the context)
+    try:
+        t = asyncio.run(go())
+    finally:
+        current.reset(token)
     plain = Style(False)
     rid = next((e.data.get("requestId") or e.data.get("id") for e in t.events
                 if e.kind == "answer" and e.name == "request_supply" and isinstance(e.data, dict)

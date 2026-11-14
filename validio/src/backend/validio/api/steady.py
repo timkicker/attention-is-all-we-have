@@ -207,16 +207,27 @@ class _Live:
     store: Store
     audit: AuditLog
     service: OrderService
+    keys: Path | None = None
 
 
 class Runtime:
-    """Catalog and Valio once, the stores per seed. A new seed token (after `make seed`) reopens them."""
+    """Catalog and Valio once, the stores per seed. A new seed token (after `make seed`) reopens them.
 
-    def __init__(self):
+    Without a path the store is the local kitchen's (VALIDIO_DB, VALIDIO_KEYS). An account's runtime has its
+    own path and keys and borrows the catalog and the Valio client of `shared`."""
+
+    def __init__(self, path: Path | None = None, keys: Path | None = None, shared: "Runtime | None" = None):
         self.lock = threading.RLock()
+        self._path, self._keys, self._shared = path, keys, shared
         self._live: _Live | None = None
         self._catalog: Catalog | None = None
         self._valio: ValioClient | None = None
+
+    def db_path(self) -> Path:
+        return self._path or seed.db_path()
+
+    def keys_dir(self) -> Path:
+        return self._keys or seed.keys_path()
 
     @property
     def settings(self):
@@ -224,12 +235,16 @@ class Runtime:
 
     @property
     def catalog(self) -> Catalog:
+        if self._shared is not None:
+            return self._shared.catalog
         if self._catalog is None:
             self._catalog = Catalog(self.settings.catalog_db)
         return self._catalog
 
     @property
     def valio(self) -> ValioClient:
+        if self._shared is not None:
+            return self._shared.valio
         if self._valio is None:
             s = self.settings
             self._valio = ValioClient(s.valio_base_url, s.valio_api_key, s.valio_mode, s.valio_cache,
@@ -237,10 +252,10 @@ class Runtime:
         return self._valio
 
     def live(self) -> _Live:
-        path = seed.db_path()
+        path = self.db_path()
         token = seed.seed_token(path)
         if token is None:
-            seed.reset(path)
+            seed.reset(path, self.keys_dir())
             token = seed.seed_token(path)
         if self._live is None or (self._live.token, self._live.path) != (token, path):
             if self._live is not None:
@@ -248,12 +263,19 @@ class Runtime:
                 self._live.store.close()  # the ledger shares this connection, so it closes too
             store = Store(path)
             # an order and its ledger entry commit together; the kitchen key signs the head
-            audit = AuditLog(path, seed.kitchen_key(), con=store.con, lock=store.lock)
+            audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
             service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: demo_now(self.settings.now, store.con),
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    lock=self.lock)  # one lock for every write and the demo reset
-            self._live = _Live(token, path, store, audit, service)
+            self._live = _Live(token, path, store, audit, service, self.keys_dir())
         return self._live
+
+    def close(self) -> None:
+        with self.lock:
+            if self._live is not None:
+                self._live.service.closed = True
+                self._live.store.close()
+                self._live = None
 
 
 runtime = Runtime()
@@ -283,12 +305,17 @@ def _save(path: Path, order_id: str, body: dict) -> None:
         con.close()
 
 
-def _chef(request: Request, key: str, header: str | None, body) -> None:
-    # the approve route's code check, imported late: api.state imports this module
-    from .state import get_ctx
+def _ctx(request: Request):
+    # the request's account, imported late: api.state imports this module
+    from .accounts import request_ctx
+
+    return request_ctx(request)
+
+
+def _chef(ctx, request: Request, key: str, header: str | None, body) -> None:
     from .ui import check_code
 
-    check_code(get_ctx(), request, key, header, body)
+    check_code(ctx, request, key, header, body)
 
 
 def _refuse(path: Path, so_id: str, state: dict, view: SteadyOrderOut, idx: int, sentence: str,
@@ -387,12 +414,12 @@ def _accept_lines(line: SteadyLineOut) -> tuple[list[LineIn], int | None]:
     return [LineIn(line.product_id, line.this_week_quantity)], None
 
 
-def _pass(path) -> Mandate:
-    return seed.spend_pass(path, now=runtime.settings.now, pass_id=seed.STEADY_PASS_ID)
+def _pass(path, keys=None) -> Mandate:
+    return seed.spend_pass(path, keys, now=runtime.settings.now, pass_id=seed.STEADY_PASS_ID)
 
 
 def _with_pass(view: SteadyOrderOut, live) -> SteadyOrderOut:
-    m = _pass(live.path)
+    m = _pass(live.path, live.keys)
     tz = runtime.settings.now.tzinfo
     return view.model_copy(update={"steady_pass": SteadyPassOut(
         id=m.id, valid_from=datetime.fromtimestamp(m.not_before, tz).isoformat(),
@@ -409,9 +436,10 @@ def _dump(view: SteadyOrderOut) -> dict:
 
 
 @router.get("", response_model=list[SteadyOrderSummaryOut], response_model_exclude_none=True)
-def steady_list():
-    with runtime.lock:
-        live = runtime.live()
+def steady_list(request: Request):
+    rt = _ctx(request).rt
+    with rt.lock:
+        live = rt.live()
         so, h = _steady()
         state = _load(live.path, so.id)
         view = _view(state) if state else _pending(so, h)
@@ -421,9 +449,10 @@ def steady_list():
 
 
 @router.get("/{order_id}", response_model=SteadyOrderOut, response_model_exclude_none=True)
-def steady_order(order_id: str):
-    with runtime.lock:
-        live = runtime.live()
+def steady_order(request: Request, order_id: str):
+    rt = _ctx(request).rt
+    with rt.lock:
+        live = rt.live()
         so, h = _get_order(order_id)
         state = _load(live.path, so.id)
         return _with_pass(_view(state) if state else _pending(so, h), live)
@@ -432,22 +461,27 @@ def steady_order(order_id: str):
 @router.post("/{order_id}/renew", response_model=SteadyOrderOut, response_model_exclude_none=True)
 def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
                  x_approve_code: Annotated[str | None, Header()] = None):
-    _chef(request, f"steady:{order_id}", x_approve_code, body)
-    return renew(order_id)
+    ctx = _ctx(request)
+    _chef(ctx, request, f"steady:{order_id}", x_approve_code, body)
+    return renew(order_id, ctx.rt)
 
 
-def renew(order_id: str) -> SteadyOrderOut:
+def renew(order_id: str, rt: Runtime | None = None) -> SteadyOrderOut:
     """The renewal behind the button, without the code check: the route checks the code, the agent's
-    tool renew_steady_order checks the Spend Pass instead."""
-    with runtime.lock:
-        live = runtime.live()
+    tool renew_steady_order checks the Spend Pass instead. Without `rt` it works on `get_ctx()`'s store."""
+    if rt is None:
+        from .state import get_ctx
+
+        rt = get_ctx().rt
+    with rt.lock:
+        live = rt.live()
         so, h = _get_order(order_id)
         state = _load(live.path, so.id)
         if state:  # already renewed this week: nothing is ordered twice
             return _with_pass(_view(state), live)
         now = live.service.clock()
-        mandate = _pass(live.path)
-        renewal = run(so, h, runtime.catalog, runtime.valio, mandate, now, stockout=seed.stockout(live.path))
+        mandate = _pass(live.path, live.keys)
+        renewal = run(so, h, rt.catalog, rt.valio, mandate, now, stockout=seed.stockout(live.path))
         pending = {ln.product_id: ln for ln in _pending(so, h).lines}
         diet = {ln.product_id: ln.diet for ln in so.lines}
         out = []
@@ -481,9 +515,11 @@ def renew(order_id: str) -> SteadyOrderOut:
 def steady_accept(request: Request, order_id: str, product_id: str,
                   body: Annotated[ApproveIn | None, Body()] = None,
                   x_approve_code: Annotated[str | None, Header()] = None):
-    _chef(request, f"steady:{order_id}:{product_id}", x_approve_code, body)
-    with runtime.lock:
-        live = runtime.live()
+    ctx = _ctx(request)
+    rt = ctx.rt
+    _chef(ctx, request, f"steady:{order_id}:{product_id}", x_approve_code, body)
+    with rt.lock:
+        live = rt.live()
         so, _h = _get_order(order_id)
         state = _load(live.path, so.id)
         if not state:
@@ -496,7 +532,7 @@ def steady_accept(request: Request, order_id: str, product_id: str,
         if line.result not in (str(LineResult.WAITING), str(LineResult.FLAGGED)) or not line.this_week_quantity:
             raise HTTPException(409, f"Line {product_id} is {line.result}, only a waiting or flagged line "
                                      "can be accepted.")
-        mandate = _pass(live.path)
+        mandate = _pass(live.path, live.keys)
         diet = {ln.product_id: ln.diet for ln in so.lines}[product_id]
         delivery = date.fromisoformat(state["delivery"])
         try:
