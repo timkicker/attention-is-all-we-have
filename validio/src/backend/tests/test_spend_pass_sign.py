@@ -46,7 +46,19 @@ def test_one_ledger_entry_by_the_owner(client):  # noqa: F811
     assert mine[0]["sentence"] == ("Owner changed the limits of Spend Pass M-1: alone up to 1,600.00 €, "
                                    "never above 2,500.00 €, lactose free, delivered by 16 Nov, substitutes from "
                                    "Valio's list.")
-    assert client.get("/api/ledger").json()["chain"]["ok"]
+    led = client.get("/api/ledger").json()
+    assert led["chain"]["ok"]
+
+
+def test_the_limits_entry_is_whole_and_filed_under_the_pass(client, holder):  # noqa: F811
+    ask(client, holder, "500 litres of lactose-free milk by Monday", "before")
+    assert sign(client).status_code == 200
+    led = client.get("/api/ledger").json()
+    e = next(e for e in led["entries"] if e["kind"] == "spend_pass")
+    assert e["displayText"] == ("Changed the limits of Spend Pass M-1: alone up to 1,600.00 €, never above "
+                                "2,500.00 €, lactose free, delivered by 16 Nov, substitutes from Valio's list.")
+    assert e["requestId"] == "M-1"
+    assert {"requestId": "M-1", "titleText": "Spend Pass M-1"} in led["groups"]
 
 
 def test_the_weeks_spend_carries_over(client, holder, ctx):  # noqa: F811
