@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { agrees, comparable, analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { agrees, comparable, tidy, analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -141,5 +141,9 @@ describe('changes', () => {
     expect(comparable({ this: '48,745', other: 'up to 422' })).toBe(false)
     expect(comparable({ this: '200,000', other: '722' })).toBe(false)
     expect(comparable({ this: '25,904', other: '22,830' })).toBe(true)
+  })
+  it('tidies wiki text leftovers', () => {
+    expect(tidy('known as ""Shelling of Mainila"". &lt;...&gt; During the war')).toBe('known as "Shelling of Mainila". During the war')
+    expect(tidy('A <...> B &amp; C')).toBe('A B & C')
   })
 })

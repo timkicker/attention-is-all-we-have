@@ -36,6 +36,14 @@
     return g.originals.map((o) => ({ lang: o.lang, say: { text: o.text, spans: [] }, url: o.url }))
   }
   const open = $derived(vm?.open ?? [])
+  /** Groups whose long quote is shown in full. */
+  let openQ = $state(new Set<number>())
+  const toggle = (i: number) => {
+    const n = new Set(openQ)
+    if (n.has(i)) n.delete(i)
+    else n.add(i)
+    openQ = n
+  }
   const changeRest = (c: StatementVM['changes'][number]) =>
     c.to ? copy.topic.changeRest(c.lang, c.from, c.to) : copy.topic.removedRest(c.lang)
   /** Each edition of a group with the revision its wording is from. */
@@ -68,7 +76,10 @@
             {/each}
           {:else}
             <p class="ed">{#each versions(g) as v, j (v.lang)}{#if v.url}<a class="v" href={v.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(v.lang)} data-testid={VERSION}>{copy.edition(v.lang)}</a>{:else}{copy.edition(v.lang)}{/if}{sep(j, g.langs.length)}{/each}</p>
-            <p class="say"><Marked value={g.say} /></p>
+            <p class="say" class:clamp={!openQ.has(i)}><Marked value={g.say} /></p>
+            {#if g.say.text.length > 260}
+              <button class="more sec u" type="button" aria-expanded={openQ.has(i)} onclick={() => toggle(i)}>{openQ.has(i) ? copy.topic.LESS : copy.topic.MORE}</button>
+            {/if}
           {/if}
         </div>
       {/each}
@@ -86,7 +97,7 @@
         {#each vm.changes as c, i (i)}
           <div class="item" data-testid={TID.changeRow}>
             <p>{#if c.url}<a class="v" href={c.url} target="_blank" rel="noopener" title={copy.topic.versionTitle(c.lang)} data-testid={CHANGE_VERSION}>{copy.topic.changeDate(c.date, c.approx)}</a>{:else}{copy.topic.changeDate(c.date, c.approx)}{/if}{changeRest(c)}</p>
-            {#if c.comment}<p class="t13 muted">{copy.editComment(c.comment)}</p>{/if}
+            {#if c.comment}<p class="t13 muted one-line" title={c.comment}>{copy.editComment(c.comment)}</p>{/if}
           </div>
         {:else}
           <div class="item"><p class="muted">{copy.topic.NO_CHANGES}</p></div>
@@ -109,6 +120,9 @@
   .ed { display: inline-block; font-weight: var(--w-medium); }
   .item .say { margin-top: 4px; }
   .one + .one { margin-top: 16px; }
+  .clamp { display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .more { margin-top: 4px; font-size: var(--fs-15); }
+  .one-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .v { color: inherit; text-decoration: none; }
   .v:hover, .v:focus-visible { text-decoration: underline; text-decoration-color: var(--line2); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
   .changed { margin-top: 64px; }
