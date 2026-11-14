@@ -174,6 +174,8 @@ class Accounts:
         from .connect import leave_unconnected
 
         self._copy_files(db, keys)
+        # its own kitchen key, agent key and issuer: no copy shares a signing key with the template or another
+        seed.rekey(db, keys, f"kitchen:{account_id}")
         leave_unconnected(db)
 
     def _copy_files(self, db: Path, keys: Path) -> None:

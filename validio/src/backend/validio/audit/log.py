@@ -158,6 +158,13 @@ class AuditLog:
                           protected=canonical({"alg": "ES256", "typ": HEAD_TYP, "kid": self._key.thumbprint()}))
         return jws.serialize(compact=True)
 
+    def sign_head(self) -> None:
+        """Sign the head as it is with this log's key (a kitchen copied from another that got its own key)."""
+        with self._lock:
+            row = self._con.execute("SELECT count, hash, at FROM ledger_head WHERE id = 1").fetchone()
+            if row is not None:
+                self._con.execute("UPDATE ledger_head SET sig = ? WHERE id = 1", (self._sign(*row),))
+
     def head(self) -> Head | None:
         with self._lock:
             row = self._con.execute("SELECT count, hash, at, sig FROM ledger_head WHERE id = 1").fetchone()
