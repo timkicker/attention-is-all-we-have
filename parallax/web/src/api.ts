@@ -18,6 +18,8 @@ export type CheckClaim = Check['claims'][number]
 export type Evidence = S['Evidence']
 export type CheckRecorded = S['CheckRecorded']
 export type Stats = S['Stats']
+export type Atlas = S['Atlas']
+export type AtlasTopic = Atlas['topics'][number]
 export type Ask = S['Ask']
 export type Quote = Ask['quotes'][string][number]
 export type Sources = S['Sources'] & { as_of?: string }
@@ -80,6 +82,8 @@ export const api = {
     getJson<Check>('/api/check', {}, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }),
   checkRun: (runId: string, asOf?: string) => getJson<Check>(`/api/check/${encodeURIComponent(runId)}`, { as_of: asOf }),
   checkRecorded: () => getJson<CheckRecorded>('/api/check/recorded'),
+  atlas: (p: { coverage?: string; offset?: number; limit?: number; sort?: string }, init?: RequestInit) =>
+    getJson<Atlas>('/api/atlas', p, init),
   ask: (p: { q: string; as_of?: string; k?: number }, init?: RequestInit) => getJson<Ask>('/api/ask', p, init),
   sources: (p: { topic: string; as_of?: string }, init?: RequestInit) => getJson<Sources>('/api/sources', p, init),
   stats: () => getJson<Stats>('/api/stats'),
