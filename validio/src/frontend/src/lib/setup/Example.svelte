@@ -33,7 +33,7 @@
       if (out.requestId) {
         const [r, inbox] = await Promise.all([api.request(out.requestId), api.inbox().catch(() => [])]);
         row = askRow(r, inbox.find((i) => i.id === r.id));
-      } else refused = notRecorded(out.final);
+      } else refused = [out.final, ...out.lines].some((l) => /paused this agent/i.test(l)) ? "Agent paused" : notRecorded(out.final);
       bump();
     } catch (err) {
       problem = err instanceof ApiError && err.status === 409 ? "Connect the demo agent first." : err instanceof Error ? err.message : String(err);
