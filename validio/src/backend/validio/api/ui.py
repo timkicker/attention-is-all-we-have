@@ -12,7 +12,7 @@ Without a code or a token, approve and the demo switches stay closed to anyone n
 
 import hmac
 import re
-from datetime import date, datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
@@ -87,15 +87,19 @@ def session(ctx: CtxDep, request: Request, body: SessionIn) -> Response:
 
 def check_code(ctx: Ctx, request: Request, key: str, header: str | None, body: ApproveIn | None) -> None:
     """The approval code, for an order or a Steady Order button (`key`). Five wrong codes lock that key,
-    five from one client lock the client."""
-    if not ctx.approve_code:
+    five from one client lock the client. The kitchen's own code (api/codes.py) wins over VALIDIO_APPROVE_CODE."""
+    from . import codes
+
+    own = codes.stored(ctx.db_path)
+    if not own and not ctx.approve_code:
         if ctx.is_local(_host(request)):
             return
         raise HTTPException(403, "this server has no VALIDIO_APPROVE_CODE, so approval is closed")
     keys = [("key", key), ("client", _host(request) or "?")]
     if any(ctx.code_tries.get(k, 0) >= MAX_CODE_TRIES for k in keys):
         raise HTTPException(429, "too many wrong codes, approval is locked")
-    if not _same(header or (body.code if body else None), ctx.approve_code):
+    given = header or (body.code if body else None)
+    if not (codes.matches(own, given) if own else _same(given, ctx.approve_code)):
         for k in keys:
             ctx.code_tries[k] = ctx.code_tries.get(k, 0) + 1
         raise HTTPException(403, "wrong or missing approval code")
@@ -208,35 +212,20 @@ def sign_spend_pass(ctx: CtxDep, request: Request, body: SpendPassIn,
                     x_approve_code: Annotated[str | None, Header()] = None):
     """The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week
     already placed still counts; the copy the agent held before is refused from now on. One ledger entry."""
-    from ..demo import seed
     from ..policy.mandate import SUBSTITUTES_LISTED
     from ..text.format import money
+    from .settings import resign
 
     check_code(ctx, request, "spend-pass", x_approve_code, body)
     if body.auto_limit_cents > body.hard_cap_cents:
         raise HTTPException(422, f"alone up to {money(body.auto_limit_cents)} is above never above "
                                  f"{money(body.hard_cap_cents)}")
-    diet = sorted(set(body.diet))
-    changes = {"autoLimitCents": body.auto_limit_cents, "hardCapCents": body.hard_cap_cents, "diet": diet,
-               "deliverBy": body.deliver_by.isoformat(),
+    changes = {"autoLimitCents": body.auto_limit_cents, "hardCapCents": body.hard_cap_cents,
+               "diet": sorted(set(body.diet)), "deliverBy": body.deliver_by.isoformat(),
                "substitutes": SUBSTITUTES_LISTED if body.substitutes else "never"}
-    def said(x: dict) -> list[tuple[str, str]]:
-        d = date.fromisoformat(str(x["deliver_by"]))
-        return [("Alone up to", money(x["auto_limit_cents"])), ("Never above", money(x["hard_cap_cents"])),
-                ("Diet", " and ".join(CLAIM_NAMES.get(c, c) for c in sorted(x["diet"] or ())) or "none"),
-                ("Delivered by", f"{d.day} {d:%b}"),
-                ("Substitutes", "from Valio's list" if x["substitutes"] == SUBSTITUTES_LISTED else "none alone")]
-
     with ctx.rt.lock:
-        before = said(_show_issued(ctx))
-        seed.sign_again(ctx.db_path, ctx.keys_dir, changes)
-        # shown once, so the page and what the next request is judged against agree at once
-        m = _show_issued(ctx)
-        changed = [f"{k} {a} → {b}." for (k, a), (_, b) in zip(before, said(m), strict=True) if a != b]
-        sentence = (f"Owner changed Spend Pass {m['id']}. " + " ".join(changed) if changed
-                    else f"Owner signed Spend Pass {m['id']} again, nothing changed.")
-        ctx.audit.append(at=ctx.now(), actor="owner", kind="spend_pass", sentence=sentence,
-                         facts=[], mandate_id=m["id"], disclosed={}, rule_ids=[], order_id=None)
+        resign(ctx, changes, "Rules changed")
+        m = _show_issued(ctx)  # shown once, so the page and what the next request is judged against agree at once
     return spend_pass(ctx, m["id"])
 
 
