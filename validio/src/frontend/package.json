@@ -7,7 +7,7 @@
     "dev": "vite dev --host 127.0.0.1 --port 5410 --strictPort",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1 --port 5410 --strictPort",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "node scripts/check-tokens.mjs && node scripts/test-check-tokens.mjs && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "e2e": "playwright test",
     "shots": "playwright test e2e/shots.spec.ts"
   },
