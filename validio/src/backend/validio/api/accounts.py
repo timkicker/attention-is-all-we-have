@@ -25,7 +25,7 @@ from pydantic import Field
 
 from ..demo import seed
 from .connect import AgentState
-from .limits import NEW_KITCHENS, client_ip
+from .limits import NEW_KITCHENS, client_ip, secure_cookies
 from .schemas import Model
 from .state import Ctx, get_ctx
 from .steady import Runtime
@@ -261,6 +261,12 @@ class Accounts:
             con.execute("insert into session values (?, ?, ?)", (_sid_hash(sid), account_id, time.time() + SESSION_SECONDS))
         return sid
 
+    def end_other_sessions(self, account_id: str, keep_sid: str | None) -> None:
+        """Every session of the account but `keep_sid` ends (a new password: whoever knew the old one is out)."""
+        with self._db() as con:
+            con.execute("delete from session where account_id = ? and id_hash != ?",
+                        (account_id, _sid_hash(keep_sid) if keep_sid else ""))
+
     def end_session(self, sid: str) -> None:
         with self._db() as con:
             con.execute("delete from session where id_hash = ?", (_sid_hash(sid),))
@@ -382,9 +388,12 @@ def _signed_in(request: Request, row: dict, status: int = 200) -> Response:
     sid = get_accounts().start_session(row["id"])
     r = Response(view(row).model_dump_json(by_alias=True, exclude_none=True), status_code=status,
                  media_type="application/json")
-    r.set_cookie(COOKIE, sid, httponly=True, samesite="lax", secure=request.url.scheme == "https",
+    r.set_cookie(COOKIE, sid, httponly=True, samesite="lax", secure=secure_cookies(request),
                  max_age=SESSION_SECONDS, path="/")
     return r
+
+
+_DUMMY_HASH = hash_secret(secrets.token_hex(16))
 
 
 def _too_many(keys: list[str]) -> bool:
@@ -419,7 +428,8 @@ def login(request: Request, body: LoginIn):
     if _too_many(keys):
         raise HTTPException(429, "too many wrong logins, wait 15 minutes")
     row = get_accounts().by_email(email)
-    if row is None or not secret_ok(body.password, row["pw_hash"]):
+    # an unknown email costs one scrypt as well, so the time of the answer never tells whether it exists
+    if not secret_ok(body.password, row["pw_hash"] if row else _DUMMY_HASH) or row is None:
         _miss(keys)
         raise HTTPException(401, "wrong email or password")
     return _signed_in(request, row)
@@ -479,5 +489,5 @@ def open_link(request: Request, token: str):
         raise HTTPException(404, "this link is used or expired")
     r = RedirectResponse(row["path"], status_code=303)
     r.set_cookie(COOKIE, acc.start_session(row["account_id"]), httponly=True, samesite="lax",
-                 secure=request.url.scheme == "https", max_age=SESSION_SECONDS, path="/")
+                 secure=secure_cookies(request), max_age=SESSION_SECONDS, path="/")
     return r

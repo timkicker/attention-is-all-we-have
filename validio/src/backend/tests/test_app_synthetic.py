@@ -182,3 +182,38 @@ def test_an_account_dropped_from_the_cache_keeps_working_for_its_request(c, monk
                       mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
     assert held.audit.verify().ok
     assert account(c).audit.list()[-1].sentence == "still open"  # a fresh runtime sees the same file
+
+
+def test_a_new_password_ends_the_other_sessions(c):
+    assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+    with TestClient(app) as phone:
+        assert phone.post("/api/account/login", json={"email": SIGNUP["email"],
+                                                      "password": SIGNUP["password"]}).status_code == 200
+        assert c.put("/api/settings/login", json={"currentPassword": SIGNUP["password"],
+                                                  "password": "a new long one"}).status_code == 200
+        assert phone.get("/api/account").status_code == 401
+    assert c.get("/api/account").status_code == 200  # the session that changed it stays
+
+
+def test_login_runs_scrypt_for_an_unknown_email_too(c, monkeypatch):
+    from validio.api import accounts
+
+    calls = []
+    real = accounts.secret_ok
+    monkeypatch.setattr(accounts, "secret_ok", lambda s, h: calls.append(h) or real(s, h))
+    assert c.post("/api/account/login", json={"email": "nobody@example.com", "password": "x" * 9}).status_code == 401
+    assert calls == [accounts._DUMMY_HASH]
+
+
+def test_cookies_are_secure_on_a_public_deploy_behind_a_proxy(monkeypatch):
+    from types import SimpleNamespace
+
+    from validio.api.limits import secure_cookies
+
+    plain = SimpleNamespace(url=SimpleNamespace(scheme="http"), headers={"x-forwarded-proto": "https"})
+    assert not secure_cookies(plain)
+    monkeypatch.setenv("VALIDIO_TRUST_PROXY", "1")
+    assert secure_cookies(plain)
+    monkeypatch.setenv("VALIDIO_TRUST_PROXY", "")
+    monkeypatch.setenv("VALIDIO_PUBLIC", "1")
+    assert secure_cookies(plain)

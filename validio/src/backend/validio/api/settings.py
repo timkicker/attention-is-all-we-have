@@ -370,4 +370,8 @@ def put_login(ctx: CtxDep, request: Request, body: LoginChangeIn):
         except sqlite3.IntegrityError as e:
             raise HTTPException(409, "an account with this email exists") from e
         ctx.account.update(fields)  # the open account's row, cached with its store
+        if "pw_hash" in fields:  # a new password ends every other session of the account
+            from .accounts import COOKIE
+
+            acc.end_other_sessions(row["id"], request.cookies.get(COOKIE))
     return _settings(ctx)

@@ -25,11 +25,12 @@ def _fake_model(monkeypatch):
 @pytest.fixture(autouse=True)
 def _fresh_rate_limits():
     """Rate limits are per process: every test starts with empty windows, so one test's calls never 429 the next."""
-    from validio.api import limits
+    from validio.api import accounts, limits
 
     for v in vars(limits).values():
         if isinstance(v, limits.RateLimiter):
             v.clear()
+    accounts._tries.clear()  # the login's and the password change's misses
     yield
 
 
