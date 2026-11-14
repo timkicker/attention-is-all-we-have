@@ -51,7 +51,7 @@ export function mayWords(r: Rules): string[] {
   if (!r.saved) return ["Every order needs approval"];
   return [
     `Orders alone up to ${euro(r.aloneUpToCents)}`,
-    `Needs approval up to ${euro(r.approvalUpToCents)}`,
+    `Waiting for you up to ${euro(r.approvalUpToCents)}`,
     `Blocked above ${euro(r.approvalUpToCents)}`,
     ...(r.perWeekCents == null ? [] : [`Per week up to ${euro(r.perWeekCents)}`]),
     r.substitutes === "off" ? "No substitutes" : r.substitutes === "listed" ? "Substitutes from Valio's list" : `Substitutes up to ${r.maxExtraPct} % extra`,

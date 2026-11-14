@@ -2,19 +2,23 @@
 // answer on the phone meanwhile), and again at once after a demo action.
 // Whatever `fn` reads before its first await (a route param) is tracked, so a
 // new param fetches the new thing.
+import { ApiError } from "./api/error";
 import { chrome } from "./chrome.svelte";
 import { poll } from "./poll";
 
 export function live<T>(fn: () => Promise<T>, ms = 2000) {
-  const s = $state({ data: undefined as T | undefined, error: "", loaded: false });
+  // status: the HTTP status of the last failed fetch (404: the thing is not there), 0 when it did not answer
+  const s = $state({ data: undefined as T | undefined, error: "", status: 0, loaded: false });
   $effect(() => {
     void chrome.version;
     return poll(async () => {
       try {
         s.data = await fn();
         s.error = "";
+        s.status = 0;
       } catch (e) {
         s.error = e instanceof Error ? e.message : String(e);
+        s.status = e instanceof ApiError ? e.status : 0;
       } finally {
         s.loaded = true;
       }

@@ -18,7 +18,7 @@
   const id = $derived(page.params.id ?? "");
   const detail = live(() => api.activityItem(id));
   const d = $derived(detail.data?.item.id === id ? detail.data : undefined);
-  const missing = $derived(!d && detail.error.startsWith(`${id} not found`));
+  const missing = $derived(!d && detail.status === 404);
 
   const HELSINKI = "Europe/Helsinki";
   const date = (ymd: string) =>
