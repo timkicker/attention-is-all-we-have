@@ -13,16 +13,17 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome } from "$lib/chrome.svelte";
+  import { Activity, Bot, House, ShieldCheck } from "@lucide/svelte";
 
   let { children } = $props();
 
-  // Four places, flat, as words in the petrol band (the phone's tab bar at the bottom).
-  // The kitchen's name on the right opens Settings.
+  // Four places, flat, as icon and word in the petrol band (the phone's tab bar at the bottom,
+  // icon over word). The same icons as the v2 sidebar. The kitchen's name on the right opens Settings.
   const PAGES = [
-    { href: "/", id: "nav-home", label: "Home", match: (p: string) => p === "/" },
-    { href: "/activity", id: "nav-activity", label: "Activity", match: (p: string) => p.startsWith("/activity") },
-    { href: "/rules", id: "nav-rules", label: "Rules", match: (p: string) => p.startsWith("/rules") },
-    { href: "/agent", id: "nav-agent", label: "Agent", match: (p: string) => p.startsWith("/agent") },
+    { href: "/", id: "nav-home", label: "Home", icon: House, match: (p: string) => p === "/" },
+    { href: "/activity", id: "nav-activity", label: "Activity", icon: Activity, match: (p: string) => p.startsWith("/activity") },
+    { href: "/rules", id: "nav-rules", label: "Rules", icon: ShieldCheck, match: (p: string) => p.startsWith("/rules") },
+    { href: "/agent", id: "nav-agent", label: "Agent", icon: Bot, match: (p: string) => p.startsWith("/agent") },
   ];
 
   const path = $derived(page.url.pathname);
@@ -112,7 +113,7 @@
 </script>
 
 <svelte:head>
-  <title>{chrome.title ? `${chrome.title}, Validio` : "Validio"}</title>
+  <title>Validio</title><!-- one name in the tab on every page; the page says where you are -->
 </svelte:head>
 
 {#snippet waitCount(n: number)}
@@ -145,7 +146,7 @@
         <nav class="topnav" aria-label="Main">
           {#each PAGES as p (p.href)}
             <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
-              {p.label}{#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}
+              <p.icon class="nav-icon" size={16} strokeWidth={1.75} aria-hidden="true" />{p.label}{#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}
             </a>
           {/each}
         </nav>
@@ -172,6 +173,7 @@
     <nav class="dock" aria-label="Main">
       {#each PAGES as p (p.href)}
         <a href={p.href} id="{p.id}-tab" data-testid="{p.id}-tab" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
+          <p.icon class="dock-icon" size={20} strokeWidth={1.75} aria-hidden="true" />
           <span>{p.label}{#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}</span>
         </a>
       {/each}
@@ -252,9 +254,17 @@
   }
 
   /* ---------- the petrol band ---------- */
+  /* The band stays at the top while the page scrolls; the grey demo strip above it scrolls away. */
   .band {
+    position: sticky;
+    top: 0;
+    z-index: 30;
     background: var(--valio-band);
     color: var(--valio-band-fg);
+  }
+  .topnav :global(.nav-icon) {
+    flex: none;
+    opacity: 0.9;
   }
   .band-in {
     display: flex;
@@ -398,11 +408,13 @@
   .dock a {
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     height: 56px;
-    font-size: 13px;
-    line-height: 20px;
+    font-size: 12px;
+    line-height: 16px;
     color: var(--v-muted);
     text-decoration: none;
   }
