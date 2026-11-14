@@ -188,3 +188,14 @@ def test_a_word_the_catalogue_does_not_know_is_refused(catalog):
 def test_without_a_catalogue_only_the_fixed_kinds():
     with pytest.raises(ValueError, match="no known product kind"):
         parse_need("20 kg of parmesan", TODAY)
+
+
+def test_two_words_before_one_and_cream_is_dairy(catalog):
+    from validio.matching.need import kind_of
+
+    n = parse_need("100 litres of whipping cream by Monday", TODAY, catalog)
+    assert n.kind == "whipping cream"
+    cream = parse_need("200 litres of cream by Monday", TODAY, catalog)
+    assert kind_of(cream.kind).net == ("10401",)  # not ice cream, which most names with "cream" are
+    kept, _ = screen(cream, catalog)
+    assert kept and all(p.category.startswith("10401") for p in kept)

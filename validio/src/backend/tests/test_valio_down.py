@@ -90,8 +90,19 @@ def test_approve_while_valio_is_down_places_nothing(ctx, client, holder):  # noq
 
 def test_unrecorded_product_is_a_clean_503(client, holder):  # noqa: F811
     r = client.post("/agent/v1/requests", headers=auth(holder), json={
-        "lines": [{"productId": "463359", "quantity": 10, "unit": "ST"}], "deliverBy": "2026-11-16",
+        "lines": [{"productId": "463361", "quantity": 10, "unit": "ST"}], "deliverBy": "2026-11-16",
         "idempotencyKey": "unrecorded-1"})
     assert r.status_code == 503, r.text
     assert "no recorded" in r.json()["detail"]
     assert client.get("/api/inbox").json() == []
+
+
+def test_a_schedule_line_without_a_date_is_no_delivery_date():
+    """Valio's test API answers some products with one line of 0 and no availableDate."""
+    from validio.valio.models import Availability
+
+    a = Availability.from_api({"productId": "462556", "closingTime": "2026-11-15T17:00:00+0200", "salesBlock": False,
+                               "logisticModel": "Stock",
+                               "scheduleLines": [{"salesBlock": False, "availableAmount": 0.0, "salesUnit": "KG"}]},
+                              "2026-11-14T00:01:02+0200")
+    assert a.lines == [] and not a.deliverable
