@@ -40,12 +40,12 @@ describe('App shell', () => {
     expect(parse(window.location)).toEqual({ view: 'dropped', topic: 'winterwar', as_of: '2012-06-01', anchor: 'fi', section: '', claim: '', run: '', q: '' })
   })
 
-  it('shows an empty state instead of data for views not built yet', async () => {
+  it('opens the atlas from its URL', async () => {
     window.history.replaceState(null, '', '/atlas')
     const { parse, state } = await import('./state')
     Object.assign(state, parse(window.location))
     const w = mount(App)
     await flushPromises()
-    expect(w.text()).toContain('no data yet')
+    expect(w.find('[aria-label="Atlas"]').exists()).toBe(true)
   })
 })
