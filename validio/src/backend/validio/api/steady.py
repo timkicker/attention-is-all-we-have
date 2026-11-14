@@ -44,7 +44,7 @@ from .schemas import ApproveIn
 
 router = APIRouter(prefix="/api/steady", tags=["steady"])
 ACTOR = "validio:steady-order"
-CHEF = "kitchen:chef"
+CHEF = "owner"  # the person who accepts a Steady Order line approves like on any order (O5)
 WEEKDAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 STATE_SCHEMA = "create table if not exists steady_state (order_id text primary key, body text not null)"
 
@@ -480,20 +480,18 @@ def steady_accept(request: Request, order_id: str, product_id: str,
         delivery = date.fromisoformat(state["delivery"])
         try:
             if line.order_id:  # renewed, then Valio's second answer made it wait: approve that order, no second one
-                o, fresh = live.service.get(line.order_id), False
+                o = live.service.get(line.order_id)
             else:
                 order_lines, base = _accept_lines(line)
-                o, fresh = live.service.submit(
+                # a placed order gets this approval entry just before its own, cause before effect
+                note = (f"Owner accepted {_qty_of(line.this_week_quantity, product_id)} for Steady Order {so.id}: "
+                        f"{line.sentence}")
+                o = live.service.submit(
                     mandate=mandate, lines=order_lines, deliver_by=delivery,
                     idempotency_key=f"steady:{so.id}:{delivery}:{product_id}:accept", actor=CHEF, accepted_by=CHEF,
-                    required_claims=diet, split_base_cents=base), True
-            if o["state"] == "waiting":
+                    accept_note=note, required_claims=diet, split_base_cents=base)
+            if o["state"] == "waiting":  # approve writes the approval entry, then the order entry
                 o = live.service.approve(o["id"], CHEF, verb="accepted")  # Valio asked again, a block is never lifted
-            elif o["state"] == "placed" and fresh:  # approve writes its own approval entry, this path needs one
-                live.audit.append(
-                    at=live.service.clock(), actor=CHEF, kind="approval",
-                    sentence=f"Chef accepted {_qty_of(line.this_week_quantity, product_id)} for Steady Order {so.id}: {line.sentence}",
-                    facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=[], order_id=o["id"])
         except ApproveRefused as e:
             # no waiting order is left behind where no page shows it: the line ends blocked with the reason
             o = live.service.reject(o["id"], "validio", reason="approval refused")

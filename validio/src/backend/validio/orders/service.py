@@ -232,10 +232,12 @@ class OrderService:
                request_id: str | None = None, actor: str | None = None,
                stock_override: dict[str, float] | None = None, budget: CallBudget | None = None,
                required_claims: tuple[str, ...] | list[str] | None = None,
-               split_base_cents: int | None = None, accepted_by: str | None = None) -> dict:
+               split_base_cents: int | None = None, accepted_by: str | None = None,
+               accept_note: str | None = None) -> dict:
         """`required_claims` is the line's own diet (a Steady Order line), None means the Spend Pass diet.
         `split_base_cents` marks the order as a split and is what the wanted amount alone would cost.
-        `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without a person"."""
+        `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without a person".
+        `accept_note` is that person's approval sentence, written just before the order entry it caused."""
         if not lines:
             raise OrderError("an order needs at least one line")
         body_hash = _hash({"lines": [(ln.product_id, ln.sales_qty, ln.is_substitute, ln.on_valio_list)
@@ -263,6 +265,8 @@ class OrderService:
             })
             self.store.idem_put(mandate.id, idempotency_key, body_hash, order["id"])
             if state == "placed":
+                if accepted_by is not None and accept_note:
+                    self._log(order, accepted_by, "approval", accept_note, [])
                 self._log(order, actor or mandate.holder, "order", self._placed_sentence(order, None, accepted_by),
                           decision["ruleIds"])
             else:

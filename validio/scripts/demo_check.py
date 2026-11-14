@@ -225,7 +225,7 @@ class Run:
             check(r.status_code == 403, f"scene 4: accept without the code answered {r.status_code}")
         acc = {ln["productId"]: ln for ln in self.post("/api/steady/S-1/lines/471376/accept", headers=chef)["lines"]}
         check(acc["471376"]["result"] == "accepted", f"scene 4: pancakes after accept {acc['471376']['result']}")
-        return "milk renewed alone, parmesan split 177 for 772.49 € (2.5 % more), pancakes waited and the chef " \
+        return "milk renewed alone, parmesan split 177 for 772.49 € (2.5 % more), pancakes waited and the owner " \
                "ordered 27, mozzarella flagged 26 % more per guest"
 
     async def scene5(self):
