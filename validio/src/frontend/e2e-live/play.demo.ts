@@ -14,30 +14,61 @@ test.afterAll(async ({ request }) => {
   await request.post("/api/demo/reset");
 });
 
-test("ask as the kitchen's agent", async ({ page }) => {
+test("ask as the kitchen's agent: a short summary, the log folded", async ({ page }) => {
   await page.goto("/");
-  const ask = async (text: string) => {
+  const open = async () => {
     await page.locator("#page-menu").click();
     await page.getByTestId("menu-ask").click();
-    await page.getByTestId("ask-input").fill(text);
-    await page.getByTestId("ask-send").click();
   };
-  await ask("20 kg of parmesan by Monday");
-  await expect(page.getByTestId("ask-final")).toContainText("Validio could not take the request", { timeout: 60_000 });
-  await expect(page.getByTestId("ask-lines")).toContainText("no recorded");
-  await expect(page.getByTestId("ask-open")).toHaveCount(0);
-  await page.getByRole("button", { name: "Close" }).click();
+  const summary = page.getByTestId("ask-summary");
+  const log = page.getByTestId("ask-log");
+  // One example chip for each ending, each recorded at Valio.
+  const cases = [
+    { chip: "100 litres of whipping cream by Monday", first: "Ordered alone: ", status: "Ordered alone" },
+    { chip: "50 bags of lactose-free mozzarella by Monday", first: "Waits for you: ", status: "Waiting for you" },
+    { chip: "20 kg of butter by Monday", first: "Blocked: ", status: "Blocked" },
+  ];
+  for (const [i, c] of cases.entries()) {
+    await open();
+    await page.getByRole("button", { name: c.chip, exact: true }).click();
+    await expect(page.getByTestId("ask-input")).toHaveValue(c.chip);
+    await page.getByTestId("ask-send").click();
+    await expect(page.getByTestId("ask-open")).toBeVisible({ timeout: 60_000 });
+    const lines = summary.locator("li");
+    await expect(lines).toHaveCount(3);
+    await expect(lines.nth(0)).toHaveText(/^Agent\sasked\sValidio\sfor\s.+\sby\s.+\.$/);
+    await expect(lines.nth(1)).toHaveText(/^Checked\s\d+\sproducts\slive\.$/);
+    await expect(lines.nth(2)).toHaveText(new RegExp(`^${c.first}`));
+    // The raw log is there, folded; nothing of it shows until opened.
+    await expect(log).not.toHaveAttribute("open", "");
+    expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("request_supply");
+    await log.locator("summary").click();
+    await expect(log).toContainText("request_supply");
+    if (process.env.SHOTS && i === 0) {
+      await log.locator("summary").click();
+      await page.screenshot({ path: `${process.env.SHOTS}/play-ask-live-1280-light.png` });
+    }
+    await page.getByTestId("ask-open").click();
+    await expect(page).toHaveURL(new RegExp(`/requests/R-${i + 1}$`));
+    await expect(page.locator("#request-status")).toContainText(c.status);
+  }
 
-  await ask("500 litres of lactose-free milk by Monday");
-  await expect(page.getByTestId("ask-open")).toBeVisible({ timeout: 60_000 });
-  if (process.env.SHOTS) await page.screenshot({ path: `${process.env.SHOTS}/play-ask-live-1280-light.png` });
-  await page.getByTestId("ask-open").click();
-  await expect(page).toHaveURL(/\/requests\/R-\d+$/);
-  await expect(page.locator("#request-status")).toBeVisible();
+  // No request: the agent's last sentence is the one line.
+  await open();
+  await page.getByTestId("ask-input").fill("20 kg of saffron by Monday");
+  await page.getByTestId("ask-send").click();
+  await expect(summary.locator("li")).toHaveCount(1, { timeout: 60_000 });
+  await expect(summary).toHaveText(/^Validio\scould\snot\stake\sthe\srequest,\snothing\sordered\.$/);
+  await expect(page.getByTestId("ask-open")).toHaveCount(0);
+  expect(await page.getByTestId("ask-dialog").innerText()).not.toContain("503");
 });
 
-test("change limits: 422 and 403 inline, then signed", async ({ page }) => {
+test("change limits: 422 and 403 inline, then signed", async ({ page, request }) => {
+  // The split limit is the seeded pass's, read from the API (500 basis points).
+  const pass = await (await request.get("/api/spend-passes/M-1")).json();
+  expect(pass.split.maxExtraCostPct).toBe(5);
   await page.goto("/spend-pass");
+  await expect(page.locator("main")).toContainText(/up\sto\s5\s%\sextra/);
   await page.getByTestId("change-limits").click();
   await page.getByTestId("f-auto").fill("1300");
   await page.getByTestId("f-hard").fill("1200");
