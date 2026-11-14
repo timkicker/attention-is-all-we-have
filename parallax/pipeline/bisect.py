@@ -177,7 +177,8 @@ def gather(topic: str, lang: str, rs: list[dict], budget: int = MAX_EXTRA) -> tu
     """Extra revisions (with text) for one edition: the revision of every bisected edit and the one before it, then
     the same pair for each replacement of a claim (a sentence the edit wrote into the section the claim left) that is
     gone again by the next sample, followed down the chain of replacements until none is left or the budget of
-    fetched revisions is spent. Returns (extra revisions, wordings chased)."""
+    fetched revisions is spent. A followed wording that is new in a revision-before-an-edit sample gets its birth edit
+    bisected the same way. Returns (extra revisions, wordings chased)."""
     meta = meta_order(topic, lang)
     pos = {r["rev_id"]: i for i, r in enumerate(meta)}
     snap_ids = {r["rev_id"] for r in read_jsonl(hist_dir(topic) / f"{lang}.snap.jsonl.gz")}
@@ -205,7 +206,7 @@ def gather(topic: str, lang: str, rs: list[dict], budget: int = MAX_EXTRA) -> tu
 
     claim_rx = [re.compile(r["regex"]) for r in rs]
     followed: set[str] = set()  # the claims and every wording that replaced one of them
-    chased: set[tuple[str, int]] = set()
+    chased: set[tuple] = set()
     for _ in range(MAX_ROUNDS):
         revs = samples(topic, lang, exact=False, extra=list(extra.values()))
         sp = [pos.get(r["rev_id"]) for r in revs]
@@ -222,6 +223,23 @@ def gather(topic: str, lang: str, rs: list[dict], budget: int = MAX_EXTRA) -> tu
             if lv["h"] in followed and d is not None and revs[d]["adjacent"]:
                 died_at.setdefault(d, []).append(_words(lv["text"]))
         added = False
+        # a followed wording first seen at an extra sample that does not follow its predecessor (the revision before
+        # an edit) appeared somewhere since the previous sample: find the edit that wrote it
+        for lv, b, _d in spans:
+            rid = revs[b]["rev_id"]
+            if lv["h"] not in followed or b == 0 or rid not in extra or revs[b]["adjacent"]:
+                continue
+            if (lv["h"], b, "born") in chased or sp[b - 1] is None or sp[b] is None:
+                continue
+            chased.add((lv["h"], b, "born"))
+
+            def present(i: int, h=lv["h"]) -> bool | None:
+                hs = _hashes(lang, meta[i]["rev_id"])
+                return None if hs is None else h in hs
+
+            k = first_lasting_change(present, sp[b - 1], sp[b], want=True, hours=hours)
+            added |= add(k - 1)
+            added |= add(k)
         for lv, b, d in spans:
             if lv["h"] not in followed:
                 if b not in died_at or not any(_jaccard(_words(lv["text"]), ws) >= REPLACES for ws in died_at[b]):
@@ -230,9 +248,9 @@ def gather(topic: str, lang: str, rs: list[dict], budget: int = MAX_EXTRA) -> tu
             if b not in died_at:
                 continue
             transient = d == b + 1 and not revs[d]["adjacent"]
-            if not transient or (lv["h"], b) in chased or sp[b] is None or sp[d] is None:
+            if not transient or (lv["h"], b, "died") in chased or sp[b] is None or sp[d] is None:
                 continue
-            chased.add((lv["h"], b))
+            chased.add((lv["h"], b, "died"))
 
             def probe(i: int, h=lv["h"]) -> bool | None:
                 hs = _hashes(lang, meta[i]["rev_id"])

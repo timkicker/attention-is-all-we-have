@@ -27,6 +27,8 @@ SELECT time_precision, LEFT(text, 70) FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP
 SELECT time_precision, LEFT(text, 90) FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP '2014-09-01 00:00:00' WHERE topic_id='winterwar' AND lang='ru' AND text LIKE 'В тот же день%Майнила%' ORDER BY text;
 -- name: ru_mainila_2010_11_after_bisect
 SELECT time_precision, LEFT(text, 120) FROM claim FOR SYSTEM_TIME AS OF TIMESTAMP '2010-11-01 00:00:00' WHERE topic_id='winterwar' AND lang='ru' AND text LIKE 'В тот же день%Майнила%' ORDER BY text;
+-- name: en_staged_last_life_born
+SELECT born_rev, row_start, time_precision FROM claim FOR SYSTEM_TIME ALL WHERE lang='en' AND text LIKE '%staged the shelling of Mainila%' AND died_rev=309285088;
 -- name: mainila_gap_after_exact_death
 -- An exact death of a Mainila sentence must be followed at once by another Mainila sentence or by what the same edit wrote.
 SELECT COUNT(*) FROM claim FOR SYSTEM_TIME ALL d WHERE d.topic_id='winterwar' AND d.time_precision='exact' AND d.row_end < NOW() AND d.text REGEXP 'Mainil|Майнил|Майніл' AND NOT EXISTS (SELECT 1 FROM claim FOR SYSTEM_TIME ALL r WHERE r.topic_id='winterwar' AND r.lang=d.lang AND r.row_start <= d.row_end AND r.row_end > d.row_end AND (r.born_rev = d.died_rev OR r.text REGEXP 'Mainil|Майнил|Майніл'));
