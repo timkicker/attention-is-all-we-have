@@ -2273,6 +2273,20 @@
             "title": "Maxextrapct",
             "type": "integer"
           },
+          "perWeekCents": {
+            "anyOf": [
+              {
+                "maximum": 10000000.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "all orders under the pass together; with it the two limits above hold per order. null: no weekly limit, the two limits hold for the pass as a whole",
+            "title": "Perweekcents"
+          },
           "substitutes": {
             "description": "off, Valio's list, or Valio's list with a split that may cost up to maxExtraPct more",
             "enum": [
@@ -2310,6 +2324,17 @@
             "title": "Passversion",
             "type": "integer"
           },
+          "perWeekCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perweekcents"
+          },
           "saved": {
             "title": "Saved",
             "type": "boolean"
@@ -2329,6 +2354,7 @@
           "approvalUpToCents",
           "substitutes",
           "maxExtraPct",
+          "perWeekCents",
           "saved",
           "passVersion"
         ],

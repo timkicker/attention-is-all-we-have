@@ -119,7 +119,7 @@ async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
     ctx = get_ctx()
     _errors(ctx.verify)(spendPass)
     try:
-        view = await anyio.to_thread.run_sync(renew, orderId)
+        view = await anyio.to_thread.run_sync(renew, orderId, ctx.rt)  # this account's store
     except HTTPException as e:
         raise ToolError(f"{e.status_code}: {e.detail}") from e
     return view.model_dump(mode="json", by_alias=True, exclude_none=True)

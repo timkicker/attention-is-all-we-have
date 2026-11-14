@@ -204,6 +204,14 @@ class OrderService:
                     "sentence": f"Blocked: Valio has no price for {and_list(_names(quoted, missing))}."}, []
         total = sum(ln["totalCents"] for ln in quoted)
         used = self.used_cents(mandate.id)
+        week = mandate.week_cap_cents
+        if week is not None:
+            if used + total > week:
+                return {"outcome": "block", "ruleIds": ["never-over-week-cap"],
+                        "sentence": f"Blocked: Spend Pass {mandate.id} already placed {eur(used)} this week, this "
+                                    f"order of {eur(total)} would make {eur(used + total)}, over the weekly "
+                                    f"limit of {eur(week)}."}, []
+            used = 0  # the two limits hold per order now, the week is checked above
         per = []
         for ln in quoted:
             ctx = context_for(mandate, ln["_product"], ln["_avail"], total_cents=total, now=self.clock(),

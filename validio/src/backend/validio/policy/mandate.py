@@ -75,6 +75,9 @@ class Mandate:
     diet: tuple[str, ...] | None
     prefer_labels: tuple[str, ...] | None
     disclosed: dict[str, Any]  # only the selectively disclosable fields the agent showed
+    # the Rules' per week limit: when set, the two limits above hold per order and this one for every order
+    # placed under the pass together; when absent (the seeded pass), both limits hold for the pass as a whole
+    week_cap_cents: int | None = None
 
 
 # The only `substitutes` value that lets a listed substitute order alone. Anything else fails closed.
@@ -306,4 +309,5 @@ def _mandate(p: dict[str, Any]) -> Mandate:
         diet=tuple(diet) if diet is not None else None,
         prefer_labels=tuple(labels) if labels is not None else None,
         disclosed=disclosed,
+        week_cap_cents=_ints(p.get("weekCapCents")),
     )

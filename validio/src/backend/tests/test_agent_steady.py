@@ -78,3 +78,29 @@ async def test_renew_calls_the_steady_function_not_the_http_route(ctx, monkeypat
         a = await port.call("renew_steady_order", {"orderId": "S-1"})
     assert "error" not in a, a
     assert a["id"] == "S-1" and a["renewedAt"]
+
+
+@pytest.mark.asyncio
+async def test_renew_works_on_the_account_in_current(ctx, tmp_path, monkeypatch):
+    # demo/ask sets state.current to the account: the tool renews that account's Steady Order, not the local one
+    from validio.agent.holder import DISCLOSE
+    from validio.api import accounts, connect, state, steady
+    from validio.demo import seed
+
+    monkeypatch.setenv("VALIDIO_ACCOUNTS", str(tmp_path / "accounts"))
+    monkeypatch.setenv("VALIDIO_TEMPLATE", str(tmp_path / "template"))
+    reg = accounts.get_accounts()
+    row = reg.create(name="K", email=None, password=None, customer="1", code="246810", is_demo=True)
+    acct = reg.ctx(row["id"])
+    connect.answer_as_demo_agent(acct)  # a new account starts unconnected: connect the server's demo agent
+    connect.allow(acct)
+    token = state.current.set(acct)
+    try:
+        h = Holder(seed.issuance(acct.db_path), connect.demo_key(acct), lambda: tools.nonce(acct), DISCLOSE)
+        async with McpPort(server, spend_pass=h.presentation) as port:
+            a = await port.call("renew_steady_order", {"orderId": "S-1"})
+    finally:
+        state.current.reset(token)
+    assert "error" not in a, a
+    assert steady._load(acct.db_path, "S-1") is not None
+    assert steady._load(ctx.db_path, "S-1") is None

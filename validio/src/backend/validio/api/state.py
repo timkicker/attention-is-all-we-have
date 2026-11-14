@@ -61,13 +61,22 @@ class Ctx:
 
     @property
     def has_code(self) -> bool:
-        return self._code_ok is not None or bool(self.approve_code)
+        from . import codes
+
+        return self._code_ok is not None or bool(self.approve_code) or codes.stored(self.db_path) is not None
 
     def code_ok(self, given: str | None) -> bool:
+        """The account's code (hash in its row); for the local kitchen a code set in Settings (api/codes.py),
+        else VALIDIO_APPROVE_CODE."""
         import hmac
+
+        from . import codes
 
         if self._code_ok is not None:
             return self._code_ok(given or "")
+        own = codes.stored(self.db_path)
+        if own is not None:
+            return codes.matches(own, given)
         return hmac.compare_digest((given or "").encode(), self.approve_code.encode())
 
     # read on every call, so a test or an operator can change them without a restart
