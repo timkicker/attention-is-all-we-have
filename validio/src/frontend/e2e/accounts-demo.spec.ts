@@ -1,8 +1,10 @@
 import { test, expect, type Page, type Locator } from "@playwright/test";
 import { CODE } from "./helpers";
+import { connectMcp, connector } from "../e2e-live/connector";
 
-// "Done means" of the accounts plan, clicked in a fresh browser: try the demo kitchen, connect the demo
-// agent, send the example request and see it ordered, lower the alone limit in Rules with the code, send
+// "Done means" of the accounts plan, clicked in a fresh browser: try the demo kitchen, connect an MCP
+// agent (scripts/connector_check.py on the page's URL, the verification codes compared), let it order
+// milk and see it ordered, lower the alone limit in Rules with the code, send
 // again and see it wait, approve with the code, pause the agent and see the refusal in the ledger, change
 // the diet in Settings. A second browser holds its own demo copy and must not see any of it.
 //
@@ -37,15 +39,18 @@ async function typeCode(page: Page) {
   await page.getByTestId("code-submit").filter({ visible: true }).first().click();
 }
 
-/** Send the example from the Inbox and wait for one more row with `status` than before (the template's
- * own scenes already have rows like it). */
-async function sendExample(page: Page, status: RegExp) {
-  await nav(page, "nav-inbox", /^inbox$/i).click();
+/** The MCP agent orders the milk; the Inbox (or Orders, for a handled one) has one more row with
+ * `status` than before (the template's own scenes already have rows like it). */
+async function agentOrders(page: Page, url: string, status: RegExp, where: "inbox" | "orders") {
+  await (where === "inbox" ? nav(page, "nav-inbox", /^inbox$/i) : nav(page, "nav-orders", /^orders$/i)).click();
   await page.waitForLoadState("networkidle");
   const rows = page.locator("main").getByText(status);
   const before = await rows.count();
-  await el(page, "example-send", "button", /send example request/i).click();
-  await expect(rows).toHaveCount(before + 1, { timeout: 30_000 });
+  connector(url);
+  await expect(async () => {
+    await page.reload();
+    await expect(rows).toHaveCount(before + 1, { timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
 }
 
 test("the demo path, end to end, in a fresh browser", async ({ page, browser }) => {
@@ -69,17 +74,11 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await nav(b, "nav-inbox", /^inbox$/i).click();
   const bInbox = await b.locator("main").innerText();
 
-  // 2 connect the demo agent
-  await agentNav.click();
-  await connect.click();
-  await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/);
-  await el(page, "agent-demo", "button", /connect the demo agent/i).click();
-  await expect(page.getByText(/orders alone up to 1,200\.00 €/i).first()).toBeVisible();
-  await el(page, "consent-allow", "button", /^allow$/i).click();
-  await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
+  // 2 connect an MCP agent: its first call asks, the page and the agent show the same code, Allow
+  const url = await connectMcp(page);
 
-  // 3 the example request, ordered alone
-  await sendExample(page, /ordered alone/i);
+  // 3 the agent orders the milk alone (a handled request is in Orders, not the Inbox)
+  await agentOrders(page, url, /ordered alone/i, "orders");
   await expect(page.getByText("1,010.00 €").first()).toBeVisible();
 
   // 4 lower the alone limit in Rules, with the code
@@ -90,7 +89,7 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await expect(page.getByTestId("rules-alone")).toContainText("800.00 €");
 
   // 5 the same request again waits
-  await sendExample(page, /waiting for you/i);
+  await agentOrders(page, url, /waiting for you/i, "inbox");
   const waiting = page.locator("main").getByText(/waiting for you/i).first();
   // the request waits; it is not blocked (the inbox facts still name the "blocked above" limit)
   await expect(page.locator("main").getByText(/blocked(?! above)/i)).toHaveCount(0);
@@ -106,11 +105,11 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   await typeCode(page);
   await expect(page.getByText(/^(placed|ordered)$/i).filter({ visible: true }).first()).toBeVisible({ timeout: 30_000 });
 
-  // 7 pause, send again, the refusal stands in the ledger
+  // 7 pause, the agent asks again, the refusal stands in the ledger
   await agentNav.click();
   await el(page, "agent-pause", "button", /^pause$/i).click();
   await expect(page.getByTestId("agent-state")).toHaveText(/paused/i);
-  await sendExample(page, /^refused: agent paused/i);
+  connector(url);
   await agentNav.click();
   await el(page, "agent-ledger", "link", /see in ledger/i).click();
   await expect(page).toHaveURL(/\/ledger/);

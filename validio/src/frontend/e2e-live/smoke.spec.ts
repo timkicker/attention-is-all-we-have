@@ -42,9 +42,9 @@ test("the paired agent orders alone, the request opens from Orders", async ({ pa
 });
 
 test("owner approves the swap on the phone", async ({ page, kitchen }) => {
+  // The presenter's stock-out has no control in the app: the demo API sets it.
+  expect((await page.request.post("/api/demo/stock-out")).status()).toBe(200);
   await page.goto("/");
-  await page.getByTestId("page-menu").click();
-  await page.getByTestId("stock-out").click();
   await expect.poll(async () => (await (await page.request.get("/api/demo")).json()).stockOut466375).toBe(true);
   agent(kitchen, 3);
   await page.reload();
