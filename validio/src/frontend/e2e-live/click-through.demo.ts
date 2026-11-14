@@ -83,6 +83,11 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass
   await page.goto("/");
   await needs(page, "inbox-R-1", "spend-pass", "pass-auto", "pass-cap");
   await expect(page.getByTestId("inbox-R-1")).toContainText(/1,?000\slitres of lactose-free milk/); // display words, "1,000"
+  // Grouped by the state the pill shows: nothing under Handled is still working or waiting.
+  const handled = page.locator("section", { has: page.locator("#h-Handled") });
+  for (const pill of await handled.locator(".v-pill").allInnerTexts()) expect(["Ordered alone", "Ordered", "Rejected", "Blocked"]).toContain(pill.trim());
+  if (/Working|Waiting/.test(await page.getByTestId("inbox-R-1").innerText()))
+    await expect(page.locator("section", { has: page.locator("#h-Open") }).getByTestId("inbox-R-1")).toBeVisible();
   await expect(page.getByTestId("pass-auto")).toContainText(money("1,200.00"));
   await expect(page.getByTestId("pass-cap")).toContainText(money("2,000.00"));
   // The request pane keeps one Spend Pass line; the whole pass is its own page.
