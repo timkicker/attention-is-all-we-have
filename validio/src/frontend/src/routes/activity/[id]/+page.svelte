@@ -8,6 +8,7 @@
   import { Check, ChevronRight, X } from "@lucide/svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Section } from "@arlen/ui-kit/components/ui/section";
+  import { agentApi } from "$lib/api/agent";
   import { api, ApiError } from "$lib/api/client";
   import type { ActivityDetail } from "$lib/api/types";
   import { bump } from "$lib/chrome.svelte";
@@ -19,6 +20,9 @@
   const detail = live(() => api.activityItem(id));
   const d = $derived(detail.data?.item.id === id ? detail.data : undefined);
   const missing = $derived(!d && detail.status === 404);
+  // The rules this request was decided under can be older than today's: then the link says which they are now.
+  const rules = live(() => agentApi.rules().then((r) => r.passVersion).catch(() => null));
+  const later = $derived(d && rules.data && rules.data !== d.rule.version ? rules.data : null);
 
   const HELSINKI = "Europe/Helsinki";
   const date = (ymd: string) =>
@@ -203,7 +207,7 @@
       <Section class="v-card">
         <a class="rule-row" href="/rules" id="rule-link" data-testid="rule">
           <span class="rule-text">{nb(d.rule.text)}</span>
-          <span class="rule-ver">Rules, version {d.rule.version}</span>
+          <span class="rule-ver" data-testid="rule-version">{later ? `Rules, version ${d.rule.version} (now ${later})` : `Rules, version ${d.rule.version}`}</span>
           <ChevronRight class="go" size={16} strokeWidth={1.75} aria-hidden="true" />
         </a>
       </Section>

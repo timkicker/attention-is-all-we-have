@@ -34,7 +34,7 @@ test("the three blocks say each rule once, with no summary on top", async ({ pag
   await expect(row(page, "blocked")).toContainText("Above 5,000.00");
   await expect(row(page, "week")).toContainText("Up to 8,000.00");
   await expect(row(page, "must")).toContainText("Lactose-free");
-  await expect(row(page, "never")).toContainText("Nothing left out");
+  await expect(row(page, "never")).toContainText("None");
   await expect(row(page, "allowed")).toContainText("From Valio's list");
   await expect(row(page, "extra")).toContainText("Up to 5 %");
   await expect(row(page, "unlisted")).toContainText("Waiting for you");
@@ -68,6 +68,9 @@ test("one save asks the code once, a wrong code stays inline, the right one make
   await expect(page.getByTestId("rules-version")).toContainText("Version 3");
   await expect(row(page, "alone")).toContainText("Up to 1,500.00");
   await expect(row(page, "never")).toContainText("Peanuts");
+  // A request decided before the save keeps its version and says which one holds now.
+  await page.goto("/activity/R-2");
+  await expect(page.getByTestId("rule-version")).toHaveText("Rules, version 2 (now 3)");
 });
 
 test("problems show under their own field and nothing is saved", async ({ page }) => {
@@ -128,7 +131,7 @@ test("a kitchen made here sets its first rules", async ({ page }) => {
   await expect(row(page, "alone")).toContainText("Up to 800.00");
   await expect(row(page, "waiting")).toContainText("Up to 3,000.00");
   await expect(row(page, "must")).toContainText("Vegan");
-  await expect(row(page, "never")).toContainText("Nothing left out");
+  await expect(row(page, "never")).toContainText("None");
 });
 
 test("phone: the fields sit under their labels and the page does not scroll sideways", async ({ page }) => {

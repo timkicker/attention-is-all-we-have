@@ -51,7 +51,7 @@
     </ListSection>
     <ListSection id="diet" title="Diet and allergens">
       <ListRow id="rule-must" label="Must be" value={r.diet?.mustBe.length ? list(r.diet.mustBe) : "Anything"} />
-      <ListRow id="rule-never" label="Never" value={r.diet?.never.length ? list(r.diet.never) : "Nothing left out"} />
+      <ListRow id="rule-never" label="Never" value={r.diet?.never.length ? list(r.diet.never) : "None"} />
     </ListSection>
     <ListSection id="substitutes" title="Substitutes">
       {#if allowedOf(r) === "off"}
