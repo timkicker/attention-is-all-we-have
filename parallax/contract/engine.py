@@ -142,13 +142,15 @@ class FakeEngine:
                 out.append(Verdict(h=c.h, label="same" if normalise(claim) == normalise(c.text) else "different"))
         return out
 
-    def judge_or_guess(self, claim: str, claim_lang: str, candidates: list[Candidate]) -> list[tuple[Verdict, str]]:
+    def judge_or_guess(
+        self, claim: str, claim_lang: str, candidates: list[Candidate], strict: bool = False
+    ) -> list[tuple[Verdict, str]]:
         """(verdict, model) per candidate: the fixture verdict with model_id where one exists, else
         guess_verdicts() with FAKE_GUESS_MODEL. Used by the any-article ingest; judge() keeps its old fallback."""
         table = _fixture("judge")
         ch = claim_hash(claim)
         known = self.judge(claim, claim_lang, candidates)
-        guessed = guess_verdicts(claim, candidates)
+        guessed = guess_verdicts(claim, candidates, strict)
         return [
             (k, self.model_id) if f"{ch}:{c.h}" in table else (g, FAKE_GUESS_MODEL)
             for c, k, g in zip(candidates, known, guessed, strict=True)
@@ -203,8 +205,12 @@ def sketch_embed(texts: list[str]) -> list[list[float]]:
     return out
 
 
-def guess_verdicts(claim: str, candidates: list[Candidate]) -> list[Verdict]:
-    """A fake judge for pairs no fixture knows: shared numbers and names decide same, partial or different."""
+def guess_verdicts(claim: str, candidates: list[Candidate], strict: bool = False) -> list[Verdict]:
+    """A fake judge for pairs no fixture knows: shared numbers and names decide same, partial or different.
+
+    strict (Check an AI answer, where partial reads "says"): a claim number the candidate lacks or changes means
+    different, and partial needs at least 2 shared numbers or names. The ingest keeps the loose rule, where a
+    differing number is the difference Compare shows."""
     nums_a, names_a = set(_numbers(claim)), _names(claim)
     out = []
     for c in candidates:
@@ -216,9 +222,11 @@ def guess_verdicts(claim: str, candidates: list[Candidate]) -> list[Verdict]:
         overlap = len(a & b) / len(a | b) if a | b else 0.0
         only_a, only_b = sorted(nums_a - nums_b), sorted(nums_b - nums_a)
         numbers = list(zip(only_a, only_b, strict=False))[:2] if nums_a & nums_b or names_a & names_b else []
-        if overlap >= 0.5 and not only_a and not only_b:
+        if strict and only_a:  # a number of the claim is missing or differs: this sentence cannot back it
+            label, numbers = "different", []
+        elif overlap >= 0.5 and not only_a and not only_b:
             label = "same"
-        elif overlap >= 0.2:
+        elif overlap >= 0.2 and (not strict or len(a & b) >= 2):
             label = "partial"
         else:
             label, numbers = "different", []

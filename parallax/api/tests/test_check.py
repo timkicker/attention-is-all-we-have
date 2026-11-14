@@ -172,31 +172,71 @@ def test_reworded_sentence_still_says():
 
 
 def _ollama_up() -> bool:
+    """ollama answers at EMBED_URL and has bge-m3 pulled."""
     import requests
 
     try:
-        return requests.get(f"{os.environ.get('EMBED_URL') or 'http://127.0.0.1:11434'}/api/tags", timeout=2).ok
-    except requests.RequestException:
+        r = requests.get(f"{os.environ.get('EMBED_URL') or 'http://127.0.0.1:11434'}/api/tags", timeout=2)
+        return r.ok and any(m["name"].split(":")[0] == "bge-m3" for m in r.json().get("models", []))
+    except (requests.RequestException, ValueError):
         return False
 
 
-@pytest.mark.parametrize("backend", ["fake", "ollama"])
-def test_pasted_gloss_is_found(client, monkeypatch, backend):
-    """Pasted text the fixtures never saw (the English gloss of a Finnish sentence) is embedded with EMBED_BACKEND
-    and judged by the similarity guess, so at least one edition backs it, under the guess model's own name."""
+def _gloss() -> str:
+    from api import sqllog
+
+    return sqllog.run("SELECT text_en FROM gloss WHERE lang = 'fi' AND h = '8519fbaf22d33984'")[0]["text_en"]
+
+
+def _check(client, text: str) -> dict:
+    r = client.post("/api/check", json={"text": text})
+    assert r.status_code == 200, r.text
+    return r.json()["claims"][0]["per_lang"]
+
+
+def _backed(per_lang: dict) -> dict:
+    return {lang: v for lang, v in per_lang.items() if v["label"] in ("says", "stopped_saying")}
+
+
+@pytest.fixture
+def bge(monkeypatch):
+    if not _ollama_up():
+        pytest.skip("no ollama with bge-m3")
+    monkeypatch.setenv("EMBED_BACKEND", "ollama")
+
+
+def test_pasted_gloss_is_found(client, bge):
+    """Pasted text the fixtures never saw (the English gloss of a Finnish sentence) is embedded with bge-m3 and
+    judged by the similarity guess, so at least one edition backs it, under the guess model's own name."""
     from contract.engine import FAKE_GUESS_MODEL, FakeEngine
     from contract.engine import _fixture as fixture
 
-    if backend == "ollama" and not _ollama_up():
-        pytest.skip("no ollama with bge-m3")
-    monkeypatch.setenv("EMBED_BACKEND", backend)
-    from api import sqllog
-
-    gloss = sqllog.run("SELECT text_en FROM gloss WHERE lang = 'fi' AND h = '8519fbaf22d33984'")[0]["text_en"]
+    gloss = _gloss()
     assert FakeEngine().split_claims(gloss) == [gloss] and claim_hash(gloss) not in fixture("embed")
-    r = client.post("/api/check", json={"text": gloss})
-    assert r.status_code == 200, r.text
-    per_lang = r.json()["claims"][0]["per_lang"]
-    backed = {lang: v for lang, v in per_lang.items() if v["label"] in ("says", "stopped_saying")}
-    assert backed, {lang: v["label"] for lang, v in per_lang.items()}
+    backed = _backed(_check(client, gloss))
+    assert backed
     assert {e["verdict"]["model"] for v in backed.values() for e in v["evidence"]} == {FAKE_GUESS_MODEL}
+
+
+def test_pasted_gloss_with_a_wrong_year_is_not_said(client, bge):
+    wrong = _gloss().replace("1939", "1941")
+    assert wrong != _gloss()
+    per_lang = _check(client, wrong)
+    assert not [lang for lang, v in per_lang.items() if v["label"] == "says"], per_lang
+
+
+def test_sketch_vectors_keep_the_old_fallback(client, monkeypatch):
+    """EMBED_BACKEND=fake: sketch vectors cannot be compared with the stored bge-m3 vectors, so a pasted claim gets
+    the old random vector and exact-text judge and no edition backs the gloss."""
+    monkeypatch.setenv("EMBED_BACKEND", "fake")
+    per_lang = _check(client, _gloss())
+    assert not _backed(per_lang)
+    assert all(e["verdict"]["model"] == "fake-judge" for v in per_lang.values() for e in v["evidence"])
+
+
+def test_embedder_down_is_503(client, monkeypatch):
+    monkeypatch.setenv("EMBED_BACKEND", "ollama")
+    monkeypatch.setenv("EMBED_URL", "http://127.0.0.1:9")  # nothing listens on the discard port
+    r = client.post("/api/check", json={"text": "A sentence nobody recorded, about 1939 and Mannerheim."})
+    assert r.status_code == 503 and r.json()["error"]["code"] == "embed_unavailable"
+    assert not schema_errors("/api/check", r.json(), method="post", status="503")
