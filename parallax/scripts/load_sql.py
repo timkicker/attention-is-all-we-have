@@ -2,10 +2,13 @@
 
 Statements are split on a semicolon at the end of a line, which holds for schema.sql and the seeds.
 --reset drops every table in the database first. Gzipped files are read directly.
+A file named seed-NAME.sql[.gz] records NAME as stat `seed`, which /api/health reports.
 """
 
 import argparse
 import gzip
+import json
+import re
 import sys
 from pathlib import Path
 
@@ -46,6 +49,12 @@ def main() -> None:
                 c.execute(stmt)
                 n += 1
             print(f"{path}: {n} statements")
+            if m := re.fullmatch(r"seed-([\w.]+)\.sql(\.gz)?", path.name):
+                c.execute(
+                    "INSERT INTO stat (k, v, computed_at) VALUES ('seed', %s, UTC_TIMESTAMP(6)) "
+                    "ON DUPLICATE KEY UPDATE v=VALUES(v), computed_at=VALUES(computed_at)",
+                    (json.dumps(m.group(1)),),
+                )
 
 
 if __name__ == "__main__":

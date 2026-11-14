@@ -13,6 +13,12 @@ def test_health(client):
     assert body["counts"]["verdict"] == 12
 
 
+def test_health_reports_the_loaded_seed(client, monkeypatch):
+    # conftest loads contract/fixtures/seed-mini.sql, so the database says mini whatever .env says
+    monkeypatch.setenv("SEED", "v1")
+    assert client.get("/api/health").json()["seed"] == "mini"
+
+
 def test_every_response_carries_timed_sql(client):
     body = client.get("/api/health").json()
     st = body["sql"][0]
