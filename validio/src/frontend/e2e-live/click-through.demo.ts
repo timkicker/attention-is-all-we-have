@@ -259,7 +259,7 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   const mozz = page.getByTestId("line-466375");
   await expect(mozz).toContainText("26 %");
   await expect(mozz).toContainText("98");
-  await expect(mozz).toContainText("none in stock at Valio");
+  await expect(mozz).toContainText("Not renewed: none in stock at Valio. Also 26 % more per guest than usual.");
   await expect(page.getByTestId("accept-466375")).toHaveCount(0);
 });
 
