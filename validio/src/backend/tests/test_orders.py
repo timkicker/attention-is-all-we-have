@@ -142,13 +142,13 @@ def test_approve_places_after_requote(svc, mandate):
 
 
 def test_cannot_approve_placed_order(svc, mandate):
+    auto = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k7")  # first: M-1 is empty
+    with pytest.raises(OrderStateError):
+        svc.approve(auto["id"], approver="owner")
     o = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="k6")
     svc.approve(o["id"], approver="owner")
     with pytest.raises(OrderStateError):
         svc.approve(o["id"], approver="owner")
-    auto = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="k7")
-    with pytest.raises(OrderStateError):
-        svc.approve(auto["id"], approver="owner")
 
 
 def test_approve_requotes_and_refuses_price_rise(svc, mandate):
@@ -255,3 +255,37 @@ def test_short_line_keeps_valio_answer_for_the_hard_lines(svc, mandate):
                    required_claims=())
     assert o["state"] == "waiting"
     assert "Valio does not confirm enough stock" in o["decision"]["sentence"]
+
+
+# review 3 M1: the limits of a Spend Pass hold across its orders, not per order
+
+def test_running_total_makes_the_second_order_wait(svc, mandate):
+    assert svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="r1")["state"] == "placed"
+    o = svc.submit(mandate=mandate, lines=milk(300), deliver_by=MON, idempotency_key="r2")
+    assert o["totalCents"] == 30300  # the order itself stays what it costs
+    assert o["state"] == "waiting", o["decision"]
+    s = o["decision"]["sentence"]
+    assert "Spend Pass M-1 already placed 1,010.00 €" in s and "1,313.00 €" in s
+
+
+def test_running_total_over_the_hard_cap_blocks(svc, mandate):
+    svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="r1")
+    o = svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="r2")
+    assert o["state"] == "blocked" and "never-over-hard-cap" in o["decision"]["ruleIds"]
+
+
+def test_running_total_counts_placed_orders_of_this_pass_only(svc, mandate):
+    assert svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="r0")["state"] == "waiting"
+    assert svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="r1")["state"] == "placed"
+    other = replace(mandate, id="M-2")
+    assert svc.submit(mandate=other, lines=milk(300), deliver_by=MON, idempotency_key="r2")["state"] == "placed"
+
+
+def test_approve_counts_what_was_placed_meanwhile(svc, mandate):
+    swap = svc.submit(mandate=mandate, lines=mozz_swap(), deliver_by=MON, idempotency_key="r0")  # 196.60 waits
+    svc.submit(mandate=mandate, lines=milk(), deliver_by=MON, idempotency_key="r1")  # 1010.00 placed
+    big = svc.submit(mandate=mandate, lines=milk(800), deliver_by=MON, idempotency_key="r2")  # 1818.00 waits
+    assert svc.approve(big["id"], "owner")["state"] == "placed"
+    with pytest.raises(ApproveRefused, match="hard cap"):  # 1818.00 + 196.60 is over 2000.00
+        svc.approve(swap["id"], "owner")
+    assert svc.get(swap["id"])["state"] == "waiting"

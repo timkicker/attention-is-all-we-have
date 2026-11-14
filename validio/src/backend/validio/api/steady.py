@@ -17,7 +17,7 @@ import json
 import sqlite3
 import threading
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Annotated
 
@@ -31,6 +31,7 @@ from ..config import load_settings
 from ..demo import seed
 from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
 from ..orders.store import Store
+from ..policy.mandate import Mandate
 from ..standing.drift import unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
@@ -90,6 +91,16 @@ class SteadyLineOut(Camel):
     rule_ids: list[str] | None = None
 
 
+class SteadyPassOut(Camel):
+    """The Steady Orders' own weekly Spend Pass and what its placed orders already used (review 3 M1)."""
+    id: str
+    valid_from: str
+    valid_to: str
+    auto_limit_cents: int | None = None
+    hard_cap_cents: int | None = None
+    used_cents: int
+
+
 class SteadyOrderOut(Camel):
     id: str
     name: str
@@ -99,6 +110,7 @@ class SteadyOrderOut(Camel):
     simulated_history: bool
     renewed_at: str | None = None
     lines: list[SteadyLineOut]
+    steady_pass: SteadyPassOut | None = None  # filled on every answer, never stored with the view
 
 
 class SteadyOrderSummaryOut(Camel):
@@ -293,12 +305,25 @@ def _accept_lines(line: SteadyLineOut) -> tuple[list[LineIn], int | None]:
     return [LineIn(line.product_id, line.this_week_quantity)], None
 
 
+def _pass(path) -> Mandate:
+    return seed.spend_pass(path, now=runtime.settings.now, pass_id=seed.STEADY_PASS_ID)
+
+
+def _with_pass(view: SteadyOrderOut, live) -> SteadyOrderOut:
+    m = _pass(live.path)
+    tz = runtime.settings.now.tzinfo
+    return view.model_copy(update={"steady_pass": SteadyPassOut(
+        id=m.id, valid_from=datetime.fromtimestamp(m.not_before, tz).isoformat(),
+        valid_to=datetime.fromtimestamp(m.expires, tz).isoformat(), auto_limit_cents=m.auto_limit_cents,
+        hard_cap_cents=m.hard_cap_cents, used_cents=live.service.used_cents(m.id))})
+
+
 def _view(state: dict) -> SteadyOrderOut:
     return SteadyOrderOut.model_validate(state["view"])
 
 
 def _dump(view: SteadyOrderOut) -> dict:
-    return view.model_dump(by_alias=False)
+    return view.model_dump(by_alias=False, exclude={"steady_pass"})
 
 
 @router.get("", response_model=list[SteadyOrderSummaryOut], response_model_exclude_none=True)
@@ -319,7 +344,7 @@ def steady_order(order_id: str):
         live = runtime.live()
         so, h = _get_order(order_id)
         state = _load(live.path, so.id)
-        return _view(state) if state else _pending(so, h)
+        return _with_pass(_view(state) if state else _pending(so, h), live)
 
 
 @router.post("/{order_id}/renew", response_model=SteadyOrderOut, response_model_exclude_none=True)
@@ -331,9 +356,9 @@ def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | No
         so, h = _get_order(order_id)
         state = _load(live.path, so.id)
         if state:  # already renewed this week: nothing is ordered twice
-            return _view(state)
+            return _with_pass(_view(state), live)
         s = runtime.settings
-        mandate = seed.spend_pass(live.path, now=s.now)
+        mandate = _pass(live.path)
         renewal = run(so, h, runtime.catalog, runtime.valio, mandate, s.now, stockout=seed.stockout(live.path))
         pending = {ln.product_id: ln for ln in _pending(so, h).lines}
         diet = {ln.product_id: ln.diet for ln in so.lines}
@@ -361,7 +386,7 @@ def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | No
             out.append(line)
         view = _pending(so, h).model_copy(update={"lines": out, "renewed_at": s.now.isoformat()})
         _save(live.path, so.id, {"view": _dump(view), "delivery": renewal.delivery.isoformat()})
-        return view
+        return _with_pass(view, live)
 
 
 @router.post("/{order_id}/lines/{product_id}/accept", response_model=SteadyOrderOut,
@@ -385,7 +410,7 @@ def steady_accept(request: Request, order_id: str, product_id: str,
             raise HTTPException(409, f"Line {product_id} is {line.result}, only a waiting or flagged line "
                                      "can be accepted.")
         s = runtime.settings
-        mandate = seed.spend_pass(live.path, now=s.now)
+        mandate = _pass(live.path)
         diet = {ln.product_id: ln.diet for ln in so.lines}[product_id]
         delivery = date.fromisoformat(state["delivery"])
         try:
@@ -418,5 +443,5 @@ def steady_accept(request: Request, order_id: str, product_id: str,
                                              "order_id": o["id"], "total_cents": o["totalCents"]})
         view = view.model_copy(update={"lines": lines})
         _save(live.path, so.id, {**state, "view": _dump(view)})
-        return view
+        return _with_pass(view, live)
 

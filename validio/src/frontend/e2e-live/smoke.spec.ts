@@ -28,12 +28,12 @@ test("app and API from one process", async ({ page, request }) => {
   await expect(page.locator("#inbox-R-1")).toContainText("Ordered alone");
   await page.locator("#inbox-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1000 ST of 464306");
+  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs of Valio");
   await expect(page.locator("#live-checked")).toContainText("Checked 12 products live");
   await expect(page.locator("#option-464306")).toContainText("1,010.00");
   await expect(page.locator("#option-462921")).toContainText("hard cap");
   await page.reload(); // served by FastAPI's fallback
-  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1000 ST of 464306");
+  await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs of Valio");
 });
 
 test("owner approves the swap on the phone", async ({ page }) => {
@@ -50,6 +50,9 @@ test("owner approves the swap on the phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.locator("#open-approve").click();
   await page.locator("#approve").click();
+  // the app asks for the code; this server has none set and takes any code from this machine
+  await page.getByTestId("code-input").fill("246810");
+  await page.getByTestId("code-submit").click();
   await expect(page.locator("#order-steps")).toContainText("Placed at Valio");
 
   await page.setViewportSize({ width: 1280, height: 900 });
