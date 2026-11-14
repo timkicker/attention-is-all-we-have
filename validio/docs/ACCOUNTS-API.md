@@ -27,7 +27,7 @@ Account = {
   deliveryAddress: string,    // "" until set
   isDemo: boolean,
   demoCode?: "246810",        // only on demo copies: the approval code, shown in the demo bar on purpose
-  setup: {                    // the Inbox checklist; a fresh demo copy has kitchen and rules true
+  setup: {                    // the Home checklist; a fresh demo copy has kitchen and rules true
     kitchen: boolean,         // name and delivery address saved
     rules: boolean,           // Rules saved once (until then every order needs approval)
     agent: boolean,           // an agent is connected (active or paused)
