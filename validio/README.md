@@ -6,7 +6,16 @@ The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-valid
 
 ## Setup
 
-You need Python 3.12 with uv, Node 20 or newer (npm warns that `@axe-core/playwright` wants 22.12, the setup works on 20 anyway), the Valio API key and the three Valio data files. Every command runs from `validio/`.
+For a quick look without key or data you only need Node 20 or newer. From `validio/`:
+
+```sh
+cd src/frontend && npm ci && npm run kit && cd ../..
+make demo-mock                   # builds the web app and serves it on http://127.0.0.1:8411
+```
+
+On a fresh clone this was up in about 25 seconds. The web app then runs on answers recorded from the backend, as its page menu says. The Inbox shows the milk request R-1 as "Ordered alone" at 1,010.00 €. Nothing in it is live and the agent cannot talk to it.
+
+For the full demo you need Python 3.12 with uv, Node 20 or newer (npm warns that `@axe-core/playwright` wants 22.12, the setup works on 20 anyway), the Valio API key and the three Valio data files. Every command runs from `validio/`.
 
 The three files are `valio_aimo_junction26_product_data.json`, `valio_aimo_junction26_delivery_reliability.csv` and `valio_aimo_junction26_carbon_footprint.csv`. Download them from the challenge's data page in the Junction resource portal (you have to log in) and put them into one folder. The API key is in the Valio Aimo challenge text.
 
@@ -20,7 +29,7 @@ make seed                        # demo state: kitchen hotel-espoo, Spend Pass M
 make demo                        # builds the web app, seeds and serves both on http://127.0.0.1:8410
 ```
 
-`make setup` checks the files against their sha256 before anything is indexed and stops on a wrong one. `make record` is the only step that goes to the network. It talks to Valio's test API only. Everything after it replays the stored answers, so without it the server fails with "run make record first".
+`make setup` checks the files against their sha256 before anything is indexed and stops on a wrong one. `make record` is the only step that goes to the network. It talks to Valio's test API only. Everything after it replays the stored answers. Without them `make seed` and `make demo` still run, but the Inbox stays empty. `make agent` then ends with "Validio could not take the request, nothing ordered." followed by the reason, which ends in "run make record first".
 
 After that:
 
