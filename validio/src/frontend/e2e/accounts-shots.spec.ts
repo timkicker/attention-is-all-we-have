@@ -37,16 +37,23 @@ for (const v of VIEWS) {
     await demoLogin(page);
     for (const [name, path] of [
       ["inbox", "/"],
-      ["orders", "/orders"],
+      ["request", "/requests/R-1"],
       ["ledger", "/ledger"],
     ] as const) {
       await go(path);
       await page.waitForLoadState("networkidle");
       await shoot(name);
     }
-    if (v.width === 390) {
-      await page.locator("#page-menu").first().click().catch(() => {});
-      await shoot("menu");
+    await go("/");
+    await page.locator("#page-menu").first().click();
+    await shoot("menu");
+    await page.getByTestId("stock-out").click();
+    await expect(page.getByTestId("inbox-R-2")).toBeVisible();
+    await shoot("inbox-waiting");
+    if (v.width === 1280) {
+      await page.getByTestId("nav-orders").focus();
+      await page.setViewportSize({ width: 900, height: 900 });
+      await shoot("rail");
     }
   });
 }

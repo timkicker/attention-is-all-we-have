@@ -30,7 +30,7 @@ test("scene 4: steady order renews with flags", async ({ page }) => {
   await expect(page.getByTestId("line-471376")).toContainText("Accepted");
   await expect(page.getByTestId("accept-471376")).toHaveCount(0);
   await expect(page.getByTestId("code-input")).toHaveCount(0);
-  await page.getByTestId("nav-open-ledger").click();
+  await page.getByTestId("nav-ledger").click();
   await expect(page.getByTestId("ledger")).toContainText("Owner accepted 27 cartons of vegan pancake 30 g");
   await expect(page.getByTestId("chain-status")).toContainText("Verified");
 });

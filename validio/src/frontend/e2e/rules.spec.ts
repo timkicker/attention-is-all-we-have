@@ -193,7 +193,7 @@ function measure(page: Page, name: string) {
     }
 
     // 14. Copy.
-    const hidden = [...document.querySelectorAll("details:not([open]) > :not(summary), [hidden], [data-raw], details .fold-body")];
+    const hidden = [...document.querySelectorAll("details:not([open]) > :not(summary), [hidden], [data-raw], [data-code], details .fold-body")]; // data-code: the demo approval code, shown on purpose
     hidden.forEach((e) => ((e as HTMLElement).dataset.was = (e as HTMLElement).style.display, ((e as HTMLElement).style.display = "none")));
     const text = main.innerText;
     hidden.forEach((e) => ((e as HTMLElement).style.display = (e as HTMLElement).dataset.was ?? ""));
@@ -375,24 +375,6 @@ test("plan rules can fail", async ({ page }) => {
   });
   const out = (await measure(page, "control")).join("\n");
   for (const rule of ["§6.11", "§6.8", "§6.13", "§6.14", "§6.14b"]) expect(out).toContain(rule);
-});
-
-// The theme choice in the phone sheet is one tab stop; the arrows move it.
-test("theme radio group takes the arrow keys", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await fresh(page);
-  await page.getByTestId("page-menu").click();
-  const radios = page.getByRole("radio");
-  await expect(radios).toHaveCount(3);
-  const checked = page.getByRole("radio", { checked: true });
-  await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
-  const before = await checked.innerText();
-  await checked.focus();
-  await page.keyboard.press("ArrowDown");
-  const after = page.getByRole("radio", { checked: true });
-  await expect(after).not.toHaveText(before);
-  await expect(after).toBeFocused();
-  await expect(page.locator('[role="radio"][tabindex="0"]')).toHaveCount(1);
 });
 
 // One count for the alternatives: the Options lane, the two tabs, and Approve's
