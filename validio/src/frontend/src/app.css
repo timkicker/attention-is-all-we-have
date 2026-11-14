@@ -61,6 +61,7 @@
 
 /* ---------- base ---------- */
 html {
+  scroll-padding-top: 72px; /* an anchor lands below the sticky band */
   scrollbar-gutter: stable;
   background: var(--v-ground);
   font-family: var(--v-sans);
