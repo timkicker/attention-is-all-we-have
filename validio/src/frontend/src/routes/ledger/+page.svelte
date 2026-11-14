@@ -2,6 +2,9 @@
   /// The open ledger as halbat's feed: entries in chain order under the
   /// request or steady order they belong to. Each entry is a closed fold
   /// holding the backend's sentence, the rules, the disclosed fields and the hashes.
+  import { page } from "$app/state";
+  import { replaceState } from "$app/navigation";
+  import { Chip } from "@arlen/ui-kit/components/ui/chip";
   import { api } from "$lib/api/client";
   import { live } from "$lib/live.svelte";
   import { ACTOR, ledgerGroups } from "$lib/v";
@@ -19,7 +22,18 @@
     inbox.data?.find((i) => i.id === id)?.displayName ??
     steady.data?.find((s) => s.id === id)?.name ??
     "Other entries";
-  const groups = $derived(ledgerGroups(ledger.data?.entries ?? []));
+  // "See in ledger" on the Agent page lands here with ?pass=<passId>: that agent's entries only.
+  const passId = page.url.searchParams.get("pass");
+  let onlyPass = $state(!!passId);
+  function pick(only: boolean) {
+    onlyPass = only;
+    const url = new URL(page.url);
+    if (only && passId) url.searchParams.set("pass", passId);
+    else url.searchParams.delete("pass");
+    replaceState(url, {});
+  }
+  const entries = $derived((ledger.data?.entries ?? []).filter((e) => !onlyPass || e.spendPassId === passId));
+  const groups = $derived(ledgerGroups(entries));
   const chain = $derived(ledger.data?.chain);
 </script>
 
@@ -39,9 +53,16 @@
     <VState kind="error" title="Validio is not reachable." detail={ledger.error} onretry={() => location.reload()} />
   {:else if !ledger.loaded}
     <VState kind="loading" rows={4} />
-  {:else if !groups.length}
+  {:else if !ledger.data?.entries?.length}
     <VState kind="empty" title="Nothing recorded yet." />
   {:else}
+    {#if passId}
+      <div class="chips" role="group" aria-label="Show">
+        <Chip id="ledger-all" label="All" pressed={!onlyPass} onclick={() => pick(false)} />
+        <Chip id="ledger-agent" label="Agent" pressed={onlyPass} onclick={() => pick(true)} />
+      </div>
+    {/if}
+    {#if !groups.length}<VState kind="empty" title="None." />{/if}
     <div data-testid="ledger" id="ledger">
       {#each groups as g (g.id)}
         <!-- The id once after the title ("Spend Pass M-1"); the demo's own group has no id to show. -->
@@ -76,6 +97,19 @@
 </div>
 
 <style>
+  .chips {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .chips :global(.chip) {
+    height: 28px;
+  }
+  @media (max-width: 760px) {
+    .chips :global(.chip) {
+      height: 44px;
+    }
+  }
   .chain {
     display: inline-flex;
     align-items: center;

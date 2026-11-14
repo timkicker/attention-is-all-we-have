@@ -4,10 +4,13 @@ import { fresh } from "./helpers";
 // Scene 2: the milk is ranked and ordered alone; the ledger chain verifies.
 test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await fresh(page);
-  await expect(page.getByTestId("inbox-R-1")).toContainText("Ordered alone");
   await expect(page.getByTestId("pass-auto")).toContainText("1,200.00");
+  // handled requests live on Orders, the Inbox keeps only what is open
+  await expect(page.getByTestId("inbox-R-1")).toHaveCount(0);
+  await page.goto("/orders");
+  await expect(page.getByTestId("order-r-R-1")).toContainText("Ordered alone");
 
-  await page.getByTestId("inbox-R-1").click();
+  await page.getByTestId("order-r-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-title")).toHaveText("1,000 litres of lactose-free milk");
   await expect(page.getByTestId("request-status")).toContainText("Ordered alone");
