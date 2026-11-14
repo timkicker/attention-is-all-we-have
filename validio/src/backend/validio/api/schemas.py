@@ -165,7 +165,8 @@ class RankedOptionView(Model):
     why_reasons: list[str] | None = Field(None, description="the reasons without the one shortText already says")
     unit_price_text: str | None = Field(None, description="price per litre or kilo when the pack size is known: "
                                                           "\"1.01 € per l\"")
-    delivery_date: str | None = Field(None, description="Valio's earliest delivery date, ISO")
+    delivery_date: str | None = Field(None, description="the day the order arrives, ISO: the day asked for, or Valio's "
+                                                        "first day with stock when that is later")
     delivery_text: str | None = Field(None, description="\"Arrives Mon 16 Nov\"")
     cutoff_text: str | None = Field(None, description="\"Order by Sun 15 Nov 12:00\", Valio's order cut-off")
     reliability_text: str | None = Field(None, description="\"Delivered in full 99 of 100 times\"")
