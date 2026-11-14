@@ -23,6 +23,7 @@ def labels(run, idx):
 def test_matches_contract(run):
     assert not schema_errors("/api/check", run, method="post")
     assert run["source"] == "live" and run["engine"] == "fake"
+    assert run["text"] == ANSWER  # the whole answer, for "Show the whole answer"
     assert [c["text"] for c in run["claims"]][0].startswith("The Shelling of Mainila on 26 November 1939 was staged")
 
 

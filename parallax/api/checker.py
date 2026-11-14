@@ -167,6 +167,7 @@ def load_run(run_id: str, as_of: dt.datetime | None = None) -> dict | None:
         "answer_model": head["answer_model"],
         "answer_date": head["answer_date"].isoformat() if head["answer_date"] else None,
         "question": head["question"],
+        "text": head["answer"],
         "as_of": iso(at),
         "engine": head["engine"],
         "claims": claims,
