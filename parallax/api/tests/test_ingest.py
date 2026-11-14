@@ -93,7 +93,11 @@ def test_ingest_end_to_end(offline):
     states = {e["lang"]: (e["state"], e["error"]) for e in d["editions"]}
     assert states["fi"] == ("waiting", None) and states["ru"] == ("failed", "no_article")
     again = offline.post("/api/ingest", json={"qid": QID}).json()  # idempotent
-    assert again["state"] == "queued"
+    assert again["state"] == "queued" and again["since"] is None
+    narrowed = offline.post("/api/ingest", json={"qid": QID, "since": "2021-01-01"}).json()  # "Faster" link
+    assert narrowed["state"] == "queued" and narrowed["since"] == "2021-01-01"
+    offline.post("/api/ingest", json={"qid": QID, "since": "2010-01-01"})  # an earlier date never widens it
+    assert offline.get(f"/api/ingest/{QID}").json()["since"] == "2021-01-01"
 
     assert job.run_job(QID) == "done"
     d = offline.get(f"/api/ingest/{QID}").json()
