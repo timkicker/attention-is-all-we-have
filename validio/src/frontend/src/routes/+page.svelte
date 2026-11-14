@@ -10,7 +10,6 @@
   import { isFinal, requestPill } from "$lib/v";
   import VHead from "$lib/v/VHead.svelte";
   import Checklist from "$lib/setup/Checklist.svelte";
-  import Example from "$lib/setup/Example.svelte";
   import VState from "$lib/v/VState.svelte";
   import VStatusRow from "$lib/v/VStatusRow.svelte";
   import { shortReason } from "$lib/ask";
@@ -45,7 +44,6 @@
 
 <div class="blocks">
   <Checklist />
-  <Example listed={open.map((i) => i.id)} />
   {#if inbox.error && !inbox.data}
     <VState kind="error" title="Validio is not reachable." detail={inbox.error} onretry={() => location.reload()} />
   {:else if !inbox.loaded}
