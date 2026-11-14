@@ -355,6 +355,14 @@ class SupplyService:
                                           "text": text or "; ".join(self._line_text(ln) for ln in lines),
                                           "spendPassId": mandate.id, "status": "working"})
             self.store.idem_put(scope, key, body_hash, req["id"])
+            self.orders.begin_outside()  # a reset waits until step 3 wrote (OrderService.wait_idle)
+        try:
+            return self._decide_outside(req, mandate, lines, deliver_by, agent, scope, key)
+        finally:
+            self.orders.end_outside()
+
+    def _decide_outside(self, req: dict, mandate: Mandate, lines: list[LineRequest], deliver_by: date | None,
+                        agent: str | None, scope: str, key: str) -> dict:
         # 2. Without the lock: the catalog, Valio and the reader, the slow part
         budget = CallBudget(self.orders.max_ids)
         started = time.monotonic()

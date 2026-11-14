@@ -183,6 +183,8 @@ class OrderService:
         self.valio_down = valio_down or (lambda: False)  # the demo switch "Valio not answering"
         self.max_ids = max_ids
         self.lock = lock or threading.RLock()
+        self._idle = threading.Condition()  # its own lock: a reset waits on it without holding self.lock
+        self._outside = 0
         self.closed = False
 
     def check_open(self) -> None:
@@ -324,35 +326,39 @@ class OrderService:
             self.check_open()
             if (done := seen_before()) is not None:
                 return done
-        # Valio is asked without the lock, so the kitchen's other calls never wait on Valio; `quoted` is an
-        # answer the caller just had from Valio for these very lines
-        if quoted is None:
-            quoted = self.quote(lines, deliver_by, stock_override, budget)
-        with self.lock, self.store.tx():
-            self.check_open()
-            if (done := seen_before()) is not None:  # the same key finished meanwhile
-                return done
-            claims = None if required_claims is None else list(required_claims)
-            decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by, budget_cents)
-            state = STATE[decision["outcome"]]
-            total = sum(ln["totalCents"] or 0 for ln in quoted)
-            now = self.stamp().isoformat()
-            order = self.store.new_order({
-                "requestId": request_id, "state": state, "lines": self._public(quoted), "totalCents": total,
-                "deliverBy": deliver_by.isoformat(), "decision": decision, "history": [{"state": state, "at": now}],
-                "spendPassId": mandate.id, "mandate": mandate_dict(mandate), "agent": actor or mandate.holder,
-                "requiredClaims": claims, "splitBaseCents": split_base_cents,
-            })
-            self.store.idem_put(mandate.id, idempotency_key, body_hash, order["id"])
-            if state == "placed":
-                if accepted_by is not None and accept_note:
-                    self._log(order, accepted_by, "approval", accept_note, [])
-                # Validio places every order; the agent only asked, its request entry says so
-                self._log(order, "validio", "order", self._placed_sentence(order, None, accepted_by),
-                          decision["ruleIds"])
-            else:
-                self._log(order, "validio", "decision", decision["sentence"], decision["ruleIds"])
-            return order
+            self.begin_outside()  # a reset waits until this order is written (wait_idle)
+        try:
+            # Valio is asked without the lock, so the kitchen's other calls never wait on Valio; `quoted` is an
+            # answer the caller just had from Valio for these very lines
+            if quoted is None:
+                quoted = self.quote(lines, deliver_by, stock_override, budget)
+            with self.lock, self.store.tx():
+                self.check_open()
+                if (done := seen_before()) is not None:  # the same key finished meanwhile
+                    return done
+                claims = None if required_claims is None else list(required_claims)
+                decision = self._decide(mandate, quoted, claims, split_base_cents, deliver_by, budget_cents)
+                state = STATE[decision["outcome"]]
+                total = sum(ln["totalCents"] or 0 for ln in quoted)
+                now = self.stamp().isoformat()
+                order = self.store.new_order({
+                    "requestId": request_id, "state": state, "lines": self._public(quoted), "totalCents": total,
+                    "deliverBy": deliver_by.isoformat(), "decision": decision, "history": [{"state": state, "at": now}],
+                    "spendPassId": mandate.id, "mandate": mandate_dict(mandate), "agent": actor or mandate.holder,
+                    "requiredClaims": claims, "splitBaseCents": split_base_cents,
+                })
+                self.store.idem_put(mandate.id, idempotency_key, body_hash, order["id"])
+                if state == "placed":
+                    if accepted_by is not None and accept_note:
+                        self._log(order, accepted_by, "approval", accept_note, [])
+                    # Validio places every order; the agent only asked, its request entry says so
+                    self._log(order, "validio", "order", self._placed_sentence(order, None, accepted_by),
+                              decision["ruleIds"])
+                else:
+                    self._log(order, "validio", "decision", decision["sentence"], decision["ruleIds"])
+                return order
+        finally:
+            self.end_outside()
 
     def get(self, order_id: str) -> dict:
         o = self.store.order(order_id)
@@ -372,16 +378,45 @@ class OrderService:
             return [f"the delivery date {day(deliver_by)} has passed"]
         return []
 
+    # calls between their first and last step under the lock (Valio asked outside it): a reset waits for them
+
+    def begin_outside(self) -> None:
+        """Call with the lock held, before letting it go for Valio; end_outside() once the call's last write is done."""
+        with self._idle:
+            self._outside += 1
+
+    def end_outside(self) -> None:
+        with self._idle:
+            self._outside -= 1
+            self._idle.notify_all()
+
+    def idle(self) -> bool:
+        """No call is between asking Valio outside the lock and its last write (call with the lock held)."""
+        with self._idle:
+            return self._outside == 0
+
+    def wait_idle(self, timeout: float) -> bool:
+        """Call WITHOUT the lock: waits until no call asks Valio outside it any more (Ctx.reset)."""
+        with self._idle:
+            return self._idle.wait_for(lambda: self._outside == 0, timeout)
+
     @strict
     def approve(self, order_id: str, approver: str, verb: str = "approved") -> dict:
         """`verb` is "accepted" when a chef's accept on a Steady Order line sent it: the sentences say so."""
         with self.lock:
             self.check_open()
-            o, mandate, deliver_by = self._approvable(order_id)
+            o, _mandate, deliver_by = self._approvable(order_id)
             lines = [LineIn(ln["productId"], ln["quantity"], ln["isSubstitute"], ln["onValioList"])
                      for ln in o["lines"]]
+            self.begin_outside()
+        try:
+            return self._approve_again(order_id, approver, verb, lines, deliver_by)
+        finally:
+            self.end_outside()
+
+    def _approve_again(self, order_id: str, approver: str, verb: str, lines: list[LineIn], deliver_by: date) -> dict:
         # Valio is asked again without the lock; then everything is checked again under it, so a second approve,
-        # a reject or a revocation that came meanwhile wins
+        # a reject or a revocation that came meanwhile wins. A reset waits for this (wait_idle)
         fresh = self.quote(lines, deliver_by)
         with self.lock:
             self.check_open()
