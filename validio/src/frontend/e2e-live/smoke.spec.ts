@@ -1,4 +1,4 @@
-import { CODE, agent, expect, fresh, pairAgent, test } from "./kitchen";
+import { CODE, agent, expect, fresh, pairAgent, stockOut, test } from "./kitchen";
 
 // The built web app and the API from one process, no Vite: the login page lets a juror into a demo copy,
 // the kitchen's agent (paired through the Agent page) places requests over MCP on the copy's own path,
@@ -42,8 +42,8 @@ test("the paired agent orders alone, the request opens from Orders", async ({ pa
 });
 
 test("owner approves the swap on the phone", async ({ page, kitchen }) => {
-  // The presenter's stock-out has no control in the app: the demo API sets it.
-  expect((await page.request.post("/api/demo/stock-out")).status()).toBe(200);
+  // The stock-out has no control in the app or the API: set in the copy's store.
+  stockOut(kitchen);
   await page.goto("/");
   await expect.poll(async () => (await (await page.request.get("/api/demo")).json()).stockOut466375).toBe(true);
   agent(kitchen, 3);
