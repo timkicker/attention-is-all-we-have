@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import topics from '../../contract/examples/topics.json'
 import compare from '../../contract/examples/compare.json'
+import atlas from '../../contract/examples/atlas.json'
 import App from './App.vue'
 import { FORBIDDEN } from '../tests/forbidden'
 
@@ -11,7 +12,10 @@ const FOOTER =
 beforeEach(() => {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (url: string) => new Response(JSON.stringify(String(url).startsWith('/api/compare') ? compare : topics))),
+    vi.fn(async (url: string) => {
+      const u = String(url)
+      return new Response(JSON.stringify(u.startsWith('/api/compare') ? compare : u.startsWith('/api/atlas') ? atlas : topics))
+    }),
   )
   window.history.replaceState(null, '', '/compare')
 })
