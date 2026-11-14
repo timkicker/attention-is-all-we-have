@@ -60,4 +60,7 @@ export async function findStatement(page: Page, q: string) {
   const input = page.locator(`input[data-testid="${id}"], [data-testid="${id}"] input`).first()
   await input.fill(q)
   await input.press('Enter')
+  // the field also searches on its own after a short pause; let that reload finish before reading or paging the list
+  await expect(page).toHaveURL(new RegExp(`[?&]q=${encodeURIComponent(q).replace(/%20/g, '\\+')}`))
+  await page.waitForLoadState('networkidle')
 }
