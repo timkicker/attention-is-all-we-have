@@ -28,12 +28,10 @@ import type { TopicCtx, WithoutCounts } from './shared'
 
 type Client = typeof Api
 
-/** compare.py adds the English word for the Finnish side of a term mark when its term list knows it. */
-export type Mark = MarkRaw & { this_en?: string | null }
-export type Cell = Omit<CellRaw, 'marks'> & { marks: Mark[] }
-export type Row = Omit<CompareRowRaw, 'cells'> & { cells: Record<string, Cell> }
-/** timeline.py adds the English gloss of each life when one exists. */
-export type Life = LifeRaw & { gloss?: string | null }
+export type Mark = MarkRaw
+export type Cell = CellRaw
+export type Row = CompareRowRaw
+export type Life = LifeRaw
 
 export const PAGE = 25
 const MORE_STEP = 100
@@ -303,7 +301,7 @@ function load(api: Client, ctx: TopicCtx): Promise<Result<Loaded>> {
       const [cmp, starts] = await Promise.all([compareAll(api, ctx.topic.topicId, ctx.date), topicStarts(api, ctx.topic.topicId)])
       if (!cmp.ok) return cmp
       const present = new Set(Object.keys(cmp.data.editions))
-      const rows = (cmp.data.rows as Row[])
+      const rows = cmp.data.rows
         .map((r) => analyse(r, cmp.data.anchor, present, starts))
         .filter((x): x is Analysed => x !== null)
       return { ok: true, data: { rows: rank(rows), starts } }
@@ -360,18 +358,6 @@ export async function countDifferences(api: Client, ctx: TopicCtx): Promise<numb
 
 // ---------- One statement ----------
 
-/** Extra fields the statement page reads; the shared model does not have them yet. */
-export interface GroupExtra {
-  /** The edition's own wording with its side of the marks (shown with "Show original wording"). */
-  marked: { lang: Lang; say: MarkedText; url: string | null }[]
-}
-export type Group = StatementGroup & GroupExtra
-export interface ChangeExtra {
-  /** The date is a yearly snapshot: the change happened on or before it. */
-  approx: boolean
-}
-export type Change = StatementChange & ChangeExtra
-export type StatementX = StatementVM & { groups: Group[]; changes: Change[]; open: Lang[] }
 
 const words = (s: string) => s.split(/\s+/).filter(Boolean)
 const norm = (w: string) => w.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
@@ -419,8 +405,8 @@ export function cleanComment(c: string | null): string | null {
  * Edits of the sentences the judge paired with the statement: from each paired life, step back to the life it
  * replaced (removed in the revision that added it, mostly the same words) and report what changed.
  */
-export function changesOf(lives: Life[], ownLang: string): Change[] {
-  const out = new Map<string, Change>()
+export function changesOf(lives: Life[], ownLang: string): StatementChange[] {
+  const out = new Map<string, StatementChange>()
   const paired = lives.filter((l) => l.lang !== ownLang && l.verdict && MATCHED.has(l.verdict.label))
   for (const start of paired) {
     let cur: Life | undefined = start
@@ -455,7 +441,7 @@ export function statementOf(row: Row | null, anchor: string, present: Set<string
     const text = fallback.gloss ?? fallback.text
     return {
       title: text,
-      groups: [{ langs: [fallback.lang as Lang], say: plain(text), originals: [], marked: [] }] as Group[],
+      groups: [{ langs: [fallback.lang as Lang], say: plain(text), originals: [], marked: [] }] as StatementGroup[],
       missing: [] as Lang[],
       open: [] as Lang[],
     }
@@ -468,13 +454,13 @@ export function statementOf(row: Row | null, anchor: string, present: Set<string
   const text = readable(a.gloss ?? a.text ?? '', row.section)
   const orig = (l: Lang, c: Cell, spans: Span[]) => ({ lang: l, say: { text: c.text ?? '', spans }, url: c.oldid_url })
   const anchorSpans = spansFor(a.text ?? '', allMarks.map((m) => ({ ...m, this_en: null })))
-  const first: Group = {
+  const first: StatementGroup = {
     langs: [anchor as Lang],
     say: { text, spans: spansFor(text, allMarks) },
     originals: [{ lang: anchor as Lang, text: a.text ?? '', url: a.oldid_url }],
     marked: [orig(anchor as Lang, a, anchorSpans)],
   }
-  const groups: Group[] = [first]
+  const groups: StatementGroup[] = [first]
   for (const l of others) {
     const c = row.cells[l]
     const k = kinds.get(l)
@@ -527,19 +513,18 @@ export async function loadStatement(
   pageId: string,
   h: string,
 ): Promise<Result<WithoutCounts<StatementVM>>> {
-  const compare = api.compare as (q: Record<string, string | number | undefined>) => ReturnType<Client['compare']>
   const [cmp, tl] = await Promise.all([
-    compare({ topic: ctx.topic.topicId, as_of: ctx.date ?? undefined, anchor: lang, h, limit: 1 }),
+    api.compare({ topic: ctx.topic.topicId, as_of: ctx.date ?? undefined, anchor: lang, h, limit: 1 }),
     api.timeline(lang, pageId, h),
   ])
   if (!tl.ok) return tl
   if (!cmp.ok) return cmp
-  const lives = tl.data.lives as Life[]
+  const lives = tl.data.lives
   const own = lives.filter((l) => l.lang === lang && l.h === h)
-  const row = ((cmp.data.rows as Row[]).find((r) => r.cells[lang]?.h === h) ?? null) as Row | null
+  const row = cmp.data.rows.find((r) => r.cells[lang]?.h === h) ?? null
   const present = new Set(Object.keys(cmp.data.editions))
   const s = statementOf(row, cmp.data.anchor, present, { lang, text: tl.data.claim.text, gloss: own[own.length - 1]?.gloss ?? null })
-  const vm: WithoutCounts<StatementX> = {
+  const vm: WithoutCounts<StatementVM> = {
     topic: ctx.topic,
     date: ctx.date,
     title: copy.excerpt(s.title, 80),

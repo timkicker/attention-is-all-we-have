@@ -1,7 +1,6 @@
 <script lang="ts">
   // One statement (wf/06): how each edition tells it, grouped by wording, and when editions changed it.
   import * as copy from '../lib/copy'
-  import type { Change, Group } from '../lib/adapt/topic'
   import { getStatement } from '../lib/data'
   import { dateState } from '../lib/date.svelte'
   import type { Failure, Lang, MarkedText, StatementVM } from '../lib/model'
@@ -32,14 +31,13 @@
   })
 
   /** Original wording per edition: marked when the adapter sent marks, else the plain text. */
-  function originals(g: Group | StatementVM['groups'][number]): { lang: Lang; say: MarkedText }[] {
-    const m = (g as Group).marked
-    if (m?.length) return m
+  function originals(g: StatementVM['groups'][number]): { lang: Lang; say: MarkedText }[] {
+    if (g.marked.length) return g.marked
     return g.originals.map((o) => ({ lang: o.lang, say: { text: o.text, spans: [] } }))
   }
-  const open = $derived(((vm as { open?: Lang[] } | null)?.open ?? []) as Lang[])
+  const open = $derived(vm?.open ?? [])
   const changeLine = (c: StatementVM['changes'][number]) =>
-    copy.topic.changedFromToAt(c.date, (c as Change).approx ?? false, c.lang, c.from, c.to)
+    copy.topic.changedFromToAt(c.date, c.approx, c.lang, c.from, c.to)
 </script>
 
 <Bar right="change" />
@@ -71,7 +69,7 @@
         <div class="item" data-testid={TID.statementMissing}><p class="muted">{copy.notIn(vm.missing)}</p></div>
       {/if}
       {#if open.length}
-        <div class="item"><p class="muted">{copy.topic.notCompared(open)}</p></div>
+        <div class="item"><p class="muted">{copy.notCompared(open)}</p></div>
       {/if}
     </div>
 

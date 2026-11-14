@@ -113,7 +113,7 @@ export function start(): Result<StartVM> {
         { lang: 'en', say: marked('A border incident was reported near Mainila', 'border incident was reported') },
         { lang: 'ru', say: marked('According to the Soviet side, Finnish artillery shelled Mainila', 'Finnish artillery') },
       ],
-      href: paths.differences(WINTER_WAR.qid),
+      href: stmt(MAINILA),
     },
   })
 }
@@ -145,7 +145,10 @@ export function ingest(qid: string, step: number): Result<IngestVM> {
   if (qid !== MANNERHEIM.qid) return notFound(qid)
   const e = (lang: Lang, state: IngestEdition['state'], pct: number): IngestEdition => ({ lang, state, pct, error: null, retryAt: null })
   const ready = step >= 2
-  const editions = ready
+  // Step 3: Wikipedia asked us to slow down for Russian; it retries in 2 min, the others are done or running.
+  const editions = step >= 3
+    ? [e('fi', 'done', 100), e('sv', 'done', 100), e('de', 'done', 100), e('en', 'running', 71), { ...e('ru', 'running', 20), error: 'rate_limited', retryAt: new Date(Date.now() + 120_000).toISOString() }, e('et', 'done', 100), e('uk', 'waiting', 0)]
+    : ready
     ? [e('fi', 'done', 100), e('sv', 'done', 100), e('de', 'done', 100), e('en', 'running', 71), e('ru', 'running', 20), e('et', 'done', 100), e('uk', 'waiting', 0)]
     : [e('fi', 'done', 100), e('sv', 'done', 100), e('de', 'running', 91), e('en', 'running', 28), e('ru', 'waiting', 0), e('et', 'waiting', 0), e('uk', 'waiting', 0)]
   return ok({
@@ -214,18 +217,19 @@ export function statement(qid: string, date: string | null, _lang: string, _page
       ...base,
       title: 'How many Finns died in the war',
       groups: [
-        { langs: ['fi'], say: marked(FI_LOSSES, '26,662'), originals: [{ lang: 'fi', text: 'Suomen tappiot talvisodassa olivat 26 662 kaatunutta.', url: 'https://fi.wikipedia.org/w/index.php?oldid=24373824' }] },
-        { langs: ['sv'], say: marked('22,830 Finns were killed or went missing in the war', '22,830'), originals: [{ lang: 'sv', text: 'Omkring 22 830 finländare stupade eller försvann i kriget.', url: null }] },
-        { langs: ['de', 'en', 'ru', 'et', 'uk'], say: marked('25,904 Finns were killed or went missing in the war', '25,904'), originals: [{ lang: 'en', text: 'Finnish losses were 25,904 dead or missing.', url: null }] },
+        { langs: ['fi'], say: marked(FI_LOSSES, '26,662'), originals: [{ lang: 'fi', text: 'Suomen tappiot talvisodassa olivat 26 662 kaatunutta.', url: 'https://fi.wikipedia.org/w/index.php?oldid=24373824' }], marked: [{ lang: 'fi', say: marked('Suomen tappiot talvisodassa olivat 26 662 kaatunutta.', '26 662'), url: 'https://fi.wikipedia.org/w/index.php?oldid=24373824' }] },
+        { langs: ['sv'], say: marked('22,830 Finns were killed or went missing in the war', '22,830'), originals: [{ lang: 'sv', text: 'Omkring 22 830 finländare stupade eller försvann i kriget.', url: null }], marked: [{ lang: 'sv', say: marked('Omkring 22 830 finländare stupade eller försvann i kriget.', '22 830'), url: null }] },
+        { langs: ['de', 'en', 'ru', 'et', 'uk'], say: marked('25,904 Finns were killed or went missing in the war', '25,904'), originals: [{ lang: 'en', text: 'Finnish losses were 25,904 dead or missing.', url: null }], marked: [{ lang: 'en', say: marked('Finnish losses were 25,904 dead or missing.', '25,904'), url: null }] },
       ],
       missing: [],
       changes: [],
+      open: [],
     })
   }
   if (h !== MAINILA.h) {
     const row = diffRowsToday().find((r) => r.id === h)
     if (!row) return { ok: false, error: { status: 404, code: 'claim_not_found', message: h } }
-    return ok({ ...base, title: row.say.text, groups: [{ langs: ['fi'], say: row.say, originals: [] }], missing: [], changes: [] })
+    return ok({ ...base, title: row.say.text, groups: [{ langs: ['fi'], say: row.say, originals: [], marked: [] }], missing: [], changes: [], open: [] })
   }
   return ok({
     ...base,
@@ -239,16 +243,23 @@ export function statement(qid: string, date: string | null, _lang: string, _page
           { lang: 'de', text: 'Am Ende inszenierte die Sowjetunion die Schüsse von Mainila, um den Krieg zu rechtfertigen.', url: 'https://de.wikipedia.org/w/index.php?oldid=125967039' },
           { lang: 'uk', text: 'Зрештою Радянський Союз інсценував постріли в Майнілі, щоб виправдати війну.', url: null },
         ],
+        marked: [
+          { lang: 'fi', say: marked('Lopulta Neuvostoliitto lavasti Mainilan laukaukset perustellakseen sodan.', 'lavasti'), url: 'https://fi.wikipedia.org/w/index.php?oldid=24373824' },
+          { lang: 'de', say: marked('Am Ende inszenierte die Sowjetunion die Schüsse von Mainila, um den Krieg zu rechtfertigen.', 'inszenierte'), url: 'https://de.wikipedia.org/w/index.php?oldid=125967039' },
+          { lang: 'uk', say: marked('Зрештою Радянський Союз інсценував постріли в Майнілі, щоб виправдати війну.', 'інсценував'), url: null },
+        ],
       },
-      { langs: ['sv'], say: marked('Who fired the shots has never been settled', 'has never been settled'), originals: [{ lang: 'sv', text: 'Vem som avlossade skotten har aldrig klarlagts.', url: 'https://sv.wikipedia.org/w/index.php?oldid=42191553' }] },
-      { langs: ['en'], say: marked('A border incident was reported near Mainila', 'border incident was reported'), originals: [{ lang: 'en', text: 'A border incident was reported near Mainila.', url: 'https://en.wikipedia.org/w/index.php?oldid=1384334162' }] },
-      { langs: ['ru'], say: marked('According to the Soviet side, Finnish artillery shelled Mainila', 'Finnish artillery'), originals: [{ lang: 'ru', text: 'По данным советской стороны, финская артиллерия обстреляла Майнилу.', url: 'https://ru.wikipedia.org/w/index.php?oldid=155688701' }] },
+      { langs: ['sv'], say: marked('Who fired the shots has never been settled', 'has never been settled'), originals: [{ lang: 'sv', text: 'Vem som avlossade skotten har aldrig klarlagts.', url: 'https://sv.wikipedia.org/w/index.php?oldid=42191553' }], marked: [{ lang: 'sv', say: marked('Vem som avlossade skotten har aldrig klarlagts.', 'har aldrig klarlagts'), url: 'https://sv.wikipedia.org/w/index.php?oldid=42191553' }] },
+      { langs: ['en'], say: marked('A border incident was reported near Mainila', 'border incident was reported'), originals: [{ lang: 'en', text: 'A border incident was reported near Mainila.', url: 'https://en.wikipedia.org/w/index.php?oldid=1384334162' }], marked: [{ lang: 'en', say: marked('A border incident was reported near Mainila.', 'border incident was reported'), url: 'https://en.wikipedia.org/w/index.php?oldid=1384334162' }] },
+      { langs: ['ru'], say: marked('According to the Soviet side, Finnish artillery shelled Mainila', 'Finnish artillery'), originals: [{ lang: 'ru', text: 'По данным советской стороны, финская артиллерия обстреляла Майнилу.', url: 'https://ru.wikipedia.org/w/index.php?oldid=155688701' }], marked: [{ lang: 'ru', say: marked('По данным советской стороны, финская артиллерия обстреляла Майнилу.', 'финская артиллерия'), url: 'https://ru.wikipedia.org/w/index.php?oldid=155688701' }] },
     ],
     missing: ['et'],
     changes: [
-      { date: '2015-02-04', lang: 'sv', from: 'Soviet troops fired the shots', to: 'has never been settled', comment: null, url: null },
-      { date: '2009-03-12', lang: 'en', from: 'staged', to: 'a border incident was reported', comment: 'attribute the claim, sources disagree', url: null },
+      { date: '2015-02-04', lang: 'sv', from: 'Soviet troops fired the shots', to: 'has never been settled', comment: null, url: null, approx: false },
+      { date: '2009-03-12', lang: 'en', from: 'staged', to: 'a border incident was reported', comment: 'attribute the claim, sources disagree', url: null, approx: false },
     ],
+    // Wireframe 06 has no "Not compared yet" line.
+    open: [],
   })
 }
 
@@ -355,6 +366,8 @@ export function checkRun(qid: string, date: string | null, runId: string): Resul
       disputed: rows.filter((r) => r.verdict === 'disputed').length,
       backed: rows.filter((r) => r.verdict === 'backed').length,
     },
+    // Wireframe 10: "backed by most editions".
+    mostBacked: true,
     rows,
     againHref: paths.check(WINTER_WAR.qid),
   })
@@ -381,6 +394,11 @@ export function hood(fromQid: string | null): Result<HoodVM> {
     top1: 0.57,
     top5: 0.89,
     queryMs: 62,
+    // Wireframe 11 shows no embedding rate and no model agreement.
+    embedRate: null,
+    embedGpu: null,
+    judgeAccuracy: null,
+    judgeN: null,
     sql: HOOD_SQL,
   })
 }

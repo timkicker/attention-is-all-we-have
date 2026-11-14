@@ -2,7 +2,6 @@
   // Under the hood (wf/11). Owner: P4. ?from=qid makes the bar link go back to that topic.
   import * as copy from '../lib/copy'
   import { getHood, resolveTopic } from '../lib/data'
-  import type { HoodExtra } from '../lib/hood/extra'
   import type { HoodVM, Result } from '../lib/model'
   import { paths, router } from '../lib/router.svelte'
   import { TID } from '../lib/testids'
@@ -12,7 +11,7 @@
   let { params: _params }: { params: Record<string, string> } = $props()
   const from = $derived(router.query.get('from'))
   let fromTitle = $state('')
-  let res = $state<Result<HoodVM & Partial<HoodExtra>> | null>(null)
+  let res = $state<Result<HoodVM> | null>(null)
 
   $effect(() => {
     const qid = from
@@ -70,10 +69,10 @@
           <div data-testid={TID.hoodNumber} data-key="top5"><dt>{h.TOP5}</dt><dd>{h.recall(vm.top5)}</dd></div>
         {/if}
         {#if vm.judgeAccuracy != null}
-          <div data-testid={TID.hoodNumber} data-key="judge"><dt>{h.judgeAgreement(vm.judgeN ?? null)}</dt><dd>{h.share(vm.judgeAccuracy)}</dd></div>
+          <div data-testid={TID.hoodNumber} data-key="judge"><dt>{h.judgeAgreement(vm.judgeN)}</dt><dd>{h.share(vm.judgeAccuracy)}</dd></div>
         {/if}
         {#if vm.embedRate != null}
-          <div data-testid={TID.hoodNumber} data-key="embed_rate"><dt>{h.embedRate(vm.embedGpu ?? null)}</dt><dd>{h.perSecond(vm.embedRate)}</dd></div>
+          <div data-testid={TID.hoodNumber} data-key="embed_rate"><dt>{h.embedRate(vm.embedGpu)}</dt><dd>{h.perSecond(vm.embedRate)}</dd></div>
         {/if}
         {#if vm.queryMs !== null}
           <div data-testid={TID.hoodNumber} data-key="query_ms"><dt>{h.QUERY_MS}</dt><dd>{h.ms(vm.queryMs)}</dd></div>

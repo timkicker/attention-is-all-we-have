@@ -3,15 +3,13 @@
 // topic and filters (edition, text, date) and pages on the client. The tab count and the list then
 // always agree.
 import type { api as Api } from '../api/client'
-import type { DroppedRowRaw as Raw } from '../api/types'
+import type { DroppedRowRaw } from '../api/types'
 import { excerpt, note, noteText, quote, removedNote, stillIn } from '../copy'
 import { LANGS, type Lang, type MarkedText, type RemovedRow, type RemovedVM, type Result } from '../model'
 import { paths } from '../router.svelte'
 import type { TopicCtx, WithoutCounts } from './shared'
 
 type Client = typeof Api
-/** api/routes/dropped.py adds `removed`: the cut part when the edit kept the rest of the sentence. */
-export type DroppedRowRaw = Raw & { removed?: { start: number; end: number } | null }
 
 export const PAGE = 25
 const API_LIMIT = 200

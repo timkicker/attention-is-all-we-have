@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import type { TopicsRes } from '../api/types'
-import { formatSql, fromStats, type LoggedStatement, pickQuery, versionsOf, wrapLine } from './hood'
+import type { SqlStatement } from '../api/types'
+import { formatSql, fromStats, pickQuery, versionsOf, wrapLine } from './hood'
 
-const st = (text: string, rows: number, params?: LoggedStatement['params']): LoggedStatement => ({
+const st = (text: string, rows: number, params?: SqlStatement['params']): SqlStatement => ({
   text,
   ms: 12.5,
   rows,
