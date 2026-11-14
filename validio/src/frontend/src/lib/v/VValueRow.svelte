@@ -33,9 +33,9 @@
 {/snippet}
 
 {#if href || onclick}
-  <a class="vr link" {href} {onclick} data-testid={testid}>{@render body()}</a>
+  <a class="vr link" {href} {onclick} data-testid={testid} id={testid}>{@render body()}</a>
 {:else}
-  <div class="vr" data-testid={testid}>{@render body()}</div>
+  <div class="vr" data-testid={testid} id={testid}>{@render body()}</div>
 {/if}
 
 <style>
