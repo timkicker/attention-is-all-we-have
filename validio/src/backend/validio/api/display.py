@@ -20,14 +20,14 @@ from ..text.format import (
 
 # the Spend Pass fields under the names a person reads
 PASS_FIELDS = {
-    "autoLimitCents": "orders alone up to", "auto_limit_cents": "orders alone up to", "hardCapCents": "never above",
-    "hard_cap_cents": "never above", "diet": "diet", "categories": "product groups", "deliverBy": "deliver by",
+    "autoLimitCents": "orders alone up to", "auto_limit_cents": "orders alone up to", "hardCapCents": "blocked above",
+    "hard_cap_cents": "blocked above", "diet": "diet", "categories": "product groups", "deliverBy": "deliver by",
     "deliver_by": "deliver by", "substitutes": "substitutes", "split": "split limit",
     "preferLabels": "preferred labels", "prefer_labels": "preferred labels",
     "split_max_extra_bp": "split limit", "splitMaxExtraBp": "split limit", "approvers": "who approves",
     "split_allow_listed": "substitutes in a split", "splitAllowListed": "substitutes in a split",
 }
-ACTORS = {"validio": "Validio", "presenter": "Demo", "demo": "Demo", "owner": "Owner"}
+ACTORS = {"validio": "Validio", "presenter": "Demo", "demo": "Demo", "owner": "You"}
 SUMMARY_WORDS = 14  # "about twelve": a quantity like "10 × 2.5 kg" counts as two
 
 
@@ -269,6 +269,21 @@ def checks(facts, diet: list[str] | None = None) -> list[str]:
     return out[:CHECK_MAX]
 
 
+def reason_text(sentence: str | None) -> str | None:
+    """Why a waiting order waits, as one line: "Over your 800.00 € limit for ordering alone."."""
+    said = asks_text(sentence)
+    if not said:
+        return None
+    s = said.removeprefix("Asks you: ")
+    return s[:1].upper() + s[1:]
+
+
+def _over_alone(why: str) -> str | None:
+    """"1,010.00 € is over the auto limit of 800.00 €" in the Rules' words."""
+    m = re.match(r"[\d,.]+ € is over the auto limit of ([\d,.]+ €)", why)
+    return f"over your {m.group(1)} limit for ordering alone" if m else None
+
+
 def asks_text(sentence: str | None) -> str | None:
     """Why a waiting request waits for you, for its inbox row: "Asks you: the swap is not on Valio's list."."""
     said = ledger_text("approval", "", sentence or "")
@@ -317,7 +332,10 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
     if kind == "spend_pass":  # one whole sentence: every limit counts, none may be cut
         if re.match(r"Owner signed Spend Pass \S+ again, nothing changed", s):
             return "Signed again, nothing changed."
-        return re.sub(r"^Owner changed Spend Pass \S+\. ", "", s)  # only what changed, field by field
+        s = re.sub(r"^Owner changed Spend Pass \S+\. ", "", s)  # only what changed, field by field
+        # the Rules' words, also for entries written before they had them
+        return re.sub(r"\bNever above\b", "Blocked above", re.sub(r"^Alone up to\b|(?<=\. )Alone up to\b",
+                                                                   "Orders alone up to", s))
     steady = re.match(r"Steady Order S-\d+, (.+?): (.+)$", s)
     if steady:
         what, rest = steady.groups()
@@ -336,18 +354,20 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
             return f"Asked you: {this} would take the week to {total}, past {over.group(1)}."
         return f"Asked you: {_first(why).rstrip('.')}."
     if s.startswith("Needs a person: "):
-        return f"Asked you: {_first(s[16:]).rstrip('.')}."
+        why = _first(s[16:]).rstrip(".")
+        return f"Asked you: {_over_alone(why) or why}."
     alone = re.match(r"May order it alone: ([\d,.]+ €) is inside the auto limit of ([\d,.]+ €)", s)
     if alone:
         return f"Cleared it to order alone: {alone.group(1)} is within {alone.group(2)}."
     alone = re.match(r"Ordered (.+? without asking you)\.", s)
     if alone and order_id:
-        return f"Placed {order_id}: {alone.group(1)}."
+        return f"Ordered {order_id}: {alone.group(1)}."
     placed = re.match(r"Placed order (O-\d+): (.+?) after the \w+ \w+\.", s)
     if placed:
-        return f"Placed {placed.group(1)}: {placed.group(2)}."
-    if actor_text and s.startswith(actor_text + " "):
-        s = s[len(actor_text) + 1:]
+        return f"Ordered {placed.group(1)}: {placed.group(2)}."
+    said_by = "Owner" if actor_text == "You" else actor_text  # stored sentences still say "Owner"
+    if said_by and s.startswith(said_by + " "):
+        s = s[len(said_by) + 1:]
         s = s[:1].upper() + s[1:]
     first = _first(s)
     first = re.sub(r" for the demo\.$", ".", first)
