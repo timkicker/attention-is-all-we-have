@@ -1,6 +1,6 @@
-# In progress: one account per kitchen
+# Plan: one account per kitchen
 
-Plan of Saturday 14 November, 14:20. Being built now, live tonight. Until then the demo link shows the old version.
+Plan of Saturday 14 November, 14:20. It is built and live. The pages named below (Inbox, Orders, Ledger) were later replaced by Home, Activity, Rules, Agent and Settings; [../README.md](../README.md) describes the current state.
 
 ## Why
 

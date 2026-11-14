@@ -1,3 +1,5 @@
+import re
+
 from fastapi import APIRouter, Query
 
 from api import match, sqllog
@@ -21,6 +23,27 @@ def topic_editions(topic: str, as_of) -> dict[str, dict]:
     return {r["lang"]: r for r in rows}
 
 
+def english_terms(lang: str) -> list[tuple[re.Pattern, str]]:
+    out = []
+    for r in sqllog.run_file("term_gloss"):
+        if r["lang"] == lang:
+            try:
+                out.append((re.compile(r["pattern"], re.I), r["gloss_en"]))
+            except re.error:
+                continue
+    return out
+
+
+def add_english(marks: list[dict], terms: list[tuple[re.Pattern, str]]) -> list[dict]:
+    """Give a term mark `this_en`, the English word for the anchor side, when the term list knows it."""
+    for m in marks:
+        if m["kind"] == "term":
+            en = next((en for pat, en in terms if pat.search(m["this"])), None)
+            if en:
+                m["this_en"] = en
+    return marks
+
+
 def topic_langs(topic: str) -> list[str]:
     rows = sqllog.run("SELECT lang FROM page WHERE topic_id = %s", (topic,))
     if not rows:
@@ -35,6 +58,7 @@ def compare(
     anchor: str = "fi",
     langs: str | None = None,
     section: str | None = None,
+    h: str | None = None,
     offset: int = Query(0, ge=0),
     limit: int = Query(25, ge=1, le=200),
 ) -> dict:
@@ -55,6 +79,7 @@ def compare(
             "topic": topic,
             "anchor": anchor,
             "section": section,
+            "h": h,
             "tail": TAIL_SECTIONS,
             "limit": limit,
             "offset": offset,
@@ -75,6 +100,7 @@ def compare(
     def rev(lang: str):
         return editions[lang]["rev_id"] if lang in editions else None
 
+    terms = english_terms(anchor)
     rows = []
     for a in anchors:
         cells = {anchor: match.cell("anchor", anchor, a, rev(anchor), gl.get((anchor, a["h"])), a["text"], None)}
@@ -85,6 +111,7 @@ def compare(
                 if row is None
                 else match.cell(status, lang, row, rev(lang), gl.get((lang, row["h"])), a["text"], verdict)
             )
+            add_english(cells[lang]["marks"], terms)
         rows.append({"row_id": f"{anchor}:{a['page_id']}:{a['h']}", "section": a["section"], "cells": cells})
 
     return {
