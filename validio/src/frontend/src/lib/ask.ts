@@ -61,7 +61,7 @@ const ORDER: Record<string, string> = { placed: "Placed {id}", waiting: "{id} wa
 export function askLog(lines: string[]): AskStep[] {
   const out: AskStep[] = [];
   const add = (who: AskStep["who"], what: string) => {
-    if (what && !out.some((x) => x.who === who && x.what === what)) out.push({ who, what });
+    if (what && !out.some((x) => x.what === what)) out.push({ who, what }); // said once, by whoever said it first
   };
   for (const raw of lines) {
     const parts = raw.split("\n").map((p) => p.trim()).filter(Boolean);
