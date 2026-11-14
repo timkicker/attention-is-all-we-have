@@ -127,22 +127,13 @@ for (const v of VIEWS) {
   });
 }
 
-// The play controls: the ask dialog, the limits form with its inline answer, the menu while the stock is out.
+// The limits form with its inline answer.
 for (const v of [VIEWS[0], VIEWS[2]]) {
   test(`play views, ${v.width} ${v.theme}`, async ({ page }) => {
     await page.emulateMedia({ colorScheme: v.theme });
     await page.setViewportSize({ width: v.width, height: v.height });
     const at = (name: string) => `${OUT}/${name}-${v.width}-${v.theme}.png`;
     await fresh(page);
-    await page.locator("#page-menu").click();
-    await page.getByTestId("menu-ask").click();
-    await page.getByTestId("ask-input").fill("500 litres of lactose-free milk by Monday");
-    await page.getByTestId("ask-send").click();
-    await expect(page.getByTestId("ask-none")).toBeVisible();
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: at("play-ask") });
-    await page.keyboard.press("Escape");
-
     await page.goto("/agent");
     await page.getByTestId("rules-edit").click();
     await page.getByTestId("r-alone").fill("6000");
@@ -151,11 +142,5 @@ for (const v of [VIEWS[0], VIEWS[2]]) {
     await expect(page.locator("#r-alone-problem")).toBeVisible();
     await page.waitForTimeout(250);
     await page.screenshot({ path: at("play-limits"), fullPage: true });
-
-    await stockOut(page);
-    await page.locator("#page-menu").click();
-    await expect(page.getByTestId("stock-out")).toHaveAttribute("aria-checked", "true");
-    await page.waitForTimeout(250);
-    await page.screenshot({ path: at("play-menu") });
   });
 }

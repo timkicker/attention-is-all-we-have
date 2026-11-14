@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect, type Page } from "@playwright/test";
-import { demoLogin } from "./helpers";
+import { connectAgent, demoLogin } from "./helpers";
 
 // axe (WCAG 2.2 A and AA, contrast included) over Settings, the Inbox
 // checklist and the example request, 1280 and 390, light and dark; on the
@@ -37,13 +37,10 @@ for (const v of VIEWS) {
     await page.evaluate(() => localStorage.clear());
     await go("/login");
     await demoLogin(page);
-    // a demo copy starts without an agent; the example request shows once one is connected
-    await go("/agent");
-    await page.getByTestId("agent-demo").click();
-    await page.getByTestId("consent-allow").click();
-    await expect(page.getByTestId("agent-state")).toHaveText("Active");
+    // a demo copy starts without an agent; an MCP agent connects itself
+    await connectAgent(page, `/agent?theme=${v.theme}`);
     await page.getByRole("link", { name: "Inbox" }).first().click();
-    await expect(page.getByTestId("example")).toBeVisible();
+    await expect(page.locator("h1")).toHaveText("Inbox");
     await audit(page, "inbox", out, phone);
     await go("/settings");
     await expect(page.getByTestId("settings-theme")).toBeVisible();

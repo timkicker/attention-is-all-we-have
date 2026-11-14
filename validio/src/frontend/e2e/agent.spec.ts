@@ -54,7 +54,11 @@ for (const v of VIEWS) {
     await expect(page.getByTestId("mcp-hint")).toHaveText("Add this URL to your agent as an MCP server. Allow appears here on its first call.");
     await shoot("pairing");
 
-    await page.getByTestId("agent-demo").click();
+    // An MCP agent's first call: the consent card shows the code the agent was told.
+    const told = await page.evaluate(() => (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall());
+    expect(told).toMatch(/^[A-Z2-9]{3}-[A-Z2-9]{3}$/);
+    await expect(page.getByTestId("verify-code")).toHaveText(told!, { timeout: 5000 });
+    await expect(page.getByTestId("verify-hint")).toHaveText("Your agent shows this code too. Allow only if it matches.");
     await expect(page.getByTestId("consent")).toContainText("Orders alone up to 1,200.00 €");
     await expect(page.getByTestId("pair-code")).toHaveCount(0);
     await shoot("consent");
@@ -98,7 +102,7 @@ for (const v of VIEWS) {
     await shoot("disconnect");
     await page.getByTestId("disconnect-confirm").click();
     await expect(page.getByTestId("agent-state")).toHaveText("Not connected");
-    await expect(page.getByTestId("agent-demo")).toBeVisible();
+    await expect(page.getByTestId("agent-connect")).toBeVisible();
 
     // A kitchen that never saved its Rules and has no agent yet.
     await page.evaluate((k) => {
@@ -159,8 +163,15 @@ test("any MCP agent: its first call on the pairing URL shows the consent without
   }
 
   // The agent calls the URL; the page polls and turns to the consent card by itself.
-  await page.evaluate(() => (window as unknown as { validioMcpCall: () => void }).validioMcpCall());
+  const told = await page.evaluate(() => (window as unknown as { validioMcpCall: () => string | undefined }).validioMcpCall());
+  expect(told).toMatch(/^[A-Z2-9]{3}-[A-Z2-9]{3}$/);
   await expect(page.getByTestId("consent")).toContainText("MCP agent wants to order", { timeout: 5000 });
+  await expect(page.getByTestId("verify-code")).toHaveText(told!);
+  for (const w of [1280, 390]) {
+    await page.setViewportSize({ width: w, height: w === 390 ? 844 : 900 });
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: `${PAIR_SHOTS}/consent-${w}.png`, fullPage: true });
+  }
   await page.getByTestId("consent-allow").click();
   await expect(page.getByTestId("agent-state")).toHaveText("Active");
   await expect(page.getByTestId("agent-name")).toHaveText("MCP agent");

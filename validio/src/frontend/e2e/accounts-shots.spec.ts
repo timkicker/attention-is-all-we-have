@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { demoLogin } from "./helpers";
+import { demoLogin, stockOut } from "./helpers";
 
 // Screens of the account work, each state at 1280 and 390, light and dark.
 // Runs only with ACCOUNT_SHOTS=<dir>: ACCOUNT_SHOTS=/tmp/shots npx playwright test accounts-shots
@@ -44,10 +44,8 @@ for (const v of VIEWS) {
       await page.waitForLoadState("networkidle");
       await shoot(name);
     }
+    await stockOut(page);
     await go("/");
-    await page.locator("#page-menu").first().click();
-    await shoot("menu");
-    await page.getByTestId("stock-out").click();
     await expect(page.getByTestId("inbox-R-2")).toBeVisible();
     await shoot("inbox-waiting");
     if (v.width === 1280) {
