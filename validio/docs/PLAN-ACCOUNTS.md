@@ -18,10 +18,10 @@ The kitchen connects its purchasing agent to its account.
 
 * **Login:** "Try the demo kitchen" (each browser gets its own fresh copy, so jurors never click in each other's data), email login, create account.
 * **Sidebar:** Inbox, Orders, Agent, Ledger. At the bottom the kitchen's name, it opens Settings. On the phone the kitchen name sits top left.
-* **Inbox:** what waits for you. Setup checklist until done: Kitchen, Rules, Connect agent. Demo kitchen: "Send example request".
+* **Inbox:** what waits for you. Setup checklist until done: Kitchen, Rules, Connect agent. Requests come only from the connected agent.
 * **Orders:** requests and steady orders in one list.
 * **Agent:**
-  * Connect with a pairing code, then a consent screen (Allow / Deny). Demo kitchen: "Connect the demo agent".
+  * Connect with a pairing code, then a consent screen (Allow / Deny). The consent screen shows a verification code the agent shows too.
   * **Rules**, the one place for what the agent may do: orders alone up to X €, needs approval up to Y €, blocked above; per week; substitutes. One save, one approval code, a new signed pass version.
   * Pause, Disconnect, link to its ledger entries, technical details folded away.
 * **Ledger:** as today, plus pass replaced, connected, paused, disconnected.
@@ -33,9 +33,9 @@ Cut for now: notifications, presets, several users per kitchen, real OAuth.
 ## Demo order
 
 1. Try the demo kitchen.
-2. Connect the demo agent, Allow.
-3. Send the example request (1,000 l lactose-free milk): ordered alone.
-4. Lower the limit in Rules, send again: now it waits. Approve with the code.
+2. Connect a real agent (MCP connector URL), check the verification code, Allow.
+3. The agent sends the example request (1,000 l lactose-free milk): ordered alone.
+4. Lower the limit in Rules, the agent asks again: now it waits. Approve with the code.
 5. Pause the agent: its next request is refused and logged.
 
 ## What stays
