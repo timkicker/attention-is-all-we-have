@@ -6,9 +6,9 @@ import { CODE } from "./helpers";
 // again and see it wait, approve with the code, pause the agent and see the refusal in the ledger, change
 // the diet in Settings. A second browser holds its own demo copy and must not see any of it.
 //
-// Against the built web app of the default config, or against a running server or the public link:
-//   ACCOUNTS_BASE=http://127.0.0.1:8410 npx playwright test e2e/accounts-demo.spec.ts
-// Skips itself while the Agent page has no Connect agent.
+// Against the real backend only (the mock web app of the default config skips it):
+//   npx playwright test -c playwright.accounts.config.ts       its own server, fresh template
+//   ACCOUNTS_BASE=https://... npx playwright test e2e/accounts-demo.spec.ts   a running server or the public link
 //
 // Numbers: the demo template (alone up to 1,200.00 €, the example 1,010.00 €), lowered to 800 €.
 const BASE = process.env.ACCOUNTS_BASE;
@@ -30,11 +30,11 @@ async function freshDemo(page: Page) {
 
 const nav = (page: Page, id: string, name: RegExp) => el(page, id, "link", name);
 
+/** Type the code when the page asks for it (a page that remembers it this visit does not), then submit. */
 async function typeCode(page: Page) {
-  const box = page.getByTestId("code-input").or(page.getByLabel(/approval code/i)).first();
-  await expect(box).toBeVisible();
-  await box.fill(CODE);
-  await page.getByTestId("code-submit").or(page.getByRole("button", { name: /^(confirm|save|approve|ok)$/i })).first().click();
+  const box = page.getByTestId("code-input").filter({ visible: true }).first();
+  if (await box.waitFor({ timeout: 3_000 }).then(() => true, () => false)) await box.fill(CODE);
+  await page.getByTestId("code-submit").filter({ visible: true }).first().click();
 }
 
 /** Send the example from the Inbox and wait for one more row with `status` than before (the template's
@@ -49,6 +49,7 @@ async function sendExample(page: Page, status: RegExp) {
 }
 
 test("the demo path, end to end, in a fresh browser", async ({ page, browser }) => {
+  test.skip(!BASE, "runs against a server: -c playwright.accounts.config.ts or ACCOUNTS_BASE");
   test.setTimeout(180_000);
   await freshDemo(page);
   const agentNav = nav(page, "nav-agent", /^agent$/i);
@@ -71,11 +72,11 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
   // 2 connect the demo agent
   await agentNav.click();
   await connect.click();
-  await expect(page.getByTestId("pairing-code").or(page.getByText(/^[A-Z0-9]{4}-[A-Z0-9]{4}$/)).first()).toBeVisible();
+  await expect(page.getByTestId("pair-code")).toHaveText(/^[A-Z0-9]{4}-?[A-Z0-9]{4}$/);
   await el(page, "agent-demo", "button", /connect the demo agent/i).click();
   await expect(page.getByText(/order alone up to 1,200\.00 €/i).first()).toBeVisible();
-  await el(page, "agent-allow", "button", /^allow$/i).click();
-  await expect(page.getByText(/^active$/i).first()).toBeVisible();
+  await el(page, "consent-allow", "button", /^allow$/i).click();
+  await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
 
   // 3 the example request, ordered alone
   await sendExample(page, /ordered alone/i);
@@ -83,12 +84,10 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
 
   // 4 lower the alone limit in Rules, with the code
   await agentNav.click();
-  await el(page, "agent-rules", "link", /^rules$/i).or(page.getByRole("button", { name: /^rules$/i })).first().click();
-  const alone = page.getByTestId("rules-alone").or(page.getByLabel(/orders? alone up to/i)).first();
-  await alone.fill("800");
-  await el(page, "rules-save", "button", /^save$/i).click();
+  await el(page, "rules-edit", "button", /^(edit|set rules)$/i).click();
+  await page.getByTestId("r-alone").fill("800");
   await typeCode(page);
-  await expect(alone).toHaveValue(/^800([.,]00)?$/);
+  await expect(page.getByTestId("rules-alone")).toContainText("800.00 €");
 
   // 5 the same request again waits
   await sendExample(page, /waiting for you/i);
@@ -97,15 +96,16 @@ test("the demo path, end to end, in a fresh browser", async ({ page, browser }) 
 
   // 6 approve with the code
   await waiting.click();
-  await el(page, "open-approval", "link", /open approval/i).or(page.getByRole("button", { name: /open approval/i })).first().click();
+  await el(page, "open-approve", "link", /open approval/i).click();
+  await el(page, "approve", "button", /^approve$/i).click();
   await typeCode(page);
-  await expect(page.getByText(/^(placed|ordered|approved)\b/i).first()).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByText(/^(placed|ordered)$/i).filter({ visible: true }).first()).toBeVisible({ timeout: 30_000 });
 
   // 7 pause, send again, the refusal stands in the ledger
   await agentNav.click();
   await el(page, "agent-pause", "button", /^pause$/i).click();
-  await expect(page.getByText(/^paused$/i).first()).toBeVisible();
-  await sendExample(page, /paused this agent/i);
+  await expect(page.getByTestId("agent-state")).toHaveText(/paused/i);
+  await sendExample(page, /^refused$/i);
   await agentNav.click();
   await el(page, "agent-ledger", "link", /see in ledger/i).click();
   await expect(page).toHaveURL(/\/ledger/);
