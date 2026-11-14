@@ -171,6 +171,8 @@
   @media (max-width: 600px) {
     .ctl { gap: 8px; flex-wrap: wrap; }
     .ctl :global(.field) { flex: 1 1 100%; }
-    .pair { gap: 8px; }
+    /* the date button goes to its own line when both do not fit; at the right, so its panel opens on screen */
+    .pair { gap: 8px; flex: 1 1 100%; flex-wrap: wrap; }
+    .pair :global(.asof) { margin-left: auto; }
   }
 </style>
