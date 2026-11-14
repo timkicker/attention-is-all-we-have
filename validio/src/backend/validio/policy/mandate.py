@@ -78,7 +78,21 @@ class Mandate:
     # the Rules' per week limit: when set, the two limits above hold per order and this one for every order
     # placed under the pass together; when absent (the seeded pass), both limits hold for the pass as a whole
     week_cap_cents: int | None = None
+    # the Rules' "never" allergens, words of NEVER_ALLERGENS: a product that lists one is blocked, one without
+    # allergen data or that may contain one waits for a person. A word not in NEVER_ALLERGENS fails closed
+    never_contains: tuple[str, ...] | None = None
 
+
+# The Rules' allergens a kitchen can rule out, in words, with the GS1 codes Valio sends for each
+# (text.format.ALLERGEN_WORDS). Signed into the pass as the plain claim `neverContains`.
+NEVER_ALLERGENS: dict[str, frozenset[str]] = {
+    "milk": frozenset({"AM", "ML"}), "eggs": frozenset({"AE"}),
+    "gluten": frozenset({"AW", "UW", "GB", "GO", "NR", "GS", "GK"}),
+    "nuts": frozenset({"AN", "SA", "SH", "SW", "SC", "SP", "SR", "ST", "SM"}), "peanuts": frozenset({"AP"}),
+    "soy": frozenset({"AY"}), "fish": frozenset({"AF"}), "crustaceans": frozenset({"AC"}),
+    "molluscs": frozenset({"UM"}), "sesame": frozenset({"AS"}), "celery": frozenset({"BC"}),
+    "mustard": frozenset({"BM"}), "lupin": frozenset({"NL"}), "sulphites": frozenset({"AU"}),
+}
 
 # The only `substitutes` value that lets a listed substitute order alone. Anything else fails closed.
 SUBSTITUTES_LISTED = "listed_and_rules_kept"
@@ -310,4 +324,5 @@ def _mandate(p: dict[str, Any]) -> Mandate:
         prefer_labels=tuple(labels) if labels is not None else None,
         disclosed=disclosed,
         week_cap_cents=_ints(p.get("weekCapCents")),
+        never_contains=tuple(str(x) for x in p.get("neverContains") or ()),
     )
