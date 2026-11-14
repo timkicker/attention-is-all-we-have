@@ -183,7 +183,9 @@
   @media (max-width: 1000px) {
     .split { grid-template-columns: minmax(0, 1fr); grid-template-areas: "intro" "topics" "ex"; }
     .ex { margin-top: 48px; }
-    .covered .ex { visibility: hidden; }
+    /* One column: the results sit in the flow in place of the prepared list, with the example below (wf 02 at 390). */
+    .covered .pre { display: none; }
+    .covered .search :global(.res) { position: static; margin-top: 8px; }
     .pre { margin-top: 56px; }
   }
   @media (max-width: 600px) {
