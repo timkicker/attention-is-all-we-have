@@ -7,7 +7,7 @@ In process: `async with mcp.Client(server)`. Over HTTP: mounted at /mcp on 127.0
 
 import functools
 
-from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver import Context, MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
 from ..orders.service import (
@@ -24,7 +24,27 @@ from ..valio.budget import CallBudgetExceeded
 from ..valio.client import NotRecorded, ReplayMiss, ValioUnavailable
 from . import tools
 from .schemas import ConfirmIn, SupplyLineIn, SupplyRequestIn
-from .state import get_ctx
+from .state import Ctx, get_ctx
+
+ACCOUNT = "validio.account"  # put on the ASGI scope by the /mcp/k/{account}/ mount in app.py
+
+
+def kitchen(mc: Context | None) -> Ctx:
+    """The kitchen a tool call works on: the account in the URL (/mcp/k/{account}/), read from the HTTP request
+    of this call, because a streamable-HTTP session runs in its own task and sees no contextvar from the
+    request. In process (demo/ask) there is no request: `get_ctx()`, which the caller set."""
+    request = None
+    if mc is not None:
+        try:
+            request = mc.request_context.request
+        except ValueError:
+            request = None
+    account = getattr(request, "scope", {}).get(ACCOUNT) if request is not None else None
+    if account:
+        from .accounts import get_accounts
+
+        return get_accounts().ctx(account)
+    return get_ctx()
 
 server = MCPServer("validio", instructions=(
     "Validio checks every supply order against the kitchen's Spend Pass and Valio's own data. "
@@ -60,42 +80,43 @@ def _dump(m):
 @server.tool()
 @_errors
 def search_products(text: str | None = None, category: str | None = None, claims: list[str] | None = None,
-                    limit: int = 10) -> list[dict]:
+                    limit: int = 10, mc: Context | None = None) -> list[dict]:
     """Search Valio's catalog (static data, no live call, at most 20). Claims come with their grade."""
-    return [_dump(p) for p in tools.search_products(get_ctx(), text, category, claims, limit)]
+    return [_dump(p) for p in tools.search_products(kitchen(mc), text, category, claims, limit)]
 
 
 @server.tool()
 @_errors
 def request_supply(spendPass: str, lines: list[SupplyLineIn], idempotencyKey: str,
-                   deliverBy: str | None = None) -> dict:
+                   deliverBy: str | None = None, mc: Context | None = None) -> dict:
     """Ask for supply: lines of free text or {productId, quantity, unit}. Returns ranked options per
     line, the decision (auto_order, ask_human or block) and how many product ids were checked live."""
     body = SupplyRequestIn(lines=lines, deliver_by=deliverBy, idempotency_key=idempotencyKey)
-    return _dump(tools.request_supply(get_ctx(), spendPass, body))
+    return _dump(tools.request_supply(kitchen(mc), spendPass, body))
 
 
 @server.tool()
 @_errors
-def get_request(requestId: str) -> dict:
+def get_request(requestId: str, mc: Context | None = None) -> dict:
     """The current state of a request."""
-    return _dump(tools.get_request(get_ctx(), requestId))
+    return _dump(tools.get_request(kitchen(mc), requestId))
 
 
 @server.tool()
 @_errors
-def confirm_order(spendPass: str, requestId: str, choice: list[dict], idempotencyKey: str) -> dict:
+def confirm_order(spendPass: str, requestId: str, choice: list[dict], idempotencyKey: str,
+                  mc: Context | None = None) -> dict:
     """Confirm products and amounts ([{productId, salesQty}]) from a request's options. Prices are
     taken from Valio again, never from the agent."""
     body = ConfirmIn(request_id=requestId, choice=choice, idempotency_key=idempotencyKey)
-    return _dump(tools.confirm_order(get_ctx(), spendPass, body))
+    return _dump(tools.confirm_order(kitchen(mc), spendPass, body))
 
 
 @server.tool()
 @_errors
-def get_order(orderId: str) -> dict:
+def get_order(orderId: str, mc: Context | None = None) -> dict:
     """The order and its state: waiting, approved, placed, rejected or blocked."""
-    return _dump(tools.get_order(get_ctx(), orderId))
+    return _dump(tools.get_order(kitchen(mc), orderId))
 
 
 @server.resource("validio://nonce", mime_type="application/json")
@@ -104,11 +125,23 @@ def nonce_resource() -> str:
     return tools.nonce(get_ctx()).model_dump_json()
 
 
+@server.resource("validio://k/{account}/nonce", mime_type="application/json")
+def kitchen_nonce_resource(account: str) -> str:
+    """A fresh single-use nonce from the kitchen `account` (a static resource cannot see the URL it came in on,
+    so the account is in the resource's own URI)."""
+    from .accounts import get_accounts
+
+    try:
+        return tools.nonce(get_accounts().ctx(account)).model_dump_json()
+    except KeyError as e:
+        raise ValueError(f"no kitchen {account}") from e
+
+
 # Scene 4 for the kitchen's agent: the same renewal as the web app's button (POST /api/steady/{id}/renew),
 # called as a function. The Spend Pass is checked first and stands in for the approve code, so only the
 # kitchen's agent can press it and no code travels anywhere.
 @server.tool()
-async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
+async def renew_steady_order(spendPass: str, orderId: str = "S-1", mc: Context | None = None) -> dict:
     """Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, the rest
     wait for the owner with the reason. A second renewal in the same week orders nothing twice."""
     import anyio
@@ -116,7 +149,7 @@ async def renew_steady_order(spendPass: str, orderId: str = "S-1") -> dict:
 
     from .steady import renew
 
-    ctx = get_ctx()
+    ctx = kitchen(mc)
     _errors(ctx.verify)(spendPass)
     try:
         view = await anyio.to_thread.run_sync(renew, orderId, ctx.rt)  # this account's store
