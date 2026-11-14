@@ -15,6 +15,7 @@ import hashlib
 import json
 import sqlite3
 import threading
+import time
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -51,7 +52,24 @@ FIELDS = ("seq", "at", "actor", "kind", "sentence", "facts", "mandate_id", "disc
 
 
 def canonical(body: dict[str, Any]) -> str:
+    """The bytes the hash is taken over: JSON with keys sorted, no spaces, UTF-8 (not \\u escapes). For what an
+    entry holds (ASCII keys; strings, whole numbers, true, false, null; no floats, see `_plain`) this is exactly
+    RFC 8785 (JCS), so anyone can check the chain with a JCS library in any language."""
     return json.dumps(body, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _plain(v: Any) -> Any:
+    """An entry without floats: JSON numbers with a fraction are written differently by different languages, so
+    a whole float becomes an int and any other float its shortest decimal string."""
+    if isinstance(v, bool) or v is None:
+        return v
+    if isinstance(v, float):
+        return int(v) if v.is_integer() else repr(v)
+    if isinstance(v, dict):
+        return {str(k): _plain(x) for k, x in v.items()}
+    if isinstance(v, (list, tuple)):
+        return [_plain(x) for x in v]
+    return v
 
 
 def entry_hash(body: dict[str, Any]) -> str:
@@ -158,6 +176,13 @@ class AuditLog:
                           protected=canonical({"alg": "ES256", "typ": HEAD_TYP, "kid": self._key.thumbprint()}))
         return jws.serialize(compact=True)
 
+    def sign_head(self) -> None:
+        """Sign the head as it is with this log's key (a kitchen copied from another that got its own key)."""
+        with self._lock:
+            row = self._con.execute("SELECT count, hash, at FROM ledger_head WHERE id = 1").fetchone()
+            if row is not None:
+                self._con.execute("UPDATE ledger_head SET sig = ? WHERE id = 1", (self._sign(*row),))
+
     def head(self) -> Head | None:
         with self._lock:
             row = self._con.execute("SELECT count, hash, at, sig FROM ledger_head WHERE id = 1").fetchone()
@@ -201,7 +226,7 @@ class AuditLog:
                 "prev_hash": prev,
             }
             # round trip so the stored body is exactly what gets hashed
-            body = json.loads(canonical(body))
+            body = json.loads(canonical(_plain(body)))
             h = entry_hash(body)
             con.execute(
                 "INSERT INTO ledger (seq, order_id, body, hash) VALUES (?, ?, ?, ?)",
@@ -229,7 +254,21 @@ class AuditLog:
                 ).fetchall()
         return [_entry(b, h) for b, h in rows]
 
+    VERIFY_FOR = 10.0  # seconds a verify result stands while this connection wrote nothing
+
     def verify(self) -> VerifyResult:
+        """The whole chain, checked again after any write here and at least every VERIFY_FOR seconds, so a row
+        changed by hand in the file shows within seconds even while nothing is appended."""
+        with self._lock:
+            key = (id(self._con), self._con.total_changes)
+            cached = getattr(self, "_verified", None)
+            if cached and cached[0] == key and time.monotonic() - cached[1] < self.VERIFY_FOR:
+                return cached[2]
+            result = self._verify()
+            self._verified = (key, time.monotonic(), result)
+            return result
+
+    def _verify(self) -> VerifyResult:
         prev = GENESIS
         count = 0
         expected_seq = 1

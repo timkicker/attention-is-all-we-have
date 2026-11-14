@@ -194,3 +194,20 @@ def test_waiting_order_approved_after_asking_again(svc):
     with pytest.raises(Exception, match="only a waiting order"):
         svc.approve(o["id"], "owner:synthetic")
     assert svc.audit.verify().ok
+
+
+def test_an_own_account_never_orders_alone_on_placeholder_stock(syn, tmp_path):
+    cat, valio = syn
+    lenient = OrderService(Store(tmp_path / "a.db"), cat, valio, AuditLog(tmp_path / "a.db"), clock=lambda: NOW)
+    strict = OrderService(Store(tmp_path / "b.db"), cat, valio, AuditLog(tmp_path / "b.db"), clock=lambda: NOW,
+                          strict_stock=True)
+    line = [LineIn("900002", 100)]  # Valio answers 9999999999 for it
+    assert lenient.submit(mandate=PASS, lines=line, deliver_by=MON, idempotency_key="p")["state"] == "placed"
+    o = strict.submit(mandate=PASS, lines=line, deliver_by=MON, idempotency_key="p")
+    assert o["state"] == "waiting" and "does not confirm the stock" in o["decision"]["sentence"]
+    q = next(f for f in o["lines"][0]["facts"] if f["field"] == "quantity")
+    assert q["grade"] == "unknown"
+    # the strict rule ends with the call: the process default is untouched
+    from validio.config import strict_placeholder_stock
+
+    assert strict_placeholder_stock() is False

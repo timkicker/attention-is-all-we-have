@@ -1,6 +1,8 @@
 """Requests, orders and idempotency keys in the local SQLite store (data/validio.db, the same file the
 demo seed writes). Each record is one JSON document, ids count up from a reset (R-1, O-1, ...)."""
 
+import contextlib
+import itertools
 import json
 import sqlite3
 import threading
@@ -24,11 +26,17 @@ class NotFound(LookupError):
     """No request or order with this id (HTTP 404). A bare KeyError is a bug, never a 404."""
 
 
+_SERIALS = itertools.count(1)
+
+
 class Store:
     def __init__(self, path: Path | str):
         self.path = Path(path)
+        self.serial = next(_SERIALS)  # unique in the process for the store's life, never reused (unlike id())
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
+        # timeout: a second connection to the same file (an account's runtime dropped from the cache while a
+        # request still uses it) waits for the other's write instead of failing at once
+        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False, timeout=30)
         self._lock = threading.RLock()
         self._depth = 0
         self._con.executescript(SCHEMA)
@@ -45,6 +53,10 @@ class Store:
 
     def close(self) -> None:
         self._con.close()
+
+    def __del__(self) -> None:  # an account's runtime dropped from the cache closes when nothing holds it
+        with contextlib.suppress(Exception):  # at interpreter shutdown the module may be half gone
+            self._con.close()
 
     @contextmanager
     def tx(self) -> Iterator[None]:
@@ -112,7 +124,8 @@ class Store:
         return json.loads(row[0]) if row else None
 
     def order_for_request(self, rid: str) -> dict[str, Any] | None:
-        row = self._con.execute("select body from supply_order where request_id = ?", (rid,)).fetchone()
+        with self._lock:
+            row = self._con.execute("select body from supply_order where request_id = ?", (rid,)).fetchone()
         return json.loads(row[0]) if row else None
 
     def orders(self) -> list[dict[str, Any]]:
@@ -135,6 +148,15 @@ class Store:
     def idem_put(self, scope: str, key: str, body_hash: str, ref: str) -> None:
         with self._lock:
             self._con.execute("insert into idempotency values (?, ?, ?, ?)", (scope, key, body_hash, ref))
+
+    def idem_delete(self, scope: str, key: str) -> None:
+        with self._lock:
+            self._con.execute("delete from idempotency where scope = ? and key = ?", (scope, key))
+
+    def drop_request(self, rid: str) -> None:
+        """Forget a request that never got past its start (an error before any decision)."""
+        with self._lock:
+            self._con.execute("delete from supply_request where id = ?", (rid,))
 
     def remember_pass(self, pass_id: str, body: dict[str, Any]) -> None:
         with self._lock:

@@ -12,6 +12,7 @@ this table has the demo agent connected: the seed signs M-1 to the demo agent's 
 import hashlib
 import secrets
 import sqlite3
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -32,6 +33,7 @@ CODE_TTL = timedelta(minutes=10)
 MAX_PAIR_TRIES = 5
 DEMO_AGENT = seed.DEMO_AGENT_NAME
 MCP_NAME = "MCP agent"  # the name of a connector agent whose client sent no usable clientInfo.name
+AGENT_NAME = "Agent"  # the name of a signing agent that paired with no usable name
 RESERVED = frozenset({"you", "owner", "validio", "demo", "kitchen"})  # names the screens give someone else
 KNOWN_CLIENTS = {"claude-code": "Claude Code", "claude-ai": "Claude"}  # ids some clients send as their name
 PAUSED = "the kitchen paused this agent"
@@ -193,14 +195,16 @@ def leave_unconnected(db_path: Path) -> None:
     save(Path(db_path), Link("none"))
 
 
-def clean_name(raw) -> str:
-    """The MCP client's clientInfo.name as the screens show it: printable, one line, at most 60 characters.
-    Nothing usable, or a name the screens use for someone else, reads "MCP agent"."""
+def clean_name(raw, fallback: str = MCP_NAME) -> str:
+    """An agent's name as the screens show it (the MCP client's clientInfo.name, or the name a signing agent
+    pairs with): printable, one line, at most 60 characters. Nothing usable, or a name the screens use for
+    someone else ("Validio", "owner", "you"), reads `fallback`, so no agent can pose as them on the consent
+    screen or in the ledger."""
     if not isinstance(raw, str):
-        return MCP_NAME
+        return fallback
     name = " ".join("".join(ch if ch.isprintable() else " " for ch in raw).split())[:60].strip()
     name = KNOWN_CLIENTS.get(name.lower(), name)
-    return name if name and name.lower() not in RESERVED else MCP_NAME
+    return name if name and name.lower() not in RESERVED else fallback
 
 
 NAMES_SCHEMA = f"create table if not exists {seed.AGENT_NAME_TABLE}"
@@ -350,7 +354,7 @@ def agent_pair(ctx: Ctx, body: PairIn) -> str:
     """The agent answers the code with its name and key. 404 for a wrong or expired code; five wrong codes
     end the pairing. Returns the verification code the consent screen shows."""
     key = _public(body.public_jwk)
-    name = " ".join(body.name.split())
+    name = clean_name(body.name, fallback=AGENT_NAME)
     with ctx.rt.lock:
         link = load(ctx)
         live = link.state == "pairing" and link.code_expires and datetime.fromisoformat(link.code_expires) > _wall()
@@ -390,6 +394,8 @@ def allow(ctx: Ctx) -> None:
         demo = key.thumbprint() == demo_key(ctx).thumbprint()
         sub = DEMO_CLAIMS["sub"] if demo else "agent:" + ("".join(ch if ch.isalnum() else "-" for ch in
                                                                    link.pending_name.lower()).strip("-") or "agent")
+        if not demo and sub in (DEMO_CLAIMS["sub"], "agent:validio", "agent:gate"):
+            sub = f"{sub}-{key_id(key)}"  # never the demo agent's or Validio's own actor in the ledger
         seed.sign_again(ctx.db_path, ctx.keys_dir, {"sub": sub}, agent_pub=key, why="Agent connected", at=ctx.stamp())
         ver = seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID)
         link = Link("active", link.pending_name, sub, key.export_public(), key_id(key), ctx.stamp().isoformat(),
@@ -479,7 +485,11 @@ def _issued_jwt(ctx: Ctx, pass_id: str) -> str | None:
 # token is kept in clear only while pairing waits; an index in the accounts db finds the kitchen by its hash.
 
 CONNECTOR_SCHEMA = """create table if not exists connector (
-  id integer primary key check (id = 1), private_jwk text not null, token_hash text not null, token text)"""
+  id integer primary key check (id = 1), private_jwk text not null, token_hash text not null, token text,
+  used_at real)"""
+# A connector URL is a bearer secret for as long as it lasts: one nobody used for this long is dropped and the
+# kitchen connects again. Counted on the wall clock from the last call that came in on the URL.
+CONNECTOR_IDLE = 30 * 24 * 3600
 INDEX_SCHEMA = "create table if not exists connector_index (token_hash text primary key, account_id text)"
 WAITING = ("Waiting for the kitchen to press Allow in Validio. Ask the user to open the Agent page in Validio "
            "and press Allow, then call the tool again.")
@@ -496,7 +506,27 @@ def _kcon(ctx: Ctx) -> sqlite3.Connection:
     con = sqlite3.connect(ctx.db_path, timeout=10)
     con.execute("pragma secure_delete = on")  # a token cleared after Allow leaves no copy in free pages
     con.execute(CONNECTOR_SCHEMA)
+    if "used_at" not in {r[1] for r in con.execute("pragma table_info(connector)")}:
+        con.execute("alter table connector add column used_at real")  # a store from before the idle limit
     return con
+
+
+def _used_at(ctx: Ctx) -> float | None:
+    con = _kcon(ctx)
+    try:
+        row = con.execute("select used_at from connector where id = 1").fetchone()
+    finally:
+        con.close()
+    return row[0] if row else None
+
+
+def _touch_connector(ctx: Ctx) -> None:
+    con = _kcon(ctx)
+    try:
+        con.execute("update connector set used_at = ? where id = 1", (time.time(),))
+        con.commit()
+    finally:
+        con.close()
 
 
 def _connector(ctx: Ctx) -> tuple[str, str, str | None] | None:
@@ -583,6 +613,15 @@ def connector_ctx(token: str | None, touch: bool = False, name: str | None = Non
         return None
     if link.state == "none":
         return None
+    used = _used_at(ctx)
+    if link.state in ("active", "paused") and used is not None and time.time() - used > CONNECTOR_IDLE:
+        with ctx.rt.lock:  # unused for 30 days: the URL ends, as Disconnect ends it
+            disconnect(ctx, quiet=True)
+            _entry(ctx, f"Ended the connection link of {link.name}: unused for 30 days. Connect it again on the "
+                        "Agent page.", actor="validio")
+        return None
+    if touch:
+        _touch_connector(ctx)
     if touch and (link.state == "pairing" or (link.state == "consent" and name and link.pending_name == MCP_NAME)):
         with ctx.rt.lock:
             link = load(ctx)

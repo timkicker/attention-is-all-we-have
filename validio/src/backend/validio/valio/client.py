@@ -7,7 +7,10 @@ replay  answers only from cache_dir and never opens a connection
 
 import hashlib
 import json
+import logging
+import threading
 import time
+from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
 
@@ -17,6 +20,7 @@ from .budget import CallBudget
 from .models import Availability, Quote
 
 MAX_PER_CALL = 1000  # Valio rejects longer lists with 422
+TIMEOUT_S = 15.0  # one read; asked twice at most, so a request waits at most about 30 s on Valio
 TEST_API_HOST = "junction26.valioaimo.fi"  # Valio's test API. The real webshop is never called.
 
 
@@ -52,6 +56,13 @@ class ValioRefused(ValioUnavailable):
     message = "Valio refused Validio's key. Nothing was ordered."
 
 
+class ValioMalformed(ValioUnavailable):
+    """Valio answered, but not in the shape Validio reads: a missing field, a bad number or time. Nothing was
+    ordered; refused like an outage, never a 500 and never a guess."""
+
+    message = "Valio answered in a shape Validio cannot read. Nothing was ordered."
+
+
 def _refusal(e: Exception) -> ValioUnavailable | None:
     """429, 401 and 403 as Valio not answering, never a raw error (they used to become a 500)."""
     if isinstance(e, httpx.HTTPStatusError):
@@ -67,6 +78,16 @@ def _transient(e: Exception) -> bool:
     if isinstance(e, httpx.HTTPStatusError):
         return e.response.status_code >= 500
     return isinstance(e, httpx.TransportError)  # timeouts, refused or dropped connections
+
+
+@contextmanager
+def _readable(endpoint: str):
+    """An answer Validio cannot read becomes ValioMalformed, with the cause in the log for the developer."""
+    try:
+        yield
+    except (KeyError, TypeError, ValueError, AttributeError) as e:
+        logging.getLogger(__name__).warning("unreadable Valio %s answer: %r", endpoint, e)
+        raise ValioMalformed(e) from e
 
 
 def checked_base_url(url: str) -> str:
@@ -116,6 +137,8 @@ class ValioClient:
         self.chunk = min(chunk, MAX_PER_CALL)
         self._api_key = api_key
         self._http = http
+        self._pool: httpx.Client | None = None  # one client for every call: kept-alive TLS connections
+        self._pool_lock = threading.Lock()
         self.backoff = backoff
         self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
 
@@ -126,15 +149,17 @@ class ValioClient:
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
         out: dict[str, Quote] = {}
         for resp in self._query("price", ids, requested, budget):
-            for x in resp["products"]:
-                out[x["productId"]] = Quote.from_api(x)
+            with _readable("price"):
+                for x in resp["products"]:
+                    out[x["productId"]] = Quote.from_api(x)
         return out
 
     def availability(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Availability]:
         out: dict[str, Availability] = {}
         for resp in self._query("availability", ids, requested, budget):
-            for x in resp["products"]:
-                out[x["productId"]] = Availability.from_api(x, resp.get("timeNow"))
+            with _readable("availability"):
+                for x in resp["products"]:
+                    out[x["productId"]] = Availability.from_api(x, resp.get("timeNow"))
         return out
 
     def _query(self, endpoint: str, ids: list[str], requested: date, budget: CallBudget) -> list[dict]:
@@ -172,17 +197,16 @@ class ValioClient:
 
     def _call_once(self, endpoint: str, requested: date, ids: list[str]) -> dict:
         body = {"customer": self.customer, "requestedDate": requested.isoformat(), "products": ids}
-        http = self._http or httpx.Client(timeout=30)
-        try:
-            req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
-                                     headers={"X-API-Key": self._api_key})
-            checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
-            r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
-            r.raise_for_status()
+        http = self._http or self._client()
+        req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
+                                 headers={"X-API-Key": self._api_key})
+        checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
+        r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
+        r.raise_for_status()
+        with _readable(endpoint):
             resp = r.json()
-        finally:
-            if self._http is None:
-                http.close()
+            if not isinstance(resp, dict) or not isinstance(resp.get("products"), list):
+                raise TypeError("no product list")
         if self.mode == "record":
             d = self.cache_dir / endpoint / requested.isoformat()
             d.mkdir(parents=True, exist_ok=True)
@@ -190,6 +214,14 @@ class ValioClient:
                 {"endpoint": endpoint, "requestedDate": requested.isoformat(), "ids": sorted(ids),
                  "response": resp}, indent=1, ensure_ascii=False))
         return resp
+
+    def _client(self) -> httpx.Client:
+        """The pooled client, made on first use; httpx.Client is safe to share between threads."""
+        with self._pool_lock:
+            if self._pool is None:
+                self._pool = httpx.Client(timeout=httpx.Timeout(TIMEOUT_S, connect=5.0),
+                                          limits=httpx.Limits(max_connections=20, max_keepalive_connections=10))
+            return self._pool
 
     def _replay(self, endpoint: str, requested: date, ids: list[str]) -> dict:
         d = self.cache_dir / endpoint / requested.isoformat()

@@ -1,6 +1,8 @@
 """Settings from the environment and validio/.env. Secrets live only in .env (gitignored)."""
 
 import os
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from datetime import datetime
 from functools import cache
@@ -68,9 +70,26 @@ def _env_file_value(path: Path, key: str) -> str | None:
     return _read_env_file(path).get(key)
 
 
+_STRICT_STOCK: ContextVar[bool] = ContextVar("strict_placeholder_stock", default=False)
+
+
+@contextmanager
+def strict_stock(on: bool):
+    """Within it, placeholder stock is no real count whatever STRICT_PLACEHOLDER_STOCK says: a kitchen's own
+    account decides with real money, so it never orders alone on a count nobody made. It only turns strict on."""
+    token = _STRICT_STOCK.set(_STRICT_STOCK.get() or on)
+    try:
+        yield
+    finally:
+        _STRICT_STOCK.reset(token)
+
+
 def strict_placeholder_stock() -> bool:
     """STRICT_PLACEHOLDER_STOCK=1: Valio's placeholder stock numbers (9999999999, 666666666) count as no real
-    count, so nothing orders alone on them. Off by default until a Valio mentor says what they mean."""
+    count, so nothing orders alone on them. Off by default for the demo and the local kitchen until a Valio
+    mentor says what they mean; always on for a kitchen's own account (`strict_stock`)."""
+    if _STRICT_STOCK.get():
+        return True
     v = os.environ.get("STRICT_PLACEHOLDER_STOCK")
     if v is None:
         v = _env_file_value(DEFAULT_ENV, "STRICT_PLACEHOLDER_STOCK")

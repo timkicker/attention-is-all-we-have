@@ -201,7 +201,8 @@ def test_rules_and_diet_sign_the_accounts_own_pass(ctx, tmp_path, monkeypatch):
         assert put_rules(c).status_code == 403  # the server's code is not this kitchen's
         r = put_rules(c, code="135790")
         assert r.status_code == 200, r.text
-        assert r.json()["saved"] is True and r.json()["passVersion"] == 2
+        # version 2 is the signing for the account's own key (seed.rekey on create), the Rules sign version 3
+        assert r.json()["saved"] is True and r.json()["passVersion"] == 3
         assert c.get("/api/account").json()["setup"]["rules"] is True
         d = c.put("/api/settings/diet", json={"diet": ["VEGAN"], "code": "135790"})
         assert d.status_code == 200 and d.json()["diet"] == ["VEGAN"]
@@ -234,7 +235,8 @@ def test_changing_the_code_works_for_approvals_too(ctx, tmp_path, monkeypatch):
         assert c.put("/api/settings/approval-code", json={"current": "135790", "next": "975310"}).status_code == 204
         assert put_rules(c, code="135790").status_code == 403
         assert put_rules(c, code="975310").status_code == 200
-        assert c.post("/api/steady/S-1/renew", json={"code": "975310"}).status_code == 200
+        # an own account has no borrowed Steady Order S-1 to renew (test_an_own_account_has_no_borrowed_steady_order)
+        assert c.post("/api/steady/S-1/renew", json={"code": "975310"}).status_code == 404
 
 
 def test_demo_copy_answers_to_246810_and_keeps_it(ctx, tmp_path, monkeypatch):

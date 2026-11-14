@@ -350,3 +350,4 @@ def test_ledger_entries_name_their_request(client, holder):
     assert got[:4] == [("request", "R-1"), ("decision", "R-1"), ("decision", "R-1"), ("order", "R-1")]
     assert ("simulation", "demo") in got  # the stock-out is the demo's own group, not a request's
     assert all(r in ("R-1", "R-2", "demo") for _, r in got)
+

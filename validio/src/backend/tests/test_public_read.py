@@ -84,7 +84,8 @@ def test_a_demo_copy_drives_the_demo_on_a_public_deploy(public, monkeypatch, tmp
     monkeypatch.setenv("VALIDIO_ACCOUNTS", str(tmp_path / "accounts"))
     monkeypatch.setenv("VALIDIO_TEMPLATE", str(tmp_path / "template"))
     acc_mod._tries.clear()
-    with stranger() as c:
+    # VALIDIO_PUBLIC=1 marks the session cookie Secure, so the browser here talks https as a real visitor does
+    with TestClient(app, client=REMOTE, base_url="https://testserver") as c:
         assert c.post("/api/account/demo").status_code == 200
         assert c.post("/api/demo/reset").status_code == 200
     assert public.store.requests() == []  # the local kitchen did not move
