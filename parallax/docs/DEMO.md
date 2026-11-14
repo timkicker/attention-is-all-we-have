@@ -5,8 +5,8 @@
 ## Run it locally
 
 ```
-make seed SEED=v3        # or SEED=v1 until v3 is released
-make demo                # builds web/dist, records the example answers once, serves on API_PORT (default 8000)
+make seed               # SEED=v4 by default; /api/health then reports the seed the database was loaded from
+make demo                # builds web/dist, checks the AI answers with the real engine once, serves on API_PORT (default 8000)
 make demo-check          # in a second shell, against http://127.0.0.1:$(API_PORT)
 ```
 
@@ -32,13 +32,15 @@ A failing step prints `FAILED` with the first line of the error, the others stil
 | Script time | Step | Asserted on screen |
 |---|---|---|
 | 0:00 | Title | page title and wordmark "Parallax" |
-| 0:08 | Compare | the Mainila row has one cell per edition (7 on seed v3); de "inszenierte", sv "kunnat bevisas", en "reported"; a "same claim" chip; the Finnish dead row shows fi "26 662" and "number differs" in sv and en |
-| 0:30 | Time | the en Mainila cell reads "the Soviets staged" before the change and "an incident was reported" after it, life bars are drawn, and on seed v3 the edit comment of the change is on the bar |
-| 0:55 | Dropped | the ru card for "инсценированный советской стороной" with its date and the oldid of its last revision, "de: same claim", and on seed v3 the Finnish scale line |
-| 1:15 | Check | a recorded answer with its model, a chip "en: stopped saying (year)" and a "not found in" chip |
+| 0:08 | Compare | the Mainila row has one cell per edition of the topic; de "inszenierte", en "reported" and the sv term of the seed; the seed's verdict chip ("partly the same" on v4); the Finnish dead row shows fi "26 662" and "number differs" in the editions of the seed (de, en, uk on v4) |
+| 0:30 | Time | for the fi Mainila sentence alive before the change, the en cell reads "the Soviets staged" before it and "... was reported" after it, life bars are drawn, and from seed v3 on the edit comment of the change is on the bar |
+| 0:55 | Dropped | with the edition filter on Russian (paging on while needed), the ru card for "инсценированный советской стороной" with its date and the oldid of its last revision, the de chip, and from seed v3 on the Finnish scale line |
+| 1:15 | Check | the recorded answer about Mainila with its model, a chip "en: stopped saying (year)" and a "not found in" chip |
 | 1:35 | Under the hood | one statement with both `FOR SYSTEM_TIME AS OF` and `VEC_DISTANCE_COSINE`, its time and rows, the scale grid |
 | 1:50 | Footer | the footer text, "Evidence, not edits.", an "Open on fi.wikipedia" link to an oldid and no edit button |
 
-The values that depend on the data live in `e2e/demo-facts.ts`, one row per seed. The step reads the seed from `/api/health` and stops with "no demo facts for seed ..." on any other seed. The v1 row was read off seed v1. The v3 row holds the values the demo script names (en change on 21 Aug 2009, ru change on 9 Jul 2014, seven editions); correct it there if seed v3 differs.
+The values the audience reads live in `e2e/demo-facts.ts`, one entry per seed: sentences, terms, dates, edit comments and Wikipedia revision ids. Row ids are claim hashes, which depend on how a seed split the text, so the walk finds the rows through `/api/compare` (the fi sentence of the section that contains the given words) and takes the number of editions from `/api/topics`. The step reads the seed from `/api/health` and stops with "no demo facts for seed ..." on any other seed.
 
-`make e2e` leaves the demo walk out (it is tagged `@demo`), because its facts need seed v1 or v3.
+The recorded answers come from `contract/fixtures/answers.json` (A15, `make answers`). `make demo` checks them with `ENGINE=real` when the database holds no recorded answer yet, so it needs `GEMINI_API_KEY` in `.env` once per fresh seed load. An answer whose check fails is tried three times, then skipped.
+
+`make e2e` leaves the demo walk out (it is tagged `@demo`) and runs the other specs on seed-mini in a database of its own.
