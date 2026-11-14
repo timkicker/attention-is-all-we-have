@@ -433,6 +433,12 @@ def steady_order(order_id: str):
 def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | None, Body()] = None,
                  x_approve_code: Annotated[str | None, Header()] = None):
     _chef(request, f"steady:{order_id}", x_approve_code, body)
+    return renew(order_id)
+
+
+def renew(order_id: str) -> SteadyOrderOut:
+    """The renewal behind the button, without the code check: the route checks the code, the agent's
+    tool renew_steady_order checks the Spend Pass instead."""
     with runtime.lock:
         live = runtime.live()
         so, h = _get_order(order_id)
