@@ -83,20 +83,55 @@ describe('search', () => {
   })
 })
 
+const cell = (over: Record<string, unknown>) => ({
+  status: 'matched', h: 'x', page_id: 1, text: null, gloss: null, dist: null, verdict: null, marks: [],
+  born: null, died: null, born_rev: null, died_rev: null, time_precision: null, oldid_url: null, ...over,
+})
+const term = (other: string, thisEn: string | null = 'staged') => ({ kind: 'term', this: 'lavasti', other, this_en: thisEn })
+const mainila = (cells: Record<string, unknown>) => ({
+  topic: 'winterwar', as_of: '', anchor: 'fi', langs: [], editions: {}, total_rows: 1, sql: [],
+  rows: [{ row_id: 'r', section: 's', cells: {
+    fi: cell({ status: 'anchor', h: 'abe24bc5f22fda02', page_id: 1256, text: 'Neuvostoliitto lavasti', gloss: 'On 26 November 1939, the Soviet Union staged the Shelling of Mainila' }),
+    ...cells,
+  } }],
+})
+const FULL = mainila({
+  sv: cell({ text: 'Den officiella', gloss: 'The official Soviet explanation referred to Mainila.', marks: [term('Den officiella')] }),
+  de: cell({ text: 'Am 26.', gloss: 'The Red Army staged a border incident', marks: [term('die Rote Armee', null)] }),
+  en: cell({ text: 'On 26 November 1939, an incident was reported near Mainila', marks: [term('was reported')] }),
+  ru: cell({ text: 'организовал', gloss: 'The Soviet Union organized a provocation', marks: [term('организовал провокацию')] }),
+  et: cell({ text: 'x', gloss: 'Finland had fired', marks: [term('None')] }),
+})
+const topic = (qid: string, label: string) => ({ topic_id: label === 'Winter War' ? 'winterwar' : label, label_en: label, wikidata_id: qid, depth: 'deep', editions: [] })
+const client = (topics: unknown[], compare: unknown) =>
+  ({
+    topics: async () => ({ ok: true as const, data: { topics } }),
+    compare: async (q: { h?: string }) => (q.h === 'abe24bc5f22fda02' ? compare : { ok: false, error: { status: 404, code: 'x', message: '' } }),
+  }) as never
+
 describe('loadStart', () => {
-  it('lists loaded topics without years and shows the example only with Winter War', async () => {
-    const topic = (qid: string, label: string) => ({ topic_id: label, label_en: label, wikidata_id: qid, depth: 'deep', editions: [] })
-    const withWw = { topics: async () => ({ ok: true as const, data: { topics: [topic('Q134949', 'Winter War'), topic('Q152786', 'Mannerheim')] } }) } as never
-    const r = await loadStart(withWw)
+  it('builds the example from the real statement: Finnish plus three differing editions', async () => {
+    const r = await loadStart(client([topic('Q134949', 'Winter War'), topic('Q152786', 'Mannerheim')], { ok: true, data: FULL }))
     expect(r.ok).toBe(true)
     if (!r.ok) return
     expect(r.data.prepared.map((p) => [p.title, p.from, p.href])).toEqual([
       ['Winter War', null, '/t/Q134949'],
       ['Mannerheim', null, '/t/Q152786'],
     ])
-    expect(r.data.example?.href).toBe('/t/Q134949/s/fi/1256/abe24bc5f22fda02')
-    const without = { topics: async () => ({ ok: true as const, data: { topics: [topic('Q152786', 'Mannerheim')] } }) } as never
-    const r2 = await loadStart(without)
-    expect(r2.ok && r2.data.example).toBeNull()
+    const ex = r.data.example!
+    expect(ex.href).toBe('/t/Q134949/s/fi/1256/abe24bc5f22fda02')
+    expect(ex.title).toBe('How four editions tell one statement')
+    expect(ex.lines.map((l) => l.lang)).toEqual(['fi', 'sv', 'en', 'ru'])
+    const markedWords = ex.lines.map((l) => l.say.spans.map((s) => l.say.text.slice(s.start, s.end)))
+    expect(markedWords).toEqual([['staged'], [], ['was reported'], []])
+  })
+
+  it('hides the example without Winter War, on a failed call or with fewer than two differing editions', async () => {
+    expect(((await loadStart(client([topic('Q152786', 'M')], { ok: true, data: FULL }))) as { data: { example: unknown } }).data.example).toBeNull()
+    const failed = await loadStart(client([topic('Q134949', 'Winter War')], { ok: false, error: { status: 500, code: 'x', message: '' } }))
+    expect(failed.ok && failed.data.example).toBeNull()
+    const one = mainila({ en: cell({ text: 'an incident was reported', marks: [term('was reported')] }) })
+    const r = await loadStart(client([topic('Q134949', 'Winter War')], { ok: true, data: one }))
+    expect(r.ok && r.data.example).toBeNull()
   })
 })

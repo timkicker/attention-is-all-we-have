@@ -2,7 +2,7 @@
 // Shared words (edition names, finding words, footer) come from ./shared.
 
 import { fmtNum } from '../format'
-import { mins } from './shared'
+import { mins, numWord } from './shared'
 
 export const HERO = 'See where seven Wikipedias disagree'
 export const LEAD = 'Pick an article and see what each language edition tells differently'
@@ -15,6 +15,10 @@ export function exampleKicker(topic: string): string {
   return `${EXAMPLE} · ${topic}`
 }
 export const OPEN_EXAMPLE = 'Open this comparison →'
+/** Live example heading: "How four editions tell one statement". */
+export function exampleTitle(editions: number): string {
+  return `How ${numWord(editions)} editions tell one statement`
+}
 
 // Search result status, right side of a result row
 export const READY = 'Ready'
