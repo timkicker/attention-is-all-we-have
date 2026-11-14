@@ -19,4 +19,5 @@
   .sk { padding: 24px 0; border-bottom: 1px solid var(--line); }
   .sk i { display: block; height: 16px; border-radius: 4px; background: var(--soft); }
   .sk i + i { margin-top: 12px; }
+  .sk:last-child { border-bottom: 0; padding-bottom: 0; }
 </style>
