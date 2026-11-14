@@ -329,10 +329,9 @@ class SupplyService:
                 return self.get_request(seen[1])
             self.store.remember_pass(mandate.id, mandate_dict(mandate))
             budget = CallBudget(self.orders.max_ids)
-            now = self.now()
             started = time.monotonic()
             remember = True  # Valio not answering is never remembered, so the same key can try again
-            req = self.store.new_request({"createdAt": now.isoformat(), "agent": agent or mandate.holder,
+            req = self.store.new_request({"createdAt": self.orders.stamp().isoformat(), "agent": agent or mandate.holder,
                                           "text": text or "; ".join(self._line_text(ln) for ln in lines),
                                           "spendPassId": mandate.id, "status": "working"})
             self._log(req, mandate, agent or mandate.holder, "request",
@@ -393,7 +392,7 @@ class SupplyService:
                 # entry in the ledger, and not remembered under the key, so a retry after Valio is back works
                 req["lines"], req["status"] = [], "blocked"
                 said = str(e) if isinstance(e, (ValioBusy, ValioRefused)) else \
-                    f"Valio didn't answer at {now:%H:%M}. Nothing was ordered."
+                    f"Valio didn't answer at {self.orders.stamp():%H:%M}. Nothing was ordered."
                 req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": str(e),
                                    "reasonCode": "valio_down", "ownerText": said}
                 self._log(req, mandate, "validio", "decision", str(e), [], None)
@@ -493,7 +492,7 @@ class SupplyService:
         return entries[-1].sentence if entries else None
 
     def _log(self, req, mandate, actor, kind, sentence, rule_ids, order_id) -> None:
-        self.audit.append(at=self.now(), actor=actor, kind=kind, sentence=sentence, facts=[],
+        self.audit.append(at=self.orders.stamp(), actor=actor, kind=kind, sentence=sentence, facts=[],
                           mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=rule_ids, order_id=order_id)
 
 

@@ -32,7 +32,7 @@ if (!REMOTE)
   Object.assign(process.env, {
     VALIDIO_DB: `${STORE}/local/validio.db`, VALIDIO_KEYS: `${STORE}/local/keys`,
     VALIDIO_ACCOUNTS: `${STORE}/accounts`, VALIDIO_TEMPLATE: `${STORE}/template`, // no template: plain seeds
-    VALIO_MODE: "replay", VALIDIO_DEMO: "1", VALIDIO_APPROVE_CODE: "", VALIDIO_DEMO_TOKEN: "",
+    VALIO_MODE: "replay", VALIDIO_DEMO: "1", VALIDIO_REAL_TIME: "1", VALIDIO_APPROVE_CODE: "", VALIDIO_DEMO_TOKEN: "",
     VALIDIO_PUBLIC: "", VALIDIO_PUBLIC_READ: "", VALIDIO_KITCHEN_TOKEN: "", GEMINI_API_KEY: "",
   });
 

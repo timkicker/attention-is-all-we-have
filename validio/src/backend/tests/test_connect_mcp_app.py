@@ -415,3 +415,23 @@ def test_the_body_reaches_the_mcp_server_unchanged(kitchens):
     r = agent.post(f"/mcp/c/{token}/", headers=MCP_HEADERS, json=init)
     assert r.status_code == 200 and "serverInfo" in r.text
     assert demo.get("/api/agent").json()["consent"]["name"] == "Big"
+
+
+def test_real_time_stamps_what_happens_and_decides_on_the_demo_clock(kitchens, monkeypatch):
+    """VALIDIO_REAL_TIME=1 (the public deploy): the first MCP call's time and the ledger are the real time,
+    the decisions keep VALIDIO_NOW, which the replayed Valio answers fit (live test 14 Nov: 10:47 at 19:00)."""
+    from datetime import UTC, datetime, timedelta
+
+    monkeypatch.setenv("VALIDIO_REAL_TIME", "1")
+    demo, _new, agent, a, _b = kitchens
+    get_accounts().ctx(a).rt.close()  # the copy's service picks the setting up when it opens again
+    before = datetime.now(UTC)
+    token = start_pairing(demo)
+    Mcp(agent, f"/mcp/c/{token}/", name=AGENT)
+    at = datetime.fromisoformat(demo.get("/api/agent").json()["consent"]["at"])
+    assert before - timedelta(seconds=1) <= at <= datetime.now(UTC)
+    demo.post("/api/agent/allow")
+    entry = demo.get("/api/ledger").json()["entries"][-1]
+    assert datetime.fromisoformat(entry["at"]) >= before - timedelta(seconds=1), entry
+    ctx = get_accounts().ctx(a)
+    assert ctx.now() < ctx.stamp() and ctx.now().date().isoformat() == "2026-11-14"

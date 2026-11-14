@@ -160,6 +160,10 @@ class Ctx:
     def now(self):
         return self.orders.clock()
 
+    def stamp(self):
+        """When something happens, as the ledger and the screens show it (OrderService.stamp)."""
+        return self.orders.stamp()
+
     @property
     def kitchen_pub(self) -> JWK:
         path = self.keys_dir / "kitchen-es256.json"

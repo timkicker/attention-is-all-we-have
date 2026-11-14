@@ -264,7 +264,10 @@ class Runtime:
             store = Store(path)
             # an order and its ledger entry commit together; the kitchen key signs the head
             audit = AuditLog(path, seed.kitchen_key(self.keys_dir()), con=store.con, lock=store.lock)
-            service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: demo_now(self.settings.now, store.con),
+            clock = lambda: demo_now(self.settings.now, store.con)
+            wall = lambda: datetime.now(self.settings.now.tzinfo)
+            service = OrderService(store, self.catalog, self.valio, audit, clock=clock,
+                                   stamp=wall if self.settings.real_time else clock,
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    valio_down=lambda: seed.valio_down(path),
                                    lock=self.lock)  # one lock for every write and the demo reset
@@ -501,7 +504,7 @@ def renew(order_id: str, rt: Runtime | None = None) -> SteadyOrderOut:
             else:
                 flags = " ".join(f.sentence for f in rl.flags if f.sentence not in rl.sentence)
                 live.audit.append(
-                    at=live.service.clock(), actor="validio", kind="decision",
+                    at=live.service.stamp(), actor="validio", kind="decision",
                     sentence=f"Steady Order {so.id}, {_qty_of(rl.usual_qty, rl.product_id)}: {rl.sentence}" + (f" {flags}" if flags else ""),
                     facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed,
                     rule_ids=list(rl.decision.rule_ids) if rl.decision is not None else [], order_id=None)

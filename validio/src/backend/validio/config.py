@@ -31,6 +31,9 @@ class Settings:
     valio_max_ids: int
     valio_customer: str
     now: datetime
+    # VALIDIO_REAL_TIME=1: what happens is stamped with the real time (ledger, orders, requests, the agent link);
+    # the decisions keep `now`, which Valio's replayed cut-offs and delivery dates and the pass's week fit
+    real_time: bool
     demo: bool
     catalog_db: Path
     valio_cache: Path
@@ -53,6 +56,7 @@ def load_settings(env_file: Path | None = DEFAULT_ENV) -> Settings:
         valio_max_ids=int(get("VALIO_MAX_IDS_PER_REQUEST", "40")),
         valio_customer=get("VALIO_CUSTOMER", "hotel-espoo"),
         now=datetime.fromisoformat(get("VALIDIO_NOW", "2026-11-14T10:00:00+02:00")),
+        real_time=get("VALIDIO_REAL_TIME", "0") == "1",
         demo=get("VALIDIO_DEMO", "0") == "1",  # the demo switches are off unless asked for
         catalog_db=Path(get("VALIDIO_CATALOG_DB", str(DATA / "catalog.db"))),
         valio_cache=Path(get("VALIDIO_VALIO_CACHE", str(DATA / "cache" / "valio"))),

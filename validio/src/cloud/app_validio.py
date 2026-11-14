@@ -48,6 +48,7 @@ image = (
         "VALIO_MODE": "replay",
         "VALIDIO_DEMO": "1",
         "VALIDIO_NOW": "2026-11-14T10:00:00+02:00",
+        "VALIDIO_REAL_TIME": "1",  # what jurors do is stamped with the real time, the story keeps VALIDIO_NOW
         "VALIDIO_DB": f"{DATA}/validio.db",
         "VALIDIO_KEYS": f"{DATA}/keys",
         "VALIDIO_CATALOG_DB": f"{DATA}/catalog.db",
@@ -114,7 +115,7 @@ def fill() -> str:
     demo_seed.reset(Path(TEMPLATE_DB), Path(TEMPLATE_KEYS))
     port = "8419"
     # a throwaway code that lives only in this container, so the scenes check the gate too
-    env = {**os.environ, "VALIDIO_PUBLIC": "", "VALIDIO_KITCHEN_TOKEN": "",
+    env = {**os.environ, "VALIDIO_PUBLIC": "", "VALIDIO_KITCHEN_TOKEN": "", "VALIDIO_REAL_TIME": "",
            "VALIDIO_DB": TEMPLATE_DB, "VALIDIO_KEYS": TEMPLATE_KEYS,
            "VALIDIO_APPROVE_CODE": f"{secrets.randbelow(10**6):06d}"}
     server = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
