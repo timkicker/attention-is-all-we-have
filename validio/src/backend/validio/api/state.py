@@ -59,6 +59,11 @@ class Ctx:
         return _env().get("VALIDIO_PUBLIC", "") == "1"
 
     @property
+    def public_read(self) -> bool:
+        """GET routes of the web API open to anyone (the public demo); writes stay behind the gates."""
+        return _env().get("VALIDIO_PUBLIC_READ", "") == "1"
+
+    @property
     def kitchen_token(self) -> str:
         return _env().get("VALIDIO_KITCHEN_TOKEN", "")
 
