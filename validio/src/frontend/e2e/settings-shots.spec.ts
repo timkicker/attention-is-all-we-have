@@ -91,9 +91,9 @@ for (const v of VIEWS) {
     await shoot("inbox-example-sent");
 
     await go("/settings/diet");
-    await expect(page.getByRole("switch", { name: "Lactose free" })).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByTestId("diet-FREE_FROM_LACTOSE")).toHaveAttribute("aria-checked", "true");
     await shoot("settings-diet");
-    await page.getByRole("switch", { name: "Gluten free" }).click();
+    await page.getByTestId("diet-FREE_FROM_GLUTEN").click();
     await shoot("settings-diet-changed");
     await page.getByTestId("diet-save").click();
     await expect(page.getByTestId("code-input")).toBeFocused();
