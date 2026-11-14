@@ -35,15 +35,16 @@ def _normalise(vecs) -> np.ndarray:
 class OllamaBackend:
     batch = 32
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, timeout: float = 600) -> None:
         self.url = url.rstrip("/")
+        self.timeout = timeout
         self.session = requests.Session()
 
     def __call__(self, texts: list[str]) -> np.ndarray:
         r = self.session.post(
             f"{self.url}/api/embed",
             json={"model": MODEL, "input": texts, "options": {"num_ctx": 8192, "num_batch": 8192}},
-            timeout=600,
+            timeout=self.timeout,
         )
         r.raise_for_status()
         return _normalise(r.json()["embeddings"])
@@ -52,12 +53,13 @@ class OllamaBackend:
 class RemoteBackend:
     batch = 256
 
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, timeout: float = 600) -> None:
         self.url = url.rstrip("/")
+        self.timeout = timeout
         self.session = requests.Session()
 
     def __call__(self, texts: list[str]) -> np.ndarray:
-        r = self.session.post(f"{self.url}/embed", json={"texts": texts}, timeout=600)
+        r = self.session.post(f"{self.url}/embed", json={"texts": texts}, timeout=self.timeout)
         r.raise_for_status()
         return _normalise(r.json()["vectors"])
 
@@ -78,14 +80,15 @@ class STBackend:
         return _normalise(v)
 
 
-def backend():
+def backend(timeout: float = 600):
+    """The configured backend; timeout (seconds) bounds each ollama or remote request."""
     load_env()
     kind = os.environ.get("EMBED_BACKEND") or "ollama"
     url = os.environ.get("EMBED_URL") or "http://127.0.0.1:11434"
     if kind == "ollama":
-        return OllamaBackend(url)
+        return OllamaBackend(url, timeout)
     if kind == "remote":
-        return RemoteBackend(url)
+        return RemoteBackend(url, timeout)
     if kind == "st":
         return STBackend()
     raise ValueError(f"EMBED_BACKEND must be ollama, st or remote, not {kind!r}")
