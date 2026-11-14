@@ -1,0 +1,9 @@
+.env
+data/
+.venv/
+web/node_modules/
+web/dist/
+e2e/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
