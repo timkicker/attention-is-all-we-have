@@ -1,19 +1,17 @@
 <script lang="ts">
-  /// Settings: one page. On the desk the section list stands on the left and
-  /// jumps to its section; on the phone the sections follow one another in
-  /// one list, Log out last.
+  /// Settings: Kitchen, Login, Approval code, Theme, then Log out. One
+  /// column of rows; each change opens under its own row. The diet moved to
+  /// the Rules.
   import { onMount } from "svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { chrome } from "$lib/chrome.svelte";
   import { session } from "$lib/owner.svelte";
   import { settingsApi, type Settings } from "$lib/settings";
-  import VHead from "$lib/v/VHead.svelte";
-  import VState from "$lib/v/VState.svelte";
-  import Diet from "./Diet.svelte";
+  import { Loading, LoadError, PageHead } from "$lib/v2";
+  import Code from "./Code.svelte";
   import Kitchen from "./Kitchen.svelte";
   import Login from "./Login.svelte";
   import Theme from "./Theme.svelte";
-  import { logOut, SECTIONS, type SectionId } from "./sections";
+  import { logOut } from "./sections";
 
   let s = $state<Settings | undefined>();
   let error = $state("");
@@ -24,123 +22,36 @@
     );
   onMount(load);
   const saved = (v: Settings) => (s = v);
-
-  let here = $state<SectionId>("kitchen");
-  onMount(() => {
-    const h = location.hash.slice(1);
-    if (SECTIONS.some((x) => x.id === h)) here = h as SectionId;
-  });
+  const demo = $derived(!!session.account?.isDemo);
 </script>
 
-<VHead title="Settings" />
+<PageHead title="Settings" />
 
-<div class="set" class:phone={chrome.phone}>
-  {#if !chrome.phone}
-    <nav class="set-nav" aria-label="Settings">
-      {#each SECTIONS as x (x.id)}
-        <a
-          href="#{x.id}"
-          id="set-nav-{x.id}"
-          data-testid="set-nav-{x.id}"
-          class="set-item"
-          class:on={here === x.id}
-          aria-current={here === x.id ? "location" : undefined}
-          onclick={() => (here = x.id)}>{x.label}</a
-        >
-      {/each}
-      <button type="button" class="set-item out" data-testid="log-out" onclick={logOut}>Log out</button>
-    </nav>
-  {/if}
-  <div class="set-body">
-    {#if !s}
-      {#if error}
-        <VState kind="error" title="Validio is not reachable." detail={error} onretry={load} />
-      {:else}
-        <VState kind="loading" rows={3} />
-      {/if}
+<div class="blocks">
+  {#if !s}
+    {#if error}
+      <LoadError detail={error} onretry={load} />
     {:else}
-      {#each SECTIONS as x (x.id)}
-        <section class="sec" id={x.id} aria-labelledby="h-{x.id}" data-testid="settings-{x.id}">
-          <h2 class="v-h" id="h-{x.id}">{x.label}</h2>
-          {#if x.id === "kitchen"}
-            <Kitchen {s} onsaved={saved} />
-          {:else if x.id === "diet"}
-            <Diet {s} onsaved={saved} />
-          {:else if x.id === "login"}
-            <Login {s} demo={!!session.account?.isDemo} onsaved={saved} />
-          {:else}
-            <Theme />
-          {/if}
-        </section>
-      {/each}
-      {#if chrome.phone}
-        <Button variant="outline" class="out-row" data-testid="log-out" onclick={logOut}>Log out</Button>
-      {/if}
+      <Loading rows={4} />
     {/if}
-  </div>
+  {:else}
+    <Kitchen {s} onsaved={saved} />
+    <Login {s} {demo} onsaved={saved} />
+    <Code {demo} />
+    <Theme />
+    <div class="out">
+      <Button variant="outline" id="log-out" data-testid="log-out" onclick={logOut}>Log out</Button>
+    </div>
+  {/if}
 </div>
 
 <style>
-  .set {
-    margin-top: 32px;
-    display: grid;
-    grid-template-columns: 200px minmax(0, 1fr);
-    gap: 32px;
-    align-items: start;
-  }
-  .set.phone {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .set-nav {
+  .blocks {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    position: sticky;
-    top: 48px;
+    gap: 32px;
   }
-  .set-item {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 8px;
+  .blocks > :global(*) {
     margin: 0;
-    border: 0;
-    border-radius: var(--radius-button);
-    background: none;
-    font: inherit;
-    font-size: var(--fs-meta);
-    line-height: 20px;
-    color: var(--v-muted);
-    text-align: left;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  .set-item:hover:not(.on) {
-    background: var(--v-tint-hover);
-    color: var(--v-fg);
-  }
-  .set-item.on {
-    color: var(--v-fg);
-    font-weight: 500;
-    background: var(--v-tint-hover);
-  }
-  .set-item.out {
-    margin-top: 12px;
-  }
-  .set-body {
-    min-width: 0;
-  }
-  .sec {
-    scroll-margin-top: 48px;
-  }
-  .sec + .sec {
-    margin-top: 32px;
-  }
-  /* A plain secondary button: red stays for blocked, rejected and a broken chain. */
-  .set-body :global(.out-row) {
-    width: 100%;
-    min-height: 44px;
-    margin-top: 32px;
   }
 </style>

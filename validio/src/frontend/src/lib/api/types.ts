@@ -601,8 +601,8 @@ export interface Account {
 export interface AgentState {
   state: "none" | "pairing" | "consent" | "active" | "paused";
   pairing?: { code: string; expiresAt: string; mcpUrl: string; apiUrl: string };
-  /** verifyCode: "XXX-XXX", the same code the MCP agent gets in its tool answer. */
-  consent?: { name: string; keyId: string; may: string[]; verifyCode: string };
+  /** verifyCode: "XXX-XXX", the same code the MCP agent gets in its tool answer; at: when its first call came. */
+  consent?: { name: string; keyId: string; may: string[]; verifyCode: string; at: string | null };
   agent?: { name: string; kind: "agent" | "mcp"; keyId: string; connectedAt: string; lastUsedAt: string | null; passId: string; passVersion: number };
   /** Newest first. */
   versions: { version: number; at: string; why: string }[];
@@ -618,9 +618,20 @@ export interface Rules {
   /** False until saved once: everything needs approval. */
   saved: boolean;
   passVersion: number;
+  /** v2: diet and allergens live in the Rules (one save, one code, one pass version). */
+  diet?: RulesDiet;
 }
 
-export type RulesIn = Omit<Rules, "saved" | "passVersion"> & { code: string };
+export interface RulesDiet {
+  /** e.g. ["lactose-free"] */
+  mustBe: string[];
+  /** e.g. ["nuts"] */
+  never: string[];
+  /** What the kitchen can pick from. */
+  options: { mustBe: string[]; never: string[] };
+}
+
+export type RulesIn = Omit<Rules, "saved" | "passVersion" | "diet"> & { code: string; diet?: Pick<RulesDiet, "mustBe" | "never"> };
 
 export type Diet = "FREE_FROM_LACTOSE" | "FREE_FROM_GLUTEN" | "VEGAN";
 
@@ -640,4 +651,70 @@ export interface SignupIn extends LoginIn {
   customerNumber: string;
   /** The 6-digit approval code the owner sets now and types for every approval. */
   approvalCode: string;
+}
+
+// ---------- v2 (UI-V2-API.md) ----------
+
+export type ActivityStatus = "ordered" | "waiting" | "blocked" | "standing";
+export type ActivityFilter = "all" | ActivityStatus;
+
+/** One line of the timeline: a request the agent made, or a standing order. */
+export interface ActivityItem {
+  /** "R-4"; for standing the steady order id. */
+  id: string;
+  kind: "request" | "standing";
+  status: ActivityStatus;
+  title: string;
+  /** One plain line in the Rules words. */
+  why: string;
+  totalCents: number | null;
+  at: string;
+  orderId: string | null;
+  /** Ordered because the owner approved it, not alone. */
+  approvedByYou: boolean;
+}
+
+/** GET /api/home */
+export interface HomeOut {
+  agent: { state: AgentState["state"]; name: string | null; lastUsedAt: string | null };
+  week: { usedCents: number; capCents: number | null };
+  setup: { rulesSaved: boolean; agentConnected: boolean; firstOrder: boolean };
+  /** Status waiting, newest first. */
+  needsYou: ActivityItem[];
+  /** The newest 5 of all. */
+  latest: ActivityItem[];
+}
+
+/** GET /api/activity?status= */
+export interface ActivityList {
+  items: ActivityItem[];
+  counts: Record<ActivityFilter, number>;
+}
+
+export interface ActivityCheck {
+  label: "Product" | "Price" | "Stock" | "Allergens" | "Substitute";
+  value: string;
+  note: string | null;
+  /** null: nothing to judge (a plain fact). */
+  ok: boolean | null;
+}
+
+export interface ProofEntry {
+  at: string;
+  actor: string;
+  text: string;
+  hash: string;
+}
+
+/** GET /api/activity/{id} */
+export interface ActivityDetail {
+  item: ActivityItem;
+  asked: { text: string; agentName: string };
+  checks: ActivityCheck[];
+  rule: { text: string; version: number };
+  /** orderIds: every order placed (the Steady Order places one per renewed line); orderId is the first. */
+  result: { orderId: string; orderIds: string[]; delivery: string | null } | null;
+  /** Only while waiting. Approve and reject go to /api/orders/{orderId}/approve|reject. */
+  approval: { orderId: string; holdUntil: string } | null;
+  proof: ProofEntry[];
 }

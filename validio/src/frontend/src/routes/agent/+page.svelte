@@ -1,32 +1,31 @@
 <script lang="ts">
-  /// The kitchen's one agent: connect it over MCP (or a pairing code), let it
-  /// in on the consent card once its code matches, then pause or disconnect it. Its Rules
-  /// sit below in one card, edited in place and saved with the approval code.
+  /// Agent: connect it once, check the code on its first call, then pause or
+  /// disconnect it. The state comes from GET /api/agent every two seconds, so
+  /// the code appears here while the person is still in their agent. In the
+  /// fixture, validioMcpCall() in the console plays the agent's first call.
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Dialog } from "@arlen/ui-kit/components/ui/dialog";
-  import { Input } from "@arlen/ui-kit/components/ui/input";
+  import { ConfirmDialog } from "@arlen/ui-kit/components/ui/confirm-dialog";
+  import { Row } from "@arlen/ui-kit/components/ui/row";
   import { Section } from "@arlen/ui-kit/components/ui/section";
-  import { SegmentedControl } from "@arlen/ui-kit/components/ui/segmented-control";
   import { ChevronRight } from "@lucide/svelte";
-  import { api, ApiError } from "$lib/api/client";
-  import { agentApi, type AgentState, type Rules, type Substitutes } from "$lib/api/agent";
+  import { agentApi, type AgentState } from "$lib/api/agent";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { dayTime, hm, money } from "$lib/format";
-  import { live } from "$lib/live.svelte";
-  import { owner, session } from "$lib/owner.svelte";
-  import VCode from "$lib/v/VCode.svelte";
-  import VHead from "$lib/v/VHead.svelte";
+  import { ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
   import VPill from "$lib/v/VPill.svelte";
-  import VState from "$lib/v/VState.svelte";
-  import VValueRow from "$lib/v/VValueRow.svelte";
+  import type { PillTone } from "$lib/v";
 
   const ag = live(() => agentApi.agent());
-  const rl = live(() => agentApi.rules());
   const a = $derived(ag.data);
-  const r = $derived(rl.data);
   const connected = $derived(a?.state === "active" || a?.state === "paused");
-  const passId = $derived(a?.agent?.passId);
-  const pass = live(() => (passId ? api.spendPass(passId) : Promise.resolve(undefined)), 10_000);
+
+  const PILL: Record<AgentState["state"], { label: string; tone: PillTone } | null> = {
+    none: null,
+    pairing: { label: "Connecting", tone: "neutral" },
+    consent: { label: "Check the code", tone: "wait" },
+    active: { label: "Active", tone: "ok" },
+    paused: { label: "Paused", tone: "neutral" },
+  };
+  const pill = $derived(a ? PILL[a.state] : null);
 
   let busy = $state(false);
   let problem = $state("");
@@ -34,531 +33,313 @@
     busy = true;
     problem = "";
     try {
-      const next = await run();
-      ag.data = next;
-      // The Inbox checklist reads the agent from the session.
-      const acc = session.account;
-      if (acc) {
-        const agent = next.state === "active" || next.state === "paused";
-        const setup = { ...acc.setup, agent, done: acc.setup.kitchen && acc.setup.rules && agent };
-        session.account = { ...acc, agent: next, setup };
-      }
+      ag.data = await run();
+      // Home and the sidebar read the agent too.
       bump();
     } catch (e) {
-      problem = e instanceof Error ? e.message : String(e);
+      const msg = e instanceof Error ? e.message : String(e);
+      problem = msg.charAt(0).toUpperCase() + msg.slice(1);
     } finally {
       busy = false;
     }
   }
 
   let copied = $state("");
+  let copyTimer: ReturnType<typeof setTimeout> | undefined;
   async function copy(what: string, text: string) {
     try {
       await navigator.clipboard.writeText(text);
-      copied = what;
-      setTimeout(() => (copied = ""), 2000);
     } catch {
-      copied = "";
+      // No clipboard (an insecure origin): select the text so Ctrl+C takes it.
+      const el = document.getElementById(`${what}-text`);
+      if (el) getSelection()?.selectAllChildren(el);
+      return;
     }
+    copied = what;
+    clearTimeout(copyTimer);
+    copyTimer = setTimeout(() => (copied = ""), 2000);
   }
 
   let confirmOff = $state(false);
-
-  // ---------- Rules, edited in place ----------
-  const SUBS: { value: Substitutes; label: string }[] = [
-    { value: "off", label: "Off" },
-    { value: "listed", label: "Valio's list" },
-    { value: "extra", label: "Extra cost" },
-  ];
-  const subsWord = (x: Rules) =>
-    x.substitutes === "off" ? "Off" : x.substitutes === "listed" ? "Valio's list" : `Up to ${x.maxExtraPct} % extra`;
-
-  let editing = $state(false);
-  let saving = $state(false);
-  const f = $state({ alone: "", approval: "", week: "", subs: "listed" as Substitutes, pct: "5", code: "" });
-  let bad = $state<{ alone?: string; approval?: string; week?: string; pct?: string; code?: string; form?: string }>({});
-  const euros = (c: number) => (c / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const cents = (t: string) => (/^\s*[\d,]*\.?\d*\s*$/.test(t) && /\d/.test(t) ? Math.round(Number(t.replace(/[,\s]/g, "")) * 100) : NaN);
-  const tidy = (k: "alone" | "approval" | "week") => {
-    const c = cents(f[k]);
-    if (c >= 0) f[k] = euros(c);
-  };
-  const above = $derived(cents(f.approval) >= 0 ? money(cents(f.approval)) : "");
-
-  function startEdit() {
-    if (!r) return;
-    f.alone = euros(r.aloneUpToCents);
-    f.approval = euros(r.approvalUpToCents);
-    f.week = r.perWeekCents == null ? "" : euros(r.perWeekCents);
-    f.subs = r.substitutes;
-    f.pct = String(r.maxExtraPct || 5);
-    f.code = owner.code;
-    bad = {};
-    editing = true;
-    queueMicrotask(() => document.getElementById("r-alone")?.focus());
-  }
-
-  async function save() {
-    const alone = cents(f.alone);
-    const approval = cents(f.approval);
-    const pct = Number(f.pct);
-    // An empty week field is no weekly limit.
-    const week = f.week.trim() ? cents(f.week) : null;
-    const next: typeof bad = {};
-    if (!(alone >= 0)) next.alone = "Type an amount in euros.";
-    if (!(approval >= 0)) next.approval = "Type an amount in euros.";
-    else if (alone > approval) next.alone = "Above needs approval.";
-    if (week !== null && !(week >= 0)) next.week = "Type an amount in euros.";
-    else if (week !== null && approval >= 0 && week < approval) next.week = "Below needs approval.";
-    if (f.subs === "extra" && !(Number.isInteger(pct) && pct >= 0 && pct <= 20)) next.pct = "0 to 20.";
-    if (!/^\d{6}$/.test(f.code)) next.code = "Type the 6 digit code.";
-    bad = next;
-    if (Object.keys(next).length) return;
-    saving = true;
-    try {
-      rl.data = await agentApi.saveRules({
-        aloneUpToCents: alone,
-        approvalUpToCents: approval,
-        perWeekCents: week,
-        substitutes: f.subs,
-        maxExtraPct: f.subs === "extra" ? pct : (r?.maxExtraPct ?? 5),
-        code: f.code,
-      });
-      owner.code = f.code;
-      editing = false;
-      const acc = session.account;
-      if (acc && !acc.setup.rules) session.account = { ...acc, setup: { ...acc.setup, rules: true, done: acc.setup.kitchen && acc.setup.agent } };
-      bump();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      if (e instanceof ApiError && e.status === 403) {
-        bad = { code: "That code is not right." };
-        owner.code = "";
-      } else if (e instanceof ApiError && e.status === 429) bad = { code: "Too many tries. Wait 15 minutes." };
-      else bad = { form: msg.charAt(0).toUpperCase() + msg.slice(1) };
-    } finally {
-      saving = false;
-    }
-  }
 </script>
 
-{#snippet money_field(k: "alone" | "approval" | "week", label: string)}
-  <span class="money">
-    <span class="euro">
-      <Input
-        id="r-{k}"
-        data-testid="r-{k}"
-        inputmode="decimal"
-        bind:value={f[k]}
-        onblur={() => tidy(k)}
-        autocomplete="off"
-        aria-label="{label}, in euros"
-        aria-invalid={bad[k] ? true : undefined}
-        aria-describedby={bad[k] ? `r-${k}-problem` : undefined}
-      />
-      <span class="unit" aria-hidden="true">€</span>
-    </span>
-    {#if bad[k]}<span class="problem" id="r-{k}-problem" role="alert">{bad[k]}</span>{/if}
-  </span>
-{/snippet}
-
-{#snippet controls()}
-  <Button variant="outline" data-testid="agent-pause" disabled={busy} onclick={() => act(() => agentApi.pause(a?.state === "active"))}>
-    {a?.state === "active" ? "Pause" : "Resume"}
-  </Button>
-  <Button variant="ghost" data-testid="agent-disconnect" disabled={busy} onclick={() => (confirmOff = true)}>Disconnect</Button>
-{/snippet}
-
-{#snippet copy_button(what: string, text: string, label: string)}
-  <Button variant="outline" data-testid="copy-{what}" aria-label={copied === what ? "Copied" : label} onclick={() => copy(what, text)}>
+{#snippet copyButton(what: string, text: string, label: string)}
+  <Button variant="outline" id="copy-{what}" data-testid="copy-{what}" aria-label={copied === what ? "Copied" : label} onclick={() => copy(what, text)}>
     {copied === what ? "Copied" : "Copy"}
   </Button>
 {/snippet}
 
-{#if !a}
-  <VHead title="Agent" />
-  {#if ag.error}
-    <VState kind="error" title="Validio is not reachable." detail={ag.error} onretry={() => location.reload()} />
-  {:else}
-    <VState kind="loading" rows={3} />
+{#snippet apiText()}<code class="mono code-sm" id="api-text" data-testid="api-url" data-raw>{a?.pairing?.apiUrl}</code>{/snippet}
+{#snippet apiCopy()}{@render copyButton("api", a?.pairing?.apiUrl ?? "", "Copy API address")}{/snippet}
+
+{#snippet facts()}
+  {#if pill}<VPill label={pill.label} tone={pill.tone} testid="agent-state" id="agent-state" />{/if}
+  {#if a?.state === "consent" && a.consent}
+    <span data-testid="consent-who">{a.consent.at ? `${a.consent.name} called at ${hm(a.consent.at)}` : a.consent.name}</span>
   {/if}
-{:else}
-  <VHead title="Agent" titleId="agent-title">
-    {#snippet facts()}
-      {#if a.state === "active"}
-        <VPill label="Active" tone="ok" testid="agent-state" />
-      {:else if a.state === "paused"}
-        <VPill label="Paused" tone="neutral" testid="agent-state" />
-      {:else}
-        <VPill label={a.state === "pairing" ? "Waiting for your agent" : a.state === "consent" ? "Waiting for you" : "Not connected"} tone="neutral" testid="agent-state" />
-      {/if}
-      {#if a.agent}
-        <span data-testid="agent-name">{a.agent.name}</span>
-        <span data-testid="agent-used">{a.agent.lastUsedAt ? `Used ${dayTime(a.agent.lastUsedAt)}` : "Not used yet"}</span>
-        {#if pass.data?.usedCents !== undefined}<span class="num" data-testid="agent-week">{money(pass.data.usedCents)} this week</span>{/if}
-        <a href="/ledger?pass={encodeURIComponent(a.agent.passId)}" data-testid="agent-ledger" id="agent-ledger">See in ledger</a>
-      {/if}
-    {/snippet}
-    {#snippet actions()}
-      {#if connected && !chrome.phone}{@render controls()}{/if}
-    {/snippet}
-  </VHead>
+{/snippet}
 
-  <div class="blocks">
-    {#if connected && chrome.phone}
-      <div class="row-buttons">{@render controls()}</div>
-    {:else if a.state === "none"}
-      <div class="row-buttons">
-        <Button data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
+<PageHead title="Agent" titleId="agent-title" facts={pill ? facts : undefined}>
+  {#snippet actions()}
+    {#if a?.state === "pairing"}
+      <Button variant="ghost" id="pair-cancel" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
+    {:else if connected}
+      <Button variant="outline" id="agent-pause" data-testid="agent-pause" disabled={busy} onclick={() => act(() => agentApi.pause(a?.state === "active"))}>
+        {a?.state === "active" ? "Pause" : "Resume"}
+      </Button>
+      <Button variant="outline" id="agent-disconnect" data-testid="agent-disconnect" disabled={busy} onclick={() => (confirmOff = true)}>Disconnect</Button>
+    {/if}
+  {/snippet}
+</PageHead>
+
+<div class="blocks">
+  {#if !a}
+    {#if ag.error}<LoadError detail={ag.error} />{:else}<Loading rows={3} />{/if}
+  {:else if a.state === "none"}
+    <Section class="v-card">
+      <div class="none" data-testid="agent-none">
+        <p class="none-title">No agent connected</p>
+        <p class="none-text">Your purchasing agent orders from Valio through Validio, inside your Rules.</p>
+        <Button id="agent-connect" data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
       </div>
-    {:else if a.state === "pairing" && a.pairing}
-      <section class="sec" aria-labelledby="h-pair">
-        <h2 class="v-h" id="h-pair">Connect your agent</h2>
-        <Section class="v-card">
-          <div class="pair">
-            <code class="url big" data-testid="mcp-url" id="mcp-url">{a.pairing.mcpUrl}</code>
-            {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
-          </div>
-          <p class="steps" data-testid="mcp-hint">Add this URL to your agent as an MCP server. Allow appears here on its first call.</p>
-        </Section>
-        <details class="fold vendor">
-          <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />Agent without MCP</summary>
-          <div class="fold-body urls">
-            <span class="url-label">Code</span>
-            <code class="url" data-testid="pair-code" id="pair-code" data-raw>{a.pairing.code}</code>
-            {@render copy_button("code", a.pairing.code, "Copy pairing code")}
-            <span class="hint">Valid until {hm(a.pairing.expiresAt)}</span>
-            <span class="url-label">API</span>
-            <code class="url">{a.pairing.apiUrl}</code>
-            {@render copy_button("api", a.pairing.apiUrl, "Copy API URL")}
-          </div>
-        </details>
-        <div class="row-buttons">
-          <Button variant="ghost" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
+    </Section>
+  {:else if a.state === "pairing" && a.pairing}
+    <section class="pair" aria-labelledby="pair-h">
+      <p class="pair-h" id="pair-h" data-testid="mcp-hint">Add this address to your agent as an MCP server, then ask it to order something.</p>
+      <Section class="v-card">
+        <div class="url-line">
+          <code class="url-big mono" id="mcp-text" data-testid="mcp-url" data-raw>{a.pairing.mcpUrl}</code>
+          {@render copyButton("mcp", a.pairing.mcpUrl, "Copy MCP address")}
         </div>
-      </section>
-    {:else if a.state === "consent" && a.consent}
-      <section class="sec" aria-labelledby="h-consent" data-testid="consent">
-        <h2 class="v-h" id="h-consent">{a.consent.name} wants to order for {session.account?.name ?? "your kitchen"} within your Rules</h2>
-        <Section class="v-card">
-          {#if a.consent.verifyCode}
-            <div class="verify">
-              <span class="code mono" data-testid="verify-code" id="verify-code" data-raw>{a.consent.verifyCode}</span>
-              <p class="steps" data-testid="verify-hint">Your agent shows this code too. Allow only if it matches.</p>
-            </div>
-          {/if}
-          <ul class="may" aria-label="What it may do">
-            {#each a.consent.may as m (m)}<li>{m}</li>{/each}
-          </ul>
-        </Section>
-        <div class="row-buttons">
-          <Button data-testid="consent-allow" disabled={busy} onclick={() => act(agentApi.allow)}>Allow</Button>
-          <Button variant="outline" data-testid="consent-deny" disabled={busy} onclick={() => act(agentApi.deny)}>Deny</Button>
-        </div>
-      </section>
-    {/if}
-    {#if problem}<p class="problem" role="alert" data-testid="agent-problem">{problem}</p>{/if}
-
-    <!-- While an agent pairs or asks, that is the page's one job; the consent card names the Rules. -->
-    {#if a.state !== "pairing" && a.state !== "consent"}
-    <section class="sec" aria-labelledby="h-rules" id="rules">
-      <h2 class="v-h" id="h-rules">
-        Rules
-        <span class="grow"></span>
-        {#if r && !editing}
-          <Button variant="outline" data-testid="rules-edit" id="rules-edit" onclick={startEdit}>{r.saved ? "Edit" : "Set rules"}</Button>
-        {/if}
-      </h2>
-      {#if !r}
-        {#if rl.error}<VState kind="error" title="Rules are not reachable." detail={rl.error} onretry={() => location.reload()} />{:else}<VState kind="loading" rows={3} />{/if}
-      {:else if editing}
-        <div class="rules-form" data-testid="rules-form">
+      </Section>
+      <details class="fold" id="agent-nomcp" data-testid="agent-nomcp">
+        <summary><ChevronRight class="chev" aria-hidden="true" />Agent without MCP</summary>
+        <div class="fold-body nomcp">
           <Section class="v-card">
-            <VValueRow label="Orders alone">{@render money_field("alone", "Orders alone")}</VValueRow>
-            <VValueRow label="Needs approval">{@render money_field("approval", "Needs approval")}</VValueRow>
-            <VValueRow label="Blocked above" value={above || "—"} testid="r-blocked" />
-            <VValueRow label="Per week">{@render money_field("week", "Per week")}</VValueRow>
-            <VValueRow label="Substitutes">
-              <span class="subs">
-                <SegmentedControl ariaLabel="Substitutes" options={SUBS} bind:value={f.subs} id="r-subs" />
-                {#if f.subs === "extra"}
-                  <span class="pct">
-                    <span class="euro">
-                      <Input
-                        id="r-pct"
-                        data-testid="r-pct"
-                        inputmode="numeric"
-                        bind:value={f.pct}
-                        autocomplete="off"
-                        aria-label="Up to this percent extra"
-                        aria-invalid={bad.pct ? true : undefined}
-                      />
-                      <span class="unit" aria-hidden="true">%</span>
-                    </span>
-                    {#if bad.pct}<span class="problem" role="alert">{bad.pct}</span>{/if}
-                  </span>
-                {/if}
-              </span>
-            </VValueRow>
+            <Row id="pair-code" label="Pairing code" description="Valid until {hm(a.pairing.expiresAt)}">
+              {#snippet preview()}<code class="mono code-sm" id="code-text" data-testid="pair-code-text" data-raw>{a.pairing?.code}</code>{/snippet}
+              {#snippet control()}{@render copyButton("code", a.pairing?.code ?? "", "Copy pairing code")}{/snippet}
+            </Row>
+            {#if chrome.phone}
+              <!-- The address under its label: beside it, the label breaks inside a word. -->
+              <Row id="api-url" label="API address" control={apiCopy} below={apiText} />
+            {:else}
+              <Row id="api-url" label="API address" preview={apiText} control={apiCopy} />
+            {/if}
           </Section>
-          {#if bad.form}<p class="problem" role="alert" data-testid="rules-problem">{bad.form}</p>{/if}
-          <VCode bind:value={f.code} error={bad.code} focus={false} busy={saving} submitLabel="Save" onsubmit={save} oncancel={() => (editing = false)} />
-        </div>
-      {:else}
-        <Section class="v-card">
-          {#if r.saved}
-            <VValueRow label="Orders alone" value="Up to {money(r.aloneUpToCents)}" testid="rules-alone" />
-            <VValueRow label="Needs approval" value="Up to {money(r.approvalUpToCents)}" testid="rules-approval" />
-            <VValueRow label="Blocked above" value={money(r.approvalUpToCents)} testid="rules-blocked" />
-            <VValueRow label="Per week" value={r.perWeekCents == null ? "No limit" : `Up to ${money(r.perWeekCents)}`} testid="rules-week" />
-            <VValueRow label="Substitutes" value={subsWord(r)} testid="rules-subs" />
-          {:else}
-            <VValueRow label="Every order" value="Needs approval" testid="rules-unset" />
-          {/if}
-        </Section>
-      {/if}
-    </section>
-    {/if}
-
-    {#if connected && a.agent}
-      <details class="fold" data-testid="tech-fold" id="tech-fold">
-        <summary><ChevronRight class="chev" aria-hidden="true" />Technical</summary>
-        <div class="fold-body tech">
-          <dl>
-            <dt>Pass</dt>
-            <dd class="mono">{a.agent.passId}</dd>
-            <dt>Key</dt>
-            <dd class="mono">{a.agent.keyId}</dd>
-          </dl>
-          {#if a.versions.length}
-            <ol class="versions" aria-label="Versions">
-              {#each a.versions as v (v.version)}
-                <li><span class="mono">v{v.version}</span><span>{v.why}</span><span class="when">{dayTime(v.at)}</span></li>
-              {/each}
-            </ol>
-          {/if}
-          {#if pass.data}<pre class="raw mono" data-testid="raw-pass" data-raw>{JSON.stringify(pass.data, null, 2)}</pre>{/if}
         </div>
       </details>
-    {/if}
-  </div>
-
-  <Dialog open={confirmOff} onClose={() => (confirmOff = false)} labelledby="off-title">
-    <div class="confirm">
-      <h2 id="off-title">Disconnect {a.agent?.name ?? "the agent"}?</h2>
-      <div class="confirm-buttons">
-        <Button variant="ghost" onclick={() => (confirmOff = false)}>Cancel</Button>
-        <Button
-          variant="destructive"
-          data-testid="disconnect-confirm"
-          onclick={() => {
-            confirmOff = false;
-            void act(agentApi.disconnect);
-          }}>Disconnect</Button
-        >
+    </section>
+  {:else if a.state === "consent" && a.consent}
+    <section class="consent" aria-labelledby="consent-h" data-testid="consent">
+      <Section class="v-card">
+        <div class="verify">
+          <h2 class="sr-only" id="consent-h">Check the code</h2>
+          <p class="verify-code mono" id="verify-code" data-testid="verify-code" aria-label="Code {a.consent.verifyCode?.split('').join(' ')}">
+            {a.consent.verifyCode ?? ""}
+          </p>
+          <p class="verify-text">Your agent shows this code too. Allow only if it matches.</p>
+          <div class="verify-buttons">
+            <Button id="consent-allow" data-testid="consent-allow" disabled={busy} onclick={() => act(agentApi.allow)}>Allow</Button>
+            <Button variant="outline" id="consent-deny" data-testid="consent-deny" disabled={busy} onclick={() => act(agentApi.deny)}>Deny</Button>
+          </div>
+        </div>
+      </Section>
+      <div class="may">
+        <h3 class="may-h" id="may-h">What it may do</h3>
+        <ul aria-labelledby="may-h" data-testid="consent-may">
+          {#each a.consent.may as m (m)}<li>{m}</li>{/each}
+        </ul>
       </div>
-    </div>
-  </Dialog>
-{/if}
+    </section>
+  {:else if connected && a.agent}
+    <ListSection id="agent">
+      <ListRow id="agent-name" label="Name" value={a.agent.name} />
+      <ListRow id="agent-connected" label="Connected" value={dayTime(a.agent.connectedAt)} />
+      <ListRow id="agent-used" label="Last used" value={a.agent.lastUsedAt ? dayTime(a.agent.lastUsedAt) : "Not yet"} />
+      <a class="vr go-row" href="/activity" id="agent-activity" data-testid="agent-activity">
+        <span>See its activity</span>
+        <ChevronRight class="go" aria-hidden="true" />
+      </a>
+    </ListSection>
+  {/if}
+  {#if problem}<p class="problem" role="alert" data-testid="agent-problem">{problem}</p>{/if}
+</div>
+
+<ConfirmDialog
+  open={confirmOff}
+  title="Disconnect {a?.agent?.name ?? 'the agent'}?"
+  message="It can no longer order. To use it again, connect it anew."
+  confirmLabel="Disconnect"
+  variant="destructive"
+  onCancel={() => (confirmOff = false)}
+  onConfirm={async () => {
+    await act(agentApi.disconnect);
+    confirmOff = false;
+  }}
+/>
 
 <style>
-  .row-buttons {
+  /* ---------- none ---------- */
+  .none {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 20px;
   }
-  .sec > .row-buttons:first-child,
-  .blocks > .row-buttons:first-child {
-    margin-top: 0;
+  .none-title {
+    margin: 0;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: 500;
   }
-  .grow {
-    flex: 1;
+  .none-text {
+    margin: 0 0 16px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
   }
+  /* ---------- pairing ---------- */
   .pair {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px;
+    flex-direction: column;
+    gap: 12px;
   }
-  .pair .big {
-    font-size: var(--fs-body);
-    line-height: 24px;
-    font-weight: 600;
-    overflow-wrap: anywhere;
-    min-width: 0;
-  }
-  .verify {
-    padding: 16px 16px 0;
-    border-bottom: 1px solid var(--v-line);
-  }
-  .verify .code {
-    display: block;
-    font-size: 32px;
-    line-height: 40px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-  }
-  .verify .steps {
-    padding: 4px 0 16px;
-  }
-  .steps {
+  .pair-h {
     margin: 0;
-    padding: 0 16px 16px;
-    font-size: var(--fs-meta);
-    line-height: var(--lh-meta);
-    color: var(--v-muted);
-    overflow-wrap: anywhere;
-  }
-  .vendor {
-    margin-top: 12px;
-  }
-  .urls {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 8px 12px;
-  }
-  .url-label {
-    font-size: var(--fs-meta);
-    color: var(--v-muted);
-  }
-  .url {
-    font-size: var(--fs-meta);
-    overflow-wrap: anywhere;
-  }
-  .hint {
-    grid-column: 2 / -1;
-    font-size: var(--fs-meta);
-    line-height: var(--lh-meta);
-    color: var(--v-muted);
-    overflow-wrap: anywhere;
-  }
-  .may {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .may li {
-    padding: 12px 16px;
     font-size: var(--fs-body);
     line-height: var(--lh-body);
   }
-  .may li + li {
-    border-top: 1px solid var(--v-line);
-  }
-  .rules-form {
+  .url-line {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 16px;
+    padding: 16px 16px 16px 20px;
   }
-  .money,
-  .pct {
+  .url-big {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: var(--fs-body);
+    line-height: 24px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  .pair .fold {
+    margin-top: 4px;
+  }
+  /* The fold's body is muted for prose; these rows hold controls at full contrast. */
+  .fold-body.nomcp {
+    color: var(--v-fg);
+  }
+  .code-sm {
+    display: block;
+    overflow-wrap: anywhere;
+    text-align: right;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-fg);
+  }
+  /* ---------- consent ---------- */
+  .consent {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 160px;
+    gap: 20px;
   }
-  .pct {
-    width: 96px;
-  }
-  .subs {
+  .verify {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 20px 24px;
+    text-align: center;
   }
-  .euro {
-    position: relative;
-    display: block;
-  }
-  .euro :global(input) {
-    width: 100%;
-    text-align: right;
-    padding-right: 26px;
+  .verify-code {
+    margin: 0;
+    font-size: 48px;
+    line-height: 56px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
+    color: var(--v-fg);
   }
-  .unit {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+  .verify-text {
+    margin: 0;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     color: var(--v-muted);
-    pointer-events: none;
+  }
+  .verify-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .may-h {
+    margin: 0 0 4px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    font-weight: 500;
+    color: var(--v-fg);
+  }
+  .may ul {
+    max-width: 560px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 24px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  /* ---------- connected ---------- */
+  .go-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 12px 16px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--v-fg);
+    text-decoration: none;
+  }
+  .go-row :global(.go) {
+    width: 16px;
+    height: 16px;
+    color: var(--v-faint);
   }
   .problem {
-    margin: 0;
+    margin: 12px 0 0;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     color: var(--v-bad-text);
   }
-  .tech dl {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 4px 16px;
-    margin: 0;
-  }
-  .tech dt {
-    color: var(--v-muted);
-  }
-  .tech dd {
-    margin: 0;
-  }
-  .versions {
-    max-width: 480px;
-    margin: 12px 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .versions li {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) auto;
-    gap: 12px;
-    padding: 4px 0;
-  }
-  .versions .when {
-    color: var(--v-muted);
-  }
-  .raw {
-    margin: 12px 0 0;
-    font-size: 12px;
-    line-height: 18px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-  .confirm {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: var(--v-dialog-pad);
-  }
-  .confirm h2 {
-    margin: 0;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: 600;
-  }
-  .confirm-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 4px;
-  }
   @media (max-width: 760px) {
-    .verify .code {
-      font-size: 28px;
-      line-height: 36px;
+    .url-line {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 16px;
     }
-    .urls {
-      grid-template-columns: minmax(0, 1fr) auto;
+    .may ul {
+      columns: 1;
     }
-    .url-label {
-      grid-column: 1 / -1;
+    .code-sm {
+      text-align: left;
     }
-    .hint {
-      grid-column: 1 / -1;
+    .verify-code {
+      font-size: 40px;
+      line-height: 48px;
+    }
+    .verify-buttons {
+      align-self: stretch;
+    }
+    .verify-buttons :global([data-slot="button"]) {
+      flex: 1;
+    }
+    .none :global([data-slot="button"]) {
+      align-self: stretch;
     }
   }
 </style>

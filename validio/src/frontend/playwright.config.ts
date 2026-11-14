@@ -3,7 +3,8 @@ import { defineConfig } from "@playwright/test";
 // Runs against the built SPA in fixture mode. Screenshots go to
 // ../../artifacts/shots (gitignored), one per page at 1280 and 390 px in
 // both themes. The scenes against the backend: `make e2e-live` (e2e-live/).
-const PORT = 5411;
+// PORT=5421 npm run e2e: each builder its own port (5421 and up); 5411 by default.
+const PORT = Number(process.env.PORT ?? 5411);
 
 export default defineConfig({
   testDir: "e2e",
