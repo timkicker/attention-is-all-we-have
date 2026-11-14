@@ -3,7 +3,7 @@ TOPIC ?= winterwar
 PY := $(UV) run python
 
 .PHONY: fetch-smoke fetch parse lives bisect embed load checks checks-write dump release test-a align m-lives \
-	m-lives-load contested m-embed judge gloss atlas sources-data gold label eval answers bench l-scale
+	m-lives-load contested m-embed judge gloss atlas sources-data gold label eval answers bench l-scale docs
 
 fetch-smoke:
 	$(PY) -m pipeline.wapi
@@ -92,4 +92,7 @@ bench:
 
 l-scale:
 	$(PY) -m pipeline.l_scale
+
+docs:
+	$(PY) -m pipeline.docs
 
