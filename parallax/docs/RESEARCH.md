@@ -1,6 +1,6 @@
-# Zombie Facts research
+# Parallax research
 
-Research notes behind [PROJECT_BLUEPRINT-zombie-facts.md](../PROJECT_BLUEPRINT-zombie-facts.md), written on 14 November 2026. Web sources were retrieved that day. Local sources are named by what they are: the challenge text c-307, the README files of MariaDB's three starter repos and the files of our spike on the night of 13 November (scripts such as `sentences.py`, outputs such as `stat-NN.json`, `candidates.json`, `spike-run1.txt`, `spike-scale.txt` and `zombie-gemma.txt`). The spike files are not in this repo yet. **(unverified)** marks a fact we could not find in a saved file or on the web. **(inference)** marks our own reasoning.
+Research notes behind [PRODUCT.md](PRODUCT.md) and [PLAN.md](../PLAN.md), written on 14 November 2026. Web sources were retrieved that day. Local sources are named by what they are: the challenge text c-307, the README files of MariaDB's three starter repos and the files of our spike on the night of 13 November (scripts such as `sentences.py`, outputs such as `stat-NN.json`, `candidates.json`, `spike-run1.txt`, `spike-scale.txt` and `gemma-check.txt`). The spike files are not in this repo yet. **(unverified)** marks a fact we could not find in a saved file or on the web. **(inference)** marks our own reasoning.
 
 Starter repos:
 - DS: https://github.com/MariaDB/mariadb-wikipedia-datasets
@@ -15,7 +15,7 @@ Starter repos:
 - Mission: "build a tool for Wikipedia that doesn't exist yet" with "MariaDB at the core of your stack".
 - RAG track, "recommended for most teams": use native vector search for "grounded, source-cited answers".
 - SVT track, "for advanced teams": "tools that query how knowledge changes over time", for example "showing what an article said on any given date".
-- Both, "for very advanced teams", with the example of a RAG assistant that says what Wikipedia said about something in 2015 and what has changed since. Zombie Facts sits here.
+- Both, "for very advanced teams", with the example of a RAG assistant that says what Wikipedia said about something in 2015 and what has changed since. Parallax sits here.
 - Insight paragraph: language models have "a particular world view" from their training data that "may differ from Wikipedia's world view, which strives for NPOV". It also asks for tools that make Wikipedia "easier to digest, verify and trust, such as source-grounded Q&A, fact-checking assistants" and for "'time-travel' tools that reveal how articles evolve".
 - Two user groups are named: Wikipedia readers and active Wikipedians. Teams may pick either or both.
 
@@ -70,8 +70,8 @@ Summed over the 16 `stat-NN.json` files: 862,076 versions, 19,742 articles, 46,4
 | 6,399 removed claims with a keyword comment | confirmed, length of `candidates.json` | own count |
 | 144,711 reworded, 78,978 gone | **(unverified)**. `candidates.py` printed them and nothing saved them | `candidates.py` |
 | 1,948 lived two years or more with an error comment | **(unverified)**. `candidates.json` has 4,925 entries of two years or more with the Finnish keyword filter. The 1,948 came from a narrower filter that was not saved | own count |
-| Gemma's dead claim at rank 12 of 148 (0.479), the short restatement first at 0.268 | **(unverified)**. Only the raw run is saved | `zombie-gemma.txt` |
-| Gemma said the 1990s depression "was considerably milder than the Great De[pression]" | confirmed | `zombie-gemma.txt` |
+| Gemma's dead claim at rank 12 of 148 (0.479), the short restatement first at 0.268 | **(unverified)**. Only the raw run is saved | `gemma-check.txt` |
+| Gemma said the 1990s depression "was considerably milder than the Great De[pression]" | confirmed | `gemma-check.txt` |
 | "Se ei kuitenkaan ollut niin paha kuin 1930-luvun lama." stood 2.3 years, removed 27 May 2008 as "lähteetön väite" by an anonymous editor | confirmed | `candidates.json`, page 89865 |
 | The Sámi claim on "mongolidisesta perimästä" stood 9.8 years, removed 10 October 2020 with "Poistettu kaksi lähteetöntä ja varsin spekulatiivista kappaletta." | confirmed | `candidates.json`, page 7283 |
 | Hennala, "yli 500 vankia" with about 200 women, stood 4.3 years, removed 18 May 2018 by an editor who cites the National Archives | confirmed. The same edit also removes another researcher's figures, so it is a contested removal and not a clear correction | `candidates.json`, page 1151714 |
