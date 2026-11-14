@@ -67,10 +67,13 @@ async function topicPage<T extends { counts: TabCounts }>(
   qid: string,
   date: string | null,
   load: (ctx: TopicCtx) => Promise<Result<WithoutCounts<T>>>,
+  /** Do not wait for the tab counts (the page loads them with getCounts and shows the tabs without a count). */
+  lazy = false,
 ): Promise<Result<T>> {
   const c = await ctxFor(qid, date)
   if (!c.ok) return c
-  const [r, counts] = await Promise.all([guard(() => load(c.data)), getCounts(qid, date)])
+  const none: TabCounts = { differences: null, removed: null }
+  const [r, counts] = await Promise.all([guard(() => load(c.data)), lazy ? none : getCounts(qid, date)])
   if (!r.ok) return r
   return { ok: true, data: { ...r.data, counts } as T }
 }
@@ -107,7 +110,7 @@ export async function getDifferences(
 ): Promise<Result<DifferencesVM>> {
   const o = { q: opts.q ?? '', offset: opts.offset ?? 0 }
   if (mock()) return fx.differences(qid, date, o)
-  return topicPage<DifferencesVM>(qid, date, (ctx) => aTopic.loadDifferences(api, ctx, o))
+  return topicPage<DifferencesVM>(qid, date, (ctx) => aTopic.loadDifferences(api, ctx, o), true)
 }
 
 export async function getStatement(
@@ -118,7 +121,7 @@ export async function getStatement(
   h: string,
 ): Promise<Result<StatementVM>> {
   if (mock()) return fx.statement(qid, date, lang, pageId, h)
-  return topicPage<StatementVM>(qid, date, (ctx) => aTopic.loadStatement(api, ctx, lang, pageId, h))
+  return topicPage<StatementVM>(qid, date, (ctx) => aTopic.loadStatement(api, ctx, lang, pageId, h), true)
 }
 
 export async function getRemoved(
