@@ -1,5 +1,4 @@
-import { execFile, execFileSync } from "node:child_process";
-import { test as base, expect, type BrowserContext, type Page } from "@playwright/test";
+import { test as base, expect, type BrowserContext } from "@playwright/test";
 import { connectMcp } from "./connector";
 
 // The live e2e works on a demo copy, as a juror does: one browser context per worker logs in through the
@@ -7,8 +6,8 @@ import { connectMcp } from "./connector";
 // starts that copy from the plain seed (POST /api/demo/reset {"fresh": true}: no template, no agent), so the
 // ids of docs/DEMO.md hold on this machine and on the public link alike (E2E_BASE).
 //
-// The kitchen's agent is scripts/agent.py with --kitchen: paired through the Agent page's code with its own
-// key, then MCP on /mcp/k/{account}/ of the same base.
+// The kitchen's agent is a real MCP client (scripts/connector_check.py) on the connector URL the Agent page
+// shows (connector.ts).
 
 /** A demo copy's approval code (api/accounts.DEMO_CODE); the demo bar names it. */
 export const CODE = "246810";
@@ -48,38 +47,6 @@ export { expect };
 export async function fresh(k: Kitchen) {
   const r = await k.ctx.request.post("/api/demo/reset", { data: { fresh: true } });
   expect(r.status(), await r.text()).toBe(200);
-}
-
-const cli = (k: Kitchen, args: string[]) =>
-  ["run", "python", "-W", "ignore", "../../scripts/agent.py", "--base", k.base, "--kitchen", k.id, ...args];
-
-/** The kitchen's agent plays one scene of docs/DEMO.md on this copy. */
-export function agent(k: Kitchen, scene: number) {
-  execFileSync("uv", cli(k, ["--scene", String(scene)]), { cwd: "../backend", env: process.env, stdio: "pipe" });
-}
-
-/** Connect the CLI agent the way a person does: Connect agent, the agent sends the code, Allow on the page. */
-export async function pairAgent(k: Kitchen, page: Page) {
-  await page.goto("/agent");
-  await page.getByTestId("agent-connect").click();
-  const code = ((await page.getByTestId("pair-code").textContent()) ?? "").trim();
-  const done = new Promise<void>((ok, fail) =>
-    execFile("uv", cli(k, ["--pair", code, "--wait", "60"]), { cwd: "../backend", env: process.env }, (err, _o, e) =>
-      err ? fail(new Error(`agent.py --pair: ${e || err.message}`)) : ok()),
-  );
-  await page.getByTestId("consent-allow").click({ timeout: 60_000 });
-  await done;
-  await expect(page.getByTestId("agent-state")).toHaveText(/active/i);
-}
-
-/**
- * The scene 3 stock-out of 466375 on this copy. It has no HTTP route (nothing in Validio orders or simulates
- * for the owner); as scripts/demo_check.py does, it is set in the copy's store on this machine, with its
- * ledger entry. Needs the server's store here: not against E2E_BASE / SMOKE_BASE.
- */
-export function stockOut(k: Kitchen) {
-  const py = `from validio.api.accounts import get_accounts; get_accounts().ctx(${JSON.stringify(k.id)}).set_stockout(True)`;
-  execFileSync("uv", ["run", "python", "-W", "ignore", "-c", py], { cwd: "../backend", env: process.env, stdio: "pipe" });
 }
 
 /** The kitchen's agent as any MCP agent connects: the connector on the Agent page's URL, then Allow. */

@@ -6,7 +6,7 @@ import { defineConfig } from "@playwright/test";
 // (VITE_API=live, built by the make target first) and the API, accounts in their own store, no template
 // (every demo copy is the plain seed); no Vite server. Its own port (SMOKE_PORT, default 8416), so a
 // `make demo` on 8410 is never touched; it refuses to start when something already answers there.
-// The browser logs in through the login page as a demo copy, the agent is scripts/agent.py --kitchen
+// The browser logs in through the login page as a demo copy, the agent is a real MCP client
 // (e2e-live/kitchen.ts). SMOKE_BASE=https://... runs it against a running server or the public link.
 // The server reads the web app from build/, which the default config rebuilds in mock mode: do not run
 // both at once.
