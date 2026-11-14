@@ -164,7 +164,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   const subs = ["466151", "473986", "468526", "475908"];
   const beyond = ["465256", "463383", "465174"];
   await needs(page, "request-rule", "live-checked", "option-466375", ...[...subs, ...beyond].map((p) => `option-${p}`));
-  await expect(page.getByTestId("option-466375")).toContainText(/Only 0 (BAG|bags) in stock, 200 needed|Out of stock at Valio/); // either copy
+  await expect(page.getByTestId("option-466375")).toContainText("Out of stock at Valio, 200 bags needed");
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
     await expect(page.getByTestId(`option-${p}`)).toContainText("Lists milk and has no lactose-free claim");
@@ -193,7 +193,7 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
     expect((await request.post("/api/orders/O-2/approve", { headers: chef })).status()).toBe(200);
   });
   const led = (await json(request, "/api/ledger")).entries.map((e: { sentence: string }) => e.sentence).join("\n");
-  expect(led).toContain("Owner approved 10 ST of 465256 for 180.10 EUR");
+  expect(led).toContain("Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €");
   expect(led).toMatch(/Placed order O-2\b.*Valio was asked again: every line can be delivered and no price rose more than 2 %/);
 });
 

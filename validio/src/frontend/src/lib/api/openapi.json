@@ -188,6 +188,18 @@
           "sentence": {
             "title": "Sentence",
             "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "at most about 12 words for the screen, the sentence is the detail",
+            "title": "Summary"
           }
         },
         "required": [
@@ -282,6 +294,17 @@
             ],
             "title": "Note"
           },
+          "noteText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notetext"
+          },
           "source": {
             "title": "Source",
             "type": "string"
@@ -313,6 +336,18 @@
               }
             ],
             "title": "Value"
+          },
+          "valueText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the value in words: no placeholder count, codes or ratios",
+            "title": "Valuetext"
           }
         },
         "required": [
@@ -345,6 +380,17 @@
           "state": {
             "title": "State",
             "type": "string"
+          },
+          "timeText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timetext"
           }
         },
         "required": [
@@ -360,9 +406,31 @@
             "title": "Createdat",
             "type": "string"
           },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
           "id": {
             "title": "Id",
             "type": "string"
+          },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
           },
           "sentence": {
             "title": "Sentence",
@@ -372,9 +440,42 @@
             "title": "Status",
             "type": "string"
           },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
           "text": {
             "title": "Text",
             "type": "string"
+          },
+          "timeText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timetext"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           },
           "totalCents": {
             "anyOf": [
@@ -404,6 +505,17 @@
             "title": "Actor",
             "type": "string"
           },
+          "actorText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actortext"
+          },
           "at": {
             "title": "At",
             "type": "string"
@@ -414,6 +526,20 @@
             },
             "title": "Disclosed",
             "type": "array"
+          },
+          "disclosedText": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disclosedtext"
           },
           "facts": {
             "items": {
@@ -471,6 +597,28 @@
               }
             ],
             "title": "Spendpassid"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "timeText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timetext"
           }
         },
         "required": [
@@ -599,6 +747,17 @@
             "title": "Deliverby",
             "type": "string"
           },
+          "deliverByText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverbytext"
+          },
           "diet": {
             "items": {
               "type": "string"
@@ -616,6 +775,18 @@
               }
             ],
             "title": "Productid"
+          },
+          "qtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "in the product's sales unit for a product line: 200 bags",
+            "title": "Qtytext"
           },
           "quantity": {
             "title": "Quantity",
@@ -680,6 +851,28 @@
             ],
             "title": "Deliverydate"
           },
+          "deliveryText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deliverytext"
+          },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
           "facts": {
             "default": [],
             "items": {
@@ -692,6 +885,17 @@
             "default": false,
             "title": "Issubstitute",
             "type": "boolean"
+          },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
           },
           "name": {
             "title": "Name",
@@ -728,9 +932,31 @@
             "title": "Productid",
             "type": "string"
           },
+          "qtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtytext"
+          },
           "quantity": {
             "title": "Quantity",
             "type": "integer"
+          },
+          "shortName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortname"
           },
           "totalCents": {
             "anyOf": [
@@ -795,6 +1021,17 @@
             },
             "title": "Lines",
             "type": "array"
+          },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
           },
           "requestId": {
             "anyOf": [
@@ -904,6 +1141,17 @@
       },
       "RankedOptionView": {
         "properties": {
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
           "facts": {
             "items": {
               "$ref": "#/components/schemas/FactView"
@@ -921,6 +1169,17 @@
               }
             ],
             "title": "Issubstitute"
+          },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
           },
           "name": {
             "title": "Name",
@@ -940,6 +1199,17 @@
           "productId": {
             "title": "Productid",
             "type": "string"
+          },
+          "qtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtytext"
           },
           "quantity": {
             "anyOf": [
@@ -963,9 +1233,35 @@
             ],
             "title": "Rank"
           },
+          "reasons": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the sentence as a list, one reason each",
+            "title": "Reasons"
+          },
           "sentence": {
             "title": "Sentence",
             "type": "string"
+          },
+          "shortName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortname"
           },
           "supplierText": {
             "anyOf": [
@@ -1175,6 +1471,20 @@
         "title": "RequestLineView",
         "type": "object"
       },
+      "SessionIn": {
+        "properties": {
+          "token": {
+            "maxLength": 200,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "SessionIn",
+        "type": "object"
+      },
       "SimulatedMark": {
         "properties": {
           "sentence": {
@@ -1245,6 +1555,21 @@
             "title": "Disclosed",
             "type": "array"
           },
+          "disclosedText": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the disclosed fields as a person reads them",
+            "title": "Disclosedtext"
+          },
           "hardCapCents": {
             "anyOf": [
               {
@@ -1262,6 +1587,20 @@
             },
             "title": "Hidden",
             "type": "array"
+          },
+          "hiddenText": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hiddentext"
           },
           "holder": {
             "title": "Holder",
@@ -1345,6 +1684,17 @@
       },
       "SplitPartOut": {
         "properties": {
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -1357,9 +1707,31 @@
             "title": "Productid",
             "type": "string"
           },
+          "qtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtytext"
+          },
           "quantity": {
             "title": "Quantity",
             "type": "integer"
+          },
+          "shortName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortname"
           },
           "totalCents": {
             "title": "Totalcents",
@@ -1434,6 +1806,17 @@
             ],
             "title": "History"
           },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -1452,6 +1835,17 @@
           "productId": {
             "title": "Productid",
             "type": "string"
+          },
+          "qtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtytext"
           },
           "result": {
             "title": "Result",
@@ -1474,6 +1868,17 @@
           "sentence": {
             "title": "Sentence",
             "type": "string"
+          },
+          "shortName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shortname"
           },
           "split": {
             "anyOf": [
@@ -1510,6 +1915,17 @@
           "unit": {
             "title": "Unit",
             "type": "string"
+          },
+          "usualQtyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usualqtytext"
           },
           "usualQuantity": {
             "title": "Usualquantity",
@@ -1563,6 +1979,38 @@
             "title": "Simulatedhistory",
             "type": "boolean"
           },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "stateText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statetext"
+          },
+          "steadyPass": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SteadyPassOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "weekday": {
             "title": "Weekday",
             "type": "string"
@@ -1613,6 +2061,28 @@
             ],
             "title": "Renewedat"
           },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "stateText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statetext"
+          },
           "weekday": {
             "title": "Weekday",
             "type": "string"
@@ -1626,6 +2096,57 @@
           "flagCount"
         ],
         "title": "SteadyOrderSummaryOut",
+        "type": "object"
+      },
+      "SteadyPassOut": {
+        "description": "The Steady Orders' own weekly Spend Pass and what its placed orders already used (review 3 M1).",
+        "properties": {
+          "autoLimitCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autolimitcents"
+          },
+          "hardCapCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hardcapcents"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "usedCents": {
+            "title": "Usedcents",
+            "type": "integer"
+          },
+          "validFrom": {
+            "title": "Validfrom",
+            "type": "string"
+          },
+          "validTo": {
+            "title": "Validto",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "validFrom",
+          "validTo",
+          "usedCents"
+        ],
+        "title": "SteadyPassOut",
         "type": "object"
       },
       "SupplierTextView": {
@@ -1768,6 +2289,18 @@
             "title": "Agent",
             "type": "string"
           },
+          "agentText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what the agent sent, as it sent it",
+            "title": "Agenttext"
+          },
           "createdAt": {
             "title": "Createdat",
             "type": "string"
@@ -1793,6 +2326,18 @@
             ],
             "title": "Deliverby"
           },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the same as title, the name types.ts already reads",
+            "title": "Displayname"
+          },
           "id": {
             "title": "Id",
             "type": "string"
@@ -1814,6 +2359,17 @@
                 "type": "null"
               }
             ]
+          },
+          "moneyText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Moneytext"
           },
           "orderId": {
             "anyOf": [
@@ -1875,6 +2431,29 @@
           "text": {
             "title": "Text",
             "type": "string"
+          },
+          "timeText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timetext"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "from the parsed need, never the agent's own words",
+            "title": "Title"
           },
           "totalCents": {
             "anyOf": [
@@ -2535,7 +3114,7 @@
     },
     "/api/orders/{order_id}/approve": {
       "post": {
-        "description": "Approve a waiting order. Validio asks Valio again and refuses if a price rose more than 2 %\nor a line can no longer be delivered. A placed order cannot be approved twice.",
+        "description": "Approve a waiting order. Validio asks Valio again and refuses if a price rose more than 2 %, a\nline can no longer be delivered, the cut-off or the deadline has passed or the Spend Pass is no\nlonger valid. A placed order cannot be approved twice.",
         "operationId": "approve_api_orders__order_id__approve_post",
         "parameters": [
           {
@@ -2721,6 +3300,41 @@
           }
         },
         "summary": "Request Detail",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/session": {
+      "post": {
+        "description": "Trade the kitchen token for a cookie, so the web app need not send the header itself.",
+        "operationId": "session_api_session_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Session",
         "tags": [
           "web"
         ]

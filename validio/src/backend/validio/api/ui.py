@@ -110,7 +110,7 @@ def inbox(ctx: CtxDep):
         v = get_request(ctx, r["id"])
         sentence = v.question if v.status == "waiting" and v.question else (v.decision.sentence if v.decision else "")
         out.append(InboxItem(id=v.id, created_at=v.created_at, text=v.text, status=v.status, sentence=sentence,
-                             total_cents=v.total_cents))
+                             total_cents=v.total_cents, title=v.title))
     return out
 
 

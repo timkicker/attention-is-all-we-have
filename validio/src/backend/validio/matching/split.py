@@ -15,7 +15,7 @@ from ..catalog.model import Product
 from ..catalog.store import Catalog
 from ..policy.decide import Decision, Outcome, Policy, context_for, decide
 from ..policy.mandate import Mandate
-from ..text.format import display_name, qty_text, sentences
+from ..text.format import product_qty, qty_of, sentences, short_name
 from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
@@ -59,7 +59,7 @@ class SplitPlan:
 
     @property
     def breaks(self) -> list[str]:
-        return [f"{display_name(p.name_en)} would break a rule. {why[0].upper()}{why[1:]}" for p, why in self.refused]
+        return [f"{short_name(p.name_en)} would break a rule. {why[0].upper()}{why[1:]}" for p, why in self.refused]
 
     @property
     def complete(self) -> bool:
@@ -71,17 +71,16 @@ class SplitPlan:
 
     @property
     def sentence(self) -> str:
-        unit = self.first.sales_unit
         if not self.complete:
             head = self.parts[0].sales_qty if self.parts else 0
-            s = f"{head} of {qty_text(self.wanted, unit)} can come."
+            s = f"{head} of {product_qty(self.wanted, self.first)} can come."
             if self.breaks:
                 s += " " + ". ".join(self.breaks) + ". The rest waits for you"
             else:
                 s += " No listed substitute can fill the rest. It waits for you"
             return s
         parts = " plus ".join(
-            f"{qty_text(p.sales_qty, p.product.sales_unit)} of {display_name(p.product.name_en)}" for p in self.parts)
+            qty_of(p.sales_qty, p.product) for p in self.parts)
         diff = self.total_cents - self.base_cents
         limit = f"{self.max_extra_bp / 100:g} %"
         if diff < 0:

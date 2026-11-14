@@ -22,13 +22,14 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Header, HTTPException, Request
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_serializer
 from pydantic.alias_generators import to_camel
 
 from ..audit.log import AuditLog
 from ..catalog.store import Catalog
 from ..config import load_settings
 from ..demo import seed
+from ..demo.clock import demo_now
 from ..orders.service import ApproveRefused, LineIn, OrderError, OrderService
 from ..orders.store import Store
 from ..policy.mandate import Mandate
@@ -36,7 +37,7 @@ from ..standing.drift import unit_word
 from ..standing.learn import learn
 from ..standing.model import LineResult, RenewedLine, StandingOrder
 from ..standing.renew import run
-from ..text.format import display_name, qty_text
+from ..text.format import money, product_qty, qty_of, short_name
 from ..text.format import unit_word as fmt_unit_word
 from ..valio.client import ValioClient
 from .schemas import ApproveIn
@@ -50,6 +51,21 @@ STATE_SCHEMA = "create table if not exists steady_state (order_id text primary k
 
 class Camel(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+    def _texts(self) -> dict:
+        """Text fields made from the raw ones when the view is sent, so a copied view never shows old text."""
+        return {}
+
+    @model_serializer(mode="wrap")
+    def _with_texts(self, handler, info):
+        out = handler(self)
+        for k, v in self._texts().items():
+            key = to_camel(k) if info.by_alias else k
+            if v is None and info.exclude_none:
+                out.pop(key, None)
+            else:
+                out[key] = v
+        return out
 
 
 class DriftFlagOut(Camel):
@@ -65,6 +81,14 @@ class SplitPartOut(Camel):
     unit: str
     total_cents: int
     on_valio_list: bool
+
+    short_name: str | None = None
+    qty_text: str | None = None
+    money_text: str | None = None
+
+    def _texts(self) -> dict:
+        return {"short_name": short_name(self.name), "qty_text": _qty(self.quantity, self.product_id),
+                "money_text": money(self.total_cents)}
 
 
 class SplitOut(Camel):
@@ -90,6 +114,25 @@ class SteadyLineOut(Camel):
     order_id: str | None = None
     rule_ids: list[str] | None = None
 
+    short_name: str | None = None
+    usual_qty_text: str | None = None
+    qty_text: str | None = None
+    money_text: str | None = None
+
+    def _texts(self) -> dict:
+        return {"short_name": short_name(self.name), "usual_qty_text": _qty(self.usual_quantity, self.product_id),
+                "qty_text": None if self.this_week_quantity is None else _qty(self.this_week_quantity, self.product_id),
+                "money_text": None if self.total_cents is None else money(self.total_cents)}
+
+
+def _state(renewed_at: str | None) -> tuple[str, str]:
+    """One state for the whole order, so no line has to repeat it."""
+    if not renewed_at:
+        return "not_renewed", "Not renewed this week"
+    from datetime import datetime
+    t = datetime.fromisoformat(renewed_at)
+    return "renewed", f"Renewed {t:%a} {t.day} {t:%b}, {t:%H:%M}"
+
 
 class SteadyPassOut(Camel):
     """The Steady Orders' own weekly Spend Pass and what its placed orders already used (review 3 M1)."""
@@ -112,6 +155,13 @@ class SteadyOrderOut(Camel):
     lines: list[SteadyLineOut]
     steady_pass: SteadyPassOut | None = None  # filled on every answer, never stored with the view
 
+    state: str | None = None
+    state_text: str | None = None
+
+    def _texts(self) -> dict:
+        state, text = _state(self.renewed_at)
+        return {"state": state, "state_text": text}
+
 
 class SteadyOrderSummaryOut(Camel):
     id: str
@@ -120,6 +170,13 @@ class SteadyOrderSummaryOut(Camel):
     line_count: int
     flag_count: int
     renewed_at: str | None = None
+
+    state: str | None = None
+    state_text: str | None = None
+
+    def _texts(self) -> dict:
+        state, text = _state(self.renewed_at)
+        return {"state": state, "state_text": text}
 
 
 @dataclass
@@ -171,7 +228,7 @@ class Runtime:
             store = Store(path)
             # an order and its ledger entry commit together; the kitchen key signs the head
             audit = AuditLog(path, seed.kitchen_key(), con=store.con, lock=store.lock)
-            service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: self.settings.now,
+            service = OrderService(store, self.catalog, self.valio, audit, clock=lambda: demo_now(self.settings.now, store.con),
                                    adjust=lambda avail: seed.apply_stockout(avail, seed.stockout(path)),
                                    lock=self.lock)  # one lock for every write and the demo reset
             self._live = _Live(token, path, store, audit, service)
@@ -263,9 +320,13 @@ def _unit(pid: str) -> str:
     return _UNITS[pid]
 
 
+def _qty_of(n: int, pid: str) -> str:
+    return qty_of(n, runtime.catalog.get(pid))
+
+
 def _qty(n: int, pid: str) -> str:
     p = runtime.catalog.get(pid)
-    return qty_text(n, p.sales_unit if p else None)
+    return product_qty(n, p)
 
 
 def _line_out(pending: SteadyLineOut, rl: RenewedLine) -> SteadyLineOut:
@@ -357,9 +418,9 @@ def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | No
         state = _load(live.path, so.id)
         if state:  # already renewed this week: nothing is ordered twice
             return _with_pass(_view(state), live)
-        s = runtime.settings
+        now = live.service.clock()
         mandate = _pass(live.path)
-        renewal = run(so, h, runtime.catalog, runtime.valio, mandate, s.now, stockout=seed.stockout(live.path))
+        renewal = run(so, h, runtime.catalog, runtime.valio, mandate, now, stockout=seed.stockout(live.path))
         pending = {ln.product_id: ln for ln in _pending(so, h).lines}
         diet = {ln.product_id: ln.diet for ln in so.lines}
         out = []
@@ -378,13 +439,12 @@ def steady_renew(request: Request, order_id: str, body: Annotated[ApproveIn | No
             else:
                 flags = " ".join(f.sentence for f in rl.flags if f.sentence not in rl.sentence)
                 live.audit.append(
-                    at=s.now, actor="validio", kind="decision",
-                    sentence=f"Steady Order {so.id}, {_qty(rl.usual_qty, rl.product_id)} of "
-                             f"{display_name(line.name)} ({rl.product_id}): {rl.sentence}" + (f" {flags}" if flags else ""),
+                    at=live.service.clock(), actor="validio", kind="decision",
+                    sentence=f"Steady Order {so.id}, {_qty_of(rl.usual_qty, rl.product_id)}: {rl.sentence}" + (f" {flags}" if flags else ""),
                     facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed,
                     rule_ids=list(rl.decision.rule_ids) if rl.decision is not None else [], order_id=None)
             out.append(line)
-        view = _pending(so, h).model_copy(update={"lines": out, "renewed_at": s.now.isoformat()})
+        view = _pending(so, h).model_copy(update={"lines": out, "renewed_at": now.isoformat()})
         _save(live.path, so.id, {"view": _dump(view), "delivery": renewal.delivery.isoformat()})
         return _with_pass(view, live)
 
@@ -409,7 +469,6 @@ def steady_accept(request: Request, order_id: str, product_id: str,
         if line.result not in (str(LineResult.WAITING), str(LineResult.FLAGGED)) or not line.this_week_quantity:
             raise HTTPException(409, f"Line {product_id} is {line.result}, only a waiting or flagged line "
                                      "can be accepted.")
-        s = runtime.settings
         mandate = _pass(live.path)
         diet = {ln.product_id: ln.diet for ln in so.lines}[product_id]
         delivery = date.fromisoformat(state["delivery"])
@@ -420,15 +479,14 @@ def steady_accept(request: Request, order_id: str, product_id: str,
                 order_lines, base = _accept_lines(line)
                 o, fresh = live.service.submit(
                     mandate=mandate, lines=order_lines, deliver_by=delivery,
-                    idempotency_key=f"steady:{so.id}:{delivery}:{product_id}:accept", actor=CHEF,
+                    idempotency_key=f"steady:{so.id}:{delivery}:{product_id}:accept", actor=CHEF, accepted_by=CHEF,
                     required_claims=diet, split_base_cents=base), True
             if o["state"] == "waiting":
-                o = live.service.approve(o["id"], CHEF)  # Valio asked again, a block is never lifted
+                o = live.service.approve(o["id"], CHEF, verb="accepted")  # Valio asked again, a block is never lifted
             elif o["state"] == "placed" and fresh:  # approve writes its own approval entry, this path needs one
                 live.audit.append(
-                    at=s.now, actor=CHEF, kind="approval",
-                    sentence=f"Chef accepted {_qty(line.this_week_quantity, product_id)} of "
-                             f"{display_name(line.name)} ({product_id}) for Steady Order {so.id}: {line.sentence}",
+                    at=live.service.clock(), actor=CHEF, kind="approval",
+                    sentence=f"Chef accepted {_qty_of(line.this_week_quantity, product_id)} for Steady Order {so.id}: {line.sentence}",
                     facts=[], mandate_id=mandate.id, disclosed=mandate.disclosed, rule_ids=[], order_id=o["id"])
         except ApproveRefused as e:
             # no waiting order is left behind where no page shows it: the line ends blocked with the reason

@@ -26,6 +26,9 @@ export interface Fact {
   note?: string;
   /** Set for attested_until, e.g. the end of a contract price. */
   until?: string;
+  /** The value in words: "100 % of orders", "milk and lactose", "Valio gives no real count". */
+  valueText?: string;
+  noteText?: string;
 }
 
 /** Text written by a supplier. Shown, never used for a decision. */
@@ -89,6 +92,16 @@ export interface RankedOption {
   /** True when the option replaces the product the request named. */
   isSubstitute?: boolean;
   supplierText?: SupplierText;
+  /** The catalogue name without ® and shouting, sizes as "2.5 kg". */
+  displayName?: string;
+  /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
+  shortName?: string;
+  /** "10 × 2.5 kg", "200 bags", in the catalogue's sales unit. */
+  qtyText?: string;
+  /** "1,010.00 €" */
+  moneyText?: string;
+  /** The sentence as a list, one reason each; the screen joins them. */
+  reasons?: string[];
 }
 
 export interface SplitPart {
@@ -98,6 +111,9 @@ export interface SplitPart {
   unit: string;
   totalCents: number;
   onValioList: boolean;
+  shortName?: string;
+  qtyText?: string;
+  moneyText?: string;
 }
 
 export interface Split {
@@ -116,12 +132,19 @@ export interface Need {
   unit: string;
   diet: string[];
   deliverBy: string;
+  /** "1,000 litres", or "200 bags" in the product's sales unit for a product line. */
+  qtyText?: string;
+  /** "Mon 16 Nov" */
+  deliverByText?: string;
 }
 
 export interface Decision {
   outcome: Outcome;
   ruleIds: string[];
+  /** The full sentence, for the ledger and a details view. */
   sentence: string;
+  /** At most about 12 words for the screen. */
+  summary?: string;
 }
 
 export interface RequestLine {
@@ -183,6 +206,13 @@ export interface SupplyRequest {
   /** For waiting requests: the one question for the owner. */
   question?: string;
   simulated?: SimulatedMark[];
+  /** From the parsed need, never the agent's words: "1,000 litres of lactose-free milk by Mon 16 Nov". */
+  title?: string;
+  /** What the agent sent, as it sent it. */
+  agentText?: string;
+  moneyText?: string;
+  /** "10:00" on the demo clock. */
+  timeText?: string;
 }
 
 /** One row in the inbox. */
@@ -195,6 +225,12 @@ export interface InboxItem {
   status: RequestStatus;
   sentence: string;
   totalCents?: number;
+  /** As on the request. */
+  title?: string;
+  /** At most about 12 words of `sentence`. */
+  summary?: string;
+  moneyText?: string;
+  timeText?: string;
 }
 
 export type OrderState = "waiting" | "approved" | "placed" | "rejected" | "blocked";
@@ -216,6 +252,14 @@ export interface OrderLine {
   isSubstitute: boolean;
   onValioList: boolean;
   facts: Fact[];
+  /** The catalogue name without ® and shouting, sizes as "2.5 kg". */
+  displayName?: string;
+  /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
+  shortName?: string;
+  qtyText?: string;
+  moneyText?: string;
+  /** "delivery Mon 16 Nov" */
+  deliveryText?: string;
 }
 
 /** `confirm_order` / `get_order` result. */
@@ -226,12 +270,13 @@ export interface Order {
   lines: OrderLine[];
   totalCents: number;
   /** Every state the order went through, oldest first. */
-  history: { state: OrderState; at: string }[];
+  history: { state: OrderState; at: string; timeText?: string }[];
   decision: Decision;
   spendPassId: string;
   deliverBy: string;
   /** The role that approved, e.g. "owner". Never a name. */
   approvedBy?: string;
+  moneyText?: string;
 }
 
 /**
@@ -253,6 +298,9 @@ export interface SpendPass {
   split: { maxExtraCostPct: number; allowListedSubstitutes: boolean };
   disclosed: string[];
   hidden: string[];
+  /** The same fields as a person reads them: "auto limit", "never above", "diet". */
+  disclosedText?: string[];
+  hiddenText?: string[];
 }
 
 export type LedgerKind =
@@ -277,6 +325,14 @@ export interface LedgerEntry {
   orderId?: string;
   prevHash: string;
   hash: string;
+  /** "Validio", "Owner", "Chef", "Demo" */
+  actorText?: string;
+  /** "10:04" on the demo clock. */
+  timeText?: string;
+  /** At most about 12 words of `sentence`. */
+  summary?: string;
+  /** `disclosed` as a person reads it. */
+  disclosedText?: string[];
 }
 
 export interface ChainStatus {
@@ -326,6 +382,11 @@ export interface SteadyLine {
   orderId?: string;
   /** The rules that decided the line. */
   ruleIds?: string[];
+  shortName?: string;
+  /** "200 × 200 g", "98 bags" */
+  usualQtyText?: string;
+  qtyText?: string;
+  moneyText?: string;
 }
 
 export interface SteadyOrder {
@@ -340,6 +401,10 @@ export interface SteadyOrder {
   lines: SteadyLine[];
   /** The Steady Orders' own weekly Spend Pass; its limits hold across the orders placed under it. */
   steadyPass?: SteadyPass;
+  /** One state for the whole order, so no line repeats it. */
+  state?: "renewed" | "not_renewed";
+  /** "Not renewed this week", "Renewed Sat 14 Nov, 10:12" */
+  stateText?: string;
 }
 
 export interface SteadyPass {
@@ -361,6 +426,8 @@ export interface SteadyOrderSummary {
   lineCount: number;
   flagCount: number;
   renewedAt?: string;
+  state?: "renewed" | "not_renewed";
+  stateText?: string;
 }
 
 /** The few demo switches the presenter presses. Each one is simulated. */

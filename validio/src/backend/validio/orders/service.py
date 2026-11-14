@@ -25,7 +25,7 @@ from ..audit.sentences import eur, ordered_alone
 from ..catalog.store import Catalog
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate, effective_deadline
-from ..text.format import and_list, count, display_name, qty_text
+from ..text.format import and_list, count, product_qty, qty_of, short_name, short_ref
 from ..trust.levels import PLACEHOLDER_NOTE, Fact, price_fact, quantity_fact, stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.models import Availability
@@ -110,12 +110,12 @@ def _hash(body: Any) -> str:
 
 def _short(p, stock: float, needed: int) -> str:
     if stock <= 0:
-        return f"{display_name(p.name_en)} is out of stock at Valio, {qty_text(needed, p.sales_unit)} needed"
-    return f"Only {qty_text(stock, p.sales_unit)} of {display_name(p.name_en)} in stock, {count(needed)} needed"
+        return f"{short_name(p.name_en)} is out of stock at Valio, {product_qty(needed, p)} needed"
+    return f"Only {qty_of(stock, p)} in stock, {count(needed)} needed"
 
 
 def _names(quoted: list[dict], ids: list[str]) -> list[str]:
-    return [display_name(ln["name"]) for ln in quoted if ln["productId"] in ids]
+    return [short_ref(ln["name"]) for ln in quoted if ln["productId"] in ids]
 
 
 def _with_stock(a: Availability | None, amount: float) -> Availability | None:
@@ -211,7 +211,7 @@ class OrderService:
                 sentences.append(ln["short"] + ".")
             if ln["isSubstitute"] and not ln["onValioList"] and worst == "ask_human" \
                     and "not on Valio's list" not in d.sentence:
-                sentences.append(f"{display_name(ln['name'])} is a substitute that is not on Valio's list.")
+                sentences.append(f"{short_name(ln['name'])} is a substitute that is not on Valio's list.")
             if d.sentence not in sentences:
                 sentences.append(d.sentence)
         return {"outcome": worst, "ruleIds": rule_ids, "sentence": " ".join(sentences)}, per
@@ -232,9 +232,10 @@ class OrderService:
                request_id: str | None = None, actor: str | None = None,
                stock_override: dict[str, float] | None = None, budget: CallBudget | None = None,
                required_claims: tuple[str, ...] | list[str] | None = None,
-               split_base_cents: int | None = None) -> dict:
+               split_base_cents: int | None = None, accepted_by: str | None = None) -> dict:
         """`required_claims` is the line's own diet (a Steady Order line), None means the Spend Pass diet.
-        `split_base_cents` marks the order as a split and is what the wanted amount alone would cost."""
+        `split_base_cents` marks the order as a split and is what the wanted amount alone would cost.
+        `accepted_by` is the person whose accept sent the order: a placed order then says so, never "without a person"."""
         if not lines:
             raise OrderError("an order needs at least one line")
         body_hash = _hash({"lines": [(ln.product_id, ln.sales_qty, ln.is_substitute, ln.on_valio_list)
@@ -262,7 +263,7 @@ class OrderService:
             })
             self.store.idem_put(mandate.id, idempotency_key, body_hash, order["id"])
             if state == "placed":
-                self._log(order, actor or mandate.holder, "order", self._placed_sentence(order, None),
+                self._log(order, actor or mandate.holder, "order", self._placed_sentence(order, None, accepted_by),
                           decision["ruleIds"])
             else:
                 self._log(order, "validio", "decision", decision["sentence"], decision["ruleIds"])
@@ -286,7 +287,8 @@ class OrderService:
             return [f"the delivery date {day(deliver_by)} has passed"]
         return []
 
-    def approve(self, order_id: str, approver: str) -> dict:
+    def approve(self, order_id: str, approver: str, verb: str = "approved") -> dict:
+        """`verb` is "accepted" when a chef's accept on a Steady Order line sent it: the sentences say so."""
         with self.lock:
             self.check_open()
             o = self.get(order_id)
@@ -306,11 +308,11 @@ class OrderService:
             fresh = self.quote(lines, deliver_by)
             for old, new in zip(o["lines"], fresh, strict=True):
                 if not new["deliverable"]:
-                    problems.append(new["short"] or f"{display_name(new['name'])} can no longer be delivered")
+                    problems.append(new["short"] or f"{short_ref(new['name'])} can no longer be delivered")
                 elif new["priceCents"] is None:
-                    problems.append(f"Valio has no price for {display_name(new['name'])} any more")
+                    problems.append(f"Valio has no price for {short_ref(new['name'])} any more")
                 elif old["priceCents"] and new["priceCents"] * 10000 > old["priceCents"] * (10000 + MAX_PRICE_RISE_BP):
-                    problems.append(f"the price of {display_name(new['name'])} rose from {eur(old['priceCents'])} "
+                    problems.append(f"the price of {short_ref(new['name'])} rose from {eur(old['priceCents'])} "
                                     f"to {eur(new['priceCents'])}, more than 2 %")
             if not problems:
                 # a person may lift "ask", never a block, a passed cut-off or a late delivery
@@ -322,11 +324,11 @@ class OrderService:
                     a = ln["_avail"]
                     if not c.cutoff_ok:
                         when = f" ({a.closing_time:%d %b %H:%M})" if a is not None and a.closing_time else ""
-                        problems.append(f"the order cut-off for {display_name(ln['name'])} has passed{when}")
+                        problems.append(f"the order cut-off for {short_ref(ln['name'])} has passed{when}")
                     elif not c.delivery_in_time:
-                        problems.append((f"Valio now delivers {display_name(ln['name'])} on {day(ln['deliveryDate'])}, "
+                        problems.append((f"Valio now delivers {short_ref(ln['name'])} on {day(ln['deliveryDate'])}, "
                                          f"after {day(deliver_by)}") if ln["deliveryDate"] else
-                                        f"Valio gives no delivery date for {display_name(ln['name'])}")
+                                        f"Valio gives no delivery date for {short_ref(ln['name'])}")
             if problems:
                 self._refuse(o, problems)
             now = self.clock().isoformat()
@@ -337,9 +339,9 @@ class OrderService:
             o["approvedBy"] = approver
             with self.store.tx():
                 self.store.put_order(o)
-                self._log(o, approver, "approval", f"{approver.split(':')[-1].capitalize()} approved "
+                self._log(o, approver, "approval", f"{approver.split(':')[-1].capitalize()} {verb} "
                           f"{self._parts(o)} for {eur(o['totalCents'])}.", [])
-                self._log(o, "validio", "order", self._placed_sentence(o, approver), o["decision"]["ruleIds"])
+                self._log(o, "validio", "order", self._placed_sentence(o, approver, verb=verb), o["decision"]["ruleIds"])
             return o
 
     def _refuse(self, o: dict, problems: list[str]) -> None:
@@ -364,17 +366,24 @@ class OrderService:
 
     # Sentences and ledger
 
-    @staticmethod
-    def _parts(o: dict, ids: bool = True) -> str:
-        """The lines in words. The ledger keeps the product ids next to the names, the question does not."""
-        return and_list([f"{qty_text(ln['quantity'], ln['unit'])} of {display_name(ln['name'])}"
-                         + (f" ({ln['productId']})" if ids else "") for ln in o["lines"]])
+    def _qty(self, ln: dict) -> str:
+        return product_qty(ln["quantity"], self.catalog.get(ln["productId"]), ln["unit"])
 
-    def _placed_sentence(self, o: dict, approver: str | None) -> str:
+    def _parts(self, o: dict, ids: bool = False) -> str:
+        """The lines in words, by short name. The product ids stay in the order the entry points to."""
+        return and_list([qty_of(ln["quantity"], self.catalog.get(ln["productId"]), ln["unit"], ln["name"])
+                         for ln in o["lines"]])
+
+    def _placed_sentence(self, o: dict, approver: str | None, accepted_by: str | None = None,
+                         verb: str = "approved") -> str:
         m = o["mandate"]
         ln = o["lines"][0]
+        if accepted_by is not None:
+            role = accepted_by.split(":")[-1]
+            return (f"Ordered {self._parts(o)} for {eur(o['totalCents'])} after the {role} accepted. "
+                    f"Inside Spend Pass {m['id']}.")
         if approver is None and len(o["lines"]) == 1 and ln["priceValidTo"] and m.get("auto_limit_cents"):
-            return ordered_alone(quantity=ln["quantity"], unit=ln["unit"], product_id=ln["productId"],
+            return ordered_alone(quantity=ln["quantity"], unit=ln["unit"], qty=self._qty(ln), product_id=ln["productId"],
                                  product_name=ln["name"], total_cents=o["totalCents"],
                                  price_valid_until=ln["priceValidTo"], delivery_date=ln["deliveryDate"],
                                  mandate_id=m["id"], auto_limit_cents=m["auto_limit_cents"])
@@ -382,7 +391,7 @@ class OrderService:
         if approver is None:
             return f"Ordered {names} for {eur(o['totalCents'])} without a person. Inside Spend Pass {m['id']}."
         role = approver.split(":")[-1]  # the role only, never the approver list of the Spend Pass
-        return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the {role} approved. "
+        return (f"Placed order {o['id']}: {names} for {eur(o['totalCents'])} after the {role} {verb}. "
                 f"Valio was asked again: every line is delivered by {day(o['deliverBy'])}, before its order "
                 f"cut-off, inside Spend Pass {m['id']}, and no price rose more than 2 %.")
 
@@ -395,7 +404,7 @@ class OrderService:
                     hit = re.match(r"Valio reports (\d+), (" + PLACEHOLDER_NOTE + r"; treated as in stock)",
                                   f.get("note") or "")
                     if f["field"] == "quantity" and hit:
-                        what = "the stock" if len(o["lines"]) == 1 else f"the stock of {display_name(ln['name'])}"
+                        what = "the stock" if len(o["lines"]) == 1 else f"the stock of {short_ref(ln['name'])}"
                         sentence += f" Valio gives no real count of {what}, so Validio treats it as in stock."
         self.audit.append(at=self.clock(), actor=actor, kind=kind, sentence=sentence, facts=facts,
                           mandate_id=m["id"], disclosed=m["disclosed"], rule_ids=rule_ids, order_id=o["id"])

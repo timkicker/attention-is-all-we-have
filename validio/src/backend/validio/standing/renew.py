@@ -16,7 +16,7 @@ from ..catalog.store import Catalog
 from ..matching.split import SplitPlan, decide_split, plan_split
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
-from ..text.format import and_list, display_name, qty_text
+from ..text.format import and_list, qty_of
 from ..trust.levels import stock_in_sales_units
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
@@ -106,7 +106,7 @@ def _line(ln: StandingLine, flags: list[DriftFlag], cat: Catalog, quotes: dict[s
         d = decide_split(plan, mandate, now, required_claims=ln.diet, deliver_by=delivery)
         if d.outcome is Outcome.ALLOW:
             extra = plan.total_cents - plan.base_cents
-            added = and_list([f"{qty_text(x.sales_qty, x.product.sales_unit)} of {display_name(x.product.name_en)}"
+            added = and_list([qty_of(x.sales_qty, x.product)
                               for x in plan.parts if x.on_valio_list])
             limit = f"{mandate.split_max_extra_bp / 100:g}"
             return replace(base, this_week_qty=got, total_cents=plan.total_cents, result=LineResult.SPLIT_RENEWED,

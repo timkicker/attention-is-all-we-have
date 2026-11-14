@@ -12,7 +12,7 @@ from enum import StrEnum
 
 from ..catalog.model import Product
 from ..catalog.store import Catalog
-from ..text.format import and_list, display_name, money, qty_text, sentences
+from ..text.format import and_list, money, product_qty, sentences, short_name
 from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel
 from ..valio.budget import CallBudget
@@ -65,7 +65,7 @@ class SwapResult:
         b = self.best
         if b is None:
             return "No substitute keeps every rule and can be delivered, so the line waits for a person."
-        name = display_name(b.product.name_en)
+        name = short_name(b.product.name_en)
         if b.on_valio_list:
             return f"{name} is on Valio's substitute list and keeps every rule."
         return (f"No substitute on Valio's list keeps every rule and can be delivered. {name} does, "
@@ -136,7 +136,7 @@ def _judge(p: Product, r: Ranked, need: Need, listed: bool) -> SubOption:
         return SubOption(p, SubVerdict.UNDELIVERABLE, f"{kept}, but Valio gives no delivery date for it", listed, r)
     if not r.accepted:
         return SubOption(p, SubVerdict.REJECTED, sentences(r.reasons).rstrip("."), listed, r)
-    qty = f"{qty_text(r.sales_qty, p.sales_unit)} for {money(r.total_cents)}"
+    qty = f"{product_qty(r.sales_qty, p)} for {money(r.total_cents)}"
     if listed:
         return SubOption(p, SubVerdict.OK_LISTED, f"{kept}. {qty}, on Valio's substitute list", True, r)
     # the section it is shown in says it is not on Valio's list, the sentence does not say it again

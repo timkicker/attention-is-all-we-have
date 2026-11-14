@@ -40,7 +40,7 @@ for (const theme of ["dark", "light"] as const) {
     await shoot("inbox");
 
     await go("/requests/R-1");
-    await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs");
+    await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 × 1 l");
     await shoot("request-milk");
     await stockOut(page);
     await expect(page.locator("#request-title")).toContainText("200 bags");

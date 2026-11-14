@@ -17,7 +17,7 @@ from ..matching.reasons import carbon_sentence, option_sentence
 from ..matching.substitute import SubOption, SubVerdict, safe_swap
 from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
-from ..text.format import display_name, money, qty_text
+from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
 from .service import (
     SEVERITY,
@@ -86,7 +86,7 @@ class SupplyService:
             unit = unit if unit in ("L", "KG") else "PCS"
             need = Need(_kind_of(p) or "", ln.quantity, unit, set(diet), set(), deliver_by or self._default_by(mandate),
                         None, product_id=p.id,
-                        text=ln.text or f"{qty_text(ln.quantity, ln.unit or p.sales_unit)} of {display_name(p.name_en)}")
+                        text=ln.text or qty_of(ln.quantity, p, ln.unit))
         elif ln.text:
             try:
                 need = parse_need(ln.text, self.now().date())
@@ -104,7 +104,7 @@ class SupplyService:
         p = self.catalog.get(ln.product_id) if ln.product_id else None
         if ln.text or p is None:
             return ln.text or f"{ln.quantity:g} {ln.unit or ''} of {ln.product_id}"
-        return f"{qty_text(ln.quantity or 0, ln.unit or p.sales_unit)} of {display_name(p.name_en)}"
+        return qty_of(ln.quantity or 0, p, ln.unit)
 
     def _default_by(self, mandate: Mandate) -> date:
         return date.fromisoformat(mandate.deliver_by) if mandate.deliver_by else self.now().date()
@@ -259,7 +259,7 @@ class SupplyService:
                     for o in b["line"]["options"]:
                         if (o.get("supplierText") or {}).get("planted"):
                             self._log(req, mandate, "validio", "decision",
-                                      f"Ignored the description of {display_name(o['name'])} ({o['productId']}), "
+                                      f"Ignored the description of {short_ref(o['name'])}, "
                                       f"which talks to AI agents. "
                                       f"Descriptions are never used for decisions. {o['sentence']}", [], None)
                 if missing and not proposals:
