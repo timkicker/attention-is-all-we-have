@@ -108,10 +108,12 @@ def test_fi_mode_refuses_other_editions(client):
     assert r.status_code == 422
 
 
-@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") != "v2", reason="needs seed v2 (exact bisect of the 2014 ru edit)")
-def test_ru_staged_clause_on_seed_v2(client):
-    # PLAN B5 done check. After M1:
-    # PARALLAX_SEED=v2 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_dropped.py -k v2
+@pytest.mark.skipif(
+    os.environ.get("PARALLAX_SEED") not in ("v2", "v3", "v4"), reason="needs seed v2 or later (exact bisect of 2014)"
+)
+def test_ru_staged_clause_on_a_full_seed(client):
+    # PLAN B5 done check:
+    # PARALLAX_SEED=v4 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_dropped.py -k full_seed
     body = client.get("/api/dropped", params={"topic": "winterwar", "lang": "ru", "limit": 200}).json()
     ru = [r for r in body["rows"] if "инсценированный советской стороной" in r["text"]]
     assert any(r["died_rev"] == 64106894 and "de" in {a["lang"] for a in r["alive_in"]} for r in ru)

@@ -72,9 +72,9 @@ def test_unknown_topic_is_404_and_topic_is_required(client):
     assert client.get("/api/sources").status_code == 422
 
 
-@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") != "v3", reason="needs seed v3 (ref_stat from A14)")
-def test_seven_editions_on_seed_v3(client):
-    # PLAN B8 done check. After M2:
-    # PARALLAX_SEED=v3 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_sources.py -k v3
+@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") not in ("v3", "v4"), reason="needs seed v3 or later (ref_stat)")
+def test_seven_editions_on_a_full_seed(client):
+    # PLAN B8 done check:
+    # PARALLAX_SEED=v4 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_sources.py -k full_seed
     body = client.get("/api/sources", params={"topic": "winterwar"}).json()
     assert len(body["editions"]) == 7

@@ -53,8 +53,8 @@ def test_empty_until_a_seed_has_the_atlas(client):
     assert body["counts"] == {"all": 0, "fi+sv": 0, "fi+en": 0, "fi": 0} and body["topics"] == []
 
 
-@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") != "v3", reason="needs seed v3 (atlas from Track A)")
-def test_counts_all_on_seed_v3(client):
-    # PLAN B10 done check. After M2:
-    # PARALLAX_SEED=v3 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_atlas.py -k v3
+@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") not in ("v3", "v4"), reason="needs seed v3 or later (atlas)")
+def test_counts_all_on_a_full_seed(client):
+    # PLAN B10 done check:
+    # PARALLAX_SEED=v4 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_atlas.py -k full_seed
     assert client.get("/api/atlas").json()["counts"]["all"] == 2919

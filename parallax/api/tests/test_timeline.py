@@ -2,12 +2,11 @@ import os
 
 import pytest
 
+from api import sqllog
 from api.tests.conftest import schema_errors
 
 FI_MAINILA = "/api/claim/fi/1256/8519fbaf22d33984/timeline"
 EN_STAGED = "/api/claim/en/33924/7aee25bc3466a2fc/timeline"
-# Same sentence on seed v2; its h is the hash of the text, so it stays 7aee25bc3466a2fc if A3 splits it the same way.
-EN_STAGED_V2 = EN_STAGED
 
 
 def lives_of(body, lang, h=None):
@@ -60,10 +59,19 @@ def test_unknown_claim_is_404(client):
     assert not schema_errors("/api/claim/{lang}/{page_id}/{h}/timeline", r.json(), status="404")
 
 
-@pytest.mark.skipif(os.environ.get("PARALLAX_SEED") != "v2", reason="needs seed v2 (exact bisect of the 2009 edit)")
-def test_en_mainila_life_ends_on_21_august_2009_on_seed_v2(client):
-    # After M1: PARALLAX_SEED=v2 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_timeline.py -k v2
-    (staged,) = lives_of(client.get(EN_STAGED_V2).json(), "en")[:1]
+@pytest.mark.skipif(
+    os.environ.get("PARALLAX_SEED") not in ("v2", "v3", "v4"), reason="needs seed v2 or later (exact bisect of 2009)"
+)
+def test_en_mainila_life_ends_on_21_august_2009_on_a_full_seed(client):
+    # PARALLAX_SEED=v4 PARALLAX_SEED_DB=parallax uv run pytest api/tests/test_timeline.py -k full_seed
+    # The last "staged" sentence is found by its text: its h depends on how the seed split the text.
+    (last,) = sqllog.run(
+        "SELECT page_id, h FROM claim FOR SYSTEM_TIME ALL WHERE lang = 'en' AND topic_id = 'winterwar'"
+        " AND text LIKE %s ORDER BY row_end DESC LIMIT 1",
+        ("%the Soviets staged the shelling of Mainila%",),
+    )
+    body = client.get(f"/api/claim/en/{last['page_id']}/{last['h']}/timeline").json()
+    (staged,) = lives_of(body, "en", last["h"])[-1:]
     assert staged["died"].startswith("2009-08-21") and staged["died_rev"] == 309285088
     assert staged["time_precision"] == "exact"
 
