@@ -1,0 +1,105 @@
+/* Parallax tokens: the only file with a colour, size or radius written as a value.
+   Values come from the approved wireframes (parallax-ui3/wf/base.css). The Arlen ui-kit
+   token names are mapped onto the same values, so a kit primitive renders at wireframe size.
+   Light only: the wireframes define no dark palette.
+   One accent: --mark / --mark-ink mean "says it differently" and nothing else. */
+:root {
+  color-scheme: light;
+
+  /* Wireframe palette */
+  --bg: #ffffff;
+  --soft: #f6f6f4; /* hover/selected rows, notice, skeleton, the one popover */
+  --fg: #1a1a1a;
+  --fg2: #55554f;
+  --fg3: #8a8a84;
+  --line: #e8e8e4;
+  --line2: #d6d6d0;
+  --mark: #f6e7bd; /* pencil highlight behind words that differ */
+  --mark-ink: #6b4a00;
+  --ochre: #a86b12;
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.08); /* only .pop */
+
+  /* Radius: 8 everywhere, 2 for the mark */
+  --r: 8px;
+  --r-mark: 2px;
+
+  /* Type: 13 / 15 / 18 / 28 / 40, weights 400 / 500 */
+  --sans: "Inter", system-ui, sans-serif;
+  --serif: "Noto Serif", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --fs-13: 13px;
+  --lh-13: 20px;
+  --fs-15: 15px;
+  --lh-15: 24px;
+  --fs-18: 18px;
+  --lh-18: 28px;
+  --fs-28: 28px;
+  --lh-28: 36px;
+  --fs-40: 40px;
+  --lh-40: 48px;
+  --w-regular: 400;
+  --w-medium: 500;
+
+  /* Layout */
+  --col: 760px;
+  --wide: 1120px;
+  --gutter: 32px;
+  --bar: 64px;
+  --control: 40px;
+  --control-big: 56px;
+
+  /* Arlen ui-kit names, pointed at the values above */
+  --color-bg-shell: var(--bg);
+  --color-bg-app: var(--bg);
+  --color-bg-card: var(--bg);
+  --color-bg-input: var(--bg);
+  --color-fg-primary: var(--fg);
+  --color-fg-secondary: var(--fg2);
+  --color-fg-disabled: var(--fg3);
+  --color-fg-inverse: var(--bg);
+  --color-accent: var(--fg);
+  --color-accent-foreground: var(--bg);
+  --color-border: var(--line);
+  --color-border-strong: var(--line2);
+  --background: var(--bg);
+  --foreground: var(--fg);
+  --card: var(--bg);
+  --card-foreground: var(--fg);
+  --popover: var(--bg);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
+  --primary-foreground: var(--bg);
+  --muted: var(--soft);
+  --muted-foreground: var(--fg2);
+  --border: var(--line);
+  --input: var(--line2);
+  --ring: var(--fg);
+  --radius: var(--r);
+  --radius-sm: var(--r);
+  --radius-md: var(--r);
+  --radius-lg: var(--r);
+  --radius-xl: var(--r);
+  --radius-chip: var(--r-mark);
+  --radius-button: var(--r);
+  --radius-input: var(--r);
+  --radius-card: var(--r);
+  --radius-modal: var(--r);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+  --font-size-base: var(--fs-15);
+  --text-xs: var(--fs-13);
+  --text-sm: var(--fs-13);
+  --text-base: var(--fs-15);
+  --text-md: var(--fs-15);
+  --text-lg: var(--fs-18);
+  --text-xl: var(--fs-28);
+  --height-control: var(--control);
+  --height-control-prominent: var(--control);
+  --height-control-emphasized: var(--control-big);
+  --height-bar: var(--bar);
+}
+@media (max-width: 600px) {
+  :root {
+    --gutter: 16px;
+  }
+}
