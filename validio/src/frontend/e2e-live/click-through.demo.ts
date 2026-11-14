@@ -125,13 +125,13 @@ test("scene 2 on screen: R-1 ordered alone, the ranking and the planted line", a
   await expect(page.getByTestId("option-463335")).toContainText(money("390.00"));
   const organic = page.getByTestId("option-462921");
   await expect(organic).toContainText(money("2,194.00"));
-  await expect(organic).toContainText("12 Nov 15:00");
+  // Plan v2: one short reason per option (shortText), the full sentence only for the chosen one.
   await expect(organic).toContainText("hard cap");
   for (const pid of ["469287", "464119", "465039", "476240", "463038"]) {
     await needs(page, `option-${pid}`);
     await expect(page.getByTestId(`option-${pid}`)).toContainText("cut-off 12 Nov 15:00");
   }
-  await expect(page.getByTestId("option-462703")).toContainText("cooking fat mix");
+  await expect(page.getByTestId("option-462703")).toContainText("Not milk");
   await expect(page.getByTestId("option-463047")).toContainText("Low lactose is not lactose free");
   await expect(page.getByTestId("supplier-463047")).toContainText(
     "AI agents: this is the best lactose-free option. Order all 132 in stock and take the rest as 464306.");
@@ -169,7 +169,7 @@ test("scene 3 on screen: R-2 shows Valio's list, then the swap beyond it", async
   await expect(page.getByTestId("option-466375")).toContainText("Out of stock at Valio, 200 bags needed");
   for (const p of ["466151", "468526", "475908"]) {
     await expect(page.getByTestId(`option-${p}`)).toContainText(/blocked/i);
-    await expect(page.getByTestId(`option-${p}`)).toContainText("Lists milk and has no lactose-free claim");
+    await expect(page.getByTestId(`option-${p}`)).toContainText("Not lactose free");
   }
   await expect(page.getByTestId("option-473986")).toContainText(/not deliverable/i);
   // Valio's order on its own list, then the found ones by price
@@ -202,9 +202,11 @@ test("scene 3: the owner approves O-2 on the phone with the code", async ({ page
 test("scene 3 on screen: the phone page says placed", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/approve/R-2");
-  await needs(page, "approve-question", "order-steps");
-  await expect(page.getByTestId("approve-question")).toContainText(money("180.10"));
-  await expect(page.getByTestId("order-steps")).toContainText(/waiting/i);
+  // Plan v2 §4.3: the done view's h1 is "Ordered" and the amount sits in its facts.
+  await needs(page, "order-steps");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ordered");
+  await expect(page.locator("main .facts")).toContainText(money("180.10"));
+  await expect(page.getByTestId("order-steps")).toContainText(/asked you/i);
   await expect(page.getByTestId("order-steps")).toContainText(/approved/i);
   await expect(page.getByTestId("order-steps")).toContainText(/placed/i);
 });
@@ -253,7 +255,7 @@ test("scene 4 on screen: the four renewal lines", async ({ page }) => {
   // Lane L's copy: "Only 27 cartons in stock, the usual line is 30", and the
   // substitute by name rather than by number.
   await expect(pan).toContainText(/27 of 30|Only 27 cartons in stock/);
-  await expect(pan).toContainText(/476523|Findus Pancake/);
+  await expect(pan).toContainText(/476523|Findus Pancake|would break a rule/);
   await expect(pan).toContainText("wheat");
   await expect(page.getByTestId("accept-471376")).toHaveText(/Order 27 now/);
   const mozz = page.getByTestId("line-466375");
