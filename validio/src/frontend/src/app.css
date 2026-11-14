@@ -41,6 +41,7 @@
   --height-control: 32px;
   --height-control-prominent: 32px;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --v-on-valio: #ffffff;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -670,4 +671,22 @@ details.fold .fold-body p + p {
   details.fold > summary {
     min-height: 44px;
   }
+}
+
+/* ---------- dialogs (P3) ---------- */
+/* A plain dim like the kit's, no blur, and it covers the whole width: the
+   page's reserved scrollbar gutter is dropped while a dialog is open, so no
+   light strip stays on the right. */
+.dialog-backdrop {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html:has(.dialog-backdrop) {
+  scrollbar-gutter: auto;
+  overflow: hidden;
+}
+/* Nothing fixed to the page (the phone dock, the approve bar) sits over an open dialog or sheet. */
+body:has(.dialog-backdrop) .dock,
+body:has(.dialog-backdrop) [data-bar] {
+  visibility: hidden;
 }
