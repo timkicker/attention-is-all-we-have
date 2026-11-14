@@ -70,6 +70,156 @@
         "title": "AccountView",
         "type": "object"
       },
+      "ActivityDetail": {
+        "properties": {
+          "approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Approval"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "asked": {
+            "$ref": "#/components/schemas/Asked"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/Check"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "item": {
+            "$ref": "#/components/schemas/ActivityItem"
+          },
+          "proof": {
+            "items": {
+              "$ref": "#/components/schemas/Proof"
+            },
+            "title": "Proof",
+            "type": "array"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Result"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule": {
+            "$ref": "#/components/schemas/RuleUsed"
+          }
+        },
+        "required": [
+          "item",
+          "asked",
+          "checks",
+          "rule",
+          "result",
+          "approval",
+          "proof"
+        ],
+        "title": "ActivityDetail",
+        "type": "object"
+      },
+      "ActivityItem": {
+        "properties": {
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "request",
+              "standing"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "orderId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderid"
+          },
+          "status": {
+            "enum": [
+              "ordered",
+              "waiting",
+              "blocked",
+              "standing"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "totalCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalcents"
+          },
+          "why": {
+            "title": "Why",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "title",
+          "why",
+          "totalCents",
+          "at",
+          "orderId"
+        ],
+        "title": "ActivityItem",
+        "type": "object"
+      },
+      "ActivityList": {
+        "properties": {
+          "counts": {
+            "$ref": "#/components/schemas/Counts"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "counts"
+        ],
+        "title": "ActivityList",
+        "type": "object"
+      },
       "AgentInfo": {
         "properties": {
           "connectedAt": {
@@ -182,6 +332,24 @@
         "title": "AgentState",
         "type": "object"
       },
+      "Approval": {
+        "properties": {
+          "holdUntil": {
+            "title": "Holduntil",
+            "type": "string"
+          },
+          "orderId": {
+            "title": "Orderid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "orderId",
+          "holdUntil"
+        ],
+        "title": "Approval",
+        "type": "object"
+      },
       "ApprovalCodeIn": {
         "properties": {
           "current": {
@@ -217,6 +385,24 @@
           }
         },
         "title": "ApproveIn",
+        "type": "object"
+      },
+      "Asked": {
+        "properties": {
+          "agentName": {
+            "title": "Agentname",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "agentName"
+        ],
+        "title": "Asked",
         "type": "object"
       },
       "AskedFor": {
@@ -269,6 +455,55 @@
           "count"
         ],
         "title": "ChainStatus",
+        "type": "object"
+      },
+      "Check": {
+        "properties": {
+          "label": {
+            "enum": [
+              "Product",
+              "Price",
+              "Stock",
+              "Allergens",
+              "Substitute"
+            ],
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ok"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value",
+          "note",
+          "ok"
+        ],
+        "title": "Check",
         "type": "object"
       },
       "ChoiceIn": {
@@ -422,6 +657,39 @@
         "title": "Consent",
         "type": "object"
       },
+      "Counts": {
+        "properties": {
+          "all": {
+            "title": "All",
+            "type": "integer"
+          },
+          "blocked": {
+            "title": "Blocked",
+            "type": "integer"
+          },
+          "ordered": {
+            "title": "Ordered",
+            "type": "integer"
+          },
+          "standing": {
+            "title": "Standing",
+            "type": "integer"
+          },
+          "waiting": {
+            "title": "Waiting",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "all",
+          "ordered",
+          "waiting",
+          "blocked",
+          "standing"
+        ],
+        "title": "Counts",
+        "type": "object"
+      },
       "DecisionView": {
         "properties": {
           "outcome": {
@@ -527,6 +795,86 @@
           "diet"
         ],
         "title": "DietIn",
+        "type": "object"
+      },
+      "DietOptions": {
+        "properties": {
+          "mustBe": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Mustbe",
+            "type": "array"
+          },
+          "never": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Never",
+            "type": "array"
+          }
+        },
+        "required": [
+          "mustBe",
+          "never"
+        ],
+        "title": "DietOptions",
+        "type": "object"
+      },
+      "DietOut": {
+        "properties": {
+          "mustBe": {
+            "description": "every line must be all of these: lactose-free, gluten-free, vegan",
+            "items": {
+              "type": "string"
+            },
+            "title": "Mustbe",
+            "type": "array"
+          },
+          "never": {
+            "description": "no line may contain any of these: milk, eggs, gluten, nuts, peanuts, soy, fish, crustaceans, molluscs, sesame, celery, mustard, lupin, sulphites",
+            "items": {
+              "type": "string"
+            },
+            "title": "Never",
+            "type": "array"
+          },
+          "options": {
+            "$ref": "#/components/schemas/DietOptions"
+          }
+        },
+        "required": [
+          "mustBe",
+          "never",
+          "options"
+        ],
+        "title": "DietOut",
+        "type": "object"
+      },
+      "DietRules": {
+        "properties": {
+          "mustBe": {
+            "description": "every line must be all of these: lactose-free, gluten-free, vegan",
+            "items": {
+              "type": "string"
+            },
+            "title": "Mustbe",
+            "type": "array"
+          },
+          "never": {
+            "description": "no line may contain any of these: milk, eggs, gluten, nuts, peanuts, soy, fish, crustaceans, molluscs, sesame, celery, mustard, lupin, sulphites",
+            "items": {
+              "type": "string"
+            },
+            "title": "Never",
+            "type": "array"
+          }
+        },
+        "required": [
+          "mustBe",
+          "never"
+        ],
+        "title": "DietRules",
         "type": "object"
       },
       "DriftFlagOut": {
@@ -693,6 +1041,109 @@
           "at"
         ],
         "title": "HistoryStep",
+        "type": "object"
+      },
+      "Home": {
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/HomeAgent"
+          },
+          "latest": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityItem"
+            },
+            "title": "Latest",
+            "type": "array"
+          },
+          "needsYou": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityItem"
+            },
+            "title": "Needsyou",
+            "type": "array"
+          },
+          "setup": {
+            "$ref": "#/components/schemas/HomeSetup"
+          },
+          "week": {
+            "$ref": "#/components/schemas/Week"
+          }
+        },
+        "required": [
+          "agent",
+          "week",
+          "setup",
+          "needsYou",
+          "latest"
+        ],
+        "title": "Home",
+        "type": "object"
+      },
+      "HomeAgent": {
+        "properties": {
+          "lastUsedAt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastusedat"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "state": {
+            "enum": [
+              "none",
+              "pairing",
+              "consent",
+              "active",
+              "paused"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "name",
+          "lastUsedAt"
+        ],
+        "title": "HomeAgent",
+        "type": "object"
+      },
+      "HomeSetup": {
+        "properties": {
+          "agentConnected": {
+            "title": "Agentconnected",
+            "type": "boolean"
+          },
+          "firstOrder": {
+            "title": "Firstorder",
+            "type": "boolean"
+          },
+          "rulesSaved": {
+            "title": "Rulessaved",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "rulesSaved",
+          "agentConnected",
+          "firstOrder"
+        ],
+        "title": "HomeSetup",
         "type": "object"
       },
       "InboxItem": {
@@ -1831,6 +2282,34 @@
         "title": "ProductSummary",
         "type": "object"
       },
+      "Proof": {
+        "properties": {
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "at": {
+            "title": "At",
+            "type": "string"
+          },
+          "hash": {
+            "title": "Hash",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at",
+          "actor",
+          "text",
+          "hash"
+        ],
+        "title": "Proof",
+        "type": "object"
+      },
       "RankedOptionView": {
         "properties": {
           "checks": {
@@ -2254,6 +2733,49 @@
         "title": "ResetIn",
         "type": "object"
       },
+      "Result": {
+        "properties": {
+          "delivery": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delivery"
+          },
+          "orderId": {
+            "title": "Orderid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "orderId",
+          "delivery"
+        ],
+        "title": "Result",
+        "type": "object"
+      },
+      "RuleUsed": {
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "text",
+          "version"
+        ],
+        "title": "RuleUsed",
+        "type": "object"
+      },
       "RulesIn": {
         "properties": {
           "aloneUpToCents": {
@@ -2281,6 +2803,17 @@
             ],
             "description": "the 6 digit approval code, or the X-Approve-Code header",
             "title": "Code"
+          },
+          "diet": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DietRules"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "left out: the diet stays as it is"
           },
           "maxExtraPct": {
             "default": 0,
@@ -2333,6 +2866,9 @@
             "title": "Approvaluptocents",
             "type": "integer"
           },
+          "diet": {
+            "$ref": "#/components/schemas/DietOut"
+          },
           "maxExtraPct": {
             "title": "Maxextrapct",
             "type": "integer"
@@ -2373,7 +2909,8 @@
           "maxExtraPct",
           "perWeekCents",
           "saved",
-          "passVersion"
+          "passVersion",
+          "diet"
         ],
         "title": "RulesOut",
         "type": "object"
@@ -3745,6 +4282,31 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "Week": {
+        "properties": {
+          "capCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capcents"
+          },
+          "usedCents": {
+            "title": "Usedcents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "usedCents",
+          "capCents"
+        ],
+        "title": "Week",
+        "type": "object"
       }
     }
   },
@@ -4388,6 +4950,100 @@
         ]
       }
     },
+    "/api/activity": {
+      "get": {
+        "description": "Every request and Steady Order, newest first. `counts` count all items, whatever the filter.",
+        "operationId": "activity_api_activity_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "enum": [
+                "all",
+                "ordered",
+                "waiting",
+                "blocked",
+                "standing"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activity",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/activity/{item_id}": {
+      "get": {
+        "description": "A request (R-…) or a Steady Order (S-…). Approve and reject stay POST /api/orders/{orderId}/approve and\n/reject with `approval.orderId`.",
+        "operationId": "activity_detail_api_activity__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Activity Detail",
+        "tags": [
+          "web"
+        ]
+      }
+    },
     "/api/agent": {
       "get": {
         "operationId": "get_agent_api_agent_get",
@@ -4624,6 +5280,28 @@
           }
         },
         "summary": "Health"
+      }
+    },
+    "/api/home": {
+      "get": {
+        "description": "Home in one call. `week.usedCents` is what placed orders under the Rules' pass add up to, `capCents` the\nRules' per week limit (null without one).",
+        "operationId": "home_api_home_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Home"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Home",
+        "tags": [
+          "web"
+        ]
       }
     },
     "/api/inbox": {

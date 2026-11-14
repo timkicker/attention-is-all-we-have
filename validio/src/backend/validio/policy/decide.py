@@ -19,7 +19,7 @@ from typing import Any
 import cedarpy
 
 from validio.audit.sentences import eur
-from validio.policy.mandate import SUBSTITUTES_LISTED, Mandate, effective_deadline
+from validio.policy.mandate import NEVER_ALLERGENS, SUBSTITUTES_LISTED, Mandate, effective_deadline
 from validio.text.format import and_list
 
 HERE = Path(__file__).resolve().parent
@@ -179,7 +179,7 @@ def context_for(
     covers = stock is not None and sales_qty is not None and stock >= sales_qty
     deadline = effective_deadline(mandate, deliver_by)
     in_time = deliverable and deadline is not None and availability.lines[0].available <= deadline
-    return build_context(
+    ctx = build_context(
         mandate,
         total_cents=total_cents,
         diet_grades={d: claim_check(product, d)[0] for d in mandate.diet or ()},
@@ -197,6 +197,25 @@ def context_for(
         delivery_in_time=bool(in_time),
         has_delivery_line=bool(deliverable),
     )
+    contained, unchecked = allergen_check(mandate, product)
+    if contained or unchecked:  # the Rules' "never" allergens count as diet rules: listed blocks, unsure asks
+        ctx = replace(ctx, diet_contradicted=ctx.diet_contradicted or contained,
+                      diet_unchecked=ctx.diet_unchecked or unchecked)
+    return ctx
+
+
+def allergen_check(mandate: Mandate, product: Any) -> tuple[bool, bool]:
+    """(contained, unchecked) for the pass's `never_contains`: contained when Valio lists one of those allergens
+    as contained; unchecked when it may contain one, has no allergen data, or a word is not one Validio knows."""
+    words = mandate.never_contains or ()
+    if not words:
+        return False, False
+    if any(w not in NEVER_ALLERGENS for w in words):
+        return False, True
+    codes = frozenset().union(*(NEVER_ALLERGENS[w] for w in words))
+    if not getattr(product, "has_allergen_data", False):
+        return False, True
+    return bool(codes & product.contains), bool(codes & product.may_contain)
 
 
 @dataclass(frozen=True)
