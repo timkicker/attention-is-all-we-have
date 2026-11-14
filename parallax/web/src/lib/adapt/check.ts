@@ -7,7 +7,7 @@
 //   else                                   -> In no edition
 import type { api as Api } from '../api/client'
 import type { CheckRecordedRes, CheckRes, EvidenceRaw } from '../api/types'
-import { backedBy, DISPUTED, disputedOtherwise, disputedRemoved, excerpt, IN_NO_EDITION } from '../copy'
+import { backedBy, DISPUTED, disputedOtherwise, excerpt, IN_NO_EDITION } from '../copy'
 import { fmtYear } from '../format'
 import { LANGS, type CheckResultVM, type CheckRow, type CheckVerdict, type CheckVM, type Result } from '../model'
 import { paths } from '../router.svelte'
@@ -122,7 +122,7 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
     head =
       stopped.length > 2 || !year
         ? checkCopy.disputedRemovedIn(says.length, all, stopped.length)
-        : disputedRemoved(says.length, all, stopped.map(([l]) => l), year)
+        : checkCopy.disputedRemovedBy(says.length, all, stopped.map(([l]) => l), year)
   } else if (says.length) {
     verdict = 'backed'
     head = backedBy(says.length, all)
@@ -164,7 +164,7 @@ export async function loadCheckRun(
 
 export function toResult(ctx: TopicCtx, d: CheckRes): WithoutCounts<CheckResultVM> {
   // As in wireframe 10: statements in no edition first, then disputed, then backed (most editions first).
-  const weight = { none: 0, disputed: 1, backed: 2 } as const
+  const weight = { disputed: 0, none: 1, backed: 2 } as const
   const says = (c: Claim) => Object.values(c.per_lang).filter((v) => v.label === 'says').length
   const rows = d.claims
     .map((c, i) => ({ row: toCheckRow(ctx.topic.qid, c), n: says(c), i }))

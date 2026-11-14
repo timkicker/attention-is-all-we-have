@@ -17,6 +17,9 @@
   let title = $state('')
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let whole = $state(false)
+  // The first FIRST rows, then all of them after "Show N more".
+  const FIRST = 6
+  let all = $state(false)
 
   $effect(() => {
     resolveTopic(params.qid).then((r) => (title = r.ok ? r.data.title : params.qid))
@@ -61,19 +64,23 @@
     <p class="sum t18" data-testid={TID.checkSummary}>{copy.checkSummary(vm.summary, vm.mostBacked)}</p>
 
     <div class="list">
-      {#each vm.rows as row (row.id)}
+      {#each all ? vm.rows : vm.rows.slice(0, FIRST) as row (row.id)}
         <Item href={row.href} testid={TID.checkRow} data-verdict={row.verdict}>
           <p class="v" class:bad={row.verdict !== 'backed'}>{row.head}</p>
           <p class="say">{row.say}</p>
         </Item>
       {/each}
     </div>
+    {#if !all && vm.rows.length > FIRST}
+      <p class="more"><button class="btn" type="button" data-testid={TID.showMore} onclick={() => (all = true)}>{copy.showMore(vm.rows.length - FIRST)}</button></p>
+    {/if}
   {/if}
 
   <Footer fromQid={params.qid} />
 </main>
 
 <style>
+  .more { margin-top: 24px; }
   .meta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
   .meta a, .nw { flex: none; white-space: nowrap; }
   .v { color: var(--fg2); }
