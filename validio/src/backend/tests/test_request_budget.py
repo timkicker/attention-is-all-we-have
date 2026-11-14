@@ -30,3 +30,12 @@ def test_inside_the_budget_still_orders_alone(client, holder):  # noqa: F811
 def test_no_budget_changes_nothing(client, holder):  # noqa: F811
     req = ask(client, holder, "1000 litres of lactose-free milk by Monday", "none")
     assert req["decision"]["outcome"] == "auto_order"
+
+
+def test_a_request_with_no_option_logs_its_block(client, holder):  # noqa: F811
+    """Play audit 4: the 3,000 l block wrote no decision entry."""
+    req = ask(client, holder, "3000 litres of lactose-free milk by Monday", "big")
+    assert req["status"] == "blocked"
+    entries = client.get("/api/ledger").json()["entries"]
+    blocks = [e for e in entries if e["kind"] == "decision" and e["sentence"] == req["decision"]["sentence"]]
+    assert len(blocks) == 1

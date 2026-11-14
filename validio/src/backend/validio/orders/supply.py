@@ -266,6 +266,7 @@ class SupplyService:
                     req["decision"] = {"outcome": "block", "ruleIds": [],
                                        "sentence": "No option keeps every rule and can be delivered, nothing was ordered."}
                     req["status"] = "blocked"
+                    self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)
                 else:
                     # Cedar over the whole proposal, with totals Valio gives for the summed order
                     quoted = self.orders.quote(proposals, date.fromisoformat(req["deliverBy"]), budget=budget)
