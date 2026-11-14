@@ -276,7 +276,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px;
+    padding: 16px 0 20px;
   }
   .change {
     margin: 0;

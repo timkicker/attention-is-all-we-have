@@ -1,15 +1,15 @@
-// The theme menu: System follows the device, Light and Dark stay.
+// The theme menu: Light is the default, System follows the device, Dark stays.
 export type Mode = "system" | "light" | "dark";
 const KEY = "validio-theme";
 
 function stored(): Mode {
   try {
     const v = localStorage.getItem(KEY);
-    if (v === "light" || v === "dark") return v;
+    if (v === "system" || v === "dark") return v;
   } catch {
-    // no storage: System
+    // no storage: Light
   }
-  return "system";
+  return "light";
 }
 
 export const theme = $state({ mode: stored() as Mode });
@@ -17,7 +17,7 @@ export const theme = $state({ mode: stored() as Mode });
 export function setMode(m: Mode) {
   theme.mode = m;
   try {
-    if (m === "system") localStorage.removeItem(KEY);
+    if (m === "light") localStorage.removeItem(KEY);
     else localStorage.setItem(KEY, m);
   } catch {
     // no storage: this visit only

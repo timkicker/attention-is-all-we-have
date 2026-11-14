@@ -4,13 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <script>
-      // The theme before the first paint: ?theme=, then the stored choice, then the system.
+      // The theme before the first paint: ?theme=, then the stored choice, then light.
       (function () {
         var KEY = "validio-theme";
         var q = new URLSearchParams(location.search).get("theme");
-        var mode = "system";
+        var mode = "light";
         try {
-          mode = localStorage.getItem(KEY) || "system";
+          mode = localStorage.getItem(KEY) || "light";
         } catch (e) {}
         var mq = matchMedia("(prefers-color-scheme: light)");
         function set() {
@@ -21,13 +21,17 @@
         set();
         mq.addEventListener("change", function () {
           try {
-            mode = localStorage.getItem(KEY) || "system";
+            mode = localStorage.getItem(KEY) || "light";
           } catch (e) {}
           set();
         });
       })();
     </script>
     <title>Validio</title>
+    <link rel="icon" href="%sveltekit.assets%/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="%sveltekit.assets%/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0B4F66" />
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">
