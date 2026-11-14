@@ -63,6 +63,7 @@
   }
 
   let confirmOff = $state(false);
+  const addCmd = (url: string) => `claude mcp add --transport http validio ${url}`;
 
   // ---------- Rules, edited in place ----------
   const SUBS: { value: Substitutes; label: string }[] = [
@@ -224,12 +225,14 @@
           </div>
           <VValueRow label="Valid until" value={hm(a.pairing.expiresAt)} />
         </Section>
-        <details class="fold vendor">
+        <details class="fold vendor" open>
           <summary data-testid="vendor-fold"><ChevronRight class="chev" aria-hidden="true" />For your agent's vendor</summary>
           <div class="fold-body urls">
             <span class="url-label">MCP</span>
             <code class="url" data-testid="mcp-url">{a.pairing.mcpUrl}</code>
             {@render copy_button("mcp", a.pairing.mcpUrl, "Copy MCP URL")}
+            <span class="hint" data-testid="mcp-hint">Paste into any MCP agent, e.g. Claude Code: <code class="url mono">{addCmd(a.pairing.mcpUrl)}</code></span>
+            {@render copy_button("mcp-cmd", addCmd(a.pairing.mcpUrl), "Copy Claude Code command")}
             <span class="url-label">API</span>
             <code class="url">{a.pairing.apiUrl}</code>
             {@render copy_button("api", a.pairing.apiUrl, "Copy API URL")}
@@ -405,6 +408,16 @@
     font-size: var(--fs-meta);
     overflow-wrap: anywhere;
   }
+  .hint {
+    grid-column: 2;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+    overflow-wrap: anywhere;
+  }
+  .hint .url {
+    color: var(--v-fg);
+  }
   .may {
     margin: 0;
     padding: 0;
@@ -525,6 +538,9 @@
     }
     .url-label {
       grid-column: 1 / -1;
+    }
+    .hint {
+      grid-column: 1;
     }
   }
 </style>
