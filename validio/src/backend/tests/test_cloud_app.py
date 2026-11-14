@@ -22,6 +22,7 @@ def test_imports_inside_the_container(monkeypatch):
     ns = load_as("/root/app_validio.py", local=False, monkeypatch=monkeypatch)
     assert ns["app"].name == "validio-web"
     assert isinstance(ns["web"], modal.Function) and isinstance(ns["seed"], modal.Function)
+    assert isinstance(ns["fill"], modal.Function)
 
 
 def test_imports_on_the_laptop(monkeypatch):
