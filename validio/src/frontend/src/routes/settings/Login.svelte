@@ -1,28 +1,43 @@
 <script lang="ts">
   /// Login and approval code: email, password and the 6 digit code, each
-  /// changed in place under its own row. A demo kitchen has none of its own.
+  /// changed in place under its own row. A demo kitchen has no login of its
+  /// own and keeps the demo code: one row for each, nothing to change.
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { ApiError } from "$lib/api/client";
-  import { isCode, owner } from "$lib/owner.svelte";
+  import { isCode, owner, session } from "$lib/owner.svelte";
   import { settingsApi, type Settings } from "$lib/settings";
   import VField from "$lib/v/VField.svelte";
 
   let { s, demo, onsaved }: { s: Settings; demo: boolean; onsaved: (s: Settings) => void } = $props();
 
-  type Key = "email" | "password" | "code";
+  type Key = "email" | "password" | "code" | "demo";
   let open = $state<Key | null>(null);
   let done = $state<Key | null>(null);
   let saving = $state(false);
   const f = $state({ current: "", next: "" });
   let bad = $state<{ current?: string; next?: string; form?: string }>({});
 
-  const ROWS: { key: Key; label: string }[] = [
-    { key: "email", label: "Email" },
-    { key: "password", label: "Password" },
-    { key: "code", label: "Approval code" },
-  ];
-  const value = (k: Key) => (demo ? (k === "code" ? "Fixed" : "None") : k === "email" ? (s.login.email ?? "None") : "Set");
+  const ROWS: { key: Key; label: string }[] = $derived(
+    demo
+      ? [
+          { key: "demo", label: "Login" },
+          { key: "code", label: "Approval code" },
+        ]
+      : [
+          { key: "email", label: "Email" },
+          { key: "password", label: "Password" },
+          { key: "code", label: "Approval code" },
+        ],
+  );
+  const value = (k: Key) =>
+    k === "demo"
+      ? "Demo account, no login"
+      : demo
+        ? `${session.account?.demoCode ?? ""}, demo code`
+        : k === "email"
+          ? (s.login.email ?? "Not set")
+          : "Set";
 
   function change(k: Key) {
     open = k;

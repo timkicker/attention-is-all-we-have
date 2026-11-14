@@ -188,13 +188,14 @@
       {#if a.state === "active"}
         <VPill label="Active" tone="ok" testid="agent-state" />
       {:else if a.state === "paused"}
-        <VPill label="Paused" tone="wait" testid="agent-state" />
+        <VPill label="Paused" tone="neutral" testid="agent-state" />
       {:else}
         <VPill label="Not connected" tone="neutral" testid="agent-state" />
       {/if}
       {#if a.agent}
         <span data-testid="agent-name">{a.agent.name}</span>
         <span data-testid="agent-used">{a.agent.lastUsedAt ? `Used ${dayTime(a.agent.lastUsedAt)}` : "Not used yet"}</span>
+        {#if pass.data?.usedCents !== undefined}<span class="num" data-testid="agent-week">{money(pass.data.usedCents)} this week</span>{/if}
         <a href="/ledger?pass={encodeURIComponent(a.agent.passId)}" data-testid="agent-ledger" id="agent-ledger">See in ledger</a>
       {/if}
     {/snippet}
@@ -243,7 +244,7 @@
       </section>
     {:else if a.state === "consent" && a.consent}
       <section class="sec" aria-labelledby="h-consent" data-testid="consent">
-        <h2 class="v-h" id="h-consent">{a.consent.name}</h2>
+        <h2 class="v-h" id="h-consent">{a.consent.name} wants to order for {session.account?.name ?? "your kitchen"} within your Rules</h2>
         <Section class="v-card">
           <ul class="may" aria-label="What it may do">
             {#each a.consent.may as m (m)}<li>{m}</li>{/each}
@@ -257,6 +258,8 @@
     {/if}
     {#if problem}<p class="problem" role="alert" data-testid="agent-problem">{problem}</p>{/if}
 
+    <!-- While an agent pairs or asks, that is the page's one job; the consent card names the Rules. -->
+    {#if a.state !== "pairing" && a.state !== "consent"}
     <section class="sec" aria-labelledby="h-rules" id="rules">
       <h2 class="v-h" id="h-rules">
         Rules
@@ -272,7 +275,7 @@
           <Section class="v-card">
             <VValueRow label="Orders alone">{@render money_field("alone", "Orders alone")}</VValueRow>
             <VValueRow label="Needs approval">{@render money_field("approval", "Needs approval")}</VValueRow>
-            <VValueRow label="Blocked" value={above ? `Above ${above}` : "—"} testid="r-blocked" />
+            <VValueRow label="Blocked above" value={above || "—"} testid="r-blocked" />
             <VValueRow label="Per week">{@render money_field("week", "Per week")}</VValueRow>
             <VValueRow label="Substitutes">
               <span class="subs">
@@ -305,18 +308,16 @@
           {#if r.saved}
             <VValueRow label="Orders alone" value="Up to {money(r.aloneUpToCents)}" testid="rules-alone" />
             <VValueRow label="Needs approval" value="Up to {money(r.approvalUpToCents)}" testid="rules-approval" />
-            <VValueRow label="Blocked" value="Above {money(r.approvalUpToCents)}" testid="rules-blocked" />
+            <VValueRow label="Blocked above" value={money(r.approvalUpToCents)} testid="rules-blocked" />
             <VValueRow label="Per week" value={r.perWeekCents == null ? "No limit" : `Up to ${money(r.perWeekCents)}`} testid="rules-week" />
             <VValueRow label="Substitutes" value={subsWord(r)} testid="rules-subs" />
-            {#if pass.data?.usedCents !== undefined}
-              <VValueRow label="Ordered" value={money(pass.data.usedCents)} testid="rules-used" />
-            {/if}
           {:else}
             <VValueRow label="Every order" value="Needs approval" testid="rules-unset" />
           {/if}
         </Section>
       {/if}
     </section>
+    {/if}
 
     {#if connected && a.agent}
       <details class="fold" data-testid="tech-fold" id="tech-fold">
