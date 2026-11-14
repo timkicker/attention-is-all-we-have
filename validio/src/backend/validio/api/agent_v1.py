@@ -13,7 +13,7 @@ from . import connect, tools
 from .schemas import ConfirmIn, NonceView, OrderView, ProductSummary, SupplyRequestIn, SupplyRequestView
 from .state import Ctx, get_ctx
 
-ACCOUNT_ID = re.compile(r"k-[0-9a-f]{8}")
+ACCOUNT_ID = re.compile(r"k-(?:[0-9a-f]{32}|[0-9a-f]{8})")  # 8: accounts made before the ids grew
 Auth = Annotated[str | None, Header(alias="Authorization", description="SD-JWT <presentation>")]
 
 
@@ -27,6 +27,13 @@ def account_ctx(account: str) -> Ctx:
         return get_accounts().ctx(account)
     except KeyError as e:
         raise HTTPException(404, f"no kitchen {account}") from e
+
+
+def _read_gate(ctx: Ctx, authorization: str | None, suffix: str) -> None:
+    """Reads on a kitchen's own path need its pass: the account id is in every URL the kitchen hands out, so it is
+    no secret. The local kitchen's reads stay open, as before. A pass sent anyway is checked."""
+    if suffix or authorization:
+        ctx.verify(tools.bearer(authorization))
 
 
 def _routes(router: APIRouter, CtxDep, suffix: str = "") -> APIRouter:
@@ -53,7 +60,8 @@ def _routes(router: APIRouter, CtxDep, suffix: str = "") -> APIRouter:
 
 
     @router.get("/requests/{request_id}", response_model=SupplyRequestView, operation_id=f"get_request{suffix}")
-    def get_request(ctx: CtxDep, request_id: str):
+    def get_request(ctx: CtxDep, request_id: str, authorization: Auth = None):
+        _read_gate(ctx, authorization, suffix)
         return tools.get_request(ctx, request_id)
 
 
@@ -65,7 +73,8 @@ def _routes(router: APIRouter, CtxDep, suffix: str = "") -> APIRouter:
 
 
     @router.get("/orders/{order_id}", response_model=OrderView, operation_id=f"get_order{suffix}")
-    def get_order(ctx: CtxDep, order_id: str):
+    def get_order(ctx: CtxDep, order_id: str, authorization: Auth = None):
+        _read_gate(ctx, authorization, suffix)
         return tools.get_order(ctx, order_id)
     connect.agent_routes(router, CtxDep, suffix)
     return router

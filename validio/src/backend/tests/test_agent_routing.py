@@ -44,8 +44,10 @@ def test_agent_http_works_on_the_kitchen_in_the_path(kitchens, ctx):
     assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
     assert two.get("/api/inbox").json() == []
     assert len(ctx.audit.list()) == local_before
-    assert agent.get(f"/agent/v1/k/{a}/requests/{rid}").json()["id"] == rid
-    assert agent.get(f"/agent/v1/k/{b}/requests/{rid}").status_code == 404
+    h = holder(agent, a)
+    pa = {"Authorization": f"SD-JWT {h.presentation()}"}
+    assert agent.get(f"/agent/v1/k/{a}/requests/{rid}", headers=pa).json()["id"] == rid
+    assert agent.get(f"/agent/v1/k/{b}/requests/{rid}").status_code == 401
 
 
 def test_a_pass_from_one_kitchen_is_refused_in_another(kitchens):
@@ -56,7 +58,7 @@ def test_a_pass_from_one_kitchen_is_refused_in_another(kitchens):
     assert r.status_code == 401
 
 
-@pytest.mark.parametrize("account", ["k-00000000", "k-ZZZZZZZZ", "k-zz"])
+@pytest.mark.parametrize("account", ["k-00000000", "k-" + "0" * 32, "k-ZZZZZZZZ", "k-zz"])
 def test_an_unknown_kitchen_is_404(kitchens, account):
     _, _, agent, *_ = kitchens
     assert agent.get(f"/agent/v1/k/{account}/nonce").status_code == 404
@@ -135,7 +137,7 @@ def test_mcp_works_on_the_kitchen_in_the_path(kitchens, ctx):
     rid = res["structuredContent"]["id"]
     assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
     assert len(ctx.audit.list()) == local_before
-    assert m.call("get_request", {"requestId": rid})["structuredContent"]["id"] == rid
+    assert m.call("get_request", {"requestId": rid, "spendPass": h.presentation()})["structuredContent"]["id"] == rid
     other = Mcp(agent, f"/mcp/k/{b}/")
     assert other.call("get_request", {"requestId": rid}).get("isError")
     assert two.get("/api/inbox").json() == []
@@ -158,3 +160,82 @@ def test_example_request_runs_on_the_account(kitchens):
     rid = r.json()["requestId"]
     assert [i["id"] for i in one.get("/api/inbox").json()] == [rid]
     assert two.get("/api/inbox").json() == []
+
+
+# reads need the kitchen's pass on the per-kitchen routes (account ids alone are no secret)
+
+
+def _placed(agent, a):
+    h = holder(agent, a)
+    r = ask(agent, a, h, "read-1")
+    assert r.status_code == 200, r.text
+    return h, r.json()["id"]
+
+
+def test_account_ids_carry_128_random_bits(kitchens):
+    import re
+
+    *_, a, b = kitchens
+    assert re.fullmatch(r"k-[0-9a-f]{32}", a) and re.fullmatch(r"k-[0-9a-f]{32}", b)
+
+
+def test_http_reads_need_the_kitchens_pass(kitchens):
+    _, _, agent, a, _ = kitchens
+    h, rid = _placed(agent, a)
+    r = agent.get(f"/agent/v1/k/{a}/requests/{rid}")
+    assert r.status_code == 401 and rid not in r.text
+    r = agent.get(f"/agent/v1/k/{a}/requests/{rid}", headers={"Authorization": "SD-JWT not-a-pass"})
+    assert r.status_code == 401 and rid not in r.text
+    ok = agent.get(f"/agent/v1/k/{a}/requests/{rid}", headers={"Authorization": f"SD-JWT {h.presentation()}"})
+    assert ok.status_code == 200 and ok.json()["id"] == rid
+    oid = ok.json().get("orderId")
+    if oid:
+        assert agent.get(f"/agent/v1/k/{a}/orders/{oid}").status_code == 401
+        r = agent.get(f"/agent/v1/k/{a}/orders/{oid}", headers={"Authorization": f"SD-JWT {h.presentation()}"})
+        assert r.status_code == 200
+
+
+def test_a_pass_of_another_demo_copy_reads_nothing(kitchens, app_env, tmp_path):  # noqa: F811
+    """Demo copies share the template's kitchen key and demo agent key, so a pass from copy C must still be
+    refused in copy D."""
+    from validio.demo import seed
+
+    _, _, agent, *_ = kitchens
+    seed.reset(tmp_path / "template" / "validio.db", tmp_path / "template" / "keys")
+    with TestClient(app_env) as three, TestClient(app_env) as four:
+        c = three.post("/api/account/demo").json()["id"]
+        d = four.post("/api/account/demo").json()["id"]
+        connect_demo_agent(three)
+        connect_demo_agent(four)
+        assert (get_accounts().paths(c)[1] / "kitchen-es256.json").read_text() == \
+            (get_accounts().paths(d)[1] / "kitchen-es256.json").read_text()  # the shared key
+        r = ask(agent, d, holder(agent, d), "d-1")
+        assert r.status_code == 200
+        rid = r.json()["id"]
+        hc = holder(agent, c)
+        hc.nonce = lambda: agent.get(f"/agent/v1/k/{d}/nonce").json()
+        r = agent.get(f"/agent/v1/k/{d}/requests/{rid}", headers={"Authorization": f"SD-JWT {hc.presentation()}"})
+        assert r.status_code == 401 and rid not in r.text
+        assert ask(agent, d, hc, "c-in-d").status_code == 401  # nor write
+        assert three.get("/api/inbox").json() == []
+
+
+def test_mcp_reads_need_the_kitchens_pass(kitchens):
+    _, _, agent, a, b = kitchens
+    m = Mcp(agent, f"/mcp/k/{a}/")
+    h = holder(agent, a)
+    h.nonce = lambda: m.read(f"validio://k/{a}/nonce")
+    res = m.call("request_supply", {"spendPass": h.presentation(), "lines": MILK, "idempotencyKey": "m2",
+                                    "deliverBy": "2026-11-16"})
+    rid = res["structuredContent"]["id"]
+    bare = m.call("get_request", {"requestId": rid})
+    assert bare.get("isError") and "401" in bare["content"][0]["text"] and rid not in json.dumps(bare)
+    bad = m.call("get_request", {"requestId": rid, "spendPass": "not-a-pass"})
+    assert bad.get("isError") and "401" in bad["content"][0]["text"]
+    good = m.call("get_request", {"requestId": rid, "spendPass": h.presentation()})
+    assert good["structuredContent"]["id"] == rid
+    other = Mcp(agent, f"/mcp/k/{b}/")
+    hb = holder(agent, a)
+    hb.nonce = lambda: other.read(f"validio://k/{b}/nonce")
+    leak = other.call("get_request", {"requestId": rid, "spendPass": hb.presentation()})
+    assert leak.get("isError") and rid not in json.dumps(leak)
