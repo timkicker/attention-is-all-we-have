@@ -66,11 +66,13 @@ def test_an_unknown_kitchen_is_404(kitchens, account):
 
 
 def test_pairing_through_the_kitchen_path(kitchens):
+    import re
+
     from jwcrypto.jwk import JWK
 
     _, two, agent, _, b = kitchens
     s = two.post("/api/agent/pair").json()
-    assert s["pairing"]["mcpUrl"] == f"http://testserver/mcp/k/{b}/"
+    assert re.fullmatch(r"http://testserver/mcp/c/[A-Za-z0-9_-]{43}/", s["pairing"]["mcpUrl"])  # any MCP agent
     assert s["pairing"]["apiUrl"] == f"http://testserver/agent/v1/k/{b}"
     key = JWK.generate(kty="EC", crv="P-256")
     r = agent.post(f"/agent/v1/k/{b}/pair", json={"code": s["pairing"]["code"], "name": "Buyer B",

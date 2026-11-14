@@ -154,7 +154,7 @@ const mock = {
     const c = m.agent.consent;
     if (m.agent.state !== "consent" || !c) throw new ApiError(409, "nothing to allow");
     m.agent = { state: "active", versions: m.agent.versions };
-    m.agent.agent = { name: c.name, keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
+    m.agent.agent = { name: c.name, kind: "agent", keyId: c.keyId, connectedAt: now(), lastUsedAt: null, passId: "M-1", passVersion: 0 };
     bumpVersion(m, "Agent connected");
     store(m);
     return structuredClone(m.agent);
