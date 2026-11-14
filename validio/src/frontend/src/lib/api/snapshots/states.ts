@@ -235,8 +235,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -248,7 +248,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -266,7 +266,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -378,8 +378,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -391,7 +391,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -409,7 +409,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -424,7 +424,7 @@ export const answers: Answers = {
      "timeText": "10:09"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [
@@ -437,7 +437,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-2: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -455,10 +455,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "hash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -470,7 +470,7 @@ export const answers: Answers = {
      "timeText": "10:11"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
@@ -483,7 +483,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-3: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -514,10 +514,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "hash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "prevHash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -544,9 +544,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "hash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "kind": "decision",
-     "prevHash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "prevHash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -571,9 +571,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 98 bags of lactose-free mozzarella 125 g for you: 26 % more per guest than usual.",
      "facts": [],
-     "hash": "4776a2fad392139115c564d028532507204006e4e56243e2787bbd2993b86b8f",
+     "hash": "b8f39730b6b1a7c88977882875f68389e32010b88e41a7b1aee92792bcce6552",
      "kind": "decision",
-     "prevHash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "prevHash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -686,8 +686,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -699,7 +699,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -717,7 +717,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -732,7 +732,7 @@ export const answers: Answers = {
      "timeText": "10:09"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [
@@ -745,7 +745,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-2: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -763,10 +763,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "hash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -778,7 +778,7 @@ export const answers: Answers = {
      "timeText": "10:11"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
@@ -791,7 +791,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-3: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -822,10 +822,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "hash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "prevHash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -852,9 +852,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "hash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "kind": "decision",
-     "prevHash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "prevHash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -879,9 +879,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 98 bags of lactose-free mozzarella 125 g for you: 26 % more per guest than usual.",
      "facts": [],
-     "hash": "4776a2fad392139115c564d028532507204006e4e56243e2787bbd2993b86b8f",
+     "hash": "b8f39730b6b1a7c88977882875f68389e32010b88e41a7b1aee92792bcce6552",
      "kind": "decision",
-     "prevHash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "prevHash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -923,10 +923,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "c4f1ad3ee6e97e9f3310701aec11e3a9ae21098073a5b96f2d87e20b6b3daa2a",
+     "hash": "a6a3bc4ce76835f0977b13c6da2c5bb107edf1b663f690b1b08731f114448d8a",
      "kind": "decision",
      "orderId": "O-4",
-     "prevHash": "4776a2fad392139115c564d028532507204006e4e56243e2787bbd2993b86b8f",
+     "prevHash": "b8f39730b6b1a7c88977882875f68389e32010b88e41a7b1aee92792bcce6552",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -968,10 +968,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "9697632844839d5df484cf046f781a6b824caa22e3376cac7f7fc38e4360c89a",
+     "hash": "8f4756b5332f9b97d28a887a66060f6be3fd3c20a90b0a3229f58ecd30885213",
      "kind": "approval",
      "orderId": "O-4",
-     "prevHash": "c4f1ad3ee6e97e9f3310701aec11e3a9ae21098073a5b96f2d87e20b6b3daa2a",
+     "prevHash": "a6a3bc4ce76835f0977b13c6da2c5bb107edf1b663f690b1b08731f114448d8a",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -1011,10 +1011,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "79939a606a4c7251aae46b7111f52aec6c35c1926bdd3457d6f0e3b851a87270",
+     "hash": "beab6b50bbe4b7ad93c12c210c1bf46fe9ee09681341e6182cce0f30a4267d44",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "9697632844839d5df484cf046f781a6b824caa22e3376cac7f7fc38e4360c89a",
+     "prevHash": "8f4756b5332f9b97d28a887a66060f6be3fd3c20a90b0a3229f58ecd30885213",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -1127,8 +1127,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -1140,7 +1140,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1158,7 +1158,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -1173,7 +1173,7 @@ export const answers: Answers = {
      "timeText": "10:09"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:11:00+02:00",
      "disclosed": [
@@ -1186,7 +1186,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-2: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1204,10 +1204,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "hash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -1219,7 +1219,7 @@ export const answers: Answers = {
      "timeText": "10:11"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:14:00+02:00",
      "disclosed": [
@@ -1232,7 +1232,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-3: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1263,10 +1263,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "hash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "91bb6e58559dcd53710b0182f43f1c3381dc8dc4579e3219c673cda65e74d91a",
+     "prevHash": "3b41aeb80db4fe578d29eb7a64c876418e16736b3efa1515bc3a1a1a2fa97d8b",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -1293,9 +1293,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "hash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "kind": "decision",
-     "prevHash": "a6b97c79c69bd247333f6ddf16e05671a5c69a4d975079b03edd2252dac33a8f",
+     "prevHash": "cf3010e02e617e68568e479af4eb431e00bb9204bf1dac6b28ed5dc67b0e4b09",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -1320,9 +1320,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 98 bags of lactose-free mozzarella 125 g for you: 26 % more per guest than usual.",
      "facts": [],
-     "hash": "4776a2fad392139115c564d028532507204006e4e56243e2787bbd2993b86b8f",
+     "hash": "b8f39730b6b1a7c88977882875f68389e32010b88e41a7b1aee92792bcce6552",
      "kind": "decision",
-     "prevHash": "fb4fb52682597217026fa96c7d7aa744e039491c6d70acc10908743f2b39fe78",
+     "prevHash": "efcaee7564d0af8389e4c39ee0081b387fd4e3ddfc5bc15265516df3626a2a3a",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -1364,10 +1364,10 @@ export const answers: Answers = {
        "value": "1.16 €"
       }
      ],
-     "hash": "bbe3eb33d845986eb59358527079e3c6a1e920ebdde339767c80cfa0b741acdb",
+     "hash": "38949186c2112abdd29841c620b4ddde62c7649571b652f6abf21382d03eb7d5",
      "kind": "decision",
      "orderId": "O-4",
-     "prevHash": "4776a2fad392139115c564d028532507204006e4e56243e2787bbd2993b86b8f",
+     "prevHash": "b8f39730b6b1a7c88977882875f68389e32010b88e41a7b1aee92792bcce6552",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -1409,10 +1409,10 @@ export const answers: Answers = {
        "value": "1.16 €"
       }
      ],
-     "hash": "886bb4fb355aba1cc41362c9e6fc27b65bb5a66b8b71b04c9b0508389132e16c",
+     "hash": "c9270ac0305590e003499b5c3dd2a79d4a57a9008c001455048dc52fc14efbb6",
      "kind": "approval",
      "orderId": "O-4",
-     "prevHash": "bbe3eb33d845986eb59358527079e3c6a1e920ebdde339767c80cfa0b741acdb",
+     "prevHash": "38949186c2112abdd29841c620b4ddde62c7649571b652f6abf21382d03eb7d5",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 98 bags of lactose-free mozzarella 125 g for 113.68 €.",
@@ -1452,10 +1452,10 @@ export const answers: Answers = {
        "value": "1.16 €"
       }
      ],
-     "hash": "722dde9973a9565e62a2a64de4b70b3085104cd3625fcb9e09493cf8ebe9861a",
+     "hash": "789ab3be7c1a4f0409f38ef48b7406d6323b4a90de30426e93297ee4a17f6b54",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "886bb4fb355aba1cc41362c9e6fc27b65bb5a66b8b71b04c9b0508389132e16c",
+     "prevHash": "c9270ac0305590e003499b5c3dd2a79d4a57a9008c001455048dc52fc14efbb6",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -1568,8 +1568,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -1581,7 +1581,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1599,7 +1599,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -1621,9 +1621,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -1647,9 +1647,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -1689,10 +1689,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -1805,8 +1805,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -1818,7 +1818,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1836,7 +1836,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -1858,9 +1858,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -1884,9 +1884,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -1926,10 +1926,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -1941,7 +1941,7 @@ export const answers: Answers = {
      "timeText": "10:16"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
@@ -1954,7 +1954,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -1972,10 +1972,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "53f3096b1bf5f75168717a34d270d2f00da54f2bc5c1ffa02b57500551e515b6",
+     "hash": "c81927f4de66137091609a58ed91ce611900727988646d40d75e3c1afa9e3a15",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -1987,7 +1987,7 @@ export const answers: Answers = {
      "timeText": "10:19"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
@@ -2000,7 +2000,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -2031,10 +2031,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "3fe91e73bad9d773da80886db80f9826c9721c5e29b7bf144471ddac642ea806",
+     "hash": "37dcfd912ea0e98fcd009014f5eba01b23728a744c30d91fa71a07450e1e1a0c",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "53f3096b1bf5f75168717a34d270d2f00da54f2bc5c1ffa02b57500551e515b6",
+     "prevHash": "c81927f4de66137091609a58ed91ce611900727988646d40d75e3c1afa9e3a15",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -2061,9 +2061,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "3fcae2c0733e0607b8d731996ce6e99aa91ede709acab738b51e7f23009fc6de",
+     "hash": "1ae6deef3ebef15280e74c73c5a39ea77c52c35928a70849ac68478025076eee",
      "kind": "decision",
-     "prevHash": "3fe91e73bad9d773da80886db80f9826c9721c5e29b7bf144471ddac642ea806",
+     "prevHash": "37dcfd912ea0e98fcd009014f5eba01b23728a744c30d91fa71a07450e1e1a0c",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -2088,9 +2088,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "f3f73d0cc55ead061d0461ee5dd8f6ad61b6ac2a938a539a0cf0b720e2e8f1c3",
+     "hash": "d34a62d9e9e924c0dd828a556fddd81a3029a05d2d2d12ca30e3bf7cb6b1caf1",
      "kind": "decision",
-     "prevHash": "3fcae2c0733e0607b8d731996ce6e99aa91ede709acab738b51e7f23009fc6de",
+     "prevHash": "1ae6deef3ebef15280e74c73c5a39ea77c52c35928a70849ac68478025076eee",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -2205,8 +2205,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -2218,7 +2218,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -2236,7 +2236,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -2258,9 +2258,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -2284,9 +2284,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -2326,10 +2326,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -2341,7 +2341,7 @@ export const answers: Answers = {
      "timeText": "10:16"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:19:00+02:00",
      "disclosed": [
@@ -2354,7 +2354,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -2372,10 +2372,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "53f3096b1bf5f75168717a34d270d2f00da54f2bc5c1ffa02b57500551e515b6",
+     "hash": "c81927f4de66137091609a58ed91ce611900727988646d40d75e3c1afa9e3a15",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -2387,7 +2387,7 @@ export const answers: Answers = {
      "timeText": "10:19"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
@@ -2400,7 +2400,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -2431,10 +2431,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "3fe91e73bad9d773da80886db80f9826c9721c5e29b7bf144471ddac642ea806",
+     "hash": "37dcfd912ea0e98fcd009014f5eba01b23728a744c30d91fa71a07450e1e1a0c",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "53f3096b1bf5f75168717a34d270d2f00da54f2bc5c1ffa02b57500551e515b6",
+     "prevHash": "c81927f4de66137091609a58ed91ce611900727988646d40d75e3c1afa9e3a15",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -2461,9 +2461,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "3fcae2c0733e0607b8d731996ce6e99aa91ede709acab738b51e7f23009fc6de",
+     "hash": "1ae6deef3ebef15280e74c73c5a39ea77c52c35928a70849ac68478025076eee",
      "kind": "decision",
-     "prevHash": "3fe91e73bad9d773da80886db80f9826c9721c5e29b7bf144471ddac642ea806",
+     "prevHash": "37dcfd912ea0e98fcd009014f5eba01b23728a744c30d91fa71a07450e1e1a0c",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -2488,9 +2488,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "f3f73d0cc55ead061d0461ee5dd8f6ad61b6ac2a938a539a0cf0b720e2e8f1c3",
+     "hash": "d34a62d9e9e924c0dd828a556fddd81a3029a05d2d2d12ca30e3bf7cb6b1caf1",
      "kind": "decision",
-     "prevHash": "3fcae2c0733e0607b8d731996ce6e99aa91ede709acab738b51e7f23009fc6de",
+     "prevHash": "1ae6deef3ebef15280e74c73c5a39ea77c52c35928a70849ac68478025076eee",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -2530,10 +2530,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "0bc7ce2b47f64e535abfe1ebc4077e62c0931425b32fec71f8c563e1443b2f0f",
+     "hash": "fdd1cf6249e22b9a177d6ea4c5c7adc1166d7b02007a6735531fcfe97a9e023c",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "f3f73d0cc55ead061d0461ee5dd8f6ad61b6ac2a938a539a0cf0b720e2e8f1c3",
+     "prevHash": "d34a62d9e9e924c0dd828a556fddd81a3029a05d2d2d12ca30e3bf7cb6b1caf1",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -2575,10 +2575,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "4b890e65e9d9e662cc65cdc85f3272dc1b28587588cf1d860c4709a7f35c63a1",
+     "hash": "4c2fcf54c6caa6e6145a6965d14ae65620c48896dd2998b480f90c1b658d3b71",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "0bc7ce2b47f64e535abfe1ebc4077e62c0931425b32fec71f8c563e1443b2f0f",
+     "prevHash": "fdd1cf6249e22b9a177d6ea4c5c7adc1166d7b02007a6735531fcfe97a9e023c",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -2618,10 +2618,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "2c9f8d205dca04976a0e656c859bcaad234fe3d836db15dbde36250930be860b",
+     "hash": "a863f3e6e8385d00a33fac3f9f6e3aa94c9ddd6f907b9f22d029585ab8d46ac0",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "4b890e65e9d9e662cc65cdc85f3272dc1b28587588cf1d860c4709a7f35c63a1",
+     "prevHash": "4c2fcf54c6caa6e6145a6965d14ae65620c48896dd2998b480f90c1b658d3b71",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -2738,8 +2738,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -2751,7 +2751,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -2769,7 +2769,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -2791,9 +2791,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -2817,9 +2817,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -2859,10 +2859,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -2904,10 +2904,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
@@ -2947,10 +2947,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+     "hash": "6ae71e44f8466f7e2c18ae908747c06245b0e14de61efb52f1587264e0c9e014",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "prevHash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -3063,8 +3063,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -3076,7 +3076,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3094,7 +3094,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -3116,9 +3116,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -3142,9 +3142,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -3184,10 +3184,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -3229,10 +3229,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
@@ -3272,10 +3272,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+     "hash": "6ae71e44f8466f7e2c18ae908747c06245b0e14de61efb52f1587264e0c9e014",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "prevHash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -3287,7 +3287,7 @@ export const answers: Answers = {
      "timeText": "10:23"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
@@ -3300,7 +3300,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3318,10 +3318,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+     "hash": "a06961920813d3d6a57baa0f02f40a5142d4b373453672c2a0149ebd68c608ec",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+     "prevHash": "6ae71e44f8466f7e2c18ae908747c06245b0e14de61efb52f1587264e0c9e014",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -3333,7 +3333,7 @@ export const answers: Answers = {
      "timeText": "10:25"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:28:00+02:00",
      "disclosed": [
@@ -3346,7 +3346,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3377,10 +3377,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+     "hash": "c62d3166e635300fd97468cad47a2180e264d952d81bb7851c23ccc1dcb4a107",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+     "prevHash": "a06961920813d3d6a57baa0f02f40a5142d4b373453672c2a0149ebd68c608ec",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -3407,9 +3407,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+     "hash": "b5c021b80c445c03816132ceca9373485c7811b72b4ddc7f6d2d53295d662b31",
      "kind": "decision",
-     "prevHash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+     "prevHash": "c62d3166e635300fd97468cad47a2180e264d952d81bb7851c23ccc1dcb4a107",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -3434,9 +3434,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
+     "hash": "980c124b9b1f133c22dd7615f8ad6f6e5ea8acfa0d4007f05c5b80c6034119d6",
      "kind": "decision",
-     "prevHash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+     "prevHash": "b5c021b80c445c03816132ceca9373485c7811b72b4ddc7f6d2d53295d662b31",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -3551,8 +3551,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -3564,7 +3564,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3582,7 +3582,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -3604,9 +3604,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -3630,9 +3630,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -3672,10 +3672,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -3717,10 +3717,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "hash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €.",
@@ -3760,10 +3760,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+     "hash": "6ae71e44f8466f7e2c18ae908747c06245b0e14de61efb52f1587264e0c9e014",
      "kind": "order",
      "orderId": "O-2",
-     "prevHash": "6ecde714464497875ba0621c1bd45ac940f93577173c56162ec00359311ac8a0",
+     "prevHash": "47c647785c71fc65d5806cc1a9de5e71b58408c3642f759e93d0a30f0361d74f",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -3775,7 +3775,7 @@ export const answers: Answers = {
      "timeText": "10:23"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
@@ -3788,7 +3788,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3806,10 +3806,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+     "hash": "a06961920813d3d6a57baa0f02f40a5142d4b373453672c2a0149ebd68c608ec",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "ec394f94218a632a656861cdee1036ce590022d77f1eeb140486b22a2dd2841c",
+     "prevHash": "6ae71e44f8466f7e2c18ae908747c06245b0e14de61efb52f1587264e0c9e014",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -3821,7 +3821,7 @@ export const answers: Answers = {
      "timeText": "10:25"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:28:00+02:00",
      "disclosed": [
@@ -3834,7 +3834,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -3865,10 +3865,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+     "hash": "c62d3166e635300fd97468cad47a2180e264d952d81bb7851c23ccc1dcb4a107",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "7768f2e9d97e2462c434c351cb06a16182c9ec8be12af04ce14b58cf2e82cba9",
+     "prevHash": "a06961920813d3d6a57baa0f02f40a5142d4b373453672c2a0149ebd68c608ec",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -3895,9 +3895,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+     "hash": "b5c021b80c445c03816132ceca9373485c7811b72b4ddc7f6d2d53295d662b31",
      "kind": "decision",
-     "prevHash": "1ee159865763c41f707850d1b9a134d4d6cac78313f4b5c677941c3a90aeaf2c",
+     "prevHash": "c62d3166e635300fd97468cad47a2180e264d952d81bb7851c23ccc1dcb4a107",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -3922,9 +3922,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
+     "hash": "980c124b9b1f133c22dd7615f8ad6f6e5ea8acfa0d4007f05c5b80c6034119d6",
      "kind": "decision",
-     "prevHash": "1605da2dd97993b949a72551d560e325b033c0ae014f5fbd6fefb598bf214031",
+     "prevHash": "b5c021b80c445c03816132ceca9373485c7811b72b4ddc7f6d2d53295d662b31",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -3964,10 +3964,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
+     "hash": "a4994749312841393f0bb600099ccf72cf67e445c66fe45683951c7e9e21355b",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "05fa63d299be8c7333e3effbb8634c15e4f694239c046b32a90bcc1120521dd2",
+     "prevHash": "980c124b9b1f133c22dd7615f8ad6f6e5ea8acfa0d4007f05c5b80c6034119d6",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -4009,10 +4009,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
+     "hash": "b1ca87d0c7902f71db1079dcd5a2177e88cf4b05f266f2609f99958d89658a52",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "c02da56dc97670bb0c080e17e5ab82d4349206b27a3726ef87cbcab3be269274",
+     "prevHash": "a4994749312841393f0bb600099ccf72cf67e445c66fe45683951c7e9e21355b",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -4052,10 +4052,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "3edaa1a4058c77910108156a3b718799418d8aee61a2b6ff133e7c1471e625e0",
+     "hash": "e110f7ea5974b2280b698b09d18f904ba08e5f42dc9272106eba16c00fb59d39",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "bf2b73e0602655f4db974fa64cb5b1f3de6945453fe7193ddf5be0faaa579c72",
+     "prevHash": "b1ca87d0c7902f71db1079dcd5a2177e88cf4b05f266f2609f99958d89658a52",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -4172,8 +4172,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -4185,7 +4185,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -4203,7 +4203,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -4225,9 +4225,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -4251,9 +4251,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -4293,10 +4293,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -4338,10 +4338,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "d01b0c20f50388eda0e05c77f5fbf1def8620e2ffc28169611f7c6504cd388a1",
+     "hash": "4e45cd5a2201b74a2f2dd4319f0dad1374731e397e9912247d18e4c88dd7819e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
@@ -4452,8 +4452,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -4465,7 +4465,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -4483,7 +4483,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -4505,9 +4505,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -4531,9 +4531,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -4573,10 +4573,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -4618,10 +4618,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "d01b0c20f50388eda0e05c77f5fbf1def8620e2ffc28169611f7c6504cd388a1",
+     "hash": "4e45cd5a2201b74a2f2dd4319f0dad1374731e397e9912247d18e4c88dd7819e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
@@ -4631,7 +4631,7 @@ export const answers: Answers = {
      "timeText": "10:19"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
@@ -4644,7 +4644,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -4662,10 +4662,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "62d54a41dd6cc76c2b9ee2349a432a98b2de8fed80ba69ace1977c7988fbfc00",
+     "hash": "f1485dcbedf4f6d782009edde875f7a73848277a7025e01c39afcf45ee3e094b",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "d01b0c20f50388eda0e05c77f5fbf1def8620e2ffc28169611f7c6504cd388a1",
+     "prevHash": "4e45cd5a2201b74a2f2dd4319f0dad1374731e397e9912247d18e4c88dd7819e",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -4677,7 +4677,7 @@ export const answers: Answers = {
      "timeText": "10:23"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
@@ -4690,7 +4690,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -4721,10 +4721,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "dc7d66caaaeb0d9baa599f3efe7f5c3163fdd85d11a5316b28f40c2af63ec1c8",
+     "hash": "e8bdc631d8676f1487299a0902098ad734f3f42c6d9f8b65c5a8fc91e6cdc17c",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "62d54a41dd6cc76c2b9ee2349a432a98b2de8fed80ba69ace1977c7988fbfc00",
+     "prevHash": "f1485dcbedf4f6d782009edde875f7a73848277a7025e01c39afcf45ee3e094b",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -4751,9 +4751,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "1d34dad9fd708f25b6bb5db4091c827ab85eb3cc19098ec24e474534f4cd2adc",
+     "hash": "f68679c997cfc24fa90d1269f8e5c0ed01d74ba3c667bfa1ca1ea7b07cba47f3",
      "kind": "decision",
-     "prevHash": "dc7d66caaaeb0d9baa599f3efe7f5c3163fdd85d11a5316b28f40c2af63ec1c8",
+     "prevHash": "e8bdc631d8676f1487299a0902098ad734f3f42c6d9f8b65c5a8fc91e6cdc17c",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -4778,9 +4778,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "30c470951e98b909cf2b6e01f5624d43e7625d05457dc6a7f333b9f37143966c",
+     "hash": "1d551a7ce285f7d043ae7a838d6fac2c65c12eeba12e99a32a547cea82685a03",
      "kind": "decision",
-     "prevHash": "1d34dad9fd708f25b6bb5db4091c827ab85eb3cc19098ec24e474534f4cd2adc",
+     "prevHash": "f68679c997cfc24fa90d1269f8e5c0ed01d74ba3c667bfa1ca1ea7b07cba47f3",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -4895,8 +4895,8 @@ export const answers: Answers = {
      "timeText": "10:05"
     },
     {
-     "actor": "agent:buyer-1",
-     "actorText": "Agent",
+     "actor": "validio",
+     "actorText": "Validio",
      "at": "2026-11-14T10:09:00+02:00",
      "disclosed": [
       "autoLimitCents",
@@ -4908,7 +4908,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
+     "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -4926,7 +4926,7 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "kind": "order",
      "orderId": "O-1",
      "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
@@ -4948,9 +4948,9 @@ export const answers: Answers = {
      "disclosedText": [],
      "displayText": "Simulated a stock-out of lactose-free mozzarella 125 g.",
      "facts": [],
-     "hash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "hash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "kind": "simulation",
-     "prevHash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
+     "prevHash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Simulated a stock-out of lactose-free mozzarella 125 g for the demo. Valio has 11,603 bags.",
@@ -4974,9 +4974,9 @@ export const answers: Answers = {
      ],
      "displayText": "Asked for 200 bags of lactose-free mozzarella 125 g by Mon 16 Nov.",
      "facts": [],
-     "hash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "hash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "kind": "request",
-     "prevHash": "572aa9f93298b94eee07e210429dc6beabe88e8f0c37d1e0b7eab773feefe012",
+     "prevHash": "77bb1d8ed4f591e807ae5c8907209001081a9784c4a3245db0da49d62a52f7fc",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "The agent asked for 200 bags of lactose-free mozzarella 125 g.",
@@ -5016,10 +5016,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "hash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "kind": "decision",
      "orderId": "O-2",
-     "prevHash": "efc998aded0a14d487143ff7014b565dab1422a1345cc80fbe7c4cff7025b11b",
+     "prevHash": "34aae9be74e04ece10717741c9ff319af8bf4a716d7ee3a0945a911b53718af4",
      "requestId": "R-2",
      "ruleIds": [
       "ask-human"
@@ -5061,10 +5061,10 @@ export const answers: Answers = {
        "value": "18.01 €"
       }
      ],
-     "hash": "d01b0c20f50388eda0e05c77f5fbf1def8620e2ffc28169611f7c6504cd388a1",
+     "hash": "4e45cd5a2201b74a2f2dd4319f0dad1374731e397e9912247d18e4c88dd7819e",
      "kind": "approval",
      "orderId": "O-2",
-     "prevHash": "674810652c1cba808d974971c944ed0b9553afad9387c54a327ace494fc9c3b6",
+     "prevHash": "58626503920e381f8b88be89843d7b27e652ee7fe6caf0dae530334eceb2a3e1",
      "requestId": "R-2",
      "ruleIds": [],
      "sentence": "Owner rejected 10 × 2.5 kg of mozzarella-fontal crumbled cheese. Nothing was ordered.",
@@ -5074,7 +5074,7 @@ export const answers: Answers = {
      "timeText": "10:19"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:23:00+02:00",
      "disclosed": [
@@ -5087,7 +5087,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
+     "displayText": "Placed O-3: 300 × 1 l of lactose-free semi-skimmed milk for 303.00 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -5105,10 +5105,10 @@ export const answers: Answers = {
        "value": "1.01 €"
       }
      ],
-     "hash": "62d54a41dd6cc76c2b9ee2349a432a98b2de8fed80ba69ace1977c7988fbfc00",
+     "hash": "f1485dcbedf4f6d782009edde875f7a73848277a7025e01c39afcf45ee3e094b",
      "kind": "order",
      "orderId": "O-3",
-     "prevHash": "d01b0c20f50388eda0e05c77f5fbf1def8620e2ffc28169611f7c6504cd388a1",
+     "prevHash": "4e45cd5a2201b74a2f2dd4319f0dad1374731e397e9912247d18e4c88dd7819e",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -5120,7 +5120,7 @@ export const answers: Answers = {
      "timeText": "10:23"
     },
     {
-     "actor": "validio:steady-order",
+     "actor": "validio",
      "actorText": "Validio",
      "at": "2026-11-14T10:25:00+02:00",
      "disclosed": [
@@ -5133,7 +5133,7 @@ export const answers: Answers = {
       "diet",
       "never above"
      ],
-     "displayText": "Ordered 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
+     "displayText": "Placed O-4: 137 × 125 g of parmesan reggiano and 40 × 200 g of parmigiano reggiano block for 772.49 € without asking you.",
      "facts": [
       {
        "field": "quantity",
@@ -5164,10 +5164,10 @@ export const answers: Answers = {
        "value": "6.40 €"
       }
      ],
-     "hash": "dc7d66caaaeb0d9baa599f3efe7f5c3163fdd85d11a5316b28f40c2af63ec1c8",
+     "hash": "e8bdc631d8676f1487299a0902098ad734f3f42c6d9f8b65c5a8fc91e6cdc17c",
      "kind": "order",
      "orderId": "O-4",
-     "prevHash": "62d54a41dd6cc76c2b9ee2349a432a98b2de8fed80ba69ace1977c7988fbfc00",
+     "prevHash": "f1485dcbedf4f6d782009edde875f7a73848277a7025e01c39afcf45ee3e094b",
      "requestId": "S-1",
      "ruleIds": [
       "auto-order"
@@ -5194,9 +5194,9 @@ export const answers: Answers = {
      ],
      "displayText": "Held 30 cartons of vegan pancake 30 g for you: only 27 cartons in stock, the usual line is 30.",
      "facts": [],
-     "hash": "1d34dad9fd708f25b6bb5db4091c827ab85eb3cc19098ec24e474534f4cd2adc",
+     "hash": "f68679c997cfc24fa90d1269f8e5c0ed01d74ba3c667bfa1ca1ea7b07cba47f3",
      "kind": "decision",
-     "prevHash": "dc7d66caaaeb0d9baa599f3efe7f5c3163fdd85d11a5316b28f40c2af63ec1c8",
+     "prevHash": "e8bdc631d8676f1487299a0902098ad734f3f42c6d9f8b65c5a8fc91e6cdc17c",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 30 cartons of vegan pancake 30 g: Only 27 cartons in stock, the usual line is 30. Vegan pancake 100 x 60 g would break a rule: not gluten free. Lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
@@ -5221,9 +5221,9 @@ export const answers: Answers = {
      ],
      "displayText": "Did not renew 98 bags of lactose-free mozzarella 125 g: none in stock at Valio.",
      "facts": [],
-     "hash": "30c470951e98b909cf2b6e01f5624d43e7625d05457dc6a7f333b9f37143966c",
+     "hash": "1d551a7ce285f7d043ae7a838d6fac2c65c12eeba12e99a32a547cea82685a03",
      "kind": "decision",
-     "prevHash": "1d34dad9fd708f25b6bb5db4091c827ab85eb3cc19098ec24e474534f4cd2adc",
+     "prevHash": "f68679c997cfc24fa90d1269f8e5c0ed01d74ba3c667bfa1ca1ea7b07cba47f3",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Steady Order S-1, 98 bags of lactose-free mozzarella 125 g: Not renewed: none in stock at Valio. Also 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Out of stock at Valio, the usual line is 98 bags.",
@@ -5263,10 +5263,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "d970d16d1b3e5e4a0105000a8db27f263118f16fae5249f01c39b99762733bc9",
+     "hash": "ea6aa10ce841383bac72644f3a6ee74776feddba7839821268fd087e48e7d526",
      "kind": "decision",
      "orderId": "O-5",
-     "prevHash": "30c470951e98b909cf2b6e01f5624d43e7625d05457dc6a7f333b9f37143966c",
+     "prevHash": "1d551a7ce285f7d043ae7a838d6fac2c65c12eeba12e99a32a547cea82685a03",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"
@@ -5308,10 +5308,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "da1eaa90c8c964751bf812e49635544f9ae8821d9fea949e36396d3e5ec50983",
+     "hash": "46ea2f24c2966bf69fdfc0ec1e87bbdb99bf86f2ff5e34fd9d3ef8e5953c7c77",
      "kind": "approval",
      "orderId": "O-5",
-     "prevHash": "d970d16d1b3e5e4a0105000a8db27f263118f16fae5249f01c39b99762733bc9",
+     "prevHash": "ea6aa10ce841383bac72644f3a6ee74776feddba7839821268fd087e48e7d526",
      "requestId": "S-1",
      "ruleIds": [],
      "sentence": "Owner accepted 27 cartons of vegan pancake 30 g for 905.31 €.",
@@ -5351,10 +5351,10 @@ export const answers: Answers = {
        "value": "33.53 €"
       }
      ],
-     "hash": "d7d9bae5eca1dfea37d1f1c8d32f9c3ecf027682df5e6195ed24ed3c74b1e73a",
+     "hash": "be42476ff747a20c30d634103db8c658bda3f21d1b4ce328e192f6610f0808b5",
      "kind": "order",
      "orderId": "O-5",
-     "prevHash": "da1eaa90c8c964751bf812e49635544f9ae8821d9fea949e36396d3e5ec50983",
+     "prevHash": "46ea2f24c2966bf69fdfc0ec1e87bbdb99bf86f2ff5e34fd9d3ef8e5953c7c77",
      "requestId": "S-1",
      "ruleIds": [
       "ask-human"

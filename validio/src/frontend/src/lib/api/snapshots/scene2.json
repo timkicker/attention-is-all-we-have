@@ -3002,7 +3002,7 @@
       {
         "seq": 4,
         "at": "2026-11-14T10:09:00+02:00",
-        "actor": "agent:buyer-1",
+        "actor": "validio",
         "kind": "order",
         "sentence": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
@@ -3034,8 +3034,8 @@
         "orderId": "O-1",
         "requestId": "R-1",
         "prevHash": "564a8d7f3df890c3634e8b343a8f78755c020406a71839e1b2f55350bfd3b615",
-        "hash": "ae2af7e9f9feb5a04f5732aec3ae89a9d9e7996db43eb558f5b456ed21841e23",
-        "actorText": "Agent",
+        "hash": "3357282c1e20410ec51b01853243845d61900d88124a4532b022de836850fb49",
+        "actorText": "Validio",
         "timeText": "10:09",
         "summary": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you.",
         "disclosedText": [
@@ -3043,7 +3043,7 @@
           "diet",
           "never above"
         ],
-        "displayText": "Ordered 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
+        "displayText": "Placed O-1: 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 € without asking you."
       }
     ],
     "chain": {

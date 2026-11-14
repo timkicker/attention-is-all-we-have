@@ -209,7 +209,8 @@ def ledger(ctx: CtxDep):
                 so = _steady()[0]
                 titles[rid] = (so.name, so.name) if so.id == rid else (rid, rid)
         e["display_text"] = display.ledger_text(e["kind"], display.actor(e["actor"]), e["sentence"],
-                                                titles[rid][0] if rid and e["kind"] == "request" else None)
+                                                titles[rid][0] if rid and e["kind"] == "request" else None,
+                                                order_id=e.get("order_id"))
     groups = [{"request_id": rid, "title_text": t[1]} for rid, t in titles.items()]
     return LedgerView(entries=entries, chain={"ok": ok, "count": count, "broken_at": broken_at}, groups=groups)
 
