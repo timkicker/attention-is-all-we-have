@@ -70,9 +70,9 @@
     {#if problem}<p class="t13 sec bad" role="alert">{problem}</p>{/if}
     <div class="go">
       {#if res?.ok && res.data.recorded.length}
-        <p class="muted">
-          {copy.check.RECORDED_LEAD}
-          {#each res.data.recorded as r, i (r.runId)}{#if i}{copy.FOOT.sep}{/if}<a class="u" href={r.href} data-testid={TID.checkRecorded}>{r.label}</a>{/each}
+        <p class="muted parts">
+          <span>{copy.check.RECORDED_LEAD}</span>
+          {#each res.data.recorded as r (r.runId)}<a class="u" href={r.href} data-testid={TID.checkRecorded}>{r.label}</a>{/each}
         </p>
       {:else}
         <span></span>

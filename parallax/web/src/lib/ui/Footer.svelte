@@ -8,13 +8,13 @@
   let { variant = 'full', fromQid = null }: { variant?: 'full' | 'short'; fromQid?: string | null } = $props()
 </script>
 
-<p class="foot" data-testid={TID.foot}>
+<p class="foot parts" data-testid={TID.foot}>
   {#if variant === 'full'}
-    {copy.FOOT.licence}{copy.FOOT.sep}{copy.FOOT.machine}{copy.FOOT.sep}{copy.FOOT.affiliation}{copy.FOOT.sep}<a
+    <span>{copy.FOOT.licence}</span><span>{copy.FOOT.machine}</span><span>{copy.FOOT.affiliation}</span><a
       href={paths.hood(fromQid)}
       data-testid={TID.footHood}>{copy.FOOT.hood}</a
     >
   {:else}
-    {copy.FOOT.licence}{copy.FOOT.sep}{copy.FOOT.affiliation}
+    <span>{copy.FOOT.licence}</span><span>{copy.FOOT.affiliation}</span>
   {/if}
 </p>

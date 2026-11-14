@@ -26,8 +26,8 @@
 
 <div class="notice" role="status" data-testid={TID.stateEditionFailed}>
   <span class="text"
-    >{copy.states.editionFailed(lang, rateLimited)}<br /><span class="sec"
-      >{copy.states.othersReady(othersReady)}{#if openHref}{copy.FOOT.sep}<a class="u" href={openHref} data-testid={TID.stateEditionFailedOpen}
+    >{copy.states.editionFailed(lang, rateLimited)}<span class="sec parts"
+      ><span>{copy.states.othersReady(othersReady)}</span>{#if openHref}<a class="u" href={openHref} data-testid={TID.stateEditionFailedOpen}
           >{copy.states.OPEN_THEM}</a
         >{/if}</span
     ></span

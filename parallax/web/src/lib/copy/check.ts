@@ -5,14 +5,14 @@
 import { fmtDate } from '../format'
 import { DISPUTED, editions, fmtNum } from './shared'
 
-/** "Disputed · in 3 of 7 · English removed it in 2009" (one or two editions removed it). */
-export function disputedRemovedBy(n: number, of: number, langs: readonly string[], year: string): string {
-  return `${DISPUTED} · in ${n} of ${of} · ${editions(langs)} removed it in ${year}`
+/** ["Disputed", "in 3 of 7", "English removed it in 2009"] (one or two editions removed it). */
+export function disputedRemovedBy(n: number, of: number, langs: readonly string[], year: string): string[] {
+  return [DISPUTED, `in ${n} of ${of}`, `${editions(langs)} removed it in ${year}`]
 }
 
-/** "Disputed · in 3 of 7 · 4 editions removed it" (more than two editions removed it). */
-export function disputedRemovedIn(n: number, of: number, removedIn: number): string {
-  return `${DISPUTED} · in ${n} of ${of} · ${fmtNum(removedIn)} editions removed it`
+/** ["Disputed", "in 3 of 7", "4 editions removed it"] (more than two editions removed it). */
+export function disputedRemovedIn(n: number, of: number, removedIn: number): string[] {
+  return [DISPUTED, `in ${n} of ${of}`, `${fmtNum(removedIn)} editions removed it`]
 }
 
 /** Short topic phrases for the recorded questions (a label stays under 30 characters): "Gemini on Mainila". */
@@ -33,9 +33,9 @@ export const ANSWER_LABEL = 'Answer to check'
 export const RECORDED_LEAD = 'Or try a recorded answer:'
 export const CHECK_ANSWER = 'Check answer'
 export const CHECKING = 'Checking the answer'
-/** "Gemini on Mainila · recorded 12 Nov 2026" (label is data). */
+/** "Gemini on Mainila, recorded 12 Nov 2026" (label is data). */
 export function recordedOn(label: string, date: string | null): string {
-  return date ? `${label} · ${recordedDate(date)}` : label
+  return date ? `${label}, ${recordedDate(date)}` : label
 }
 /** "recorded 12 Nov 2026" (the meta line keeps it on one line). */
 export function recordedDate(date: string): string {
