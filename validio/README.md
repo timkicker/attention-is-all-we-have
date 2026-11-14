@@ -6,6 +6,19 @@ The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-valid
 
 **In progress:** accounts per kitchen, settings and agent connect, see [docs/PLAN-ACCOUNTS.md](docs/PLAN-ACCOUNTS.md).
 
+## Quick look
+
+Draft for the accounts build. It is not live yet. Demo link: updated after deploy.
+
+1. Open the demo link and click **Try the demo kitchen**. Your browser gets its own copy. The bar on top shows the approval code 246810.
+2. On **Agent** click **Connect agent**, then **Connect the demo agent**, then **Allow**.
+3. In **Inbox** click **Send example request**. Validio orders 1,000 litres of lactose-free milk for 1,010.00 € alone.
+4. In **Rules** on the Agent page lower "Orders alone up to" and save with the code. Send the request again. Now it waits until you approve with the code.
+5. Click **Pause** and send once more. The agent is refused and the ledger says so.
+6. Click the kitchen's name at the bottom of the sidebar for Settings: kitchen, diet, login, theme.
+
+Every step with what should appear is in [docs/DEMO.md](docs/DEMO.md). To run it on your own machine follow the setup below and use `make demo`.
+
 ## Setup
 
 For a quick look without key or data you only need Node 20 or newer. From `validio/`:
