@@ -2,8 +2,9 @@
   // Removed tab (wf/08): statements one edition removed while others still have them.
   // Filters live in the URL: ?q= (find a statement), ?edition= (lang), ?offset= (rows "Show N more" added).
   // The page shows FIRST rows, then STEP more per click; the adapter is asked for at least that many.
+  import { untrack } from 'svelte'
   import * as copy from '../lib/copy'
-  import { getRemoved, resolveTopic } from '../lib/data'
+  import { getRemoved, resolveTopic, watchIngest } from '../lib/data'
   import { dateState } from '../lib/date.svelte'
   import { LANGS, type Lang, type RemovedVM, type Result, type TabCounts } from '../lib/model'
   import EditionPick from '../lib/removed/EditionPick.svelte'
@@ -27,6 +28,9 @@
 
   let res = $state<Result<RemovedVM> | null>(null)
   let title = $state('')
+  let latest = $state<string | null>(null)
+  /** Bumped when the article, still loading, got another edition: the effects below load again. */
+  let reload = $state(0)
   let counts = $state<TabCounts>({ differences: null, removed: null })
   let q = $state(router.query.get('q') ?? '')
 
@@ -73,13 +77,24 @@
   )
   const more = $derived(res?.ok ? Math.max(0, res.data.total - visible.length) : 0)
 
+  // Only the article restarts the watch (untrack: watchIngest reads ?mock, which typing in ?q= also changes).
   $effect(() => {
-    resolveTopic(params.qid).then((r) => (title = r.ok ? r.data.title : params.qid))
+    const qid = params.qid
+    return untrack(() => watchIngest(qid, () => reload++))
+  })
+
+  $effect(() => {
+    void reload
+    resolveTopic(params.qid).then((r) => {
+      title = r.ok ? r.data.title : params.qid
+      latest = r.ok ? (r.data.latest ?? null) : null
+    })
   })
 
   $effect(() => {
     const args = { q: qParam, offset: shown, edition }
     const date = dateState.value
+    void reload
     let live = true
     getRemoved(params.qid, date, args).then((r) => {
       if (!live) return
@@ -114,7 +129,7 @@
     <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} testid={TID.findStatement} oninput={onInput} />
     <div class="pair">
       <EditionPick value={edition} editions={res?.ok ? res.data.editions : []} onpick={(l) => router.setQuery({ edition: l, offset: null })} />
-      <AsOf />
+      <AsOf {latest} />
     </div>
   </div>
 
@@ -156,6 +171,8 @@
   @media (max-width: 600px) {
     .ctl { gap: 8px; flex-wrap: wrap; }
     .ctl :global(.field) { flex: 1 1 100%; }
-    .pair { gap: 8px; }
+    /* the date button goes to its own line when both do not fit; at the right, so its panel opens on screen */
+    .pair { gap: 8px; flex: 1 1 100%; flex-wrap: wrap; }
+    .pair :global(.asof) { margin-left: auto; }
   }
 </style>

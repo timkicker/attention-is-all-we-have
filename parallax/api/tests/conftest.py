@@ -42,6 +42,9 @@ def pytest_configure(config):
 
     load_env()
     os.environ["ENGINE"] = "fake"
+    os.environ["RATE_LIMITS"] = "0"  # api/ratelimit.py: the suite sends many checks from one client
+    os.environ["INGEST_MAX_ACTIVE"] = "1000"
+    os.environ["INGEST_PARSE_PROCESS"] = "0"  # parse in the worker thread; pipeline/tests covers the parse process
     if os.environ.get("PARALLAX_SEED_DB"):
         # Seed checks against an already loaded database, e.g. PARALLAX_SEED=v2 PARALLAX_SEED_DB=parallax.
         os.environ["DB_NAME"] = os.environ["PARALLAX_SEED_DB"]

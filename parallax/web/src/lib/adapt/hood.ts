@@ -35,6 +35,7 @@ export function shortGpu(gpu: string): string {
 function literal(v: Param): string {
   if (v === null) return 'NULL'
   if (typeof v === 'number') return String(v)
+  if (typeof v === 'object' && 'chars' in v) return `'…' /* ${v.chars} characters */`
   if (typeof v === 'object') return `(/* ${v.count} ${v.count === 1 ? 'value' : 'values'} */)`
   return `'${v.replace(/'/g, "''")}'`
 }

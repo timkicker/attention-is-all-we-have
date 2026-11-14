@@ -49,7 +49,12 @@
       active = 0
     } else {
       found = null
-      failed = r.error.code === 'rate_limited' && r.error.retryAfterS ? copy.ERR.rateLimited(r.error.retryAfterS) : copy.start.SEARCH_FAILED
+      failed =
+        r.error.code === 'rate_limited' && r.error.retryAfterS
+          ? copy.ERR.rateLimited(r.error.retryAfterS)
+          : r.error.code === 'too_many'
+            ? copy.ERR.tooMany(r.error.retryAfterS ?? 60)
+            : copy.start.SEARCH_FAILED
     }
     open = true
   }
@@ -70,12 +75,20 @@
   // The wireframe shows at most four results.
   const results = $derived((found?.results ?? []).slice(0, 4))
 
+  /** A load is being started: a second click or Enter on the same pick must not post it again. */
+  let choosing = false
+
   async function choose(r: SearchResult) {
-    if (!r.href) return
+    if (!r.href || choosing) return
     if (r.status === 'new') {
-      const s = await startIngest(r.qid)
+      choosing = true
+      const s = await startIngest(r.qid).finally(() => (choosing = false))
       if (!s.ok && s.error.code === 'rate_limited') {
         failed = copy.ERR.rateLimited(s.error.retryAfterS ?? 120)
+        return
+      }
+      if (!s.ok && s.error.code === 'too_many') {
+        failed = copy.ERR.tooMany(s.error.retryAfterS ?? 60)
         return
       }
       if (!s.ok && s.error.code === 'no_finnish') {

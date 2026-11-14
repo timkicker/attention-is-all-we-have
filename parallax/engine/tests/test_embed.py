@@ -91,4 +91,20 @@ def test_shared_store_loads_once_and_never_writes(tmp_path, monkeypatch):
     assert not errors
     assert loads == [False]  # one read-only load for the whole process
     assert len(list(tmp_path.glob("shard-*.npz"))) == 1  # the API path wrote nothing
-    assert claim_hash("New text number 3.") in E.shared_store()  # new vectors kept in memory
+    store = E.shared_store()
+    assert claim_hash("Known sentence.") in store
+    # a visitor's text is embedded for its request only (engine.embed.Overlay), so the process does not grow per call
+    assert claim_hash("New text number 3.") not in store
+
+
+def test_writer_shares_the_loaded_vectors_and_writes_new_shards(tmp_path, monkeypatch):
+    seed = E.VectorStore(tmp_path)
+    E.embed_texts(["Known sentence."], seed, FakeBackend())
+    monkeypatch.setattr(E, "EMB_DIR", tmp_path)
+    monkeypatch.setattr(E, "_SHARED", None)
+
+    w = E.writer()
+    assert w.vecs is E.shared_store().vecs  # one copy of data/emb/ per process
+    E.embed_texts(["Ingested sentence."], w, FakeBackend())
+    assert len(list(tmp_path.glob("shard-*.npz"))) == 2  # the ingest still persists its vectors
+    assert claim_hash("Ingested sentence.") in E.shared_store()  # and the API sees them at once
