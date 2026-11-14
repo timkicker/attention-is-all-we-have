@@ -3,6 +3,7 @@
 // Recorded-answer labels ("... on Mainila") are data from the API, never written here.
 
 import { fmtDate } from '../format'
+import { checkSummary } from './shared'
 
 export const SUB_CHECK = 'Which editions back up what a chatbot says'
 /** "Paste what a chatbot said about Winter War". */
@@ -23,3 +24,13 @@ export const SHOW_WHOLE = 'Show the whole answer'
 export const SHOW_LESS = 'Show less'
 export const EMPTY_ANSWER = 'Paste an answer to check'
 export const TOO_LONG = 'The answer is too long. Paste at most 6,000 characters'
+
+/**
+ * The summary line. Shared checkSummary says "backed by most editions"; when some backed statement has
+ * only a minority of editions behind it, that would overstate it, so the line says "at least one" instead.
+ * (Workaround until copy/shared.ts checkSummary takes this flag itself.)
+ */
+export function summary(s: { total: number; none: number; disputed: number; backed: number }, most: boolean): string {
+  const line = checkSummary(s)
+  return most ? line : line.replace('backed by most editions', 'backed by at least one edition')
+}
