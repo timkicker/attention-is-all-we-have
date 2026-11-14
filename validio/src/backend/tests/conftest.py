@@ -22,6 +22,17 @@ def _fake_model(monkeypatch):
     monkeypatch.setenv("LLM_MODE", "fake")
 
 
+@pytest.fixture(autouse=True)
+def _fresh_rate_limits():
+    """Rate limits are per process: every test starts with empty windows, so one test's calls never 429 the next."""
+    from validio.api import limits
+
+    for v in vars(limits).values():
+        if isinstance(v, limits.RateLimiter):
+            v.clear()
+    yield
+
+
 @pytest.fixture(scope="session")
 def catalog():
     from validio.catalog.store import Catalog
