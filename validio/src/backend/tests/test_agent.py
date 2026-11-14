@@ -147,3 +147,30 @@ def test_gemini_default_model_is_the_verified_id(monkeypatch):
     assert GeminiLLM.from_env().name == "Gemini gemini-3.8-flash"
     monkeypatch.setenv("GEMINI_MODEL", "gemini-2.5-flash")
     assert GeminiLLM.from_env().name == "Gemini gemini-2.5-flash"
+
+
+MISS = "no recorded availability answer for 464306 on 2026-11-14, run make record first"
+
+
+def test_replay_miss_reaches_the_agent_as_a_tool_error():
+    from mcp.server.mcpserver.exceptions import ToolError
+
+    from validio.api.mcp_server import _errors
+    from validio.valio.client import ReplayMiss
+
+    def request_supply():
+        raise ReplayMiss(MISS)
+
+    with pytest.raises(ToolError, match="run make record first"):  # not the bare "Error executing tool"
+        _errors(request_supply)()
+
+
+@pytest.mark.parametrize("n", [1, 2, 3])
+def test_fake_names_the_cause_when_request_supply_fails(n):
+    llm = FakeLLM(n)
+    history = [{"role": "user", "search": "milk", "claims": [], "lines": [], "deliverBy": "2026-11-16"},
+               {"role": "tool", "name": "search_products", "result": {"products": []}},
+               {"role": "tool", "name": "request_supply", "result": {"error": f"503 no recorded answers: {MISS}"}}]
+    final = llm.step(history).text
+    assert final is not None and "run make record first" in final
+    assert "None" not in final
