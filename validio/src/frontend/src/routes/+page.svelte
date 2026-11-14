@@ -58,8 +58,8 @@
                 id="inbox-{i.id}"
                 pill={requestPill(i.status)}
                 title={i.titleText ?? i.displayName ?? i.title ?? i.text}
-                sub={simulated(i.id)}
-                subTestid={simulated(i.id) ? "stock-out-note" : undefined}
+                sub={i.status === "waiting" ? (i.summary ?? simulated(i.id)) : undefined}
+                subTestid={i.status === "waiting" ? `inbox-summary-${i.id}` : undefined}
                 end={i.moneyText ?? money(i.totalCents)}
               />
             {/each}
