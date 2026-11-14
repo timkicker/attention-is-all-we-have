@@ -59,6 +59,12 @@
     }
   }
 
+  // The dialog puts focus on its first control, the close button, whose tooltip then
+  // stands over the title; the field is where a person starts.
+  $effect(() => {
+    if (open) queueMicrotask(() => document.getElementById("ask-input")?.focus());
+  });
+
   function submit(e: SubmitEvent) {
     e.preventDefault();
     void send(text);
