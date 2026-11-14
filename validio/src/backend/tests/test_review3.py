@@ -313,3 +313,25 @@ def test_l1_mcp_host_allow_list_is_configurable(ctx, monkeypatch):
     monkeypatch.setenv("VALIDIO_MCP_HOSTS", "validio-demo.modal.run")
     with TestClient(app) as c:
         assert c.post("/mcp/", headers=hdr, json=init).status_code == 200
+
+
+# M1: Steady Orders run on their own weekly Spend Pass, so the agent's orders under M-1 do not eat its limits
+
+def test_m1_steady_order_has_its_own_weekly_pass(client, holder, ctx):
+    from validio.demo.seed import STEADY_PASS_ID
+
+    req = ask_milk(client, holder)
+    o = client.post("/agent/v1/orders", headers=auth(holder), json={
+        "requestId": req["id"], "idempotencyKey": "m1", "choice": [{"productId": "464306", "salesQty": 1000}]})
+    assert o.json()["state"] == "placed" and o.json()["spendPassId"] == "M-1"
+    view = client.post("/api/steady/S-1/renew", headers={"X-Approve-Code": CODE}).json()
+    got = {ln["productId"]: ln for ln in view["lines"]}
+    assert (got["464306"]["result"], got["464306"]["totalCents"]) == ("renewed", 30300)
+    assert (got["463968"]["result"], got["463968"]["thisWeekQuantity"], got["463968"]["totalCents"]) == \
+        ("split_renewed", 177, 77249)
+    for pid in ("464306", "463968"):
+        assert ctx.orders.get(got[pid]["orderId"])["spendPassId"] == STEADY_PASS_ID
+    sp = client.get("/api/steady/S-1").json()["steadyPass"]
+    assert sp == {"id": STEADY_PASS_ID, "validFrom": "2026-11-09T00:00:00+02:00",
+                  "validTo": "2026-11-16T00:00:00+02:00", "autoLimitCents": 120000, "hardCapCents": 200000,
+                  "usedCents": 30300 + 77249}

@@ -75,7 +75,8 @@ def test_placed_and_blocked_orders_cannot_be_approved(client, ctx):
     """An order placed alone or blocked by the Hard Lines never goes through approve."""
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
     auth = lambda: {"Authorization": f"SD-JWT {h.presentation()}"}
-    for pid, qty, state in (("464306", 1000, "placed"), ("463047", 132, "blocked")):
+    # the refused choice first: after the milk is placed, M-1's running total blocks a second milk request
+    for pid, qty, state in (("463047", 132, "blocked"), ("464306", 1000, "placed")):
         req = client.post("/agent/v1/requests", headers=auth(), json={
             "lines": [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}],
             "deliverBy": "2026-11-16", "idempotencyKey": f"milk-{pid}"}).json()
@@ -83,7 +84,7 @@ def test_placed_and_blocked_orders_cannot_be_approved(client, ctx):
             "requestId": req["id"], "idempotencyKey": f"o-{pid}", "choice": [{"productId": pid, "salesQty": qty}]})
         if state == "blocked":  # review 3 M2: an option Validio refused never becomes an order at all
             assert r.status_code == 422 and "rejected" in r.json()["detail"]
-            assert client.get("/api/orders/O-2").status_code == 404  # O-1 is the placed one
+            assert client.get("/api/orders/O-1").status_code == 404  # nothing was ordered
             continue
         o = r.json()
         assert o["state"] == state

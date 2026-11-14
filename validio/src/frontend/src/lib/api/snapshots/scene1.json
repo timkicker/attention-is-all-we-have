@@ -5,7 +5,7 @@
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "working",
-      "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+      "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
       "totalCents": 101000
     }
   ],
@@ -41,7 +41,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -52,7 +52,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -186,7 +186,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -197,7 +197,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -338,7 +338,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -349,7 +349,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -476,7 +476,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -487,7 +487,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -620,7 +620,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -631,7 +631,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -758,7 +758,7 @@
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -769,7 +769,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -895,7 +895,7 @@
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -905,7 +905,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1036,7 +1036,7 @@
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1046,7 +1046,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -1186,7 +1186,7 @@
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1196,7 +1196,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -1329,7 +1329,7 @@
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1339,7 +1339,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1478,7 +1478,7 @@
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1488,7 +1488,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1613,7 +1613,7 @@
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1623,7 +1623,7 @@
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1828,7 +1828,7 @@
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1841,7 +1841,7 @@
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1867,7 +1867,7 @@
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1880,7 +1880,7 @@
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1893,7 +1893,7 @@
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1906,7 +1906,7 @@
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1971,7 +1971,7 @@
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -2034,7 +2034,7 @@
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -2106,7 +2106,7 @@
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -2116,14 +2116,14 @@
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -2134,8 +2134,8 @@
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       }
     ],
     "chain": {
@@ -2167,7 +2167,7 @@
           "unit": "packs",
           "usualQuantity": 300,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2176,7 +2176,7 @@
           "unit": "packs",
           "usualQuantity": 200,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2185,7 +2185,7 @@
           "unit": "cartons",
           "usualQuantity": 30,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2207,7 +2207,15 @@
             120
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 0
+      }
     }
   },
   "demo": {

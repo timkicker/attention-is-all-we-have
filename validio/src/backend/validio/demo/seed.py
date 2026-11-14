@@ -1,6 +1,7 @@
 """Demo seed. `make seed` resets the local store to one fixed state, so every run shows the same numbers.
 
-Frozen clock, kitchen hotel-espoo with its key and Spend Pass M-1, 8 weeks of simulated order history and the
+Frozen clock, kitchen hotel-espoo with its key, Spend Pass M-1 for the agent, the weekly Spend Pass for the
+Steady Orders (STEADY_PASS_ID, same kitchen key, valid for the ISO week of the demo clock), 8 weeks of simulated order history and the
 stock-out switch for 466375 (off after a reset). The planted line on 463047 lives in the catalog index
 (`planted` table, from demo/planted.json) and is not touched here.
 """
@@ -10,7 +11,7 @@ import os
 import secrets
 import sqlite3
 from dataclasses import replace
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from ..config import DATA
@@ -34,6 +35,13 @@ HISTORY_FILE = HERE / "history.json"
 NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")  # Saturday 14 November 10:00 Helsinki
 KITCHEN = "hotel-espoo"
 SPEND_PASS_ID = "M-1"
+# Steady Orders get their own pass, so what the agent orders under M-1 never eats their limits (review 3 M1).
+# Same limits as M-1, valid Monday 00:00 to the next Monday 00:00 of the demo clock's ISO week.
+WEEK_START = datetime.combine(NOW.date() - timedelta(days=NOW.weekday()), datetime.min.time(), NOW.tzinfo)
+STEADY_PASS_ID = f"S-1-W{NOW.isocalendar().week}"
+STEADY_CLAIMS = {**{k: v for k, v in DEMO_CLAIMS.items() if k != "deliverBy"},  # the renewal sets the delivery
+                 "jti": STEADY_PASS_ID, "iat": int(WEEK_START.timestamp()), "nbf": int(WEEK_START.timestamp()),
+                 "exp": int((WEEK_START + timedelta(days=7)).timestamp())}
 STOCKOUT_ID = "466375"
 STOCKOUT_LEAD = "Stock-out simulated for the demo."
 STOCKOUT_NOTE = f"{STOCKOUT_LEAD} Valio really has stock."
@@ -92,6 +100,8 @@ def reset(path: Path | None = None, keys_dir: Path | None = None) -> Path:
         con.execute("insert into kitchen values (?, ?)", (KITCHEN, "Hotel kitchen in Espoo"))
         issuance = issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, kitchen_key, agent_key)
         con.execute("insert into spend_pass values (?, ?, ?)", (SPEND_PASS_ID, KITCHEN, issuance))
+        steady = issue_mandate(STEADY_CLAIMS, DEMO_SD_FIELDS, kitchen_key, agent_key)
+        con.execute("insert into spend_pass values (?, ?, ?)", (STEADY_PASS_ID, KITCHEN, steady))
         con.execute("insert into demo_state values ('stockout_466375', '0')")
         con.execute("insert into demo_state values ('seed_token', ?)", (secrets.token_hex(8),))
         h = load_history()
@@ -193,12 +203,12 @@ def apply_stockout(avail: dict[str, Availability], on: bool) -> dict[str, Availa
 
 def spend_pass(path: Path | None = None, keys_dir: Path | None = None,
                disclose: set[str] | frozenset[str] = frozenset({"autoLimitCents", "hardCapCents", "diet"}),
-               now: datetime = NOW) -> Mandate:
-    """The seeded pass M-1 as Validio sees it after the agent shows `disclose`."""
+               now: datetime = NOW, pass_id: str = SPEND_PASS_ID) -> Mandate:
+    """A seeded pass (M-1 unless `pass_id` says otherwise) as Validio sees it after the agent shows `disclose`."""
     keys_dir = Path(keys_dir or keys_path())
     con = sqlite3.connect(path or db_path())
     try:
-        (issuance,) = con.execute("select issuance from spend_pass where id = ?", (SPEND_PASS_ID,)).fetchone()
+        (issuance,) = con.execute("select issuance from spend_pass where id = ?", (pass_id,)).fetchone()
         has_list = con.execute("select 1 from sqlite_master where name = 'revoked_pass'").fetchone()
         revoked = {r for (r,) in con.execute("select id from revoked_pass")} if has_list else set()
     finally:

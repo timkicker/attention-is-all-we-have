@@ -31,7 +31,7 @@ export const scene1: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "working",
-      "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+      "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
       "totalCents": 101000
     }
   ],
@@ -67,7 +67,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -78,7 +78,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -212,7 +212,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -223,7 +223,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -364,7 +364,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -375,7 +375,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -502,7 +502,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -513,7 +513,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -646,7 +646,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -657,7 +657,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -784,7 +784,7 @@ export const scene1: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -795,7 +795,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -921,7 +921,7 @@ export const scene1: Snapshot = {
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -931,7 +931,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1062,7 +1062,7 @@ export const scene1: Snapshot = {
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1072,7 +1072,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -1212,7 +1212,7 @@ export const scene1: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1222,7 +1222,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -1355,7 +1355,7 @@ export const scene1: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1365,7 +1365,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1504,7 +1504,7 @@ export const scene1: Snapshot = {
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1514,7 +1514,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1639,7 +1639,7 @@ export const scene1: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -1649,7 +1649,7 @@ export const scene1: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -1854,7 +1854,7 @@ export const scene1: Snapshot = {
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1867,7 +1867,7 @@ export const scene1: Snapshot = {
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1893,7 +1893,7 @@ export const scene1: Snapshot = {
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1906,7 +1906,7 @@ export const scene1: Snapshot = {
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1919,7 +1919,7 @@ export const scene1: Snapshot = {
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1932,7 +1932,7 @@ export const scene1: Snapshot = {
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -1997,7 +1997,7 @@ export const scene1: Snapshot = {
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -2060,7 +2060,7 @@ export const scene1: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -2132,7 +2132,7 @@ export const scene1: Snapshot = {
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -2142,14 +2142,14 @@ export const scene1: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -2160,8 +2160,8 @@ export const scene1: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       }
     ],
     "chain": {
@@ -2193,7 +2193,7 @@ export const scene1: Snapshot = {
           "unit": "packs",
           "usualQuantity": 300,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2202,7 +2202,7 @@ export const scene1: Snapshot = {
           "unit": "packs",
           "usualQuantity": 200,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2211,7 +2211,7 @@ export const scene1: Snapshot = {
           "unit": "cartons",
           "usualQuantity": 30,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -2233,7 +2233,15 @@ export const scene1: Snapshot = {
             120
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 0
+      }
     }
   },
   "demo": {
@@ -2252,7 +2260,7 @@ export const scene2: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000
     }
   ],
@@ -2288,7 +2296,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -2299,7 +2307,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -2433,7 +2441,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -2444,7 +2452,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -2585,7 +2593,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -2596,7 +2604,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -2723,7 +2731,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -2734,7 +2742,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -2867,7 +2875,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -2878,7 +2886,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -3005,7 +3013,7 @@ export const scene2: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3016,7 +3024,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -3142,7 +3150,7 @@ export const scene2: Snapshot = {
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3152,7 +3160,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -3283,7 +3291,7 @@ export const scene2: Snapshot = {
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3293,7 +3301,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -3433,7 +3441,7 @@ export const scene2: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3443,7 +3451,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -3576,7 +3584,7 @@ export const scene2: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3586,7 +3594,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -3725,7 +3733,7 @@ export const scene2: Snapshot = {
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3735,7 +3743,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -3860,7 +3868,7 @@ export const scene2: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -3870,7 +3878,7 @@ export const scene2: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -4075,7 +4083,7 @@ export const scene2: Snapshot = {
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4088,7 +4096,7 @@ export const scene2: Snapshot = {
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4114,7 +4122,7 @@ export const scene2: Snapshot = {
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4127,7 +4135,7 @@ export const scene2: Snapshot = {
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4140,7 +4148,7 @@ export const scene2: Snapshot = {
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4153,7 +4161,7 @@ export const scene2: Snapshot = {
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4218,7 +4226,7 @@ export const scene2: Snapshot = {
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -4281,7 +4289,7 @@ export const scene2: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -4357,7 +4365,7 @@ export const scene2: Snapshot = {
             },
             {
               "field": "price",
-              "value": "1.01 EUR",
+              "value": "1.01 €",
               "grade": "attested_until",
               "source": "Valio price API",
               "note": "until 2026-12-31",
@@ -4378,7 +4386,7 @@ export const scene2: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16"
@@ -4408,7 +4416,7 @@ export const scene2: Snapshot = {
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -4418,14 +4426,14 @@ export const scene2: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -4436,15 +4444,15 @@ export const scene2: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -4459,7 +4467,7 @@ export const scene2: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -4472,8 +4480,8 @@ export const scene2: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
-        "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
+        "prevHash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519",
+        "hash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11"
       }
     ],
     "chain": {
@@ -4505,7 +4513,7 @@ export const scene2: Snapshot = {
           "unit": "packs",
           "usualQuantity": 300,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -4514,7 +4522,7 @@ export const scene2: Snapshot = {
           "unit": "packs",
           "usualQuantity": 200,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -4523,7 +4531,7 @@ export const scene2: Snapshot = {
           "unit": "cartons",
           "usualQuantity": 30,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -4545,7 +4553,15 @@ export const scene2: Snapshot = {
             120
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 0
+      }
     }
   },
   "demo": {
@@ -4562,9 +4578,9 @@ export const scene3: Snapshot = {
     {
       "id": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010
     },
     {
@@ -4572,7 +4588,7 @@ export const scene3: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000
     }
   ],
@@ -4582,14 +4598,14 @@ export const scene3: Snapshot = {
       "requestId": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
       "agent": "agent:buyer-1",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "deliverBy": "2026-11-16",
       "status": "ordered",
       "spendPassId": "M-1",
       "lines": [
         {
           "lineId": "L-1",
-          "text": "200 BAG of 466375",
+          "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
           "need": {
             "what": "mozzarella",
             "quantity": 200.0,
@@ -4608,7 +4624,7 @@ export const scene3: Snapshot = {
               "quantity": 200,
               "unit": "BAG",
               "totalCents": 23200,
-              "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
               "facts": [
                 {
                   "field": "quantity",
@@ -4619,7 +4635,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.16 EUR",
+                  "value": "1.16 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -4701,7 +4717,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.21 EUR",
+                  "value": "1.21 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -4783,7 +4799,7 @@ export const scene3: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 18010,
-              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 packs for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -4794,7 +4810,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.01 EUR",
+                  "value": "18.01 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -4900,7 +4916,7 @@ export const scene3: Snapshot = {
               "quantity": 10,
               "unit": "BAG",
               "totalCents": 19660,
-              "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -4911,7 +4927,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "19.66 EUR",
+                  "value": "19.66 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -4981,7 +4997,7 @@ export const scene3: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 23490,
-              "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 packs for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -4992,7 +5008,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "23.49 EUR",
+                  "value": "23.49 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5098,7 +5114,7 @@ export const scene3: Snapshot = {
               "quantity": 63,
               "unit": "ST",
               "totalCents": 33453,
-              "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free, claim unchecked. 63 packs for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -5109,7 +5125,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "5.31 EUR",
+                  "value": "5.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5189,7 +5205,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "36.17 EUR",
+                  "value": "36.17 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5309,7 +5325,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.29 EUR",
+                  "value": "18.29 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5431,7 +5447,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "108.09 EUR",
+                  "value": "108.09 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5497,7 +5513,7 @@ export const scene3: Snapshot = {
               "productId": "467197",
               "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
               "verdict": "rejected",
-              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
               "facts": [
                 {
                   "field": "quantity",
@@ -5507,7 +5523,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "76.33 EUR",
+                  "value": "76.33 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -5578,7 +5594,7 @@ export const scene3: Snapshot = {
               }
             }
           ],
-          "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
+          "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Valio mozzarella-fontal 2.5 kg crumbled cheese does, but it is not on the list, so you decide.",
           "chosen": {
             "productId": "465256",
             "salesQty": 10,
@@ -5592,7 +5608,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -5612,11 +5628,11 @@ export const scene3: Snapshot = {
         ]
       },
       "orderId": "O-2",
-      "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+      "question": "Order 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese for 180.10 €?",
       "simulated": [
         {
-          "what": "stock-out of 466375",
-          "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero."
+          "what": "stock-out of Gran Castelli mozzarella 125 g lactose free",
+          "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags."
         }
       ]
     },
@@ -5651,7 +5667,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -5662,7 +5678,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -5796,7 +5812,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -5807,7 +5823,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -5948,7 +5964,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -5959,7 +5975,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -6086,7 +6102,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6097,7 +6113,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -6230,7 +6246,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6241,7 +6257,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -6368,7 +6384,7 @@ export const scene3: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6379,7 +6395,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -6505,7 +6521,7 @@ export const scene3: Snapshot = {
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6515,7 +6531,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -6646,7 +6662,7 @@ export const scene3: Snapshot = {
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6656,7 +6672,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -6796,7 +6812,7 @@ export const scene3: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6806,7 +6822,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -6939,7 +6955,7 @@ export const scene3: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -6949,7 +6965,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -7088,7 +7104,7 @@ export const scene3: Snapshot = {
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -7098,7 +7114,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -7223,7 +7239,7 @@ export const scene3: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -7233,7 +7249,7 @@ export const scene3: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -7438,7 +7454,7 @@ export const scene3: Snapshot = {
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7451,7 +7467,7 @@ export const scene3: Snapshot = {
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7477,7 +7493,7 @@ export const scene3: Snapshot = {
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7490,7 +7506,7 @@ export const scene3: Snapshot = {
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7503,7 +7519,7 @@ export const scene3: Snapshot = {
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7516,7 +7532,7 @@ export const scene3: Snapshot = {
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7581,7 +7597,7 @@ export const scene3: Snapshot = {
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -7644,7 +7660,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -7719,7 +7735,7 @@ export const scene3: Snapshot = {
             },
             {
               "field": "price",
-              "value": "18.01 EUR",
+              "value": "18.01 €",
               "grade": "attested",
               "source": "Valio price API",
               "note": "catalog price, no end date"
@@ -7747,7 +7763,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -7780,7 +7796,7 @@ export const scene3: Snapshot = {
             },
             {
               "field": "price",
-              "value": "1.01 EUR",
+              "value": "1.01 €",
               "grade": "attested_until",
               "source": "Valio price API",
               "note": "until 2026-12-31",
@@ -7801,7 +7817,7 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16"
@@ -7831,7 +7847,7 @@ export const scene3: Snapshot = {
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -7841,14 +7857,14 @@ export const scene3: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -7859,15 +7875,15 @@ export const scene3: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -7882,7 +7898,7 @@ export const scene3: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -7895,27 +7911,27 @@ export const scene3: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
-        "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
+        "prevHash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519",
+        "hash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11"
       },
       {
         "seq": 5,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "presenter",
         "kind": "simulation",
-        "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
+        "sentence": "Simulated a stock-out of Gran Castelli mozzarella 125 g lactose free (466375) for the demo. Valio has 11,603 bags.",
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
-        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
+        "prevHash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11",
+        "hash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b"
       },
       {
         "seq": 6,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "request",
-        "sentence": "The agent asked for 200 BAG of 466375.",
+        "sentence": "The agent asked for 200 bags of Gran Castelli mozzarella 125 g lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -7924,15 +7940,15 @@ export const scene3: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
-        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
+        "prevHash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b",
+        "hash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250"
       },
       {
         "seq": 7,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
         "facts": [
           {
             "field": "quantity",
@@ -7946,7 +7962,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -7959,15 +7975,15 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
-        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
+        "prevHash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250",
+        "hash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481"
       },
       {
         "seq": 8,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "owner",
         "kind": "approval",
-        "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
+        "sentence": "Owner approved 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 €.",
         "facts": [
           {
             "field": "quantity",
@@ -7981,7 +7997,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -7992,15 +8008,15 @@ export const scene3: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
-        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
+        "prevHash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481",
+        "hash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -8014,7 +8030,7 @@ export const scene3: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -8027,8 +8043,8 @@ export const scene3: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
-        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
+        "prevHash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3",
+        "hash": "168331ab57159968cf95918d35cc3bffe4cf4bba4780eb55af7432aa08e7660d"
       }
     ],
     "chain": {
@@ -8060,7 +8076,7 @@ export const scene3: Snapshot = {
           "unit": "packs",
           "usualQuantity": 300,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -8069,7 +8085,7 @@ export const scene3: Snapshot = {
           "unit": "packs",
           "usualQuantity": 200,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -8078,7 +8094,7 @@ export const scene3: Snapshot = {
           "unit": "cartons",
           "usualQuantity": 30,
           "result": "pending",
-          "sentence": "Usual amount.",
+          "sentence": "",
           "flags": []
         },
         {
@@ -8100,7 +8116,15 @@ export const scene3: Snapshot = {
             120
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 0
+      }
     }
   },
   "demo": {
@@ -8117,9 +8141,9 @@ export const scene4: Snapshot = {
     {
       "id": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010
     },
     {
@@ -8127,7 +8151,7 @@ export const scene4: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000
     }
   ],
@@ -8137,14 +8161,14 @@ export const scene4: Snapshot = {
       "requestId": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
       "agent": "agent:buyer-1",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "deliverBy": "2026-11-16",
       "status": "ordered",
       "spendPassId": "M-1",
       "lines": [
         {
           "lineId": "L-1",
-          "text": "200 BAG of 466375",
+          "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
           "need": {
             "what": "mozzarella",
             "quantity": 200.0,
@@ -8163,7 +8187,7 @@ export const scene4: Snapshot = {
               "quantity": 200,
               "unit": "BAG",
               "totalCents": 23200,
-              "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
               "facts": [
                 {
                   "field": "quantity",
@@ -8174,7 +8198,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.16 EUR",
+                  "value": "1.16 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8256,7 +8280,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.21 EUR",
+                  "value": "1.21 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8338,7 +8362,7 @@ export const scene4: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 18010,
-              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 packs for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -8349,7 +8373,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.01 EUR",
+                  "value": "18.01 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8455,7 +8479,7 @@ export const scene4: Snapshot = {
               "quantity": 10,
               "unit": "BAG",
               "totalCents": 19660,
-              "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -8466,7 +8490,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "19.66 EUR",
+                  "value": "19.66 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8536,7 +8560,7 @@ export const scene4: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 23490,
-              "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 packs for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -8547,7 +8571,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "23.49 EUR",
+                  "value": "23.49 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8653,7 +8677,7 @@ export const scene4: Snapshot = {
               "quantity": 63,
               "unit": "ST",
               "totalCents": 33453,
-              "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free, claim unchecked. 63 packs for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -8664,7 +8688,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "5.31 EUR",
+                  "value": "5.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8744,7 +8768,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "36.17 EUR",
+                  "value": "36.17 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8864,7 +8888,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.29 EUR",
+                  "value": "18.29 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -8986,7 +9010,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "108.09 EUR",
+                  "value": "108.09 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -9052,7 +9076,7 @@ export const scene4: Snapshot = {
               "productId": "467197",
               "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
               "verdict": "rejected",
-              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9062,7 +9086,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "76.33 EUR",
+                  "value": "76.33 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -9133,7 +9157,7 @@ export const scene4: Snapshot = {
               }
             }
           ],
-          "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
+          "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Valio mozzarella-fontal 2.5 kg crumbled cheese does, but it is not on the list, so you decide.",
           "chosen": {
             "productId": "465256",
             "salesQty": 10,
@@ -9147,7 +9171,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -9167,11 +9191,11 @@ export const scene4: Snapshot = {
         ]
       },
       "orderId": "O-2",
-      "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+      "question": "Order 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese for 180.10 €?",
       "simulated": [
         {
-          "what": "stock-out of 466375",
-          "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero."
+          "what": "stock-out of Gran Castelli mozzarella 125 g lactose free",
+          "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags."
         }
       ]
     },
@@ -9206,7 +9230,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9217,7 +9241,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -9351,7 +9375,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9362,7 +9386,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -9503,7 +9527,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9514,7 +9538,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -9641,7 +9665,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9652,7 +9676,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -9785,7 +9809,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9796,7 +9820,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -9923,7 +9947,7 @@ export const scene4: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -9934,7 +9958,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -10060,7 +10084,7 @@ export const scene4: Snapshot = {
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10070,7 +10094,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -10201,7 +10225,7 @@ export const scene4: Snapshot = {
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10211,7 +10235,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -10351,7 +10375,7 @@ export const scene4: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10361,7 +10385,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -10494,7 +10518,7 @@ export const scene4: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10504,7 +10528,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -10643,7 +10667,7 @@ export const scene4: Snapshot = {
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10653,7 +10677,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -10778,7 +10802,7 @@ export const scene4: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -10788,7 +10812,7 @@ export const scene4: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -10993,7 +11017,7 @@ export const scene4: Snapshot = {
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11006,7 +11030,7 @@ export const scene4: Snapshot = {
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11032,7 +11056,7 @@ export const scene4: Snapshot = {
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11045,7 +11069,7 @@ export const scene4: Snapshot = {
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11058,7 +11082,7 @@ export const scene4: Snapshot = {
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11071,7 +11095,7 @@ export const scene4: Snapshot = {
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11136,7 +11160,7 @@ export const scene4: Snapshot = {
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -11199,7 +11223,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -11274,7 +11298,7 @@ export const scene4: Snapshot = {
             },
             {
               "field": "price",
-              "value": "18.01 EUR",
+              "value": "18.01 €",
               "grade": "attested",
               "source": "Valio price API",
               "note": "catalog price, no end date"
@@ -11302,7 +11326,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -11335,7 +11359,7 @@ export const scene4: Snapshot = {
             },
             {
               "field": "price",
-              "value": "1.01 EUR",
+              "value": "1.01 €",
               "grade": "attested_until",
               "source": "Valio price API",
               "note": "until 2026-12-31",
@@ -11356,7 +11380,7 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16"
@@ -11386,7 +11410,7 @@ export const scene4: Snapshot = {
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -11396,14 +11420,14 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -11414,15 +11438,15 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -11437,7 +11461,7 @@ export const scene4: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -11450,27 +11474,27 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
-        "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
+        "prevHash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519",
+        "hash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11"
       },
       {
         "seq": 5,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "presenter",
         "kind": "simulation",
-        "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
+        "sentence": "Simulated a stock-out of Gran Castelli mozzarella 125 g lactose free (466375) for the demo. Valio has 11,603 bags.",
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
-        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
+        "prevHash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11",
+        "hash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b"
       },
       {
         "seq": 6,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "request",
-        "sentence": "The agent asked for 200 BAG of 466375.",
+        "sentence": "The agent asked for 200 bags of Gran Castelli mozzarella 125 g lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -11479,15 +11503,15 @@ export const scene4: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
-        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
+        "prevHash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b",
+        "hash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250"
       },
       {
         "seq": 7,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
         "facts": [
           {
             "field": "quantity",
@@ -11501,7 +11525,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -11514,15 +11538,15 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
-        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
+        "prevHash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250",
+        "hash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481"
       },
       {
         "seq": 8,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "owner",
         "kind": "approval",
-        "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
+        "sentence": "Owner approved 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 €.",
         "facts": [
           {
             "field": "quantity",
@@ -11536,7 +11560,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -11547,15 +11571,15 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
-        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
+        "prevHash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481",
+        "hash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -11569,7 +11593,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -11582,15 +11606,15 @@ export const scene4: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
-        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
+        "prevHash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3",
+        "hash": "168331ab57159968cf95918d35cc3bffe4cf4bba4780eb55af7432aa08e7660d"
       },
       {
         "seq": 10,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 300 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -11605,10 +11629,10 @@ export const scene4: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -11618,15 +11642,15 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
-        "prevHash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125",
-        "hash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0"
+        "prevHash": "168331ab57159968cf95918d35cc3bffe4cf4bba4780eb55af7432aa08e7660d",
+        "hash": "72c4762d95c70ea61f05afa0355924efe1e9c241454778b12c980f5a5358f3d1"
       },
       {
         "seq": 11,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
+        "sentence": "Ordered 137 packs of Castelli Parmesan Reggiano 125 g PDO (463968) and 40 packs of Castelli parmigiano reggiano 200 g block (469648) for 772.49 € without a person. Inside Spend Pass S-1-W46.",
         "facts": [
           {
             "field": "quantity",
@@ -11640,7 +11664,7 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "3.77 EUR"
+            "value": "3.77 €"
           },
           {
             "field": "quantity",
@@ -11654,10 +11678,10 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "6.40 EUR"
+            "value": "6.40 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -11667,34 +11691,34 @@ export const scene4: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
-        "prevHash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0",
-        "hash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e"
+        "prevHash": "72c4762d95c70ea61f05afa0355924efe1e9c241454778b12c980f5a5358f3d1",
+        "hash": "da485554d967337e48839a389fd0319287ec6e5ae01cd941618c1b63e722090d"
       },
       {
         "seq": 12,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
+        "sentence": "Steady Order S-1, 30 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376): Only 27 cartons in stock, the usual line is 30. Findus Pancake, vegan ca 100x60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
         "facts": [],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e",
-        "hash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93"
+        "prevHash": "da485554d967337e48839a389fd0319287ec6e5ae01cd941618c1b63e722090d",
+        "hash": "870b278bfdb5a3fb575fc458d10d7c207201dcf2f7196614fa157f15f2684820"
       },
       {
         "seq": 13,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
+        "sentence": "Steady Order S-1, 98 bags of Gran Castelli mozzarella 125 g lactose free (466375): Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Out of stock at Valio, the usual line is 98 bags.",
         "facts": [],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -11703,15 +11727,15 @@ export const scene4: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93",
-        "hash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35"
+        "prevHash": "870b278bfdb5a3fb575fc458d10d7c207201dcf2f7196614fa157f15f2684820",
+        "hash": "a8534ace0931e823cbf5091a504b3acccf3b1f1a7a1b2db0f58c9302fdfe4168"
       },
       {
         "seq": 14,
         "at": "2026-11-14T10:00:00+02:00",
-        "actor": "kitchen:chef",
-        "kind": "order",
-        "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+        "actor": "validio",
+        "kind": "decision",
+        "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
         "facts": [
           {
             "field": "quantity",
@@ -11725,30 +11749,45 @@ export const scene4: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "33.53 EUR"
+            "value": "33.53 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
           "hardCapCents"
         ],
         "ruleIds": [
-          "auto-order"
+          "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35",
-        "hash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43"
+        "prevHash": "a8534ace0931e823cbf5091a504b3acccf3b1f1a7a1b2db0f58c9302fdfe4168",
+        "hash": "7470e3702231120b8fe3d50f9387194adf5df6d01eed0de980ceed004e57b3b8"
       },
       {
         "seq": 15,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "kitchen:chef",
         "kind": "approval",
-        "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-        "facts": [],
-        "spendPassId": "M-1",
+        "sentence": "Chef approved 27 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376) for 905.31 €.",
+        "facts": [
+          {
+            "field": "quantity",
+            "grade": "attested",
+            "note": "Stock at Valio",
+            "source": "Valio availability API",
+            "value": "27 KI"
+          },
+          {
+            "field": "price",
+            "grade": "attested",
+            "note": "catalog price, no end date",
+            "source": "Valio price API",
+            "value": "33.53 €"
+          }
+        ],
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -11756,13 +11795,48 @@ export const scene4: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43",
-        "hash": "edab13196d85cde4e0969de285658c3d6bccddaa70767841d4d82d59332b1d54"
+        "prevHash": "7470e3702231120b8fe3d50f9387194adf5df6d01eed0de980ceed004e57b3b8",
+        "hash": "9a65152797eacf08f9edde76c48cdc801a1324d68738ab077a85783e5c7feffe"
+      },
+      {
+        "seq": 16,
+        "at": "2026-11-14T10:00:00+02:00",
+        "actor": "validio",
+        "kind": "order",
+        "sentence": "Placed order O-5: 27 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376) for 905.31 € after the chef approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+        "facts": [
+          {
+            "field": "quantity",
+            "grade": "attested",
+            "note": "Stock at Valio",
+            "source": "Valio availability API",
+            "value": "27 KI"
+          },
+          {
+            "field": "price",
+            "grade": "attested",
+            "note": "catalog price, no end date",
+            "source": "Valio price API",
+            "value": "33.53 €"
+          }
+        ],
+        "spendPassId": "S-1-W46",
+        "disclosed": [
+          "autoLimitCents",
+          "diet",
+          "hardCapCents"
+        ],
+        "ruleIds": [
+          "ask-human"
+        ],
+        "orderId": "O-5",
+        "prevHash": "9a65152797eacf08f9edde76c48cdc801a1324d68738ab077a85783e5c7feffe",
+        "hash": "46ba28192b8e89592677bcc422e51caa419fc8b6f37e7598db897a0e6c143ab9"
       }
     ],
     "chain": {
       "ok": true,
-      "count": 15
+      "count": 16
     }
   },
   "steadyList": [
@@ -11808,7 +11882,7 @@ export const scene4: Snapshot = {
           "thisWeekQuantity": 177,
           "totalCents": 77249,
           "result": "split_renewed",
-          "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+          "sentence": "Only 137 packs in stock, the usual line is 200. So 40 packs of Castelli parmigiano reggiano 200 g block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
           "flags": [
             {
               "kind": "stock_below",
@@ -11851,7 +11925,7 @@ export const scene4: Snapshot = {
           "thisWeekQuantity": 27,
           "totalCents": 90531,
           "result": "accepted",
-          "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+          "sentence": "Only 27 cartons in stock, the usual line is 30. Findus Pancake, vegan ca 100x60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
           "flags": [
             {
               "kind": "stock_below",
@@ -11868,7 +11942,7 @@ export const scene4: Snapshot = {
           "thisWeekQuantity": 98,
           "totalCents": 11368,
           "result": "flagged",
-          "sentence": "Waits for you because of the flag below.",
+          "sentence": "Waits for you: 26 % more per guest than usual.",
           "flags": [
             {
               "kind": "per_guest_up",
@@ -11877,7 +11951,7 @@ export const scene4: Snapshot = {
             },
             {
               "kind": "stock_below",
-              "sentence": "Only 0 bags in stock, the usual line is 98."
+              "sentence": "Out of stock at Valio, the usual line is 98 bags."
             }
           ],
           "acceptLabel": "Renew anyway",
@@ -11895,7 +11969,15 @@ export const scene4: Snapshot = {
             "ask-human"
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 198080
+      }
     }
   },
   "demo": {
@@ -11912,9 +11994,9 @@ export const scene5: Snapshot = {
     {
       "id": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "status": "ordered",
-      "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 18010
     },
     {
@@ -11922,7 +12004,7 @@ export const scene5: Snapshot = {
       "createdAt": "2026-11-14T10:00:00+02:00",
       "text": "1000 litres of lactose-free milk by Monday, budget 1200 euro",
       "status": "ordered_alone",
-      "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+      "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
       "totalCents": 101000
     }
   ],
@@ -11932,14 +12014,14 @@ export const scene5: Snapshot = {
       "requestId": "R-2",
       "createdAt": "2026-11-14T10:00:00+02:00",
       "agent": "agent:buyer-1",
-      "text": "200 BAG of 466375",
+      "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
       "deliverBy": "2026-11-16",
       "status": "ordered",
       "spendPassId": "M-1",
       "lines": [
         {
           "lineId": "L-1",
-          "text": "200 BAG of 466375",
+          "text": "200 bags of Gran Castelli mozzarella 125 g lactose free",
           "need": {
             "what": "mozzarella",
             "quantity": 200.0,
@@ -11958,7 +12040,7 @@ export const scene5: Snapshot = {
               "quantity": 200,
               "unit": "BAG",
               "totalCents": 23200,
-              "sentence": "Only 0 BAG in stock, 200 needed; Lactose free claim unchecked: claims lactose free but gives no lactose value.",
+              "sentence": "Out of stock at Valio, 200 bags needed. Lactose free claim unchecked: claims lactose free but gives no lactose value.",
               "facts": [
                 {
                   "field": "quantity",
@@ -11969,7 +12051,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.16 EUR",
+                  "value": "1.16 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12051,7 +12133,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.21 EUR",
+                  "value": "1.21 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12133,7 +12215,7 @@ export const scene5: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 18010,
-              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 ST for 180.10 EUR, not on Valio's list. Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 packs for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -12144,7 +12226,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.01 EUR",
+                  "value": "18.01 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12250,7 +12332,7 @@ export const scene5: Snapshot = {
               "quantity": 10,
               "unit": "BAG",
               "totalCents": 19660,
-              "sentence": "Lactose free and checked. 10 BAG for 196.60 EUR, not on Valio's list. 16.50 EUR more than the cheapest; Valio delivered it as ordered 97 of 100 times; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 bags for 196.60 €. 16.50 € more than the cheapest and Valio delivered it as ordered 97 of 100 times. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -12261,7 +12343,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "19.66 EUR",
+                  "value": "19.66 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12331,7 +12413,7 @@ export const scene5: Snapshot = {
               "quantity": 10,
               "unit": "ST",
               "totalCents": 23490,
-              "sentence": "Lactose free and checked. 10 ST for 234.90 EUR, not on Valio's list. 54.80 EUR more than the cheapest; Valio delivered it as ordered 98 of 100 times; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free and checked. 10 packs for 234.90 €. 54.80 € more than the cheapest and Valio delivered it as ordered 98 of 100 times. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -12342,7 +12424,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "23.49 EUR",
+                  "value": "23.49 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12448,7 +12530,7 @@ export const scene5: Snapshot = {
               "quantity": 63,
               "unit": "ST",
               "totalCents": 33453,
-              "sentence": "Lactose free, claim unchecked. 63 ST for 334.53 EUR, not on Valio's list. 154.43 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Footprint 5.21 kg CO2e per kg, a group average.",
+              "sentence": "Lactose free, claim unchecked. 63 packs for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
               "facts": [
                 {
                   "field": "quantity",
@@ -12459,7 +12541,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "5.31 EUR",
+                  "value": "5.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12539,7 +12621,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "36.17 EUR",
+                  "value": "36.17 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12659,7 +12741,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "18.29 EUR",
+                  "value": "18.29 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12781,7 +12863,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "108.09 EUR",
+                  "value": "108.09 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12847,7 +12929,7 @@ export const scene5: Snapshot = {
               "productId": "467197",
               "name": "2xTopfoods mozzarella pearl lactose free 5g 3kg frozen",
               "verdict": "rejected",
-              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079); Order cut-off 12 Nov 15:00 has passed.",
+              "sentence": "Pack size unknown (sources disagree: name 0.01, comparison price 6.00079). Order cut-off 12 Nov 15:00 has passed.",
               "facts": [
                 {
                   "field": "quantity",
@@ -12857,7 +12939,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "76.33 EUR",
+                  "value": "76.33 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -12928,7 +13010,7 @@ export const scene5: Snapshot = {
               }
             }
           ],
-          "swapSentence": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides.",
+          "swapSentence": "No substitute on Valio's list keeps every rule and can be delivered. Valio mozzarella-fontal 2.5 kg crumbled cheese does, but it is not on the list, so you decide.",
           "chosen": {
             "productId": "465256",
             "salesQty": 10,
@@ -12942,7 +13024,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock."
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 18010,
       "liveChecked": {
@@ -12962,11 +13044,11 @@ export const scene5: Snapshot = {
         ]
       },
       "orderId": "O-2",
-      "question": "No listed substitute keeps every rule and can be delivered. 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese does, but it is not on Valio's list, so a person decides. Order 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR?",
+      "question": "Order 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese for 180.10 €?",
       "simulated": [
         {
-          "what": "stock-out of 466375",
-          "sentence": "Simulated stock-out: Valio really has 11,603 bags; the demo sets it to zero."
+          "what": "stock-out of Gran Castelli mozzarella 125 g lactose free",
+          "sentence": "Stock-out simulated for the demo. Valio has 11,603 bags."
         }
       ]
     },
@@ -13001,7 +13083,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 101000,
-              "sentence": "Cheapest safe option; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13012,7 +13094,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.01 EUR",
+                  "value": "1.01 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -13146,7 +13228,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 110000,
-              "sentence": "90.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Heart Symbol label, which your Spend Pass does not ask for; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "90.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Heart Symbol and Hyvää Suomesta labels, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13157,7 +13239,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.10 EUR",
+                  "value": "1.10 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -13298,7 +13380,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 140000,
-              "sentence": "390.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "390.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13309,7 +13391,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.40 EUR",
+                  "value": "1.40 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -13436,7 +13518,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 156000,
-              "sentence": "550.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "550.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13447,7 +13529,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.56 EUR",
+                  "value": "1.56 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -13580,7 +13662,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 164000,
-              "sentence": "630.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "630.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13591,7 +13673,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.64 EUR",
+                  "value": "1.64 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -13718,7 +13800,7 @@ export const scene5: Snapshot = {
               "quantity": 1000,
               "unit": "ST",
               "totalCents": 165000,
-              "sentence": "640.00 EUR more than the cheapest; Valio delivered it as ordered every time in its records; Has the Hyvää Suomesta label, which your Spend Pass does not ask for; Footprint 1.1 kg CO2e per kg, a group average.",
+              "sentence": "640.00 € more than the cheapest and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13729,7 +13811,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "1.65 EUR",
+                  "value": "1.65 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -13855,7 +13937,7 @@ export const scene5: Snapshot = {
               "quantity": 48,
               "unit": "KI",
               "totalCents": 131472,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -13865,7 +13947,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "27.39 EUR",
+                  "value": "27.39 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -13996,7 +14078,7 @@ export const scene5: Snapshot = {
               "quantity": 100,
               "unit": "KI",
               "totalCents": 133200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -14006,7 +14088,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "13.32 EUR",
+                  "value": "13.32 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -14146,7 +14228,7 @@ export const scene5: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 137200,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -14156,7 +14238,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "6.86 EUR",
+                  "value": "6.86 €",
                   "grade": "attested_until",
                   "source": "Valio price API",
                   "note": "until 2026-12-31",
@@ -14289,7 +14371,7 @@ export const scene5: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 152400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -14299,7 +14381,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "7.62 EUR",
+                  "value": "7.62 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -14438,7 +14520,7 @@ export const scene5: Snapshot = {
               "quantity": 50,
               "unit": "KI",
               "totalCents": 156550,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown.",
               "facts": [
                 {
                   "field": "quantity",
@@ -14448,7 +14530,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "31.31 EUR",
+                  "value": "31.31 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -14573,7 +14655,7 @@ export const scene5: Snapshot = {
               "quantity": 200,
               "unit": "KI",
               "totalCents": 219400,
-              "sentence": "Order cut-off 12 Nov 15:00 has passed; the quantity is unknown. Blocked: 2194.00 EUR is over the hard cap of 2000.00 EUR.",
+              "sentence": "Order cut-off 12 Nov 15:00 has passed. The quantity is unknown. Blocked: 2,194.00 € is over the hard cap of 2,000.00 €.",
               "facts": [
                 {
                   "field": "quantity",
@@ -14583,7 +14665,7 @@ export const scene5: Snapshot = {
                 },
                 {
                   "field": "price",
-                  "value": "10.97 EUR",
+                  "value": "10.97 €",
                   "grade": "attested",
                   "source": "Valio price API",
                   "note": "catalog price, no end date"
@@ -14788,7 +14870,7 @@ export const scene5: Snapshot = {
               "productId": "463779",
               "name": "Valio Eila® semi skimmed milk drink 2,5 dl UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14801,7 +14883,7 @@ export const scene5: Snapshot = {
               "productId": "464198",
               "name": "Valio Eila® semi skimmed milk drink 5 dl lactose free",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14827,7 +14909,7 @@ export const scene5: Snapshot = {
               "productId": "464399",
               "name": "14 x Arla Low fat milkdrink 2 dl Suomesta UHT lactose free",
               "verdict": "rejected",
-              "sentence": "0.2 l packs, too small for 1000 litres.",
+              "sentence": "0.2 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14840,7 +14922,7 @@ export const scene5: Snapshot = {
               "productId": "464440",
               "name": "Valio semi skimmed milk 0,5 l lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14853,7 +14935,7 @@ export const scene5: Snapshot = {
               "productId": "465149",
               "name": "6 x Arla 5 dl lactose free low fat milk drink Suomi ESL",
               "verdict": "rejected",
-              "sentence": "0.5 l packs, too small for 1000 litres.",
+              "sentence": "0.5 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14866,7 +14948,7 @@ export const scene5: Snapshot = {
               "productId": "466288",
               "name": "Valio semi skimmed milk 2,5 dl lactose free UHT",
               "verdict": "rejected",
-              "sentence": "0.25 l packs, too small for 1000 litres.",
+              "sentence": "0.25 l packs, too small for 1,000 litres.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14931,7 +15013,7 @@ export const scene5: Snapshot = {
               "productId": "475534",
               "name": "Valio skimmed sour milk 1 l HYLA®",
               "verdict": "rejected",
-              "sentence": "Sour milk, not plain milk; Low lactose is not lactose free.",
+              "sentence": "Sour milk, not plain milk. Low lactose is not lactose free.",
               "facts": [],
               "isSubstitute": false,
               "supplierText": {
@@ -14994,7 +15076,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock."
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock."
       },
       "totalCents": 101000,
       "liveChecked": {
@@ -15069,7 +15151,7 @@ export const scene5: Snapshot = {
             },
             {
               "field": "price",
-              "value": "18.01 EUR",
+              "value": "18.01 €",
               "grade": "attested",
               "source": "Valio price API",
               "note": "catalog price, no end date"
@@ -15097,7 +15179,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list."
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16",
@@ -15130,7 +15212,7 @@ export const scene5: Snapshot = {
             },
             {
               "field": "price",
-              "value": "1.01 EUR",
+              "value": "1.01 €",
               "grade": "attested_until",
               "source": "Valio price API",
               "note": "until 2026-12-31",
@@ -15151,7 +15233,7 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested."
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested."
       },
       "spendPassId": "M-1",
       "deliverBy": "2026-11-16"
@@ -15181,7 +15263,7 @@ export const scene5: Snapshot = {
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Ignored the description of 463047, which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
+        "sentence": "Ignored the description of Arla Whole milk 1 l Suomesta low lactose Uht (463047), which talks to AI agents. Descriptions are never used for decisions. Low lactose is not lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -15191,14 +15273,14 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "prevHash": "8bc6df2185166536f3126bb8040844aaacf3246a7012b9c1ea2bba9baf2bb5fc",
-        "hash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d"
+        "hash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39"
       },
       {
         "seq": 3,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "May order 464306 alone: 1010.00 EUR is inside the auto limit of 1200.00 EUR and every fact it needs is attested.",
+        "sentence": "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 € and every fact it needs is attested.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -15209,15 +15291,15 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "auto-order"
         ],
-        "prevHash": "f5203296d508bbb9f5781c313a8983042b34561eadcab43d04ca517f00ac585d",
-        "hash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118"
+        "prevHash": "ec676f04bf23a3d594fca02a1d02954d43f395a6488ee9e465311075fe758d39",
+        "hash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519"
       },
       {
         "seq": 4,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "order",
-        "sentence": "Ordered 1000 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 1010.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 1,000 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 1,010.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass M-1, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -15232,7 +15314,7 @@ export const scene5: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -15245,27 +15327,27 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-1",
-        "prevHash": "d40c933b39a6e2d2783df97fa719d0dbf2c11d31d04536bdf322ea8f58e9c118",
-        "hash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca"
+        "prevHash": "ae5fd12bca90e6eb3f43e23f05a902a489e79f676d108fa900e910659857c519",
+        "hash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11"
       },
       {
         "seq": 5,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "presenter",
         "kind": "simulation",
-        "sentence": "Simulated a stock-out of 466375. Valio really has 11,603 bags; the demo sets it to zero.",
+        "sentence": "Simulated a stock-out of Gran Castelli mozzarella 125 g lactose free (466375) for the demo. Valio has 11,603 bags.",
         "facts": [],
         "disclosed": [],
         "ruleIds": [],
-        "prevHash": "8508fa5750c74c199c3a2f90146b13fac8333ffe254e563927999c4e0fcefaca",
-        "hash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6"
+        "prevHash": "722cf9a2148189b74bbe79d0f078037084d228df481f12a3af7faa5b19d20f11",
+        "hash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b"
       },
       {
         "seq": 6,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "agent:buyer-1",
         "kind": "request",
-        "sentence": "The agent asked for 200 BAG of 466375.",
+        "sentence": "The agent asked for 200 bags of Gran Castelli mozzarella 125 g lactose free.",
         "facts": [],
         "spendPassId": "M-1",
         "disclosed": [
@@ -15274,15 +15356,15 @@ export const scene5: Snapshot = {
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "8e5a12556098e0f49ffef1317c2fa91d0f1a26a7286b829fa8b491ddce5ccfc6",
-        "hash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f"
+        "prevHash": "2c26978daa7610c91ff4316623e02db9d8521fe105ab6fb80fefb0922380301b",
+        "hash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250"
       },
       {
         "seq": 7,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "465256 is a substitute that is not on Valio's list. Needs a person: the substitute is not on Valio's list.",
+        "sentence": "Spend Pass M-1 already placed 1,010.00 €, so this order of 180.10 € counts as 1,190.10 €. Needs a person: the substitute is not on Valio's list.",
         "facts": [
           {
             "field": "quantity",
@@ -15296,7 +15378,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -15309,15 +15391,15 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "09093b6cfbe8a708ffce899fd4bba115b0753af75e8e82712444a838028ec26f",
-        "hash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944"
+        "prevHash": "212d1467d69803c74b917d4b746805df36857f218369df070fe0912362f48250",
+        "hash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481"
       },
       {
         "seq": 8,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "owner",
         "kind": "approval",
-        "sentence": "Owner approved 10 ST of 465256 for 180.10 EUR.",
+        "sentence": "Owner approved 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 €.",
         "facts": [
           {
             "field": "quantity",
@@ -15331,7 +15413,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -15342,15 +15424,15 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-2",
-        "prevHash": "8a26fcbc7feb96c61a69b2ec4121f8c1cd9d25e527867d6018ab8cca3d673944",
-        "hash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1"
+        "prevHash": "6bbe8c5197f65cb48ed74375c00fcf4502966f2a111857b94cf4b0673b50c481",
+        "hash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3"
       },
       {
         "seq": 9,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "order",
-        "sentence": "Placed order O-2: 10 ST of 465256 Valio mozzarella-fontal e2,5 kg crumbled cheese for 180.10 EUR after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio reports 9999999999 for 465256, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Placed order O-2: 10 packs of Valio mozzarella-fontal 2.5 kg crumbled cheese (465256) for 180.10 € after the owner approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass M-1, and no price rose more than 2 %. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -15364,7 +15446,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "18.01 EUR"
+            "value": "18.01 €"
           }
         ],
         "spendPassId": "M-1",
@@ -15377,15 +15459,15 @@ export const scene5: Snapshot = {
           "ask-human"
         ],
         "orderId": "O-2",
-        "prevHash": "9d689b7fbdb3ae24dd4e1f03f3d0130d32caccbfaca18f0385bda34865dfede1",
-        "hash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125"
+        "prevHash": "1950e27ef591d86fc4861e33e49a1c775688fb5e70446dc6c05d9880e68a0eb3",
+        "hash": "168331ab57159968cf95918d35cc3bffe4cf4bba4780eb55af7432aa08e7660d"
       },
       {
         "seq": 10,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 300 ST of 464306 Valio Hyvä suomalainen Arki® Eila® semi skimmed milk drink 1 l lactose free for 303.00 EUR without a human. Stock quantity attested by Valio, contract price until 31 Dec 2026, delivery 16 Nov. Inside mandate M-1 (auto limit disclosed: 1200.00 EUR). Valio reports 9999999999 for 464306, a placeholder, not a real count; treated as in stock.",
+        "sentence": "Ordered 300 packs of Valio Hyvä suomalainen Arki Eila semi skimmed milk drink 1 l lactose free (464306) for 303.00 € without a person. Valio attests the stock and the contract price until 31 Dec 2026, delivery 16 Nov. Inside Spend Pass S-1-W46, whose disclosed auto limit is 1,200.00 €. Valio gives no real count of the stock, so Validio treats it as in stock.",
         "facts": [
           {
             "field": "quantity",
@@ -15400,10 +15482,10 @@ export const scene5: Snapshot = {
             "note": "until 2026-12-31",
             "source": "Valio price API",
             "until": "2026-12-31",
-            "value": "1.01 EUR"
+            "value": "1.01 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -15413,15 +15495,15 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-3",
-        "prevHash": "fefc560f96cb9a987914828b130f3e10ed850aa78a14710b3e4debfede5fc125",
-        "hash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0"
+        "prevHash": "168331ab57159968cf95918d35cc3bffe4cf4bba4780eb55af7432aa08e7660d",
+        "hash": "72c4762d95c70ea61f05afa0355924efe1e9c241454778b12c980f5a5358f3d1"
       },
       {
         "seq": 11,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio:steady-order",
         "kind": "order",
-        "sentence": "Ordered 137 ST of 463968 CASTELLI PARMESAN REGGIANO 125G PDO and 40 ST of 469648 Castelli parmigiano reggiano 200g block for 772.49 EUR without a human. Inside mandate M-1.",
+        "sentence": "Ordered 137 packs of Castelli Parmesan Reggiano 125 g PDO (463968) and 40 packs of Castelli parmigiano reggiano 200 g block (469648) for 772.49 € without a person. Inside Spend Pass S-1-W46.",
         "facts": [
           {
             "field": "quantity",
@@ -15435,7 +15517,7 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "3.77 EUR"
+            "value": "3.77 €"
           },
           {
             "field": "quantity",
@@ -15449,10 +15531,10 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "6.40 EUR"
+            "value": "6.40 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -15462,34 +15544,34 @@ export const scene5: Snapshot = {
           "auto-order"
         ],
         "orderId": "O-4",
-        "prevHash": "9e96a2dca52121fca003c17ac0b90c051c38844e747a2a7a6e2de41badf487e0",
-        "hash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e"
+        "prevHash": "72c4762d95c70ea61f05afa0355924efe1e9c241454778b12c980f5a5358f3d1",
+        "hash": "da485554d967337e48839a389fd0319287ec6e5ae01cd941618c1b63e722090d"
       },
       {
         "seq": 12,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 30 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now? Only 27 cartons in stock, the usual line is 30.",
+        "sentence": "Steady Order S-1, 30 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376): Only 27 cartons in stock, the usual line is 30. Findus Pancake, vegan ca 100x60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
         "facts": [],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
           "hardCapCents"
         ],
         "ruleIds": [],
-        "prevHash": "ce7741552138b756bd3f047fe70d94a91e82296c3c6c2ffeae1856c0e20cde1e",
-        "hash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93"
+        "prevHash": "da485554d967337e48839a389fd0319287ec6e5ae01cd941618c1b63e722090d",
+        "hash": "870b278bfdb5a3fb575fc458d10d7c207201dcf2f7196614fa157f15f2684820"
       },
       {
         "seq": 13,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "validio",
         "kind": "decision",
-        "sentence": "Steady Order S-1, 98 bags of 466375 Gran Castelli mozzarella 125g lactose free: Waits for you because of the flag below. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Only 0 bags in stock, the usual line is 98.",
+        "sentence": "Steady Order S-1, 98 bags of Gran Castelli mozzarella 125 g lactose free (466375): Waits for you: 26 % more per guest than usual. The last 2 weeks averaged 118 bags, the first 4 averaged 93.5, with 400 guests every week. That is 26 % more per guest (0.23 to 0.29 bags per guest). Renew anyway? Out of stock at Valio, the usual line is 98 bags.",
         "facts": [],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -15498,15 +15580,15 @@ export const scene5: Snapshot = {
         "ruleIds": [
           "ask-human"
         ],
-        "prevHash": "adc44dd1bc46730f62f2f7297ffeb204d37e391487265a7d0f0b1a6015f5cd93",
-        "hash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35"
+        "prevHash": "870b278bfdb5a3fb575fc458d10d7c207201dcf2f7196614fa157f15f2684820",
+        "hash": "a8534ace0931e823cbf5091a504b3acccf3b1f1a7a1b2db0f58c9302fdfe4168"
       },
       {
         "seq": 14,
         "at": "2026-11-14T10:00:00+02:00",
-        "actor": "kitchen:chef",
-        "kind": "order",
-        "sentence": "Ordered 27 KI of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for 905.31 EUR without a human. Inside mandate M-1.",
+        "actor": "validio",
+        "kind": "decision",
+        "sentence": "Spend Pass S-1-W46 already placed 1,075.49 €, so this order of 905.31 € counts as 1,980.80 €. Needs a person: 1,980.80 € is over the auto limit of 1,200.00 €.",
         "facts": [
           {
             "field": "quantity",
@@ -15520,30 +15602,45 @@ export const scene5: Snapshot = {
             "grade": "attested",
             "note": "catalog price, no end date",
             "source": "Valio price API",
-            "value": "33.53 EUR"
+            "value": "33.53 €"
           }
         ],
-        "spendPassId": "M-1",
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
           "hardCapCents"
         ],
         "ruleIds": [
-          "auto-order"
+          "ask-human"
         ],
         "orderId": "O-5",
-        "prevHash": "4454d1f5412f2a8fef47914f12409bce19853494513f972e8adb5dd947373b35",
-        "hash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43"
+        "prevHash": "a8534ace0931e823cbf5091a504b3acccf3b1f1a7a1b2db0f58c9302fdfe4168",
+        "hash": "7470e3702231120b8fe3d50f9387194adf5df6d01eed0de980ceed004e57b3b8"
       },
       {
         "seq": 15,
         "at": "2026-11-14T10:00:00+02:00",
         "actor": "kitchen:chef",
         "kind": "approval",
-        "sentence": "Chef accepted 27 cartons of 471376 Lagerblad Foods Pancake vegan 30 g / 3,0kg Fried Frozen for Steady Order S-1: 27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
-        "facts": [],
-        "spendPassId": "M-1",
+        "sentence": "Chef approved 27 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376) for 905.31 €.",
+        "facts": [
+          {
+            "field": "quantity",
+            "grade": "attested",
+            "note": "Stock at Valio",
+            "source": "Valio availability API",
+            "value": "27 KI"
+          },
+          {
+            "field": "price",
+            "grade": "attested",
+            "note": "catalog price, no end date",
+            "source": "Valio price API",
+            "value": "33.53 €"
+          }
+        ],
+        "spendPassId": "S-1-W46",
         "disclosed": [
           "autoLimitCents",
           "diet",
@@ -15551,13 +15648,48 @@ export const scene5: Snapshot = {
         ],
         "ruleIds": [],
         "orderId": "O-5",
-        "prevHash": "b7be107d496ff24015063bcdd24a111793d4d9577ab1210bb2a58fad170b3a43",
-        "hash": "edab13196d85cde4e0969de285658c3d6bccddaa70767841d4d82d59332b1d54"
+        "prevHash": "7470e3702231120b8fe3d50f9387194adf5df6d01eed0de980ceed004e57b3b8",
+        "hash": "9a65152797eacf08f9edde76c48cdc801a1324d68738ab077a85783e5c7feffe"
+      },
+      {
+        "seq": 16,
+        "at": "2026-11-14T10:00:00+02:00",
+        "actor": "validio",
+        "kind": "order",
+        "sentence": "Placed order O-5: 27 cartons of Lagerblad Foods Pancake vegan 30 g / 3 kg Fried Frozen (471376) for 905.31 € after the chef approved. Valio was asked again: every line is delivered by 16 Nov, before its order cut-off, inside Spend Pass S-1-W46, and no price rose more than 2 %.",
+        "facts": [
+          {
+            "field": "quantity",
+            "grade": "attested",
+            "note": "Stock at Valio",
+            "source": "Valio availability API",
+            "value": "27 KI"
+          },
+          {
+            "field": "price",
+            "grade": "attested",
+            "note": "catalog price, no end date",
+            "source": "Valio price API",
+            "value": "33.53 €"
+          }
+        ],
+        "spendPassId": "S-1-W46",
+        "disclosed": [
+          "autoLimitCents",
+          "diet",
+          "hardCapCents"
+        ],
+        "ruleIds": [
+          "ask-human"
+        ],
+        "orderId": "O-5",
+        "prevHash": "9a65152797eacf08f9edde76c48cdc801a1324d68738ab077a85783e5c7feffe",
+        "hash": "46ba28192b8e89592677bcc422e51caa419fc8b6f37e7598db897a0e6c143ab9"
       }
     ],
     "chain": {
       "ok": true,
-      "count": 15
+      "count": 16
     }
   },
   "steadyList": [
@@ -15603,7 +15735,7 @@ export const scene5: Snapshot = {
           "thisWeekQuantity": 177,
           "totalCents": 77249,
           "result": "split_renewed",
-          "sentence": "Only 137 packs in stock, the usual line is 200. So 40 of 469648 come from Valio's own substitute list. 18.49 EUR (2.5 %) more, inside your 5 % split limit.",
+          "sentence": "Only 137 packs in stock, the usual line is 200. So 40 packs of Castelli parmigiano reggiano 200 g block come from Valio's own substitute list. They cost 18.49 € (2.5 %) more, inside your 5 % split limit.",
           "flags": [
             {
               "kind": "stock_below",
@@ -15646,7 +15778,7 @@ export const scene5: Snapshot = {
           "thisWeekQuantity": 27,
           "totalCents": 90531,
           "result": "accepted",
-          "sentence": "27 of 30 cartons can come. 476523 Findus Pancake, vegan ca 100x60g would break a rule: Not gluten free: lists gluten cereals as contained; lists wheat as contained; Valio does not confirm its stock (Terminal). Order 27 now?",
+          "sentence": "Only 27 cartons in stock, the usual line is 30. Findus Pancake, vegan ca 100x60 g would break a rule. Not gluten free: lists gluten cereals as contained and lists wheat as contained. Valio does not confirm its stock, the goods sit at the supplier. Order 27 now?",
           "flags": [
             {
               "kind": "stock_below",
@@ -15663,7 +15795,7 @@ export const scene5: Snapshot = {
           "thisWeekQuantity": 98,
           "totalCents": 11368,
           "result": "flagged",
-          "sentence": "Waits for you because of the flag below.",
+          "sentence": "Waits for you: 26 % more per guest than usual.",
           "flags": [
             {
               "kind": "per_guest_up",
@@ -15672,7 +15804,7 @@ export const scene5: Snapshot = {
             },
             {
               "kind": "stock_below",
-              "sentence": "Only 0 bags in stock, the usual line is 98."
+              "sentence": "Out of stock at Valio, the usual line is 98 bags."
             }
           ],
           "acceptLabel": "Renew anyway",
@@ -15690,7 +15822,15 @@ export const scene5: Snapshot = {
             "ask-human"
           ]
         }
-      ]
+      ],
+      "steadyPass": {
+        "id": "S-1-W46",
+        "validFrom": "2026-11-09T00:00:00+02:00",
+        "validTo": "2026-11-16T00:00:00+02:00",
+        "autoLimitCents": 120000,
+        "hardCapCents": 200000,
+        "usedCents": 198080
+      }
     }
   },
   "demo": {
