@@ -76,11 +76,6 @@
     color: var(--v-faint);
     align-self: center;
   }
-  a.vr:hover .vr-value {
-    text-decoration: underline;
-    text-decoration-color: var(--v-faint);
-    text-underline-offset: 3px;
-  }
   @media (max-width: 760px) {
     .vr {
       grid-template-columns: minmax(0, 1fr) auto;
