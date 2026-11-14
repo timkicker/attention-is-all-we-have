@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, shallowReactive, watch } from 'vue'
 import { CdxButton, CdxField, CdxMessage, CdxSelect, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
-import { api, type Topic } from './api'
+import { api, lastSql, type Statement, type Topic } from './api'
 import { navigate, state, VIEWS, type ViewName } from './state'
 import Footer from './components/Footer.vue'
 import Wordmark from './components/Wordmark.vue'
@@ -10,6 +10,8 @@ import CompareView from './views/CompareView.vue'
 import TimeView from './views/TimeView.vue'
 import DroppedView from './views/DroppedView.vue'
 import CheckView from './views/CheckView.vue'
+import HoodView from './views/HoodView.vue'
+import SqlPanel from './components/SqlPanel.vue'
 import TimelineDrawer from './components/TimelineDrawer.vue'
 
 const PENDING: Record<ViewName, string> = {
@@ -22,6 +24,13 @@ const PENDING: Record<ViewName, string> = {
   atlas: 'Topics covered in Finnish, Swedish and English and how far apart the editions are.',
   hood: 'The SQL behind every panel with its time and row count.',
 }
+
+// The SQL panel under each view shows the statements of that view's latest data request.
+const SKIP = /^\/api\/(topics|stats|health|check\/recorded)\b/
+const sqlByView = shallowReactive<Partial<Record<ViewName, { source: string; statements: Statement[] }>>>({})
+watch(lastSql, (v) => {
+  if (v && !SKIP.test(v.path)) sqlByView[state.view] = { source: `${v.method} ${v.path}`, statements: v.statements }
+})
 
 const topics = ref<Topic[]>([])
 const loadError = ref('')
@@ -86,7 +95,13 @@ const today = new Date().toISOString().slice(0, 10)
             <TimeView v-else-if="v.name === 'time'" :topics="topics" />
             <DroppedView v-else-if="v.name === 'dropped'" :topics="topics" />
             <CheckView v-else-if="v.name === 'check'" />
+            <HoodView v-else-if="v.name === 'hood'" />
             <PendingView v-else :label="v.label" :detail="PENDING[v.name]" />
+            <SqlPanel
+              v-if="v.name !== 'hood' && sqlByView[v.name]"
+              :statements="sqlByView[v.name]!.statements"
+              :source="sqlByView[v.name]!.source"
+            />
           </div>
         </CdxTab>
       </CdxTabs>
