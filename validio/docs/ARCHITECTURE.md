@@ -11,7 +11,7 @@ File paths are relative to `src/backend/validio/` unless they start with `script
 | Component | Code | What it does |
 |:---|:---|:---|
 | Kitchen agent | `agent/buyer.py`, `agent/llm.py`, `agent/port.py`, `agent/holder.py` | A loop of model step and tool call. The port adds the Spend Pass and the idempotency key to every write. `scripts/agent.py` runs it for the demo |
-| Agent interface | `api/mcp_server.py`, `api/agent_v1.py`, `api/tools.py` | The same five tools over MCP at `/mcp` and over HTTP with OpenAPI 3.1 under `/agent/v1`. Both call the functions in `api/tools.py` |
+| Agent interface | `api/mcp_server.py`, `api/agent_v1.py`, `api/tools.py` | The same six tools over MCP at `/mcp` and over HTTP with OpenAPI 3.1 under `/agent/v1`. Both call the functions in `api/tools.py`. The connector server at `/mcp/c/<token>/` adds `connection_status` and signs for any MCP client (`api/connect.py`) |
 | Spend Pass | `policy/mandate.py` | The kitchen's signed permission as an SD-JWT, bound to the agent's key, with single-use nonces |
 | Catalog | `catalog/store.py`, `scripts/index_catalog.py` | Valio's product data, read only, indexed once into a SQLite file |
 | Valio client | `valio/client.py`, `valio/budget.py` | Price and availability from Valio's test API, live, recorded or replayed, at most 40 ids per request |
@@ -22,9 +22,9 @@ File paths are relative to `src/backend/validio/` unless they start with `script
 | Open Ledger | `audit/log.py`, `audit/sentences.py` | One sentence per decision, chained by SHA-256 |
 | Steady Orders | `standing/learn.py`, `standing/drift.py`, `standing/renew.py`, `api/steady.py` | The usual weekly order, Drift Watch and renewal |
 | Reader | `reader/service.py`, `reader/fake.py`, `reader/remote.py` | A note next to supplier text for the person on screen. It never decides |
-| Web app | `api/ui.py`, `api/app.py`, `src/frontend` | The web app's API under `/api` and the SvelteKit app: inbox, request page, phone approve, Steady Orders, ledger |
+| Web app | `api/activity.py`, `api/settings.py`, `api/accounts.py`, `api/ui.py`, `api/app.py`, `src/frontend` | The web app's API under `/api` and the SvelteKit app: Home, Activity, Rules, Agent and Settings, one account per kitchen |
 
-`docs/RULES.md` lists the four Cedar rules and the context fields they read. `test_rules_doc.py::test_every_rule_documented_with_its_inputs` keeps that page in line with the policy file.
+`docs/RULES.md` lists the four Cedar rules and the context fields they read. The Rules' optional per week limit is checked before Cedar, in `_judge` in `orders/service.py`, because it is the only limit that counts orders already placed. `test_rules_doc.py::test_every_rule_documented_with_its_inputs` keeps that page in line with the policy file.
 
 ## One request end to end
 
@@ -40,7 +40,7 @@ Scene 2 of the demo: "1000 litres of lactose-free milk by Monday, budget 1200 eu
 8. **Hard Lines.** `context_for` in `policy/decide.py` fills Cedar's context with whole numbers and yes/no values only. Cedar answers with a rule id: `auto-order`, `ask-human`, `never-break-diet` or `never-over-hard-cap`. A policy file that fails to parse stops the app at start (`test_policy.py::test_broken_policy_stops_the_app`). For 464306, 1,010.00 € is inside the auto limit of 1,200.00 € and every needed fact is attested, so the outcome is order alone.
 9. **Order service.** The agent calls `confirm_order`. `submit` in `orders/service.py` asks Valio again for every price and amount, asks Cedar again and lands in placed, waiting or blocked. A price the agent sends is never read. The idempotency key turns a retry into the same order. Valio's test API has no order call, so "placed" means placed in Validio.
 10. **Ledger.** Every step above writes one sentence with its facts into `audit/log.py`. Each entry carries the SHA-256 of the one before. For scene 2 the order's entry starts with "Ordered 1000 ST of 464306" (`test_orders.py::test_scene2_ledger_sentence`).
-11. **Web app approve.** The inbox and request page read `/api/inbox` and `/api/requests/{id}`. When Cedar says ask a person, the order waits. The owner opens `/approve/{id}` on the phone and `POST /api/orders/{id}/approve` asks Valio again. It refuses a price rise of more than 2 % and asks Cedar again, so a person can lift "ask" but never a block.
+11. **Web app approve.** Home and Activity read `/api/home`, `/api/activity` and `/api/activity/{id}`. When Cedar says ask a person, the order waits under Needs you. The owner opens it in Activity, types the approval code, and `POST /api/orders/{id}/approve` asks Valio again. It refuses a price rise of more than 2 % and asks Cedar again, so a person can lift "ask" but never a block.
 
 ## Scene 3 in sequence
 
