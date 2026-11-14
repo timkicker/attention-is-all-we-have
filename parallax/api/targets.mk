@@ -1,9 +1,10 @@
 # Track B targets (app). Owned by Track B; each stub is replaced when the step is built.
 API_PORT ?= 8000
-B_STUBS := record deploy
+B_STUBS := record
+HOST ?=
 BASE_URL ?=
 
-.PHONY: api test-b web web-build test-web e2e record-checks demo demo-check $(B_STUBS)
+.PHONY: api test-b web web-build test-web e2e record-checks demo demo-check deploy $(B_STUBS)
 
 api:
 	$(UV) run uvicorn api.main:app --host 127.0.0.1 --port $(API_PORT)
@@ -40,6 +41,12 @@ demo: web-build
 # Walk the demo script (PLAN section 0) against make demo, or against BASE_URL=https://... for a deployed instance.
 demo-check:
 	cd e2e && E2E_URL=$(or $(BASE_URL),http://127.0.0.1:$(API_PORT)) npx playwright test demo.spec.ts --workers 1 --reporter=./demo-reporter.ts
+
+# Copy the repo to HOST (root@<ip>) and start deploy/docker-compose.prod.yml there; .env and the seed stay on the server.
+deploy:
+	test -n "$(HOST)"
+	rsync -az --exclude .venv --exclude node_modules --exclude data --exclude .env ./ $(HOST):/opt/parallax/
+	ssh $(HOST) 'cd /opt/parallax && docker compose -f deploy/docker-compose.prod.yml --env-file .env up -d --build'
 
 $(B_STUBS):
 	@echo "$@: not built yet"; exit 1
