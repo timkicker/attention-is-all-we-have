@@ -92,10 +92,12 @@ export interface RankedOption {
   /** True when the option replaces the product the request named. */
   isSubstitute?: boolean;
   supplierText?: SupplierText;
-  /** The catalogue name without ® and shouting, sizes as "2.5 kg". */
-  displayName?: string;
   /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
+  displayName?: string;
+  /** The same as displayName. */
   shortName?: string;
+  /** The whole catalogue name without ® and shouting, sizes as "2.5 kg", for a detail line. */
+  fullName?: string;
   /** "10 × 2.5 kg", "200 bags", in the catalogue's sales unit. */
   qtyText?: string;
   /** "1,010.00 €" */
@@ -111,7 +113,10 @@ export interface SplitPart {
   unit: string;
   totalCents: number;
   onValioList: boolean;
+  /** At most about five words, the same as shortName. */
+  displayName?: string;
   shortName?: string;
+  fullName?: string;
   qtyText?: string;
   moneyText?: string;
 }
@@ -252,10 +257,12 @@ export interface OrderLine {
   isSubstitute: boolean;
   onValioList: boolean;
   facts: Fact[];
-  /** The catalogue name without ® and shouting, sizes as "2.5 kg". */
-  displayName?: string;
   /** At most about five words: "Lactose-free mozzarella 125 g". Brand only when two would read the same. */
+  displayName?: string;
+  /** The same as displayName. */
   shortName?: string;
+  /** The whole catalogue name without ® and shouting, sizes as "2.5 kg", for a detail line. */
+  fullName?: string;
   qtyText?: string;
   moneyText?: string;
   /** "delivery Mon 16 Nov" */
@@ -301,6 +308,8 @@ export interface SpendPass {
   /** The same fields as a person reads them: "auto limit", "never above", "diet". */
   disclosedText?: string[];
   hiddenText?: string[];
+  /** What placed orders under this Spend Pass add up to. */
+  usedCents?: number;
 }
 
 export type LedgerKind =
@@ -382,7 +391,10 @@ export interface SteadyLine {
   orderId?: string;
   /** The rules that decided the line. */
   ruleIds?: string[];
+  /** At most about five words, the same as shortName. */
+  displayName?: string;
   shortName?: string;
+  fullName?: string;
   /** "200 × 200 g", "98 bags" */
   usualQtyText?: string;
   qtyText?: string;
@@ -432,6 +444,8 @@ export interface SteadyOrderSummary {
 
 /** The few demo switches the presenter presses. Each one is simulated. */
 export interface DemoState {
+  /** False when no approve code is configured: approve needs no code then. */
+  codeRequired?: boolean;
   stockOut466375: boolean;
   /** What Valio really has of 466375, read from its availability answer at request time. */
   realStock466375?: { quantity: number; unit: string };

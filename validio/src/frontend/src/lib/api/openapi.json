@@ -212,6 +212,12 @@
       },
       "DemoState": {
         "properties": {
+          "codeRequired": {
+            "default": true,
+            "description": "false when no approve code is configured",
+            "title": "Coderequired",
+            "type": "boolean"
+          },
           "realStock466375": {
             "anyOf": [
               {
@@ -871,6 +877,7 @@
                 "type": "null"
               }
             ],
+            "description": "short, at most about five words, the same as shortName",
             "title": "Displayname"
           },
           "facts": {
@@ -880,6 +887,18 @@
             },
             "title": "Facts",
             "type": "array"
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the whole product name, tidied, for a detail line",
+            "title": "Fullname"
           },
           "isSubstitute": {
             "default": false,
@@ -1150,6 +1169,7 @@
                 "type": "null"
               }
             ],
+            "description": "short, at most about five words, the same as shortName",
             "title": "Displayname"
           },
           "facts": {
@@ -1158,6 +1178,18 @@
             },
             "title": "Facts",
             "type": "array"
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the whole product name, tidied, for a detail line",
+            "title": "Fullname"
           },
           "isSubstitute": {
             "anyOf": [
@@ -1628,6 +1660,18 @@
             ],
             "title": "Substitutes"
           },
+          "usedCents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "what placed orders under this Spend Pass add up to",
+            "title": "Usedcents"
+          },
           "validFrom": {
             "title": "Validfrom",
             "type": "string"
@@ -1684,6 +1728,28 @@
       },
       "SplitPartOut": {
         "properties": {
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fullname"
+          },
           "moneyText": {
             "anyOf": [
               {
@@ -1784,6 +1850,17 @@
             ],
             "title": "Acceptlabel"
           },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
           "flags": {
             "default": [],
             "items": {
@@ -1791,6 +1868,17 @@
             },
             "title": "Flags",
             "type": "array"
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fullname"
           },
           "history": {
             "anyOf": [

@@ -59,7 +59,7 @@ class SplitPlan:
 
     @property
     def breaks(self) -> list[str]:
-        return [f"{short_name(p.name_en)} would break a rule. {why[0].upper()}{why[1:]}" for p, why in self.refused]
+        return [_broke(short_name(p.name_en), why) for p, why in self.refused]
 
     @property
     def complete(self) -> bool:
@@ -178,3 +178,11 @@ def decide_split(plan: SplitPlan, mandate: Mandate, now: datetime, policy: Polic
         if worst is None or _WORST[d.outcome] > _WORST[worst.outcome]:
             worst = d
     return worst
+
+
+def _broke(name: str, why: str) -> str:
+    """"X would break a rule: not gluten free. Lists ..." The rule comes right after the colon, the web page reads it there."""
+    rule, _, rest = why.partition(": ")
+    rule = rule[:1].lower() + rule[1:]
+    return f"{name} would break a rule: {rule}" + (f". {rest[:1].upper()}{rest[1:]}" if rest else "")
+

@@ -1,5 +1,7 @@
 """Step 10, agent API and web app API over HTTP. Numbers from the blueprint (scenes 2 and 3)."""
 
+import re
+
 import pytest
 from conftest import CODE, TOKEN
 from fastapi.testclient import TestClient
@@ -169,9 +171,9 @@ def ask_mozzarella(client, holder):
 def test_demo_controls_need_token(client):
     assert client.post("/api/demo/stock-out").status_code == 403
     assert client.post("/api/demo/reset", headers={"X-Demo-Token": "wrong"}).status_code == 403
-    assert client.get("/api/demo").json() == {"stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    assert client.get("/api/demo").json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
     r = client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
-    assert r.json() == {"stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    assert r.json() == {"codeRequired": True, "stockOut466375": True, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
 
 
 def test_stockout_names_what_valio_really_has(client, holder, ctx):
@@ -224,7 +226,7 @@ def test_reset_starts_over(client, holder, ctx):
     ask_milk(client, holder)
     client.post("/api/demo/stock-out", headers={"X-Demo-Token": TOKEN})
     r = client.post("/api/demo/reset", headers={"X-Demo-Token": TOKEN})
-    assert r.json() == {"stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    assert r.json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
     assert client.get("/api/inbox").json() == []
     assert client.get("/api/ledger").json()["chain"] == {"ok": True, "count": 0}
     assert ask_milk(client, holder)["id"] == "R-1"
@@ -247,3 +249,37 @@ def test_reader_failure_falls_back_with_ledger_note(client, holder, ctx, monkeyp
     notes = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "reader_fallback"]
     assert len(notes) == 1
     assert notes[0]["facts"] == [{"field": "product", "value": "463047"}]
+
+
+def test_demo_says_whether_approve_needs_a_code(client, ctx):
+    assert client.get("/api/demo").json()["codeRequired"] is True
+    ctx.approve_code = ""
+    assert client.get("/api/demo").json()["codeRequired"] is False
+
+
+def test_spend_pass_shows_what_is_spent(client, holder):
+    req = ask_milk(client, holder)
+    assert client.get("/api/spend-passes/M-1").json()["usedCents"] == 0
+    client.post("/agent/v1/orders", headers=auth(holder), json={
+        "requestId": req["id"], "idempotencyKey": "milk-order-1",
+        "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]})
+    assert client.get("/api/spend-passes/M-1").json()["usedCents"] == 101000
+
+
+def _short(name):
+    # about five words; a size like "5 × 1 l" is not a word, and no product number shows
+    words = [w for w in name.split() if not re.fullmatch(r"[\d.,×x]+|[a-z]{1,2}", w)]
+    return len(words) <= 6 and not re.search(r"\b4\d{5}\b", name)
+
+
+def test_every_product_has_a_short_display_name(client, holder):
+    req = ask_milk(client, holder)
+    o = client.post("/agent/v1/orders", headers=auth(holder), json={
+        "requestId": req["id"], "idempotencyKey": "milk-order-1",
+        "choice": [{"productId": "464306", "salesQty": 1000, "priceCents": 101}]}).json()
+    full = client.get(f"/api/requests/{req['id']}").json()
+    opts = [p for ln in full["lines"] for p in ln["options"] + (ln.get("substitutes") or []) + (ln.get("beyondList") or [])]
+    assert opts and all(_short(p["displayName"]) for p in opts), [p["displayName"] for p in opts]
+    assert all(p["displayName"] == p["shortName"] and p["fullName"] for p in opts)
+    lines = client.get(f"/api/orders/{o['id']}").json()["lines"]
+    assert lines[0]["displayName"] == "Lactose-free semi-skimmed milk 1 l"

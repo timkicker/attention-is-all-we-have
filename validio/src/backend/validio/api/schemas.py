@@ -145,8 +145,9 @@ class RankedOptionView(Model):
     on_valio_list: bool | None = None
     is_substitute: bool | None = None
     supplier_text: SupplierTextView | None = None
-    display_name: str | None = None
+    display_name: str | None = Field(None, description="short, at most about five words, the same as shortName")
     short_name: str | None = None
+    full_name: str | None = Field(None, description="the whole product name, tidied, for a detail line")
     qty_text: str | None = None
     money_text: str | None = None
     reasons: list[str] | None = Field(None, description="the sentence as a list, one reason each")
@@ -155,8 +156,9 @@ class RankedOptionView(Model):
     def _text(self):
         d = _d()
         from ..text.format import display_name
-        self.display_name = self.display_name or display_name(self.name)
+        self.full_name = self.full_name or display_name(self.name)
         self.short_name = self.short_name or d.short_name(self.name)
+        self.display_name = self.short_name
         self.qty_text = self.qty_text or d.qty(self.quantity, self.unit, self.product_id)
         if self.money_text is None and self.total_cents is not None:
             self.money_text = d.money(self.total_cents)
@@ -211,7 +213,7 @@ class RequestLineView(Model):
         # two products that would read the same get their brand back
         opts = [*self.options, *(self.substitutes or []), *(self.beyond_list or [])]
         for o, n in zip(opts, _d().short_names([o.name for o in opts]), strict=True):
-            o.short_name = n
+            o.short_name = o.display_name = n
         return self
 
 
@@ -294,8 +296,9 @@ class OrderLineView(Model):
     is_substitute: bool = False
     on_valio_list: bool = False
     facts: list[FactView] = []
-    display_name: str | None = None
+    display_name: str | None = Field(None, description="short, at most about five words, the same as shortName")
     short_name: str | None = None
+    full_name: str | None = Field(None, description="the whole product name, tidied, for a detail line")
     qty_text: str | None = None
     money_text: str | None = None
     delivery_text: str | None = None
@@ -304,8 +307,9 @@ class OrderLineView(Model):
     def _text(self):
         d = _d()
         from ..text.format import display_name
-        self.display_name = self.display_name or display_name(self.name)
+        self.full_name = self.full_name or display_name(self.name)
         self.short_name = self.short_name or d.short_name(self.name)
+        self.display_name = self.short_name
         self.qty_text = self.qty_text or d.qty(self.quantity, self.unit, self.product_id)
         if self.money_text is None and self.total_cents is not None:
             self.money_text = d.money(self.total_cents)
@@ -365,6 +369,7 @@ class SpendPassView(Model):
     deliver_by: str | None = None
     substitutes: str | None = None
     split: SplitView
+    used_cents: int | None = Field(None, description="what placed orders under this Spend Pass add up to")
     disclosed: list[str]
     hidden: list[str]
     disclosed_text: list[str] | None = Field(None, description="the disclosed fields as a person reads them")
@@ -434,6 +439,7 @@ class LedgerHeadView(Model):
 
 
 class DemoState(Model):
+    code_required: bool = Field(True, description="false when no approve code is configured")
     stock_out_466375: bool = Field(alias="stockOut466375")
     real_stock_466375: RealStock | None = Field(
         None, alias="realStock466375", description="what Valio really has of 466375, read at request time")
