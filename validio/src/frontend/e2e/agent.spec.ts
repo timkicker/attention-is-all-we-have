@@ -41,6 +41,7 @@ for (const v of VIEWS) {
     // A fresh demo kitchen: rules saved, no agent yet.
     await expect(page.getByTestId("agent-state")).toHaveText("Not connected");
     await expect(page.getByTestId("rules-alone")).toContainText("1,200.00");
+    await expect(page.getByTestId("rules-week")).toContainText("8,000.00");
     await shoot("none");
 
     await page.getByTestId("agent-connect").click();
@@ -112,17 +113,25 @@ for (const v of VIEWS) {
   });
 }
 
-test("rules refuse orders alone above needs approval", async ({ page }) => {
+test("rules refuse alone above approval and a week below it", async ({ page }) => {
   await page.goto("/login");
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await demoLogin(page);
   await page.goto("/agent");
   await page.getByTestId("rules-edit").click();
-  await page.getByTestId("r-alone").fill("3000");
+  await page.getByTestId("r-alone").fill("6000");
   await page.getByTestId("code-input").fill(CODE);
   await page.getByTestId("code-submit").click();
   await expect(page.locator("#r-alone-problem")).toHaveText("Above needs approval.");
+  await page.getByTestId("r-alone").fill("900");
+  await page.getByTestId("r-week").fill("4000");
+  await page.getByTestId("code-submit").click();
+  await expect(page.locator("#r-week-problem")).toHaveText("Below needs approval.");
+  await page.getByTestId("r-week").fill("");
+  await page.getByTestId("code-submit").click();
+  await expect(page.getByTestId("rules-week")).toContainText("No limit");
+  await page.getByTestId("rules-edit").click();
   await page.getByRole("button", { name: "Cancel" }).click();
-  await expect(page.getByTestId("rules-alone")).toContainText("1,200.00");
+  await expect(page.getByTestId("rules-alone")).toContainText("900.00");
 });
