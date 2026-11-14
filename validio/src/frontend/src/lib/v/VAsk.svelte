@@ -227,6 +227,6 @@
   }
   :global(.dialog-card:has(.ask.phone)) {
     max-width: none;
-    border-radius: 12px 12px 0 0;
+    border-radius: var(--radius-modal) var(--radius-modal) 0 0;
   }
 </style>
