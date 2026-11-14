@@ -99,6 +99,9 @@
     cursor: pointer;
     transition: background-color var(--duration-fast) ease;
   }
+  .sw-line + .sw-line {
+    border-top: 1px solid var(--v-line);
+  }
   .sw-line:hover:not(:disabled) {
     background: var(--v-tint-hover);
   }
