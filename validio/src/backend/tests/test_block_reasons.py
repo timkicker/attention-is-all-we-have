@@ -51,3 +51,15 @@ def test_without_the_diet_flavoured_oat_drinks_are_not_candidates(catalog):
     kept, dropped = screen(parse_need("200 litres of oat drink by Monday", date(2026, 11, 14), catalog), catalog)
     names = [p.name_en.lower() for p in kept] + [r.product.name_en.lower() for r in dropped]
     assert kept and not any("cookie" in n or "chocolate" in n for n in names)
+
+
+def test_over_the_cap_names_amount_and_cap(client):  # noqa: F811
+    import re
+
+    req = ask(client, "3000 litres of lactose-free milk by Monday")
+    s = req["decision"]["sentence"]
+    m = re.fullmatch(r"Blocked: ([\d,.]+) € is over the 2,000\.00 € never-above limit\. Nothing was ordered\.", s)
+    assert m, s
+    cheapest = min(o["totalCents"] for ln in req["lines"] for o in ln["options"]
+                   if "over the hard cap" in o["sentence"])
+    assert m.group(1) == f"{cheapest / 100:,.2f}"

@@ -6,6 +6,7 @@ Best Pick ranks, Cedar decides per option. Nothing the agent says about price or
 """
 
 import logging
+import re
 import sqlite3
 from collections import Counter
 from dataclasses import dataclass
@@ -51,6 +52,12 @@ def _why_none(b: dict) -> str:
     blocked = [o for o in options if o["verdict"] == "blocked"] or options
     heads = Counter(group(reasons(o["sentence"]))[0] for o in blocked)
     head = heads.most_common(1)[0][0]
+    if head == "Over the hard cap":  # the cheapest that broke it, so the gap is never overstated
+        caps = [(int(m.group(1).replace(",", "").replace(".", "")), m.group(1), m.group(2)) for o in blocked
+                if (m := re.search(r"([\d,.]+) € is over the hard cap of ([\d,.]+ €)", o["sentence"]))]
+        if caps:
+            _, total, cap = min(caps)
+            return f"Blocked: {total} € is over the {cap} never-above limit."
     if head == "Outside the pass's product groups":
         return f"Blocked: {what} is outside the Spend Pass's product groups."
     if head.startswith("Not ") and head[4:] in {v for v in CLAIM_NAMES.values()}:
