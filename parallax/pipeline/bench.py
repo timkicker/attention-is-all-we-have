@@ -180,7 +180,7 @@ def render(cur) -> str:
         g("m_vectors"),
         g("align_ann_vs_exact"),
     )
-    lsc, src, jc, ev = g("l_scale"), g("sources"), g("judge_calls"), g("judge_eval")
+    lsc, src, jc, ev = g("l_scale"), g("sources"), g("judge_runs"), g("judge_eval")
     L = [
         "# Parallax at scale",
         "",

@@ -104,7 +104,7 @@ def run(topic_id: str, scope: str, limit: int | None) -> None:
         f"pairs judged={pairs} calls={gemini.STATS['calls']} 429s={gemini.STATS['r429']} failed={failed} "
         f"minutes={minutes}"
     )
-    prev = stat.get(cur, "judge_calls") or {}
+    prev = stat.get(cur, "judge_runs") or {}
     prev[scope] = {
         "pairs": pairs,
         "calls": gemini.STATS["calls"],
@@ -114,7 +114,7 @@ def run(topic_id: str, scope: str, limit: int | None) -> None:
         "model": eng.model_id,
         "prompt_version": eng.prompt_version,
     }
-    stat.put(cur, "judge_calls", prev)
+    stat.put(cur, "judge_runs", prev)
     cur.execute(
         "SELECT v.label, v.terms FROM verdict v JOIN claim a ON a.lang=v.a_lang AND a.h=v.a_h "
         "JOIN claim b ON b.lang=v.b_lang AND b.h=v.b_h WHERE v.a_lang='en' AND v.b_lang='de' "
