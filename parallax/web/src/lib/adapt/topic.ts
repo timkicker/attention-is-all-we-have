@@ -243,19 +243,19 @@ export function analyse(row: Row, anchor: string, present: Set<string>, starts: 
     .map((l) => ({ l, born: row.cells[l].born ?? '' }))
     .filter((x) => x.born && starts[x.l] && x.born.slice(0, 10) > addDays(starts[x.l]!, 30))
     .sort((x, y) => (x.born < y.born ? 1 : -1))[0]
-  if (changed) parts.push([{ text: copy.changedItIn(changed.l, changed.born.slice(0, 4)) }])
-  if (missing.length) parts.push([{ text: copy.notIn(missing) }])
   if (same.length) {
     const rest = counted.length - differs.length - missing.length
     parts.push([{ text: same.length === rest ? copy.sameInOthers(same.length) : copy.topic.sameInLangs(same) }])
   }
+  if (missing.length) parts.push([{ text: copy.topic.notInLower(missing) }])
+  if (changed) parts.push([{ text: copy.changedItIn(changed.l, changed.born.slice(0, 4)) }])
 
   return {
     id: row.row_id,
     lang: anchor as Lang,
     pageId: a.page_id,
     h: a.h,
-    say: focusOn({ text, spans: spansFor(text, marks) }),
+    say: { text, spans: spansFor(text, marks) },
     original: a.text ?? '',
     note: copy.note(...parts),
     differs,
@@ -270,18 +270,20 @@ export function readable(text: string, section: string): string {
   return tidy(section === '[infobox]' ? text.replace(/^[\p{L}_ ]{1,30}\d*:\s+/u, '') : text)
 }
 
-/** Marks past this many characters would fall under the 3-line clamp of a list row. */
-const FOCUS_AT = 200
+/** Marks past this many characters would fall under the 3-line clamp of a list row (wide screen; phones pass 90). */
+export const FOCUS_AT = 200
+export const FOCUS_AT_PHONE = 90
 
 /**
  * When the first mark starts past FOCUS_AT, start the text a little before it with "…" so the mark stays visible
  * under the row clamp. The full text stays on the statement page.
  */
-export function focusOn(say: MarkedText): MarkedText {
+export function focusOn(say: MarkedText, limit = FOCUS_AT): MarkedText {
   const first = say.spans[0]?.start ?? 0
-  if (first <= FOCUS_AT) return say
-  let at = say.text.lastIndexOf(' ', first - 60)
-  if (at < 0) at = first - 60
+  if (first <= limit) return say
+  const back = Math.min(60, Math.floor((limit * 2) / 3))
+  let at = say.text.lastIndexOf(' ', first - back)
+  if (at < 0) at = first - back
   const cut = at + 1
   return {
     text: `…${say.text.slice(cut)}`,
