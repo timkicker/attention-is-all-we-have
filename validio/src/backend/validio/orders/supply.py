@@ -19,6 +19,7 @@ from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
 from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
+from ..valio.client import ValioUnavailable
 from .service import (
     SEVERITY,
     IdempotencyConflict,
@@ -290,6 +291,11 @@ class SupplyService:
                     else:
                         req["status"] = "blocked"
                         self._log(req, mandate, "validio", "decision", decision["sentence"], decision["ruleIds"], None)
+            except ValioUnavailable as e:
+                # Valio did not answer twice: refused before any order, one entry in the ledger
+                req["lines"], req["status"] = [], "blocked"
+                req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": str(e)}
+                self._log(req, mandate, "validio", "decision", str(e), [], None)
             except (RequestError, CallBudgetExceeded, OrderError) as e:
                 # refused before a decision: stored as blocked, with the reason in the ledger
                 req["lines"], req["status"] = [], "blocked"
