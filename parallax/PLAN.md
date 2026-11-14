@@ -14,7 +14,7 @@ This file is the only briefing the coding agents get. Every task below carries w
 2. One date slider cuts every edition at the same instant with MariaDB's `FOR SYSTEM_TIME AS OF`.
 3. Claims are sentences. Each sentence life is one row of a system-versioned table whose period is the time Wikipedia stated it.
 4. A bge-m3 vector on that same table finds the matching sentence in another edition, in one SQL statement together with `AS OF`.
-5. Nemotron 3.5 Super VL judges each candidate pair (same, partial, contradicts, different) and marks differing numbers and terms.
+5. Gemini (`gemini-3.8-flash`) judges each candidate pair (same, partial, contradicts, different) and marks differing numbers and terms.
 6. "Dropped here, alive there" lists claims one edition removed while other editions still state them, with the date, the edit comment and the old revision.
 7. "Check an answer" splits a pasted AI answer into claims and labels each per edition: says, stopped saying, contradicts, not found.
 8. Breadth comes from MariaDB's datasets: every revision of 19,742 Finnish articles (M) as sentence lives and an atlas of 2,919 topics in fi, sv and en (S).
@@ -28,10 +28,10 @@ The demo opens with the cross-language comparison through time (decision Q1). We
 | Time | Screen | What is said or shown |
 |---|---|---|
 | 0:00 | Title card, wordmark "Parallax" | "Same war, seven Wikipedias. What does each one say and when did that change?" |
-| 0:08 | Compare, Winter War, anchor fi, today | Rows for the start of the war, Mainila, Finnish dead and the territory ceded. Number cells marked "differs": Finnish dead 26,662 fi, 22,830 sv, 25,904 en ru et uk; territory 9 % en, 13 % et. Mainila verbs: fi "lavasti" (staged), de "inszenierte" (staged), sv "kunnat bevisas" (proven), en "reported" plus "false flag", ru "по заявлению советской стороны" (by the Soviet side's account). Each match carries a Nemotron label chip |
+| 0:08 | Compare, Winter War, anchor fi, today | Rows for the start of the war, Mainila, Finnish dead and the territory ceded. Number cells marked "differs": Finnish dead 26,662 fi, 22,830 sv, 25,904 en ru et uk; territory 9 % en, 13 % et. Mainila verbs: fi "lavasti" (staged), de "inszenierte" (staged), sv "kunnat bevisas" (proven), en "reported" plus "false flag", ru "по заявлению советской стороны" (by the Soviet side's account). Each match carries a verdict chip from the Gemini judge |
 | 0:30 | Time slider dragged from 2006 to today | en Mainila cell changes from "the Soviets staged" to "an incident was reported" on 21 Aug 2009 (rev 309285088, comment "rewrote the mainila incident part to correspond with the article"). ru loses "инсценированный советской стороной" (staged by the Soviet side) on 9 Jul 2014 (rev 64106894). Life bars per edition under the row |
 | 0:55 | Dropped here, alive there | The ru clause dropped in 2014 while de, fi and sv still say the incident was staged. Click opens ru `?oldid=63917953`. Then the Finnish scale line: lives from 862,076 revisions, filter "unsourced" (lähteetön) |
-| 1:15 | Check an answer | A recorded answer (model and date on screen) about the Mainila shots. Each claim gets one chip per edition. One claim reads "en: stopped saying (2009)", another "not found in et". Nemotron is named as the judge, with its measured agreement on our gold set |
+| 1:15 | Check an answer | A recorded answer (model and date on screen) about the Mainila shots. Each claim gets one chip per edition. One claim reads "en: stopped saying (2009)", another "not found in et". Gemini is named as the judge, with its measured agreement on our gold set |
 | 1:35 | Under the hood | The one statement with `FOR SYSTEM_TIME AS OF` and `VEC_DISTANCE_COSINE`, its milliseconds and rows. Scale line: rows, distinct sentences, vectors, the Verda GPU throughput |
 | 1:50 | Footer and an "open on fi.wikipedia" button | "Evidence, not edits." The button opens the section on Wikipedia. Footer: not affiliated with the Wikimedia Foundation, CC BY-SA |
 
@@ -53,7 +53,7 @@ Every agent applies these in every commit. `make check-rules` tests the ones a s
 
 ## 1. Contract phase
 
-**Who:** Tim with GLaDOS, on `main`, 15:45 to 16:45. Meanwhile Abdallah and his teammate set up their laptops (Docker, `uv`, Node 22, `gh` logged in with access to the repo), each create an NVIDIA API key at build.nvidia.com and Track A's human submits the Verda credits form (Junction Hackerpacks).
+**Who:** Tim with GLaDOS, on `main`, 15:45 to 16:45. Meanwhile Abdallah and his teammate set up their laptops (Docker, `uv`, Node 22, `gh` logged in with access to the repo) and Track A's human submits the Verda credits form (Junction Hackerpacks). Tim sends each of them the Gemini API key by DM; it goes into their own `parallax/.env` and nowhere else.
 
 **Branches:** `track-a` and `track-b` start from the commit that adds this plan. When the contract lands on `main` (about 16:45), each track runs `git merge main` into its branch. Nobody force-pushes.
 
@@ -63,8 +63,8 @@ All paths are relative to the repo root.
 
 | File | Content |
 |---|---|
-| `parallax/pyproject.toml`, `uv.lock` | One Python 3.12 project for all tracks. Packages `contract`, `pipeline`, `engine`, `eval`, `api` at the top of `parallax/`. Dependencies declared once: fastapi, uvicorn, pymysql, numpy, pyarrow, mwparserfromhell, requests, openai, pyyaml, pytest, httpx, ruff; optional group `gpu` with sentence-transformers and torch. New dependencies only through Tim on `main` |
-| `parallax/.env.example` | `DB_HOST=127.0.0.1`, `DB_PORT=3307`, `DB_USER=parallax`, `DB_PASSWORD=`, `DB_NAME=parallax`, `ENGINE=fake`, `NVIDIA_API_KEYS=`, `EMBED_BACKEND=ollama`, `EMBED_URL=http://127.0.0.1:11434`, `SEED=v1` |
+| `parallax/pyproject.toml`, `uv.lock` | One Python 3.12 project for all tracks. Packages `contract`, `pipeline`, `engine`, `eval`, `api` at the top of `parallax/`. Dependencies declared once: fastapi, uvicorn, pymysql, numpy, pyarrow, mwparserfromhell, requests, openai, pyyaml, pytest, httpx, ruff (`openai` is also the Gemini client, through Gemini's OpenAI-compatible endpoint); optional group `gpu` with sentence-transformers and torch. New dependencies only through Tim on `main` |
+| `parallax/.env.example` | `DB_HOST=127.0.0.1`, `DB_PORT=3307`, `DB_USER=parallax`, `DB_PASSWORD=`, `DB_NAME=parallax`, `ENGINE=fake`, `GEMINI_API_KEY=`, `EMBED_BACKEND=ollama`, `EMBED_URL=http://127.0.0.1:11434`, `SEED=v1` |
 | `parallax/.gitignore` | `.env`, `data/`, `web/node_modules/`, `web/dist/`, `e2e/results/`, `*.sql.gz` |
 | `parallax/docker-compose.yml` | Service `db`: image `mariadb:12.3.3`, port `127.0.0.1:3307:3306`, volume `parallax-db`, config `db/my.cnf`, healthcheck `healthcheck.sh --connect` |
 | `parallax/db/my.cnf` | `max_allowed_packet=256M`, `mhnsw_max_cache_size=1073741824`, `secure_timestamp=NO`, `innodb_buffer_pool_size=2G`, `character-set-server=utf8mb4`, `default-time-zone='+00:00'` |
@@ -346,7 +346,7 @@ Track B targets (`api/targets.mk`): `api`, `web`, `web-build`, `test-b`, `test-w
 
 ## 2. Track A, data and engine
 
-Track A owns `parallax/pipeline/`, `parallax/engine/`, `parallax/eval/`, `parallax/docs/VERDA.md`, `parallax/docs/NEMOTRON.md`, `parallax/pipeline/targets.mk` and everything under `parallax/data/` (gitignored). It never edits `api/`, `web/`, `e2e/` or `contract/`. Its tests are in `pipeline/tests/`, `engine/tests/` and `eval/tests/`; `make test-a` runs them. Track A runs against its own local MariaDB and never waits for the app.
+Track A owns `parallax/pipeline/`, `parallax/engine/`, `parallax/eval/`, `parallax/docs/VERDA.md`, `parallax/docs/GEMINI.md`, `parallax/pipeline/targets.mk` and everything under `parallax/data/` (gitignored). It never edits `api/`, `web/`, `e2e/` or `contract/`. Its tests are in `pipeline/tests/`, `engine/tests/` and `eval/tests/`; `make test-a` runs them. Track A runs against its own local MariaDB and never waits for the app.
 
 Background facts for the whole track:
 
@@ -460,13 +460,13 @@ Background facts for the whole track:
 - **Done check:** `make align TOPIC=winterwar` prints rows per date; for today the en Mainila sentence has the de "inszenierte" sentence at rank 1 or 2. Test checks there are no duplicates and ranks run 1..5.
 - **Unblocks:** A9, B's Compare at anchor dates.
 
-### A9. Nemotron judge, splitter and gloss (21:30 to 23:00, 90 min)
+### A9. Gemini judge, splitter and gloss (21:30 to 23:00, 90 min)
 
-- **Goal:** the real engine (Q10).
-- **Files:** `engine/real.py`, `engine/nvidia.py`, `engine/prompts/judge-v1.txt`, `split-v1.txt`, `gloss-v1.txt`, `pipeline/judge.py`, `pipeline/gloss.py`, `engine/tests/test_real_parse.py`.
-- **Inputs:** A8, `NVIDIA_API_KEYS` in `.env` (comma-separated, one key per teammate).
+- **Goal:** the real engine (Q10). The team chose Gemini over Nemotron on Saturday afternoon as the safer bet.
+- **Files:** `engine/real.py` (class `GeminiEngine`, which `contract.engine.get_engine()` loads for `ENGINE=real`), `engine/gemini.py`, `engine/prompts/judge-v1.txt`, `split-v1.txt`, `gloss-v1.txt`, `pipeline/judge.py`, `pipeline/gloss.py`, `engine/tests/test_real_parse.py`.
+- **Inputs:** A8, `GEMINI_API_KEY` in `.env`. There is one key; Tim sends it to each human by DM. It is never committed, logged or pasted anywhere else.
 - **Steps:**
-  1. `engine/nvidia.py`: OpenAI client with `base_url=https://integrate.api.nvidia.com/v1`, model `nvidia/nemotron-3.5-super-vl-120b-a12b`, temperature 0, reasoning off through `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` (if the API rejects that field, put `/no_think` in the system prompt instead and note it in NEMOTRON.md). A token bucket of 35 requests/min per key, keys round robin, 429 backoff, timeouts of 60 s, one retry on unparseable JSON.
+  1. `engine/gemini.py`: the `openai` client (already a dependency, so no new package) on Gemini's OpenAI-compatible endpoint, `base_url=https://generativelanguage.googleapis.com/v1beta/openai/`, `api_key=GEMINI_API_KEY`, model `gemini-3.8-flash`, temperature 0, `response_format={"type": "json_object"}`, thinking kept low with `reasoning_effort="minimal"` (if the endpoint rejects that value, use `"low"` and note it in GEMINI.md). Rate limits: all of us share one key and so one quota, so a token bucket of 60 requests/min (constant `RPM` at the top of the file; set it to the limit AI Studio shows for the key) and at most 4 requests in flight. Retries: on 429 and 5xx wait `Retry-After` if present, else 2 s doubling up to 60 s, at most 5 attempts; after that the pair stays unjudged and the UI shows "candidate, not judged". Timeout 60 s per call, one extra retry on unparseable JSON. Log calls, 429s and retries, never the key.
   2. Judge prompt: one claim plus up to 5 candidates in other languages, numbered. Answer only JSON `{"results":[{"i":1,"label":"same|partial|contradicts|different","numbers":[["a","b"]],"terms":[["a","b"]]}]}`. Definitions in the prompt: same = states the same fact; partial = overlaps, one says more; contradicts = same subject, incompatible fact or number; different = another fact. Neutral: no judgement on which edition is right.
   3. Split prompt: an AI answer into claims of at most about 20 words, one fact each, in the answer's language, JSON list. Only for pasted answers (Q7).
   4. Gloss prompt: up to 20 sentences into English, JSON list in the same order.
@@ -483,9 +483,10 @@ Background facts for the whole track:
   1. Candidate pairs: the six spike anchors in en with their counterparts in fi, sv, de, ru and et, found by regex: start of the war (`^It began with a Soviet invasion of Finland on 30 November 1939`), League of Nations (`^The League of Nations deemed the attack illegal`), peace (`^Hostilities ceased in March 1940`), Mainila (`^On 26 November 1939, an incident was reported`), puppet government (`^On 1 December 1939, the Soviet Union formed a puppet government`), Raate road (`^The Battle of Raate Road`). Add uk and 12 random aligned pairs per label for 40 to 60 pairs.
   2. `eval/label.py`: a terminal loop that shows both sentences with glosses and asks the human for `same/partial/contradicts/different`. Store in `gold_pair` and `eval/gold.jsonl`.
   3. `eval/score.py`: judge accuracy and Cohen's kappa overall and per language; alignment R@1, R@5, R@10 against the gold `same` pairs; write `eval/report.json` and `stat` key `judge_eval`.
-  4. Write `judge-v2.txt` with the fixes the misses suggest (typical: partial vs same on sentences that pack two facts), rerun on the gold set only, keep the better version as default. Both numbers go into NEMOTRON.md.
+  4. Write `judge-v2.txt` with the fixes the misses suggest (typical: partial vs same on sentences that pack two facts), rerun on the gold set only, keep the better version as default. Both numbers go into GEMINI.md.
+  5. Optional, only if time allows before M2: run the same gold set through `nvidia/nemotron-3.5-super-vl-120b-a12b` as a second judge (your human creates an NVIDIA key at build.nvidia.com then) and add its accuracy and kappa next to Gemini's in `eval/report.json` and GEMINI.md. The app keeps Gemini as its only judge; skip this step without asking if A11 is due.
 - **Done check:** `make eval` prints `pairs=N accuracy=... kappa=...` per prompt version and per language. `uv run pytest eval/tests -q` checks the scorer on a toy set.
-- **Unblocks:** Nemotron form text, the agreement number in the demo.
+- **Unblocks:** Gemini form text, the agreement number in the demo.
 
 ### A11. Seed v3 for M2 (00:15 to 00:45, 30 min)
 
@@ -528,13 +529,13 @@ Background facts for the whole track:
 
 - **Goal:** AI answers for the Check view that do not depend on the network on stage.
 - **Files:** `pipeline/record_answers.py`, `pipeline/answers.yaml`.
-- **Steps:** 5 questions about the Winter War and Mainila (who fired the Mainila shots, how many Finnish soldiers died, how much territory Finland ceded, when the war ended, what the Terijoki government was). Ask each to `nvidia/nemotron-3.5-super-vl-120b-a12b` and to `google/gemma-4-31b-it` on the NVIDIA endpoint, temperature 0. Store question, model, date and answer in `data/answers.json` and hand the file to B (copy into `contract/fixtures/answers.json` through a contract commit by Tim).
-- **Done check:** 10 answers stored with model id and date.
+- **Steps:** 5 questions about the Winter War and Mainila (who fired the Mainila shots, how many Finnish soldiers died, how much territory Finland ceded, when the war ended, what the Terijoki government was). Ask each to `gemini-3.8-flash` and to `gemma-4-31b-it` through the same Gemini endpoint and key, temperature 0 (if the key does not list the Gemma model, take only Gemini and store 5 answers). Store question, model, date and answer in `data/answers.json` and hand the file to B (copy into `contract/fixtures/answers.json` through a contract commit by Tim).
+- **Done check:** 10 answers (or 5 without Gemma) stored with model id and date.
 - **Unblocks:** B6 recorded runs.
 
 ### A16. Side quest docs and final data (02:30 to 04:30)
 
-- **Goal:** `docs/NEMOTRON.md`, `docs/VERDA.md` (section 5) and the final dump.
+- **Goal:** `docs/GEMINI.md`, `docs/VERDA.md` (section 5) and the final dump.
 - **Steps:** numbers from `stat` and `eval/report.json` only; `make dump release SEED=final` at 04:30.
 - **Done check:** both docs exist, every number in them is in `stat` or `eval/report.json`; `make seed SEED=final checks` prints `checks OK`.
 - **Unblocks:** M3, the submission form.
@@ -658,7 +659,7 @@ Background facts for the whole track:
 
 - **Goal:** the public demo link (Q12) with one shared MariaDB (Q4).
 - **Files:** `deploy/docker-compose.prod.yml`, `deploy/Caddyfile`, `deploy/README.md`, `api/targets.mk` target `deploy`.
-- **Steps:** Track A's human creates the CPU instance (4 vCPU, 16 GB) in the same Verda account and adds Track B's SSH key. Compose: `db` (mariadb:12.3.3, same `my.cnf`), `api` (uvicorn serving `web/dist` as static files), `caddy` with HTTPS on `<ip>.sslip.io`. `.env` is copied over SSH and never committed. Load `seed-final` (or v3 until then). The NVIDIA keys on the server are only for live Check; recorded runs need no key.
+- **Steps:** Track A's human creates the CPU instance (4 vCPU, 16 GB) in the same Verda account and adds Track B's SSH key. Compose: `db` (mariadb:12.3.3, same `my.cnf`), `api` (uvicorn serving `web/dist` as static files), `caddy` with HTTPS on `<ip>.sslip.io`. `.env` is copied over SSH and never committed. Load `seed-final` (or v3 until then). The Gemini key on the server is only for live Check; recorded runs need no key.
 - **Done check:** `BASE_URL=https://<ip>.sslip.io make demo-check` passes; `curl -s https://<ip>.sslip.io/api/health` shows the seed name.
 - **Unblocks:** M3, the demo link in the submission.
 
@@ -679,17 +680,23 @@ Tim merges each track branch into `main` with `git merge --no-ff`; the tracks th
 | 01:00 | M2 real engine | A8 to A11, A12 loaded, seed v3 released | B4 to B7 | `ENGINE=real` Check on one recorded answer works; verdict chips visible in Compare; `make demo-check` green on seed v3; `make check-rules` green |
 | 05:00 | M3 freeze | A13 to A16, seed final | B8 to B12 | deployed instance on seed final; `make demo-check` against the URL twice from a fresh load; after this only fixes, each one with a test |
 | 07:00 | Recording | numbers checked against `stat` | B13 video helper | Tim records the 2:00 video, Track A checks every number on screen against `stat` and `eval/report.json` |
-| 09:30 | Submit | NEMOTRON form text | demo link | Tim submits: video, demo link, repo link, deck PDF; ticks MariaDB, Nemotron and Verda; posts the Verda summary link in Verda's Discord |
+| 09:30 | Submit | Gemini form text | demo link | Tim submits: video, demo link, repo link, deck PDF; ticks MariaDB, Gemini and Verda; posts the Verda summary link in Verda's Discord |
 
 ## 5. Side quest deliverables
 
-We take Nemotron (c-46) and Verda (c-56) (Q11). Only what ran gets claimed.
+We take "Best Use of Gemini API" (c-48, Google DeepMind) and Verda (c-56) (Q11; on Saturday afternoon Gemini replaced Nemotron, in Abdallah's words "stay with gemini since it is a safe bet"). Only what ran gets claimed.
 
-### Nemotron, c-46
+### Gemini, c-48
 
-- Model `nvidia/nemotron-3.5-super-vl-120b-a12b` in the working solution: it is the judge for every cross-edition pair and the claim splitter in Check, live in the demo (scene 1:15) and named on screen.
-- `docs/NEMOTRON.md` (Track A, A16): model id, what it does (labels same, partial, contradicts, different and extracts differing numbers and terms), why it matters (vector search finds the right neighbourhood but the exact twin only 57 % of the time at rank 1, so a judge has to decide between the top 5), how we improved its outputs (gold set of 40 to 60 human-labelled pairs, prompt v1 vs v2 with accuracy and kappa per language, JSON-only answers with one retry, reasoning off for latency, a verdict cache keyed by prompt version), latency and error handling (token bucket per key, backoff on 429, fallback chip "candidate, not judged").
-- Form text, about 120 words, written from NEMOTRON.md by Tim at 09:00.
+DeepMind asks for more than an LLM bolted onto an app. The submission has to explain four things: the problem and why it matters, how Gemini is integrated, what is innovative or technically impressive about that use and why Gemini is an important part of the solution.
+
+- Model `gemini-3.8-flash` through the Gemini API in the working solution: it is the judge for every cross-edition pair, the claim splitter for pasted answers in Check and the English gloss under every quoted sentence. It is live in the demo (scene 1:15) and named on screen.
+- `docs/GEMINI.md` (Track A, A16), one section per question of the challenge:
+  1. Problem: seven language editions tell the same war differently and change over time. Nobody can see where they differ or when a claim was dropped.
+  2. Integration: model id, endpoint and SDK (`openai` client on the OpenAI-compatible endpoint), the three prompts, JSON-only answers with one retry, the verdict cache keyed by prompt version, rate limiting and retries (token bucket, backoff on 429 and 5xx, fallback chip "candidate, not judged"), latency per call.
+  3. What is technically interesting: vector search in MariaDB finds the right neighbourhood but the exact twin only 57 % of the time at rank 1, so Gemini decides between the top 5 across seven languages and pulls out the numbers and terms that differ; every verdict sits next to the two original sentences and their `?oldid=` links.
+  4. Why Gemini matters here: without it there are candidates but no labels, no glosses and no Check. Measured, not claimed: the gold set of 40 to 60 human-labelled pairs, prompt v1 vs v2 with accuracy and kappa per language, plus the Nemotron comparison if A10 step 5 ran.
+- Form text, about 120 words, written from GEMINI.md by Tim at 09:00, following the same four points.
 
 ### Verda, c-56
 
@@ -711,7 +718,7 @@ If a merge point slips by more than 45 minutes, cut from the top of this list un
 7. Glosses beyond the rows shown in the demo.
 8. Deploy on Verda (B12); the demo link then points to the video and the repo.
 
-Never cut: Compare, Time, Dropped here alive there, Check with recorded runs and the Nemotron judge, the measured agreement number, Under the hood, the footer and the rules of section 0.
+Never cut: Compare, Time, Dropped here alive there, Check with recorded runs and the Gemini judge, the measured agreement number, Under the hood, the footer and the rules of section 0.
 
 ## 7. Kickoff prompts
 
@@ -724,8 +731,8 @@ You are the coding agent for Track A "data and engine" of Parallax, our MariaDB 
 
 1. git fetch && git switch track-a && git merge origin/main. Work only on branch track-a and push after every task.
 2. Read parallax/PLAN.md in full, then WORKING.md. Section 0 has the rules, section 1 the contract, section 2 your tasks A1 to A16 in order. Read parallax/contract/ (schema.sql, engine.py, openapi.yaml, SEED.md) before writing code.
-3. You own parallax/pipeline/, parallax/engine/, parallax/eval/, parallax/docs/VERDA.md, parallax/docs/NEMOTRON.md and parallax/data/ (gitignored). Never edit parallax/api/, parallax/web/, parallax/e2e/ or parallax/contract/. If the contract needs a change, stop and tell your human, who asks Tim.
-4. Setup: cd parallax && cp .env.example .env (your human fills NVIDIA_API_KEYS), uv sync, make db-up seed-mini test-contract.
+3. You own parallax/pipeline/, parallax/engine/, parallax/eval/, parallax/docs/VERDA.md, parallax/docs/GEMINI.md and parallax/data/ (gitignored). Never edit parallax/api/, parallax/web/, parallax/e2e/ or parallax/contract/. If the contract needs a change, stop and tell your human, who asks Tim.
+4. Setup: cd parallax && cp .env.example .env (your human pastes GEMINI_API_KEY, which Tim sent by DM; never commit or print it), uv sync, make db-up seed-mini test-contract.
 5. For each task: write the test first, implement, run the done check from the plan exactly, commit with a one-line lowercase message of 2 to 5 words (for example "add wikitext parser"), push, then report to your human in the form "DONE: A3 on track-a, <command> passes (<numbers>)".
 6. Rules you never break: never write to Wikipedia; every Wikimedia request through pipeline/wapi.py with the User-Agent from section 0, at most 3 in parallel, cached under parallax/data/raw/; never read or store user names from M or the API; no secrets or data in git; no home paths in files; neutral wording in anything the UI could show.
 7. Long jobs (fetch, M lives, embedding, judge) run in the background with progress lines; meanwhile continue with the next task that does not depend on them.
@@ -743,7 +750,7 @@ You are the coding agent for Track B "app" of Parallax, our MariaDB entry at Jun
 1. git fetch && git switch track-b && git merge origin/main. Work only on branch track-b and push after every task.
 2. Read parallax/PLAN.md in full, then WORKING.md. Section 0 has the product, the demo script and the rules, section 1 the contract, section 3 your tasks B1 to B13 in order. Read parallax/contract/ (schema.sql, engine.py, openapi.yaml, examples/, SEED.md) before writing code.
 3. You own parallax/api/, parallax/web/, parallax/e2e/, parallax/deploy/ and parallax/docs/DEMO.md. Never edit parallax/pipeline/, parallax/engine/, parallax/eval/ or parallax/contract/. Use the engine only through contract.engine.get_engine(). If the contract needs a change, stop and tell your human, who asks Tim.
-4. Setup: cd parallax && cp .env.example .env, uv sync, make db-up seed SEED=v1, cd web && npm ci. Until the 21:00 merge you work on seed v1 with ENGINE=fake; you never wait for Track A.
+4. Setup: cd parallax && cp .env.example .env (GEMINI_API_KEY can stay empty until the 01:00 smoke test, then your human pastes the key Tim sent by DM), uv sync, make db-up seed SEED=v1, cd web && npm ci. Until the 21:00 merge you work on seed v1 with ENGINE=fake; you never wait for Track A.
 5. For each task: write the test first, implement, run the done check from the plan exactly, commit with a one-line lowercase message of 2 to 5 words (for example "add compare view"), push, then report to your human in the form "DONE: B3 on track-b, <command> passes".
 6. UI rules you never break: words "differs", "not found in", "uses the term", "cites mostly", "stopped saying"; never "biased", "propaganda", "false", "wrong" or any ranking of editions; no editor names; glosses labelled "machine translation"; every quote links to its ?oldid=; the footer from section 0 on every page; Codex 2.7.0 only through the import map from jsDelivr, never copied into the repo or the bundle; no Wikipedia logo, globe, cdxIconLogo icon, Vector chrome or "Wiki" in the name; no button that edits anything, only "Open on <lang>.wikipedia" links. Run make check-rules before every push.
 7. No secrets in git, no home paths in files. Every view's SQL is stored in api/queries/ and every response carries the sql array.
