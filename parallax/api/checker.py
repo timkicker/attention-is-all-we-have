@@ -49,15 +49,44 @@ def default_langs(topic: str | None = None) -> list[str]:
     return sorted((r["lang"] for r in rows), key=lang_order)
 
 
-def nearest(vec: list[float], langs: list[str], topic: str | None = None) -> dict[str, list[dict]]:
-    """Per edition the 5 sentence lives nearest to `vec`, within `topic` when one is given."""
-    block = sqllog.query("check_nearest_topic" if topic else "check_nearest")
+NEAREST_K = 5  # LIMIT of the check_nearest queries
+
+
+def _nearest_per_lang(name: str, vec: list[float], langs: list[str], topic: str | None) -> dict[str, list[dict]]:
+    block = sqllog.query(name)
     text = "\nUNION ALL\n".join(f"({block.replace('{n}', str(i))})" for i in range(len(langs)))
     params = {"vec": json.dumps(vec), "topic": topic, **{f"lang_{i}": lang for i, lang in enumerate(langs)}}
     out: dict[str, list[dict]] = {lang: [] for lang in langs}
     for r in sqllog.run(text, params):
         out[r["lang"]].append(r)
     return out
+
+
+EXACT_MAX_LIVES = 1000  # an edition of the topic with at most this many lives is searched exactly, it is quicker
+
+
+def topic_sizes(topic: str) -> dict[str, int]:
+    """Lives per edition of `topic` over the whole history (steers nearest; results do not depend on it)."""
+    return {r["lang"]: int(r["n"]) for r in sqllog.run_file("check_topic_sizes", {"topic": topic})}
+
+
+def nearest(
+    vec: list[float], langs: list[str], topic: str | None = None, sizes: dict[str, int] | None = None
+) -> dict[str, list[dict]]:
+    """Per edition the 5 sentence lives nearest to `vec`, within `topic` when one is given.
+
+    Within a topic, a small edition is measured exactly (every life of it); a large one goes through the vector
+    index, and exactly after all when the index's nearest lives held fewer than 5 of the topic. sizes: topic_sizes,
+    computed once per check."""
+    if not topic:
+        return _nearest_per_lang("check_nearest", vec, langs, None)
+    sizes = topic_sizes(topic) if sizes is None else sizes
+    big = [lang for lang in langs if sizes.get(lang, 0) > EXACT_MAX_LIVES]
+    out = _nearest_per_lang("check_nearest_topic", vec, big, topic) if big else {}
+    exact = [lang for lang in langs if lang not in big or len(out[lang]) < NEAREST_K]
+    if exact:
+        out |= _nearest_per_lang("check_nearest_topic_exact", vec, exact, topic)
+    return {lang: out.get(lang, []) for lang in langs}
 
 
 def _evidence(r: dict, verdict, model: str, prompt_version: str) -> dict:
@@ -214,8 +243,10 @@ def run_check(
     try:
         claims = engine.split_claims(text)[:MAX_CLAIMS]
         vectors = embed_claims(engine, claims) if claims else []
+        sizes = topic_sizes(topic) if topic and claims else None
         judged_all = [
-            _judge_claim(engine, claim, nearest(vec, langs, topic)) for claim, vec in zip(claims, vectors, strict=True)
+            _judge_claim(engine, claim, nearest(vec, langs, topic, sizes))
+            for claim, vec in zip(claims, vectors, strict=True)
         ]
     except GeminiError as e:
         raise ModelUnavailable(str(e)) from e
