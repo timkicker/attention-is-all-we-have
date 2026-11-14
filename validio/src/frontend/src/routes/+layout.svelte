@@ -11,7 +11,7 @@
   import { CalendarSync, ChevronRight, Inbox, PanelLeft, ScrollText, ShieldCheck } from "@lucide/svelte";
   import { api, LIVE, needsToken } from "$lib/api/client";
   import { tokenPrompt } from "$lib/api/error";
-  import { owner } from "$lib/owner.svelte";
+  import { owner, session } from "$lib/owner.svelte";
   import { CLOCK, dayTime, nb } from "$lib/format";
   import { poll } from "$lib/poll";
   import { bump, chrome, demoActions } from "$lib/chrome.svelte";
@@ -41,6 +41,21 @@
   const PAGES = AREAS.flatMap((a) => a.pages);
 
   const path = $derived(page.url.pathname);
+  // The login page stands alone: no sidebar, no dock.
+  const door = $derived(path === "/login");
+
+  // Who is logged in, once; a 401 later (api/client.ts) clears it again.
+  onMount(() => {
+    api.account().then(
+      (a) => (session.account = a),
+      () => (session.account = null),
+    ).finally(() => (session.checked = true));
+  });
+  $effect(() => {
+    if (!session.checked) return;
+    if (!session.account && !door) void goto("/login", { replaceState: true });
+    else if (session.account && door) void goto("/", { replaceState: true });
+  });
   // The approve page has its own bottom bar: no dock under it.
   const approve = $derived(path.startsWith("/approve"));
 
@@ -63,12 +78,14 @@
 
   let waiting = $state(0);
   const count = async () => {
+    if (!session.account) return;
     const items = await api.inbox();
     waiting = items.filter((i) => i.status === "waiting").length;
   };
   onMount(() => poll(count));
   $effect(() => {
     void chrome.version;
+    if (!session.account) return;
     count().catch(() => {});
     api.demoState().then((d) => (chrome.stockIsOut = d.stockOut466375), () => {});
   });
@@ -143,6 +160,11 @@
   <span class="sr-only">, {n} waiting</span>
 {/snippet}
 
+{#if door}
+  <main class="v-main">
+    <div class="wrap">{@render children()}</div>
+  </main>
+{:else if session.account}
 <div class="shell" class:rail class:phone={chrome.phone}>
   {#if !chrome.phone}
     <aside class="side">
@@ -182,7 +204,7 @@
         {/each}
       </nav>
       <div class="foot">
-        <span class="kitchen">Hotel Espoo kitchen</span>
+        <span class="kitchen">{session.account.name}</span>
         <span class="clock num">{dayTime(CLOCK)}</span>
       </div>
     </aside>
@@ -195,7 +217,9 @@
   </main>
 </div>
 
-{#if chrome.phone && !approve}
+{/if}
+
+{#if session.account && !door && chrome.phone && !approve}
   <nav class="dock" aria-label="Main">
     {#each PAGES as p (p.href)}
       <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>

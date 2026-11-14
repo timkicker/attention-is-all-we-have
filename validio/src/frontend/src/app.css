@@ -633,3 +633,16 @@ body:has(.dialog-backdrop) .dock,
 body:has(.dialog-backdrop) [data-bar] {
   visibility: hidden;
 }
+
+/* ---------- forms (login, settings, rules) ---------- */
+.v-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.v-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}

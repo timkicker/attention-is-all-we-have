@@ -13,12 +13,19 @@ export async function stockOut(page: Page) {
   await page.getByTestId("stock-out").click();
 }
 
-/** From a clean state: the fixture's state lives in localStorage. */
+/** From a clean state: the fixture's state and session live in localStorage. */
 export async function fresh(page: Page) {
-  await page.goto("/");
+  await page.goto("/login");
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await demoLogin(page);
   await expect(page.getByTestId("inbox-R-1")).toBeVisible();
+}
+
+/** The login page's first button: a copy of the demo kitchen. */
+export async function demoLogin(page: Page) {
+  await page.getByTestId("try-demo").click();
+  await expect(page).not.toHaveURL(/\/login/);
 }
 
 /** Type the approval code into the shared field, if the page asks for it. */
