@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { agrees, comparable, tidy, analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { agrees, comparable, tidy, focusOn, analyse, changedWords, rank, type Analysed, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -55,7 +55,7 @@ describe('analyse', () => {
     expect(a.say.spans.map((s) => a.say.text.slice(s.start, s.end))).toEqual(['staged', '26,662'])
   })
   it('writes the note in reading order, never naming an edition that has no article', () => {
-    expect(noteText(a.note)).toBe('Swedish says 22,830 · English says it differently · English changed it in 2009 · Not in Russian · German same')
+    expect(noteText(a.note)).toBe('Swedish says 22,830 · English says it differently · English changed it in 2009 · Not in Russian · same in German')
   })
   it('drops rows where no edition differs', () => {
     const calm: Row = { ...row, cells: { fi: row.cells.fi, de: row.cells.de } }
@@ -145,5 +145,14 @@ describe('changes', () => {
   it('tidies wiki text leftovers', () => {
     expect(tidy('known as ""Shelling of Mainila"". &lt;...&gt; During the war')).toBe('known as "Shelling of Mainila". During the war')
     expect(tidy('A <...> B &amp; C')).toBe('A B & C')
+  })
+  it('starts a list row shortly before a mark that the clamp would hide', () => {
+    const text = 'word '.repeat(60) + 'MARK and the rest'
+    const at = text.indexOf('MARK')
+    const out = focusOn({ text, spans: [{ start: at, end: at + 4 }] })
+    expect(out.text.startsWith('…')).toBe(true)
+    expect(out.text.slice(out.spans[0].start, out.spans[0].end)).toBe('MARK')
+    expect(out.spans[0].start).toBeLessThan(80)
+    expect(focusOn({ text: 'short MARK', spans: [{ start: 6, end: 10 }] }).text).toBe('short MARK')
   })
 })

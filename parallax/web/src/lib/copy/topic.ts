@@ -1,6 +1,6 @@
 // Words of the topic Differences tab (05, 07) and the one-statement page (06). Owner: P2.
 // Finding words ("says it differently", "Not in", "same in the other ...") come from ./shared.
-import { changedFromTo, edition, fmtDate } from './shared'
+import { changedFromTo, edition, editions, fmtDate } from './shared'
 
 export const SUB_DIFFERENCES = 'Statements where other editions tell it differently, with the differing part'
 export const SUB_DIFFERENCES_MARK = 'marked'
@@ -49,3 +49,13 @@ export const LIST_AND = ' and '
 /** Toggle on a long quote. */
 export const MORE = 'more'
 export const LESS = 'less'
+
+/** "same in German" / "same in German and Swedish" (note line). */
+export function sameInLangs(langs: readonly string[]): string {
+  return `same in ${editions(langs)}`
+}
+
+/** "Show all 7" under the first changes. */
+export function showAllChanges(n: number): string {
+  return `Show all ${n}`
+}
