@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { noteText } from '../copy'
-import { analyse, changedWords, changesOf, cleanComment, headingOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
+import { analyse, changedWords, changesOf, cleanComment, headingOf, otherStatement, removalOf, type EditRaw, kindOf, numberText, numValue, readable, spansFor, type Cell, type Life, type Row } from './topic'
 
 const cell = (o: Partial<Cell>): Cell => ({
   status: 'matched', h: 'h', page_id: 1, text: 'x', gloss: null, dist: 0.1, verdict: null, marks: [],
@@ -111,5 +111,19 @@ describe('changes', () => {
     const long = 'word '.repeat(40).trim()
     expect(headingOf(long).length).toBeLessThan(100)
     expect(headingOf(long)).not.toMatch(/…/)
+  })
+  it('shows a removed sentence first, linked to the last revision that had it, and its removal', async () => {
+    const d = {
+      lang: 'ru', page_id: 33700, title: 'x', h: 'r1', text: 'инсценированный советской стороной', gloss: 'staged by the Soviet side',
+      born: '2012-12-24T20:44:59Z', died: '2014-07-09T10:22:55Z', died_rev: 64106894, died_comment: '/* Переговоры */ cut',
+      days: 562, reason: 'none' as const, time_precision: 'exact', last_rev: 63917953,
+      last_url: 'https://ru.wikipedia.org/w/index.php?oldid=63917953',
+      alive_in: [{ lang: 'sv', h: 's1', text: 'Den 26 november', verdict: null, oldid_url: 'https://sv.wikipedia.org/w/index.php?oldid=1' }],
+    }
+    const s = await otherStatement({} as never, {} as never, 'ru', 'r1', { text: d.text, gloss: null, url: null }, d)
+    expect(s.title).toBe('staged by the Soviet side')
+    expect(s.groups.map((g) => g.langs.join())).toEqual(['ru', 'sv'])
+    expect(s.groups[0].originals[0].url).toBe('https://ru.wikipedia.org/w/index.php?oldid=63917953')
+    expect(removalOf(d)).toMatchObject({ date: '2014-07-09', lang: 'ru', to: '', comment: 'cut', url: 'https://ru.wikipedia.org/w/index.php?oldid=64106894' })
   })
 })

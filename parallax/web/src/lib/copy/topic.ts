@@ -1,6 +1,6 @@
 // Words of the topic Differences tab (05, 07) and the one-statement page (06). Owner: P2.
 // Finding words ("says it differently", "Not in", "same in the other ...") come from ./shared.
-import { changedFromTo } from './shared'
+import { changedFromTo, edition, fmtDate } from './shared'
 
 export const SUB_DIFFERENCES = 'Statements where other editions tell it differently, with the differing part'
 export const SUB_DIFFERENCES_MARK = 'marked'
@@ -21,3 +21,27 @@ export function changedFromToAt(date: string, approx: boolean, lang: string, fro
   const line = changedFromTo(date, lang, from, to)
   return approx ? `By ${line}` : line
 }
+
+/** The date part of a "When it changed" row, linked to that revision: "21 Aug 2009" or "By 31 Dec 2022". */
+export function changeDate(date: string, approx: boolean): string {
+  return approx ? `By ${fmtDate(date)}` : fmtDate(date)
+}
+
+/** The rest of a "When it changed" row after its date. */
+export function changeRest(lang: string, from: string, to: string): string {
+  return ` · ${edition(lang)} changed “${from}” to “${to}”`
+}
+
+/** The rest of the row for a removal: " · Russian removed it". */
+export function removedRest(lang: string): string {
+  return ` · ${edition(lang)} removed it`
+}
+
+/** Title of the edition label link. */
+export function versionTitle(lang: string): string {
+  return `This version in the ${edition(lang)} Wikipedia`
+}
+
+/** Between edition names in a group label: "Finnish, Swedish and German". */
+export const LIST_SEP = ', '
+export const LIST_AND = ' and '

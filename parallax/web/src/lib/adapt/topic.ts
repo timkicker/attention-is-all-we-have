@@ -6,7 +6,7 @@
 // difference. Editions with no matching sentence at all are "Not in <edition>".
 
 import type { api as Api } from '../api/client'
-import type { CellRaw, CompareRes, CompareRowRaw, LifeRaw, MarkRaw, TopicsRes } from '../api/types'
+import type { CellRaw, CompareRes, CompareRowRaw, DroppedRowRaw, LifeRaw, MarkRaw, TopicsRes } from '../api/types'
 import * as copy from '../copy'
 import { fmtNum } from '../format'
 import { plain } from '../marks'
@@ -566,6 +566,93 @@ function numberSpans(text: string, marks: Mark[]): Span[] {
   return mergeSpans(spans)
 }
 
+/** The /api/dropped row of a removed sentence (the API also sends the last revision that had it). */
+type Dropped = DroppedRowRaw & { last_rev?: number | null; last_url?: string | null }
+
+async function findDropped(api: Client, topic: string, lang: string, h: string): Promise<Dropped | null> {
+  for (let offset = 0; offset < 1000; offset += 200) {
+    const r = await api.dropped({ topic, lang, min_days: 0, offset, limit: 200 })
+    if (!r.ok) return null
+    const hit = r.data.rows.find((x) => x.h === h)
+    if (hit) return hit as Dropped
+    if (r.data.rows.length < 200) return null
+  }
+  return null
+}
+
+/**
+ * A sentence that is not a Finnish statement on this date (removed, or from another edition): the sentence
+ * itself first, then how the editions that still have it tell it (through the Finnish counterpart when there
+ * is one), and its removal under "When it changed".
+ */
+export async function otherStatement(
+  api: Client,
+  ctx: TopicCtx,
+  lang: string,
+  h: string,
+  own: { text: string; gloss: string | null; url: string | null },
+  dropped: Dropped | null,
+) {
+  const say = dropped?.gloss ?? own.gloss ?? own.text
+  const url = dropped?.last_url ?? own.url
+  const first: StatementGroup = {
+    langs: [lang as Lang],
+    say: plain(say),
+    originals: [{ lang: lang as Lang, text: own.text, url }],
+    marked: [{ lang: lang as Lang, say: plain(own.text), url }],
+  }
+  let rest: ReturnType<typeof statementOf> | null = null
+  const fi = dropped?.alive_in.find((a) => a.lang === 'fi')
+  if (fi) {
+    const cmp = await api.compare({ topic: ctx.topic.topicId, as_of: ctx.date ?? undefined, anchor: 'fi', h: fi.h, limit: 1 })
+    const row = cmp.ok ? (cmp.data.rows.find((r) => r.cells.fi?.h === fi.h) ?? null) : null
+    if (cmp.ok && row) rest = statementOf(row, cmp.data.anchor, new Set(Object.keys(cmp.data.editions)), { lang: 'fi', text: fi.text, gloss: null })
+  }
+  let groups: StatementGroup[]
+  if (rest) {
+    groups = rest.groups
+      .map((g) => {
+        const keep = g.langs.map((l, i) => [l, i] as const).filter(([l]) => l !== lang)
+        return {
+          langs: keep.map(([l]) => l),
+          say: g.say,
+          originals: g.originals.filter((o) => o.lang !== lang),
+          marked: g.marked.filter((o) => o.lang !== lang),
+        }
+      })
+      .filter((g) => g.langs.length)
+  } else {
+    groups = (dropped?.alive_in ?? [])
+      .filter((a) => a.lang !== lang && isLang(a.lang))
+      .map((a) => ({
+        langs: [a.lang as Lang],
+        say: plain(a.text),
+        originals: [{ lang: a.lang as Lang, text: a.text, url: a.oldid_url }],
+        marked: [{ lang: a.lang as Lang, say: plain(a.text), url: a.oldid_url }],
+      }))
+  }
+  return {
+    title: say,
+    groups: [first, ...groups],
+    missing: (rest?.missing ?? []).filter((l) => l !== lang),
+    open: (rest?.open ?? []).filter((l) => l !== lang),
+  }
+}
+
+/** "When it changed" entry for the removal of a sentence. `to` is empty: the row reads "… removed it". */
+export function removalOf(d: Dropped): StatementChange | null {
+  if (!isLang(d.lang) || !d.died) return null
+  return {
+    date: d.died.slice(0, 10),
+    lang: d.lang,
+    from: copy.excerpt(d.gloss ?? d.text, 90),
+    to: '',
+    comment: cleanComment(d.died_comment),
+    url: oldid(d.lang, d.died_rev),
+    approx: (d as { time_precision?: string }).time_precision === 'snapshot',
+  }
+}
+
 /** /api/compare for this one statement (h filter) + /api/claim/:lang/:pageId/:h/timeline. */
 export async function loadStatement(
   api: Client,
@@ -584,7 +671,20 @@ export async function loadStatement(
   const own = lives.filter((l) => l.lang === lang && l.h === h)
   const row = cmp.data.rows.find((r) => r.cells[lang]?.h === h) ?? null
   const present = new Set(Object.keys(cmp.data.editions))
-  const s = statementOf(row, cmp.data.anchor, present, { lang, text: tl.data.claim.text, gloss: own[own.length - 1]?.gloss ?? null })
+  const last = own[own.length - 1]
+  const dead = !row && (!last || !!last.died)
+  const dropped = dead ? await findDropped(api, ctx.topic.topicId, lang, h) : null
+  const s = row
+    ? statementOf(row, cmp.data.anchor, present, { lang, text: tl.data.claim.text, gloss: last?.gloss ?? null })
+    : await otherStatement(api, ctx, lang, h, { text: tl.data.claim.text, gloss: last?.gloss ?? null, url: last ? oldid(lang, last.born_rev) : null }, dropped)
+  const edits = changesOf(
+    (tl.data as { edits?: EditRaw[] }).edits ?? [],
+    row ? Object.values(row.cells).flatMap((c) => c.marks.flatMap((m) => [m.this, m.this_en ?? '', m.other === 'None' ? '' : m.other])) : [],
+  )
+  const removal = dropped ? removalOf(dropped) : null
+  const changes = removal
+    ? [removal, ...edits.slice(0, MAX_CHANGES - 1)].sort((x, y) => (x.date < y.date ? 1 : x.date > y.date ? -1 : 0))
+    : edits
   const vm: WithoutCounts<StatementVM> = {
     topic: ctx.topic,
     date: ctx.date,
@@ -592,10 +692,7 @@ export async function loadStatement(
     groups: s.groups,
     missing: s.missing,
     open: s.open,
-    changes: changesOf(
-      (tl.data as { edits?: EditRaw[] }).edits ?? [],
-      row ? Object.values(row.cells).flatMap((c) => c.marks.flatMap((m) => [m.this, m.this_en ?? '', m.other === 'None' ? '' : m.other])) : [],
-    ),
+    changes,
     backHref: paths.differences(ctx.topic.qid),
   }
   return { ok: true, data: vm }
