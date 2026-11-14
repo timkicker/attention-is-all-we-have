@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query
 
 from api import match, sqllog
 from api.util import ApiError, iso, lang_order, oldid_url
+from contract.engine import claim_hash
 
 router = APIRouter()
 REASONS = ("none", "unsourced", "error", "speculation", "other")
@@ -120,6 +121,23 @@ def removed_parts(topic: str, rows: list[dict]) -> dict[tuple, dict]:
     return out
 
 
+def cut_words(text: str, span: dict) -> str:
+    """The removed words as a sentence of their own, the text pipeline.gloss_fill glosses for a partial cut."""
+    return text[span["start"] : span["end"]].strip().rstrip(",;:").strip()
+
+
+def add_cut_glosses(page: list[tuple[dict, list]], cuts: dict[tuple, dict]) -> None:
+    """Give each partial cut `words_en`, the English gloss of the removed words (None when there is none)."""
+    keys = {}
+    for r, _ in page:
+        span = cuts.get((r["lang"], r["page_id"], r["h"]))
+        if span is not None:
+            keys[(r["lang"], r["page_id"], r["h"])] = (r["lang"], claim_hash(cut_words(r["text"], span)))
+    gl = match.glosses(list(keys.values()))
+    for k, g in keys.items():
+        cuts[k]["words_en"] = gl.get(g)
+
+
 def _row(r: dict, gloss: str | None, alive: list[dict], removed: dict | None = None) -> dict:
     return {
         "lang": r["lang"],
@@ -189,6 +207,7 @@ def dropped(
         page = found[offset : offset + limit]
         glosses = match.glosses([(r["lang"], r["h"]) for r, _ in page])
         cuts = removed_parts(topic, [r for r, _ in page])
+        add_cut_glosses(page, cuts)
         rows = [
             _row(r, glosses.get((r["lang"], r["h"])), a, cuts.get((r["lang"], r["page_id"], r["h"]))) for r, a in page
         ]

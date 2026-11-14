@@ -136,6 +136,13 @@ def test_rows_carry_the_removed_part(client):
     body = client.get("/api/dropped", params={"topic": "winterwar", "limit": 200}).json()
     for r in body["rows"]:
         assert r["removed"] is None or 0 <= r["removed"]["start"] < r["removed"]["end"] <= len(r["text"])
+        assert r["removed"] is None or "words_en" in r["removed"]
+
+
+def test_cut_words_trims_the_trailing_comma():
+    from api.routes.dropped import cut_words
+
+    assert cut_words("Stalin hoped, staged, the end", {"start": 13, "end": 21}) == "staged"
 
 
 def test_scale_prefers_stored_stat_keys(monkeypatch):
