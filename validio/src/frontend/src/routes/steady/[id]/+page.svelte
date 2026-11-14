@@ -226,6 +226,11 @@
     font-size: var(--text-xs);
     color: var(--color-fg-secondary);
   }
+  @media (max-width: 760px) {
+    .line :global(.more-btn) {
+      min-height: 44px;
+    }
+  }
   .state {
     font-size: var(--text-sm);
     color: var(--color-fg-secondary);
