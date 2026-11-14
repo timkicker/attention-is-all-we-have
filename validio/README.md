@@ -4,6 +4,8 @@ Validio sits between a kitchen's purchasing agent and Valio Aimo's wholesale API
 
 The full plan with the reasoning behind each part is in [PROJECT_BLUEPRINT-validio.md](../PROJECT_BLUEPRINT-validio.md). The Hard Lines are listed in [docs/RULES.md](docs/RULES.md) and the click-through for the demo in [docs/DEMO.md](docs/DEMO.md).
 
+**In progress:** accounts per kitchen, settings and agent connect, see [docs/PLAN-ACCOUNTS.md](docs/PLAN-ACCOUNTS.md).
+
 ## Setup
 
 For a quick look without key or data you only need Node 20 or newer. From `validio/`:
