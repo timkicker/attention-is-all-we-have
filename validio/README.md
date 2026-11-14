@@ -74,7 +74,7 @@ Without anything else the pages run on the fixture in `src/lib/api/mock.ts`. Wit
 
 ![One request through the system](../docs/img/sequence.png)
 
-The agent calls `request_supply`. Validio checks the Spend Pass (an SD-JWT bound to the agent's key) and parses the need. It searches the catalog without any API call and sends at most 40 product ids to Valio for price and availability. It then grades every fact, ranks the safe options and asks Cedar for the decision. The decision goes into the Open Ledger and back to the agent, which confirms it with `confirm_order`. If Cedar says "ask", the owner answers on the phone. Before anything is placed Validio asks Valio again and refuses when the price rose by more than 2 % or a line can no longer be delivered.
+The agent calls `request_supply`. Validio checks the Spend Pass (an SD-JWT bound to the agent's key) and parses the need. It searches the catalog without any API call and sends at most 40 product ids to Valio for price and availability. It then grades every fact, ranks the safe options and asks Cedar for the decision. The decision goes into the Open Ledger and back to the agent, which confirms it with `confirm_order`. If Cedar says "ask", then the owner answers on the phone. Before anything is placed Validio asks Valio again and refuses when the price rose by more than 2 % or a line can no longer be delivered.
 
 Supplier text never reaches a decision. The reader in `validio/reader/` looks at descriptions and flags text that talks to AI agents, but its output is only shown. A test checks that matching, trust and policy never import it. A second test with a control proves that the comparison would notice if someone wired it in.
 
