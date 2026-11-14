@@ -31,7 +31,7 @@
         {title}
         {#if count}<VPill count label={String(count)} tone="wait" /><span class="sr-only">, {count}</span>{/if}
       </h2>
-      {#if link}<a class="ls-link" href={link.href} id="{id}-link" data-testid="{id}-link">{link.label}</a>{/if}
+      {#if link}<a class="ls-link hit" href={link.href} id="{id}-link" data-testid="{id}-link">{link.label}</a>{/if}
     </div>
   {/if}
   <Section class="v-card">

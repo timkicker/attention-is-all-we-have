@@ -611,6 +611,20 @@ details.fold .fold-body p + p {
   details.fold > summary {
     min-height: 44px;
   }
+  /* A finger's target on the small pieces (the kit's chips and segments, .hit on our own): the press area
+     grows to the phone's control height around the drawing, which keeps its size. */
+  :is(.hit, button.chip-body, .seg-pill) {
+    position: relative;
+  }
+  :is(.hit, button.chip-body, .seg-pill)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--height-control));
+    height: max(100%, var(--height-control));
+    transform: translate(-50%, -50%);
+  }
 }
 
 /* ---------- dialogs (P3) ---------- */
