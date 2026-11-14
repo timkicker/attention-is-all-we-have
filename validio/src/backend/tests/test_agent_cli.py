@@ -27,6 +27,6 @@ def test_local_scene4_prints_pane_and_writes_transcript(catalog, tmp_path, capsy
     set_ctx(None)
     assert cli.main(["--scene", "4", "--local"]) == 0
     out = capsys.readouterr().out
-    assert "agent -> renew_steady_order" in out and "waits for the chef:" in out
+    assert "agent -> renew_steady_order" in out and "waits for the owner:" in out
     assert (tmp_path / "scene-4.md").is_file()
     set_ctx(None)

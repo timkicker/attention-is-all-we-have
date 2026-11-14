@@ -1,5 +1,5 @@
 """Scene 4 for the kitchen's agent: it renews the Steady Order through the MCP tool renew_steady_order
-(lane D's POST /api/steady/{id}/renew behind it) and prints what was ordered and what waits for the chef."""
+(lane D's POST /api/steady/{id}/renew behind it) and prints what was ordered and what waits for the owner."""
 
 import io
 import json
@@ -44,11 +44,12 @@ async def test_pane_scene4_renews_and_names_what_waits(ctx):
     text, t, llm = await pane(ctx)
     assert [e.name for e in t.events if e.kind == "call"] == ["renew_steady_order"]
     assert "renewed        464306" in text and "split_renewed  463968" in text
-    assert "waits for the chef:" in text
+    assert "waits for the owner:" in text and "chef" not in text
+    assert "renewed 10:00" in text and "T10:00" not in text
     assert "471376" in text and "Order 27 now" in text
     assert "466375" in text and "Renew anyway" in text
     assert t.final == ("Steady Order S-1 is renewed: 464306 and 463968 are ordered alone, "
-                       "471376 and 466375 wait for the chef.")
+                       "471376 and 466375 wait for the owner.")
     assert "untrusted" not in json.dumps(llm.inputs).lower()
 
 

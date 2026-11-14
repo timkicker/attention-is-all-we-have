@@ -107,7 +107,8 @@ def _search(a, st: Style) -> list[str]:
 
 
 def _steady(a: dict, st: Style) -> list[str]:
-    out = [f"steady order {a.get('id')} {a.get('name', '')} ({a.get('weekday')}), renewed {a.get('renewedAt')}"]
+    when = display.time_text(a["renewedAt"]) if a.get("renewedAt") else "not yet"
+    out = [f"steady order {a.get('id')} {a.get('name', '')} ({a.get('weekday')}), renewed {when}"]
     for ln in a.get("lines", []):
         res = ln.get("result", "")
         mark = st.ok(f"{res:<14}") if res in ("renewed", "split_renewed", "accepted") else st.bad(f"{res:<14}")
@@ -121,7 +122,7 @@ def _steady(a: dict, st: Style) -> list[str]:
                 out.append(st.dim(f"  {'':14} flag {f.get('kind')}: {f['sentence']}"))
     waits = [ln for ln in a.get("lines", []) if ln.get("acceptLabel")]
     if waits:
-        out.append("  waits for the chef: " + ", ".join(
+        out.append("  waits for the owner: " + ", ".join(
             f"{ln['productId']} ({ln['acceptLabel']})" for ln in waits))
     return out
 

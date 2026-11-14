@@ -584,7 +584,7 @@ Reads an order and its state, which is `waiting`, `approved`, `placed`, `rejecte
 
 ### renew_steady_order
 
-Renews this week's Steady Order. Lines that match the kitchen's usual pattern are ordered alone and the rest wait for the chef with a reason and a button label. A second renewal in the same week orders nothing twice. The tool exists only over MCP and calls the web app's renewal route behind the Spend Pass check.
+Renews this week's Steady Order. Lines that match the kitchen's usual pattern are ordered alone and the rest wait for the owner with a reason and a button label. A second renewal in the same week orders nothing twice. The tool exists only over MCP and calls the web app's renewal route behind the Spend Pass check.
 
 <!-- check: mcp renew_steady_order -->
 ```json
