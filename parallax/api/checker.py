@@ -5,8 +5,9 @@ Labels per edition, at the instant `as_of` (default now):
   stopped_saying  no alive sentence is the same claim but one that ended before as_of was (the latest one is shown)
   contradicts     the judge found a sentence that contradicts it
   not_found       none of the above
-`same` ranks before `partial`, so an edition that once said the claim and now only partly says it reads
-"stopped saying" (en Mainila: "staged" until 2009, "an incident was reported" since).
+`same` ranks before `partial`, so an edition that once said the claim and now only partly says it, with a
+differing term or number, reads "stopped saying" (en Mainila: "staged" until 2009, "an incident was reported"
+since). A live `partial` without any differing term or number is a rewording and still reads "says".
 Every judged candidate is stored with the run, so a replay at any as_of needs no engine call.
 """
 
@@ -58,13 +59,23 @@ def _evidence(r: dict, verdict, model: str, prompt_version: str) -> dict:
         "died_rev": r["died_rev"],
         "died_comment": r["died_comment"],
         "dist": round(float(r["dist"]), 4),
-        "verdict": {"label": verdict.label, "model": model, "prompt_version": prompt_version},
+        "verdict": {
+            "label": verdict.label,
+            "model": model,
+            "prompt_version": prompt_version,
+            "numbers": [list(x) for x in verdict.numbers],
+            "terms": [list(x) for x in verdict.terms],
+        },
         "oldid_url": oldid_url(r["lang"], r["born_rev"]),
     }
 
 
 def _ts(value: str | None) -> dt.datetime | None:
     return dt.datetime.fromisoformat(value.replace("Z", "")) if value else None
+
+
+def _no_difference(verdict: dict) -> bool:
+    return "terms" in verdict and "numbers" in verdict and not verdict["terms"] and not verdict["numbers"]
 
 
 def label(judged: list[dict], as_of: dt.datetime) -> dict:
@@ -78,7 +89,10 @@ def label(judged: list[dict], as_of: dt.datetime) -> dict:
 
     if with_label(alive, "same"):
         return {"label": "says", "evidence": with_label(alive, "same")[:3]}
-    if with_label(dead, "same"):
+    # A live partial that differs in no term or number is the same statement reworded: the edition still says it.
+    # Runs stored before verdicts kept terms and numbers have no such keys and keep the old reading.
+    reworded = [e for e in with_label(alive, "partial") if _no_difference(e["verdict"])]
+    if with_label(dead, "same") and not reworded:
         return {"label": "stopped_saying", "evidence": with_label(dead, "same")[:1]}
     if with_label(alive, "partial"):
         return {"label": "says", "evidence": with_label(alive, "partial")[:3]}
