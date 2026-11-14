@@ -151,6 +151,8 @@ export interface StatementGroup {
   say: MarkedText
   /** The original-language text per edition, for "Show original wording". */
   originals: { lang: Lang; text: string; url: string | null }[]
+  /** Each edition's own wording with its side of the marks (shown with "Show original wording"). */
+  marked: { lang: Lang; say: MarkedText; url: string | null }[]
 }
 
 export interface StatementChange {
@@ -160,6 +162,8 @@ export interface StatementChange {
   to: string
   comment: string | null
   url: string | null
+  /** The date is a yearly snapshot: the change happened on or before it ("By ..."). */
+  approx: boolean
 }
 
 export interface StatementVM extends TopicPage {
@@ -170,6 +174,8 @@ export interface StatementVM extends TopicPage {
   missing: Lang[]
   /** Newest first. */
   changes: StatementChange[]
+  /** Editions not compared yet for this statement ("Not compared yet in ..."). */
+  open: Lang[]
   backHref: string
 }
 
@@ -229,6 +235,8 @@ export interface CheckResultVM extends TopicPage {
   /** The first ~120 characters of answer, ending in "…" when cut. */
   excerpt: string
   summary: { total: number; none: number; disputed: number; backed: number }
+  /** Every backed statement is backed by most editions; false says "at least one edition". */
+  mostBacked: boolean
   rows: CheckRow[]
   againHref: string
 }
@@ -244,6 +252,14 @@ export interface HoodVM {
   top1: number | null
   top5: number | null
   queryMs: number | null
+  /** Statements embedded per second (stat embed_rate.per_s). */
+  embedRate: number | null
+  /** The hardware and model that rate was measured on (stat embed_rate.gpu). */
+  embedGpu: string | null
+  /** Share of hand-checked pairs where the model's decision matched a person's (stat judge_eval.accuracy). */
+  judgeAccuracy: number | null
+  /** How many hand-checked pairs (stat judge_eval.n). */
+  judgeN: number | null
   /** The SQL shown under "The query". */
   sql: string
 }

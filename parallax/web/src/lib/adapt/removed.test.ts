@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { api as Api } from '../api/client'
 import { noteText } from '../copy'
 import type { TopicCtx } from './shared'
-import { countRemoved, cutOf, forgetRemoved, loadRemoved, PAGE, type DroppedRowRaw } from './removed'
+import type { DroppedRowRaw } from '../api/types'
+import { countRemoved, cutOf, forgetRemoved, loadRemoved, PAGE } from './removed'
 
 const ctx = (date: string | null = null): TopicCtx => ({
   topic: { qid: 'Q134949', topicId: 'winterwar', title: 'Winter War' },

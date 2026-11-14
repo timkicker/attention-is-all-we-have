@@ -4,20 +4,18 @@
 // milliseconds from the SQL log of the Differences list (/api/sql/compare, else one /api/compare call).
 import type { api as Api } from '../api/client'
 import type { SqlStatement, TopicsRes } from '../api/types'
-import type { HoodExtra } from '../hood/extra'
 import type { HoodVM, Result, TopicRef } from '../model'
 
 type Client = typeof Api
 
-/** The SQL log also names each statement's parameters (lists only by their length). */
-export type Param = string | number | null | { count: number }
-export type LoggedStatement = SqlStatement & { params?: Record<string, Param> }
+/** One bound parameter of a logged statement (a list only by its length). */
+type Param = NonNullable<SqlStatement['params']>[string]
 
 const VEC = /VEC_DISTANCE/i
 
 /** The statement that finds the closest statements: the vector statement that returned the most rows. */
-export function pickQuery(statements: LoggedStatement[]): LoggedStatement | null {
-  let best: LoggedStatement | null = null
+export function pickQuery(statements: SqlStatement[]): SqlStatement | null {
+  let best: SqlStatement | null = null
   for (const s of statements) if (VEC.test(s.text) && (!best || s.rows > best.rows)) best = s
   return best
 }
@@ -65,7 +63,7 @@ export function wrapLine(line: string, max = 72): string[] {
 }
 
 /** The statement as it ran: parameters written in, common indent removed, long lines wrapped at commas. */
-export function formatSql(s: LoggedStatement): string {
+export function formatSql(s: SqlStatement): string {
   const params = s.params ?? {}
   const text = s.text.replace(/%\((\w+)\)s/g, (m, name: string) => (name in params ? literal(params[name]) : m))
   const lines = text
@@ -84,7 +82,7 @@ const obj = (v: unknown): Record<string, unknown> | null =>
 /** Numbers measured offline and stored in table stat; null where a stat is missing. */
 export function fromStats(
   stats: Record<string, unknown> | null,
-): Pick<HoodVM, 'top1' | 'top5'> & HoodExtra {
+): Pick<HoodVM, 'top1' | 'top5' | 'embedRate' | 'embedGpu' | 'judgeAccuracy' | 'judgeN'> {
   const ev = obj(stats?.judge_eval)
   const align = obj(ev?.alignment)
   const embed = obj(stats?.embed_rate)
@@ -111,10 +109,10 @@ export function versionsOf(topics: TopicsRes | null, topicId: string): number | 
   return n
 }
 
-export async function loadHood(api: Client, from: TopicRef | null): Promise<Result<HoodVM & HoodExtra>> {
+export async function loadHood(api: Client, from: TopicRef | null): Promise<Result<HoodVM>> {
   const [topics, stats, logged] = await Promise.all([api.topics(), api.stats(), api.sqlPanel('compare')])
   const topicsRes = topics.ok ? topics.data : null
-  let statements: LoggedStatement[] = logged.ok ? logged.data.statements : []
+  let statements: SqlStatement[] = logged.ok ? logged.data.statements : []
   const loggedTopic = pickQuery(statements)?.params?.topic
   const topicId =
     from?.topicId ?? (typeof loggedTopic === 'string' ? loggedTopic : null) ?? topicsRes?.topics[0]?.topic_id ?? null

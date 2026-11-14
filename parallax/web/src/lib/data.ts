@@ -92,7 +92,7 @@ export async function startIngest(qid: string, since?: string): Promise<Result<I
   return guard(() => aStart.startIngest(api, qid, since))
 }
 
-/** Under ?mock=1, ?step=1 is wireframe 03 and ?step=2 is wireframe 04. */
+/** Under ?mock=1, ?step=1 is wireframe 03, ?step=2 is wireframe 04, ?step=3 has Russian rate-limited. */
 export async function getIngest(qid: string): Promise<Result<IngestVM>> {
   if (mock()) return fx.ingest(qid, Number(router.query.get('step') ?? 1))
   return guard(() => aStart.loadIngest(api, qid))

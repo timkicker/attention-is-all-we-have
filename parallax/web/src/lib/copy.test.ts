@@ -31,6 +31,11 @@ describe('copy', () => {
     expect(copy.checkSummary({ total: 6, none: 1, disputed: 2, backed: 3 })).toBe(
       'Of 6 statements, 1 is in no edition, 2 are disputed and 3 are backed by most editions',
     )
+    expect(copy.checkSummary({ total: 2, none: 0, disputed: 0, backed: 2 }, false)).toBe('Of 2 statements, 2 are backed by at least one edition')
+    expect(copy.disputedRemoved(3, 7, ['en', 'ru'], 2014)).toBe('Disputed · in 3 of 7, English and Russian removed it in 2014')
+    expect(copy.notCompared(['ru', 'et'])).toBe('Not compared yet in Russian and Estonian')
+    expect(copy.states.othersReady(0)).toBe('None of the others is ready yet')
+    expect(copy.states.othersReady(6)).toBe('The other six are ready')
     expect(copy.showingDate('2008-01-01', ['et', 'uk'])).toBe('Showing 1 Jan 2008. Estonian and Ukrainian had no article yet')
     expect(copy.asOf(null)).toBe('As of today')
     expect(copy.asOf('2008-01-01')).toBe('As of 1 Jan 2008')

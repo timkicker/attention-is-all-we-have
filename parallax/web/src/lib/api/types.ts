@@ -9,6 +9,8 @@ export interface SqlStatement {
   ms: number
   rows: number
   index: 'emb' | 'none'
+  /** Bound parameters; a list parameter is logged as its length. */
+  params?: Record<string, string | number | null | { count: number }>
 }
 
 export interface ApiErrorBody {
@@ -27,6 +29,8 @@ export interface MarkRaw {
   this: string
   /** Words in this edition's original text. */
   other: string
+  /** The English word(s) for `this` in the anchor's English gloss, when the API knows them. */
+  this_en?: string | null
 }
 
 // GET /api/health
@@ -107,6 +111,8 @@ export interface LifeRaw {
   died_comment: string | null
   time_precision: 'exact' | 'snapshot'
   verdict: VerdictRef | null
+  /** English gloss of text, when one exists. */
+  gloss?: string | null
 }
 export interface TimelineRes {
   claim: { lang: string; page_id: number; h: string; text: string; section?: string }
@@ -129,6 +135,8 @@ export interface DroppedRowRaw {
   died_comment: string | null
   days: number
   reason: Reason
+  /** Character range of text (or gloss) that was taken out, when known. */
+  removed?: { start: number; end: number } | null
   alive_in: { lang: string; h: string; text: string; verdict: VerdictRef | null; oldid_url: Url }[]
 }
 export interface DroppedRes {
@@ -160,6 +168,10 @@ export interface CheckRes {
   answer_date: string | null
   engine: 'fake' | 'real'
   claims: { idx: number; text: string; per_lang: Record<string, { label: CheckLabel; evidence: EvidenceRaw[] }> }[]
+  /** The checked answer text. */
+  text?: string
+  /** The question the recorded answer replied to, if any. */
+  question?: string | null
   sql: SqlStatement[]
 }
 export interface CheckReq {
