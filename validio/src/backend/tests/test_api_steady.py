@@ -134,7 +134,7 @@ def test_out_of_stock_drift_line_is_blocked_up_front(client):
     seed.set_stockout(seed.db_path(), True)
     mozz = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["466375"]
     assert mozz["result"] == "blocked" and "acceptLabel" not in mozz
-    assert mozz["sentence"] == "Not renewed: 26 % more per guest than usual and none in stock at Valio."
+    assert mozz["sentence"] == "Not renewed: none in stock at Valio. Also 26 % more per guest than usual."
     assert {f["kind"] for f in mozz["flags"]} >= {"per_guest_up", "stock_below"}
     assert mozz["history"]
     assert not any("Renew anyway" in f["sentence"] for f in mozz["flags"])
