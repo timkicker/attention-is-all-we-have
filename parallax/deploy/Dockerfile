@@ -1,10 +1,16 @@
 # The API image: the built web app (web/dist) served by uvicorn from the same origin. Build context: parallax/.
 FROM node:22-slim AS web
+# git fetches the Arlen ui-kit (gitignored vendor dir) at its pinned commit.
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app/web
 COPY web/package.json web/package-lock.json ./
 RUN npm ci
-COPY web/ ./
-COPY contract/ /app/contract/
+COPY web/scripts/ ./scripts/
+RUN npm run kit
+# Only the sources, never the host's node_modules, vendor or dist.
+COPY web/index.html web/vite.config.ts web/tsconfig.json web/svelte.config.js ./
+COPY web/src/ ./src/
+COPY web/tests/ ./tests/
 RUN npm run build
 
 FROM python:3.12-slim

@@ -12,7 +12,7 @@ VERSIONED = {"section_text", "claim", "claim_life_fi", "term_hit", "ref_stat"}
 
 
 def test_schema_lists_all_tables():
-    assert len(TABLES) == 18
+    assert len(TABLES) == 20
     assert {"claim", "article_vec", "verdict", "check_run", "stat"} <= set(TABLES)
 
 

@@ -1,0 +1,18 @@
+{
+  "01-start": "/?mock=1",
+  "02-start-search": {
+    "path": "/?mock=1&q=Mannerheim",
+    "type": "Mannerheim"
+  },
+  "03-ingest": "/t/Q152786/loading?mock=1",
+  "04-ingest-ready": "/t/Q152786/loading?mock=1&step=2",
+  "04b-ingest-rate-limited": "/t/Q152786/loading?mock=1&step=3",
+  "05-topic": "/t/Q134949?mock=1",
+  "06-statement": "/t/Q134949/s/fi/1256/8519fbaf22d33984?mock=1",
+  "07-topic-past": "/t/Q134949?mock=1&date=2008-01-01",
+  "08-removed": "/t/Q134949/removed?mock=1",
+  "09-check": "/t/Q134949/check?mock=1",
+  "10-check-result": "/t/Q134949/check/rec000000001?mock=1",
+  "11-hood": "/hood?mock=1&from=Q134949",
+  "12-states": "/dev/states?mock=1"
+}

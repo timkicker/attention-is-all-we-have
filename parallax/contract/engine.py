@@ -142,6 +142,18 @@ class FakeEngine:
                 out.append(Verdict(h=c.h, label="same" if normalise(claim) == normalise(c.text) else "different"))
         return out
 
+    def judge_or_guess(self, claim: str, claim_lang: str, candidates: list[Candidate]) -> list[tuple[Verdict, str]]:
+        """(verdict, model) per candidate: the fixture verdict with model_id where one exists, else
+        guess_verdicts() with FAKE_GUESS_MODEL. Used by the any-article ingest; judge() keeps its old fallback."""
+        table = _fixture("judge")
+        ch = claim_hash(claim)
+        known = self.judge(claim, claim_lang, candidates)
+        guessed = guess_verdicts(claim, candidates)
+        return [
+            (k, self.model_id) if f"{ch}:{c.h}" in table else (g, FAKE_GUESS_MODEL)
+            for c, k, g in zip(candidates, known, guessed, strict=True)
+        ]
+
     def gloss(self, texts: list[str], lang: str) -> list[str]:
         table = _fixture("gloss")
         out = []
@@ -149,6 +161,69 @@ class FakeEngine:
             hit = table.get(f"{lang}:{claim_hash(t)}")
             out.append(hit["text_en"] if hit else f"[no gloss] {t}")
         return out
+
+
+# Offline stand-ins for articles the fixtures do not know (any-article ingest with ENGINE=fake, EMBED_BACKEND=fake).
+# They only look at shared numbers, names and letters, so their results are plausible, never a real reading.
+FAKE_GUESS_MODEL = "fake-judge-similarity"
+_NUM = re.compile(r"\d+(?:[ \u00a0\u202f.,]\d{3})*")
+_NAME = re.compile(r"\b[^\W\d_][\w-]{3,}", re.U)
+
+
+def _numbers(text: str) -> list[str]:
+    return [re.sub(r"[ \u00a0\u202f.,]", "", m) for m in _NUM.findall(text)]
+
+
+def _names(text: str) -> set[str]:
+    """Capitalised words that do not start a sentence, cut to 5 letters so inflected forms still meet."""
+    out = set()
+    for m in _NAME.finditer(text):
+        w = m.group(0)
+        before = text[: m.start()].rstrip()
+        if w[0].isupper() and before and before[-1] not in ".!?:":
+            out.add(w[:5].lower())
+    return out
+
+
+def sketch_embed(texts: list[str]) -> list[list[float]]:
+    """Deterministic 1024-d vectors from hashed letter trigrams, numbers and names, L2-normalised.
+
+    Texts that share numbers and names come out near each other across editions, which is enough for a fake run."""
+    out = []
+    for t in texts:
+        v = np.zeros(DIM)
+        n = normalise(t)
+        feats = [(n[i : i + 3], 1.0) for i in range(max(0, len(n) - 2))]
+        feats += [(f"#{x}", 4.0) for x in _numbers(t)] + [(f"@{x}", 3.0) for x in _names(t)]
+        for f, w in feats:
+            d = hashlib.sha1(f.encode("utf-8")).digest()
+            v[int.from_bytes(d[:4], "little") % DIM] += w if d[4] & 1 else -w
+        norm = np.linalg.norm(v)
+        out.append((v / norm if norm else np.full(DIM, DIM**-0.5)).tolist())
+    return out
+
+
+def guess_verdicts(claim: str, candidates: list[Candidate]) -> list[Verdict]:
+    """A fake judge for pairs no fixture knows: shared numbers and names decide same, partial or different."""
+    nums_a, names_a = set(_numbers(claim)), _names(claim)
+    out = []
+    for c in candidates:
+        if normalise(claim) == normalise(c.text):
+            out.append(Verdict(h=c.h, label="same", note="fallback: same text"))
+            continue
+        nums_b, names_b = set(_numbers(c.text)), _names(c.text)
+        a, b = nums_a | names_a, nums_b | names_b
+        overlap = len(a & b) / len(a | b) if a | b else 0.0
+        only_a, only_b = sorted(nums_a - nums_b), sorted(nums_b - nums_a)
+        numbers = list(zip(only_a, only_b, strict=False))[:2] if nums_a & nums_b or names_a & names_b else []
+        if overlap >= 0.5 and not only_a and not only_b:
+            label = "same"
+        elif overlap >= 0.2:
+            label = "partial"
+        else:
+            label, numbers = "different", []
+        out.append(Verdict(h=c.h, label=label, numbers=numbers, note="fallback: shared numbers and names"))
+    return out
 
 
 def get_engine() -> Engine:

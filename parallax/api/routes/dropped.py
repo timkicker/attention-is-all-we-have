@@ -1,15 +1,22 @@
 """Dropped here, alive there: sentences one edition removed while other editions still state them."""
 
 import json
+import re
+import time
 
 from fastapi import APIRouter, Query
 
 from api import match, sqllog
 from api.util import ApiError, iso, lang_order, oldid_url
+from contract.engine import claim_hash
 
 router = APIRouter()
 REASONS = ("none", "unsourced", "error", "speculation", "other")
 SCALE_KEYS = ("fi_lives", "fi_dead", "fi_dead_1y", "fi_revisions")
+# Cosine distance up to which a sentence the dropping edit wrote counts as the same statement reworded.
+# Calibrated on seed v4 Winter War: up to about 0.12 the pairs are rewordings (a date added, a word swapped,
+# "Lopulta Neuvostoliitto lavasti ..." -> "Neuvostoliitto lavasti ..."); above it numbers and content start to change.
+REWORDED = 0.12
 
 
 def _pairs() -> dict[tuple[str, str], dict[tuple[str, str], dict]]:
@@ -59,7 +66,84 @@ def alive_in(dead: dict, pairs: dict, alive: dict) -> list[dict]:
     ]
 
 
-def _row(r: dict, gloss: str | None, alive: list[dict]) -> dict:
+TOKEN = re.compile(r"\S+")
+PUNCT = ".,;:!?\"'“”„«»()[]—–-"
+
+
+def _norm(word: str) -> str:
+    return word.strip(PUNCT).lower()
+
+
+def cut_span(text: str, after: str) -> dict | None:
+    """{start, end} character range of `text` that `after` leaves out, when `after` is `text` minus one run of words.
+
+    None when nothing or everything was cut, or when `after` changed more than one cut.
+    """
+    a = list(TOKEN.finditer(text))
+    na = [_norm(m.group()) for m in a]
+    nb = [_norm(w) for w in TOKEN.findall(after)]
+    if not nb or len(nb) >= len(na):
+        return None
+    head = 0
+    while head < len(nb) and na[head] == nb[head]:
+        head += 1
+    tail = 0
+    while tail < len(nb) - head and na[-1 - tail] == nb[-1 - tail]:
+        tail += 1
+    if head + tail < len(nb):
+        return None
+    cut = a[head : len(a) - tail]
+    if not any(na[head : len(a) - tail]):  # nothing, or only punctuation
+        return None
+    return {"start": cut[0].start(), "end": len(text) if tail == 0 else cut[-1].end()}
+
+
+def removed_parts(topic: str, rows: list[dict]) -> dict[tuple, dict]:
+    """{(lang, page_id, h): {start, end}} for dropped sentences the same edit kept with only some words cut.
+
+    A cut of three words or more that the edit moved into another sentence of the same page does not count.
+    """
+    keys = tuple({(r["lang"], r["page_id"], r["row_end"]) for r in rows})
+    if not keys:
+        return {}
+    born: dict[tuple, list[str]] = {}
+    for s in sqllog.run_file("dropped_successors", {"topic": topic, "keys": keys}):
+        born.setdefault((s["lang"], s["page_id"], s["row_start"]), []).append(s["text"])
+    out = {}
+    for r in rows:
+        texts = born.get((r["lang"], r["page_id"], r["row_end"]), [])
+        for t in texts:
+            span = cut_span(r["text"], t)
+            if span is None:
+                continue
+            words = [_norm(w) for w in TOKEN.findall(r["text"][span["start"] : span["end"]])]
+            part = f" {' '.join(words)} "
+            others = [f" {' '.join(_norm(w) for w in TOKEN.findall(o))} " for o in texts if o != t]
+            moved = len(words) >= 3 and any(part in o for o in others)
+            if not moved:
+                out[(r["lang"], r["page_id"], r["h"])] = span
+            break
+    return out
+
+
+def cut_words(text: str, span: dict) -> str:
+    """The removed words as a sentence of their own, the text pipeline.gloss_fill glosses for a partial cut."""
+    return text[span["start"] : span["end"]].strip().rstrip(",;:").strip()
+
+
+def add_cut_glosses(page: list[tuple[dict, list]], cuts: dict[tuple, dict]) -> None:
+    """Give each partial cut `words_en`, the English gloss of the removed words (None when there is none)."""
+    keys = {}
+    for r, _ in page:
+        span = cuts.get((r["lang"], r["page_id"], r["h"]))
+        if span is not None:
+            keys[(r["lang"], r["page_id"], r["h"])] = (r["lang"], claim_hash(cut_words(r["text"], span)))
+    gl = match.glosses(list(keys.values()))
+    for k, g in keys.items():
+        cuts[k]["words_en"] = gl.get(g)
+
+
+def _row(r: dict, gloss: str | None, alive: list[dict], removed: dict | None = None) -> dict:
     return {
         "lang": r["lang"],
         "page_id": r["page_id"],
@@ -77,18 +161,51 @@ def _row(r: dict, gloss: str | None, alive: list[dict]) -> dict:
         "last_rev": r["last_rev"],
         "last_url": oldid_url(r["lang"], r["last_rev"]),
         "alive_in": alive,
+        "removed": removed,
     }
 
 
 def scale() -> dict:
+    """The Finnish scale line. Stored stat keys win (pipeline.seed_stats); only missing keys are counted."""
     stored = {r["k"]: json.loads(r["v"]) for r in sqllog.run_file("dropped_stat")}
     if all(k in stored for k in SCALE_KEYS):
         return {k: int(stored[k]) for k in SCALE_KEYS}
     (counted,) = sqllog.run_file("dropped_scale")
-    return {k: int(counted[k]) for k in SCALE_KEYS}
+    return {k: int(stored[k]) if k in stored else int(counted[k]) for k in SCALE_KEYS}
+
+
+def reworded(topic: str, rows: list[dict]) -> set[tuple]:
+    """{(lang, page_id, h)} of dropped sentences the same edit only reworded: it wrote a sentence on the same page
+    within REWORDED cosine distance, and the change is not a partial cut (those stay listed with the cut part)."""
+    keys = tuple((r["lang"], r["page_id"], r["h"], r["row_end"]) for r in rows)
+    if not keys:
+        return set()
+    near = {
+        (x["lang"], x["page_id"], x["h"])
+        for x in sqllog.run_file("dropped_reworded", {"topic": topic, "keys": keys})
+        if x["dist"] is not None and float(x["dist"]) <= REWORDED
+    }
+    if not near:
+        return set()
+    cuts = removed_parts(topic, [r for r in rows if (r["lang"], r["page_id"], r["h"]) in near])
+    return near - set(cuts)
+
+
+_CACHE: dict[tuple, tuple[float, list]] = {}
+CACHE_S = 300  # every topic page asks for the Removed count; the list only changes when an ingest runs
 
 
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
+    key = (topic, lang, min_days)
+    hit = _CACHE.get(key)
+    if hit and time.monotonic() - hit[0] < CACHE_S:
+        return hit[1]
+    out = _topic_rows(topic, lang, min_days)
+    _CACHE[key] = (time.monotonic(), out)
+    return out
+
+
+def _topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
     lives = sqllog.run_file("dropped_topic", {"topic": topic, "lang": lang, "min_days": min_days})
     latest: dict[tuple, dict] = {}
     for r in lives:  # a sentence can be dropped twice; show its last life
@@ -102,11 +219,14 @@ def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
         for r in sqllog.run_file("dropped_alive", {"topic": topic, "hs": tuple(wanted)}):
             alive[(r["lang"], r["h"])] = r
     out = []
-    for r in sorted(latest.values(), key=lambda r: (-int(r["days"]), lang_order(r["lang"]), r["h"])):
+    by_lang = sorted(latest.values(), key=lambda r: (lang_order(r["lang"]), r["h"]))
+    for r in sorted(by_lang, key=lambda r: r["row_end"], reverse=True):  # newest removal first
         found = alive_in(r, pairs, alive)
         if found:
             out.append((r, found))
-    return out
+    # the vector check only for the rows still listed (a few hundred, not every dropped life)
+    gone = reworded(topic, [r for r, _ in out])
+    return [(r, found) for r, found in out if (r["lang"], r["page_id"], r["h"]) not in gone]
 
 
 @router.get("/api/dropped")
@@ -125,7 +245,11 @@ def dropped(
         found = topic_rows(topic, lang, min_days)
         page = found[offset : offset + limit]
         glosses = match.glosses([(r["lang"], r["h"]) for r, _ in page])
-        rows = [_row(r, glosses.get((r["lang"], r["h"])), a) for r, a in page]
+        cuts = removed_parts(topic, [r for r, _ in page])
+        add_cut_glosses(page, cuts)
+        rows = [
+            _row(r, glosses.get((r["lang"], r["h"])), a, cuts.get((r["lang"], r["page_id"], r["h"]))) for r, a in page
+        ]
         total = len(found)
     else:
         if lang not in (None, "fi"):

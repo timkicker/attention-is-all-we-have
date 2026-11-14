@@ -1,0 +1,16 @@
+# Any-article ingest: writable data/ for the Wikipedia cache and vectors, and bge-m3 through an ollama
+# sidecar on the compose network (not published). Once per box: docker compose ... exec ollama ollama pull bge-m3
+services:
+  api:
+    volumes: !override
+      - ../data:/app/data
+    environment:
+      EMBED_BACKEND: ollama
+      EMBED_URL: http://ollama:11434
+  ollama:
+    image: ollama/ollama:0.12.6
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+volumes:
+  ollama:
