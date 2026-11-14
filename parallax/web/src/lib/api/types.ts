@@ -134,6 +134,7 @@ export interface DroppedRowRaw {
   died_rev: number
   died_comment: string | null
   days: number
+  time_precision?: string
   reason: Reason
   /** Character range of text (or gloss) that was taken out, when known. */
   removed?: { start: number; end: number } | null
