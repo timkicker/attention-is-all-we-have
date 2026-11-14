@@ -59,3 +59,8 @@ export function sameInLangs(langs: readonly string[]): string {
 export function showAllChanges(n: number): string {
   return `Show all ${n}`
 }
+
+/** "not in Swedish" (note line, after the variants). */
+export function notInLower(langs: readonly string[]): string {
+  return `not in ${editions(langs)}`
+}
