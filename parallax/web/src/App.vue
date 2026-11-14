@@ -8,6 +8,7 @@ import Wordmark from './components/Wordmark.vue'
 import PendingView from './views/PendingView.vue'
 import CompareView from './views/CompareView.vue'
 import TimeView from './views/TimeView.vue'
+import DroppedView from './views/DroppedView.vue'
 import TimelineDrawer from './components/TimelineDrawer.vue'
 
 const PENDING: Record<ViewName, string> = {
@@ -82,6 +83,7 @@ const today = new Date().toISOString().slice(0, 10)
               @open="(lang, cell) => navigate({ claim: `${lang}:${cell.page_id}:${cell.h}` })"
             />
             <TimeView v-else-if="v.name === 'time'" :topics="topics" />
+            <DroppedView v-else-if="v.name === 'dropped'" :topics="topics" />
             <PendingView v-else :label="v.label" :detail="PENDING[v.name]" />
           </div>
         </CdxTab>
