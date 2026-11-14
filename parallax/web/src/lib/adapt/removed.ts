@@ -91,7 +91,7 @@ export function toRow(qid: string, r: DroppedRowRaw): RemovedRow {
   return {
     id: `${r.lang}:${r.page_id}:${r.h}`,
     say,
-    note: note(removedNote(r.lang, what, r.died ?? ''), alive.length ? [{ text: stillIn(alive) }] : []),
+    note: note(removedNote(r.lang, what, r.died ?? '', r.time_precision !== 'snapshot'), alive.length ? [{ text: stillIn(alive) }] : []),
     href: paths.statement(qid, r.lang, r.page_id, r.h),
   }
 }

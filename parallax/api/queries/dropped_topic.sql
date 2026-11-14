@@ -14,4 +14,4 @@ WHERE d.topic_id = %(topic)s
   AND (%(lang)s IS NULL OR d.lang = %(lang)s)
   AND DATEDIFF(d.row_end, d.row_start) >= %(min_days)s
   AND NOT EXISTS (SELECT 1 FROM claim c WHERE c.lang = d.lang AND c.page_id = d.page_id AND c.h = d.h)
-ORDER BY days DESC, d.lang, d.h
+ORDER BY d.row_end DESC, d.lang, d.h
