@@ -5,7 +5,7 @@ import pytest
 from contract.engine import claim_hash
 from pipeline.parse import ParseCache, parse
 
-DATA = Path(__file__).parent / "data"
+DATA = Path(__file__).parent / "fixtures"
 
 
 def texts(name: str) -> list[str]:
