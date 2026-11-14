@@ -74,9 +74,17 @@
   const rejected = $derived(r?.status === "rejected");
   // The facts Validio confirmed, for the chosen row's fold.
   const CHECKED = new Set(["attested", "attested_until", "consistent"]);
-  function checkedLine(o: RankedOption): string {
-    const f = o.facts.filter((x) => CHECKED.has(x.grade) && !/^(description|key_ingredients)$/.test(x.field) && (x.valueText ?? x.value) != null);
-    return f.length ? `Checked: ${f.map((x) => `${fieldWord(x.field)} ${x.valueText ?? valueWord(x.field, x.value)}`).join(", ")}.` : "";
+  /** One line per confirmed fact, each from its own API field. */
+  function checkedFacts(o: RankedOption): string[] {
+    return o.facts
+      .filter((x) => CHECKED.has(x.grade) && !/^(description|key_ingredients)$/.test(x.field) && (x.valueText ?? x.value) != null)
+      .map((x) => `${fieldWord(x.field)}: ${x.valueText ?? valueWord(x.field, x.value)}`);
+  }
+  /** The API's reasons, one per line, without the one the row's short text already says. */
+  function whyLines(o: RankedOption): string[] {
+    const all = o.reasons?.length ? o.reasons : [o.sentence];
+    const head = (t: string) => t.toLowerCase().replace(/[^a-z ]/g, "").split(" ").slice(0, 3).join(" ");
+    return o.shortText ? all.filter((t) => head(t) !== head(o.shortText!)) : all;
   }
   // The owner's states carry the rule in the chosen row's fold, not in the head.
   const ruleInFold = $derived(["waiting", "ordered", "approved", "rejected"].includes(r?.status ?? ""));
@@ -111,8 +119,13 @@
           <summary data-testid="why-{o.productId}"><ChevronRight class="chev" aria-hidden="true" />Why this product</summary>
           <div class="fold-body" data-testid="why-body-{o.productId}">
             <p>{o.fullName ?? o.name}, product {o.productId}.</p>
-            {#each o.reasons?.length ? o.reasons : [o.sentence] as why (why)}<p>{nb(why)}</p>{/each}
-            {#if checkedLine(o)}<p>{nb(checkedLine(o))}</p>{/if}
+            {#each whyLines(o) as why (why)}<p>{nb(why)}</p>{/each}
+            {#if checkedFacts(o).length}
+              <p class="why-h">Checked</p>
+              <ul class="why-facts" data-testid="why-checked-{o.productId}">
+                {#each checkedFacts(o) as f (f)}<li>{nb(f)}</li>{/each}
+              </ul>
+            {/if}
             {#if ruleInFold}<p data-testid="request-rule" id="request-rule">Rule: {rule}</p>{/if}
           </div>
         </details>
@@ -190,7 +203,8 @@
   <div class="blocks">
     <div class="lanes">
       <VLane
-        name="Total"
+        name={rejected ? "Proposed" : "Total"}
+        testid="lane-total"
         value={r.moneyText ?? money(r.totalCents)}
         sub={rejected ? "Nothing added" : r.usedBeforeCents ? `${money(r.usedBeforeCents)} ordered before` : undefined}
       >
@@ -283,4 +297,6 @@
   .pane :global(.day:first-child) {
     padding-top: 0;
   }
+  .why-h { margin-top: 8px; color: var(--v-muted); }
+  .why-facts { margin: 0; padding: 0; list-style: none; }
 </style>
