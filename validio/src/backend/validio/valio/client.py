@@ -31,9 +31,36 @@ class NotRecorded(ReplayMiss):
 class ValioUnavailable(RuntimeError):
     """Valio timed out, could not be reached or answered 5xx, twice. Nothing was ordered."""
 
+    reason_code = "valio_down"
+    message = "Valio did not answer. Nothing was ordered."
+
     def __init__(self, cause: Exception | None = None):
-        super().__init__("Valio did not answer. Nothing was ordered.")
+        super().__init__(self.message)
         self.cause = cause
+
+
+class ValioBusy(ValioUnavailable):
+    """Valio answered 429: too many calls just now. Nothing was ordered; a minute later a retry may work."""
+
+    message = "Valio is busy. Nothing was ordered. Try again in a minute."
+
+
+class ValioRefused(ValioUnavailable):
+    """Valio answered 401 or 403: it refused Validio's key. Nothing was ordered; asking again will not help
+    until the key is fixed."""
+
+    message = "Valio refused Validio's key. Nothing was ordered."
+
+
+def _refusal(e: Exception) -> ValioUnavailable | None:
+    """429, 401 and 403 as Valio not answering, never a raw error (they used to become a 500)."""
+    if isinstance(e, httpx.HTTPStatusError):
+        code = e.response.status_code
+        if code == 429:
+            return ValioBusy(e)
+        if code in (401, 403):
+            return ValioRefused(e)
+    return None
 
 
 def _transient(e: Exception) -> bool:
@@ -105,12 +132,16 @@ class ValioClient:
         try:
             return self._call_once(endpoint, requested, ids)
         except httpx.HTTPError as e:
+            if (r := _refusal(e)) is not None:
+                raise r from e
             if not _transient(e):
                 raise
         time.sleep(self.backoff)
         try:
             return self._call_once(endpoint, requested, ids)
         except httpx.HTTPError as e:
+            if (r := _refusal(e)) is not None:
+                raise r from e
             if not _transient(e):
                 raise
             raise ValioUnavailable(e) from e

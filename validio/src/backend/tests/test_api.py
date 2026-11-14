@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from validio.agent.holder import Holder
 from validio.api.app import app
 
+VALIO = {"valioDown": False, "valioMode": "replay", "valioModeText": "Valio's recorded answers"}
 MILK = "1000 litres of lactose-free milk by Monday, budget 1200 euro"
 
 
@@ -179,14 +180,15 @@ def test_demo_controls_answer_this_machine_and_nobody_else(client, monkeypatch):
     monkeypatch.setenv("VALIDIO_DEMO", "")
     assert client.post("/api/demo/reset").status_code == 404
     monkeypatch.setenv("VALIDIO_DEMO", "1")
-    assert client.get("/api/demo").json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    assert client.get("/api/demo").json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}, **VALIO}
     stockout()
     assert client.get("/api/demo").json()["stockOut466375"] is True
 
 
 def test_no_shortcut_orders_or_stocks(client):
     # ordering only through an agent over MCP or the agent API; the stock-out has no switch
-    for path in ("/api/demo/stock-out", "/api/demo/ask", "/api/demo/example", "/api/agent/demo"):
+    for path in ("/api/demo/stock-out", "/api/demo/ask", "/api/demo/example", "/api/agent/demo",
+                 "/api/demo/valio-down"):
         assert client.post(path, json={"text": "500 litres of lactose-free milk"}).status_code in (404, 405), path
 
 
@@ -242,7 +244,7 @@ def test_reset_starts_over(client, holder, ctx):
     ask_milk(client, holder)
     stockout()
     r = client.post("/api/demo/reset")
-    assert r.json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}}
+    assert r.json() == {"codeRequired": True, "stockOut466375": False, "realStock466375": {"quantity": 11603, "unit": "BAG"}, **VALIO}
     assert client.get("/api/inbox").json() == []
     assert client.get("/api/ledger").json()["chain"] == {"ok": True, "count": 0}
     assert ask_milk(client, holder)["id"] == "R-1"

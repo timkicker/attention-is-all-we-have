@@ -210,6 +210,18 @@ class Ctx:
                               .replace("Valio really has stock.", "Valio has stock."),
                               facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
 
+    def valio_down(self) -> bool:
+        return seed.valio_down(self.db_path)
+
+    def set_valio_down(self, on: bool) -> None:
+        """The demo switch "Valio not answering", with one simulation entry per change."""
+        with self.rt.lock:
+            seed.set_valio_down(self.db_path, on)
+            sentence = ("Simulated Valio not answering for the demo. Every request is refused until it ends."
+                        if on else "Ended the simulated Valio outage. Valio answers again.")
+            self.audit.append(at=self.now(), actor="presenter", kind="simulation", sentence=sentence,
+                              facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
+
     def _stockout_name(self) -> str:
         p = self.catalog.get(seed.STOCKOUT_ID)
         return short_ref(p.name_en) if p else seed.STOCKOUT_ID

@@ -68,7 +68,7 @@ def test_a_blocked_request_says_why_in_the_rules_words(kitchen):
     c, k, *_ = kitchen
     rid = ask(k, "9000 litres of lactose-free milk by Monday").request_id
     it = c.get(f"/api/activity/{rid}").json()["item"]
-    assert it["status"] == "blocked" and it["why"] == "Above your 5,000.00 € limit, blocked", it
+    assert it["status"] == "blocked" and it["why"] == "Above your 2,000.00 € limit, blocked", it
     assert c.get("/api/activity", params={"status": "blocked"}).json()["counts"]["blocked"] == 1
 
 

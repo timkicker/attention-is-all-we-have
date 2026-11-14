@@ -2,6 +2,7 @@
 (both Valio endpoints only read, Validio never places an order at Valio), then the request is refused with
 "Valio did not answer. Nothing was ordered." and one ledger entry. Nothing is placed."""
 
+import re
 from datetime import date
 
 import httpx
@@ -10,6 +11,7 @@ import respx
 from asking import stockout
 from test_api import MILK, auth, client, holder  # noqa: F401
 
+from validio.api.state import get_ctx
 from validio.valio.budget import CallBudget
 from validio.valio.client import TEST_API_HOST, ValioClient, ValioUnavailable
 
@@ -108,3 +110,57 @@ def test_a_schedule_line_without_a_date_is_no_delivery_date():
                                "scheduleLines": [{"salesBlock": False, "availableAmount": 0.0, "salesUnit": "KG"}]},
                               "2026-11-14T00:01:02+0200")
     assert a.lines == [] and not a.deliverable
+
+
+@pytest.mark.parametrize("status, cls, said", [(429, "ValioBusy", "Valio is busy"),
+                                               (401, "ValioRefused", "refused Validio's key"),
+                                               (403, "ValioRefused", "refused Validio's key")])
+def test_busy_or_refused_key_is_valio_unavailable_not_a_500(status, cls, said):
+    from validio.valio import client as vc
+
+    with respx.mock(assert_all_called=False) as net:
+        net.post(f"{OK}/api/price").mock(return_value=httpx.Response(status))
+        c = ValioClient(OK, "key", "live", None, backoff=0)
+        with pytest.raises(getattr(vc, cls), match=said) as e:
+            c.price(["464306"], MONDAY, CallBudget())
+        assert isinstance(e.value, ValioUnavailable) and len(net.calls) == 1
+
+
+def test_valio_down_is_its_own_reason_and_a_retry_with_the_same_key_works(ctx, client, holder):  # noqa: F811
+    """Valio down is not remembered under the idempotency key: once Valio answers, the same key gets a fresh
+    request and exactly one order."""
+    real = ctx.live.service.valio
+    ctx.live.service.valio, _ = _down("5xx")
+    body = {"lines": [{"text": MILK}], "deliverBy": "2026-11-16", "idempotencyKey": "down-retry"}
+    first = client.post("/agent/v1/requests", headers=auth(holder), json=body).json()
+    assert first["status"] == "blocked"
+    d = first["decision"]
+    assert d["reasonCode"] == "valio_down"
+    assert re.fullmatch(r"Valio didn't answer at \d\d:\d\d\. Nothing was ordered\.", d["ownerText"]), d
+    ctx.live.service.valio = real
+    again = client.post("/agent/v1/requests", headers=auth(holder), json=body).json()
+    assert again["id"] != first["id"] and again["decision"]["reasonCode"] != "valio_down"
+    assert client.post("/agent/v1/requests", headers=auth(holder), json=body).json()["id"] == again["id"]
+    assert client.get("/api/orders/O-1").status_code == 404  # the agent confirms nothing here, so no order
+
+
+def test_simulated_valio_not_answering(client, holder):  # noqa: F811
+    get_ctx().set_valio_down(True)  # no HTTP route, as with the stock-out: straight in the store
+    state = client.get("/api/demo").json()
+    assert state["valioDown"] is True and state["valioMode"] == "replay"
+    assert state["valioModeText"] == "Valio's recorded answers"
+    r = client.post("/agent/v1/requests", headers=auth(holder),
+                    json={"lines": [{"text": MILK}], "deliverBy": "2026-11-16", "idempotencyKey": "sw-1"})
+    assert r.json()["decision"]["reasonCode"] == "valio_down" and r.json()["decision"]["sentence"] == SAID
+    get_ctx().set_valio_down(False)
+    assert client.get("/api/demo").json()["valioDown"] is False
+    r = client.post("/agent/v1/requests", headers=auth(holder),
+                    json={"lines": [{"text": MILK}], "deliverBy": "2026-11-16", "idempotencyKey": "sw-1"})
+    assert r.json()["decision"]["reasonCode"] == "auto_ok"
+    sims = [e["sentence"] for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "simulation"]
+    assert sims[0].startswith("Simulated Valio not answering") and sims[1].startswith("Ended the simulated Valio")
+
+
+def test_reset_turns_the_valio_switch_off(client):  # noqa: F811
+    get_ctx().set_valio_down(True)
+    assert client.post("/api/demo/reset").json()["valioDown"] is False
