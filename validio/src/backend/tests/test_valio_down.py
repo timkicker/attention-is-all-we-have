@@ -86,3 +86,12 @@ def test_approve_while_valio_is_down_places_nothing(ctx, client, holder):  # noq
     r = client.post(f"/api/orders/{oid}/approve", headers={"X-Approve-Code": CODE})
     assert r.status_code == 503 and r.json()["detail"] == SAID
     assert client.get(f"/api/orders/{oid}").json()["state"] == "waiting"
+
+
+def test_unrecorded_product_is_a_clean_503(client, holder):  # noqa: F811
+    r = client.post("/agent/v1/requests", headers=auth(holder), json={
+        "lines": [{"productId": "463359", "quantity": 10, "unit": "ST"}], "deliverBy": "2026-11-16",
+        "idempotencyKey": "unrecorded-1"})
+    assert r.status_code == 503, r.text
+    assert "no recorded" in r.json()["detail"]
+    assert client.get("/api/inbox").json() == []
