@@ -117,8 +117,13 @@ def create(cur, qid: str, since: str | None = None, ent: dict | None = None) -> 
     'queued'. Raises UnknownItem, NoFinnish, or wapi.RateLimited when Wikidata cannot be asked now."""
     if _q(cur, "SELECT 1 FROM topic WHERE wikidata_id=%s", (qid,)):
         return "loaded"
-    job = _q(cur, "SELECT state FROM ingest_job WHERE qid=%s", (qid,))
+    job = _q(cur, "SELECT state, since FROM ingest_job WHERE qid=%s", (qid,))
     if job and job[0]["state"] != "failed":
+        old = job[0]["since"]
+        if since and job[0]["state"] != "done" and (old is None or dt.date.fromisoformat(since) > old):
+            # "Faster" on a running job: editions whose download has not started yet use the later date
+            cur.execute("UPDATE ingest_job SET since=%s, updated_at=%s WHERE qid=%s", (since, now(), qid))
+            return "narrowed"
         return "existing"
     if ent is None:
         if wapi.cooldown_left() > 0:
@@ -557,6 +562,8 @@ class Job:
         wapi.on_wait(waiting)
         try:
             self.ed(lang, state="running", pct=2)
+            latest = self.sql("SELECT since FROM ingest_job WHERE qid=%s", (self.qid,))
+            since = latest[0]["since"] if latest else since  # a later POST may have narrowed it
             return fetch_edition(lang, title, since, progress)
         finally:
             wapi.on_wait(None)
