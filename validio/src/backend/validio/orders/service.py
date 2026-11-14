@@ -275,7 +275,8 @@ class OrderService:
             if state == "placed":
                 if accepted_by is not None and accept_note:
                     self._log(order, accepted_by, "approval", accept_note, [])
-                self._log(order, actor or mandate.holder, "order", self._placed_sentence(order, None, accepted_by),
+                # Validio places every order; the agent only asked, its request entry says so
+                self._log(order, "validio", "order", self._placed_sentence(order, None, accepted_by),
                           decision["ruleIds"])
             else:
                 self._log(order, "validio", "decision", decision["sentence"], decision["ruleIds"])

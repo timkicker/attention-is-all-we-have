@@ -249,3 +249,11 @@ def test_split_line_says_where_the_amount_comes_from(client):
     parm = lines(client.post("/api/steady/S-1/renew", headers=CHEF).json())["463968"]
     assert parm["sentence"].startswith("137 from this product, 40 from a swap.")
     assert "the usual line is" not in parm["sentence"]
+
+
+def test_steady_orders_placed_alone_are_placed_by_validio(client):
+    client.post("/api/steady/S-1/renew", headers=CHEF)
+    alone = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "order"]
+    assert alone and all(e["actor"] == "validio" for e in alone)
+    assert alone[0]["displayText"].startswith("Placed O-")
+    assert alone[0]["displayText"].endswith("for 303.00 € without asking you.")
