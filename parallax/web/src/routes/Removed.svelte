@@ -14,6 +14,7 @@
   import Field from '../lib/ui/Field.svelte'
   import Footer from '../lib/ui/Footer.svelte'
   import Item from '../lib/ui/Item.svelte'
+  import type { RemovedRow } from '../lib/model'
   import Marked from '../lib/ui/Marked.svelte'
   import NoteLine from '../lib/ui/NoteLine.svelte'
   import Skeleton from '../lib/ui/states/Skeleton.svelte'
@@ -35,7 +36,23 @@
   const STEP = 25
   const offset = $derived(Math.max(0, Number(router.query.get('offset')) || 0))
   const shown = $derived(FIRST + offset)
-  const visible = $derived(res?.ok ? res.data.rows.slice(0, shown) : [])
+  // A partial cut of only a unit or one short token ("km²", "%", "ca") says little: such rows go after the rest of the page.
+  const UNIT = /^(km²|km2|km|m²|m|kg|t|%|ha|mi|ft|°c?)$/i
+  const struck = (r: RemovedRow) => r.say.spans.map((s) => r.say.text.slice(s.start, s.end)).join(' ').replace(/[\s.,;:()]+/g, ' ').trim()
+  const minor = (r: RemovedRow) => {
+    const cut = struck(r)
+    const whole = r.say.text.replace(/[\s.,;:()]+/g, ' ').trim()
+    return cut !== whole && !cut.includes(' ') && (cut.length <= 3 || UNIT.test(cut))
+  }
+  const visible = $derived(
+    res?.ok
+      ? res.data.rows
+          .slice(0, shown)
+          .map((r, i) => ({ r, i, m: minor(r) ? 1 : 0 }))
+          .sort((a, b) => a.m - b.m || a.i - b.i)
+          .map((x) => x.r)
+      : [],
+  )
   const more = $derived(res?.ok ? Math.max(0, res.data.total - visible.length) : 0)
 
   $effect(() => {
@@ -76,7 +93,7 @@
   <TopicHeader qid={params.qid} {title} subtitle={copy.removed.SUB_REMOVED} active="removed" {counts} />
 
   <div class="ctl">
-    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} placeholderShort={copy.SEARCH_SHORT} testid={TID.findStatement} oninput={onInput} />
+    <Field bind:value={q} placeholder={copy.FIND_STATEMENT} testid={TID.findStatement} oninput={onInput} />
     <div class="pair">
       <EditionPick value={edition} editions={res?.ok ? res.data.editions : []} onpick={(l) => router.setQuery({ edition: l, offset: null })} />
       <AsOf />
@@ -111,8 +128,8 @@
 </main>
 
 <style>
-  /* Three lines at most; the statement page shows the whole sentence. */
-  .say { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+  /* Two lines at most; the statement page shows the whole sentence. */
+  .say { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
   .ctl { display: flex; gap: 12px; margin-top: 24px; }
   .ctl :global(.field) { flex: 1 1 auto; min-width: 0; }
   .pair { display: flex; gap: 12px; flex: none; }
