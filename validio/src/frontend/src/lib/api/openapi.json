@@ -219,63 +219,6 @@
         "title": "ApproveIn",
         "type": "object"
       },
-      "AskIn": {
-        "properties": {
-          "text": {
-            "description": "what the kitchen asks its agent for",
-            "maxLength": 300,
-            "minLength": 1,
-            "title": "Text",
-            "type": "string"
-          }
-        },
-        "required": [
-          "text"
-        ],
-        "title": "AskIn",
-        "type": "object"
-      },
-      "AskOut": {
-        "properties": {
-          "final": {
-            "description": "the agent's last sentence",
-            "title": "Final",
-            "type": "string"
-          },
-          "lines": {
-            "description": "the agent's calls and Validio's answers, as the terminal pane prints them",
-            "items": {
-              "type": "string"
-            },
-            "title": "Lines",
-            "type": "array"
-          },
-          "model": {
-            "description": "\"Gemini gemini-3.8-flash\" or \"fake model (no Gemini key)\"",
-            "title": "Model",
-            "type": "string"
-          },
-          "requestId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "the request the agent made, absent when Validio refused it",
-            "title": "Requestid"
-          }
-        },
-        "required": [
-          "model",
-          "lines",
-          "final"
-        ],
-        "title": "AskOut",
-        "type": "object"
-      },
       "AskedFor": {
         "properties": {
           "displayName": {
@@ -463,12 +406,18 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "verifyCode": {
+            "description": "XXX-XXX, new for this connection; the agent shows the same code",
+            "title": "Verifycode",
+            "type": "string"
           }
         },
         "required": [
           "name",
           "keyId",
-          "may"
+          "may",
+          "verifyCode"
         ],
         "title": "Consent",
         "type": "object"
@@ -1678,10 +1627,16 @@
             "const": "consent",
             "title": "Status",
             "type": "string"
+          },
+          "verifyCode": {
+            "description": "XXX-XXX: show it to the user, it must match the code on the kitchen's Agent page before the kitchen presses Allow",
+            "title": "Verifycode",
+            "type": "string"
           }
         },
         "required": [
-          "status"
+          "status",
+          "verifyCode"
         ],
         "title": "PairOut",
         "type": "object"
@@ -3350,18 +3305,6 @@
         "title": "SteadyPassOut",
         "type": "object"
       },
-      "StockOutIn": {
-        "properties": {
-          "on": {
-            "default": true,
-            "description": "true simulates the stock-out of 466375, false ends it",
-            "title": "On",
-            "type": "boolean"
-          }
-        },
-        "title": "StockOutIn",
-        "type": "object"
-      },
       "SupplierTextView": {
         "properties": {
           "grade": {
@@ -4487,27 +4430,6 @@
         ]
       }
     },
-    "/api/agent/demo": {
-      "post": {
-        "operationId": "demo_route_api_agent_demo_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AgentState"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Demo Route",
-        "tags": [
-          "web"
-        ]
-      }
-    },
     "/api/agent/deny": {
       "post": {
         "operationId": "deny_route_api_agent_deny_post",
@@ -4633,70 +4555,6 @@
         ]
       }
     },
-    "/api/demo/ask": {
-      "post": {
-        "description": "The kitchen's agent on any text, inside the server: the same loop as `make agent`, Gemini when\nGEMINI_API_KEY is set, the fake model otherwise. On a public read deploy only a demo copy may use it.",
-        "operationId": "demo_ask_api_demo_ask_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AskIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AskOut"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Demo Ask",
-        "tags": [
-          "web"
-        ]
-      }
-    },
-    "/api/demo/example": {
-      "post": {
-        "description": "The connected demo agent sends the challenge's sentence.",
-        "operationId": "example_api_demo_example_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AskOut"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Example",
-        "tags": [
-          "web"
-        ]
-      }
-    },
     "/api/demo/reset": {
       "post": {
         "description": "Back to the state `make demo` starts from: drops every table, seeds again. A demo copy goes back to the\ntemplate, or with {\"fresh\": true} to the plain seed with no agent connected.",
@@ -4741,55 +4599,6 @@
           }
         },
         "summary": "Reset",
-        "tags": [
-          "web"
-        ]
-      }
-    },
-    "/api/demo/stock-out": {
-      "post": {
-        "description": "Simulated: Valio's test API cannot run out, so this sets 466375 to zero in stock. {\"on\": false} ends\nit. A change writes one simulation entry, the same state again writes none.",
-        "operationId": "stock_out_api_demo_stock_out_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/StockOutIn"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "title": "Body"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DemoState"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Stock Out",
         "tags": [
           "web"
         ]
