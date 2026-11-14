@@ -109,7 +109,6 @@ export function agrees(m: { this: string; other: string }): boolean {
   const b = numbersIn(m.other)[0]?.value
   if (a === undefined || b === undefined) return false
   if (a === b) return true
-  if (Math.abs(a - b) <= 0.03 * Math.max(Math.abs(a), Math.abs(b))) return true
   const step = (n: number) => {
     let p = 1
     while (n !== 0 && n % (p * 10) === 0) p *= 10
