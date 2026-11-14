@@ -2841,7 +2841,8 @@
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {},
   "ledger": {

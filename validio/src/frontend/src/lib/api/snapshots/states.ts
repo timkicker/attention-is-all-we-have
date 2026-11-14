@@ -61,7 +61,7 @@ export const answers: Answers = {
     "moneyText": "180.10 €",
     "sentence": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?",
     "status": "waiting",
-    "summary": "Order 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €?.",
+    "summary": "Asks you: the swap is not on Valio's list.",
     "text": "200 bags of lactose-free mozzarella 125 g",
     "timeText": "10:14",
     "title": "200 bags of lactose-free mozzarella 125 g by Mon 16 Nov",
@@ -8638,7 +8638,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest safe option, always delivered in full.",
+        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -8914,7 +8914,7 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
-        "displayName": "Lactose-free mozzarella stange sliced 400 g",
+        "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
          {
           "field": "quantity",
@@ -9013,7 +9013,7 @@ export const answers: Answers = {
          "Footprint 5.21 kg CO2e per kg, a group average."
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
-        "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortName": "Lactose-free sliced mozzarella stange 400 g",
         "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
@@ -9953,7 +9953,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest safe option, always delivered in full.",
+        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -10229,7 +10229,7 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
-        "displayName": "Lactose-free mozzarella stange sliced 400 g",
+        "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
          {
           "field": "quantity",
@@ -10328,7 +10328,7 @@ export const answers: Answers = {
          "Footprint 5.21 kg CO2e per kg, a group average."
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
-        "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortName": "Lactose-free sliced mozzarella stange 400 g",
         "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
@@ -11268,7 +11268,7 @@ export const answers: Answers = {
         ],
         "sentence": "Lactose free and checked. A mozzarella-fontal blend, not pure mozzarella. 10 × 2.5 kg for 180.10 €. Cheapest safe option and Valio delivered it as ordered every time in its records. Has the Hyvää Suomesta label, which your Spend Pass does not ask for. Footprint 5.21 kg CO2e per kg, a group average.",
         "shortName": "Mozzarella-fontal crumbled cheese 2.5 kg",
-        "shortText": "Cheapest safe option, always delivered in full.",
+        "shortText": "Cheapest lactose-free swap, delivered by 16 Nov.",
         "totalCents": 18010,
         "unit": "ST",
         "verdict": "chosen"
@@ -11544,7 +11544,7 @@ export const answers: Answers = {
         "verdict": "ranked"
        },
        {
-        "displayName": "Lactose-free mozzarella stange sliced 400 g",
+        "displayName": "Lactose-free sliced mozzarella stange 400 g",
         "facts": [
          {
           "field": "quantity",
@@ -11643,7 +11643,7 @@ export const answers: Answers = {
          "Footprint 5.21 kg CO2e per kg, a group average."
         ],
         "sentence": "Lactose free, claim unchecked. 63 × 400 g for 334.53 €. 154.43 € more than the cheapest and Valio delivered it as ordered every time in its records. Footprint 5.21 kg CO2e per kg, a group average.",
-        "shortName": "Lactose-free mozzarella stange sliced 400 g",
+        "shortName": "Lactose-free sliced mozzarella stange 400 g",
         "shortText": "154.43 € more.",
         "supplierText": {
          "grade": "untrusted",
@@ -12441,6 +12441,7 @@ export const answers: Answers = {
     "holder": "agent:buyer-1",
     "id": "M-1",
     "issuer": "kitchen:hotel-espoo",
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels.",
     "split": {
      "allowListedSubstitutes": true,
      "maxExtraCostPct": 5.0
@@ -12483,6 +12484,7 @@ export const answers: Answers = {
     "holder": "agent:buyer-1",
     "id": "M-1",
     "issuer": "kitchen:hotel-espoo",
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels.",
     "split": {
      "allowListedSubstitutes": true,
      "maxExtraCostPct": 5.0

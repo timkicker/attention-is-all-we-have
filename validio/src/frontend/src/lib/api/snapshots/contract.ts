@@ -2867,7 +2867,8 @@ export const scene1: Snapshot = {
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {},
   "ledger": {
@@ -5916,7 +5917,8 @@ export const scene2: Snapshot = {
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {
     "O-1": {
@@ -6602,7 +6604,7 @@ export const scene3: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
             },
             {
               "productId": "463383",
@@ -6972,8 +6974,8 @@ export const scene3: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Lactose-free mozzarella stange sliced 400 g",
-              "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "displayName": "Lactose-free sliced mozzarella stange 400 g",
+              "shortName": "Lactose-free sliced mozzarella stange 400 g",
               "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
@@ -10409,7 +10411,8 @@ export const scene3: Snapshot = {
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {
     "O-2": {
@@ -11354,7 +11357,7 @@ export const scene4: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
             },
             {
               "productId": "463383",
@@ -11724,8 +11727,8 @@ export const scene4: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Lactose-free mozzarella stange sliced 400 g",
-              "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "displayName": "Lactose-free sliced mozzarella stange 400 g",
+              "shortName": "Lactose-free sliced mozzarella stange 400 g",
               "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
@@ -15161,7 +15164,8 @@ export const scene4: Snapshot = {
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {
     "O-2": {
@@ -16482,7 +16486,7 @@ export const scene5: Snapshot = {
                 "Has the Hyvää Suomesta label, which your Spend Pass does not ask for.",
                 "Footprint 5.21 kg CO2e per kg, a group average."
               ],
-              "shortText": "Cheapest safe option, always delivered in full."
+              "shortText": "Cheapest lactose-free swap, delivered by 16 Nov."
             },
             {
               "productId": "463383",
@@ -16852,8 +16856,8 @@ export const scene5: Snapshot = {
                 "grade": "untrusted",
                 "planted": false
               },
-              "displayName": "Lactose-free mozzarella stange sliced 400 g",
-              "shortName": "Lactose-free mozzarella stange sliced 400 g",
+              "displayName": "Lactose-free sliced mozzarella stange 400 g",
+              "shortName": "Lactose-free sliced mozzarella stange 400 g",
               "fullName": "Topfoods mozzarella stange sliced lactose free 400 g frozen",
               "qtyText": "63 × 400 g",
               "moneyText": "334.53 €",
@@ -20289,7 +20293,8 @@ export const scene5: Snapshot = {
     "hiddenText": [
       "who approves",
       "preferred labels"
-    ]
+    ],
+    "seesText": "The agent sees your limits and diet rules, not who approves or your preferred labels."
   },
   "orders": {
     "O-2": {

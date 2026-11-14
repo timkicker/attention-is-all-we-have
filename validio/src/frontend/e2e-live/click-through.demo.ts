@@ -96,7 +96,7 @@ test("scene 1 on screen: Inbox shows R-1 and the Spend Pass line, the Spend Pass
   await expect(page.getByTestId("pass-diet")).toContainText(/lactose.free/i);
   await expect(page.getByTestId("pass-deliver-by")).toContainText("16 Nov");
   await expect(page.getByTestId("pass-valid-to")).toContainText("17 Nov");
-  await expect(page.getByTestId("pass-approvers")).toContainText(/hidden/i);
+  await expect(page.getByTestId("pass-approvers")).toContainText("not who approves");
 });
 
 // Scene 2, ordered alone
