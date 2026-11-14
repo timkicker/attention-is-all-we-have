@@ -626,6 +626,23 @@ def waiting_text(ctx: Ctx) -> str:
     return WAITING_CODE.format(code=code) if code else WAITING
 
 
+def connection_status(ctx: Ctx) -> dict:
+    """What connection_status answers the connector agent: the state, and while consent waits the verification
+    code with the sentence to show the user. Reads only; the request on the URL already started consent."""
+    link = load(ctx)
+    if connector_waiting(ctx):
+        code = consent_code(ctx)
+        if code:
+            return {"state": "waiting_for_allow", "verifyCode": code,
+                    "say": f"Your verification code is {code}. Check that it matches the code on the Agent page in "
+                           "Validio, then press Allow there."}
+        return {"state": "waiting_for_allow", "say": WAITING}
+    if link.state == "paused":
+        return {"state": "paused", "say": f"Connected to Validio, but {PAUSED}: nothing can be ordered until the "
+                                          "kitchen resumes it on the Agent page."}
+    return {"state": "active", "say": "Connected to Validio and allowed by the kitchen: ready to order."}
+
+
 def connector_presentation(ctx: Ctx) -> str:
     """The Spend Pass presented with the held key and a fresh nonce, as the agent's own holder would."""
     from ..agent.holder import Holder
