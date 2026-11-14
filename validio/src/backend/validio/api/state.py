@@ -168,6 +168,12 @@ class Ctx:
                                                           f"Simulated a stock-out of {self._stockout_name()} "
                                                           "for the demo."),
                               facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
+        else:
+            self.audit.append(at=self.now(), actor="presenter", kind="simulation",
+                              sentence=seed.stockout_note(self.real_stock(),
+                                                          f"Ended the simulated stock-out of {self._stockout_name()}.")
+                              .replace("Valio really has stock.", "Valio has stock."),
+                              facts=[], mandate_id=None, disclosed={}, rule_ids=[], order_id=None)
 
     def _stockout_name(self) -> str:
         p = self.catalog.get(seed.STOCKOUT_ID)
