@@ -18,6 +18,8 @@ export type CheckClaim = Check['claims'][number]
 export type Evidence = S['Evidence']
 export type CheckRecorded = S['CheckRecorded']
 export type Stats = S['Stats']
+export type Sources = S['Sources'] & { as_of?: string }
+export type SourceEdition = Sources['editions'][number] & { rev_ts?: string | null }
 /** Fields the API adds beyond the contract: the last revision that still had the sentence. */
 export type DroppedRow = Dropped['rows'][number] & { last_rev?: number | null; last_url?: string | null; time_precision?: string }
 
@@ -76,6 +78,7 @@ export const api = {
     getJson<Check>('/api/check', {}, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }),
   checkRun: (runId: string, asOf?: string) => getJson<Check>(`/api/check/${encodeURIComponent(runId)}`, { as_of: asOf }),
   checkRecorded: () => getJson<CheckRecorded>('/api/check/recorded'),
+  sources: (p: { topic: string; as_of?: string }, init?: RequestInit) => getJson<Sources>('/api/sources', p, init),
   stats: () => getJson<Stats>('/api/stats'),
   timeline: (lang: string, pageId: number, h: string) =>
     getJson<Timeline>(`/api/claim/${encodeURIComponent(lang)}/${pageId}/${encodeURIComponent(h)}/timeline`),
