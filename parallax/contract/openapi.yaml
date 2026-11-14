@@ -94,6 +94,7 @@ paths:
   /api/check:
     post:
       operationId: check
+      description: 503 embed_unavailable when the embedder for text the fixtures do not know is not answering.
       requestBody:
         required: true
         content:
@@ -113,11 +114,7 @@ paths:
               schema: {$ref: "#/components/schemas/Check"}
               examples: {default: {externalValue: examples/check.json}}
         "422": {$ref: "#/components/responses/Error"}
-        "503":
-          description: embed_unavailable, the embedder for text the fixtures do not know is not answering
-          content:
-            application/json:
-              schema: {$ref: "#/components/schemas/Error"}
+        "503": {$ref: "#/components/responses/Error"}
   /api/check/recorded:
     get:
       operationId: checkRecorded
