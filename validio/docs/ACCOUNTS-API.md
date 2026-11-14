@@ -66,7 +66,7 @@ Account = {
 AgentState = {
   state: "none" | "pairing" | "consent" | "active" | "paused",
   pairing?: {code: string, expiresAt: string, mcpUrl: string, apiUrl: string},   // state "pairing"
-  consent?: {name: string, keyId: string, may: string[], verifyCode: string},      // state "consent"
+  consent?: {name: string, keyId: string, may: string[], verifyCode: string, at: string | null}, // "consent"
   agent?: {name: string, kind: "agent" | "mcp", keyId: string, connectedAt: string,
            lastUsedAt: string | null, passId: string, passVersion: number},        // "active" / "paused"
   versions: [{version: number, at: string, why: string}]                           // newest first
@@ -87,6 +87,8 @@ AgentState = {
   `/mcp/c/<token>/` answers an error that starts "Waiting for the kitchen to press Allow in Validio. Show
   the user this verification code: <CODE>. It must match the code on the Validio Agent page." The person
   presses Allow only when the agent shows the same code. Cleared on allow, deny, cancel and disconnect.
+* `consent.at`: when the agent's first call came (the call that made the consent), on the kitchen's
+  clock. `null` only for a consent stored before the field existed.
 * `versions[].why`: "Agent connected", "Rules changed", "Diet changed", "Agent disconnected".
 
 | Method | Path | Body | Answer |
@@ -241,11 +243,12 @@ ActivityItem = {
   why: string,                   // one line in the Rules' words, no full stop
   totalCents: number | null,
   at: string,
-  orderId: string | null
+  orderId: string | null,
+  approvedByYou: boolean         // ordered because the owner approved it, not alone
 }
 ```
 
-* Status: ordered alone and approved are `ordered`; waiting is `waiting`; blocked and rejected are
+* Status: ordered alone and approved are `ordered` (`approvedByYou` tells them apart); waiting is `waiting`; blocked and rejected are
   `blocked`. A request cleared to order alone that the agent has not confirmed yet is no item until it is.
 * `why`: "Under your 1,200.00 € limit, ordered alone", "Over your 1,200.00 € limit for ordering alone",
   "Above your 5,000.00 € limit, blocked", "You approved it", "You said no"; the Steady Order "Every Monday,

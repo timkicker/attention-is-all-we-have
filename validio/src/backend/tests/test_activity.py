@@ -10,7 +10,7 @@ from test_accounts import SIGNUP, account_ctx, app_env  # noqa: F401
 from validio.api.settings import DEMO_RULES
 
 CODE = "246810"
-ITEM_KEYS = {"id", "kind", "status", "title", "why", "totalCents", "at", "orderId"}
+ITEM_KEYS = {"id", "kind", "status", "title", "why", "totalCents", "at", "orderId", "approvedByYou"}
 
 
 def lower_alone(c, cents: int = 80000) -> None:
@@ -99,12 +99,15 @@ def test_detail_while_waiting_then_approved(kitchen):
     assert d["result"] is None and d["approval"]["orderId"] == oid
     assert d["approval"]["holdUntil"] == "2026-11-15T17:00:00+02:00"  # Valio's order cut-off
     assert d["rule"] == {"text": "Over your 800.00 € limit for ordering alone.", "version": 3}
+    assert d["item"]["approvedByYou"] is False
     home = c.get("/api/home").json()
     assert [it["id"] for it in home["needsYou"]] == [r2]
 
     assert c.post(f"/api/orders/{oid}/approve", json={"code": CODE}).status_code == 200
     d = c.get(f"/api/activity/{r2}").json()
     assert d["item"]["status"] == "ordered" and d["item"]["why"] == "You approved it"
+    assert d["item"]["approvedByYou"] is True
+    assert next(i for i in c.get("/api/activity").json()["items"] if i["id"] == r2)["approvedByYou"] is True
     assert d["rule"]["text"] == "Over your 800.00 € limit for ordering alone. You approved it."
     assert d["approval"] is None and d["result"]["orderId"] == oid
     assert c.get("/api/home").json()["needsYou"] == []

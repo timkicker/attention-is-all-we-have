@@ -40,9 +40,9 @@ NOT_CONNECTED = "no agent is connected to this kitchen"
 SCHEMA = """create table if not exists agent_link (
   id integer primary key check (id = 1), state text not null, name text, sub text, jwk text, key_id text,
   connected_at text, last_used_at text, pending_name text, pending_jwk text,
-  code text, code_expires text, code_status text, wrong_tries integer not null default 0, verify_code text)"""
+  code text, code_expires text, code_status text, wrong_tries integer not null default 0, verify_code text, consent_at text)"""
 COLUMNS = ("state", "name", "sub", "jwk", "key_id", "connected_at", "last_used_at", "pending_name", "pending_jwk",
-           "code", "code_expires", "code_status", "wrong_tries", "verify_code")
+           "code", "code_expires", "code_status", "wrong_tries", "verify_code", "consent_at")
 
 
 # shapes
@@ -60,6 +60,7 @@ class Consent(Model):
     key_id: str
     may: list[str]
     verify_code: str = Field(description="XXX-XXX, new for this connection; the agent shows the same code")
+    at: str | None = Field(None, description="when the agent's first call came")
 
 
 class AgentInfo(Model):
@@ -126,6 +127,7 @@ class Link:
     code_status: str | None = None
     wrong_tries: int = 0
     verify_code: str | None = None
+    consent_at: str | None = None
 
 
 def _wall() -> datetime:
@@ -155,8 +157,11 @@ def verify_code() -> str:
 def _con(ctx_or_path) -> sqlite3.Connection:
     con = sqlite3.connect(getattr(ctx_or_path, "db_path", ctx_or_path), timeout=10)
     con.execute(SCHEMA)
-    if "verify_code" not in {r[1] for r in con.execute("pragma table_info(agent_link)")}:
+    have = {r[1] for r in con.execute("pragma table_info(agent_link)")}
+    if "verify_code" not in have:
         con.execute("alter table agent_link add column verify_code text")  # a store from before the code
+    if "consent_at" not in have:
+        con.execute("alter table agent_link add column consent_at text")  # a store from before the time
     return con
 
 
@@ -301,7 +306,7 @@ def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> 
         out.pairing = Pairing(code=f"{code[:4]}-{code[4:]}", expires_at=link.code_expires, mcp_url=mcp, api_url=api)
     if link.state == "consent":
         out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx),
-                              verify_code=consent_code(ctx))
+                              verify_code=consent_code(ctx), at=link.consent_at)
     if link.state in ("active", "paused"):
         out.agent = AgentInfo(name=link.name, key_id=link.key_id, connected_at=link.connected_at,
                               kind="mcp" if connector_key(ctx, link) else "agent",
@@ -359,6 +364,7 @@ def agent_pair(ctx: Ctx, body: PairIn) -> str:
         link.state, link.code_status = "consent", "consent"
         link.pending_name, link.pending_jwk = name, key.export_public()
         link.verify_code = verify_code()
+        link.consent_at = ctx.now().isoformat()
         save(ctx, link)
     return link.verify_code
 
@@ -585,6 +591,7 @@ def connector_ctx(token: str | None, touch: bool = False, name: str | None = Non
                 link.pending_name = clean_name(name)
                 link.pending_jwk = JWK.from_json(held[0]).export_public()
                 link.verify_code = verify_code()  # new for this connection, shown in the agent and on the page
+                link.consent_at = ctx.now().isoformat()
                 save(ctx, link)
             elif (link.state == "consent" and link.pending_name == MCP_NAME
                   and link.pending_jwk == JWK.from_json(held[0]).export_public()):

@@ -14,6 +14,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import Field
 
 from ..demo import seed
 from ..matching.need import CLAIM_NAMES
@@ -42,6 +43,7 @@ class ActivityItem(Model):
     total_cents: int | None
     at: str
     order_id: str | None
+    approved_by_you: bool = Field(False, description="ordered because the owner approved it, not alone")
 
 
 class Counts(Model):
@@ -175,7 +177,8 @@ def _request_item(ctx: Ctx, v: SupplyRequestView) -> ActivityItem | None:
     if status is None:
         return None
     return ActivityItem(id=v.id, kind="request", status=status, title=v.title_text or v.title or v.id,
-                        why=_why(ctx, v), total_cents=v.total_cents, at=v.created_at, order_id=v.order_id)
+                        why=_why(ctx, v), total_cents=v.total_cents, at=v.created_at, order_id=v.order_id,
+                        approved_by_you=v.status in ("approved", "ordered"))
 
 
 def _fact(o: RankedOptionView, field: str):
