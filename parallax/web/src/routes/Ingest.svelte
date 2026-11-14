@@ -122,7 +122,7 @@
       </div>
     {:else if stuck}
       <div class="gap">
-        <Notice>{copy.states.editionFailed(stuck.lang, stuck.error === 'rate_limited')}{#if retryInS !== null}{copy.FOOT.sep}{copy.states.retryingIn(retryInS)}{/if}</Notice>
+        <Notice>{copy.states.editionFailed(stuck.lang, stuck.error === 'rate_limited')}{#if retryInS !== null}. {copy.states.retryingIn(retryInS)}{/if}</Notice>
       </div>
     {/if}
     {#if problem}<div class="gap"><Notice>{problem}</Notice></div>{/if}

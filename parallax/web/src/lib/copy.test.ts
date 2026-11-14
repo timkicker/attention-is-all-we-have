@@ -15,7 +15,7 @@ describe('copy', () => {
   })
   it('builds note lines with separators and bold names', () => {
     const n = copy.note(copy.saysValueNote(['ru'], '425,640'), [{ text: copy.sameInOthers(5) }])
-    expect(copy.noteText(n)).toBe('Russian says 425,640 · same in the other five')
+    expect(copy.noteText(n)).toBe('Russian says 425,640, same in the other five')
     expect(n[0]).toEqual({ text: 'Russian', strong: true })
   })
   it('writes the wireframe sentences', () => {
@@ -26,13 +26,13 @@ describe('copy', () => {
     expect(copy.noteText(copy.removedNote('en', { words: 'staged' }, '2009-03-12'))).toBe('English removed “staged” on 12 Mar 2009')
     expect(copy.stillIn(['fi', 'de', 'uk'])).toBe('still in Finnish, German and Ukrainian')
     expect(copy.backedBy(6)).toBe('Backed by 6 of 7 editions')
-    expect(copy.disputedRemoved(3, 7, 'en', 2009)).toBe('Disputed · in 3 of 7, English removed it in 2009')
-    expect(copy.disputedOtherwise(['sv', 'ru'])).toBe('Disputed · Swedish and Russian say otherwise')
+    expect(copy.disputedRemoved(3, 7, 'en', 2009)).toEqual(['Disputed', 'in 3 of 7', 'English removed it in 2009'])
+    expect(copy.disputedOtherwise(['sv', 'ru'])).toEqual(['Disputed', 'Swedish and Russian say otherwise'])
     expect(copy.checkSummary({ total: 6, none: 1, disputed: 2, backed: 3 })).toBe(
       'Of 6 statements, 1 is in no edition, 2 are disputed and 3 are backed by most editions',
     )
     expect(copy.checkSummary({ total: 2, none: 0, disputed: 0, backed: 2 }, false)).toBe('Of 2 statements, 2 are backed by at least one edition')
-    expect(copy.disputedRemoved(3, 7, ['en', 'ru'], 2014)).toBe('Disputed · in 3 of 7, English and Russian removed it in 2014')
+    expect(copy.disputedRemoved(3, 7, ['en', 'ru'], 2014)).toEqual(['Disputed', 'in 3 of 7', 'English and Russian removed it in 2014'])
     expect(copy.notCompared(['ru', 'et'])).toBe('Not compared yet in Russian and Estonian')
     expect(copy.states.othersReady(0)).toBe('None of the others is ready yet')
     expect(copy.states.othersReady(6)).toBe('The other six are ready')
