@@ -323,7 +323,7 @@
     padding-left: 36px;
   }
   a.nav:hover:not(.on) {
-    background: color-mix(in srgb, var(--v-fg) 6%, transparent);
+    background: var(--v-tint-hover);
     color: var(--v-fg);
   }
   .nav.on {

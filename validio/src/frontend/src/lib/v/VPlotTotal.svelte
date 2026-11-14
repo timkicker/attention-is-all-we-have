@@ -83,13 +83,13 @@
 
 <style>
   .track {
-    fill: color-mix(in srgb, var(--v-fg) 6%, transparent);
+    fill: var(--v-tint-wash);
   }
   .asks {
-    fill: color-mix(in srgb, var(--v-fg) 10%, transparent);
+    fill: var(--v-tint-mid);
   }
   .hatch {
-    stroke: color-mix(in srgb, var(--v-fg) 14%, transparent);
+    stroke: var(--v-tint-strong);
     stroke-width: 2;
   }
   .before {
