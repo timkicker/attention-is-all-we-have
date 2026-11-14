@@ -69,7 +69,7 @@ Validio's own colour is steel blue, and it is used only for selection:
 
 There is no yellow, amber or ochre anywhere. Steel replaces halbat's ochre.
 
-| Token (in `app.css`) | Dark | Light | Use |
+| Token (in `src/lib/tokens.css`) | Dark | Light | Use |
 |:---|:---|:---|:---|
 | `--v-select` | `#7f9fc4` | `#3d6590` | selection bar, selected-row outline |
 | `--ring` | `#7f9fc4` | `#3d6590` | focus ring |
@@ -77,6 +77,8 @@ There is no yellow, amber or ochre anywhere. Steel replaces halbat's ochre.
 | `--sidebar*` | as in Arlen mail's `app.css` | | the kit sidebar paints nothing without them |
 
 State is shown with the kit `Badge` at 20px and one width per column (min-width 6.6em, set through a thin wrapper). The Badge has no dot, by Tim's own rule, which the kit enforces in `tag-no-dot.test.ts`. The colour comes from the Badge's tint.
+
+**One token file (14 Nov).** Every colour, wash and radius is a token in `src/lib/tokens.css`; `scripts/check-tokens.mjs` (run by `npm run check`) fails on a literal anywhere else. Radii are the kit's roles: chip 4 for every tag (state pills and counts are `VPill`), button 6 for nav and menu items, input 8 for fields and the Switch, card 12, modal 16 for dialogs and sheets. One hover per kind: a row that is a link takes `--v-tint-hover` (rows, ledger entries, nav), a menu item `--v-tint-mid` (the kit menu), a quiet link turns from muted to fg, an underlined link's line turns to the text colour, buttons and chips keep the kit's. Pill, title and amount in a row share the title's baseline; fields and buttons next to each other share `--height-control`.
 
 | State | Badge |
 |:---|:---|
