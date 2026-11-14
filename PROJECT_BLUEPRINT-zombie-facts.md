@@ -6,7 +6,7 @@ Junction 2026, Attention Is All We Have, MariaDB challenge "Wikipedia Through Ti
 
 ## In one minute
 
-In the Finnish history articles of the challenge dataset alone, 223,693 sentences that had stood for at least a year were later removed. For 6,399 of them the edit comment says unsourced, wrong or speculative. A language model trained on an older copy of Wikipedia never hears about it. It can keep repeating the removed claim and the reader has no way to tell.
+In the Finnish history articles of the challenge dataset alone, 223,693 sentences that had been in an article for at least a year in total were later removed. For 6,399 of them the edit comment says unsourced, wrong or speculative. A language model trained on an older copy of Wikipedia never hears about it. It can keep repeating the removed claim and the reader has no way to tell.
 
 Zombie Facts keeps the life of every sentence in the Finnish history articles of the challenge dataset: when it appeared, when it disappeared and what the editor wrote in the edit comment. That life is the system time of a row in MariaDB. Dead sentences are history rows of the same table, with a vector next to each one. Paste an AI answer (or let us ask a model) and every claim in it gets one of four labels: **Wikipedia says this**, **Wikipedia stopped saying this**, **Wikipedia contradicts this** or **Wikipedia never said this**. A dead match shows the date, the edit comment and a link to the old version.
 
@@ -31,21 +31,21 @@ Everything sits in one MariaDB server: the sentence lives, the vectors and the r
 
 We split all 862,076 versions of the 19,742 articles in dataset M into sentences and followed each one through time. Every number below comes from that run.
 
-**Wikipedia forgets a lot.** Of 1,052,406 distinct sentences (counted per article), 479,944 are in the articles today and 572,462 are gone. 223,693 of the gone ones had lived at least one year. 78,978 of those have no reworded twin among the living sentences, so the statement itself left the article and not only its wording.
+**Wikipedia forgets a lot.** Of 1,052,406 distinct sentences (counted per article), 479,944 are in the articles today and 572,462 are gone. 223,693 of the gone ones had been in the article for at least one year. That year is the total time alive, added up over all lives of a sentence that left and came back. "Gone" means it is missing from the article's last version. Some of them were only reworded. How many have no reworded twin among the living sentences is a count the spike printed but did not save, so we derive it again before we use it.
 
 **Many of them were removed on purpose.** 6,399 of the long lived dead sentences, in 1,470 articles, died in an edit whose comment says something like unsourced (lähteetön), error (virhe), wrong (väärä), speculative or rumour. 4,925 of them had stood for two years or more. Three real cases:
 
 - *Saamelaiset* (the Sámi). "Tähän kuului myös oletus saamelaisten valtaosin mongolidisesta perimästä", a claim about a mostly Mongoloid ancestry, stood 9.8 years. It was removed on 10 October 2020 with the comment "Poistettu kaksi lähteetöntä ja varsin spekulatiivista kappaletta" (two unsourced and rather speculative paragraphs removed).
 - *Suomen 1990-luvun alun lama* (the early 1990s depression). "Se ei kuitenkaan ollut niin paha kuin 1930-luvun lama", it was not as bad as the depression of the 1930s, stood 2.3 years and was removed on 27 May 2008 as "lähteetön väite" (unsourced claim). Today the article says GDP fell more steeply in the 1990s than in the 1930s.
-- *Hennalan vankileiri* (the Hennala prison camp, 1918). A sentence saying that more than 500 prisoners were shot, about 200 of them women, was removed on 18 May 2018 by an editor who rewrote the article from documents in the National Archives.
+- *Hennalan vankileiri* (the Hennala prison camp, 1918). A sentence saying that more than 500 prisoners were shot, about 200 of them women, was removed on 18 May 2018 by an editor who wrote that they had checked documents in the National Archives. The same edit dropped another researcher's figures, so this removal is contested rather than a plain correction.
 
 **AI models still say these things.** We asked a local Gemma model (gemma3:12b, temperature 0) about the 1990s depression. It answered that the depression "was considerably milder than the Great Depression". That is the claim Wikipedia removed in 2008 and that today's article contradicts. We found it on the first try.
 
-**Plain vector search is not enough.** Matched as a whole, Gemma's long sentence put the dead claim only at rank 12 of 148 (cosine distance 0.479). Restated as one short claim ("The 1990s depression in Finland was not as bad as the depression of the 1930s.") the dead claim came first at 0.268, the next one at 0.437. So the answer is split into short claims first, then vectors find candidates and a language model judges each pair.
+**Plain vector search is not enough.** In the saved run Gemma's long sentences landed nearest to living sentences, at distances between 0.37 and 0.47. The right and the wrong answers about Hennala looked alike. A short restatement of the depression claim seemed to find the dead sentence much better in a quick test, but that test was not saved and is repeated in step 5. So the answer is split into short claims first, then vectors find candidates and a language model judges each pair.
 
 **Sources go missing too.** 8,073 of the 479,944 living sentences once carried a `<ref>` and carry none today. That is a lower bound, because a sentence edited in the same step gets a new hash and is not counted. This is Citation Lost and it becomes one tab of Zombie Facts.
 
-We know of three related things. WikiFactDiff compares Wikidata snapshots of 2021 and 2023 and is a dataset, not a tool. Wikimedia's own verifiability checks ask whether a cited source supports a claim. MariaDB's starter repos show one article as it stood on a date (50 articles loaded) and one vector per article for search. None of them looks at what Wikipedia removed. *Prior art was checked with one web search on Friday and needs a second look (open).*
+Related work uses Wikipedia's history to train or date models but does not check an answer. VitaminC (NAACL 2021) builds fact verification training data from more than 100,000 revisions that changed a fact. TemporalWiki (EMNLP 2022) and WikiFactDiff (LREC-COLING 2024) use snapshot diffs to update models, the latter on Wikidata facts. Dated Data (2024) finds a model's effective cutoff from monthly Wikipedia versions with perplexity, which is closest in spirit. CLAIRE (EMNLP 2025) looks for contradictions inside today's English Wikipedia. Wikimedia's verifiability checks ask whether a cited source supports a current claim and Who Wrote That? shows who wrote the living text. MariaDB's starter repos load 50 articles into a time machine and one vector per article for search. One web search for a tool that flags AI answers resting on claims Wikipedia later removed found nothing. That is one search, not proof. Sources are in [zombie-facts/RESEARCH.md](zombie-facts/RESEARCH.md).
 
 ## How Zombie Facts works
 
@@ -53,7 +53,7 @@ We know of three related things. WikiFactDiff compares Wikidata snapshots of 202
 |:---|:---|
 | **Sentence lives** | every sentence of every version in dataset M, with birth, death, the editor's comment and whether it ever had a source. One row per life in a system versioned table, written with Wikipedia's real times |
 | **Claim vectors** | the same rows for a demo set of articles, with a bge-m3 vector (1024 numbers) and a vector index. Living and dead rows share the index |
-| **Claim splitter** | a language model turns an answer into short single claims, because short claims match far better (see above) |
+| **Claim splitter** | a language model turns an answer into short single claims, because long sentences match poorly (see above) |
 | **Two lookups** | for each claim, the nearest living sentences and the nearest dead ones, each in one SQL statement, optionally `AS OF` a date |
 | **Judge** | a language model reads each pair and says same, contradicts or unrelated. Vectors only find candidates and never decide |
 | **Labels** | says this, stopped saying this, contradicts this, never said this. A dead match always shows the date, the edit comment and the old version |
@@ -76,6 +76,8 @@ Zombie Facts has one small web page with four tabs, served by the same process a
 | SQL | under every result, the statement that produced it and how long it took |
 
 Finnish sentences come with a short English gloss from the same model, marked as a machine translation.
+
+Wikipedia text is CC BY-SA 4.0. Every claim the page shows links to its version as `https://fi.wikipedia.org/?oldid=<rev_id>`, whose history lists the authors. The footer says "Text from Finnish Wikipedia, CC BY-SA 4.0, modified: split into sentences". The page shows the edit comment of a removal but never ranks the editors who removed claims.
 
 ## Demo in two minutes
 
@@ -147,13 +149,13 @@ The splitter has known noise. Finnish ordinal dates ("12. maaliskuuta") split a 
 
 ### Sentence lives in MariaDB
 
-The life records go into `claim_life`, a table `WITH SYSTEM VERSIONING` whose period is the sentence's life on Wikipedia. With `system_versioning_insert_history` the loader writes Wikipedia's own times into `row_start` and `row_end`, so the application never keeps a "valid from" column. The starter repo uses the same switch for 31,848 versions of 50 articles.
+The life records go into `claim_life`, a table `WITH SYSTEM VERSIONING` whose period is the sentence's life on Wikipedia. With `system_versioning_insert_history` the loader writes Wikipedia's own times into `row_start` and `row_end`, so the application never keeps a "valid from" column. The starter repo uses the same switch for 31,848 versions of 50 articles. `ALTER TABLE` is blocked on a versioned table by default, so the schema of both tables is final before the load and a change means a reload from the life files.
 
 The life records keep the first birth and every death but not when a sentence came back. A sentence that died and returned is therefore stored as one life from its first birth to its last death. If it is in the article today it counts as living. This is *our choice* for the small plan and the page says so.
 
 ### Claim vectors
 
-`claim` has the same columns plus `emb VECTOR(1024) NOT NULL` and `VECTOR INDEX(emb) M=16 DISTANCE=cosine`. It holds the demo set only: the 100 articles with the most removed claims in `candidates.json` and the four articles of the spike (*Hangon vuokra-alue*, *Hennalan vankileiri*, *Saamelaiset*, *Suomen 1990-luvun alun lama*). It takes living sentences and those that died after at least one year. For the 100 articles that is 30,167 sentences, for the four articles 750, minus any overlap.
+`claim` has the same columns plus `emb VECTOR(1024) NOT NULL` and `VECTOR INDEX(emb) M=16 DISTANCE=cosine`, with `mhnsw_ef_search=80` set for every session. The defaults are M=6 and 20. The RAG starter measured 79 % recall at those against 100 % at 16 and 80. We do not partition it, because MariaDB refuses a vector index on a partitioned table, so the starter's `PARTITION BY SYSTEM_TIME` is not an option. `KEY(page_id,row_start)` does that job, as in the starter. It holds the demo set only: the 100 articles with the most removed claims in `candidates.json` and the four articles of the spike (*Hangon vuokra-alue*, *Hennalan vankileiri*, *Saamelaiset*, *Suomen 1990-luvun alun lama*). It takes living sentences and those that died after at least one year. For the 100 articles that is 30,167 sentences, for the four articles 750, minus any overlap.
 
 The spike showed that this works. A vector index on a system versioned table accepts history rows written with `insert_history` and `EXPLAIN` shows the index used for current rows and for `FOR SYSTEM_TIME ALL`. On 3,999 sentences of 66 articles the index found the same top 10 as an exact search in 99.7 % of cases for current rows and in all cases `AS OF` 2012 and over all rows. It took 0.8 to 1.3 ms against 84 to 273 ms for the exact search. We keep the starter repo's lessons: `KEY(page_id,row_start)` for `AS OF`, `mhnsw_ef_search=80` and the vector search kept in a subquery so the index is used.
 
@@ -244,7 +246,7 @@ Times are wall time from about 10:00 on Saturday. Lane A is code. Lane B is the 
 | 1 | Skeleton: folder, Makefile, MariaDB in Docker on 127.0.0.1, `/api/health`, a guard check for keys and home paths | A | 30 min | health answers. The guard fails on a planted key and passes on a clean tree |
 | 2 | Load `claim_life` from the 16 life files, one file at a time | B | 60 min | rows equal the life records minus the dropped interwiki lines, with that number printed. Current rows match the living count. *Alueen luovutuksen yhteydessä noin 8 000 suomalaista menetti kotinsa* shows 3,933 days, died 22 March 2017 |
 | 3 | Embed the demo set with bge-m3 and load `claim` | B | 40 min | about 31,000 rows (about 23 min at the spike's 22.5 sentences per second). Index search finds the same top 10 as exact search in at least 99 % of 30 probes. `EXPLAIN` shows the index |
-| 4 | Graveyard and Citation Lost queries | A | 30 min | the Sámi claim shows 9.8 years and its comment. Citation Lost over all of M counts 8,073 (any difference is explained) |
+| 4 | Graveyard and Citation Lost queries. Re-derive the unsaved spike numbers (dead without reworded twin, the narrower comment filter, the rank of the dead claim for Gemma's long and short sentence) into saved files | A | 45 min | the Sámi claim shows 9.8 years and its comment. Citation Lost over all of M counts 8,073 (any difference is explained). Each unsaved number is in a file or dropped from the plan, the deck and the video |
 | | **Checkpoint 1, about 12:30:** the data is in MariaDB | | | |
 | 5 | Splitter with fake twin | A | 40 min | Gemma's depression answer yields a claim that finds the dead 2008 sentence at rank 1 |
 | 6 | Two lookups, with `AS OF` | A | 30 min | for that claim the dead lookup returns the 2008 sentence. `AS OF` 2007 returns it as living. Each query is under 10 ms on the demo set |
@@ -294,6 +296,9 @@ Saturday 10:00 to 12:30 data, until 17:00 the check in Python, until 21:00 the m
 | `AS OF` with a vector index returns fewer than k rows at large sizes | a lookup returns too few rows | not tested beyond 3,999 rows. Raise `mhnsw_ef_search` or fetch 50 and filter. Last resort: living and dead in two tables |
 | Loading all of M takes too long | step 2 runs over two hours | load the life records of the demo set first and the rest in the background |
 | The demo answer changes | a new run gives other words | the demo uses the recorded answer. A live run is a switch |
+| Wikimedia rate limits | a 429 answer | the demo needs no API call, old versions are plain links. If we call the API after all: 10 requests a minute without a User-Agent, 200 with a proper one, requests in series and `Retry-After` honoured |
+| Dump downloads are limited | slow or refused downloads | Wikimedia caps dumps at 3 connections per IP. We never download them, dataset M already holds the content |
+| Judge rate limits | errors from the Nemotron API | about 40 requests a minute per key, so 10 claims per call. The local Gemma judge has no limit |
 | Simulated or partial parts look complete | a judge asks | the page says which answers are recorded and how many articles have vectors |
 
 **Cut list, first to go first:** the second model, embedding all of M, the Citation Lost tab (its number stays in the graveyard), the time slider, the SQL panel (the SQL goes into the video instead), the gold set beyond 15 claims.
@@ -304,7 +309,7 @@ Saturday 10:00 to 12:30 data, until 17:00 the check in Python, until 21:00 the m
 
 - **Wording:** "stopped saying" and "contradicts", never "false".
 - **Data:** dataset M as shipped and the spike's life files. Nothing from Wikipedia live except links to old versions.
-- **Licence:** Wikipedia text is CC BY-SA, so the page names fi.wikipedia.org as the source of every sentence it shows.
+- **Licence:** Wikipedia text is CC BY-SA 4.0, so every sentence on the page links its old version and any published claim table carries the same licence. The code is MIT like the starters.
 - **Git:** the work goes into `zombie-facts/` in the team repo. GLaDOS keeps `main` passing the demo check.
 - **Open:** whether the team can submit a second project to the MariaDB challenge and side prizes next to Validio.
 - **Open:** fix the splitter and rerun the sentence pass with real rebirth times (about 46 CPU minutes, one file at a time) or keep the spike's output.
