@@ -7,8 +7,10 @@ replay  answers only from cache_dir and never opens a connection
 
 import hashlib
 import json
+import logging
 import threading
 import time
+from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
 
@@ -54,6 +56,13 @@ class ValioRefused(ValioUnavailable):
     message = "Valio refused Validio's key. Nothing was ordered."
 
 
+class ValioMalformed(ValioUnavailable):
+    """Valio answered, but not in the shape Validio reads: a missing field, a bad number or time. Nothing was
+    ordered; refused like an outage, never a 500 and never a guess."""
+
+    message = "Valio answered in a shape Validio cannot read. Nothing was ordered."
+
+
 def _refusal(e: Exception) -> ValioUnavailable | None:
     """429, 401 and 403 as Valio not answering, never a raw error (they used to become a 500)."""
     if isinstance(e, httpx.HTTPStatusError):
@@ -69,6 +78,16 @@ def _transient(e: Exception) -> bool:
     if isinstance(e, httpx.HTTPStatusError):
         return e.response.status_code >= 500
     return isinstance(e, httpx.TransportError)  # timeouts, refused or dropped connections
+
+
+@contextmanager
+def _readable(endpoint: str):
+    """An answer Validio cannot read becomes ValioMalformed, with the cause in the log for the developer."""
+    try:
+        yield
+    except (KeyError, TypeError, ValueError, AttributeError) as e:
+        logging.getLogger(__name__).warning("unreadable Valio %s answer: %r", endpoint, e)
+        raise ValioMalformed(e) from e
 
 
 def checked_base_url(url: str) -> str:
@@ -130,15 +149,17 @@ class ValioClient:
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
         out: dict[str, Quote] = {}
         for resp in self._query("price", ids, requested, budget):
-            for x in resp["products"]:
-                out[x["productId"]] = Quote.from_api(x)
+            with _readable("price"):
+                for x in resp["products"]:
+                    out[x["productId"]] = Quote.from_api(x)
         return out
 
     def availability(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Availability]:
         out: dict[str, Availability] = {}
         for resp in self._query("availability", ids, requested, budget):
-            for x in resp["products"]:
-                out[x["productId"]] = Availability.from_api(x, resp.get("timeNow"))
+            with _readable("availability"):
+                for x in resp["products"]:
+                    out[x["productId"]] = Availability.from_api(x, resp.get("timeNow"))
         return out
 
     def _query(self, endpoint: str, ids: list[str], requested: date, budget: CallBudget) -> list[dict]:
@@ -182,7 +203,10 @@ class ValioClient:
         checked_base_url(str(req.url))  # every request, not only the base: an injected client cannot redirect it
         r = http.send(req, follow_redirects=False)  # never follow, whatever the client was built with
         r.raise_for_status()
-        resp = r.json()
+        with _readable(endpoint):
+            resp = r.json()
+            if not isinstance(resp, dict) or not isinstance(resp.get("products"), list):
+                raise TypeError("no product list")
         if self.mode == "record":
             d = self.cache_dir / endpoint / requested.isoformat()
             d.mkdir(parents=True, exist_ok=True)
