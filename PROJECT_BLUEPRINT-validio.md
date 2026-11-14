@@ -67,7 +67,7 @@ Validio is API first. The kitchen's agent is its own program and talks to Validi
 
 ![Demo layout: agent, web app, phone](docs/img/screens.png)
 
-*Demo layout: the agent works on the left, the kitchen's web app shows what happened, the owner answers on the phone. Sketch, the real screens come from the ui-kit.*
+*Demo layout as sketched in the plan, before the web app was built. The current screens are in [validio/README.md](validio/README.md).*
 
 | Screen | What it shows |
 |:---|:---|
