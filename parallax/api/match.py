@@ -66,15 +66,19 @@ def glosses(rows: list[tuple[str, str]]) -> dict[tuple[str, str], str]:
     }
 
 
-def pick(cands: list[dict], judged: dict, src_h: str) -> tuple[str, dict | None, dict | None]:
-    """(status, row, verdict). Best ranked candidate the judge pairs with the claim; else rank 1 unjudged."""
+def pick(cands: list[dict], judged: dict, src_h: str, top: int = 5) -> tuple[str, dict | None, dict | None]:
+    """(status, row, verdict). Best ranked candidate the judge pairs with the claim; else the nearest unjudged one.
+
+    `cands` is sorted by distance. A verdict counts wherever its candidate ranks (the judge read both sentences);
+    an unjudged candidate only counts within the first `top`.
+    """
     if not cands:
         return "not_found", None, None
     for c in cands:
         v = judged.get((src_h, c["lang"], c["h"]))
         if v and v["label"] in MATCHED:
             return "matched", c, v
-    for c in cands:
+    for c in cands[:top]:
         if (src_h, c["lang"], c["h"]) not in judged:
             return "candidate", c, None
     return "not_found", None, None

@@ -7,6 +7,8 @@ import Footer from './components/Footer.vue'
 import Wordmark from './components/Wordmark.vue'
 import PendingView from './views/PendingView.vue'
 import CompareView from './views/CompareView.vue'
+import TimeView from './views/TimeView.vue'
+import TimelineDrawer from './components/TimelineDrawer.vue'
 
 const PENDING: Record<ViewName, string> = {
   compare: 'One row per claim of the anchor edition, one column per edition, cut at the chosen date.',
@@ -74,12 +76,25 @@ const today = new Date().toISOString().slice(0, 10)
       <CdxTabs v-model:active="active" :framed="false">
         <CdxTab v-for="v in VIEWS" :key="v.name" :name="v.name" :label="v.label">
           <div v-if="state.view === v.name" class="view">
-            <CompareView v-if="v.name === 'compare'" :topics="topics" />
+            <CompareView
+              v-if="v.name === 'compare'"
+              :topics="topics"
+              @open="(lang, cell) => navigate({ claim: `${lang}:${cell.page_id}:${cell.h}` })"
+            />
+            <TimeView v-else-if="v.name === 'time'" :topics="topics" />
             <PendingView v-else :label="v.label" :detail="PENDING[v.name]" />
           </div>
         </CdxTab>
       </CdxTabs>
     </main>
+
+    <TimelineDrawer
+      v-if="state.view === 'compare' && state.claim"
+      :key="state.claim"
+      :claim-key="state.claim"
+      :as-of="state.as_of"
+      @close="navigate({ claim: '' })"
+    />
 
     <Footer />
   </div>
