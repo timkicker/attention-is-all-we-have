@@ -213,6 +213,56 @@ def window_ok(path: Path | None, now: datetime) -> bool:
     return c.get("deliverBy") is None and c.get("exp", 0) - now.timestamp() >= RENEW_BEFORE.total_seconds()
 
 
+ISSUER_KEY = "issuer"
+
+
+def issuer(path: Path | None = None) -> str:
+    """Who signs this kitchen's passes: its own `kitchen:<account>` after rekey, else the demo kitchen's."""
+    con = sqlite3.connect(path or db_path())
+    try:
+        row = con.execute("select value from demo_state where key = ?", (ISSUER_KEY,)).fetchone()
+    except sqlite3.OperationalError:
+        row = None
+    finally:
+        con.close()
+    return row[0] if row else DEMO_CLAIMS["iss"]
+
+
+def rekey(path: Path, keys_dir: Path, new_issuer: str) -> None:
+    """Give a copied kitchen its own keys and issuer: a new kitchen key and agent key, every Spend Pass signed
+    again by the new key under `new_issuer` with the same claims, and the ledger head signed again. The
+    ledger's hashes do not depend on the key, so the chain stays whole. A copy then shares no key with the
+    template or with any other kitchen."""
+    from ..audit.log import AuditLog
+
+    keys_dir = Path(keys_dir)
+    for name in ("kitchen-es256.json", "agent-es256.json"):
+        (keys_dir / name).unlink(missing_ok=True)
+    kitchen = load_or_create_key(keys_dir / "kitchen-es256.json")
+    agent = load_or_create_key(keys_dir / "agent-es256.json")
+    agent_pub = JWK.from_json(agent.export_public())
+    con = sqlite3.connect(path, isolation_level=None)
+    try:
+        con.execute("begin immediate")
+        for pid, token in con.execute("select id, issuance from spend_pass").fetchall():
+            claims = {k: v for k, v in issued_claims(token).items() if k != "cnf"}
+            claims["iss"] = new_issuer
+            con.execute("update spend_pass set issuance = ? where id = ?",
+                        (issue_mandate(claims, DEMO_SD_FIELDS, kitchen, agent_pub), pid))
+        con.execute("insert or replace into demo_state values (?, ?)", (ISSUER_KEY, new_issuer))
+        con.execute("commit")
+    except BaseException:
+        con.execute("rollback")
+        raise
+    finally:
+        con.close()
+    log = AuditLog(path, kitchen)
+    try:
+        log.sign_head()
+    finally:
+        log._con.close()
+
+
 VERSION_SCHEMA = ("create table if not exists pass_version (pass_id text, ver integer, issuance text, at text, "
                   "why text, primary key (pass_id, ver))")
 
@@ -359,5 +409,5 @@ def spend_pass(path: Path | None = None, keys_dir: Path | None = None,
     agent = load_or_create_key(keys_dir / "agent-es256.json")
     nonces = NonceStore()
     token = present(issuance, set(disclose), agent, AUDIENCE, nonces.issue(now), int(now.timestamp()))
-    return verify_presentation(token, kitchen_pub=kitchen, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
+    return verify_presentation(token, kitchen_pub=kitchen, issuer=issuer(path), aud=AUDIENCE,
                                nonces=nonces, now=now, revoked=revoked.__contains__)

@@ -85,3 +85,29 @@ def test_demo_copy_keeps_the_demo_clock(c):
     assert c.post("/api/account/demo").status_code == 200
     k = account(c)
     assert k.now() >= NOW and (k.now() - NOW).days < 3
+
+
+def test_every_account_has_its_own_kitchen_key_and_issuer(c, syn_ctx):
+    from fastapi.testclient import TestClient as TC
+
+    from validio.agent.holder import Holder
+    from validio.demo import seed
+
+    assert c.post("/api/account/signup", json=SIGNUP).status_code == 201
+    a = account(c)
+    with TC(app) as other:
+        assert other.post("/api/account/signup", json={**SIGNUP, "email": "b@example.com"}).status_code == 201
+        b = account(other)
+    keys = {k.kitchen_pub.thumbprint() for k in (a, b, syn_ctx)}
+    assert len(keys) == 3  # no account shares the template's or another account's key
+    assert seed.issuer(a.db_path) == f"kitchen:{a.account['id']}" != seed.issuer(b.db_path)
+    for k in (a, b):
+        assert k.audit.verify().ok  # the copied ledger's head is signed again by the new key
+    # kitchen A's pass, presented with A's agent key, is refused by kitchen B
+    seed.sign_again(a.db_path, a.keys_dir, {}, why="test")
+    holder = Holder(seed.issuance(a.db_path), seed.load_or_create_key(a.keys_dir / "agent-es256.json"),
+                    lambda: c.get(f"/agent/v1/k/{b.account['id']}/nonce").json())
+    from validio.policy.mandate import MandateError
+
+    with pytest.raises(MandateError):
+        b.verify(holder.presentation())

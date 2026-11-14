@@ -23,7 +23,6 @@ from ..demo import seed
 from ..orders.supply import SupplyService
 from ..policy.mandate import (
     AUDIENCE,
-    DEMO_CLAIMS,
     Mandate,
     NonceStore,
     load_or_create_key,
@@ -56,7 +55,7 @@ class Ctx:
         self.code_tries: dict[tuple[str, str], int] = {}  # ("key", order or button) and ("client", host)
         self.nonces = NonceStore()
         self._supply: tuple[object, SupplyService] | None = None
-        self._kitchen: tuple[Path, JWK] | None = None
+        self._kitchen: tuple[tuple, JWK] | None = None
 
     @property
     def has_code(self) -> bool:
@@ -166,9 +165,12 @@ class Ctx:
 
     @property
     def kitchen_pub(self) -> JWK:
+        """The kitchen's public key, read again whenever its file changed (a reset of a copy gives a new key)."""
         path = self.keys_dir / "kitchen-es256.json"
-        if self._kitchen is None or self._kitchen[0] != path:
-            self._kitchen = (path, JWK.from_json(load_or_create_key(path).export_public()))
+        stamp = (path, path.stat().st_mtime_ns if path.is_file() else None)
+        if self._kitchen is None or self._kitchen[0] != stamp:
+            pub = JWK.from_json(load_or_create_key(path).export_public())
+            self._kitchen = ((path, path.stat().st_mtime_ns), pub)
         return self._kitchen[1]
 
     def reset(self, fresh: bool = False) -> None:
@@ -233,7 +235,7 @@ class Ctx:
     def verify(self, token: str) -> Mandate:
         from .connect import check_use
 
-        m = verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=DEMO_CLAIMS["iss"], aud=AUDIENCE,
+        m = verify_presentation(token, kitchen_pub=self.kitchen_pub, issuer=seed.issuer(self.db_path), aud=AUDIENCE,
                                    nonces=self.nonces, now=self.now(), revoked=self.store.is_revoked,
                                    version=lambda jti: seed.pass_version(self.db_path, jti))
         check_use(self, m, token)  # a paused agent is refused here, with a ledger entry

@@ -315,6 +315,9 @@ How backend code gets the current account's store (code in `src/backend/validio/
   `email`, `customer`, `address`, `is_demo`, `rules_saved`, `created_at`, ...) or `None` for the local
   kitchen. `ctx.code_ok(code)` checks the account's approval code (scrypt hash; the env code for the local
   kitchen), `ctx.has_code` says whether one is set. `ctx.reset()` copies the template again for an account.
+* **Keys:** every account, demo copies too, gets its own kitchen key, agent key and issuer
+  (`kitchen:<account id>`) when it is made or reset (`seed.rekey`): its passes are signed again by the new key
+  and so is the ledger head. No account shares a signing key with the template or with another account.
 * **Clock and pass window:** a kitchen's own account (`is_demo` false) decides on the wall clock
   (`Runtime(real_clock=True)`). Its Spend Pass M-1 names no fixed delivery day and is valid for 30 days from
   each signing; `Accounts.ctx` signs it again, with one ledger entry, once fewer than seven days are left
