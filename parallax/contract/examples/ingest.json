@@ -1,0 +1,61 @@
+{
+ "job_id": "Q155093",
+ "qid": "Q155093",
+ "topic_id": "q155093",
+ "title": "Mannerheim Line",
+ "state": "usable",
+ "eta_s": 120,
+ "since": null,
+ "editions": [
+  {
+   "lang": "fi",
+   "state": "done",
+   "pct": 100,
+   "error": null,
+   "retry_at": null
+  },
+  {
+   "lang": "sv",
+   "state": "done",
+   "pct": 100,
+   "error": null,
+   "retry_at": null
+  },
+  {
+   "lang": "de",
+   "state": "done",
+   "pct": 100,
+   "error": null,
+   "retry_at": null
+  },
+  {
+   "lang": "en",
+   "state": "running",
+   "pct": 71,
+   "error": null,
+   "retry_at": null
+  },
+  {
+   "lang": "ru",
+   "state": "failed",
+   "pct": 35,
+   "error": "rate_limited",
+   "retry_at": "2026-11-14T18:12:00Z"
+  },
+  {
+   "lang": "et",
+   "state": "done",
+   "pct": 100,
+   "error": null,
+   "retry_at": null
+  },
+  {
+   "lang": "uk",
+   "state": "waiting",
+   "pct": 0,
+   "error": null,
+   "retry_at": null
+  }
+ ],
+ "sql": []
+}

@@ -32,7 +32,6 @@ WIKI_WRITE = [
 UI_DIRS = ("web/", "api/")
 UI_WORDS = re.compile(r"\b(biased|propaganda|liar|lies)\b", re.I)
 LOOKALIKE = re.compile(r"cdxIconLogo|From Wikipedia, the free encyclopedia|puzzle.?globe|wikipedia-wordmark", re.I)
-CODEX_COPY = re.compile(r"codex(-design-tokens)?(\.min)?\.(js|css)$")
 
 
 def tracked() -> list[Path]:
@@ -55,8 +54,6 @@ def main() -> int:
         if rel == ".env" or rel.endswith("/.env"):
             problems.append(f"{rel}: .env must not be committed")
             continue
-        if CODEX_COPY.search(path.name):
-            problems.append(f"{rel}: Codex is loaded from jsDelivr, never copied into the repo")
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:

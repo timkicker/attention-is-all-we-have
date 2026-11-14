@@ -1,79 +1,44 @@
 // What the demo script (PLAN section 0) shows, per seed. demo.spec.ts picks the entry for the seed /api/health reports.
-// Only what the audience reads is written here: sentences, terms, dates, edit comments and Wikipedia revision ids.
-// Row ids (claim hashes) depend on how a seed split the text, so demo.spec.ts finds the rows through the API.
+// Only what the audience reads is written here: words of the statements, dates and Wikipedia revision ids.
+// The Differences and Removed lists show English translations of the statements; "Show original wording" on a
+// statement shows each edition's own words.
 export interface DemoFacts {
-  // the fi Mainila sentence: its section and words that pick it out of that section
-  mainila: { section: string; words: string[]; terms: Record<string, string>; chip: string }
-  // the fi Finnish dead sentence and the editions whose number differs
-  dead: { section: string; fi: string; differs: string[] }
-  // the en Mainila sentence before and after the 2009 edit, in the Time view of the fi sentence alive before it
-  enFlip: { before: string; after: string; beforeText: string; afterText: string; comment: string | null }
-  // the ru clause dropped in 2014 (v1: in 2017) and an edition that still states it
-  ruDropped: { text: string; date: string; oldid: number; alive: string }
-  fiScale: boolean
+  // the fi Mainila statement today: words of its English translation, and words each edition uses in its own language
+  mainila: { find: string; words: string; originals: Record<string, string> }
+  // the fi Finnish dead statement: the number and the editions that give another one
+  dead: { find: string; fi: string; differs: string[]; other: string }
+  // the fi Mainila statement alive in 2009 (row hash) and the en sentence before and after the 2009 edit
+  enFlip: { pageId: number; h: string; before: string; after: string; beforeText: string; afterText: string; year: number }
+  // the ru clause removed on 9 Jul 2014, an edition that still has it, and the last ru revision that had it
+  ruDropped: { words: RegExp; date: string; alive: string; oldid: number }
+  // the Finnish scale line (old Dropped view): how many Finnish versions the sentence lives come from. Wireframe 08
+  // has no scale line, so no screen asserts it now; kept for when a screen shows it again.
+  fiVersions: number | null
 }
 
-const MAINILA_SECTION = 'Suomen ja Neuvostoliiton neuvottelut aluemuutoksista'
-const MAINILA_WORDS = ['lavasti', 'Mainilan laukaukset']
-const DEAD = { section: 'Osapuolten tappiot', fi: '26 662' }
-const RU_CLAUSE = 'инсценированный советской стороной'
-
 export const FACTS: Record<string, DemoFacts> = {
-  v1: {
-    mainila: {
-      section: MAINILA_SECTION,
-      words: MAINILA_WORDS,
-      terms: { de: 'inszenierte', sv: 'kunnat bevisas', en: 'reported' },
-      chip: 'same claim',
-    },
-    dead: { ...DEAD, differs: ['sv', 'en'] },
-    // v1 has yearly snapshots: the en sentence is gone in the snapshot after 2009
-    enFlip: {
-      before: '2008-01-01',
-      after: '2018-01-01',
-      beforeText: 'the Soviets staged the Shelling of Mainila',
-      afterText: 'an incident was reported',
-      comment: null,
-    },
-    ruDropped: { text: RU_CLAUSE, date: '23 Dec 2017', oldid: 60401111, alive: 'de: same claim' },
-    fiScale: false,
-  },
-  v3: {
-    mainila: {
-      section: MAINILA_SECTION,
-      words: MAINILA_WORDS,
-      terms: { de: 'inszenierte', sv: 'kunnat bevisas', en: 'reported' },
-      chip: 'same claim',
-    },
-    dead: { ...DEAD, differs: ['sv', 'en'] },
-    enFlip: {
-      before: '2009-08-01',
-      after: '2009-09-01',
-      beforeText: 'the Soviets staged the Shelling of Mainila',
-      afterText: 'an incident was reported',
-      comment: 'rewrote the mainila incident part',
-    },
-    ruDropped: { text: RU_CLAUSE, date: '9 Jul 2014', oldid: 63917953, alive: 'de: same claim' },
-    fiScale: true,
-  },
-  // v4: the judge (judge-v1) labels these pairs "partial"; the nearest sv partial match is the official account
-  // sentence. The fi sentence was reworded on 12 Sep 2026, so Time follows the 2007 to 2026 one.
   v4: {
     mainila: {
-      section: MAINILA_SECTION,
-      words: MAINILA_WORDS,
-      terms: { de: 'inszenierte', sv: 'skotten vid Mainila', en: 'reported' },
-      chip: 'partly the same',
+      find: 'Mainila',
+      words: 'staged the Shelling of Mainila',
+      originals: { fi: 'lavasti', de: 'inszenierte', sv: 'skotten vid Mainila', en: 'reported' },
     },
-    dead: { ...DEAD, differs: ['de', 'en', 'uk'] },
+    dead: { find: '26,662', fi: '26,662', differs: ['de', 'en', 'uk'], other: '25,904' },
     enFlip: {
+      pageId: 1256,
+      h: '6777cf5a519b4fe9',
       before: '2009-08-01',
       after: '2010-01-01',
       beforeText: 'the Soviets staged the shelling of Mainila',
       afterText: 'a border incident was reported',
-      comment: 'rewrote the mainila incident part',
+      year: 2009,
     },
-    ruDropped: { text: RU_CLAUSE, date: '9 Jul 2014', oldid: 63917953, alive: 'de: partly the same' },
-    fiScale: true,
+    ruDropped: {
+      words: /staged by the Soviet side|инсценированный советской стороной/,
+      date: '2014-07-09',
+      alive: 'de',
+      oldid: 63917953,
+    },
+    fiVersions: 862076,
   },
 }

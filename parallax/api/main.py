@@ -1,6 +1,8 @@
 """Parallax API: `uvicorn api.main:app`. Every JSON response carries `sql`, the statements behind it."""
 
 import json
+import logging
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -11,7 +13,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import sqllog
 from api.db import close_all
-from api.routes import ask, atlas, check, compare, dropped, health, sources, timeline, topics
+from api.routes import ask, atlas, check, compare, dropped, health, ingest, search, sources, timeline, topics
 from contract.db import load_env
 
 load_env()
@@ -19,12 +21,24 @@ load_env()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from pipeline import job
+
+    try:
+        job.ensure_tables()  # an existing seed database gains the ingest tables, nothing is dropped
+    except Exception as e:
+        logging.getLogger("parallax").warning("ingest tables not ensured: %s", e)
+    if os.environ.get("INGEST_WORKER", "1") != "0":
+        ingest.WORKER = job.Worker()
+        ingest.WORKER.start()
     yield
+    if ingest.WORKER:
+        ingest.WORKER.close()
+        ingest.WORKER = None
     close_all()
 
 
 app = FastAPI(title="Parallax API", version="1", lifespan=lifespan)
-for module in (health, topics, compare, timeline, dropped, check, sources, ask, atlas):
+for module in (health, topics, compare, timeline, dropped, check, sources, ask, atlas, search, ingest):
     app.include_router(module.router)
 
 
@@ -57,7 +71,7 @@ async def http_error(request: Request, exc: StarletteHTTPException):
     detail = (
         exc.detail if isinstance(exc.detail, dict) else {"code": f"http_{exc.status_code}", "message": str(exc.detail)}
     )
-    return JSONResponse({"error": detail}, status_code=exc.status_code)
+    return JSONResponse({"error": detail}, status_code=exc.status_code, headers=getattr(exc, "headers", None))
 
 
 @app.exception_handler(RequestValidationError)
