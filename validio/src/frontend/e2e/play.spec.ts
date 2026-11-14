@@ -15,6 +15,8 @@ test("ask without a backend says so calmly", async ({ page }) => {
   // One muted line, the input cleared for the next ask, nothing raw.
   await expect(page.getByTestId("ask-entry")).toHaveCount(1);
   await expect(page.getByTestId("ask-none")).toContainText("no backend");
+  // The one line is 13px muted, not larger than a row title.
+  expect(await page.getByTestId("ask-none").evaluate((e) => getComputedStyle(e).fontSize)).toBe("13px");
   await expect(input).toHaveValue("");
   await expect(page.getByTestId("ask-log")).toHaveCount(0);
   await expect(page.getByRole("alert")).toHaveCount(0);
@@ -67,7 +69,13 @@ test("change limits: 422 inline, then the new numbers everywhere", async ({ page
   await expect(form.getByRole("switch", { name: "Substitutes" })).toHaveAttribute("aria-checked", "true");
   await page.getByTestId("f-auto").fill("1900");
   await page.getByTestId("f-hard").fill("1800");
-  if (await page.getByTestId("f-code").isVisible()) await page.getByTestId("f-code").fill(CODE);
+  if (await page.getByTestId("f-code").isVisible()) {
+    // The field comes before the action: code, Sign again, Cancel.
+    const order = await form.locator("#f-code, [data-testid=limits-save], [data-testid=limits-cancel]").evaluateAll((es) => es.map((e) => e.id || e.getAttribute("data-testid")));
+    expect(order).toEqual(["f-code", "limits-save", "limits-cancel"]);
+    await expect(form.locator("label[for=f-code]")).toHaveText("Approval code");
+    await page.getByTestId("f-code").fill(CODE);
+  }
   await page.getByTestId("limits-save").click();
   await expect(page.getByTestId("f-auto-problem")).toHaveText("Must be below never above.");
 

@@ -23,7 +23,7 @@ test("ask as the kitchen's agent: one row per ask, the log folded", async ({ pag
   // One chip for each ending, each recorded at Valio; a tap sends it, rows stack newest on top.
   const cases = [
     { chip: "100 l whipping cream", pill: "Ordered alone", sub: null, end: true },
-    { chip: "50 kg quark, budget 100 €", pill: "Waiting for you", sub: /^160\.30\s€\sis\sover\sthe\sbudget/, end: true },
+    { chip: "50 kg quark, budget 100 €", pill: "Waiting for you", sub: /^Over\sthe\s100\.00\s€\sbudget$/, end: true },
     { chip: "20 kg parmesan", pill: "Blocked", sub: /^Valio\shas\sno\slactose.free\sparmesan\.$/, end: false },
   ];
   for (const [i, c] of cases.entries()) {
@@ -33,6 +33,12 @@ test("ask as the kitchen's agent: one row per ask, the log folded", async ({ pag
     await expect(page.getByTestId("ask-entry").first()).toContainText(c.pill);
     await expect(row).toContainText(c.pill);
     await expect(row).toHaveAttribute("href", `/requests/R-${i + 1}`);
+    // The pill sits above the title, and the row is flush with the input.
+    const pill = (await row.locator(".v-pill").boundingBox())!;
+    const title = (await row.locator(".v-row-title").boundingBox())!;
+    expect(pill.y + pill.height).toBeLessThanOrEqual(title.y + 1);
+    const input = (await page.getByTestId("ask-input").boundingBox())!;
+    expect(Math.abs(pill.x - input.x)).toBeLessThanOrEqual(1);
     const text = await row.innerText();
     expect(text).not.toMatch(/Open R-|Recorded at Valio|Agent asked/);
     if (c.end) expect(text).toMatch(/\d+\.\d\d\s€/);
@@ -45,8 +51,13 @@ test("ask as the kitchen's agent: one row per ask, the log folded", async ({ pag
   await expect(log).not.toHaveAttribute("open", "");
   expect(await dialog.innerText()).not.toContain("request_supply");
   await log.locator("summary").click();
-  await expect(log).toContainText("→ request_supply");
-  expect(await log.innerText()).not.toMatch(/[{}"]|\b\d{6}\b/);
+  // Only the latest ask (parmesan), plain steps, no code names.
+  await expect(log).toContainText("Asks Validio");
+  await expect(log).toContainText("parmesan");
+  const steps = await log.innerText();
+  expect(steps).not.toMatch(/[{}"→]|\b\d{6}\b|request_supply|whipping|quark/);
+  const items = await log.locator("li").allInnerTexts();
+  expect(new Set(items).size).toBe(items.length);
 
   // No request: one muted line, typed and sent with Enter.
   await page.getByTestId("ask-input").fill("30 litres of yoghurt by Monday");
@@ -54,11 +65,31 @@ test("ask as the kitchen's agent: one row per ask, the log folded", async ({ pag
   await expect(page.getByTestId("ask-none")).toHaveText(/^Not\srecorded\sfor\sthis\sdemo:\syoghurt$/, { timeout: 60_000 });
   expect(await dialog.innerText()).not.toContain("503");
 
+  // The inbox says it as short.
+  await page.getByTestId("ask-dialog").getByRole("button", { name: "Close" }).click();
+  await expect(page.getByTestId("inbox-summary-R-2")).toHaveText(/^Over\sthe\s100\.00\s€\sbudget$/);
+  await page.locator("#page-menu").click();
+  await page.getByTestId("menu-ask").click();
+  await page.getByTestId("ask-input").fill("20 kg of parmesan by Monday");
+  await page.getByTestId("ask-input").press("Enter");
+  await expect(page.getByTestId("ask-row-R-4")).toBeVisible({ timeout: 60_000 });
   // A row is one link to its request.
   await page.getByTestId("ask-row-R-1").click();
   await expect(page).toHaveURL(/\/requests\/R-1$/);
   await expect(page.locator("#request-status")).toContainText("Ordered alone");
   await expect(dialog).toHaveCount(0);
+});
+
+test("approving a blocked request: a plain state, not an outage", async ({ page }) => {
+  // R-3 is the parmesan ask above: blocked, so there is no order to approve.
+  const r = await (await page.request.get("/api/requests/R-3")).json();
+  expect(r.status).toBe("blocked");
+  await page.goto("/approve/R-3");
+  await expect(page.getByTestId("approve-none")).toHaveText(/^Blocked\.\sNothing\sto\sapprove\.$/);
+  await expect(page.locator("main")).not.toContainText("not reachable");
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await page.getByTestId("approve-none-request").click();
+  await expect(page).toHaveURL(/\/requests\/R-3$/);
 });
 
 test("change limits: 422 and 403 inline, then signed", async ({ page, request }) => {
