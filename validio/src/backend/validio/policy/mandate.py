@@ -208,10 +208,11 @@ def _check_disclosures(token: str) -> None:
 
 def verify_presentation(
     token: str, *, kitchen_pub: JWK, issuer: str, aud: str, nonces: NonceStore, now: datetime,
-    revoked: Callable[[str], bool] | None = None,
+    revoked: Callable[[str], bool] | None = None, version: Callable[[str], int] | None = None,
 ) -> Mandate:
     """Signature, ES256, issuer, key binding (with its iat), audience, single-use nonce, every disclosure
-    referenced by the pass, iat, nbf and exp, and the kitchen's revocation list."""
+    referenced by the pass, iat, nbf and exp, the kitchen's revocation list and, with `version`, that this
+    is the copy the kitchen signed last (claim `ver`, 1 when absent)."""
     kb = _kb_payload(token)
     nonce = kb["nonce"]
     nonces.check(nonce, now)
@@ -266,6 +267,9 @@ def verify_presentation(
         raise MandateError("Spend Pass expired")
     if revoked is not None and revoked(str(payload.get("jti", ""))):
         raise MandateError(f"Spend Pass {payload.get('jti')} was revoked by the kitchen")
+    if version is not None and payload.get("ver", 1) != version(str(payload.get("jti", ""))):
+        raise MandateError(f"Spend Pass {payload.get('jti')} was signed again by the kitchen, this copy is "
+                           "superseded")
     nonces.consume(nonce, now)
     return _mandate(payload)
 

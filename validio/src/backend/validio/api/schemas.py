@@ -494,6 +494,17 @@ class LedgerHeadView(Model):
     signature_ok: bool
 
 
+class SpendPassIn(Model):
+    """The owner signs M-1 again. Same id and window, so the week's spend carries over."""
+    auto_limit_cents: int = Field(gt=0, le=10_000_000, description="the agent may order alone up to this")
+    hard_cap_cents: int = Field(gt=0, le=10_000_000, description="never above this, not even with approval")
+    diet: list[Literal["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN", "VEGAN"]] = Field(
+        [], description="every line must keep these; Valio answers are recorded for lactose free only")
+    deliver_by: date = Field(description="the latest delivery; Valio answers are recorded for 2026-11-16 only")
+    substitutes: bool = Field(True, description="whether a swap from Valio's list may order alone")
+    code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
+
+
 class AskIn(Model):
     text: str = Field(min_length=1, max_length=300, description="what the kitchen asks its agent for")
 

@@ -1767,6 +1767,70 @@
         "title": "SimulatedMark",
         "type": "object"
       },
+      "SpendPassIn": {
+        "description": "The owner signs M-1 again. Same id and window, so the week's spend carries over.",
+        "properties": {
+          "autoLimitCents": {
+            "description": "the agent may order alone up to this",
+            "exclusiveMinimum": 0.0,
+            "maximum": 10000000.0,
+            "title": "Autolimitcents",
+            "type": "integer"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the 6 digit approval code, or the X-Approve-Code header",
+            "title": "Code"
+          },
+          "deliverBy": {
+            "description": "the latest delivery; Valio answers are recorded for 2026-11-16 only",
+            "format": "date",
+            "title": "Deliverby",
+            "type": "string"
+          },
+          "diet": {
+            "default": [],
+            "description": "every line must keep these; Valio answers are recorded for lactose free only",
+            "items": {
+              "enum": [
+                "FREE_FROM_LACTOSE",
+                "FREE_FROM_GLUTEN",
+                "VEGAN"
+              ],
+              "type": "string"
+            },
+            "title": "Diet",
+            "type": "array"
+          },
+          "hardCapCents": {
+            "description": "never above this, not even with approval",
+            "exclusiveMinimum": 0.0,
+            "maximum": 10000000.0,
+            "title": "Hardcapcents",
+            "type": "integer"
+          },
+          "substitutes": {
+            "default": true,
+            "description": "whether a swap from Valio's list may order alone",
+            "title": "Substitutes",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "autoLimitCents",
+          "hardCapCents",
+          "deliverBy"
+        ],
+        "title": "SpendPassIn",
+        "type": "object"
+      },
       "SpendPassView": {
         "properties": {
           "autoLimitCents": {
@@ -3809,6 +3873,66 @@
           }
         },
         "summary": "Session",
+        "tags": [
+          "web"
+        ]
+      }
+    },
+    "/api/spend-pass": {
+      "post": {
+        "description": "The owner signs Spend Pass M-1 again with new limits. Same id and validity window, so what the week\nalready placed still counts; the copy the agent held before is refused from now on. One ledger entry.",
+        "operationId": "sign_spend_pass_api_spend_pass_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-approve-code",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Approve-Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpendPassIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendPassView"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sign Spend Pass",
         "tags": [
           "web"
         ]

@@ -483,6 +483,36 @@ export interface SteadyOrderSummary {
 }
 
 /** The few demo switches the presenter presses. Each one is simulated. */
+/** POST /api/spend-pass: the owner signs M-1 again (approval code as for approve). Answers the SpendPassView.
+ *  422 when alone is above never above, 403 on a wrong code. Valio answers are recorded only for lactose free
+ *  and 16 Nov, so other values make the next request a clean 503. Start over restores the seeded pass. */
+export interface SpendPassIn {
+  autoLimitCents: number;
+  hardCapCents: number;
+  diet: ('FREE_FROM_LACTOSE' | 'FREE_FROM_GLUTEN' | 'VEGAN')[];
+  /** ISO date. */
+  deliverBy: string;
+  /** false: no substitute orders alone. */
+  substitutes: boolean;
+  code?: string;
+}
+
+/** POST /api/demo/ask: the kitchen's agent on any text. Kitchen token locally, demo token too when public. */
+export interface AskIn {
+  text: string;
+}
+
+export interface AskOut {
+  /** The request the agent made. Absent when Validio refused it, e.g. no recorded Valio answers. */
+  requestId?: string;
+  /** "Gemini gemini-3.8-flash" or "fake model (no Gemini key)". */
+  model: string;
+  /** The agent's calls and Validio's answers, as the terminal pane prints them. */
+  lines: string[];
+  /** The agent's last sentence. */
+  final: string;
+}
+
 export interface DemoState {
   /** False when no approve code is configured: approve needs no code then. */
   codeRequired?: boolean;

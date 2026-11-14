@@ -149,6 +149,40 @@ def seed_token(path: Path | None = None) -> str | None:
     return row[0] if row else None
 
 
+def pass_version(path: Path | None, pass_id: str) -> int:
+    """How often the kitchen signed this pass: 1 for the seeded one, up by one with every `sign_again`."""
+    con = sqlite3.connect(path or db_path())
+    try:
+        row = con.execute("select value from demo_state where key = ?", (f"pass_version:{pass_id}",)).fetchone()
+    except sqlite3.OperationalError:
+        row = None
+    finally:
+        con.close()
+    return int(row[0]) if row else 1
+
+
+def sign_again(path: Path | None, keys_dir: Path | None, changes: dict) -> dict:
+    """The owner signs M-1 again: same id and validity window, new limits, the next `ver`. The old copy is
+    superseded from now on. Returns the new claims."""
+    path, keys_dir = Path(path or db_path()), Path(keys_dir or keys_path())
+    ver = pass_version(path, SPEND_PASS_ID) + 1
+    claims = {**DEMO_CLAIMS, **changes, "ver": ver}
+    issuance = issue_mandate(claims, DEMO_SD_FIELDS, kitchen_key(keys_dir),
+                             load_or_create_key(keys_dir / "agent-es256.json"))
+    con = sqlite3.connect(path, isolation_level=None)
+    try:
+        con.execute("begin immediate")
+        con.execute("update spend_pass set issuance = ? where id = ?", (issuance, SPEND_PASS_ID))
+        con.execute("insert or replace into demo_state values (?, ?)", (f"pass_version:{SPEND_PASS_ID}", str(ver)))
+        con.execute("commit")
+    except BaseException:
+        con.execute("rollback")
+        raise
+    finally:
+        con.close()
+    return claims
+
+
 def stockout(path: Path | None = None) -> bool:
     con = sqlite3.connect(path or db_path())
     try:
