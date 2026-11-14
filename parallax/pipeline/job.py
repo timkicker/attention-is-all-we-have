@@ -27,6 +27,7 @@ import re
 import threading
 import time
 import traceback
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -730,7 +731,8 @@ class Worker:
     """One job at a time, oldest first. Jobs left running by a stopped process are picked up again (resumable:
     finished editions are kept)."""
 
-    def __init__(self) -> None:
+    def __init__(self, after_job: Callable[[], None] | None = None) -> None:
+        self.after_job = after_job  # e.g. the API clears its response cache, the job changed what it serves
         self.stop = threading.Event()
         self.wake = threading.Event()
         self.thread: threading.Thread | None = None
@@ -766,7 +768,11 @@ class Worker:
             try:
                 qid = self._next()
                 if qid:
-                    run_job(qid, self.stop)
+                    try:
+                        run_job(qid, self.stop)
+                    finally:
+                        if self.after_job:
+                            self.after_job()
                     continue
             except Exception:
                 log.warning("ingest worker:\n%s", traceback.format_exc())

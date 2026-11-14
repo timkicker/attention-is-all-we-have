@@ -80,3 +80,12 @@ def schema_errors(path: str, data: dict, method: str = "get", status: str = "200
 
 def example(name: str) -> dict:
     return json.loads((ROOT / "contract/examples" / f"{name}.json").read_text())
+
+
+@pytest.fixture(autouse=True)
+def _fresh_cache():
+    """Tests write to the database between requests; each starts with an empty response cache."""
+    from api import cache
+
+    cache.clear()
+    yield
