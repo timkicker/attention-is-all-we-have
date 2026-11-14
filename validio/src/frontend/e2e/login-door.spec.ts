@@ -13,7 +13,7 @@ test("one sentence, log in, and the demo kitchen with its code", async ({ page }
   await expect(page.getByTestId("login-what")).toContainText("Valio Aimo");
   await expect(page.locator("#door-h")).toHaveText("Log in");
   await expect(page.getByTestId("try-demo")).toHaveText("Try the demo kitchen");
-  await expect(page.locator("#demo-what")).toHaveText("A real kitchen with sample orders. Approval code 246810");
+  await expect(page.locator("#demo-what")).toHaveText("A real kitchen with sample orders. Approval code: 246810");
   await expect(page.locator("body")).not.toContainText(/claude/i);
 });
 

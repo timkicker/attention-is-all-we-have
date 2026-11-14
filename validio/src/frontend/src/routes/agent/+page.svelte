@@ -187,13 +187,14 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
-    padding: 20px;
+    padding: 20px 0 24px;
   }
   .none-title {
     margin: 0;
-    font-size: var(--fs-body);
-    line-height: var(--lh-body);
-    font-weight: 500;
+    font-family: var(--v-sans);
+    font-size: 19px;
+    line-height: 26px;
+    font-weight: 600;
   }
   .none-text {
     margin: 0;
@@ -219,7 +220,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 16px 16px 16px 20px;
+    padding: 16px 0;
   }
   .url-big {
     flex: 1 1 auto;
@@ -303,10 +304,10 @@
     justify-content: space-between;
     gap: 12px;
     min-height: 44px;
-    padding: 12px 16px;
+    padding: 12px 0;
     font-size: var(--text-sm);
     font-weight: 500;
-    color: var(--v-fg);
+    color: var(--valio);
     text-decoration: none;
   }
   .go-row :global(.go) {
@@ -324,7 +325,7 @@
     .url-line {
       flex-direction: column;
       align-items: stretch;
-      padding: 16px;
+      padding: 16px 0;
     }
     .may ul {
       columns: 1;

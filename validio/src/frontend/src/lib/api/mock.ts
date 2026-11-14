@@ -17,6 +17,7 @@ import type {
   LoginIn,
   Order,
   SignupIn,
+  SupplyRequest,
 } from "./types";
 
 // The demo copy's history names its agent the way the server's seed does: the name the demo agent reports
@@ -328,6 +329,11 @@ async function decide(id: string, to: R4): Promise<Order> {
   if (r4() !== "waiting") throw new ApiError(409, `order ${id} is ${order(id).state}, not waiting`);
   setR4(to);
   return later(order(id));
+}
+
+/** The fixture records no option lists (they come from Valio through the backend): nothing to compare. */
+export async function request(id: string): Promise<SupplyRequest> {
+  throw new ApiError(404, `${id} has no recorded options here`);
 }
 
 export async function approve(id: string, code: string): Promise<Order> {

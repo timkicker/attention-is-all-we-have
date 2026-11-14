@@ -1,10 +1,10 @@
 <script lang="ts">
-  /// halbat's page head: crumbs, h1, facts, then whatever the page puts under
-  /// them (lead, question, button). Actions sit top right. On the
-  /// phone a detail page gets the sticky header with the way back instead.
+  /// The page head: crumbs, the h1, facts, then whatever the page puts
+  /// under them (lead, question, button). Actions sit on the right. On the
+  /// phone a detail page gets a way back above the title instead of crumbs.
   import type { Snippet } from "svelte";
   import { goto } from "$app/navigation";
-  import { ChevronLeft, ChevronRight } from "@lucide/svelte";
+  import { ChevronLeft } from "@lucide/svelte";
   import { cameFrom } from "@arlen/ui-kit/components/ui/page/history";
   import { chrome, setTitle } from "$lib/chrome.svelte";
   import { nb } from "$lib/format";
@@ -46,12 +46,10 @@
 </script>
 
 {#if chrome.phone && back}
-  <div class="kopfleiste">
-    <a class="kl-back" href={back.href} onclick={goBack} aria-label="Back to {back.label}">
-      <ChevronLeft size={20} strokeWidth={1.75} aria-hidden="true" />
-    </a>
-    <span class="kl-name" aria-hidden="true">{back.label}</span>
-  </div>
+  <a class="back" href={back.href} onclick={goBack}>
+    <ChevronLeft size={16} strokeWidth={1.75} aria-hidden="true" />
+    <span>{back.label}</span>
+  </a>
 {/if}
 
 <header class="head" class:list={!back}>
@@ -60,7 +58,7 @@
       <nav class="crumbs" aria-label="Breadcrumb">
         {#each crumbs as c (c.href)}
           <a href={c.href}>{c.label}</a>
-          <ChevronRight size={12} strokeWidth={1.75} aria-hidden="true" class="crumb-sep" />
+          <span class="crumb-sep" aria-hidden="true">/</span>
         {/each}
         <span aria-current="page">{here}</span>
       </nav>
@@ -76,38 +74,23 @@
   {/if}
 </header>
 
-
 <style>
   .head-main {
     min-width: 0;
   }
-  .head :global(.crumb-sep) {
-    opacity: 0.5;
+  .crumb-sep {
+    color: var(--v-line-strong);
   }
-  .kopfleiste {
-    position: sticky;
-    top: var(--demo-h, 0px);
-    z-index: 15;
-    display: flex;
+  .back {
+    display: inline-flex;
     align-items: center;
-    height: calc(48px + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) 16px 0 8px;
-    margin: -8px -16px 16px;
-    background: var(--v-app);
-    border-bottom: 1px solid var(--v-line);
-  }
-  .kl-back {
-    display: grid;
-    place-items: center;
-    align-self: stretch;
-    width: 44px;
-    color: var(--v-fg);
-    border-radius: var(--radius-button);
-  }
-  .kl-name {
+    gap: 2px;
+    min-height: 44px;
+    margin: -12px 0 4px -4px;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
-    color: var(--v-muted);
+    color: var(--valio);
+    text-decoration: none;
   }
   @media (max-width: 760px) {
     .head.list {
@@ -120,19 +103,23 @@
       grid-column: 1;
       grid-row: 1;
       align-self: center;
-      margin: 0;
     }
     .head.list :global(.facts) {
       grid-column: 1 / -1;
       grid-row: 2;
-      margin-top: 4px;
+    }
+    .head.list .head-main > :global(:not(h1):not(.facts):not(.crumbs)) {
+      grid-column: 1 / -1;
     }
     .head.list .head-actions {
       grid-column: 2;
       grid-row: 1;
     }
+    .head-actions {
+      padding-bottom: 0;
+    }
     .head:not(.list) .head-actions {
-      margin-top: 16px;
+      margin-top: 20px;
     }
     .head:not(.list) .head-actions :global([data-slot="button"]) {
       width: 100%;
