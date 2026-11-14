@@ -6,7 +6,7 @@ import re
 from fastapi import HTTPException
 
 LANG_ORDER = ("fi", "sv", "de", "en", "ru", "et", "uk")
-MAX_TS = dt.datetime(2038, 1, 1)  # row_end of a current row is 2038-01-19
+MAX_TS = dt.datetime(2100, 1, 1)  # row_end of a current row is 2106-02-07 in MariaDB 12
 
 
 class ApiError(HTTPException):
