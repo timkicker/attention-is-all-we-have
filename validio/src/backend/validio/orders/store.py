@@ -1,6 +1,7 @@
 """Requests, orders and idempotency keys in the local SQLite store (data/validio.db, the same file the
 demo seed writes). Each record is one JSON document, ids count up from a reset (R-1, O-1, ...)."""
 
+import contextlib
 import json
 import sqlite3
 import threading
@@ -28,7 +29,9 @@ class Store:
     def __init__(self, path: Path | str):
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False)
+        # timeout: a second connection to the same file (an account's runtime dropped from the cache while a
+        # request still uses it) waits for the other's write instead of failing at once
+        self._con = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False, timeout=30)
         self._lock = threading.RLock()
         self._depth = 0
         self._con.executescript(SCHEMA)
@@ -45,6 +48,10 @@ class Store:
 
     def close(self) -> None:
         self._con.close()
+
+    def __del__(self) -> None:  # an account's runtime dropped from the cache closes when nothing holds it
+        with contextlib.suppress(Exception):  # at interpreter shutdown the module may be half gone
+            self._con.close()
 
     @contextmanager
     def tx(self) -> Iterator[None]:

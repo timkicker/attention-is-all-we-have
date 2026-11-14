@@ -88,6 +88,7 @@ FILLER = frozenset(["of", "a", "an", "the", "some", "please", "for", "by", "and"
 
 # kinds the parser found in the catalogue, by word: the categories most of the products with that word sit in
 GENERIC: dict[str, Kind] = {}
+MAX_GENERIC = 2000
 # where counting names goes wrong: most names with "cream" are ice cream, Valio files cream under 10401,
 # and a plant blend or a powder there is not the cream a kitchen asks for
 CREAM_OFF = r"alternative|blend|plant|vegetable|coconut|powder|spray"
@@ -132,6 +133,8 @@ def _product_word(t: str, cat: Catalog) -> str | None:
             if form in GENERIC:
                 return form
             if kind := _generic(form, cat):
+                if len(GENERIC) >= MAX_GENERIC:
+                    GENERIC.pop(next(iter(GENERIC)))  # the oldest word goes: never grows without bound
                 GENERIC[form] = kind
                 return form
     return None
