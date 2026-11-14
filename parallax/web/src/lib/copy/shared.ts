@@ -6,7 +6,7 @@
 // Rules: sentence case, no exclamation marks, no trailing periods on labels, no Oxford comma,
 // edition names written out, never a language code, never an AI vendor name.
 
-import { fmtDate, fmtNum, joinNames, minutes, numWord } from '../format'
+import { fmtDate, fmtYear, fmtNum, joinNames, minutes, numWord } from '../format'
 import type { Lang, Note, NotePart } from '../model'
 
 export { fmtDate, fmtNum, joinNames, numWord } from '../format'
@@ -114,9 +114,10 @@ export const REMOVED_ALL = 'removed all of it'
 export const REMOVED_END = 'removed the end'
 
 /** "<b>Swedish</b> removed all of it on 3 Mar 2021" / "<b>English</b> removed “staged” on 12 Mar 2009". */
-export function removedNote(lang: string, what: 'all' | 'end' | { words: string }, date: string): Note {
+export function removedNote(lang: string, what: 'all' | 'end' | { words: string }, date: string, exact = true): Note {
   const how = what === 'all' ? REMOVED_ALL : what === 'end' ? REMOVED_END : `removed “${what.words}”`
-  return [{ text: edition(lang), strong: true }, { text: ` ${how} on ${fmtDate(date)}` }]
+  const when = exact ? `on ${fmtDate(date)}` : `in ${fmtYear(date)}`
+  return [{ text: edition(lang), strong: true }, { text: ` ${how} ${when}` }]
 }
 
 /** "still in Finnish, German and Ukrainian". */
