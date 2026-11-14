@@ -99,7 +99,7 @@
     display: grid;
     grid-template-columns: 176px minmax(0, 1fr) auto;
     column-gap: 24px;
-    align-items: start;
+    align-items: baseline;
     min-height: 50px;
     padding: 14px 0;
     list-style: none;

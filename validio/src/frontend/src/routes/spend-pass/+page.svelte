@@ -284,6 +284,10 @@
     align-items: center;
     gap: 10px;
   }
+  /* The row's baseline is the words', not the switch's bottom edge. */
+  .sw-row > span {
+    align-self: baseline;
+  }
   .problem {
     margin: 0;
     font-size: var(--fs-meta);
@@ -298,8 +302,6 @@
   }
   /* As VCode on the approve page: the same label, field, help line and control height. */
   .sign {
-    --height-control: 44px;
-    --height-control-prominent: 44px;
     display: flex;
     flex-direction: column;
     gap: 4px;
