@@ -4,16 +4,20 @@ Client over streamable HTTP on a connector URL, with no spendPass and no idempot
     uv run python scripts/connector_check.py https://<host>/mcp/c/<token>/
 
 Prints every call and answer in short and exits 0 when the order went through Validio (ordered alone, or
-waiting for the kitchen's approval)."""
+waiting for the kitchen's approval). On a new connection the first call answers that Validio waits for Allow:
+it prints the verification code from that answer, which must match the code on the Agent page; press Allow
+there and run it again."""
 
 import asyncio
 import json
+import re
 import sys
 
 from mcp import Client
 
 LINES = [{"text": "1000 litres of lactose-free milk"}]
 DELIVER_BY = "2026-11-16"  # the demo's Monday
+VERIFY = re.compile(r"verification code: ([A-Z2-9]{3}-[A-Z2-9]{3})")
 
 
 def _data(r) -> dict:
@@ -34,7 +38,10 @@ async def order_milk(url: str, say=print) -> dict:
         req = _data(await c.call_tool("request_supply", {"lines": LINES, "deliverBy": DELIVER_BY}))
         if "error" in req:
             say(f"request_supply: {req['error']}")
-            return {"request": req}
+            code = VERIFY.search(req["error"])
+            if code:
+                say(f"verification code: {code.group(1)} (must match the code on the Validio Agent page)")
+            return {"request": req, "verifyCode": code.group(1) if code else None}
         outcome = (req.get("decision") or {}).get("outcome")
         say(f"request_supply: {req['id']} {outcome}: {(req.get('decision') or {}).get('sentence', '')}")
         out = {"request": req, "outcome": outcome}

@@ -38,9 +38,9 @@ NOT_CONNECTED = "no agent is connected to this kitchen"
 SCHEMA = """create table if not exists agent_link (
   id integer primary key check (id = 1), state text not null, name text, sub text, jwk text, key_id text,
   connected_at text, last_used_at text, pending_name text, pending_jwk text,
-  code text, code_expires text, code_status text, wrong_tries integer not null default 0)"""
+  code text, code_expires text, code_status text, wrong_tries integer not null default 0, verify_code text)"""
 COLUMNS = ("state", "name", "sub", "jwk", "key_id", "connected_at", "last_used_at", "pending_name", "pending_jwk",
-           "code", "code_expires", "code_status", "wrong_tries")
+           "code", "code_expires", "code_status", "wrong_tries", "verify_code")
 
 
 # shapes
@@ -57,6 +57,7 @@ class Consent(Model):
     name: str
     key_id: str
     may: list[str]
+    verify_code: str = Field(description="XXX-XXX, new for this connection; the agent shows the same code")
 
 
 class AgentInfo(Model):
@@ -95,6 +96,8 @@ class PairIn(Model):
 
 class PairOut(Model):
     status: Literal["consent"]
+    verify_code: str = Field(description="XXX-XXX: show it to the user, it must match the code on the kitchen's "
+                                         "Agent page before the kitchen presses Allow")
 
 
 class PassOut(Model):
@@ -120,6 +123,7 @@ class Link:
     code_expires: str | None = None
     code_status: str | None = None
     wrong_tries: int = 0
+    verify_code: str | None = None
 
 
 def _wall() -> datetime:
@@ -140,9 +144,17 @@ def key_id(jwk: JWK) -> str:
     return jwk.thumbprint()[:8]
 
 
+def verify_code() -> str:
+    """A fresh verification code for one connection, XXX-XXX without look-alikes."""
+    c = "".join(secrets.choice(ALPHABET) for _ in range(6))
+    return f"{c[:3]}-{c[3:]}"
+
+
 def _con(ctx_or_path) -> sqlite3.Connection:
     con = sqlite3.connect(getattr(ctx_or_path, "db_path", ctx_or_path), timeout=10)
     con.execute(SCHEMA)
+    if "verify_code" not in {r[1] for r in con.execute("pragma table_info(agent_link)")}:
+        con.execute("alter table agent_link add column verify_code text")  # a store from before the code
     return con
 
 
@@ -248,7 +260,8 @@ def view(ctx: Ctx, request: Request | None = None, link: Link | None = None) -> 
         code = link.code
         out.pairing = Pairing(code=f"{code[:4]}-{code[4:]}", expires_at=link.code_expires, mcp_url=mcp, api_url=api)
     if link.state == "consent":
-        out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx))
+        out.consent = Consent(name=link.pending_name, key_id=key_id(JWK.from_json(link.pending_jwk)), may=may(ctx),
+                              verify_code=consent_code(ctx))
     if link.state in ("active", "paused"):
         out.agent = AgentInfo(name=link.name, key_id=link.key_id, connected_at=link.connected_at,
                               kind="mcp" if connector_key(ctx, link) else "agent",
@@ -288,9 +301,9 @@ def _public(jwk: dict) -> JWK:
     return key
 
 
-def agent_pair(ctx: Ctx, body: PairIn) -> None:
+def agent_pair(ctx: Ctx, body: PairIn) -> str:
     """The agent answers the code with its name and key. 404 for a wrong or expired code; five wrong codes
-    end the pairing."""
+    end the pairing. Returns the verification code the consent screen shows."""
     key = _public(body.public_jwk)
     name = " ".join(body.name.split())
     with ctx.rt.lock:
@@ -305,7 +318,9 @@ def agent_pair(ctx: Ctx, body: PairIn) -> None:
             raise HTTPException(404, "wrong or expired pairing code")
         link.state, link.code_status = "consent", "consent"
         link.pending_name, link.pending_jwk = name, key.export_public()
+        link.verify_code = verify_code()
         save(ctx, link)
+    return link.verify_code
 
 
 def agent_pass(ctx: Ctx, code: str) -> PassOut:
@@ -421,6 +436,9 @@ CONNECTOR_SCHEMA = """create table if not exists connector (
 INDEX_SCHEMA = "create table if not exists connector_index (token_hash text primary key, account_id text)"
 WAITING = ("Waiting for the kitchen to press Allow in Validio. Ask the user to open the Agent page in Validio "
            "and press Allow, then call the tool again.")
+WAITING_CODE = ("Waiting for the kitchen to press Allow in Validio. Show the user this verification code: {code}. "
+                "It must match the code on the Validio Agent page. Ask the user to open the Agent page in Validio, "
+                "check that the codes match and press Allow, then call the tool again.")
 
 
 def _token_hash(token: str) -> str:
@@ -523,6 +541,7 @@ def connector_ctx(token: str | None, touch: bool = False) -> Ctx | None:
                 link.state, link.code_status = "consent", "consent"
                 link.pending_name = MCP_NAME
                 link.pending_jwk = JWK.from_json(held[0]).export_public()
+                link.verify_code = verify_code()  # new for this connection, shown in the agent and on the page
                 save(ctx, link)
     return ctx
 
@@ -530,6 +549,27 @@ def connector_ctx(token: str | None, touch: bool = False) -> Ctx | None:
 def connector_waiting(ctx: Ctx) -> bool:
     """The kitchen has not allowed the connector's key yet."""
     return connector_key(ctx) is None
+
+
+def consent_code(ctx: Ctx) -> str | None:
+    """The verification code of the connection that waits for consent, made now for a consent from before
+    codes existed; None when nothing waits."""
+    link = load(ctx)
+    if link.state != "consent":
+        return None
+    if not link.verify_code:
+        with ctx.rt.lock:
+            link = load(ctx)
+            if link.state == "consent" and not link.verify_code:
+                link.verify_code = verify_code()
+                save(ctx, link)
+    return link.verify_code
+
+
+def waiting_text(ctx: Ctx) -> str:
+    """What every connector tool answers while the kitchen has not pressed Allow."""
+    code = consent_code(ctx)
+    return WAITING_CODE.format(code=code) if code else WAITING
 
 
 def connector_presentation(ctx: Ctx) -> str:
@@ -591,8 +631,7 @@ def agent_routes(r: APIRouter, Dep, suffix: str = "") -> None:
     def pair_agent(ctx: Dep, body: PairIn):
         """Answer the kitchen's pairing code with the agent's name and public P-256 key. The kitchen then
         sees the consent screen."""
-        agent_pair(ctx, body)
-        return PairOut(status="consent")
+        return PairOut(status="consent", verify_code=agent_pair(ctx, body))
 
     @r.get("/pass", response_model=PassOut, response_model_exclude_none=True, operation_id=f"get_pass{suffix}")
     def get_pass(ctx: Dep, code: str):
