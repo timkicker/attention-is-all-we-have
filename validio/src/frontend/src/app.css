@@ -33,6 +33,15 @@
 :root:not([data-theme="light"]) [data-slot="button"].bg-primary:hover {
   background: var(--v-primary-hover);
 }
+/* A pressed kit Chip fills with the foreground and inherits the background as
+   its text, but the kit's `button.chip-body:hover` sets the text back to the
+   foreground: under the pointer the label was drawn in the colour of its own
+   fill and vanished, in both themes (kit a9f10d4, chip.svelte). The pressed
+   label keeps the background colour while hovered. */
+.chip.on > button.chip-body:hover {
+  color: var(--background);
+}
+
 /* The kit's dark outline border (--input) is nearly the card colour (O12). */
 :root:not([data-theme="light"]) [data-slot="button"].border-border:not(:focus-visible) {
   border-color: var(--v-ctx);
