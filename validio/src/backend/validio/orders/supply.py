@@ -24,7 +24,15 @@ from ..policy.decide import Outcome, context_for, decide
 from ..policy.mandate import Mandate
 from ..text.format import money, qty_of, short_ref
 from ..valio.budget import CallBudget, CallBudgetExceeded
-from ..valio.client import NotRecorded, ReplayMiss, ValioBusy, ValioRefused, ValioUnavailable, days_text
+from ..valio.client import (
+    NotRecorded,
+    ReplayMiss,
+    ValioBusy,
+    ValioMalformed,
+    ValioRefused,
+    ValioUnavailable,
+    days_text,
+)
 from .explain import explain
 from .service import (
     SEVERITY,
@@ -380,7 +388,7 @@ class SupplyService:
                 # Valio did not answer twice (or is busy, or refused the key): refused before any order, one
                 # entry in the ledger, and not remembered under the key, so a retry after Valio is back works
                 req["lines"], req["status"] = [], "blocked"
-                said = str(e) if isinstance(e, (ValioBusy, ValioRefused)) else \
+                said = str(e) if isinstance(e, (ValioBusy, ValioRefused, ValioMalformed)) else \
                     f"Valio didn't answer at {self.orders.stamp():%H:%M}. Nothing was ordered."
                 req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": str(e),
                                    "reasonCode": "valio_down", "ownerText": said}
