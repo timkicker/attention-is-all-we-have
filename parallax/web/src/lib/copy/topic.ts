@@ -1,6 +1,6 @@
 // Words of the topic Differences tab (05, 07) and the one-statement page (06). Owner: P2.
 // Finding words ("says it differently", "Not in", "same in the other ...") come from ./shared.
-import { changedFromTo, edition, editions, fmtDate } from './shared'
+import { changedFromTo, edition, editions, fmtDate, numWord } from './shared'
 
 export const SUB_DIFFERENCES = 'Statements where other editions tell it differently, with the differing part'
 export const SUB_DIFFERENCES_MARK = 'marked'
@@ -64,3 +64,11 @@ export function showAllChanges(n: number): string {
 export function notInLower(langs: readonly string[]): string {
   return `not in ${editions(langs)}`
 }
+
+/** Statement page heading: "Winter War: one statement in seven editions" (the wording itself is in each group). */
+export function oneStatementIn(topic: string, editionCount: number): string {
+  return editionCount > 1 ? `${topic}: one statement in ${numWord(editionCount)} editions` : `${topic}: one statement`
+}
+
+/** Next to an edition whose difference has no words to mark. */
+export const SAYS_DIFFERENTLY = 'says it differently'
