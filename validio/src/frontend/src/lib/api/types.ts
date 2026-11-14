@@ -326,6 +326,8 @@ export interface SpendPass {
   validTo: string;
   autoLimitCents?: number;
   hardCapCents?: number;
+  /** The Rules' per week limit, for all orders under the pass together. */
+  weekCapCents?: number;
   diet?: string[];
   categories: string[];
   deliverBy: string;
