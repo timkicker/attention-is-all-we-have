@@ -28,7 +28,7 @@ package = false
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-testpaths = ["tests", "pipeline/tests", "api/tests"]
+testpaths = ["tests", "pipeline/tests", "engine/tests", "eval/tests", "api/tests"]
 
 [tool.ruff]
 line-length = 120
