@@ -19,6 +19,7 @@ import argparse
 import asyncio
 import logging
 import os
+import secrets
 import sqlite3
 import sys
 import tempfile
@@ -132,7 +133,10 @@ async def _main(scene: int, base: str, force_local: bool, kitchen: str | None = 
         target, holder, label = local(scene)
     llm = make_llm(scene)
     print(f"Validio demo, scene {scene}: {SCENES[scene].title}\nmodel: {llm.name} | {label}\n", flush=True)
-    async with McpPort(target, spend_pass=holder.presentation) as port:
+    # on a kitchen account every run is a new request: without a salt the keys equal those the template was
+    # built with, so Validio would hand back the template's own R-1 instead of a new request
+    salt = secrets.token_hex(6) if kitchen else ""
+    async with McpPort(target, spend_pass=holder.presentation, salt=salt) as port:
         t = await run_scene(scene, llm, port, on_event=printer())
     path = write(t, scene, label, ARTIFACTS)
     print(f"transcript: {path.relative_to(ROOT) if path.is_relative_to(ROOT) else path}", flush=True)
