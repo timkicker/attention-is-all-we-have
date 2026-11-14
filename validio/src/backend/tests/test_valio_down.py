@@ -93,7 +93,8 @@ def test_unrecorded_product_is_a_clean_503(client, holder):  # noqa: F811
         "lines": [{"productId": "463361", "quantity": 10, "unit": "ST"}], "deliverBy": "2026-11-16",
         "idempotencyKey": "unrecorded-1"})
     assert r.status_code == 503, r.text
-    assert "no recorded" in r.json()["detail"]
+    detail = r.json()["detail"]
+    assert detail.endswith("aren't recorded for this demo. Nothing was ordered.") and "463361" not in detail
     assert client.get("/api/inbox").json() == []
 
 

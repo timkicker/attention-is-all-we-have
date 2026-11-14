@@ -98,4 +98,4 @@ def test_a_diet_without_recordings_is_a_clean_refusal(client, ctx):  # noqa: F81
     r = ask(client, fresh, "500 litres of milk by Monday", "plain")
     assert r.status_code in (200, 503), r.text
     if r.status_code == 503:
-        assert "no recorded" in r.json()["detail"]
+        assert "aren't recorded for this demo" in r.json()["detail"]

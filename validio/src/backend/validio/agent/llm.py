@@ -5,6 +5,7 @@ from the same five tools. The twin's script is the call sequence the Gemini path
 
 import json
 import os
+import re
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -85,6 +86,9 @@ class FakeLLM:
         if req is None:
             return Step([ToolCall("request_supply", {"lines": task["lines"], "deliverBy": task["deliverBy"]})])
         if "error" in req:  # e.g. no recordings yet: say why instead of "request None"
+            plain = re.search(r"503 not recorded: (.+)$", req["error"])
+            if plain:  # already a sentence for a person
+                return Step(text=plain.group(1).strip())
             return Step(text=f"Validio could not take the request, nothing ordered. {req['error']}")
         rid = req.get("requestId") or req.get("id")
         out = outcome(req)

@@ -27,9 +27,8 @@ def test_unrecorded_product_answers_cleanly(client):  # noqa: F811
     assert r.status_code == 200, r.text
     out = r.json()
     assert "requestId" not in out
-    assert out["final"].startswith("Validio could not take the request, nothing ordered.")
-    assert "no recorded" in out["final"]
-    assert any("503 no recorded answers" in ln for ln in out["lines"])
+    assert out["final"] == "Valio's answers for salmon aren't recorded for this demo. Nothing was ordered."
+    assert not any("make record" in ln or "475" in ln for ln in out["lines"])  # no ids, no developer hints
     assert client.get("/api/inbox").json() == []
 
 
