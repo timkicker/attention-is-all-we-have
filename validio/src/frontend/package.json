@@ -36,6 +36,7 @@
     "vite": "6.4.6"
   },
   "dependencies": {
+    "@fontsource/pacifico": "^5.3.0",
     "@tauri-apps/api": "^2",
     "messageformat": "^4.0.0"
   }

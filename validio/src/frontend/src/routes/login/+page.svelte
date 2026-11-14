@@ -152,10 +152,10 @@
   }
   .wordmark {
     margin: 0;
-    font-family: var(--v-sans);
-    font-size: 26px;
-    line-height: 32px;
-    font-weight: 600;
+    font-family: var(--v-script);
+    font-size: 40px;
+    line-height: 52px;
+    font-weight: 400;
   }
   .for {
     font-size: var(--fs-meta);
