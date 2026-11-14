@@ -42,12 +42,11 @@ for (const theme of ["dark", "light"] as const) {
     await go("/requests/R-1");
     await expect(page.locator("#decision-sentence")).toContainText("Ordered 1,000 packs");
     await shoot("request-milk");
-    await page.locator("#fold-details").click();
-    await shoot("request-milk-open");
-
     await stockOut(page);
     await expect(page.locator("#request-title")).toContainText("200 bags");
     await shoot("request-mozzarella");
+    await page.locator("#fold-details").click();
+    await shoot("request-mozzarella-open");
 
     await go("/approve/R-2");
     await expect(page.getByTestId("approve-question")).toContainText("180.10");
@@ -60,7 +59,7 @@ for (const theme of ["dark", "light"] as const) {
     await go("/steady");
     await shoot("steady-list");
     await go("/steady/S-1");
-    await expect(page.locator("#simulated-history")).toBeVisible();
+    await expect(page.locator("#simulated-history")).toBeAttached();
     await shoot("steady-before");
     await page.getByTestId("renew").click();
     await code(page);

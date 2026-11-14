@@ -42,7 +42,7 @@
           <span class="total num">{money(o.totalCents)}</span>
         </Collapsible.Trigger>
         <p class="why">
-          <span class="word" class:chosen={o.verdict === "chosen"} class:bad={o.verdict === "blocked"}>{v.label}.</span>
+          {#if o.verdict !== "ranked"}<span class="word" class:chosen={o.verdict === "chosen"} class:bad={o.verdict === "blocked"}>{v.label}.</span>{/if}
           {said[0] ?? ""}
           {#if loud(o)}{sentences(o.supplierText?.reader?.summary)[0] ?? "Its description talks to AI agents."} Validio ignored it.{/if}
         </p>
@@ -50,7 +50,9 @@
           {#snippet child({ props, open })}
             <div {...props} class="more" hidden={!open}>
               <p class="id t-quiet">
-                <span class="num">{amount(o.quantity, o.unit)}</span> · <span class="mono">{o.productId}</span>{#if o.onValioList} · on Valio's list{:else if o.isSubstitute} · not on Valio's list{/if}
+                <span class="num">{amount(o.quantity, o.unit)}</span>
+                <span class="mono">{o.productId}</span>
+                {#if o.onValioList}<span>on Valio's list</span>{:else if o.isSubstitute}<span>not on Valio's list</span>{/if}
               </p>
               {#if said.length > 1}
                 <ul class="also">
@@ -130,6 +132,9 @@
     padding-top: 0.5rem;
   }
   .id {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1rem;
     margin: 0;
     font-size: var(--text-xs);
   }

@@ -15,14 +15,13 @@ test("scene 2: ordered alone, chain verified", async ({ page }) => {
   await expect(page.getByTestId("option-464306")).toContainText("1,010.00");
   await expect(page.getByTestId("pass-auto")).toContainText("1,200.00");
 
-  // Everything behind the one sentence sits in one fold; in it the first
-  // options show, "Show all" brings the rest.
+
+  // A finished request shows no details, only the record link; the ignored
+  // supplier text gets one line.
+  await expect(page.locator("#fold-details")).toHaveCount(0);
   await expect(page.getByTestId("option-464306")).toBeHidden();
-  await page.locator("#fold-details").click();
-  await expect(page.getByTestId("option-464306")).toBeVisible();
-  await expect(page.getByTestId("option-462921")).toBeHidden();
-  await page.locator("#fold-options").click();
-  await expect(page.getByTestId("option-462921")).toBeVisible();
+  await expect(page.locator("#see-record")).toBeVisible();
+  await expect(page.locator("#ignored-note")).toContainText("told AI agents");
   await expect(page.getByTestId("option-462921")).toContainText("2,194.00");
   await expect(page.getByTestId("option-462703")).toContainText("cooking fat mix");
   await expect(page.getByTestId("supplier-463047")).toContainText("Untrusted");
