@@ -9,6 +9,7 @@ from jwcrypto.jwk import JWK
 from test_api import auth, client, holder  # noqa: F401
 
 from validio.agent.holder import Holder
+from validio.api.connect import DEMO_AGENT
 
 MILK = "500 litres of lactose-free milk by Monday"
 
@@ -53,7 +54,7 @@ def test_a_signing_agent_gets_the_verification_code_of_the_consent_screen(client
 def test_a_seeded_kitchen_has_the_demo_agent(client):  # noqa: F811
     s = client.get("/api/agent").json()
     assert s["state"] == "active"
-    assert s["agent"]["name"] == "Demo agent" and s["agent"]["passId"] == "M-1"
+    assert s["agent"]["name"] == DEMO_AGENT and s["agent"]["passId"] == "M-1"
     assert s["agent"]["passVersion"] == 1 and len(s["agent"]["keyId"]) == 8
     assert [v["version"] for v in s["versions"]] == [1]
 
@@ -67,7 +68,7 @@ def test_disconnect_bumps_the_version_and_refuses_the_old_copy(client, holder, c
     assert r.status_code == 401 and "superseded" in r.json()["detail"]
     assert not ctx.store.is_revoked("M-1")  # never revoked, so a new agent can get M-1 back
     assert [e["sentence"] for e in agent_entries(client)] == [
-        "Disconnected Demo agent. Spend Pass M-1 is now version 2, the agent's copy is refused."]
+        f"Disconnected {DEMO_AGENT}. Spend Pass M-1 is now version 2, the agent's copy is refused."]
     assert client.get("/api/spend-passes/M-1").status_code == 200  # the page still shows the pass
 
 
@@ -146,7 +147,7 @@ def test_pause_refuses_at_verify_and_writes_one_entry_each_time(client, holder):
     r = ask(client, holder, "p1")
     assert r.status_code == 401 and r.json()["detail"] == "the kitchen paused this agent"
     sentences = [e["sentence"] for e in agent_entries(client)]
-    assert sentences == ["Paused Demo agent.", "Refused Demo agent: the kitchen paused this agent."]
+    assert sentences == [f"Paused {DEMO_AGENT}.", f"Refused {DEMO_AGENT}: the kitchen paused this agent."]
     assert all(e["spendPassId"] == "M-1" for e in agent_entries(client))
     assert client.get("/api/spend-passes/M-1").status_code == 200  # looking at the pass is not agent use
     assert len(agent_entries(client)) == 2
@@ -154,7 +155,7 @@ def test_pause_refuses_at_verify_and_writes_one_entry_each_time(client, holder):
     s = client.post("/api/agent/pause", json={"paused": False}).json()
     assert s["state"] == "active" and s["agent"]["passVersion"] == 1  # the same pass comes back
     assert ask(client, holder, "p2").status_code == 200
-    assert agent_entries(client)[-1]["sentence"] == "Resumed Demo agent."
+    assert agent_entries(client)[-1]["sentence"] == f"Resumed {DEMO_AGENT}."
 
 
 def test_pause_needs_an_agent(client):  # noqa: F811
@@ -166,7 +167,7 @@ def test_demo_agent_answers_the_code_and_gets_the_pass_back(client, ctx):  # noq
     client.post("/api/agent/disconnect")
     pair_demo_agent(ctx)  # the demo agent's key answers the code like any signing agent
     s = client.get("/api/agent").json()
-    assert s["state"] == "consent" and s["consent"]["name"] == "Demo agent"
+    assert s["state"] == "consent" and s["consent"]["name"] == DEMO_AGENT
     s = client.post("/api/agent/allow").json()
     assert s["state"] == "active" and s["agent"]["passVersion"] == 3
     h = Holder.from_seed(lambda: client.get("/agent/v1/nonce").json(), ctx.db_path, ctx.keys_dir)
@@ -228,3 +229,16 @@ def test_settings_resign_names_the_version(client):  # noqa: F811
     r = client.put("/api/settings/diet", json={"diet": ["FREE_FROM_LACTOSE", "FREE_FROM_GLUTEN"], "code": CODE})
     assert r.status_code == 200, r.text
     assert client.get("/api/agent").json()["versions"][0]["why"] == "Diet changed"
+
+
+def test_the_seeded_requests_keep_the_demo_agents_name_without_a_connection(tmp_path):
+    """The template's requests were made by the demo agent; a kitchen that starts unconnected still names it."""
+    from types import SimpleNamespace
+
+    from validio.api import connect
+    from validio.demo import seed
+    from validio.policy.mandate import DEMO_CLAIMS
+
+    db = seed.reset(tmp_path / "validio.db", tmp_path / "keys")
+    connect.leave_unconnected(db)
+    assert connect.agent_names(SimpleNamespace(db_path=db)) == {DEMO_CLAIMS["sub"]: DEMO_AGENT}

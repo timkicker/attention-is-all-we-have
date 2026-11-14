@@ -44,6 +44,10 @@ STEADY_PASS_ID = f"S-1-W{NOW.isocalendar().week}"
 STEADY_CLAIMS = {**{k: v for k, v in DEMO_CLAIMS.items() if k != "deliverBy"},  # the renewal sets the delivery
                  "jti": STEADY_PASS_ID, "iat": int(WEEK_START.timestamp()), "nbf": int(WEEK_START.timestamp()),
                  "exp": int((WEEK_START + timedelta(days=7)).timestamp())}
+# The name the demo agent reports when it pairs (agent/cli.py). The seed's requests are its own, made with the key
+# M-1 is signed to, so the store keeps that name for its sub the way allow() keeps a connector client's name.
+DEMO_AGENT_NAME = "Kitchen agent"
+AGENT_NAME_TABLE = "agent_name (sub text primary key, name text not null)"
 STOCKOUT_ID = "466375"
 STOCKOUT_LEAD = "Stock-out simulated for the demo."
 STOCKOUT_NOTE = f"{STOCKOUT_LEAD} Valio really has stock."
@@ -55,6 +59,7 @@ create table spend_pass (id text primary key, kitchen_id text, issuance text);
 create table demo_state (key text primary key, value text);
 create table past_order (delivered text primary key, kitchen_id text, guests integer, simulated integer);
 create table past_line (delivered text, product_id text, sales_qty integer, primary key (delivered, product_id));
+create table """ + AGENT_NAME_TABLE + """;
 """
 
 
@@ -104,6 +109,7 @@ def reset(path: Path | None = None, keys_dir: Path | None = None) -> Path:
         con.execute("insert into spend_pass values (?, ?, ?)", (SPEND_PASS_ID, KITCHEN, issuance))
         steady = issue_mandate(STEADY_CLAIMS, DEMO_SD_FIELDS, kitchen_key, agent_key)
         con.execute("insert into spend_pass values (?, ?, ?)", (STEADY_PASS_ID, KITCHEN, steady))
+        con.execute("insert into agent_name values (?, ?)", (DEMO_CLAIMS["sub"], DEMO_AGENT_NAME))
         con.execute("insert into demo_state values ('stockout_466375', '0')")
         con.execute("insert into demo_state values ('seed_token', ?)", (secrets.token_hex(8),))
         h = load_history()
