@@ -188,7 +188,8 @@
     font-size: 12px;
     line-height: 18px;
     color: var(--v-muted);
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
   :global(.dialog-card:has(.ask)) {
     max-width: 520px;
