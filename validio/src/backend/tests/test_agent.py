@@ -42,7 +42,7 @@ async def test_fake_scene1_requests_supply():
     assert [c for c, _ in calls] == ["search_products", "request_supply"]
     assert calls[1][1]["lines"] == [{"text": SCENES[1].request}]
     assert calls[1][1]["deliverBy"] == "2026-11-16"
-    assert t.final == "Validio may order request R-1 alone (auto_order), checked 12 products live."
+    assert t.final == "Validio may order request R-1 automatically (auto_order), checked 12 products live."
 
 
 @pytest.mark.asyncio

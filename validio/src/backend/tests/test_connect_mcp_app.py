@@ -196,7 +196,7 @@ def test_orders_alone_without_any_pass(kitchens):
 def test_waits_for_the_kitchens_approval(kitchens):
     demo, _, agent, _, _ = kitchens
     m = Mcp(agent, f"/mcp/c/{connect_app(demo, agent)}/", name=AGENT)
-    big = [{"text": "1500 litres of lactose-free milk"}]  # above what the demo Rules let it order alone
+    big = [{"text": "1500 litres of lactose-free milk"}]  # above what the demo Rules let it order automatically
     req = m.call("request_supply", {"lines": big, "deliverBy": "2026-11-16"})["structuredContent"]
     assert req["decision"]["outcome"] == "ask_human" and req["orderId"], req["decision"]
     order = m.call("get_order", {"orderId": req["orderId"]})["structuredContent"]

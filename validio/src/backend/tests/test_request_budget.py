@@ -16,7 +16,7 @@ def test_over_the_budget_needs_a_person(client, holder):  # noqa: F811
     assert req["status"] == "waiting" and d["outcome"] == "ask_human"
     assert "over-budget" in d["ruleIds"] and "auto-order" not in d["ruleIds"]
     assert "over the budget of 500.00 € the request names" in d["sentence"]
-    assert "May order it alone" not in d["sentence"]
+    assert "May order it automatically" not in d["sentence"]
     order = client.get(f"/api/orders/{req['orderId']}").json()
     assert order["state"] == "waiting" and "budget of 500.00 €" in order["decision"]["sentence"]
 

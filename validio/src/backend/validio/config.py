@@ -76,7 +76,7 @@ _STRICT_STOCK: ContextVar[bool] = ContextVar("strict_placeholder_stock", default
 @contextmanager
 def strict_stock(on: bool):
     """Within it, placeholder stock is no real count whatever STRICT_PLACEHOLDER_STOCK says: a kitchen's own
-    account decides with real money, so it never orders alone on a count nobody made. It only turns strict on."""
+    account decides with real money, so it never orders automatically on a count nobody made. It only turns strict on."""
     token = _STRICT_STOCK.set(_STRICT_STOCK.get() or on)
     try:
         yield
@@ -86,7 +86,7 @@ def strict_stock(on: bool):
 
 def strict_placeholder_stock() -> bool:
     """STRICT_PLACEHOLDER_STOCK=1: Valio's placeholder stock numbers (9999999999, 666666666) count as no real
-    count, so nothing orders alone on them. Off by default for the demo and the local kitchen until a Valio
+    count, so nothing orders automatically on them. Off by default for the demo and the local kitchen until a Valio
     mentor says what they mean; always on for a kitchen's own account (`strict_stock`)."""
     if _STRICT_STOCK.get():
         return True

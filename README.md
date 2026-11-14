@@ -11,7 +11,7 @@ This repository holds the two projects our team built at Junction 2026 in Espoo 
 
 ![Validio Home in the demo kitchen: spend this week, nothing waiting, the latest orders](docs/img/validio-home.png)
 
-A kitchen connects its purchasing agent to Validio and the agent orders from Valio Aimo through it. Within the kitchen's Rules the agent orders alone. Above them the order waits until the owner approves it with a code. Beyond them it is blocked. Four Cedar rules make that decision from Valio's own product data and the kitchen's signed Spend Pass, so neither model output nor supplier text can change it. Every decision, approval and Rules change goes into a hash-chained ledger with a signed head.
+A kitchen connects its purchasing agent to Validio and the agent orders from Valio Aimo through it. Within the kitchen's Rules the agent orders automatically. Above them the order waits until the owner approves it with a code. Beyond them it is blocked. Four Cedar rules make that decision from Valio's own product data and the kitchen's signed Spend Pass, so neither model output nor supplier text can change it. Every decision, approval and Rules change goes into a hash-chained ledger with a signed head.
 
 ### Try it in a minute
 

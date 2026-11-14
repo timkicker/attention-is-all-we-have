@@ -293,15 +293,15 @@
         {#if limits}
           {@const over = limits.total > limits.alone}
           <div class="ck" data-testid="limits">
-            <dt>{limits.total > limits.most ? "Over your limits" : over ? "Above what it orders alone" : "Within your limits"}</dt>
+            <dt>{limits.total > limits.most ? "Over your limits" : over ? "Above what it orders automatically" : "Within your limits"}</dt>
             <dd>
-              <span class="meter" role="img" aria-label="This order {money(limits.total)}. Ordered alone up to {money(limits.alone)}. Waiting for you up to {money(limits.most)}.">
+              <span class="meter" role="img" aria-label="This order {money(limits.total)}. Ordered automatically up to {money(limits.alone)}. Waiting for you up to {money(limits.most)}.">
                 <span class="fill" class:over style:width={pct(limits.total)}></span>
                 <span class="tick" style:left={pct(limits.alone)}></span>
               </span>
               <span class="legend num">
                 <span>{short(limits.total)}</span>
-                <span>{short(limits.alone)} alone</span>
+                <span>{short(limits.alone)} automatic</span>
                 <span>{short(limits.most)} at most</span>
               </span>
             </dd>

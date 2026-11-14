@@ -15,7 +15,7 @@ const OUT = `${process.env.A11Y_OUT}/results`;
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const VIEWPORTS = { desktop: { width: 1280, height: 900 }, phone: { width: 390, height: 844 } };
 const SCHEMES = ["light", "dark"] as const;
-// R-1 ordered alone, R-2 waiting for approval, S-1 the Steady Order (setup.ts)
+// R-1 ordered automatically, R-2 waiting for approval, S-1 the Steady Order (setup.ts)
 const PAGES = ["/", "/activity", "/activity/R-1", "/activity/R-2", "/activity/S-1", "/rules", "/rules/edit", "/settings"];
 const STATES = ["none", "pairing", "consent", "active", "paused"] as const;
 type AgentState = (typeof STATES)[number];

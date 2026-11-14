@@ -91,7 +91,7 @@ test("the agent's first call shows the code without a reload; Deny, then Allow",
   await expect(page.getByTestId("agent-state")).toHaveText("Check the code");
   await expect(page.getByTestId("consent-who")).toHaveText(/^MCP agent called at \d\d:\d\d$/);
   await expect(page.getByTestId("consent")).toContainText("Your agent shows this code too. Allow only if it matches.");
-  await expect(page.getByTestId("consent-may")).toContainText("Orders alone up to 1,200.00 €");
+  await expect(page.getByTestId("consent-may")).toContainText("Orders automatically up to 1,200.00 €");
   expect(await slop(page)).toEqual([]);
   // The code is random and is read out letter by letter: a run that drew a unit code ("PSS") is still clean.
   await page.getByTestId("verify-code").evaluate((e) => (e.textContent = "PSS-EUR"));

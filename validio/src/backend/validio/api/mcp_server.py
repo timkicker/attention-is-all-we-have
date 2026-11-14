@@ -205,7 +205,7 @@ def kitchen_nonce_resource(account: str) -> str:
 # kitchen's agent can press it and no code travels anywhere.
 @server.tool(annotations=ORDER)
 async def renew_steady_order(spendPass: str, orderId: str = "S-1", mc: Context | None = None) -> dict:
-    """Renew this week's Steady Order. Lines that match the usual pattern are ordered alone, the rest
+    """Renew this week's Steady Order. Lines that match the usual pattern are ordered automatically, the rest
     wait for the owner with the reason. A second renewal in the same week orders nothing twice."""
     import anyio
     from fastapi import HTTPException
@@ -229,7 +229,7 @@ CONNECTOR = "validio.connector"  # the token, put on the ASGI scope by the /mcp/
 
 INSTRUCTIONS = (
     "Validio is the purchasing gate of one professional kitchen that buys from Valio, the Finnish dairy and "
-    "food supplier. You order for this kitchen within the Rules its owner set (how much may be ordered alone, "
+    "food supplier. You order for this kitchen within the Rules its owner set (how much may be ordered automatically, "
     "what needs approval, what is blocked). Validio signs every call for you: never ask for a pass, key or code.\n"
     "To order: 1. Call request_supply with the order in the user's own words as lines, e.g. "
     "[{\"text\": \"1000 litres of lactose-free milk\"}], and deliverBy as YYYY-MM-DD when a day is named "
@@ -383,7 +383,7 @@ def c_get_order(orderId: str, mc: Context | None = None) -> dict:
 @connector_server.tool(name="renew_steady_order", annotations=ORDER)
 async def c_renew_steady_order(orderId: str = "S-1", mc: Context | None = None) -> dict:
     """Renew this week's Steady Order (the kitchen's usual weekly order, S-1). Lines that match the usual
-    pattern are ordered alone, the rest wait for the kitchen with the reason."""
+    pattern are ordered automatically, the rest wait for the kitchen with the reason."""
     import anyio
     from fastapi import HTTPException
 

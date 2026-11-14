@@ -96,7 +96,7 @@ def pass_with(never):
     (["nuts"], product(["SH"]), (True, False)),  # hazelnuts are nuts
     (["nuts"], product(may=["SA"]), (False, True)),  # may contain almonds: a person looks
     (["nuts"], product(["AM"]), (False, False)),
-    (["nuts"], product(data=False), (False, True)),  # no allergen data: never alone
+    (["nuts"], product(data=False), (False, True)),  # no allergen data: never automatically
     (["peanuts"], product(["AN"]), (False, False)),
     (["unicorn"], product(), (False, True)),  # a word Validio does not know fails closed
 ])

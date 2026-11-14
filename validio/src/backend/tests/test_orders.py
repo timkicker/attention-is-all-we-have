@@ -257,7 +257,7 @@ def test_short_line_keeps_valio_answer_for_the_hard_lines(svc, mandate):
     assert "Valio does not confirm enough stock" in o["decision"]["sentence"]
 
 
-# The alone and approval limits hold per order, as the Rules page shows them; only "per week" counts what the
+# The automatic and approval limits hold per order, as the Rules page shows them; only "per week" counts what the
 # pass already placed (live test 14 Nov: a second 1,010 € order was blocked by the 2,000 € limit).
 
 def test_limits_hold_per_order_without_a_week_limit(svc, mandate):

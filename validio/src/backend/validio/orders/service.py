@@ -144,7 +144,7 @@ def _with_stock(a: Availability | None, amount: float) -> Availability | None:
 
 
 def over_budget(decision: dict[str, Any], quoted: list[dict], budget_cents: int | None) -> dict[str, Any]:
-    """A budget the request names counts: above it, a person decides, never Validio alone. A block stays."""
+    """A budget the request names counts: above it, a person decides, Validio never orders automatically. A block stays."""
     total = sum(ln["totalCents"] or 0 for ln in quoted)
     if not budget_cents or total <= budget_cents or decision["outcome"] == "block":
         return decision
@@ -152,7 +152,7 @@ def over_budget(decision: dict[str, Any], quoted: list[dict], budget_cents: int 
     rules = [*decision["ruleIds"], "over-budget"]
     if decision["outcome"] == "ask_human":
         return {**decision, "ruleIds": rules, "sentence": f"{decision['sentence']} Also {why}."}
-    kept = [s for s in re.split(r"(?<=\.)\s+(?=[A-Z])", decision["sentence"]) if not s.startswith("May order it alone")]
+    kept = [s for s in re.split(r"(?<=\.)\s+(?=[A-Z])", decision["sentence"]) if not s.startswith("May order it automatically")]
     return {**decision, "outcome": "ask_human", "ruleIds": [r for r in rules if r != "auto-order"],
             "sentence": " ".join([*kept, f"Needs a person: {why}."]).strip()}
 
@@ -255,7 +255,7 @@ class OrderService:
                                     f"order of {eur(total)} would make {eur(used + total)}, over the weekly "
                                     f"limit of {eur(week)}."}, []
         per = []
-        for ln in quoted:  # the alone and approval limits hold per order
+        for ln in quoted:  # the automatic and approval limits hold per order
             ctx = context_for(mandate, ln["_product"], ln["_avail"], total_cents=total, now=self.clock(),
                               is_substitute=ln["isSubstitute"], on_valio_list=ln["onValioList"],
                               split_base_cents=split_base_cents, required_claims=required_claims,

@@ -73,7 +73,7 @@
     <div class="p-mark"><h1 class="wordmark">Validio</h1><span class="for">for Valio Aimo customers</span></div>
     <div class="p-copy">
       <p class="statement" data-testid="login-what">Let your agent order from Valio Aimo, inside the rules you set.</p>
-      <p>Before every order, Validio asks Valio for the price and the stock. Your agent orders alone only below your limit; above it, the order waits for you.</p>
+      <p>Before every order, Validio asks Valio for the price and the stock. Your agent orders automatically only below your limit; above it, the order waits for you.</p>
       <p>Every decision is written to a sealed record you can read at any time.</p>
     </div>
     <p class="p-foot">A service for restaurant kitchens buying from Valio Aimo.</p>

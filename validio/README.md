@@ -1,6 +1,6 @@
 # Validio
 
-A kitchen's purchasing agent orders from Valio Aimo through Validio. Within the Rules the kitchen sets, the agent orders alone. Above them it needs the owner's approval. Beyond them it is blocked.
+A kitchen's purchasing agent orders from Valio Aimo through Validio. Within the Rules the kitchen sets, the agent orders automatically. Above them it needs the owner's approval. Beyond them it is blocked.
 
 Live: https://timkicker--validio.us-east.modal.run. Click **Try the demo kitchen**. Your browser gets its own copy of a filled demo kitchen. The bar on top shows its approval code (246810) and **Start over** in that bar takes the copy back to the start. Nothing you do there reaches Valio or another visitor.
 
@@ -20,7 +20,7 @@ The plan and the reasoning behind each part are in [PROJECT_BLUEPRINT-validio.md
    A chat app's custom connector works the same way.
 3. Ask the agent to order something, for example "1000 litres of lactose-free milk by Monday, budget 1200 euro". Until the kitchen allows it, every tool answers with a verification code like `K7P-3QX`. The read-only tool `connection_status` returns the same code at any time. The Agent page now shows a code as well.
 4. If the two codes match, click **Allow**. Validio holds the agent's key and signs every call for it, so the agent never handles a pass, a key or a code.
-5. Ask again. The milk is ordered alone for 1,010.00 € and shows up on **Home** and in **Activity**.
+5. Ask again. The milk is ordered automatically for 1,010.00 € and shows up on **Home** and in **Activity**.
 
 The connector offers seven tools: `search_products`, `request_supply`, `confirm_order`, `get_request`, `get_order`, `renew_steady_order` and `connection_status`. An agent that signs its own Spend Pass pairs with the code under "Agent without MCP" instead. [docs/AGENTS.md](docs/AGENTS.md) covers both ways and OpenAPI.
 
@@ -36,10 +36,10 @@ The connector offers seven tools: `search_products`, `request_supply`, `confirm_
 
 ## Rules
 
-- **Per order.** "Ordered alone up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
+- **Per order.** "Ordered automatically up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
 - **Per week.** An optional cap on everything the Spend Pass has placed this week. An order that would go over it is blocked. Validio checks this limit before it asks Cedar, so it is not one of the Cedar rules. The demo kitchen has 8,000.00 €.
 - **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product is blocked when its own Valio data contradicts the diet or when it lists a "never" allergen. It waits for you when the diet cannot be confirmed, when it may contain a "never" allergen or when it has no allergen data.
-- **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered alone. With extra cost: as from Valio's list, plus a line may be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
+- **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered automatically. With extra cost: as from Valio's list, plus a line may be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
 
 A budget written in the request ("budget 1200 euro") counts too: above it, the order waits for you. Before it places any order, Validio asks Valio again. If a price rose by more than 2 % or a line can no longer be delivered, the order is refused. The rules themselves are listed in [docs/RULES.md](docs/RULES.md).
 
@@ -63,7 +63,7 @@ Three things are simulated: the stock-out of mozzarella 466375 (Valio really has
 
 - **FastAPI** (`src/backend/validio/api/`): one Python service for the web app's API under `/api`, the agent API under `/agent/v1` (OpenAPI 3.1) and MCP under `/mcp`. All three call the same functions.
 - **Spend Pass** (`policy/mandate.py`): the kitchen's signed permission, an SD-JWT bound to the agent's P-256 key and checked with a single-use nonce. The Rules are claims inside it, so every Rules change signs a new version.
-- **Cedar** (`policy/policies.cedar`): four rules decide whether to order alone, ask a person or block. The rules read only numbers and yes/no values that Validio fills from Valio's data and the pass. Model output and supplier text never reach a decision.
+- **Cedar** (`policy/policies.cedar`): four rules decide whether to order automatically, ask a person or block. The rules read only numbers and yes/no values that Validio fills from Valio's data and the pass. Model output and supplier text never reach a decision.
 - **Matching and Fact Grades** (`matching/`, `trust/`): the request turns into a typed need, the local catalog narrows it down and at most 40 ids per call go to Valio. Every fact is graded and a missing value never counts as a yes.
 - **MCP** (`api/mcp_server.py`): the connector server at `/mcp/c/<token>/` for any client and `/mcp/k/<account>/` for agents that sign.
 - **SvelteKit** (`src/frontend/`): the web app, built to static files and served by the same FastAPI process.

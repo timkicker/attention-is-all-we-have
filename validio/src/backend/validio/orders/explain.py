@@ -1,5 +1,5 @@
 """Why a request ended where it did, for the owner: a reason code and one plain sentence in the words of the
-kitchen's own limits ("1,010.00 € is under your 1,200.00 € limit for buying alone.").
+kitchen's own limits ("1,010.00 € is under your 1,200.00 € limit for automatic orders.").
 
 Read from the decision Validio stored (its outcome, rule ids and sentence), never from the agent. The stored
 sentence stays as it is; this only says it again for a person. Exceptions decided before any rule ran
@@ -42,13 +42,13 @@ def reason(decision: dict, diet: list[str] | tuple[str, ...] = (), deliver_by: s
     rules = decision.get("ruleIds") or []
     outcome = decision.get("outcome")
     if outcome == "auto_order":
-        m = re.search(rf"May order it alone: {MONEY} is inside the auto limit of {MONEY}", s)
+        m = re.search(rf"May order it (?:alone|automatically): {MONEY} is inside the auto limit of {MONEY}", s)
         if m:
-            return "auto_ok", f"{m.group(1)} is under your {m.group(2)} limit for buying alone"
-        return "auto_ok", "it is inside your limit for buying alone"
+            return "auto_ok", f"{m.group(1)} is under your {m.group(2)} limit for automatic orders"
+        return "auto_ok", "it is inside your limit for automatic orders"
     if outcome == "ask_human":
         if m := re.search(rf"{MONEY} is over the auto limit of {MONEY}", s):
-            return "over_alone", f"{m.group(1)} is over your {m.group(2)} limit for buying alone"
+            return "over_alone", f"{m.group(1)} is over your {m.group(2)} limit for automatic orders"
         if "over-budget" in rules and (m := re.search(rf"{MONEY} is over the budget of {MONEY}", s)):
             return "over_budget", f"{m.group(1)} is over the {m.group(2)} budget the request names"
         if re.search(r"substitute (that )?is not on Valio's list", s):

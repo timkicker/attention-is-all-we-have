@@ -178,7 +178,7 @@ export interface Decision {
   summary?: string;
   /** Why it ended here, for every status. */
   reasonCode?: ReasonCode;
-  /** One plain sentence in the kitchen's own limits: "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for buying alone." */
+  /** One plain sentence in the kitchen's own limits: "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders." */
   ownerText?: string;
 }
 
@@ -542,7 +542,7 @@ export interface SteadyOrderSummary {
 
 /** The few demo switches the presenter presses. Each one is simulated. */
 /** POST /api/spend-pass: the owner signs M-1 again (approval code as for approve). Answers the SpendPassView.
- *  422 when alone is above never above, 403 on a wrong code. Valio answers are recorded only for lactose free
+ *  422 when automatic orders are above never above, 403 on a wrong code. Valio answers are recorded only for lactose free
  *  and 16 Nov, so other values make the next request a clean 503. Start over restores the seeded pass. */
 export interface SpendPassIn {
   autoLimitCents: number;
@@ -550,7 +550,7 @@ export interface SpendPassIn {
   diet: ('FREE_FROM_LACTOSE' | 'FREE_FROM_GLUTEN' | 'VEGAN')[];
   /** ISO date. */
   deliverBy: string;
-  /** false: no substitute orders alone. */
+  /** false: no substitute orders automatically. */
   substitutes: boolean;
   code?: string;
 }
@@ -670,7 +670,7 @@ export interface ActivityItem {
   totalCents: number | null;
   at: string;
   orderId: string | null;
-  /** Ordered because the owner approved it, not alone. */
+  /** Ordered because the owner approved it, not automatically. */
   approvedByYou: boolean;
 }
 
