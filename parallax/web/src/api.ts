@@ -11,6 +11,9 @@ export type Cell = S['Cell']
 export type Timeline = S['Timeline']
 export type Life = S['Life']
 export type Statement = S['Statement']
+export type Dropped = S['Dropped']
+/** Fields the API adds beyond the contract: the last revision that still had the sentence. */
+export type DroppedRow = Dropped['rows'][number] & { last_rev?: number | null; last_url?: string | null; time_precision?: string }
 
 export class ApiError extends Error {
   constructor(
@@ -54,6 +57,10 @@ export const api = {
     init?: RequestInit,
   ) =>
     getJson<Compare>('/api/compare', p, init),
+  dropped: (
+    p: { topic?: string; lang?: string; reason?: string; min_days?: number; offset?: number; limit?: number },
+    init?: RequestInit,
+  ) => getJson<Dropped>('/api/dropped', p, init),
   timeline: (lang: string, pageId: number, h: string) =>
     getJson<Timeline>(`/api/claim/${encodeURIComponent(lang)}/${pageId}/${encodeURIComponent(h)}/timeline`),
 }

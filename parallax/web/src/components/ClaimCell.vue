@@ -5,16 +5,10 @@ import { CdxInfoChip } from '@wikimedia/codex'
 import type { Cell } from '../api'
 import { highlight } from '../highlight'
 import { langDir, langName } from '../langs'
+import { VERDICT } from '../verdicts'
 
 const props = defineProps<{ lang: string; cell: Cell; anchorLang: string }>()
 const emit = defineEmits<{ open: [] }>()
-
-const VERDICT: Record<string, { label: string; status: 'success' | 'notice' | 'warning' | 'subtle' }> = {
-  same: { label: 'same claim', status: 'success' },
-  partial: { label: 'partly the same', status: 'notice' },
-  contradicts: { label: 'differs', status: 'warning' },
-  different: { label: 'other claim', status: 'subtle' },
-}
 
 const chip = computed(() => {
   const c = props.cell
