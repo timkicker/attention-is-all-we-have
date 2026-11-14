@@ -40,6 +40,8 @@ Proof:
 - `test_reader.py::test_deciding_code_never_imports_reader`
 - `test_reader.py::test_reader_output_cannot_change_decision` with its control `test_reader.py::test_control_wired_reader_would_be_caught`, which wires a lying reader into grading and shows the decision would move
 
+The connector URL (`/mcp/c/<token>/`, chat apps and coding tools that cannot sign) answers through the same `redact` in `api/mcp_server.py`, since those agents have no holder of their own to strip it (`test_connector_synthetic.py::test_connector_answers_carry_no_supplier_text`). `/mcp` and `/agent/v1` still return supplier text under `supplierText` and `descriptionUntrusted`, for agents built on Validio's holder, which strip it themselves; any other agent there must drop those fields before its model reads them.
+
 Not covered: `redact` works on field names. A new API field that carries supplier text under an unknown name would reach the model until someone adds it to the list. Product names and the chef's own request text go to the model as they are. The fake reader's patterns are English, so an instruction in Finnish gets no flag on screen. It still cannot change a decision. The owner sees the reader's note and can be talked into something by text on a screen. No code stops that.
 
 ## Valio data wrong
