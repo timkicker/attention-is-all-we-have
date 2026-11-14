@@ -1,8 +1,65 @@
 # Demo click-through
 
+**Draft.** This page describes the click path for one account per kitchen, as planned in [PLAN-ACCOUNTS.md](PLAN-ACCOUNTS.md). That build is not live yet. The labels come from the build plan. Check each one against the built pages before recording and fix this page where they differ. The old path for `make demo` stays below until the new one is deployed.
+
+## New click path
+
+About two minutes. Open the demo link (updated after deploy) or `make demo` on http://127.0.0.1:8410 in a fresh browser at 1280 px. Keep a second window at 390 px for the phone.
+
+### 1 Try the demo kitchen
+
+The login page offers **Try the demo kitchen**, email login and **Create account**. Click **Try the demo kitchen**.
+
+Each browser gets its own copy of the demo kitchen. Two jurors never click in each other's data. A reload lands in the same copy.
+
+A thin bar on top reads "Demo kitchen", the approval code 246810 and **Reset**. The code is shown on purpose. A juror has no other way to know it. The sidebar holds Inbox, Orders, Agent and Ledger. The kitchen's name at the bottom opens Settings.
+
+### 2 Connect the demo agent
+
+Click **Agent**, then **Connect agent**. The page shows a pairing code in large letters with **Copy**. A real agent would take that code. The MCP address sits in a closed fold.
+
+Click **Connect the demo agent**. A consent screen replaces the code. It names the agent and lists what it may do in words, for example "Order alone up to 1,200.00 €" and "Never above 2,000.00 €". Click **Allow**.
+
+The Agent page now shows Active, when it was last used, its **Rules**, **Pause**, **Disconnect** and **See in ledger**. Validio signed the Spend Pass again to the agent's own key. The Technical fold shows the raw pass and its versions.
+
+If the demo copy opens with the agent already connected, click **Disconnect** and start this step again.
+
+### 3 Send the example request
+
+Click **Inbox**. The setup checklist (Kitchen, Rules, Connect agent) is ticked on the demo kitchen. Click **Send example request**. The demo agent sends the challenge's sentence: "1000 litres of lactose-free milk by Monday, budget 1200 euro".
+
+What should appear: the request as "Ordered alone", 1,000 × 1 l of lactose-free semi-skimmed milk for 1,010.00 €. That is under the 1,200.00 € the agent may spend alone. Open it to show the options and the planted line Validio ignored, as in scene 2 below.
+
+### 4 Lower the limit and approve
+
+Click **Agent**, then **Rules**. Set "Orders alone up to" to 500 €. Click **Save**. The page asks for the approval code. Type 246810. The pass gets a new version and the ledger a new entry.
+
+Back in **Inbox**, click **Send example request** again. This time the request says "Waiting for you". Open it and click **Open approval**. In the 390 px window type 246810 and tap **Approve**. Validio asks Valio again for price and stock before it places the order.
+
+### 5 Pause the agent
+
+On the Agent page click **Pause**. The status turns to Paused. In **Inbox** click **Send example request**. The agent is refused with "the kitchen paused this agent" and nothing is ordered.
+
+Click **See in ledger**. The ledger is filtered to this agent. It shows connected, pass replaced, paused and the refusal, each as one sentence. Click **Pause** again to resume. The same pass comes back without a new version.
+
+### 6 Settings
+
+Click the kitchen's name at the bottom of the sidebar. Settings is one page with Kitchen, Diet and allergens, Login and approval code, Theme and Log out. On the phone it is one list.
+
+Under Diet and allergens add a diet and save. The page asks for the code again, because a diet change signs a new pass. Valio's answers are recorded for lactose free only. Other diets save and sign, but most requests then find nothing.
+
+**Reset** in the demo bar takes the copy back to the filled demo kitchen.
+
+### A real agent
+
+A real agent connects with the pairing code. It sends the code, its name and its public key to `/agent/v1/k/<account>/pair` and waits for the kitchen's Allow. After that it talks MCP at `/mcp/k/<account>/` or OpenAPI under `/agent/v1/k/<account>`. Details are in [ACCOUNTS-API.md](ACCOUNTS-API.md) and [AGENTS.md](AGENTS.md).
+
+## Old path (main before accounts)
+
+
 Five scenes in about two minutes, following the demo script in the blueprint. Every line below was checked on a fresh clone of main (commit `1ba7f8a`, 14 November around 07:15) that followed only the README and this page, in a browser at 1280 and 390 px, with `make agent`.
 
-## Before you start
+### Before you start
 
 Do the first run in the README once (`make setup`, the key in `.env`, `make record`). Then you need two terminals in `validio/` and a browser. The first terminal runs the server:
 
@@ -14,13 +71,13 @@ The second terminal runs `make agent SCENE=1`, then 2 and 3. The agent talks MCP
 
 The server is ready when uvicorn prints `Uvicorn running on http://127.0.0.1:8410`. `make demo` always builds the web app against the API. Only `make demo-mock` and `npm run dev` without `VITE_API=live` show recorded answers from `src/frontend/src/lib/api/snapshots/` instead. Open http://127.0.0.1:8410 at 1280 px and keep a second window at 390 px for the phone page. `make demo-check` in another shell starts its own server on port 8418 and leaves the running demo alone, so it is safe as a last check (it should end with `ALL SCENES OK`).
 
-## Scene 1, request (0:00)
+### Scene 1, request (0:00)
 
 Run `make agent SCENE=1`. The pane shows the agent's `search_products` call for lactose-free milk and then `request_supply` for "1000 litres of lactose-free milk by Monday, budget 1200 euro". Each call says how many supplier text fields were withheld from the agent's model. It ends with "Validio may order request R-1 alone (auto_order), checked 12 products live."
 
 The Inbox shows the request under **Open** as "Working" at 1,010.00 €. Under the page title a link sums up the Spend Pass: "Orders alone up to 1,200.00 €, never above 2,000.00 €". Click the request. The page says "May order it alone: 1,010.00 € is inside the auto limit of 1,200.00 €." and names the rule auto-order. The **Spend Pass** page shows the pass as signed by you and held by the buyer agent, valid 14 Nov to 17 Nov, lactose free, delivered by 16 Nov. Its last section says "The agent sees your limits and diet rules, not who approves or your preferred labels."
 
-## Scene 2, ordered alone (0:15)
+### Scene 2, ordered alone (0:15)
 
 Run `make agent SCENE=2`. The pane ends with "Order O-1 is placed."
 
@@ -35,7 +92,7 @@ The request moves to **Handled** as "Ordered alone". Click it. What must appear:
 
 The point to say out loud is that the planted line asks the agent to buy a milk that is not lactose free. A spending limit lets that through as long as the sum fits. Validio does not, because the product's own data lists lactose.
 
-## Scene 3, owner approves a swap (0:45)
+### Scene 3, owner approves a swap (0:45)
 
 Open the page menu at the top right and click **Simulate stock-out of mozzarella**. The item then reads "Stock-out simulated" and cannot be clicked again. Run `make agent SCENE=3`. The pane ends with "Order O-2 waits for the owner's approval on the phone."
 
@@ -49,7 +106,7 @@ The Inbox shows the mozzarella request as "Waiting for you" at 180.10 € with "
 
 Switch to the 390 px window and click **Open approval**. The phone page asks the same question with "Not on Valio's list", names the product instead of "Lactose-free mozzarella 125 g, out of stock (simulated)" and says "Free from lactose, checked". **Why not the others** holds the other 11. Tap **Approve**. The page turns to "Ordered 10 × 2.5 kg of mozzarella-fontal crumbled cheese" with "Placed", a link to Order O-2 and "Price and delivery confirmed again before ordering." The steps below read "Asked you", "You approved" and "Validio placed the order". With plain `make demo` there is no code field, because `VALIDIO_APPROVE_CODE` in `.env` is empty after `make setup`. The phone page asks for that 6-digit code before Approve, Reject and **Order 27 now** only when the variable is set in `.env` or the shell. `make video` and `make demo-check` always set a random one, so the video shows a code being typed.
 
-## Scene 4, steady order (1:15)
+### Scene 4, steady order (1:15)
 
 Click **Steady orders**, then "Weekly Monday order" (400 guests a week, 4 lines). The page says "History of 8 weeks, simulated". Click **Renew now**. What must appear:
 
@@ -62,7 +119,7 @@ Click **Steady orders**, then "Weekly Monday order" (400 guests a week, 4 lines)
 
 Click **Order 27 now**. The pancakes move to **Ordered** as "Accepted" and the total at the top goes from 1,075.49 € to 1,980.80 €.
 
-## Scene 5, ledger (1:45)
+### Scene 5, ledger (1:45)
 
 Click **Ledger**. At the top it must say "Verified" with 16 entries. The simulated stock-out is one of them. Entries are grouped by request and every step from the scenes above is one sentence. The one for the planted text reads "Ignored the description of low-lactose whole milk 1 l, which talks to AI agents." Scene 3 left "Approved 10 × 2.5 kg of mozzarella-fontal crumbled cheese for 180.10 €." by the owner and "Placed O-2" right after it. Scene 4 ends with the owner's "Accepted 27 cartons of vegan pancake 30 g for 905.31 €." The approver list of the Spend Pass never shows up here.
 
