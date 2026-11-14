@@ -197,8 +197,7 @@ def test_http_reads_need_the_kitchens_pass(kitchens):
 
 
 def test_a_pass_of_another_demo_copy_reads_nothing(kitchens, app_env, tmp_path):  # noqa: F811
-    """Demo copies share the template's kitchen key and demo agent key, so a pass from copy C must still be
-    refused in copy D."""
+    """Every demo copy has its own kitchen key and issuer (seed.rekey), so a pass from copy C is refused in copy D."""
     from validio.demo import seed
 
     _, _, agent, *_ = kitchens
@@ -208,8 +207,8 @@ def test_a_pass_of_another_demo_copy_reads_nothing(kitchens, app_env, tmp_path):
         d = four.post("/api/account/demo").json()["id"]
         connect_demo_agent(three)
         connect_demo_agent(four)
-        assert (get_accounts().paths(c)[1] / "kitchen-es256.json").read_text() == \
-            (get_accounts().paths(d)[1] / "kitchen-es256.json").read_text()  # the shared key
+        assert (get_accounts().paths(c)[1] / "kitchen-es256.json").read_text() != \
+            (get_accounts().paths(d)[1] / "kitchen-es256.json").read_text()  # each copy its own key
         r = ask(agent, d, holder(agent, d), "d-1")
         assert r.status_code == 200
         rid = r.json()["id"]

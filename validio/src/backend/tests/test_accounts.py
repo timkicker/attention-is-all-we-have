@@ -194,7 +194,8 @@ def test_copy_comes_from_template(app_env, tmp_path):
     con = sqlite3.connect(db)
     assert con.execute("select name from kitchen").fetchone()[0] == "from the template"
     con.close()
-    assert (keys / "kitchen-es256.json").read_text() == (t / "keys" / "kitchen-es256.json").read_text()
+    # its own kitchen key (seed.rekey), never the template's
+    assert (keys / "kitchen-es256.json").read_text() != (t / "keys" / "kitchen-es256.json").read_text()
     assert seed.seed_token(db) != seed.seed_token(t / "validio.db")
 
 
