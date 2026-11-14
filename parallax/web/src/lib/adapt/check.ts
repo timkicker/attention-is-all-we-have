@@ -17,12 +17,6 @@ type Client = typeof Api
 type Claim = CheckRes['claims'][number]
 type Recorded = CheckRecordedRes['runs'][number]
 
-/**
- * The result plus one fact the shared view model lacks: whether every backed statement has most editions
- * behind it. false makes the summary say "backed by at least one edition" (copy.check.summary).
- */
-export type CheckResultView = CheckResultVM & { mostBacked?: boolean }
-
 /** How many recorded answers the Check page offers. */
 export const RECORDED_MAX = 3
 
@@ -47,20 +41,34 @@ function questionPart(q: string | null): string | null {
   return s.charAt(0).toLowerCase() + s.slice(1)
 }
 
+/** Longest recorded-answer label, cut on a word boundary (no "…"). */
+export const LABEL_MAX = 60
+
 /** The recorded answer's label, built only from its stored data: "<model> on <question>". */
 export function recordedLabel(r: { answer_model: string | null; question: string | null }): string | null {
   const m = modelName(r.answer_model)
   const q = questionPart(r.question)
-  if (m && q) return `${m} on ${q}`
-  return m ?? (q ? q.charAt(0).toUpperCase() + q.slice(1) : null)
+  const full = m && q ? `${m} on ${q}` : (m ?? (q ? q.charAt(0).toUpperCase() + q.slice(1) : null))
+  if (!full || full.length <= LABEL_MAX) return full
+  const cut = full.slice(0, LABEL_MAX + 1)
+  const at = cut.lastIndexOf(' ')
+  return (at > 0 ? cut.slice(0, at) : full.slice(0, LABEL_MAX)).replace(/[\s,;:]+$/, '')
 }
 
-/** Up to max recorded answers, one per question first, so the links show different questions. */
+/** Questions the Check page offers first: the Mainila shots, then the losses. */
+const FIRST_QUESTIONS = [/mainila/i, /died|killed|losses|lost/i]
+const rank = (q: string | null) => {
+  const i = FIRST_QUESTIONS.findIndex((rx) => rx.test(q ?? ''))
+  return i < 0 ? FIRST_QUESTIONS.length : i
+}
+
+/** Up to max recorded answers: Mainila and losses questions first, one per question before any repeat. */
 export function pickRecorded(runs: Recorded[], max = RECORDED_MAX): Recorded[] {
   const seen = new Set<string>()
   const first: Recorded[] = []
   const rest: Recorded[] = []
-  for (const r of runs) {
+  const sorted = runs.map((r, i) => ({ r, i })).sort((a, b) => rank(a.r.question) - rank(b.r.question) || a.i - b.i)
+  for (const { r } of sorted) {
     const k = r.question ?? r.run_id
     if (seen.has(k)) rest.push(r)
     else {
@@ -97,10 +105,9 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
     head = disputedOtherwise(contradicts.map(([l]) => l))
   } else if (stopped.length) {
     verdict = 'disputed'
-    // The edition that removed it last; its evidence is the sentence life that ended.
-    const [lang, v] = [...stopped].sort(([, a], [, b]) => (b.evidence[0]?.died ?? '').localeCompare(a.evidence[0]?.died ?? ''))[0]
-    const died = v.evidence[0]?.died
-    head = died ? disputedRemoved(says.length, all, lang, fmtYear(died)) : DISPUTED
+    // Every edition that removed it, with the year of the last removal; evidence is the sentence life that ended.
+    const died = stopped.map(([, v]) => v.evidence[0]?.died ?? '').sort().at(-1)
+    head = died ? disputedRemoved(says.length, all, stopped.map(([l]) => l), fmtYear(died)) : DISPUTED
   } else if (says.length) {
     verdict = 'backed'
     head = backedBy(says.length, all)
@@ -137,10 +144,10 @@ export async function loadCheckRun(
 ): Promise<Result<WithoutCounts<CheckResultVM>>> {
   const r = await api.checkRun(runId, ctx.date ?? undefined)
   if (!r.ok) return r
-  return { ok: true, data: toResult(ctx, r.data as CheckRes & { text?: string; question?: string | null }) }
+  return { ok: true, data: toResult(ctx, r.data) }
 }
 
-export function toResult(ctx: TopicCtx, d: CheckRes & { text?: string; question?: string | null }): WithoutCounts<CheckResultView> {
+export function toResult(ctx: TopicCtx, d: CheckRes): WithoutCounts<CheckResultVM> {
   const rows = d.claims.map((c) => toCheckRow(ctx.topic.qid, c))
   const mostBacked = d.claims.every((c) => {
     const per = Object.values(c.per_lang)
@@ -161,7 +168,7 @@ export function toResult(ctx: TopicCtx, d: CheckRes & { text?: string; question?
     excerpt: excerpt(answer),
     summary: { total: rows.length, none: count('none'), disputed: count('disputed'), backed: count('backed') },
     rows,
-    againHref: paths.check(ctx.topic.qid),
     mostBacked,
+    againHref: paths.check(ctx.topic.qid),
   }
 }
