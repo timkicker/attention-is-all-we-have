@@ -1,19 +1,12 @@
-// Settings and the demo's example request (docs/ACCOUNTS-API.md, sections
-// Settings and Demo). `VITE_API=live` talks to the backend; the fixture keeps
-// the kitchen's settings in localStorage, as the backend would keep them.
+// Settings (docs/ACCOUNTS-API.md, section Settings): kitchen, login and the
+// approval code. The diet lives in the Rules since v2 (api/agent.ts).
+// `VITE_API=live` talks to the backend; the fixture keeps the kitchen's
+// settings in localStorage, as the backend would keep them.
 import { api, ApiError, LIVE } from "$lib/api/client";
 import type { Diet, Settings } from "$lib/api/types";
 import { session } from "$lib/owner.svelte";
 
 export type { Diet, Settings };
-export const DIETS: { id: Diet; label: string }[] = [
-  { id: "FREE_FROM_LACTOSE", label: "Lactose free" },
-  { id: "FREE_FROM_GLUTEN", label: "Gluten free" },
-  { id: "VEGAN", label: "Vegan" },
-];
-
-/** The challenge's sentence, as the demo agent sends it. */
-export const EXAMPLE = "1000 litres of lactose-free milk by Monday, budget 1200 euro";
 
 async function call<T>(method: "GET" | "POST" | "PUT", path: string, body?: unknown): Promise<T> {
   const res = await fetch(path, {
@@ -66,7 +59,7 @@ function save(s: Settings): Settings {
   return structuredClone(s);
 }
 
-/** After a kitchen change: the sidebar's name and the Inbox checklist follow. */
+/** After a kitchen change: the sidebar's name follows. */
 export async function refreshAccount(s: Settings) {
   if (LIVE) {
     session.account = await api.account();
@@ -97,11 +90,6 @@ export const settingsApi = {
     if (!b.name.trim()) throw new ApiError(422, "name is empty");
     const s = load();
     return later(save({ ...s, kitchen: { ...s.kitchen, name: b.name.trim(), deliveryAddress: b.deliveryAddress.trim() } }));
-  },
-  diet: async (diet: Diet[], code: string): Promise<Settings> => {
-    if (LIVE) return call("PUT", "/api/settings/diet", { diet, code });
-    checkCode(code);
-    return later(save({ ...load(), diet }));
   },
   login: async (b: { currentPassword: string; email?: string; password?: string }): Promise<Settings> => {
     if (LIVE) return call("PUT", "/api/settings/login", b);

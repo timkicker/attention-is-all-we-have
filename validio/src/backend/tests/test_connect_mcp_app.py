@@ -295,6 +295,7 @@ def test_the_agent_shows_the_verification_code_of_the_agent_page(app_env):  # no
         assert consent["verifyCode"] == m.group(1)
         assert not set(m.group(1)) & set("0O1IL")
         assert WAIT_TEXT.match(asyncio.run(_first_call(url))).group(1) == m.group(1)  # stable while it waits
+        assert consent["at"] and web.get("/api/agent").json()["consent"]["at"] == consent["at"]  # the first call's time
 
         web.post("/api/agent/deny")
         again = web.post("/api/agent/pair").json()["pairing"]["mcpUrl"]
