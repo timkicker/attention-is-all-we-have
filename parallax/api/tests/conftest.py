@@ -41,8 +41,13 @@ def pytest_configure(config):
     from contract.db import load_env
 
     load_env()
-    os.environ["DB_NAME"] = TEST_DB
     os.environ["ENGINE"] = "fake"
+    if os.environ.get("PARALLAX_SEED_DB"):
+        # Seed checks against an already loaded database, e.g. PARALLAX_SEED=v2 PARALLAX_SEED_DB=parallax.
+        os.environ["DB_NAME"] = os.environ["PARALLAX_SEED_DB"]
+        os.environ["SEED"] = os.environ.get("PARALLAX_SEED", "unknown")
+        return
+    os.environ["DB_NAME"] = TEST_DB
     os.environ["SEED"] = "mini"
     _create_test_db()
     subprocess.run(

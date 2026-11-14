@@ -2,15 +2,16 @@
 
 import json
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from api import sqllog
 from api.db import close_all
-from api.routes import compare, health, topics
+from api.routes import compare, health, timeline, topics
 from contract.db import load_env
 
 load_env()
@@ -23,7 +24,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Parallax API", version="1", lifespan=lifespan)
-for module in (health, topics, compare):
+for module in (health, topics, compare, timeline):
     app.include_router(module.router)
 
 
@@ -64,3 +65,17 @@ async def validation_error(request: Request, exc: RequestValidationError):
     first = exc.errors()[0] if exc.errors() else {}
     loc = ".".join(str(x) for x in first.get("loc", []))
     return JSONResponse({"error": {"code": "bad_request", "message": f"{loc}: {first.get('msg', 'invalid')}"}}, 422)
+
+
+DIST = Path(__file__).resolve().parent.parent / "web" / "dist"
+if DIST.is_dir():
+    # The built web app (make web-build) is served from the same origin, so the demo is one process.
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def web(path: str):
+        if path.startswith("api/"):
+            return JSONResponse({"error": {"code": "not_found", "message": f"No route /{path}."}}, 404)
+        file = (DIST / path).resolve()
+        if path and file.is_file() and file.is_relative_to(DIST):
+            return FileResponse(file)
+        return FileResponse(DIST / "index.html")

@@ -37,7 +37,7 @@ describe('App shell', () => {
   it('reads the view and date from the URL and writes tab changes back', async () => {
     window.history.replaceState(null, '', '/dropped?as_of=2012-06-01')
     const { parse } = await import('./state')
-    expect(parse(window.location)).toEqual({ view: 'dropped', topic: 'winterwar', as_of: '2012-06-01', anchor: 'fi', section: '' })
+    expect(parse(window.location)).toEqual({ view: 'dropped', topic: 'winterwar', as_of: '2012-06-01', anchor: 'fi', section: '', claim: '' })
   })
 
   it('shows an empty state instead of data for views not built yet', async () => {
