@@ -18,6 +18,7 @@ from validio.orders.supply import RequestError
 from validio.policy.decide import load_policy, policy_file
 from validio.policy.mandate import MandateError
 from validio.valio.budget import CallBudgetExceeded
+from validio.valio.client import ValioUnavailable
 
 from . import agent_v1, ui
 from .mcp_server import server as mcp_server
@@ -91,7 +92,7 @@ def _err(status: int):
 
 for exc, status in ((MandateError, 401), (NotFound, 404), (OrderStateError, 409), (IdempotencyConflict, 409),
                     (ApproveRefused, 409), (RequestError, 422), (OrderError, 422), (CallBudgetExceeded, 422),
-                    (ServiceClosed, 503)):
+                    (ServiceClosed, 503), (ValioUnavailable, 503)):
     app.add_exception_handler(exc, _err(status))
 
 
