@@ -242,6 +242,18 @@ def test_embedder_down_is_503(client, monkeypatch):
     assert not schema_errors("/api/check", r.json(), method="post", status="503")
 
 
+def test_a_check_waits_for_an_embedder_busy_with_an_ingest(client, monkeypatch):
+    import engine.embed
+
+    seen = []
+    real = engine.embed.backend
+    monkeypatch.setenv("EMBED_BACKEND", "ollama")
+    monkeypatch.setattr(engine.embed, "backend", lambda timeout=600: seen.append(timeout) or real(timeout))
+    monkeypatch.setenv("EMBED_URL", "http://127.0.0.1:9")
+    client.post("/api/check", json={"text": "Another sentence nobody recorded, about 1940 and Kollaa."})
+    assert seen and seen[0] >= 60
+
+
 def test_a_full_check_queue_answers_busy(client, monkeypatch):
     from api.routes import check
 

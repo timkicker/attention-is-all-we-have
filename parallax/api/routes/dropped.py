@@ -196,9 +196,10 @@ CACHE_S = 300  # every topic page asks for the Removed count; the list only chan
 CACHE_MAX = 64  # topic, edition and min_days come from the query string: keep the newest few only
 
 
-def clear_cache() -> None:
-    """Forget every computed list (an ingest loaded another edition)."""
-    _CACHE.clear()
+def clear_cache(topic: str | None = None) -> None:
+    """Forget the computed lists of topic, or every one (an ingest loaded another edition)."""
+    for key in [k for k in _CACHE if topic is None or k[0].lower() == topic.lower()]:
+        _CACHE.pop(key, None)
 
 
 def topic_rows(topic: str, lang: str | None, min_days: int) -> list[dict]:
