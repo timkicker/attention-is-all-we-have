@@ -77,7 +77,8 @@ def test_a_blocked_request_says_why_in_the_rules_words(kitchen):
 def test_detail_of_an_order_placed_alone(kitchen):
     c, _, r1, _ = kitchen
     d = c.get(f"/api/activity/{r1}").json()
-    assert set(d) == {"item", "asked", "checks", "rule", "result", "approval", "proof"}
+    assert set(d) == {"item", "asked", "checks", "rule", "result", "approval", "proof", "lines"}
+    assert [(ln["ordered"], ln["reason"], ln["replacedBy"]) for ln in d["lines"]] == [(True, None, None)]
     assert d["asked"] == {"text": EXAMPLE, "agentName": DEMO_AGENT}
     labels = [x["label"] for x in d["checks"]]
     assert labels[:3] == ["Product", "Price", "Stock"] and "Allergens" in labels
@@ -257,3 +258,65 @@ def test_a_tuesday_order_is_delivered_on_tuesday(kitchen):
     order = c.get(f"/api/orders/{d['item']['orderId']}").json()
     assert order["deliverBy"] == "2026-11-17"
     assert [(ln["deliveryDate"], ln["deliveryText"]) for ln in order["lines"]] == [("2026-11-17", "delivery Tue 17 Nov")]
+
+
+# a request with many lines: the risotto order, the lines ordered and the bouillon not deliverable in time
+
+RISOTTO = [("460130", "PUMPKIN BUTTERNUTSQUASH ZA", 10, "KG", 2420),
+           ("460351", "ONION 1KG BAG NETHERLANDS", 2, "ST", 318),
+           ("460335", "GARLIC PEELED 1KG CHINA", 1, "ST", 945),
+           ("460378", "SAGE 100G BUNCH ITALY", 2, "ST", 598),
+           ("469285", "Knorr Vegetable bouillon powder, low salt 1kg/125L", 1, "ST", 1890)]
+
+
+def _risotto_view():
+    from validio.api.schemas import SupplyRequestView
+
+    def line(i, pid, name, qty, unit, cents):
+        late = pid == "469285"
+        return {"lineId": f"L{i}", "text": f"{qty} {unit} {pid}",
+                "need": {"what": "", "quantity": qty, "unit": unit, "diet": [], "deliverBy": "2026-11-20",
+                         "productId": pid, "deliverByText": "Fri 20 Nov"},
+                "options": [{"productId": pid, "name": name, "verdict": "not_deliverable" if late else "chosen",
+                             "quantity": qty, "unit": unit, "totalCents": cents, "sentence": "", "facts": [],
+                             "deliveryDate": "2026-11-24" if late else "2026-11-20"}],
+                **({} if late else {"chosen": {"productId": pid, "salesQty": qty, "isSubstitute": False,
+                                               "onValioList": False}})}
+
+    return SupplyRequestView.model_validate({
+        "id": "R-8", "requestId": "R-8", "createdAt": "2026-11-15T10:00:00+02:00", "agent": "agent:claude",
+        "text": "risotto", "deliverBy": "2026-11-20", "status": "ordered_alone", "spendPassId": "M-1",
+        "lines": [line(i + 1, *x) for i, x in enumerate(RISOTTO)], "totalCents": 4281, "orderId": "O-8"})
+
+
+def test_many_lines_title_names_the_first_three_in_plain_words():
+    from validio.api import display
+
+    v = _risotto_view()
+    assert v.title_text == "5 items: butternut squash, onion, garlic and 2 more"
+    assert v.title == "5 items by Fri 20 Nov: butternut squash, onion, garlic and 2 more"
+    assert display.plain_name("Valio Eila® butter 500 g salted lactose free") == "salted lactose-free butter"
+    assert display.plain_name("Risella Risotto Rice 5kg") == "risotto rice"
+    assert display.plain_name("CASTELLI 1KG GRATED PARMESAN REGGIANO PD") == "grated parmesan reggiano"
+    assert display.plain_name("Knorr Vegetable bouillon powder, low salt 1kg/125L") == "vegetable bouillon"
+
+
+def test_many_lines_say_which_were_ordered_and_why_one_was_not():
+    from types import SimpleNamespace as NS
+
+    v = _risotto_view()
+    placed = NS(lines=[NS(product_id=pid, price_cents=cents // qty, total_cents=cents, qty_text=None,
+                          delivery_date="2026-11-20") for pid, _, qty, _, cents in RISOTTO[:4]])
+    lines = activity._lines(v, placed)
+    assert [ln.name for ln in lines] == ["Butternut squash", "Onion", "Garlic", "Sage", "Vegetable bouillon"]
+    assert [ln.ordered for ln in lines] == [True, True, True, True, False]
+    assert (lines[1].unit_price_cents, lines[1].total_cents, lines[1].delivery) == (159, 318, "2026-11-20")
+    assert lines[-1].reason == "Can't be delivered by Fri 20 Nov" and all(ln.reason is None for ln in lines[:4])
+    assert activity._lines(v, None)[-1].ordered is None  # nothing placed yet: no line is left out
+
+
+def test_a_replacement_is_the_same_kind_of_product():
+    assert activity.same_kind("469285", "469285")
+    assert activity.same_kind("469285", "461219")  # vegetable bouillon 1 kg, then 5 kg
+    assert not activity.same_kind("469285", "460351")  # bouillon is no onion
+    assert not activity.same_kind("460351", "460257")  # onion and garlic share a group, not a name

@@ -35,9 +35,9 @@ test("set up: agent and week on one line, Needs you, Latest without repeats", as
   await expect(page.getByTestId("section-setup")).toHaveCount(0);
   // The demo kitchen has no agent until one connects, as the real demo copy.
   await expect(page.getByTestId("home-agent")).toContainText("No agent connected");
-  await expect(page.getByTestId("home-week")).toContainText("1,190.10");
+  await expect(page.getByTestId("home-week")).toContainText("1,318.19");
   await expect(page.getByTestId("home-week")).toContainText("8,000.00");
-  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "15");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "16");
   await expect(page.getByTestId("need-R-4")).toContainText("1,515.00");
   // R-4 waits: it is under Needs you and not again under Latest.
   await expect(page.getByTestId("section-latest").getByTestId("activity-R-4")).toHaveCount(0);
@@ -57,7 +57,7 @@ test("after approving, Home updates on its own", async ({ page }) => {
   await expect(page.getByTestId("detail-status")).toHaveText("Approved by you");
   await page.locator("#nav-home").click();
   await expect(page.getByTestId("needs-none")).toBeVisible();
-  await expect(page.getByTestId("home-week")).toContainText("2,705.10");
+  await expect(page.getByTestId("home-week")).toContainText("2,833.19");
   await expect(page.getByTestId("section-latest").getByTestId("activity-R-4")).toBeVisible();
   await expect(page.locator("#nav-home .nb")).toHaveCount(0);
 });

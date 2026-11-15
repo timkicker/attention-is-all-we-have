@@ -76,3 +76,45 @@ test("phone: the code line fits, no sideways scroll", async ({ page }) => {
   expect(Math.abs((field?.y ?? 0) - (confirm?.y ?? 99))).toBeLessThan(8);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });
+
+test("many items: one order table with a total, checks folded under each row, the left-out line says why", async ({ page }) => {
+  await fresh(page);
+  await page.goto("/activity/R-5");
+  await expect(page.getByTestId("detail-title")).toHaveText("9 items: butternut squash, onion, garlic and 6 more");
+  await expect(page.getByTestId("detail-lede")).toHaveText(
+    "Auto-ordered 8 of 9 items. 82.19 €, arriving Fri 20 Nov. 1 item couldn't be delivered in time.",
+  );
+  const table = page.getByTestId("order-lines");
+  await expect(table.locator("tr.row")).toHaveCount(9);
+  await expect(page.getByTestId("lines-total")).toContainText("82.19");
+  await expect(page.getByTestId("lines-total")).toContainText("8 of 9 items");
+  // No stacked check blocks and no empty comparison.
+  await expect(page.getByTestId("check-product")).toHaveCount(0);
+  await expect(page.getByTestId("options")).toHaveCount(0);
+  await expect(page.getByText("No product fitted every rule")).toHaveCount(0);
+  // The left-out line: its reason in plain words and the order that brought it later.
+  const late = page.getByTestId("line-L9");
+  await expect(late).toHaveAttribute("data-ordered", "false");
+  await expect(late.getByTestId("line-reason")).toContainText("Can't be delivered by Fri 20 Nov");
+  await expect(late).toContainText("Not ordered");
+  await expect(late.getByTestId("line-replaced")).toHaveAttribute("href", "/activity/R-6");
+  // A row opens to its checks.
+  await expect(page.locator("#checks-L1")).toBeHidden();
+  await page.getByTestId("line-L1").getByRole("button").click();
+  await expect(page.locator("#checks-L1")).toBeVisible();
+  await expect(page.locator("#checks-L1")).toContainText("1.49 € per kg");
+  await expect(page.getByTestId("line-L1").getByRole("button")).toHaveAttribute("aria-expanded", "true");
+  expect(await slop(page)).toEqual([]);
+  // The replacement link goes to the agent's next request.
+  await late.getByTestId("line-replaced").click();
+  await expect(page).toHaveURL(/\/activity\/R-6$/);
+});
+
+test("many items, phone: rows fold into name, quantity at the unit price and total, no sideways scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await fresh(page);
+  await page.goto("/activity/R-5");
+  await expect(page.getByTestId("line-L2").locator(".meta")).toHaveText("2 × 1 kg at 1.45 €, arrives Fri 20 Nov");
+  await expect(page.getByTestId("order-lines").locator("thead")).toBeHidden();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
