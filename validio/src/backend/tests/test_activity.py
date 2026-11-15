@@ -315,7 +315,7 @@ def test_many_lines_say_which_were_ordered_and_why_one_was_not():
     assert activity._lines(v, None)[-1].ordered is None  # nothing placed yet: no line is left out
 
 
-def test_a_replacement_is_the_same_kind_of_product():
+def test_a_replacement_is_the_same_kind_of_product(catalog):  # real Valio ids: skips without the catalog (CI)
     assert activity.same_kind("469285", "469285")
     assert activity.same_kind("469285", "461219")  # vegetable bouillon 1 kg, then 5 kg
     assert not activity.same_kind("469285", "460351")  # bouillon is no onion
