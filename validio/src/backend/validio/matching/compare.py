@@ -6,7 +6,7 @@ answered and the static catalog: no extra call."""
 from datetime import date, datetime
 
 from ..catalog.model import Product
-from ..text.format import money
+from ..text.format import and_list, money
 from ..trust.claims import claim_check
 from ..valio.models import Availability, Quote
 from .need import CLAIM_NAMES, Need, Ranked, amount_per_sales_unit
@@ -80,6 +80,8 @@ def decided_by(chosen: Ranked, runner: Ranked | None, cheapest: int, prefer=(), 
     """The Best Pick key that put `chosen` ahead of `runner`, the next accepted option."""
     if runner is None:
         return "only option"
+    if bool(chosen.diet_open) != bool(runner.diet_open):
+        return "diet"
     c, r = chosen.product, runner.product
     if runner.total_cents > cheapest * (1 + band) or chosen.total_cents > cheapest * (1 + band):
         return "price"
@@ -101,6 +103,8 @@ def why_text(chosen: Ranked, runner: Ranked | None, decided: str, cheapest: int,
     if runner is None:
         return f"The only option that fits and arrives in time. {rel}"
     diff = runner.total_cents - chosen.total_cents
+    if decided == "diet":
+        return f"Valio's data confirms your diet for it, not for the next option. {rel}"
     if decided == "price":
         per = unit.get(id(chosen))
         head = f"Cheapest that fits, at {per}." if per else "Cheapest that fits."
@@ -123,6 +127,8 @@ def why_not_text(o: Ranked, chosen: Ranked, cheapest: int, unit: dict[int, str |
                  band: float = TIE_BAND) -> str:
     """One sentence on why an accepted option was not the one: "Costs 16.50 € more: 7.86 € per kg against
     7.20 €."."""
+    if o.diet_open and not chosen.diet_open:
+        return f"Valio's data doesn't confirm it is {and_list(o.diet_open)}."
     diff = o.total_cents - chosen.total_cents
     if o.total_cents > cheapest * (1 + band):
         mine, theirs = unit.get(id(o)), unit.get(id(chosen))

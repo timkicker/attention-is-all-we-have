@@ -250,3 +250,107 @@ def test_not_recorded_day_text():
         "Valio's answers for delivery on Mon 2026-11-23 aren't recorded for this demo. "
         "Recorded delivery days: Mon 2026-11-16, Tue 2026-11-17. Nothing was ordered.")
     assert "Recorded" not in not_recorded_day(MON, [])
+
+
+# VALIO_LIVE_FALLBACK: replay asks the test API only for what has no recording, and keeps the answer
+
+
+def _recorded_monday(tmp_path):
+    with respx.mock() as mock:
+        mock.post(f"{BASE}/api/price").mock(side_effect=echo_price)
+        ValioClient(BASE, "k", "record", tmp_path).price(["1", "2"], MON, CallBudget(40))
+
+
+def test_fallback_asks_live_for_only_the_missing_ids_and_replays_them_next_time(tmp_path):
+    _recorded_monday(tmp_path)
+    with respx.mock() as mock:
+        route = mock.post(f"{BASE}/api/price").mock(side_effect=echo_price)
+        c = ValioClient(BASE, "secret", "replay", tmp_path, live_fallback=True)
+        b = CallBudget(40)
+        assert set(c.price(["1", "3", "4"], MON, b)) == {"1", "3", "4"}
+        assert route.call_count == 1
+        sent = json.loads(route.calls[0].request.content)
+        assert sent["products"] == ["3", "4"] and route.calls[0].request.headers["X-API-Key"] == "secret"
+        assert route.calls[0].request.url.host == "junction26.valioaimo.fi"
+        assert (b.ids_sent, b.calls) == (3, 1)  # the same budget and 40 id cap as any request
+        with pytest.raises(CallBudgetExceeded):  # the cap holds before any live call
+            c.price([str(i) for i in range(41)], MON, CallBudget(40))
+        assert route.call_count == 1
+    stored = [json.loads(f.read_text())["ids"] for f in (tmp_path / "price" / MON.isoformat()).glob("*.json")]
+    assert sorted(stored) == [["1", "2"], ["3", "4"]]  # stored as record mode stores it
+    with respx.mock(assert_all_called=False) as mock:
+        route = mock.route()
+        fresh = ValioClient(BASE, "", "replay", tmp_path)  # a restart, without the fallback or a key
+        assert set(fresh.price(["4", "2", "3"], MON, CallBudget(40))) == {"2", "3", "4"}
+        assert route.call_count == 0
+
+
+def test_fallback_answers_a_day_without_recordings(tmp_path):
+    _recorded_monday(tmp_path)
+    tue = date(2026, 11, 17)
+    with respx.mock() as mock:
+        route = mock.post(f"{BASE}/api/price").mock(side_effect=echo_price)
+        c = ValioClient(BASE, "secret", "replay", tmp_path, live_fallback=True)
+        assert c.recorded_days() is None  # any day: none is refused for having no recording
+        assert set(c.price(["1"], tue, CallBudget(40))) == {"1"}
+        assert json.loads(route.calls[0].request.content)["requestedDate"] == "2026-11-17"
+    assert any((tmp_path / "price" / "2026-11-17").glob("*.json"))
+
+
+def test_fallback_off_is_a_replay_miss_as_before(tmp_path):
+    _recorded_monday(tmp_path)
+    with respx.mock(assert_all_called=False) as mock:
+        route = mock.route()
+        c = ValioClient(BASE, "secret", "replay", tmp_path)
+        with pytest.raises(ReplayMiss, match=r"no recorded price answer for \['3'\]"):
+            c.price(["1", "3"], MON, CallBudget(40))
+        assert c.recorded_days() == []  # price only, so no day replay can fully answer
+        assert route.call_count == 0
+
+
+def test_fallback_without_a_key_is_a_replay_miss(tmp_path):
+    _recorded_monday(tmp_path)
+    with respx.mock(assert_all_called=False) as mock:
+        route = mock.route()
+        c = ValioClient(BASE, "", "replay", tmp_path, live_fallback=True)
+        with pytest.raises(ReplayMiss, match="run make record first"):
+            c.price(["3"], MON, CallBudget(40))
+        with pytest.raises(ReplayMiss, match="recorded delivery days"):
+            c.price(["1"], date(2026, 11, 23), CallBudget(40))
+        assert c.recorded_days() == [] and route.call_count == 0
+
+
+def test_fallback_when_valio_does_not_answer_is_valio_unavailable(tmp_path):
+    from validio.valio.client import ValioUnavailable
+
+    _recorded_monday(tmp_path)
+    with respx.mock() as mock:
+        mock.post(f"{BASE}/api/price").mock(return_value=httpx.Response(503))
+        c = ValioClient(BASE, "secret", "replay", tmp_path, live_fallback=True, backoff=0)
+        with pytest.raises(ValioUnavailable):
+            c.price(["3"], MON, CallBudget(40))
+    assert [json.loads(f.read_text())["ids"] for f in (tmp_path / "price" / MON.isoformat()).glob("*.json")] == \
+        [["1", "2"]]  # nothing stored
+    assert set(c.price(["1"], MON, CallBudget(40))) == {"1"}  # what is recorded still replays
+
+
+def test_settings_read_the_fallback_switch(monkeypatch):
+    monkeypatch.delenv("VALIO_LIVE_FALLBACK", raising=False)
+    assert load_settings(env_file=None).valio_live_fallback is False
+    monkeypatch.setenv("VALIO_LIVE_FALLBACK", "1")
+    assert load_settings(env_file=None).valio_live_fallback is True
+
+
+def test_mcp_note_refuses_no_day_with_the_fallback_on(monkeypatch, tmp_path):
+    from validio.api.mcp_server import delivery_days_note
+
+    _recorded_monday(tmp_path)
+    monkeypatch.setenv("VALIO_MODE", "replay")
+    monkeypatch.setenv("VALIDIO_VALIO_CACHE", str(tmp_path))
+    monkeypatch.setenv("VALIO_API_KEY", "k")
+    assert "503 not recorded" in delivery_days_note()  # the switch is off in tests (conftest)
+    monkeypatch.setenv("VALIO_LIVE_FALLBACK", "1")
+    note = delivery_days_note()
+    assert "503" not in note and "any other delivery day or product is asked from Valio's test API live" in note
+    monkeypatch.setenv("VALIO_API_KEY", "")
+    assert "503 not recorded" in delivery_days_note()  # no key, no fallback

@@ -40,5 +40,6 @@ On **Agent**, click **Pause**. Ask the agent again. It is refused because the ki
 
 - Valio's answers are recorded for delivery on Mon 16 to Fri 20 Nov 2026 only. Another day returns `503 not recorded` with the recorded days named. "Monday" means 16 Nov.
 - Only the products the demo scenes and the common kitchen requests touch are recorded. A different diet in Rules saves and signs, but most requests then find fewer options.
+- With `VALIO_API_KEY` in `.env`, `make demo` sets `VALIO_LIVE_FALLBACK=1`: another day or product is asked from Valio's test API once and recorded. Its prices and stock are that moment's, not those of the recordings.
 - The scripted recording (`make video`) was written for the first web app and has not been updated to these pages.
 - Our own agent (`make agent SCENE=1` to `3`) talks to a running `make demo` on port 8410. Requests it makes go to the single local kitchen, not to a demo copy in the browser. `make demo-check` plays all five scenes on its own server and ends with `ALL SCENES OK`.

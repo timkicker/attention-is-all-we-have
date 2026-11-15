@@ -705,7 +705,7 @@ Error executing tool confirm_order: 401 Spend Pass refused: no key binding
 Error executing tool get_order: 404 not found: no order O-99
 ```
 
-The demo answers from recorded Valio data, so only the recorded delivery days work. The `request_supply` description lists them, and a request for another day is refused with them named:
+The demo answers from recorded Valio data, so only the recorded delivery days work. The `request_supply` description lists them, and a request for another day is refused with them named. With `VALIO_LIVE_FALLBACK=1` and a Valio key (`make demo`), another day or product is asked from Valio's test API instead, and the description says so:
 
 ```
 Error executing tool request_supply: 503 not recorded: Valio's answers for delivery on Mon 2026-11-23 aren't recorded for this demo. Recorded delivery days: Mon 2026-11-16, Tue 2026-11-17, Wed 2026-11-18, Thu 2026-11-19, Fri 2026-11-20. Nothing was ordered.

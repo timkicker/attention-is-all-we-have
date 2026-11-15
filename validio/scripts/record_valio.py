@@ -74,6 +74,7 @@ def kitchen_ids(cat: Catalog) -> list[str]:
     for text in KITCHEN_PHRASES:
         for diet in (set(), {"FREE_FROM_LACTOSE"}):
             n = parse_need(f"{text} by Monday", NOW.date(), cat)
+            n.kitchen_claims = diet - n.required_claims
             n.required_claims |= diet
             for p in screen(n, cat)[0]:
                 ids += [p.id, *p.substitutes]

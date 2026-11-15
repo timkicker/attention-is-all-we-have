@@ -39,6 +39,9 @@ class Settings:
     demo: bool
     catalog_db: Path
     valio_cache: Path
+    # VALIO_LIVE_FALLBACK=1: in replay, ids or days without a recording are asked from Valio's test API (with the
+    # key) and stored for the next replay. Off by default, so tests and demo-check never leave the machine
+    valio_live_fallback: bool = False
 
 
 def load_settings(env_file: Path | None = DEFAULT_ENV) -> Settings:
@@ -62,6 +65,7 @@ def load_settings(env_file: Path | None = DEFAULT_ENV) -> Settings:
         demo=get("VALIDIO_DEMO", "0") == "1",  # the demo switches are off unless asked for
         catalog_db=Path(get("VALIDIO_CATALOG_DB", str(DATA / "catalog.db"))),
         valio_cache=Path(get("VALIDIO_VALIO_CACHE", str(DATA / "cache" / "valio"))),
+        valio_live_fallback=get("VALIO_LIVE_FALLBACK", "0") == "1",
     )
 
 

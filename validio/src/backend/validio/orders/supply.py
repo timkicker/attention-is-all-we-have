@@ -73,6 +73,9 @@ def _why_none(b: dict) -> str:
     if head == "Outside the pass's product groups":
         return f"Blocked: {what} is outside the Spend Pass's product groups."
     if head.startswith("Not ") and head[4:] in {v for v in CLAIM_NAMES.values()}:
+        if need.product_id and (named := next((o["name"] for o in options if o["productId"] == need.product_id),
+                                              None)):
+            return f"Valio's data doesn't show {short_ref(named)} is {head[4:]}."
         return f"No plain {head[4:].replace(' ', '-')} {what} at Valio."
     return f"No {what} can be ordered: {head[0].lower()}{head[1:]}."
 
@@ -143,14 +146,17 @@ class SupplyService:
                 raise RequestError("a product line needs a positive quantity")
             unit = (ln.unit or p.sales_unit).upper()
             unit = unit if unit in ("L", "KG") else "PCS"
+            # the product is named, so the diet is the kitchen's: Valio's data silent on it waits for a person
             need = Need(_kind_of(p) or "", ln.quantity, unit, set(diet), set(), deliver_by or self._default_by(mandate),
                         None, product_id=p.id,
-                        text=ln.text or qty_of(ln.quantity, p, ln.unit))
+                        text=ln.text or qty_of(ln.quantity, p, ln.unit), kitchen_claims=set(diet))
         elif ln.text:
             try:
                 need = parse_need(ln.text, self.now().date(), self.catalog)
             except ValueError as e:
                 raise RequestError(str(e)) from e
+            # a diet the text names screens products out; the kitchen-wide one only grades them (Need.kitchen_claims)
+            need.kitchen_claims = diet - need.required_claims
             need.required_claims |= diet
             if deliver_by:
                 need.deliver_by = deliver_by

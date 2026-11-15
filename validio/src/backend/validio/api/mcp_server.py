@@ -72,6 +72,9 @@ def delivery_days_note() -> str:
     if s.valio_mode != "replay":
         return ""
     days = recorded_days(s.valio_cache)
+    if s.valio_live_fallback and s.valio_api_key:  # a day or product without a recording is asked live
+        have = f"Valio's answers are recorded for {days_text(days)}; " if days else ""
+        return f"{have}any other delivery day or product is asked from Valio's test API live."
     if not days:
         return "No delivery day has recorded Valio answers yet: every request answers 503 not recorded."
     return (f"This demo replays recorded Valio answers, so deliverBy must be one of these days: {days_text(days)}. "

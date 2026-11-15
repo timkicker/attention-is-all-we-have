@@ -2,7 +2,9 @@
 
 live    calls the test API
 record  calls it and stores every answer under cache_dir
-replay  answers only from cache_dir and never opens a connection
+replay  answers only from cache_dir and never opens a connection, unless live_fallback is on
+        (VALIO_LIVE_FALLBACK=1) and there is a key: then the ids or the day without a recording are asked from
+        the test API, stored like record mode does, and replayed from then on
 """
 
 import hashlib
@@ -126,7 +128,7 @@ def replay_key(endpoint: str, requested: date, ids: list[str]) -> str:
 class ValioClient:
     def __init__(self, base_url: str, api_key: str, mode: str, cache_dir: Path | None,
                  customer: str = "hotel-espoo", chunk: int = MAX_PER_CALL, http: httpx.Client | None = None,
-                 backoff: float = 0.5):
+                 backoff: float = 0.5, live_fallback: bool = False):
         base_url = checked_base_url(base_url)
         if mode not in ("live", "record", "replay"):
             raise ValueError(f"unknown mode {mode!r}")
@@ -140,11 +142,18 @@ class ValioClient:
         self._pool: httpx.Client | None = None  # one client for every call: kept-alive TLS connections
         self._pool_lock = threading.Lock()
         self.backoff = backoff
+        self.live_fallback = live_fallback
         self._index: dict[tuple[str, str], tuple[dict, dict[str, dict], set[str]]] = {}
+        self._fallback_lock = threading.Lock()  # one live fallback at a time, so an id is never stored twice
+
+    @property
+    def falls_back(self) -> bool:
+        """Replay that asks the test API for what has no recording: only with the switch on and a key."""
+        return self.mode == "replay" and self.live_fallback and bool(self._api_key)
 
     def recorded_days(self) -> list[date] | None:
         """The days replay has answers for; None when the client asks Valio itself (any day)."""
-        return recorded_days(self.cache_dir) if self.mode == "replay" else None
+        return recorded_days(self.cache_dir) if self.mode == "replay" and not self.falls_back else None
 
     def price(self, ids: list[str], requested: date, budget: CallBudget) -> dict[str, Quote]:
         out: dict[str, Quote] = {}
@@ -174,12 +183,13 @@ class ValioClient:
             out.append(resp)
         return out
 
-    def _call(self, endpoint: str, requested: date, ids: list[str]) -> dict:
+    def _call(self, endpoint: str, requested: date, ids: list[str], store: bool = False) -> dict:
         """One read, asked once more after a short pause when Valio times out, cannot be reached or answers 5xx.
         Both endpoints only read: Validio places orders in its own store, never at Valio, so a second try
-        cannot order twice. Anything that would place an order must not come through here."""
+        cannot order twice. Anything that would place an order must not come through here. `store` keeps the
+        answer under cache_dir as record mode does (the live fallback of replay)."""
         try:
-            return self._call_once(endpoint, requested, ids)
+            return self._call_once(endpoint, requested, ids, store)
         except httpx.HTTPError as e:
             if (r := _refusal(e)) is not None:
                 raise r from e
@@ -187,7 +197,7 @@ class ValioClient:
                 raise
         time.sleep(self.backoff)
         try:
-            return self._call_once(endpoint, requested, ids)
+            return self._call_once(endpoint, requested, ids, store)
         except httpx.HTTPError as e:
             if (r := _refusal(e)) is not None:
                 raise r from e
@@ -195,7 +205,7 @@ class ValioClient:
                 raise
             raise ValioUnavailable(e) from e
 
-    def _call_once(self, endpoint: str, requested: date, ids: list[str]) -> dict:
+    def _call_once(self, endpoint: str, requested: date, ids: list[str], store: bool = False) -> dict:
         body = {"customer": self.customer, "requestedDate": requested.isoformat(), "products": ids}
         http = self._http or self._client()
         req = http.build_request("POST", f"{self.base_url}/api/{endpoint}", json=body,
@@ -207,7 +217,7 @@ class ValioClient:
             resp = r.json()
             if not isinstance(resp, dict) or not isinstance(resp.get("products"), list):
                 raise TypeError("no product list")
-        if self.mode == "record":
+        if self.mode == "record" or store:
             d = self.cache_dir / endpoint / requested.isoformat()
             d.mkdir(parents=True, exist_ok=True)
             (d / f"{replay_key(endpoint, requested, ids)}.json").write_text(json.dumps(
@@ -224,15 +234,29 @@ class ValioClient:
             return self._pool
 
     def _replay(self, endpoint: str, requested: date, ids: list[str]) -> dict:
-        d = self.cache_dir / endpoint / requested.isoformat()
-        exact = d / f"{replay_key(endpoint, requested, ids)}.json"
+        exact = self.cache_dir / endpoint / requested.isoformat() / f"{replay_key(endpoint, requested, ids)}.json"
         if exact.is_file():
             return json.loads(exact.read_text())["response"]
+        heads, rows, missing = self._recorded(endpoint, requested, ids)
+        if missing:
+            if not self.falls_back:
+                raise self._miss(endpoint, requested, missing)
+            with self._fallback_lock:  # another request may have asked for the same ids meanwhile
+                heads, rows, missing = self._recorded(endpoint, requested, ids)
+                if missing:
+                    self._fall_back(endpoint, requested, missing)
+                    heads, rows, missing = self._recorded(endpoint, requested, ids)
+            if missing:  # Valio's answer left some out: never a guess
+                raise ValioMalformed(LookupError(f"no {endpoint} answer for {missing}"))
+        # recordings made at different times carry different clocks: the earliest one asked counts, so a
+        # later recording of other products never moves an earlier answer's timeNow
+        head = min((heads[i] for i in ids), key=lambda h: json.dumps(h, sort_keys=True), default={})
+        return {**head, "products": [rows[i] for i in ids]}
+
+    def _recorded(self, endpoint: str, requested: date, ids: list[str]) -> tuple[dict, dict[str, dict], list[str]]:
+        """The recorded heads and rows for that day, and the ids among `ids` without a recording."""
+        d = self.cache_dir / endpoint / requested.isoformat()
         key = (endpoint, requested.isoformat())
-        if key not in self._index and not any(d.glob("*.json")):
-            days = days_text(recorded_days(self.cache_dir)) or "none"
-            raise ReplayMiss(f"no recorded {endpoint} answers for delivery on {requested}, recorded delivery days: "
-                             f"{days}, run make record first")
         if key not in self._index:
             heads, rows, clash = {}, {}, set()
             for f in sorted(d.glob("*.json")):
@@ -242,14 +266,24 @@ class ValioClient:
                     if rows.setdefault(x["productId"], x) != x:
                         clash.add(x["productId"])
                     heads.setdefault(x["productId"], head)
+            if not rows:  # nothing for that day yet: asked again next time, a recording may come meanwhile
+                return {}, {}, list(ids)
             self._index[key] = (heads, rows, clash)
         heads, rows, clash = self._index[key]
         if bad := [i for i in ids if i in clash]:
             raise ReplayMiss(f"recordings disagree on {endpoint} for {bad} on {requested}, run make record")
-        missing = [i for i in ids if i not in rows]
-        if missing:
-            raise ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record first")
-        # recordings made at different times carry different clocks: the earliest one asked counts, so a
-        # later recording of other products never moves an earlier answer's timeNow
-        head = min((heads[i] for i in ids), key=lambda h: json.dumps(h, sort_keys=True), default={})
-        return {**head, "products": [rows[i] for i in ids]}
+        return heads, rows, [i for i in ids if i not in rows]
+
+    def _miss(self, endpoint: str, requested: date, missing: list[str]) -> ReplayMiss:
+        if not any((self.cache_dir / endpoint / requested.isoformat()).glob("*.json")):
+            days = days_text(recorded_days(self.cache_dir)) or "none"
+            return ReplayMiss(f"no recorded {endpoint} answers for delivery on {requested}, recorded delivery days: "
+                              f"{days}, run make record first")
+        return ReplayMiss(f"no recorded {endpoint} answer for {missing} on {requested}, run make record first")
+
+    def _fall_back(self, endpoint: str, requested: date, missing: list[str]) -> None:
+        """Ask the test API for the ids without a recording only, and store the answer the way record mode does,
+        so the next request replays it. Valio not answering is ValioUnavailable, as in live mode."""
+        logging.getLogger(__name__).info("live fallback: %s for %d ids on %s", endpoint, len(missing), requested)
+        self._call(endpoint, requested, missing, store=True)
+        self._index.pop((endpoint, requested.isoformat()), None)  # read the folder again, with the new file

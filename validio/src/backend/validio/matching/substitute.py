@@ -17,12 +17,19 @@ from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel
 from ..valio.budget import CallBudget
 from ..valio.client import ValioClient
-from .need import CLAIM_NAMES, KINDS, Need, Ranked, amount_per_sales_unit, screen
+from .need import (
+    ALLERGEN_NAMES,
+    CLAIM_ALLERGEN,
+    CLAIM_NAMES,
+    KINDS,
+    Need,
+    Ranked,
+    amount_per_sales_unit,
+    screen,
+)
 from .rank import best_pick, rank_one
 
 MAX_EXTRA_IDS = 8
-ALLERGEN_NAMES = {"AM": "milk", "ML": "lactose", "AW": "gluten cereals", "UW": "wheat"}
-CLAIM_ALLERGEN = {"FREE_FROM_LACTOSE": "AM", "FREE_FROM_GLUTEN": "AW"}
 
 
 class SubVerdict(StrEnum):
@@ -54,6 +61,8 @@ class SwapResult:
     def best(self) -> SubOption | None:
         ok = [o for o in self.listed if o.verdict is SubVerdict.OK_LISTED]
         ok = ok or [o for o in self.outside if o.verdict is SubVerdict.OUTSIDE_LIST]
+        # one whose diet Valio's data confirms before one it does not (the kitchen-wide diet)
+        ok.sort(key=lambda o: bool(o.ranked is not None and o.ranked.diet_open))
         return ok[0] if ok else None
 
     @property
@@ -72,9 +81,11 @@ class SwapResult:
                 f"but it is not on the list, so you decide.")
 
 
-def diet_break(p: Product, claims: set[str]) -> str | None:
+def diet_break(p: Product, claims: set[str], kitchen: set[str] = frozenset()) -> str | None:
     """Why the product breaks the line's diet, or None when it keeps it (unchecked counts as kept here,
-    the rule engine sends unchecked claims to a person)."""
+    the rule engine sends unchecked claims to a person). A claim in `kitchen` comes only from the Spend Pass:
+    Valio's data being silent on it keeps it too, since Cedar sends it to a person; a contradiction or a listed
+    allergen the claim rules out breaks it."""
     for claim in sorted(claims):
         level, why = claim_check(p, claim)
         name = CLAIM_NAMES.get(claim, claim.lower())
@@ -85,7 +96,8 @@ def diet_break(p: Product, claims: set[str]) -> str | None:
             what = name.replace(" ", "-")
             if code and code in p.contains:
                 return f"Lists {ALLERGEN_NAMES[code]} and has no {what} claim in Valio's data"
-            return f"No {what} claim in Valio's data"
+            if claim not in kitchen:
+                return f"No {what} claim in Valio's data"
     return None
 
 
@@ -94,6 +106,8 @@ def _kept(p: Product, claims: set[str]) -> str:
         return "Keeps the line's rules"
     levels = {claim_check(p, c)[0] for c in claims}
     names = " and ".join(CLAIM_NAMES.get(c, c.lower()) for c in sorted(claims))
+    if TrustLevel.MISSING in levels:
+        return f"{names.capitalize()} not confirmed in Valio's data"
     return f"{names.capitalize()} and checked" if levels == {TrustLevel.CONSISTENT} else \
         f"{names.capitalize()}, claim unchecked"
 
@@ -147,7 +161,7 @@ def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, r
               budget: CallBudget, now: datetime, search_outside: bool = True) -> SwapResult:
     need = measured_need(need, original)
     listed_products = cat.substitutes_of(original.id)
-    blocked = {p.id: diet_break(p, need.required_claims) for p in listed_products}
+    blocked = {p.id: diet_break(p, need.required_claims, need.kitchen_claims) for p in listed_products}
     live = _live([p for p in listed_products if blocked[p.id] is None], need, valio, requested, budget, now)
     listed = [SubOption(p, SubVerdict.BLOCKED_DIET, blocked[p.id], True) if blocked[p.id]
               else _judge(p, live[p.id], need, True) for p in listed_products]
@@ -159,7 +173,7 @@ def safe_swap(original: Product, need: Need, cat: Catalog, valio: ValioClient, r
     skip = {original.id, *blocked}
     wide = replace(need, product_id=None)
     kept, _ = screen(wide, cat, limit=None)
-    extra = [p for p in kept if p.id not in skip and diet_break(p, need.required_claims) is None][:MAX_EXTRA_IDS]
+    extra = [p for p in kept if p.id not in skip and diet_break(p, need.required_claims, need.kitchen_claims) is None][:MAX_EXTRA_IDS]
     result.extra_ids = [p.id for p in extra]
     live = _live(extra, need, valio, requested, budget, now)
     ranked = best_pick(list(live.values()))
