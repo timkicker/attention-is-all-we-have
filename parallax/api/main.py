@@ -28,14 +28,14 @@ log = logging.getLogger("parallax.api")
 _LOOP = None  # the server's event loop, for warming the cache again after an ingest (worker thread)
 
 
-def data_changed() -> None:
-    """An ingest stored another edition or finished: drop every cached answer computed from the old data."""
-    cache.clear()
-    dropped.clear_cache()
+def data_changed(topic: str | None = None) -> None:
+    """An ingest stored another edition of topic or finished: drop the cached answers computed from the old data."""
+    cache.clear(topic)
+    dropped.clear_cache(topic)
 
 
-def job_done() -> None:
-    data_changed()
+def job_done(topic: str | None = None) -> None:
+    data_changed(topic)
     if _LOOP is not None:
         warm.start(app, _LOOP)
 
@@ -115,7 +115,7 @@ async def attach_sql(request: Request, call_next):
 def _changes_data(request: Request) -> bool:
     """POST /api/check only adds its own run (check_run, check_claim), which no cached GET answer reads: a check
     must not throw away the warm Differences pages of every other visitor."""
-    return request.url.path != "/api/check"
+    return request.url.path not in ("/api/check", "/api/ingest")  # POST /api/ingest clears its own topic
 
 
 def _cached_response(request: Request, entry: cache.Entry) -> Response:

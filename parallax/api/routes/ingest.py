@@ -8,7 +8,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from api import ratelimit, sqllog
+from api import cache, ratelimit, sqllog
 from api.db import connection
 from api.util import ApiError
 from pipeline import job, wapi
@@ -68,6 +68,7 @@ def ingest(body: IngestBody, request: Request):
         raise ApiError(502, "wikipedia_unavailable", "Wikidata did not answer.") from e
     if created == "queued":
         ratelimit.spend(request, "ingest")
+    cache.clear(job.topic_slug(qid))  # search and the article list now say loading; other articles stay cached
     if WORKER:
         WORKER.notify()
     return JSONResponse(_status(qid), status_code=202)
