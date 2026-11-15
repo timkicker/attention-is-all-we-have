@@ -1,5 +1,6 @@
 // Shared adapter context and topic resolution. Owner: S (shell).
 import type { api as Api } from '../api/client'
+import type { TopicsRes } from '../api/types'
 import type { Result, TopicRef } from '../model'
 
 /** What every topic adapter gets. date = chosen date or null (today); asOf = the date to send to the API. */
@@ -13,6 +14,15 @@ export interface TopicCtx {
 export type WithoutCounts<T> = Omit<T, 'counts'>
 
 let topicsCache: Promise<Result<TopicRef[]>> | null = null
+let topicsRaw: Promise<Result<TopicsRes>> | null = null
+
+/** /api/topics once per page load (until forgetTopics): the topic list and the edition start dates share it. */
+export async function topicList(api: typeof Api): Promise<Result<TopicsRes>> {
+  topicsRaw ??= api.topics()
+  const r = await topicsRaw
+  if (!r.ok) topicsRaw = null
+  return r
+}
 
 /** The newest stored revision over a topic's editions, YYYY-MM-DD; null when the API does not say. */
 export function latestOf(editions: { last_ts?: string | null }[]): string | null {
@@ -22,7 +32,7 @@ export function latestOf(editions: { last_ts?: string | null }[]): string | null
 
 /** qid (Wikidata id) -> TopicRef through /api/topics. Cached; call forgetTopics() after an ingest. */
 export async function resolveTopic(api: typeof Api, qid: string): Promise<Result<TopicRef>> {
-  topicsCache ??= api.topics().then((r) =>
+  topicsCache ??= topicList(api).then((r) =>
     r.ok
       ? {
           ok: true as const,
@@ -35,7 +45,8 @@ export async function resolveTopic(api: typeof Api, qid: string): Promise<Result
     topicsCache = null
     return r
   }
-  const t = r.data.find((x) => x.qid === qid)
+  // a link may name the topic by its id (/t/winterwar) instead of its Wikidata id
+  const t = r.data.find((x) => x.qid === qid) ?? r.data.find((x) => x.topicId === qid)
   return t ? { ok: true, data: t } : { ok: false, error: { status: 404, code: 'topic_not_found', message: qid } }
 }
 
@@ -50,5 +61,6 @@ export function onForget(f: () => void): void {
 /** Drop the topic list and every adapter cache: an ingest stored another edition or finished. */
 export function forgetTopics(): void {
   topicsCache = null
+  topicsRaw = null
   for (const f of forgetters) f()
 }
