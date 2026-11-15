@@ -29,6 +29,7 @@ from engine.gemini import GeminiError
 
 MATCH = ("same", "partial")
 ALPHABET = string.digits + string.ascii_lowercase
+CLAIM_WORKERS = int(os.environ.get("CHECK_CLAIM_WORKERS", "4"))
 MAX_CLAIMS = 20  # statements checked per answer: each costs one judge call per edition
 
 
@@ -263,7 +264,12 @@ def run_check(
         vectors = embed_claims(engine, claims) if claims else []
         sizes = topic_sizes(topic) if topic and claims else None
         near = _nearest_all(vectors, langs, topic, sizes)
-        judged_all = [_judge_claim(engine, claim, cands) for claim, cands in zip(claims, near, strict=True)]
+        with ThreadPoolExecutor(max_workers=CLAIM_WORKERS) as pool:  # each claim already fans out per edition
+            futs = [
+                pool.submit(contextvars.copy_context().run, _judge_claim, engine, c, n)
+                for c, n in zip(claims, near, strict=True)
+            ]
+            judged_all = [f.result() for f in futs]
     except GeminiError as e:
         raise ModelUnavailable(str(e)) from e
     run_id = run_id or new_run_id()
