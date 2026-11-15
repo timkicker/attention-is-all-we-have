@@ -6,7 +6,7 @@
 // difference. Editions with no matching sentence at all are "Not in <edition>".
 
 import type { api as Api } from '../api/client'
-import type { CellRaw, CompareRes, CompareRowRaw, DroppedRowRaw, LifeRaw, MarkRaw, TopicsRes } from '../api/types'
+import type { CellRaw, CompareRes, CompareRowRaw, DroppedRowRaw, LifeRaw, MarkRaw } from '../api/types'
 import * as copy from '../copy'
 import { fmtNum } from '../format'
 import { plain } from '../marks'
@@ -24,7 +24,7 @@ import type {
   StatementVM,
 } from '../model'
 import { paths } from '../router.svelte'
-import { onForget, type TopicCtx, type WithoutCounts } from './shared'
+import { onForget, topicList, type TopicCtx, type WithoutCounts } from './shared'
 
 type Client = typeof Api
 
@@ -367,20 +367,14 @@ interface Loaded {
 }
 
 const cache = new Map<string, Promise<Result<Loaded>>>()
-let topicsCache: Promise<Result<TopicsRes>> | null = null
-// An ingest that loads another edition changes both the rows and the edition start dates.
+// An ingest that loads another edition changes both the rows and the edition start dates (forgetTopics drops both).
 onForget(() => {
   cache.clear()
-  topicsCache = null
 })
 
 async function topicStarts(api: Client, topicId: string): Promise<Starts> {
-  topicsCache ??= api.topics()
-  const r = await topicsCache
-  if (!r.ok) {
-    topicsCache = null
-    return {}
-  }
+  const r = await topicList(api)
+  if (!r.ok) return {}
   const t = r.data.topics.find((x) => x.topic_id === topicId)
   const out: Starts = {}
   for (const e of t?.editions ?? []) if (isLang(e.lang) && e.first_ts) out[e.lang] = e.first_ts.slice(0, 10)
