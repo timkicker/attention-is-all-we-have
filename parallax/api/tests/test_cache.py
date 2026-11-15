@@ -148,6 +148,9 @@ def test_cold_differences_pages_run_a_few_at_a_time(monkeypatch):
             await asyncio.gather(*(c.get(f"/api/compare?topic=heavy&h=h{i}") for i in range(6)))  # one statement
             assert most[0] == 6
 
+        # Under the hood's live query does not wait behind cold pages
+        assert not main._heavy(httpx.Request("GET", "http://t/api/sql/vector?topic=winterwar"))
+
     cache.clear()
     asyncio.run(go())
     cache.clear()
