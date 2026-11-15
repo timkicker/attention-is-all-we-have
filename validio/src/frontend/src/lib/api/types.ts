@@ -718,6 +718,30 @@ export interface ActivityCheck {
   ok: boolean | null;
 }
 
+/** One line of a request as its order table shows it. */
+export interface ActivityLine {
+  lineId: string;
+  /** What it is in plain words: "Butternut squash". */
+  name: string;
+  /** The product's short name: "Pumpkin butternutsquash ZA". */
+  product: string | null;
+  productId: string | null;
+  /** "10 kg", "2 × 1 kg". */
+  qtyText: string | null;
+  /** Valio's price for one sales unit. */
+  unitPriceCents: number | null;
+  totalCents: number | null;
+  /** The day it arrives, ISO. */
+  delivery: string | null;
+  /** In the placed order (true) or left out of it (false); null while nothing is ordered. */
+  ordered: boolean | null;
+  /** Why it was not ordered: "Can't be delivered by Fri 20 Nov". */
+  reason: string | null;
+  checks: ActivityCheck[];
+  /** The agent's next request that ordered the same kind of product. */
+  replacedBy: { requestId: string; orderId: string } | null;
+}
+
 export interface ProofEntry {
   at: string;
   actor: string;
@@ -736,4 +760,6 @@ export interface ActivityDetail {
   /** Only while waiting. Approve and reject go to /api/orders/{orderId}/approve|reject. */
   approval: { orderId: string; holdUntil: string } | null;
   proof: ProofEntry[];
+  /** A request's lines, one each; absent or empty for a Steady Order. */
+  lines?: ActivityLine[];
 }

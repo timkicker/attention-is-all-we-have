@@ -10,7 +10,7 @@ Rules and the agent link); nothing decides, nothing is stored. A request the age
 but has not confirmed yet ("working") is no item until it is ordered."""
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -96,6 +96,29 @@ class Proof(Model):
     hash: str
 
 
+class Replacement(Model):
+    request_id: str
+    order_id: str
+
+
+class Line(Model):
+    """One line of a request as its order table shows it."""
+    line_id: str
+    name: str = Field(description="what it is in plain words: \"Butternut squash\"")
+    product: str | None = Field(None, description="the product's short name: \"Pumpkin butternutsquash ZA\"")
+    product_id: str | None = None
+    qty_text: str | None = None
+    unit_price_cents: int | None = Field(None, description="Valio's price for one sales unit")
+    total_cents: int | None = None
+    delivery: str | None = Field(None, description="the day it arrives, ISO")
+    ordered: bool | None = Field(None, description="in the placed order (true) or left out of it (false); null "
+                                 "while nothing is ordered")
+    reason: str | None = Field(None, description="why it was not ordered: \"Can't be delivered by Fri 20 Nov\"")
+    checks: list[Check] = Field(default_factory=list)
+    replaced_by: Replacement | None = Field(None, description="the agent's next request that ordered the same kind "
+                                            "of product, when there is one")
+
+
 class ActivityDetail(Model):
     item: ActivityItem
     asked: Asked
@@ -104,6 +127,8 @@ class ActivityDetail(Model):
     result: Result | None
     approval: Approval | None
     proof: list[Proof]
+    lines: list[Line] = Field(default_factory=list, description="a request's lines, one each; empty for a Steady "
+                              "Order")
 
 
 class HomeAgent(Model):
@@ -200,37 +225,40 @@ def _ok(grade: str | None) -> bool | None:
 def _checks(v: SupplyRequestView) -> list[Check]:
     """What Validio checked at Valio for each product it chose: the product, price, stock, allergens and, for a
     swap, whether Valio lists it."""
+    return [c for o, diet in _chosen(v) for c in _option_checks(o, diet)]
+
+
+def _option_checks(o: RankedOptionView, diet: list[str]) -> list[Check]:
     out: list[Check] = []
-    for o, diet in _chosen(v):
-        out.append(Check(label="Product", value=o.full_name or o.name, note=o.qty_text, ok=True))
-        price = _fact(o, "price")
-        if price is not None:
-            out.append(Check(label="Price", value=f"{price.value_text or price.value} per {_per(o)}",
-                             note=f"Valio price, {price.note_text}" if price.note_text else "Valio price",
-                             ok=_ok(price.grade)))
-        stock = _fact(o, "quantity")
-        if stock is not None:
-            out.append(Check(label="Stock", value=str(stock.value_text or stock.value or "unknown"),
-                             note=stock.note_text or None, ok=_ok(stock.grade)))
-        claims = [f for f in o.facts if f.field.startswith("claim:")
-                  and CLAIM_NAMES.get(f.field[6:]) in diet]
-        allergens = _fact(o, "allergens")
-        contains = None
-        if allergens is not None and allergens.value == "none contained":
-            contains = "Contains no listed allergen"
-        elif allergens is not None and allergens.value:
-            contains = f"Contains {allergens.value_text or allergens.value}"
-        if claims:
-            grades = [f.grade for f in claims]
-            ok = False if "contradicted" in grades else True if all(g in CHECKED for g in grades) else None
-            out.append(Check(label="Allergens", value=cap(display.and_list([str(f.value_text) for f in claims])),
-                             note=contains, ok=ok))
-        elif allergens is not None:
-            out.append(Check(label="Allergens", value=contains or "No allergen data", note=None,
-                             ok=None if allergens.grade == "missing" else True))
-        if o.is_substitute:
-            out.append(Check(label="Substitute", value="On Valio's list" if o.on_valio_list else "Not on Valio's list",
-                             note=o.short_text, ok=bool(o.on_valio_list)))
+    out.append(Check(label="Product", value=o.full_name or o.name, note=o.qty_text, ok=True))
+    price = _fact(o, "price")
+    if price is not None:
+        out.append(Check(label="Price", value=f"{price.value_text or price.value} per {_per(o)}",
+                         note=f"Valio price, {price.note_text}" if price.note_text else "Valio price",
+                         ok=_ok(price.grade)))
+    stock = _fact(o, "quantity")
+    if stock is not None:
+        out.append(Check(label="Stock", value=str(stock.value_text or stock.value or "unknown"),
+                         note=stock.note_text or None, ok=_ok(stock.grade)))
+    claims = [f for f in o.facts if f.field.startswith("claim:")
+              and CLAIM_NAMES.get(f.field[6:]) in diet]
+    allergens = _fact(o, "allergens")
+    contains = None
+    if allergens is not None and allergens.value == "none contained":
+        contains = "Contains no listed allergen"
+    elif allergens is not None and allergens.value:
+        contains = f"Contains {allergens.value_text or allergens.value}"
+    if claims:
+        grades = [f.grade for f in claims]
+        ok = False if "contradicted" in grades else True if all(g in CHECKED for g in grades) else None
+        out.append(Check(label="Allergens", value=cap(display.and_list([str(f.value_text) for f in claims])),
+                         note=contains, ok=ok))
+    elif allergens is not None:
+        out.append(Check(label="Allergens", value=contains or "No allergen data", note=None,
+                         ok=None if allergens.grade == "missing" else True))
+    if o.is_substitute:
+        out.append(Check(label="Substitute", value="On Valio's list" if o.on_valio_list else "Not on Valio's list",
+                         note=o.short_text, ok=bool(o.on_valio_list)))
     return [c.model_copy(update={"note": _note(c.value, c.note)}) for c in out]
 
 
@@ -265,6 +293,86 @@ def _chosen(v: SupplyRequestView) -> list[tuple[RankedOptionView, list[str]]]:
     return out
 
 
+def _option(ln, pid: str | None) -> RankedOptionView | None:
+    if not pid:
+        return None
+    return next((o for xs in (ln.options, ln.substitutes or [], ln.beyond_list or []) for o in xs
+                 if o.product_id == pid), None)
+
+
+def _left_out(ln, o: RankedOptionView | None, ordered: bool | None) -> str | None:
+    """Why a line is not in the order, in plain words; None when it is, or while nothing is ordered and the line
+    has a product."""
+    by = ln.need.deliver_by_text or display.day_word(ln.need.deliver_by)
+    if o is None:
+        return "Valio doesn't have it"
+    if o.verdict == "not_deliverable":
+        return f"Can't be delivered by {by}" if by else "Can't be delivered in time"
+    if o.verdict in ("blocked", "rejected"):
+        return (o.group_text or "Breaks one of your rules").rstrip(".")
+    return "Your agent left it out of the order" if ordered is False else None
+
+
+def _lines(v: SupplyRequestView, placed) -> list[Line]:
+    """The request's lines for the order table: what was ordered from each at what price, and for a line left
+    out of the order, why."""
+    got = {ol.product_id: ol for ol in placed.lines} if placed is not None else {}
+    out = []
+    for ln in v.lines:
+        chosen = _option(ln, ln.chosen.product_id if ln.chosen else None)
+        o = chosen or _option(ln, ln.need.product_id) or next(iter(ln.options), None)
+        ol = got.get(o.product_id) if o is not None else None
+        if ol is None and got:  # the agent may confirm another of the line's options than Validio's pick
+            o, ol = next(((x, got[x.product_id]) for xs in (ln.options, ln.substitutes or [], ln.beyond_list or [])
+                          for x in xs if x.product_id in got), (o, None))
+        ordered = None if placed is None else ol is not None
+        unit = ol.price_cents if ol is not None else (
+            round(o.total_cents / o.quantity) if o is not None and o.total_cents and o.quantity else None)
+        out.append(Line(
+            line_id=ln.line_id, name=cap(display.line_name(ln)),
+            product=(o.display_name or display.short_name(o.name)) if o is not None else None,
+            product_id=o.product_id if o is not None else ln.need.product_id,
+            qty_text=(ol.qty_text if ol is not None else o.qty_text if o is not None else None) or ln.need.qty_text,
+            unit_price_cents=unit, total_cents=ol.total_cents if ol is not None else o.total_cents if o else None,
+            delivery=(ol.delivery_date if ol is not None else o.delivery_date if o is not None else None),
+            ordered=ordered, reason=None if ol is not None else _left_out(ln, chosen or o, ordered),
+            checks=_option_checks(o, ln.need.diet) if o is not None else []))
+    return out
+
+
+REPLACED_WITHIN = timedelta(hours=24)
+
+
+def same_kind(pid: str | None, other_pid: str) -> bool:
+    """The same product, or one of the same catalogue group that a cook calls by the same word: vegetable
+    bouillon 1 kg and 5 kg, not bouillon and onion, nor two products of one group with different names."""
+    if pid and pid == other_pid:
+        return True
+    a, b = display.product(pid), display.product(other_pid)
+    if a is None or b is None or not a.category or a.category != b.category:
+        return False
+    words = [{w for w in display.plain_name(p.name_en).split() if len(w) > 3} for p in (a, b)]
+    return bool(words[0] & words[1])
+
+
+def _replacements(ctx: Ctx, v: SupplyRequestView, lines: list[Line]) -> None:
+    """A line left out, ordered by the same agent's next request within a day: that order is named on the line."""
+    open_ = [ln for ln in lines if ln.ordered is False or (ln.ordered is None and ln.reason)]
+    if not open_ or v.status == "waiting":
+        return
+    t0, n0 = datetime.fromisoformat(v.created_at), int(v.id.split("-")[-1])
+    later = [r for r in ctx.store.requests() if r.get("agent") == v.agent and r.get("orderId")
+             and int(r["id"].split("-")[-1]) > n0
+             and t0 <= datetime.fromisoformat(r["createdAt"]) <= t0 + REPLACED_WITHIN]
+    for r in later:
+        o = get_order(ctx, r["orderId"])
+        if o.state != "placed":
+            continue
+        for ln in open_:
+            if ln.replaced_by is None and any(same_kind(ln.product_id, ol.product_id) for ol in o.lines):
+                ln.replaced_by = Replacement(request_id=r["id"], order_id=o.id)
+
+
 def version_at(ctx: Ctx, at: str, pass_id: str = seed.SPEND_PASS_ID) -> int:
     """The version of the pass that was in force at `at`: the newest one signed at or before it."""
     when = datetime.fromisoformat(at)
@@ -295,18 +403,21 @@ def _request_detail(ctx: Ctx, rid: str) -> ActivityDetail:
     if item is None:
         raise HTTPException(404, f"{rid} is not decided yet")
     names = connect.agent_names(ctx)
-    result = approval = None
+    result = approval = placed = None
     if v.order_id:
         o = get_order(ctx, v.order_id)
         if o.state == "placed":
+            placed = o
             result = Result(order_id=o.id, delivery=min((ln.delivery_date for ln in o.lines if ln.delivery_date),
                                                         default=None), order_ids=[o.id])
         elif o.state == "waiting":
             approval = Approval(order_id=o.id, hold_until=_hold_until(ctx, v))
+    lines = _lines(v, placed)
+    _replacements(ctx, v, lines)
     return ActivityDetail(
         item=item, asked=Asked(text=v.agent_text or v.text, agent_name=names.get(v.agent) or display.actor(v.agent)),
         checks=_checks(v), rule=RuleUsed(text=_rule_text(ctx, v, item.why), version=version_at(ctx, v.created_at)),
-        result=result, approval=approval, proof=_proof(ctx, rid))
+        result=result, approval=approval, proof=_proof(ctx, rid), lines=lines)
 
 
 # Steady Orders

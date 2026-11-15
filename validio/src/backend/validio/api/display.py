@@ -8,6 +8,7 @@ from datetime import date
 from ..text.format import (
     and_list,
     cap,
+    display_name,
     fact_text,
     money,
     product_qty,
@@ -108,8 +109,76 @@ def day_word(iso: str | None) -> str | None:
     return f"{d:%a} {d.day} {d:%b}"
 
 
+# What a kind name leaves out of a catalogue name: where it grows, how it is packed or cut, quality marks.
+_PLACES = frozenset(["netherlands", "china", "italy", "finland", "france", "spain", "germany", "egypt", "peru",
+                     "morocco", "israel", "kenya", "turkey", "poland", "sweden", "denmark", "belgium", "holland"])
+_CODES = frozenset(["FI", "FIN", "NL", "ZA", "ES", "IT", "PE", "EG", "DE", "CN", "SE", "DK", "EE", "PL", "BE", "US",
+                    "IL", "MA", "KE", "TR", "PD", "PDO", "DOP", "IGP", "BIO"])
+_PACKED = frozenset(["bag", "bags", "bunch", "loose", "sack", "net", "box", "tetra", "peeled", "small", "block",
+                     "pcs", "pack", "transport", "package"])
+_JOINED = (("pumpkin butternutsquash", "butternut squash"), ("butternutsquash", "butternut squash"),
+           ("springonions", "spring onions"))
+_FIRST = ("salted", "unsalted", "grated", "sliced", "organic", "smoked", "crumbled", "minced", "diced")
+_PLAIN_BRANDS = frozenset(["valio", "castelli", "gran", "arla", "eila", "arki", "hyvä", "luomu", "galbani"])
+
+
+def plain_name(name: str | None) -> str:
+    """What the product is, the way a cook says it, in lower case: "PUMPKIN BUTTERNUTSQUASH ZA" reads "butternut
+    squash", "Valio Eila butter 500 g salted lactose free" "salted lactose-free butter", "Knorr Vegetable bouillon
+    powder, low salt 1kg/125L" "vegetable bouillon". No brand, size, origin or packing; at most two words for the
+    thing itself."""
+    raw = re.sub(r"[®™©!]", "", name or "")
+    shouting = raw == raw.upper()
+    s = re.sub(r"\b\d+\s?x\s?|\d+(?:[.,]\d+)?\s?(?:kg|g|l|dl|cl|ml)\b", " ", raw, flags=re.IGNORECASE)
+    s = re.sub(r"[/,()&+]", " ", s)
+    s = " ".join(w for w in s.split() if not re.search(r"\d", w) and w.lower() not in ("x", "%"))
+    lactose = ""
+    for phrase, word in (("lactose free", "lactose-free"), ("low lactose", "low-lactose")):
+        if re.search(phrase, s, re.IGNORECASE):
+            lactose, s = word, re.sub(phrase, " ", s, flags=re.IGNORECASE)
+    words = s.split()
+    # a mixed-case name starts with its brand ("Knorr Vegetable bouillon", "Risella Risotto Rice")
+    if not shouting and len(words) > 2 and words[0][:1].isupper() and words[0].lower() not in _FIRST:
+        words = words[1:]
+    first, core = [], []
+    for w in words:
+        lw = w.lower()
+        if lw in _PLAIN_BRANDS or lw in _PLACES or lw in _PACKED or lw in ("low", "less", "salt", "ca") \
+                or (w.upper() == w and w.upper() in _CODES):
+            continue
+        if lw in _FIRST:
+            first.append(lw)
+        elif lw not in core:
+            core.append(lw)
+    text = " ".join(core)
+    for joined, said in _JOINED:
+        text = text.replace(joined, said)
+    text = " ".join(text.split()[:2]) if text else ""
+    return " ".join(w for w in (*first, lactose, text) if w) or display_name(name).lower()
+
+
+def line_name(ln) -> str:
+    """One line of a request in plain words, without its quantity: "butternut squash", "lactose-free milk"."""
+    need = ln.need
+    if need.product_id:
+        return plain_name(name_of(ln, need.product_id))
+    asked = need.asked_diet if need.asked_diet is not None else need.diet
+    return " ".join([*(d.replace(" free", "-free") for d in asked), need.what])
+
+
+def items_text(lines: list, by: str | None = None) -> str:
+    """Several lines at once: "9 items: butternut squash, onion, garlic and 6 more"; with a day, "9 items by Fri
+    20 Nov: ..."."""
+    names = [line_name(ln) for ln in lines]
+    shown = names if len(names) <= 3 else [*names[:3], f"{len(names) - 3} more"]
+    return f"{len(names)} items{f' by {by}' if by else ''}: {and_list(shown)}"
+
+
 def title(lines: list, deliver_by: str | None) -> str | None:
-    """What the request asks for, from the parsed need: "1,000 litres of lactose-free milk by Mon 16 Nov"."""
+    """What the request asks for, from the parsed need: "1,000 litres of lactose-free milk by Mon 16 Nov"; several
+    lines as "9 items by Fri 20 Nov: butternut squash, onion, garlic and 6 more"."""
+    if len(lines) > 1:
+        return items_text(lines, day_word(deliver_by))
     parts = []
     for ln in lines:
         need = ln.need
@@ -122,9 +191,8 @@ def title(lines: list, deliver_by: str | None) -> str | None:
             parts.append(f"{need.qty_text} of {what}")
     if not parts:
         return None
-    head = parts[0] if len(parts) == 1 else f"{parts[0]} and {len(parts) - 1} more"
     by = day_word(deliver_by)
-    return cap(head + (f" by {by}" if by else ""))
+    return cap(parts[0] + (f" by {by}" if by else ""))
 
 
 def name_of(ln, pid: str) -> str:
@@ -142,6 +210,7 @@ __all__ = [
     "fact_text",
     "money",
     "pass_fields",
+    "plain_name",
     "product",
     "qty",
     "reasons",

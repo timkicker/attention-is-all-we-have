@@ -18,6 +18,7 @@
   import VCode from "$lib/v/VCode.svelte";
   import { dayHead, dayTime, Empty, hm, live, Loading, LoadError, money, nb, PageHead, pillOf } from "$lib/v2";
   import Options from "./Options.svelte";
+  import OrderLines from "./OrderLines.svelte";
 
   const id = $derived(page.params.id ?? "");
   const detail = live(() => api.activityItem(id));
@@ -29,9 +30,26 @@
   // The options Validio compared: the backend's request view; none for a standing order or in the fixture.
   const req = live(() => (id.startsWith("S-") ? Promise.resolve(null) : api.request(id).catch(() => null)));
   const r = $derived(d?.item.kind === "request" && req.data?.id === id ? req.data : undefined);
-  const chosen = $derived(r?.lines[0] ? [...r.lines[0].options, ...(r.lines[0].substitutes ?? []), ...(r.lines[0].beyondList ?? [])].find((o) => o.verdict === "chosen") : undefined);
+  // Several lines read as one order table; one line keeps its comparison and checks.
+  const lines = $derived(d?.lines ?? []);
+  const many = $derived(lines.length > 1);
+  const left = $derived(lines.filter((l) => l.ordered === false));
+  const chosen = $derived(r?.lines.length === 1 ? [...r.lines[0].options, ...(r.lines[0].substitutes ?? []), ...(r.lines[0].beyondList ?? [])].find((o) => o.verdict === "chosen") : undefined);
   const planted = $derived(
     r?.lines.flatMap((l) => [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])]).find((o) => o.supplierText?.planted || o.supplierText?.reader?.flags.some((f) => f.code === "addresses_agents")),
+  );
+  // The comparison only when there was something to compare: a line that named its product and got it has none.
+  const compare = $derived.by(() => {
+    const l = r?.lines.length === 1 ? r.lines[0] : undefined;
+    return !!l && [...l.options, ...(l.substitutes ?? []), ...(l.beyondList ?? [])].some((o) => o.productId !== l.need.productId);
+  });
+  /** "1 item couldn't be delivered in time." for the lines left out of the order. */
+  const leftText = $derived(
+    !left.length
+      ? ""
+      : `${left.length === 1 ? "1 item" : `${left.length} items`} ${
+          left.every((l) => /^Can't be delivered/.test(l.reason ?? "")) ? "couldn't be delivered in time" : left.length === 1 ? "wasn't ordered" : "weren't ordered"
+        }.`,
   );
   let options = $state<Options>();
 
@@ -147,11 +165,12 @@
   {#if d && pill}
     {@const amount = d.item.totalCents != null ? nb(money(d.item.totalCents)) : ""}
     <p class="lead" data-testid="detail-lede">
-      <span class="word tone-{pill.tone}-text" data-testid="detail-status">{pill.label}</span>.
+      <span class="word tone-{pill.tone}-text" data-testid="detail-status">{pill.label}</span>{#if left.length && d.item.status === "ordered"}{" "}{lines.length - left.length} of {lines.length} items{/if}.
       {#if d.item.status === "waiting"}
         {#if amount}<b class="num" data-testid="detail-total">{amount}</b> is ready to order once you approve.{:else}Ready to order once you approve.{/if}
       {:else if d.item.status === "ordered"}
         {#if amount}<b class="num" data-testid="detail-total">{amount}</b>{#if d.result?.delivery}, arriving {date(d.result.delivery)}{/if}.{/if}
+        {#if leftText}<span data-testid="detail-left">{leftText}</span>{/if}
       {:else if d.item.status === "blocked"}
         {#if amount}<b class="num" data-testid="detail-total">{amount}</b> was not ordered.{:else}Nothing was ordered.{/if}
       {:else}
@@ -235,17 +254,19 @@
       </section>
 
       <!-- A request blocked before Valio was asked has nothing checked: no empty section for it. -->
-      {#if d.checks.length || r}
+      {#if d.checks.length || r || many}
         <section class="part" aria-labelledby="h-checks">
           <h2 class="v-h" id="h-checks">What Validio checked at Valio</h2>
-          {#if d.checks.length}
+          {#if many}
+            <OrderLines {lines} {date} proposed={d.item.status !== "ordered"} />
+          {:else if d.checks.length}
             <dl class="checks">
               {#each d.checks as c, n (n)}
                 {@render fact(`check-${c.label.toLowerCase()}`, c.label, c.value, c.note, c.ok)}
               {/each}
             </dl>
           {/if}
-          {#if r}<Options bind:this={options} req={r} proposed={d.item.status === "blocked"} />{/if}
+          {#if r && compare && !many}<Options bind:this={options} req={r} proposed={d.item.status === "blocked"} />{/if}
         </section>
       {/if}
 

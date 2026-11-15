@@ -7,18 +7,18 @@ test("chips carry counts and filter through ?status=", async ({ page }) => {
   await fresh(page);
   await page.goto("/activity");
   await expect(page.locator("#filter-all")).toHaveAttribute("aria-pressed", "true");
-  for (const [f, n] of [["all", "6"], ["ordered", "3"], ["waiting", "1"], ["blocked", "1"], ["standing", "1"]]) {
+  for (const [f, n] of [["all", "8"], ["ordered", "5"], ["waiting", "1"], ["blocked", "1"], ["standing", "1"]]) {
     await expect(page.locator(`#filter-${f}`)).toContainText(n);
   }
-  await expect(page.locator("a.ar")).toHaveCount(6);
+  await expect(page.locator("a.ar")).toHaveCount(8);
   await page.locator("#filter-ordered").click();
   await expect(page).toHaveURL(/\?status=ordered$/);
   await expect(page.locator("#filter-ordered")).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator("a.ar")).toHaveCount(3);
-  await expect(page.locator('a.ar[data-status="ordered"]')).toHaveCount(3);
+  await expect(page.locator("a.ar")).toHaveCount(5);
+  await expect(page.locator('a.ar[data-status="ordered"]')).toHaveCount(5);
   await page.locator("#filter-all").click();
   await expect(page).toHaveURL(/\/activity$/);
-  await expect(page.locator("a.ar")).toHaveCount(6);
+  await expect(page.locator("a.ar")).toHaveCount(8);
 });
 
 test("a filter in the address opens with it, Back walks the filters", async ({ page }) => {

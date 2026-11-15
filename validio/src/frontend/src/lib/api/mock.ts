@@ -11,6 +11,7 @@ import type {
   ActivityDetail,
   ActivityFilter,
   ActivityItem,
+  ActivityLine,
   ActivityList,
   DemoState,
   HomeOut,
@@ -60,6 +61,128 @@ const h = (n: number) => `${n.toString(16).padStart(8, "0")}c41e9a07b2d58f3e61a0
 
 const RULE_V = 2;
 
+// The risotto order: an MCP agent asked for 50 portions of butternut squash risotto by product id. Eight lines
+// were deliverable by Fri 20 Nov and auto-ordered as O-8; the bouillon was not, and the agent's next request
+// ordered a 5 kg one as O-9.
+type RisottoLine = [name: string, product: string, qty: string, unitCents: number, n: number, allergens: string, note?: string];
+const RISOTTO: RisottoLine[] = [
+  ["Butternut squash", "Pumpkin butternutsquash ZA", "10 kg", 149, 10, "Contains no listed allergen"],
+  ["Onion", "Onion 1 kg bag Netherlands", "2 × 1 kg", 145, 2, "Contains no listed allergen"],
+  ["Garlic", "Garlic peeled China 1 kg", "1 × 1 kg", 895, 1, "Contains no listed allergen"],
+  ["Sage", "Sage bunch Italy 100 g", "2 × 100 g", 249, 2, "Contains no listed allergen"],
+  ["Pumpkin seeds", "Pumpkin seeds 800 g", "1 × 800 g", 745, 1, "Contains no listed allergen"],
+  ["Risotto rice", "Risella risotto rice 5 kg", "1 × 5 kg", 1190, 1, "Contains no listed allergen"],
+  ["Salted lactose-free butter", "Lactose-free butter 500 g", "2 × 500 g", 439, 2, "Free from lactose", "Contains milk"],
+  ["Grated parmesan reggiano", "Grated parmesan reggiano 1 kg", "1 × 1 kg", 2233, 1, "Contains milk"],
+];
+
+function risottoLines(): ActivityLine[] {
+  const ordered = RISOTTO.map(([name, product, qty, unit, n, allergens, note], i): ActivityLine => ({
+    lineId: `L${i + 1}`,
+    name,
+    product,
+    productId: null,
+    qtyText: qty,
+    unitPriceCents: unit,
+    totalCents: unit * n,
+    delivery: "2026-11-20",
+    ordered: true,
+    reason: null,
+    checks: [
+      { label: "Product", value: product, note: qty, ok: true },
+      { label: "Price", value: `${(unit / 100).toFixed(2)} € per ${qty.includes("×") ? "pack" : "kg"}`, note: "Valio price, until 31 Dec 2026", ok: true },
+      { label: "Stock", value: "In stock", note: "Arrives Fri 20 Nov", ok: true },
+      { label: "Allergens", value: allergens, note: note ?? null, ok: true },
+    ],
+    replacedBy: null,
+  }));
+  return [
+    ...ordered,
+    {
+      lineId: "L9",
+      name: "Vegetable bouillon",
+      product: "Knorr vegetable bouillon 1 kg",
+      productId: null,
+      qtyText: "1 × 1 kg",
+      unitPriceCents: 1890,
+      totalCents: 1890,
+      delivery: "2026-11-24",
+      ordered: false,
+      reason: "Can't be delivered by Fri 20 Nov",
+      checks: [
+        { label: "Product", value: "Knorr vegetable bouillon powder, low salt 1 kg", note: "1 × 1 kg", ok: true },
+        { label: "Price", value: "18.90 € per pack", note: "Valio price", ok: true },
+        { label: "Stock", value: "Not before Tue 24 Nov", note: "Asked for Fri 20 Nov", ok: false },
+        { label: "Allergens", value: "Contains celery", note: null, ok: true },
+      ],
+      replacedBy: { requestId: "R-6", orderId: "O-9" },
+    },
+  ];
+}
+
+function risotto(): Entry[] {
+  return [
+    {
+      item: {
+        id: "R-6",
+        kind: "request",
+        status: "ordered",
+        title: "1 × 5 kg of vegetable bouillon",
+        why: "Under your 1,200.00 € limit, auto-ordered",
+        totalCents: 4590,
+        at: "2026-11-14T11:44:00+02:00",
+        orderId: "O-9",
+        approvedByYou: false,
+      },
+      detail: {
+        asked: { text: "Vegetable bouillon for the risotto, 5 kg, delivered by Friday 20 November.", agentName: AGENT },
+        checks: [
+          { label: "Product", value: "Knorr vegetable bouillon 5 kg", note: "1 × 5 kg", ok: true },
+          { label: "Price", value: "45.90 € per pack", note: "Valio price, until 31 Dec 2026", ok: true },
+          { label: "Stock", value: "In stock", note: "Arrives Fri 20 Nov", ok: true },
+          { label: "Allergens", value: "Contains celery", note: null, ok: true },
+        ],
+        rule: { text: "Under your 1,200.00 € limit, auto-ordered.", version: RULE_V },
+        result: { orderId: "O-9", orderIds: ["O-9"], delivery: "2026-11-20" },
+        approval: null,
+        proof: [
+          { at: "2026-11-14T11:44:01+02:00", actor: AGENT, text: "Asked for 1 × 5 kg of vegetable bouillon", hash: h(61) },
+          { at: "2026-11-14T11:44:04+02:00", actor: "Validio", text: "Auto-ordered, order O-9", hash: h(62) },
+        ],
+      },
+    },
+    {
+      item: {
+        id: "R-5",
+        kind: "request",
+        status: "ordered",
+        title: "9 items: butternut squash, onion, garlic and 6 more",
+        why: "Under your 1,200.00 € limit, auto-ordered",
+        totalCents: 8219,
+        at: "2026-11-14T11:40:00+02:00",
+        orderId: "O-8",
+        approvedByYou: false,
+      },
+      detail: {
+        asked: {
+          text: "Ingredients for 50 portions of butternut squash risotto, delivered by Friday 20 November: butternut squash 10 kg, onions 2 × 1 kg, garlic, sage, pumpkin seeds, arborio rice 5 kg, lactose-free butter 2 × 500 g, parmesan 1 kg and Knorr vegetable bouillon 1 kg.",
+          agentName: AGENT,
+        },
+        checks: [],
+        rule: { text: "Under your 1,200.00 € limit, auto-ordered.", version: RULE_V },
+        result: { orderId: "O-8", orderIds: ["O-8"], delivery: "2026-11-20" },
+        approval: null,
+        proof: [
+          { at: "2026-11-14T11:40:01+02:00", actor: AGENT, text: "Asked for 9 items by Fri 20 Nov: butternut squash, onion, garlic and 6 more", hash: h(51) },
+          { at: "2026-11-14T11:40:05+02:00", actor: "Validio", text: "Vegetable bouillon 1 kg can't be delivered by Fri 20 Nov", hash: h(52) },
+          { at: "2026-11-14T11:40:06+02:00", actor: "Validio", text: "Auto-ordered 8 items, order O-8", hash: h(53) },
+        ],
+        lines: risottoLines(),
+      },
+    },
+  ];
+}
+
 function day(): Entry[] {
   const answer = r4();
   const r4item: ActivityItem = {
@@ -86,6 +209,7 @@ function day(): Entry[] {
       : [{ at: "2026-11-14T11:20:00+02:00", actor: "You", text: answer === "approved" ? "Approved, order O-7 placed" : "Rejected", hash: h(43) }]),
   ];
   return [
+    ...risotto(),
     {
       item: r4item,
       detail: {
