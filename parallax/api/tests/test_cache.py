@@ -30,11 +30,39 @@ def test_progress_errors_and_sql_panels_are_not_cached(client):
     assert not any(k.startswith("/api/compare") for k in cache._store)
 
 
-def test_a_write_clears_the_cache(client):
+def test_a_check_keeps_the_cache_an_ingest_write_clears_it(client):
     client.get("/api/topics")
     assert cache._store
-    client.post("/api/check", json={"text": "Talvisota alkoi 30. marraskuuta 1939.", "lang": "fi"})
-    assert not cache._store
+    r = client.post("/api/check", json={"text": "Talvisota alkoi 30. marraskuuta 1939.", "topic": "winterwar"})
+    assert r.status_code == 200
+    assert cache._store  # a check only adds its own run, the warm pages of other visitors stay
+    from api.main import _changes_data
+
+    assert _changes_data(type("R", (), {"url": type("U", (), {"path": "/api/ingest"})})())
+
+
+def test_a_cached_answer_is_gzip_once_with_an_etag_and_a_304(client):
+    first = client.get("/api/topics")
+    second = client.get("/api/topics", headers={"Accept-Encoding": "gzip"})
+    assert second.headers["content-encoding"] == "gzip"
+    assert second.json() == first.json()  # the client decompresses it
+    etag = second.headers["etag"]
+    assert etag and second.headers["cache-control"] == "no-cache"
+    again = client.get("/api/topics", headers={"If-None-Match": etag})
+    assert again.status_code == 304 and not again.content
+    plain = client.get("/api/topics", headers={"Accept-Encoding": "identity"})
+    assert "content-encoding" not in plain.headers and plain.json() == first.json()
+
+
+def test_warm_up_fills_the_cache_with_the_first_pages(client):
+    from api import warm
+    from api.main import app
+
+    cache.clear()
+    n = asyncio.run(warm.warm(app))
+    assert n > 3
+    assert "/api/compare?topic=winterwar&limit=200&offset=0" in cache._store
+    assert "/api/dropped?topic=winterwar&limit=200&offset=0" in cache._store
 
 
 def test_a_result_computed_across_a_clear_is_not_stored():

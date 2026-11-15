@@ -240,3 +240,35 @@ def test_embedder_down_is_503(client, monkeypatch):
     r = client.post("/api/check", json={"text": "A sentence nobody recorded, about 1939 and Mannerheim."})
     assert r.status_code == 503 and r.json()["error"]["code"] == "embed_unavailable"
     assert not schema_errors("/api/check", r.json(), method="post", status="503")
+
+
+def test_a_full_check_queue_answers_busy(client, monkeypatch):
+    from api.routes import check
+
+    monkeypatch.setattr(check.GATE, "waiting_max", 0)
+    r = client.post("/api/check", json={"text": ANSWER})
+    assert r.status_code == 503
+    assert r.json()["error"]["code"] == "busy" and r.headers["retry-after"] == "30"
+
+
+def test_checks_wait_for_a_slot_and_all_finish():
+    import asyncio
+
+    from api.routes import check
+
+    gate = check._Gate()
+    gate.parallel = 2
+    running, peak = [0], [0]
+
+    async def one():
+        async with gate.slot():
+            running[0] += 1
+            peak[0] = max(peak[0], running[0])
+            await asyncio.sleep(0.01)
+            running[0] -= 1
+
+    async def main():
+        await asyncio.gather(*[one() for _ in range(8)])
+
+    asyncio.run(main())
+    assert peak[0] == 2 and gate.waiting == 0

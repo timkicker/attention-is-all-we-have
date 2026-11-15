@@ -125,4 +125,16 @@ def test_topic_nearest_through_the_index_matches_the_exact_search(monkeypatch):
     fast = checker.nearest(vec, langs, "winterwar")
     exact = checker._nearest_per_lang("check_nearest_topic_exact", vec, langs, "winterwar")
     assert any(fast.values())
-    assert {k: [r["h"] for r in v] for k, v in fast.items()} == {k: [r["h"] for r in v] for k, v in exact.items()}
+    # The index is approximate: it may swap a near tie or miss one of the five. Per edition it must find as many,
+    # hold the exact nearest and most of the rest, and never report a life nearer than the exact search does.
+    shared = total = 0
+    for lang in langs:
+        f, e = [r["h"] for r in fast[lang]], [r["h"] for r in exact[lang]]
+        assert len(f) == len(e), lang
+        if not e:
+            continue
+        assert e[0] in f, lang
+        assert min(r["dist"] for r in fast[lang]) >= min(r["dist"] for r in exact[lang]) - 1e-6, lang
+        shared += len(set(f) & set(e))
+        total += len(e)
+    assert shared >= 0.8 * total
