@@ -147,7 +147,7 @@ Not covered. This is the weakest part:
 
 ## Call to the real webshop
 
-Validio must never call Valio's real webshop (toimitustukku.valioaimo.fi or api.valioaimo.fi). `checked_base_url` in `valio/client.py` parses the URL and accepts only https://junction26.valioaimo.fi, Valio's test API. Tricks with letter case, a user name, another port or a look-alike host do not get through. `scripts/fetch_data.py` refuses other hosts too. `scripts/check_forbidden_hosts.sh` fails the build when one of the webshop hosts appears anywhere outside docs. `make test` runs it first. The default mode is replay, which opens no connection. In every mode `valio/budget.py` allows at most 40 product ids per request by default (`VALIO_MAX_IDS_PER_REQUEST`).
+Validio must never call Valio's real webshop (toimitustukku.valioaimo.fi or api.valioaimo.fi). `checked_base_url` in `valio/client.py` parses the URL and accepts only https://junction26.valioaimo.fi, Valio's test API. Tricks with letter case, a user name, another port or a look-alike host do not get through. `scripts/fetch_data.py` refuses other hosts too. `scripts/check_forbidden_hosts.sh` fails the build when one of the webshop hosts appears anywhere outside docs. `make test` runs it first. The default mode is replay, which opens no connection. `VALIO_LIVE_FALLBACK=1` lets replay ask for the ids it has no recording for, through the same checked client and the same budget, off by default and off in every test. In every mode `valio/budget.py` allows at most 40 product ids per request by default (`VALIO_MAX_IDS_PER_REQUEST`).
 
 Proof:
 
@@ -157,6 +157,8 @@ Proof:
 - `test_guards.py::test_forbidden_hosts_check`
 - `test_guards.py::test_guards_pass_on_this_repo`
 - `test_valio.py::test_replay_never_calls_network`
+- `test_valio.py::test_fallback_asks_live_for_only_the_missing_ids_and_replays_them_next_time`
+- `test_valio.py::test_fallback_without_a_key_is_a_replay_miss`
 - `test_smoke.py::test_config_defaults_to_replay`
 - `test_valio.py::test_budget_blocks_41_ids`
 

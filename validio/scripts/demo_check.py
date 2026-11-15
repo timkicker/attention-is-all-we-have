@@ -296,7 +296,7 @@ def start_server(port: int, store: Path, code: str, keys: Path) -> subprocess.Po
     except httpx.HTTPError:
         pass
     e = {**os.environ, "VALIDIO_DB": str(store / "validio.db"), "VALIDIO_KEYS": str(keys),
-         "VALIDIO_APPROVE_CODE": code, "VALIO_MODE": "replay", "VALIDIO_DEMO": "1"}
+         "VALIDIO_APPROVE_CODE": code, "VALIO_MODE": "replay", "VALIO_LIVE_FALLBACK": "0", "VALIDIO_DEMO": "1"}
     log = open(store / "server.log", "w")  # noqa: SIM115  (the server writes it until it stops)
     p = subprocess.Popen([sys.executable, "-m", "uvicorn", "validio.api.app:app", "--host", "127.0.0.1",
                           "--port", str(port)], cwd=ROOT / "src" / "backend", env=e, stdout=log, stderr=log)

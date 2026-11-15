@@ -54,7 +54,7 @@ def reason(decision: dict, diet: list[str] | tuple[str, ...] = (), deliver_by: s
         if re.search(r"substitute (that )?is not on Valio's list", s):
             return "swap_unlisted", "the best swap isn't on Valio's own list, so you decide"
         if "a diet rule cannot be checked" in s:
-            return "diet_unchecked", f"Valio doesn't confirm it is {_diet(diet)}, so you decide"
+            return "diet_unchecked", f"Valio's data doesn't confirm it is {_diet(diet)}, so you decide"
         if "does not confirm" in s and "stock" in s:
             return "stock_unconfirmed", "Valio doesn't confirm enough stock, so you decide"
         why = re.sub(r"^.*?Needs a person: ", "", s).split(". ")[0].rstrip(".")
@@ -77,6 +77,8 @@ def reason(decision: dict, diet: list[str] | tuple[str, ...] = (), deliver_by: s
         return "sales_block", "Valio has a sales block on it"
     if "outside the Spend Pass's product groups" in s:
         return "outside_groups", "it is outside the product groups your limits allow"
+    if s.startswith(("No plain ", "Valio's data doesn't show ")) and diet:  # every option broke the diet
+        return "diet", f"Valio's own data doesn't show it is {_diet(diet)}"
     if not rules or "Valio gives no delivery line" in s:
         return "none_available", f"Nothing suitable arrives by {_day(deliver_by)}. Nothing was ordered."
     why = re.sub(r"^Blocked: ", "", s).split(". ")[0].rstrip(".")

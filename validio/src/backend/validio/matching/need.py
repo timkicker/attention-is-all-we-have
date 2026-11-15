@@ -10,7 +10,9 @@ from datetime import date, timedelta
 
 from ..catalog.model import Product
 from ..catalog.store import Catalog
-from ..text.format import qty_text
+from ..text.format import and_list, qty_text
+from ..trust.claims import claim_check
+from ..trust.levels import TrustLevel
 from ..valio.models import Quote
 
 MAX_CANDIDATES = 12
@@ -28,6 +30,15 @@ class Need:
     budget_cents: int | None
     product_id: str | None = None  # fixes the product, for standing order lines and product requests
     text: str = ""
+    # the part of required_claims that comes only from the kitchen's Spend Pass, not from the request's text:
+    # a product without the claim in Valio's data stays a candidate (its grade is unchecked, so Cedar sends it to
+    # a person); only a product whose own data breaks it (kitchen_break) is screened out
+    kitchen_claims: set[str] = field(default_factory=set)
+
+    @property
+    def strict_claims(self) -> set[str]:
+        """The claims the request's own text asks for: a product without them is screened out."""
+        return self.required_claims - self.kitchen_claims
 
 
 @dataclass
@@ -40,6 +51,7 @@ class Ranked:
     notes: list[str] = field(default_factory=list)  # facts worth showing that do not reject
     facts: list = field(default_factory=list)
     why: list[str] = field(default_factory=list)  # Best Pick: one sentence per ranking key
+    diet_open: list[str] = field(default_factory=list)  # kitchen diets Valio's data does not confirm, by name
 
 
 @dataclass(frozen=True)
@@ -75,6 +87,9 @@ OFF_NAMES = {"sour": "Sour milk", "ferment": "Fermented milk", "curdl": "Curdled
              "condensed": "Condensed milk", "acidofilus": "Sour milk", "vanilla": "Flavoured milk",
              "hyla": "Sour milk", "gefilus": "Sour milk", "cream": "Cream", "portion": "Portion packs"}
 NEAR_MISS = {"LOW_LACTOSE": "Low lactose is not lactose free"}
+# the allergen a diet rules out: listed with no claim for the diet, the product breaks it
+ALLERGEN_NAMES = {"AM": "milk", "ML": "lactose", "AW": "gluten cereals", "UW": "wheat"}
+CLAIM_ALLERGEN = {"FREE_FROM_LACTOSE": "AM", "FREE_FROM_GLUTEN": "AW"}
 
 WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 UNITS = {"l": "L", "litre": "L", "litres": "L", "liter": "L", "liters": "L", "kg": "KG", "kilos": "KG",
@@ -264,11 +279,26 @@ def _in_net(need: Need, p: Product) -> bool:
         return False
     if not any(p.category.startswith(c) for c in kind.net):
         return False
-    for claim in need.required_claims:
+    for claim in need.strict_claims:
         _, near, word = CLAIM_WORDS.get(claim, (None, None, None))
         if not (claim in p.claims or (near and near in p.claims) or (word and word in name)):
             return False
-    return True
+    # a kitchen-wide diet leaves out only what Valio's data says breaks it, never what it is silent on
+    return not any(kitchen_break(p, c) for c in need.kitchen_claims)
+
+
+def kitchen_break(p: Product, claim: str) -> str | None:
+    """Why the product breaks a diet of the kitchen's Spend Pass, from Valio's data alone: the claim check
+    contradicts it, or it lists the allergen the diet rules out and makes no claim. None when the data confirms
+    the diet or says nothing about it; Cedar sends the second to a person (dietUnchecked)."""
+    level, why = claim_check(p, claim)
+    name = CLAIM_NAMES.get(claim, claim.lower())
+    if level == TrustLevel.CONTRADICTED:
+        return f"Not {name}: {and_list(why)}"
+    code = CLAIM_ALLERGEN.get(claim)
+    if level == TrustLevel.MISSING and code and code in p.contains:
+        return f"Lists {ALLERGEN_NAMES[code]} and has no {name.replace(' ', '-')} claim in Valio's data"
+    return None
 
 
 def static_reasons(need: Need, p: Product) -> list[str]:
@@ -276,16 +306,17 @@ def static_reasons(need: Need, p: Product) -> list[str]:
     kind = kind_of(need.kind, need.unit)
     name = (p.name_en or "").lower()
     reasons = []
-    has_all = need.required_claims <= p.claims
+    strict = need.strict_claims
+    has_all = strict <= p.claims
     if kind.off and (m := re.search(kind.off, name)):
         what = kind.off_name or OFF_NAMES.get(m.group(0), f"A {m.group(0)} product")
         reasons.append(f"{what}, not plain {need.kind.replace('_', ' ')}")
     elif kind.categories and p.category not in kind.categories:
-        claim = " and ".join(CLAIM_NAMES.get(c, c) for c in sorted(need.required_claims))
+        claim = " and ".join(CLAIM_NAMES.get(c, c) for c in sorted(strict))
         prefix = f"{claim.capitalize()} but " if has_all and claim else ""
         what = "a cooking fat mix" if re.search(r"vegetable|fat|blend", name) else f"in Valio category {p.category}"
         reasons.append(f"{prefix}{what}, not {need.kind.replace('_', ' ')}")
-    for claim in sorted(need.required_claims - p.claims):
+    for claim in sorted(strict - p.claims):
         near = next((NEAR_MISS[c] for c in p.claims & need.excluded_claims if c in NEAR_MISS), None)
         reasons.append(near or f"No {CLAIM_NAMES.get(claim, claim)} claim in Valio's data")
     if not reasons:
@@ -296,6 +327,11 @@ def static_reasons(need: Need, p: Product) -> list[str]:
         elif need.unit == "L" and need.quantity >= 100 and piece < 1:
             reasons.append(f"{piece:g} l packs, too small for {qty_text(need.quantity, 'L')}")
     return reasons
+
+
+def diet_open_count(need: Need, p: Product) -> int:
+    """How many of the kitchen-wide diets Valio's data has no claim for."""
+    return sum(claim_check(p, c)[0] == TrustLevel.MISSING for c in need.kitchen_claims)
 
 
 def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tuple[list[Product], list[Ranked]]:
@@ -324,7 +360,8 @@ def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tupl
             dropped.append(Ranked(p, None, None, False, reasons))
         else:
             kept.append(p)
-    kept.sort(key=lambda p: (p.reliability is None, -(p.reliability or 0),
+    # products Valio's data does not confirm the kitchen's diet for come after those it does
+    kept.sort(key=lambda p: (diet_open_count(need, p), p.reliability is None, -(p.reliability or 0),
                              -(amount_per_sales_unit(need, p)[0] or 0), p.id))
     return (kept if limit is None else kept[:limit]), dropped
 

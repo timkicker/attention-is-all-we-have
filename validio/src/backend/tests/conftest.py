@@ -23,6 +23,13 @@ def _fake_model(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
+def _no_live_fallback(monkeypatch):
+    """VALIO_LIVE_FALLBACK=1 in validio/.env would let replay ask Valio's test API with the key there: tests never
+    leave the machine. A test of the fallback builds its client with live_fallback=True and mocks the HTTP."""
+    monkeypatch.setenv("VALIO_LIVE_FALLBACK", "0")
+
+
+@pytest.fixture(autouse=True)
 def _fresh_rate_limits():
     """Rate limits are per process: every test starts with empty windows, so one test's calls never 429 the next."""
     from validio.api import accounts, limits

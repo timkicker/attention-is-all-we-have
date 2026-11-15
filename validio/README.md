@@ -38,7 +38,7 @@ The connector offers seven tools: `search_products`, `request_supply`, `confirm_
 
 - **Per order.** "Ordered automatically up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
 - **Per week.** An optional cap on everything the Spend Pass has placed this week. An order that would go over it is blocked. Validio checks this limit before it asks Cedar, so it is not one of the Cedar rules. The demo kitchen has 8,000.00 €.
-- **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product is blocked when its own Valio data contradicts the diet or when it lists a "never" allergen. It waits for you when the diet cannot be confirmed, when it may contain a "never" allergen or when it has no allergen data.
+- **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product is blocked when its own Valio data contradicts the diet or when it lists a "never" allergen. It waits for you when the diet cannot be confirmed, when it may contain a "never" allergen or when it has no allergen data. A diet the request itself names ("lactose-free milk") leaves out every product without that claim. The diet in Rules does not: a product Valio's data says nothing about, such as bananas, stays an option and waits for you.
 - **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered automatically. With extra cost: as from Valio's list, plus a line may be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.
 
 A budget written in the request ("budget 1200 euro") counts too: above it, the order waits for you. Before it places any order, Validio asks Valio again. If a price rose by more than 2 % or a line can no longer be delivered, the order is refused. The rules themselves are listed in [docs/RULES.md](docs/RULES.md).
@@ -49,10 +49,11 @@ Every decision, approval, Rules change, pause and refusal becomes one sentence i
 
 ## Valio's answers: real, recorded, 16 to 20 Nov 2026
 
-The 17,546 products, with their claims, allergens, substitutes, delivery reliability and carbon values, come from Valio's challenge files. Every price and availability answer is a real answer from Valio's test API (`junction26.valioaimo.fi`, customer `hotel-espoo`). `make record` asked the API once for each delivery day from Monday 16 to Friday 20 November 2026 and stored the answers. The app replays them and never connects to Valio while it runs.
+The 17,546 products, with their claims, allergens, substitutes, delivery reliability and carbon values, come from Valio's challenge files. Every price and availability answer is a real answer from Valio's test API (`junction26.valioaimo.fi`, customer `hotel-espoo`). `make record` asked the API once for each delivery day from Monday 16 to Friday 20 November 2026 and stored the answers. The app replays them and does not connect to Valio while it runs, unless the live fallback below is on.
 
 - Any other delivery day returns `503 not recorded` and the error names the recorded days. The `request_supply` tool's description lists them too, so an agent can choose one. "Monday" means 16 Nov. With no day given, the order is due on 16 Nov.
 - Answers were recorded for the products the demo scenes need and for a list of common kitchen requests (milk, cream, cheeses, butter, eggs and others), each with Valio's listed substitutes. Any other product returns "aren't recorded for this demo" and nothing is ordered.
+- With `VALIO_LIVE_FALLBACK=1` and `VALIO_API_KEY` in `.env`, replay asks Valio's test API for the products or the delivery day it has no recording for, only those ids, at most 40 per request and never another host. The answer is stored with the recordings, so the next request replays it. Without a key, or when the test API does not answer, it stays "not recorded" or "Valio didn't answer" and nothing is ordered. `make demo` turns the switch on. Tests and `make demo-check` leave it off and never connect.
 - Decisions run on a fixed demo clock, Saturday 14 November 2026 10:00 Helsinki time, because Valio's cut-offs and delivery dates in the recordings fit that time. On the live site, what people do is stamped with the real time.
 
 Three things are simulated: the stock-out of mozzarella 466375 (Valio really has it in stock), the 8 weeks of order history behind the weekly Steady Order and the line in product 463047's description that talks to AI agents. We planted that line ourselves and keep it in its own table, apart from Valio's text. The API answers flag the stock-out and the history as simulated and the stock-out has its own ledger entry.
@@ -83,7 +84,7 @@ make template                    # optional: plays the five demo scenes into dat
 make demo                        # builds the web app, seeds and serves everything on http://127.0.0.1:8410
 ```
 
-Open http://127.0.0.1:8410 and click **Try the demo kitchen**. Without `make template`, a demo copy starts from the plain seed. Without `make record`, every request returns "not recorded".
+Open http://127.0.0.1:8410 and click **Try the demo kitchen**. Without `make template`, a demo copy starts from the plain seed. Without `make record`, every request returns "not recorded", unless `VALIO_API_KEY` is set: then `make demo` asks the test API for what is missing and records it.
 
 To look at the web app alone, without a key or data: `cd src/frontend && npm ci && npm run kit`, then `make demo-mock` from `validio/`. The app then runs on a fixture on http://127.0.0.1:8411 and no agent can talk to it.
 

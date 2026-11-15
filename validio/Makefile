@@ -56,11 +56,12 @@ SCENE ?= 2
 agent:
 	$(UV) python -W ignore ../../scripts/agent.py --scene $(SCENE)
 
-# The demo on 127.0.0.1:8410 from replayed Valio answers: web app built, store seeded.
+# The demo on 127.0.0.1:8410 from replayed Valio answers: web app built, store seeded. With VALIO_API_KEY in
+# .env, a product or day without a recording is asked from Valio's test API and recorded (VALIO_LIVE_FALLBACK).
 demo:
 	cd src/frontend && VITE_API=live npm run build
 	$(MAKE) seed
-	cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
+	cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
 
 # The web app alone on its fixture (src/lib/api/mock.ts), no backend. Never for the 10:00 run, which is `make demo`.
 demo-mock:
@@ -86,7 +87,7 @@ template:
 demo-web:
 	$(MAKE) seed
 	trap 'kill 0' INT TERM EXIT; \
-	(cd $(BACKEND) && VALIO_MODE=replay VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= \
+	(cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= \
 	  uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410) & \
 	(cd src/frontend && VITE_API=live npm run dev)
 

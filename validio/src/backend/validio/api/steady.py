@@ -252,7 +252,7 @@ class Runtime:
         if self._valio is None:
             s = self.settings
             self._valio = ValioClient(s.valio_base_url, s.valio_api_key, s.valio_mode, s.valio_cache,
-                                      customer=s.valio_customer)
+                                      customer=s.valio_customer, live_fallback=s.valio_live_fallback)
         return self._valio
 
     def live(self) -> _Live:
