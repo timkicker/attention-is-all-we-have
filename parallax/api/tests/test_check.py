@@ -284,3 +284,15 @@ def test_checks_wait_for_a_slot_and_all_finish():
 
     asyncio.run(main())
     assert peak[0] == 2 and gate.waiting == 0
+
+
+def test_nearest_searches_at_once_give_the_same_check(client, monkeypatch):
+    from api import checker
+
+    out = []
+    for parallel in (1, 4):
+        monkeypatch.setattr(checker, "NEAREST_PARALLEL", parallel)
+        r = client.post("/api/check", json={"text": ANSWER, "topic": "winterwar"}).json()
+        assert sum("VEC_DISTANCE_COSINE" in s["text"] for s in r["sql"]) >= len(r["claims"]) > 1  # all logged
+        out.append(r["claims"])
+    assert out[0] == out[1]
