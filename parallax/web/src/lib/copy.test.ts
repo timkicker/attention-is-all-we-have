@@ -32,6 +32,7 @@ describe('copy', () => {
       'Of 6 statements, 1 is in no edition, 2 are disputed and 3 are backed by most editions',
     )
     expect(copy.checkSummary({ total: 2, none: 0, disputed: 0, backed: 2 }, false)).toBe('Of 2 statements, 2 are backed by at least one edition')
+    expect(copy.checkSummary({ total: 0, none: 0, disputed: 0, backed: 0 })).toBe('No statement to check in this answer')
     expect(copy.disputedRemoved(3, 7, ['en', 'ru'], 2014)).toEqual(['Disputed', 'in 3 of 7', 'English and Russian removed it in 2014'])
     expect(copy.notCompared(['ru', 'et'])).toBe('Not compared yet in Russian and Estonian')
     expect(copy.states.othersReady(0)).toBe('None of the others is ready yet')

@@ -160,6 +160,7 @@ export function disputedOtherwise(langs: readonly string[]): string[] {
  * most=false says "backed by at least one edition", for when some backed statement has only a minority behind it.
  */
 export function checkSummary(s: { total: number; none: number; disputed: number; backed: number }, most = true): string {
+  if (!s.total) return 'No statement to check in this answer'
   const be = (n: number) => (n === 1 ? 'is' : 'are')
   const parts: string[] = []
   if (s.none) parts.push(`${s.none} ${be(s.none)} in no edition`)
