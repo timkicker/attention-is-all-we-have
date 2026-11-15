@@ -10,7 +10,7 @@ Live: https://135.181.63.238.sslip.io, with the Winter War preloaded. Good place
 - https://135.181.63.238.sslip.io/t/Q134949?date=2008-06-01 shows the same list as of 1 June 2008.
 - https://135.181.63.238.sslip.io/t/Q134949/check checks a chatbot answer. Paste one or pick a recorded Gemini answer below the text box.
 
-Demo video (2 minutes): https://youtu.be/eeRs_a-xHF0
+Demo video: https://youtu.be/eeRs_a-xHF0
 
 The live server runs on a Verda instance with Docker Compose (see [deploy/README.md](deploy/README.md)) without a language model (`ENGINE=fake`) and with bge-m3 embeddings through Ollama (`EMBED_BACKEND=ollama`).
 

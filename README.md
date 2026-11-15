@@ -45,9 +45,9 @@ Parallax lines up seven language editions of Wikipedia (Finnish, Swedish, German
 1. Open the Winter War, which is preloaded: https://135.181.63.238.sslip.io/t/Q134949. Each row is a Finnish statement that other editions tell differently, with the differing part marked.
 2. Click the first row (the shelling of Mainila) to see that statement in all seven editions and when each one changed.
 3. Go back in time: https://135.181.63.238.sslip.io/t/Q134949?date=2008-06-01 shows the same comparison as of 1 June 2008.
-4. Open **Check an AI answer**, paste what a chatbot told you about the Winter War and click **Check answer**. After about 20 seconds you see for each statement which editions back it, which one removed it and which statements are in no edition. The recorded Gemini answers below the text box work too.
+4. Open **Check an AI answer**, paste what a chatbot told you about the Winter War and click **Check answer**. After about 20 seconds it shows for each statement which editions back it or removed it. Statements that are in no edition are marked too. The recorded Gemini answers below the text box work too.
 
-The two-minute demo video is at https://youtu.be/eeRs_a-xHF0.
+The demo video is at https://youtu.be/eeRs_a-xHF0.
 
 | The Winter War, differences today | One statement in seven editions | The same article on 1 June 2008 |
 |:---:|:---:|:---:|
@@ -57,7 +57,7 @@ The two-minute demo video is at https://youtu.be/eeRs_a-xHF0.
 
 ### What is real and what is recorded
 
-Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. The English lines are machine translations, so some wording differences come from the translation. For the Winter War, Gemini matched the statements across editions and translated them before the event and the seed stores those results. The live server calls no language model (`ENGINE=fake`) but embeds new text with bge-m3 through Ollama. A pasted chatbot answer and a newly loaded article are therefore matched by vector similarity alone, which misses more than Gemini does. Statements in a newly loaded article also stay untranslated. Any article with a Finnish version can be loaded from the start page and the comparison opens after one to two minutes. The recorded Gemini answers under "Check an AI answer" are checked again against the editions each time they are opened.
+Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. The English lines are machine translations, so some wording differences come from the translation. For the Winter War, Gemini matched the statements across editions and translated them before the event and the seed stores those results. The live server calls no language model (`ENGINE=fake`) but embeds new text with bge-m3 through Ollama. A pasted chatbot answer and a newly loaded article are therefore matched by vector similarity alone. Statements in a newly loaded article also stay untranslated. Any article with a Finnish version can be loaded from the start page and the comparison opens after one to two minutes. The recorded Gemini answers under "Check an AI answer" are checked again against the editions each time they are opened.
 
 ### Built with
 
