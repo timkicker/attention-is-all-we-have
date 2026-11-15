@@ -59,6 +59,8 @@ interface Entry {
 const h = (n: number) => `${n.toString(16).padStart(8, "0")}c41e9a07b2d58f3e61a0d4c97b2e5f18a3d6c0b94e7f21a5d8c3b6e09f42a7d1`.slice(0, 64);
 
 const RULE_V = 2;
+/** The demo's version 2 limits, which every sample item was decided under (plans/025, P3). */
+const LIMITS_V = { aloneUpToCents: 120000, approvalUpToCents: 500000 };
 
 function day(): Entry[] {
   const answer = r4();
@@ -98,10 +100,10 @@ function day(): Entry[] {
         ],
         rule:
           answer === "approved"
-            ? { text: "Over your 1,200.00 € limit for ordering alone. You approved it.", version: RULE_V }
+            ? { text: "Over your 1,200.00 € limit for ordering alone. You approved it.", version: RULE_V, limits: LIMITS_V }
             : answer === "rejected"
-              ? { text: "You said no.", version: RULE_V }
-              : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V },
+              ? { text: "You said no.", version: RULE_V, limits: LIMITS_V }
+              : { text: "Over your 1,200.00 € limit for ordering alone.", version: RULE_V, limits: LIMITS_V },
         result: answer === "approved" ? { orderId: "O-7", orderIds: ["O-7"], delivery: "2026-11-16" } : null,
         approval: answer === "waiting" ? { orderId: "O-7", holdUntil: "2026-11-14T15:00:00+02:00" } : null,
         proof: r4proof,
@@ -127,7 +129,7 @@ function day(): Entry[] {
           { label: "Stock", value: "In stock", note: null, ok: true },
           { label: "Allergens", value: "Contains hazelnut", note: "Your rules say no nuts", ok: false },
         ],
-        rule: { text: "Your rules say no nuts, so it is blocked.", version: RULE_V },
+        rule: { text: "Your rules say no nuts, so it is blocked.", version: RULE_V, limits: LIMITS_V },
         result: null,
         approval: null,
         proof: [
@@ -157,7 +159,7 @@ function day(): Entry[] {
           { label: "Price", value: "7.20 € per kg", note: "4 % above the original", ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Substitute from Valio's list, under your 1,200.00 € limit, ordered alone.", version: RULE_V, limits: LIMITS_V },
         result: { orderId: "O-6", orderIds: ["O-6"], delivery: "2026-11-16" },
         approval: null,
         proof: [
@@ -187,7 +189,7 @@ function day(): Entry[] {
           { label: "Stock", value: "In stock, delivery Mon 16 Nov", note: null, ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V, limits: LIMITS_V },
         result: { orderId: "O-5", orderIds: ["O-5"], delivery: "2026-11-16" },
         approval: null,
         proof: [
@@ -215,7 +217,7 @@ function day(): Entry[] {
           { label: "Price", value: "1,980.80 € a week", note: "Valio prices on Thu 13 Nov", ok: true },
           { label: "Allergens", value: "Lactose-free, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Each run is checked again; ordered alone if under your limits.", version: RULE_V },
+        rule: { text: "Each run is checked again; ordered alone if under your limits.", version: RULE_V, limits: LIMITS_V },
         result: null,
         approval: null,
         proof: [
@@ -244,7 +246,7 @@ function day(): Entry[] {
           { label: "Stock", value: "In stock, delivery Mon 9 Nov", note: null, ok: true },
           { label: "Allergens", value: "Contains milk, no nuts", note: null, ok: true },
         ],
-        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V },
+        rule: { text: "Under your 1,200.00 € limit, ordered alone.", version: RULE_V, limits: LIMITS_V },
         result: { orderId: "O-4", orderIds: ["O-4"], delivery: "2026-11-09" },
         approval: null,
         proof: [

@@ -6,6 +6,8 @@ export interface Toast {
   title: string;
   body?: string;
   action?: { href: string; label: string };
+  /** A reversible change (Pause, the theme): Undo runs this, for as long as the toast stands. */
+  undo?: () => unknown;
 }
 let next = 1;
 export const toasts = $state<{ list: Toast[] }>({ list: [] });

@@ -3,7 +3,9 @@
   /// one Save that asks the approval code once. A save is one new pass
   /// version; the Rules page then says the agent follows it.
   import { onMount, tick, type Snippet } from "svelte";
-  import { goto } from "$app/navigation";
+  import { beforeNavigate, goto } from "$app/navigation";
+  import { api } from "$lib/api/client";
+  import type { ActivityItem } from "$lib/api/types";
   import { Chip } from "@arlen/ui-kit/components/ui/chip";
   import { SegmentedControl } from "@arlen/ui-kit/components/ui/segmented-control";
   import { agentApi, type Rules } from "$lib/api/agent";
@@ -13,7 +15,7 @@
   import { blurSwap, collapse } from "$lib/motion";
   import VCode from "$lib/v/VCode.svelte";
   import UnitField from "../UnitField.svelte";
-  import { ALLOWED, type Allowed, allowedOf, amountText, extraText, parseAmount, parsePct, word } from "../rules";
+  import { ALLOWED, type Allowed, allowedOf, amountText, dotsOf, extraText, list, parseAmount, parsePct, whatIf, word, zoneWords, type Dot } from "../rules";
 
   let r = $state<Rules | undefined>();
   let loadError = $state("");
@@ -95,6 +97,47 @@
     const c = cents(f.waiting);
     if (c !== null) lastWaiting = c;
     return lastWaiting;
+  });
+
+  // What the new limits would do with the orders so far (plans/025, R2): the dots repaint as a grip
+  // moves, and one line counts them, now against before. Money only: a diet block stays a block.
+  let acts = $state<ActivityItem[]>([]);
+  onMount(() => {
+    api.activity("all").then(
+      (l) => (acts = l.items),
+      () => {},
+    );
+  });
+  const dots = $derived<Dot[]>(r && acts.length ? dotsOf(acts, r.saved ? r.aloneUpToCents : 0, r.saved ? r.approvalUpToCents : 0) : []);
+  const ifNow = $derived(dots.length ? whatIf(dots, scaleAlone, scaleWaiting) : null);
+  const ifBefore = $derived(dots.length && r?.saved ? whatIf(dots, r.aloneUpToCents, r.approvalUpToCents) : null);
+  const ifMoved = $derived(!!ifNow && !!ifBefore && (ifNow.alone !== ifBefore.alone || ifNow.wait !== ifBefore.wait || ifNow.blocked !== ifBefore.blocked));
+
+  // Leaving with changes asks first, in the save bar, not in a browser dialog (plans/025, F3).
+  let leaveTo = $state<URL | null>(null);
+  let leaving = false;
+  beforeNavigate((nav) => {
+    if (leaving || busy || !changed.length || !nav.to || nav.type === "leave") return;
+    nav.cancel();
+    leaveTo = nav.to.url;
+    tick().then(() => document.getElementById("leave-stay")?.focus());
+  });
+  function leave() {
+    const to = leaveTo;
+    leaveTo = null;
+    leaving = true;
+    if (to) void goto(to.pathname + to.search);
+  }
+  function stay() {
+    leaveTo = null;
+  }
+  $effect(() => {
+    if (!changed.length) return;
+    const warn = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    addEventListener("beforeunload", warn);
+    return () => removeEventListener("beforeunload", warn);
   });
 
   /** A field's place in its row: right of the label on the desk, under it on the phone. */
@@ -191,6 +234,7 @@
         f.allowed === "listed" && pct !== (was.substitutes === "extra" ? was.maxExtraPct : 0) ? "extra" : "",
       ].filter(Boolean);
       bump();
+      leaving = true;
       await goto(`/rules?saved=${moved.join(",")}`, { replaceState: true });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -236,8 +280,19 @@
             f.alone = amountText(v.alone);
             f.waiting = amountText(v.waiting);
           }}
+          {dots}
           id="edit-scale"
         />
+        {#if ifNow}
+          <p class="whatif" class:moved={ifMoved} data-testid="what-if" aria-live="polite">
+            {#if ifMoved && ifBefore}
+              With these limits, of {dots.length} orders so far: <b>{zoneWords(ifNow, true)}</b>. Before: {zoneWords(ifBefore)}.
+            {:else}
+              Of {dots.length} orders so far: {zoneWords(ifNow)}. Drag a grip to see what changes.
+            {/if}
+          </p>
+          <p class="whatif-note">By price only. Diet and substitute rules still apply.</p>
+        {/if}
       </div>
       <ListRow id="row-alone" label="Ordered alone up to" description={was("alone")} {...place(aloneF)} />
       <ListRow id="row-waiting" label="Waiting for you up to" description={was("waiting") ?? "Above it, blocked"} {...place(waitingF)} />
@@ -252,6 +307,11 @@
               <Chip id="must-{w}" label={word(w)} pressed={f.mustBe.includes(w)} onclick={() => toggle("mustBe", w)} />
             {/each}
           </div>
+          {#key f.mustBe.join()}
+            <p class="chip-say" in:blurSwap={{ duration: 160 }}>
+              {f.mustBe.length ? `Only ${list(f.mustBe).toLowerCase()} products. One that can't be confirmed waits for you.` : "Any product, as far as diet goes."}
+            </p>
+          {/key}
         {/snippet}
       </ListRow>
       <ListRow id="row-never" label="Never">
@@ -261,6 +321,11 @@
               <Chip id="never-{w}" label={word(w)} pressed={f.never.includes(w)} onclick={() => toggle("never", w)} />
             {/each}
           </div>
+          {#key f.never.join()}
+            <p class="chip-say" data-testid="never-say" in:blurSwap={{ duration: 160 }}>
+              {f.never.length ? `Products with ${list(f.never).toLowerCase()} are blocked. One that may contain them waits for you.` : "No allergen blocks an order."}
+            </p>
+          {/key}
         {/snippet}
       </ListRow>
     </ListSection>
@@ -279,19 +344,100 @@
       {/if}
     </ListSection>
 
-    <ListSection id="save">
-      <div class="save">
-        <p class="change" class:bad={!!formProblem} data-testid="rules-changes" role={formProblem ? "alert" : undefined}>{#key formProblem || changeLine}<span class="ch" in:blurSwap={{ duration: 160 }}>{formProblem || changeLine}</span>{/key}</p>
-        <VCode bind:value={code} error={codeError} onsubmit={save} submitLabel="Save rules" oncancel={chrome.phone ? undefined : () => goto("/rules")} focus={false} {busy} />
-      </div>
-    </ListSection>
+    <!-- The save bar: it rides along the bottom of the screen once something changed (plans/025, R3). -->
+    <div class="save-bar" class:live={changed.length > 0} data-testid="save-bar">
+      <ListSection id="save">
+        <div class="save">
+          {#if leaveTo}
+            <div class="leave" role="alert" data-testid="leave-ask" in:collapse={{ duration: 200 }}>
+              <span>You have {changeLine.toLowerCase()}. Leave without saving them?</span>
+              <span class="v-buttons">
+                <button type="button" class="link" id="leave-stay" data-testid="leave-stay" onclick={stay}>Stay</button>
+                <button type="button" class="link bad" id="leave-go" data-testid="leave-go" onclick={leave}>Leave without saving</button>
+              </span>
+            </div>
+          {/if}
+          <p class="change" class:bad={!!formProblem} data-testid="rules-changes" role={formProblem ? "alert" : undefined}>{#key formProblem || changeLine}<span class="ch" in:blurSwap={{ duration: 160 }}>{formProblem || changeLine}</span>{/key}</p>
+          <VCode bind:value={code} error={codeError} onsubmit={save} submitLabel="Save rules" oncancel={chrome.phone ? undefined : () => goto("/rules")} focus={false} {busy} />
+        </div>
+      </ListSection>
+    </div>
   {/if}
 </div>
 
 <style>
   .scale {
     padding: 8px 0 20px;
-    max-width: 640px;
+  }
+  .chip-say {
+    margin: 10px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  .whatif {
+    margin: 12px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  .whatif.moved {
+    color: var(--v-fg);
+  }
+  .whatif b {
+    font-weight: 600;
+    color: var(--valio);
+  }
+  .whatif-note {
+    margin: 2px 0 0;
+    font-size: var(--fs-cap);
+    line-height: 16px;
+    color: var(--v-faint);
+  }
+  /* The save bar: in its place at the end of the form; once something changed it stays on screen
+     at the bottom while the form scrolls, on a hairline, no shadow. */
+  .save-bar.live {
+    position: sticky;
+    bottom: 0;
+    z-index: 8;
+    background: var(--v-ground);
+    animation: bar-in 320ms var(--v-ease-drawer);
+  }
+  .save-bar.live :global(.section-card) {
+    border-top-color: var(--valio);
+  }
+  @keyframes bar-in {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+  .leave {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+    font-size: var(--fs-head);
+    line-height: var(--lh-head);
+  }
+  .leave button {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+  }
+  .leave button.bad {
+    color: var(--v-bad-text);
+  }
+  @media (max-width: 760px) {
+    .save-bar.live {
+      bottom: calc(56px + env(safe-area-inset-bottom));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .save-bar.live {
+      animation: v-fade-in 120ms linear;
+    }
   }
   .ch {
     display: inline-block;

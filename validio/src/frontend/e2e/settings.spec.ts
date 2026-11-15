@@ -22,6 +22,7 @@ async function ownKitchen(page: Page) {
 test("the demo kitchen: four sections and Log out, no diet, no login to change", async ({ page }) => {
   await fresh(page);
   await page.locator("#nav-settings").click();
+  await page.getByTestId("menu-settings").click();
   await expect(page.locator("main h2")).toHaveText(["Kitchen", "Login", "Approval code", "Theme"]);
   await expect(page.getByText(/diet/i)).toHaveCount(0);
   await expect(page.getByTestId("kitchen-customer-change")).toHaveCount(0);
@@ -88,6 +89,10 @@ test("the approval code changes with the current one", async ({ page }) => {
   await expect(page.getByTestId("f-code-next-problem")).toHaveText("Six digits, like 482913.");
   await page.locator("#f-code-current").fill("135790");
   await page.locator("#f-code-next").fill("482913");
+  await page.locator("#f-code-again").fill("482914");
+  await page.getByTestId("code-save").click();
+  await expect(page.getByTestId("f-code-again-problem")).toHaveText("Type the same new code again.");
+  await page.locator("#f-code-again").fill("482913");
   await page.getByTestId("code-save").click();
   await expect(page.getByTestId("code-form")).toHaveCount(0);
   await expect(page.locator("#row-code")).toContainText("Saved");

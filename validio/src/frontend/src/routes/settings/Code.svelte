@@ -14,13 +14,13 @@
   let open = $state(false);
   let done = $state(false);
   let busy = $state(false);
-  const f = $state({ current: "", next: "" });
-  let bad = $state<{ current?: string; next?: string; form?: string }>({});
+  const f = $state({ current: "", next: "", again: "" });
+  let bad = $state<{ current?: string; next?: string; again?: string; form?: string }>({});
 
   function change() {
     open = true;
     done = false;
-    f.current = f.next = "";
+    f.current = f.next = f.again = "";
     bad = {};
   }
   async function save() {
@@ -28,9 +28,10 @@
     const next: typeof bad = {};
     if (!isCode(f.current)) next.current = "Type your current 6-digit code.";
     if (!isCode(f.next)) next.next = "Six digits, like 482913.";
+    else if (f.again !== f.next) next.again = "Type the same new code again.";
     bad = next;
-    if (next.current || next.next) {
-      document.getElementById(next.current ? "f-code-current" : "f-code-next")?.focus();
+    if (next.current || next.next || next.again) {
+      document.getElementById(next.current ? "f-code-current" : next.next ? "f-code-next" : "f-code-again")?.focus();
       return;
     }
     busy = true;
@@ -58,6 +59,7 @@
       <Form id="code" problem={bad.form} {busy} onsave={save} oncancel={() => (open = false)}>
         <VField id="f-code-current" label="Current code" bind:value={f.current} problem={bad.current} inputmode="numeric" maxlength={6} autocomplete="one-time-code" class="code-in num" />
         <VField id="f-code-next" label="New code" bind:value={f.next} problem={bad.next} inputmode="numeric" maxlength={6} autocomplete="off" class="code-in num" />
+        <VField id="f-code-again" label="New code again" bind:value={f.again} problem={bad.again} inputmode="numeric" maxlength={6} autocomplete="off" class="code-in num" />
       </Form>
     </EditRow>
   {/if}

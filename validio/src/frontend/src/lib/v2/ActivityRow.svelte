@@ -11,7 +11,10 @@
   import { onDestroy } from "svelte";
   import { api, LIVE } from "$lib/api/client";
   import type { ActivityItem } from "$lib/api/types";
-  import { prime } from "$lib/live-cache";
+  import { cacheGet, prime } from "$lib/live-cache";
+  import { Tooltip } from "bits-ui";
+  import { merge } from "./merge";
+  import type { ActivityDetail } from "$lib/api/types";
   import { blurSwap } from "$lib/motion";
   import { net, tick } from "$lib/net.svelte";
   import { session } from "$lib/owner.svelte";
@@ -69,24 +72,31 @@
   const leave = () => clearTimeout(timer);
   onDestroy(leave);
 
+  // A pointer that rests on a row for a moment sees how it was decided, from the detail fetched
+  // ahead (plans/025, A2). Desk only; nothing on a touch screen or for the keyboard, which opens it.
+  const fine = typeof matchMedia !== "undefined" && matchMedia("(hover: hover) and (pointer: fine)").matches;
+  let peekOpen = $state(false);
+  const peekOf = $derived.by(() => {
+    if (!peekOpen) return null;
+    const d = cacheGet(`${session.account?.id ?? "-"}:item:${item.id}`) as ActivityDetail | undefined;
+    return d ? { rule: d.rule.text, checks: d.checks.slice(0, 3) } : null;
+  });
+
   const titleParts = $derived(highlight(nb(item.title), query));
   const whyParts = $derived(highlight(nb(item.why), query));
 </script>
 
 {#snippet marked(parts: { text: string; hit: boolean }[])}{#each parts as p, i (i)}{#if p.hit}<mark>{p.text}</mark>{:else}{p.text}{/if}{/each}{/snippet}
 
+{#snippet rowLink(props: Record<string, unknown>)}
 <a
+  {...merge(props, { onclick, onpointerenter: rest, onpointerleave: leave, ontouchstart: warm, onfocus: warm })}
   class="ar"
   class:no-time={!showTime}
   {href}
   id="activity-{item.id}"
   data-testid="activity-{item.id}"
   data-status={item.status}
-  {onclick}
-  onpointerenter={rest}
-  onpointerleave={leave}
-  ontouchstart={warm}
-  onfocus={warm}
 >
   {#if showTime}<span class="ar-time num">{#key when}<span in:blurSwap>{when}</span>{/key}</span>{/if}
   <span class="ar-pill tone-{tone}"><StatusPill item={item} /></span>
@@ -96,8 +106,55 @@
   </span>
   <span class="ar-end num">{nb(total(item.totalCents))}</span>
 </a>
+{/snippet}
+
+{#if fine}
+  <Tooltip.Root delayDuration={700} bind:open={peekOpen} disableHoverableContent>
+    <Tooltip.Trigger>{#snippet child({ props })}{@render rowLink(props)}{/snippet}</Tooltip.Trigger>
+    <Tooltip.Portal>
+      <Tooltip.Content side="top" align="end" sideOffset={-6} class="ar-peek" data-testid="row-peek">
+        {#if peekOf}
+          <p class="pk-rule">{nb(peekOf.rule)}</p>
+          {#each peekOf.checks as c (c.label)}
+            <p class="pk-check"><span>{c.label}</span> {nb(c.value)}</p>
+          {/each}
+        {:else}
+          <p class="pk-rule">{nb(item.why)}</p>
+        {/if}
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  </Tooltip.Root>
+{:else}
+  {@render rowLink({})}
+{/if}
 
 <style>
+  :global(.ar-peek) {
+    z-index: 50;
+    max-width: 340px;
+    padding: 10px 12px;
+    border: 1px solid var(--v-line-strong);
+    border-radius: var(--radius-card);
+    background: var(--v-surface);
+    color: var(--v-fg);
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    pointer-events: none;
+    animation: v-tip 160ms var(--v-ease-out);
+  }
+  :global(.ar-peek p) {
+    margin: 0;
+  }
+  :global(.ar-peek .pk-rule) {
+    font-weight: 500;
+  }
+  :global(.ar-peek .pk-check) {
+    margin-top: 2px;
+    color: var(--v-muted);
+  }
+  :global(.ar-peek .pk-check span) {
+    color: var(--v-faint);
+  }
   .ar {
     display: grid;
     grid-template-columns: 72px 152px minmax(0, 1fr) auto;

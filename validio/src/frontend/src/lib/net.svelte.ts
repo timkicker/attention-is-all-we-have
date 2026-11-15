@@ -1,11 +1,20 @@
 // Whether the page is live: the polls report here (plans/020). Nothing polls on its own account.
-export const net = $state({ lastOk: 0, failing: false, online: typeof navigator === "undefined" ? true : navigator.onLine, now: Date.now() });
+export const net = $state({
+  lastOk: 0,
+  failing: false,
+  /** When the polls started failing, 0 while they answer. */
+  failingSince: 0,
+  online: typeof navigator === "undefined" ? true : navigator.onLine,
+  now: Date.now(),
+});
 
 export function reportOk(): void {
   net.lastOk = Date.now();
   net.failing = false;
+  net.failingSince = 0;
 }
 export function reportFail(): void {
+  if (!net.failing) net.failingSince = Date.now();
   net.failing = true;
 }
 

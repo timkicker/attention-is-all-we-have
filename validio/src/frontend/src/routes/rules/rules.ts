@@ -1,6 +1,6 @@
 // The Rules in the kitchen's words, and the edit form's parsing. The view and
 // the edit page share them, so a value reads the same on both.
-import type { Rules } from "$lib/api/types";
+import type { ActivityItem, Rules } from "$lib/api/types";
 import { money } from "$lib/v2";
 
 /** The biggest amount the server takes (RulesIn, MAX_CENTS). */
@@ -47,4 +47,48 @@ export function parsePct(raw: string): { pct: number } | { problem: string } {
   const s = raw.replace(/[\s%]/g, "");
   if (!/^\d{1,2}$/.test(s) || Number(s) > MAX_EXTRA_PCT) return { problem: `A whole number from 0 to ${MAX_EXTRA_PCT}.` };
   return { pct: Number(s) };
+}
+
+// ---------- the orders on the scale, and "what if" (plans/025, R1, R2) ----------
+
+export type Zone = "alone" | "wait" | "blocked";
+/** Where an amount lands under two limits. */
+export const zoneOf = (cents: number, alone: number, most: number): Zone => (cents <= alone ? "alone" : cents <= most ? "wait" : "blocked");
+
+export interface Dot {
+  id: string;
+  title: string;
+  cents: number;
+  /** Decided by something other than money (an allergen, a diet): the limits do not move it. */
+  fixed: Zone | null;
+}
+
+/** The kitchen's requests with an amount, as dots on the scale. A request blocked while its amount
+ *  sat under the waiting limit was blocked for another reason, so it stays blocked whatever the limits. */
+export function dotsOf(items: ActivityItem[], alone: number, most: number): Dot[] {
+  return items
+    .filter((i) => i.kind === "request" && i.totalCents != null)
+    .map((i) => ({
+      id: i.id,
+      title: i.title,
+      cents: i.totalCents!,
+      fixed: i.status === "blocked" && zoneOf(i.totalCents!, alone, most) !== "blocked" ? ("blocked" as Zone) : null,
+    }));
+}
+
+/** How many of the dots would be ordered alone, wait, or be blocked under these limits. */
+export function whatIf(dots: Dot[], alone: number, most: number): Record<Zone, number> {
+  const out: Record<Zone, number> = { alone: 0, wait: 0, blocked: 0 };
+  for (const d of dots) out[d.fixed ?? zoneOf(d.cents, alone, most)] += 1;
+  return out;
+}
+
+/** "3 ordered alone, 2 would wait, 1 blocked": the counts in words, zero parts left out. */
+export function zoneWords(z: Record<Zone, number>, would = false): string {
+  const parts = [
+    z.alone ? `${z.alone} ordered alone` : "",
+    z.wait ? `${z.wait} ${would ? "would wait" : "waited"} for you` : "",
+    z.blocked ? `${z.blocked} ${would ? "would be blocked" : "blocked"}` : "",
+  ].filter(Boolean);
+  return parts.length ? parts.join(", ") : "none";
 }

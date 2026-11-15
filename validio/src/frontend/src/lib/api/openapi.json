@@ -2963,8 +2963,36 @@
         "title": "Result",
         "type": "object"
       },
+      "RuleLimits": {
+        "properties": {
+          "aloneUpToCents": {
+            "title": "Aloneuptocents",
+            "type": "integer"
+          },
+          "approvalUpToCents": {
+            "title": "Approvaluptocents",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "aloneUpToCents",
+          "approvalUpToCents"
+        ],
+        "title": "RuleLimits",
+        "type": "object"
+      },
       "RuleUsed": {
         "properties": {
+          "limits": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RuleLimits"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "text": {
             "title": "Text",
             "type": "string"
@@ -4577,7 +4605,7 @@
   "paths": {
     "/agent/v1/nonce": {
       "get": {
-        "description": "A fresh single-use nonce for the Spend Pass key binding.",
+        "description": "A fresh single-use nonce for the Spend Pass key binding. At most 120 a minute per client.",
         "operationId": "get_nonce",
         "responses": {
           "200": {

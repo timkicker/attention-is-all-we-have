@@ -1,5 +1,7 @@
 <script lang="ts">
   import "../app.css";
+  import figtreeUrl from "@fontsource-variable/figtree/files/figtree-latin-wght-normal.woff2?url";
+  import pacificoUrl from "@fontsource/pacifico/files/pacifico-latin-400-normal.woff2?url";
   import { onMount, tick } from "svelte";
   import { afterNavigate, goto, onNavigate } from "$app/navigation";
   import { page } from "$app/state";
@@ -13,21 +15,21 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { Activity, Bot, ChevronDown, House, ShieldCheck } from "@lucide/svelte";
+  import { Activity, Bot, House, ShieldCheck } from "@lucide/svelte";
   import { Tooltip } from "bits-ui";
-  import { blurSwap, collapse, easeOut, fadeOut, reduced, viewTransition } from "$lib/motion";
-  import { net, reportFail, reportOk } from "$lib/net.svelte";
+  import { blurSwap, collapse, CSS_EASE, DUR, easeOut, fadeOut, reduced, viewTransition } from "$lib/motion";
+  import { net, reportFail, reportOk, tick as clock } from "$lib/net.svelte";
   import { morph } from "$lib/peek.svelte";
   import { toast } from "$lib/toast.svelte";
   import { keyRouter, stepRows } from "$lib/keys";
   import { syncThemeColor } from "$lib/theme.svelte";
-  import { BusyLabel, money, Toaster, Truncate } from "$lib/v2";
-  import Palette from "$lib/v2/Palette.svelte";
+  import { AccountMenu, BusyLabel, Current, hm, money, Toaster } from "$lib/v2";
+  import type PaletteT from "$lib/v2/Palette.svelte";
 
   let { children } = $props();
 
-  // Four places, flat, as icon and word in the petrol band (the phone's tab bar at the bottom,
-  // icon over word). The same icons as the v2 sidebar. The kitchen's name on the right opens Settings.
+  // Four places, flat, as icon and word in the middle of the petrol band (the phone's tab bar at
+  // the bottom, icon over word). The kitchen on the right is the account menu (plans/025, S1, S2).
   const PAGES = [
     { href: "/", id: "nav-home", label: "Home", icon: House, match: (p: string) => p === "/" },
     { href: "/activity", id: "nav-activity", label: "Activity", icon: Activity, match: (p: string) => p.startsWith("/activity") },
@@ -64,6 +66,18 @@
     const top = "/" + (p.split("/").filter(Boolean)[0] ?? "");
     return TAB_ORDER.indexOf(top);
   };
+  // A page change that takes longer than 300 ms runs the current along the band's foot (plans/025, F5).
+  let slowNav = $state(false);
+  let slowTimer: ReturnType<typeof setTimeout> | undefined;
+  onNavigate(() => {
+    clearTimeout(slowTimer);
+    slowTimer = setTimeout(() => (slowNav = true), 300);
+  });
+  afterNavigate(() => {
+    clearTimeout(slowTimer);
+    slowNav = false;
+  });
+
   onNavigate((nav) => {
     const doc = document as Document & { startViewTransition?: (cb: () => Promise<void>) => { finished: Promise<void> } };
     if (!doc.startViewTransition || reduced() || !nav.to || !nav.from) return;
@@ -122,7 +136,7 @@
             tone: "wait",
             title: "Waiting for you",
             body: i.totalCents != null ? `${i.title}, ${money(i.totalCents)}` : i.title,
-            action: { href: `/activity/${encodeURIComponent(i.id)}`, label: "Review" },
+            action: { href: `/activity/${encodeURIComponent(i.id)}?approve=1`, label: "Review" },
           });
       for (const i of h.latest)
         if (!seenLatest.has(i.id) && i.status === "blocked" && !at(i.id))
@@ -192,13 +206,28 @@
   }
   let resetting = $state(false);
 
-  // ⌘K and the few keys (plans/013). Nothing here animates.
-  let palette = $state<Palette>();
+  // ⌘K and the few keys (plans/013). Nothing here animates. The palette loads on its first use, or
+  // once the page is idle, so it is not in the first page's script (plans/025, F6).
+  let palette = $state<PaletteT>();
+  let PaletteC = $state<typeof PaletteT | null>(null);
+  const loadPalette = async () => {
+    if (!PaletteC) PaletteC = (await import("$lib/v2/Palette.svelte")).default;
+  };
+  async function openPalette(keys = false) {
+    await loadPalette();
+    await tick();
+    palette?.open(keys);
+  }
+  onMount(() => {
+    const idle = (globalThis as { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
+    const t = setTimeout(() => (idle ? idle(() => void loadPalette()) : void loadPalette()), 2500);
+    return () => clearTimeout(t);
+  });
   function onKey(e: KeyboardEvent) {
     if (!session.account || door) return;
     if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === "k") {
       e.preventDefault();
-      palette?.open();
+      void openPalette();
       return;
     }
     const act = keyRouter(e, { path });
@@ -207,11 +236,49 @@
     const filter = path === "/activity" && act && "go" in act && act.go.startsWith("/activity");
     if ("go" in act) void goto(act.go, { keepFocus: filter, noScroll: filter });
     else if ("rows" in act) stepRows(act.rows);
-    else palette?.open(act.palette === "keys");
+    else if ("find" in act) document.getElementById("activity-find")?.focus();
+    else if ("approve" in act) void goto(act.approve);
+    else void openPalette(act.palette === "keys");
   }
   // The badge: it appears from nine tenths with a fade, from its left edge (plans/019).
   const pop = (_n: Element) =>
     reduced() ? { duration: 120, css: (t: number) => `opacity:${t}` } : { duration: 200, easing: easeOut, css: (t: number) => `opacity:${t};transform:scale(${0.9 + 0.1 * t})` };
+
+  // The page is no longer live (plans/025, F4): offline, or the polls failed for 4 s.
+  onMount(() => clock(1000));
+  const stale = $derived(!!session.account && !door && (!net.online || (net.failing && net.now - net.failingSince > 4000)));
+  const staleText = $derived(
+    (net.online ? "Reconnecting to Validio." : "You're offline.") + (net.lastOk ? ` Last updated ${hm(new Date(net.lastOk).toISOString())}.` : ""),
+  );
+
+  // The demo bar's code copies on a click (plans/025, S3).
+  let codeCopied = $state(false);
+  let codeTimer: ReturnType<typeof setTimeout> | undefined;
+  async function copyCode(code: string) {
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      return;
+    }
+    codeCopied = true;
+    clearTimeout(codeTimer);
+    codeTimer = setTimeout(() => (codeCopied = false), 1200);
+  }
+
+  // The chosen nav item: a spark runs along its underline now and then, and a faint sheen
+  // passes over the word with it (plans/025, S1; the one glow the owner asked for).
+  const sheen = (node: HTMLElement | undefined) => {
+    if (!node || reduced()) return;
+    node.animate(
+      [
+        { transform: "translateX(-100%)", opacity: 0 },
+        { transform: "translateX(-20%)", opacity: 1, offset: 0.4 },
+        { transform: "translateX(100%)", opacity: 0 },
+      ],
+      { duration: DUR.spark, easing: CSS_EASE.inOut },
+    );
+  };
+  let sheenEl = $state<HTMLElement>();
 
   function useToken(e: SubmitEvent) {
     e.preventDefault();
@@ -224,6 +291,8 @@
 </script>
 
 <svelte:head>
+  <link rel="preload" as="font" type="font/woff2" href={figtreeUrl} crossorigin="anonymous" />
+  <link rel="preload" as="font" type="font/woff2" href={pacificoUrl} crossorigin="anonymous" />
   <!-- one name in the tab on every page, with what waits for the owner (plans/012) -->
   <title>{waiting > 0 && session.account ? `(${waiting}) Validio` : "Validio"}</title>
 </svelte:head>
@@ -245,7 +314,13 @@
     <div class="demobar" data-testid="demo-bar" id="demo-bar" style:view-transition-name="v-demo">
       <div class="col db-in">
         <span class="db-name">Demo kitchen</span>
-        {#if session.account.demoCode}<span class="db-code">Approval code: <span class="num">{session.account.demoCode}</span></span>{/if}
+        {#if session.account.demoCode}
+          {@const code = session.account.demoCode}
+          <button type="button" class="db-code" data-testid="demo-code" onclick={() => copyCode(code)} aria-label="Approval code {code}, copy">
+            Approval code:
+            {#key codeCopied}<span class="num" in:blurSwap>{codeCopied ? "Copied" : code}</span>{/key}
+          </button>
+        {/if}
         <button type="button" class="db-reset" id="demo-reset" data-testid="demo-reset" onclick={reset} disabled={resetting}><BusyLabel busy={resetting} idle="Start over" working="Starting over" /></button>
       </div>
     </div>
@@ -253,36 +328,40 @@
 
   <header class="band" class:phone={chrome.phone} style:view-transition-name="v-band">
     <div class="col band-in">
-      <a class="mark" href="/">
+      <a class="mark" href="/" aria-label="Validio, Home">
         <span class="wordmark">Validio</span>
         {#if CO_BRAND}<span class="for">{CO_BRAND}</span>{/if}
       </a>
       {#if !chrome.phone}
         <nav class="topnav" aria-label="Main">
           {#each PAGES as p (p.href)}
-            <a href={p.href} id={p.id} data-testid={p.id} class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
-              <p.icon class="nav-icon" size={16} strokeWidth={1.75} aria-hidden="true" />{p.label}{#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}
-              {#if p.match(path)}<span class="nav-ink" style:view-transition-name="v-nav-ink" aria-hidden="true"></span>{/if}
+            {@const on = p.match(path)}
+            <a href={p.href} id={p.id} data-testid={p.id} class:on aria-current={on ? "page" : undefined}>
+              <p.icon class="nav-icon" size={16} strokeWidth={1.75} aria-hidden="true" />
+              <span class="nav-word">{p.label}</span>
+              {#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}
+              {#if on}
+                <span class="nav-sheen" aria-hidden="true"><span bind:this={sheenEl}></span></span>
+                <span class="nav-ink" style:view-transition-name="v-nav-ink">
+                  <Current tone="band" mode="listen" base="lit" pause={2400} onspark={() => sheen(sheenEl)} />
+                </span>
+              {/if}
             </a>
           {/each}
         </nav>
-        <div class="band-end">
-          <a class="kitchen" href="/settings" id="nav-settings" data-testid="nav-settings" class:on={path.startsWith("/settings")} aria-current={path.startsWith("/settings") ? "page" : undefined}>
-            <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
-            {#key session.account.name}<span class="k-wrap" in:blurSwap><Truncate class="k-name" text={session.account.name} /></span>{/key}
-            <span class="sr-only">, Settings</span>
-          </a>
-        </div>
-      {:else}
-        <div class="band-end">
-          <a class="kitchen" href="/settings" id="phone-settings" data-testid="phone-settings" aria-current={path.startsWith("/settings") ? "page" : undefined}>
-            <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
-            {#key session.account.name}<span class="k-wrap" in:blurSwap><span class="k-name">{session.account.name}</span></span>{/key}
-            <span class="sr-only">, Settings</span>
-          </a>
-        </div>
       {/if}
+      <div class="band-end">
+        <AccountMenu account={session.account} phone={chrome.phone} current={path.startsWith("/settings")} onkeys={() => openPalette(true)} />
+      </div>
     </div>
+    {#if slowNav}
+      <span class="nav-prog" aria-hidden="true" out:fadeOut><Current tone="band" mode="listen" base="none" pause={0} /></span>
+    {/if}
+    {#if stale}
+      <div class="stale" role="status" data-testid="net-stale" transition:collapse={{ duration: 200 }}>
+        <div class="col stale-in">{staleText}</div>
+      </div>
+    {/if}
   </header>
 
   <main class="v-main">
@@ -295,15 +374,18 @@
     <nav class="dock" aria-label="Main" style:view-transition-name="v-dock">
       {#each PAGES as p (p.href)}
         <a href={p.href} id="{p.id}-tab" data-testid="{p.id}-tab" class:on={p.match(path)} aria-current={p.match(path) ? "page" : undefined}>
-          {#if p.match(path)}<span class="dock-ink" style:view-transition-name="v-dock-ink" aria-hidden="true"></span>{/if}
-          <p.icon class="dock-icon" size={20} strokeWidth={1.75} aria-hidden="true" />
-          <span>{p.label}{#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}</span>
+          {#if p.match(path)}<span class="dock-ink" style:view-transition-name="v-dock-ink" aria-hidden="true"><Current mode="listen" base="lit" pause={3200} thickness={3} /></span>{/if}
+          <span class="nav-ic">
+            <p.icon class="dock-icon" size={20} strokeWidth={1.75} aria-hidden="true" />
+            {#if p.href === "/" && waiting > 0}{@render waitCount(waiting)}{/if}
+          </span>
+          <span>{p.label}</span>
         </a>
       {/each}
     </nav>
   {/if}
   <Toaster />
-  <Palette bind:this={palette} onreset={session.account.isDemo ? reset : undefined} />
+  {#if PaletteC}<PaletteC bind:this={palette} onreset={session.account.isDemo ? reset : undefined} />{/if}
 {/if}
 
 </Tooltip.Provider>
@@ -362,8 +444,31 @@
     font-weight: 600;
     color: var(--v-demo-strong);
   }
+  .db-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    border-radius: var(--radius-chip);
+  }
   .db-code .num {
-    margin-left: 2px;
+    display: inline-block;
+    min-width: 6ch;
+    color: var(--v-demo-strong);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--duration-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .db-code:hover .num {
+      text-decoration-color: currentColor;
+    }
   }
   .db-reset {
     margin-left: auto;
@@ -392,7 +497,8 @@
   }
 
   /* ---------- the petrol band ---------- */
-  /* The band stays at the top while the page scrolls; the grey demo strip above it scrolls away. */
+  /* The band stays at the top while the page scrolls; the grey demo strip above it scrolls away.
+     Three columns: the wordmark, the nav exactly in the middle of the screen, the account. */
   .band {
     position: sticky;
     top: 0;
@@ -400,29 +506,26 @@
     background: var(--valio-band);
     color: var(--valio-band-fg);
   }
-  .kitchen :global(.k-chev) {
-    flex: none;
-    margin-right: -2px;
-    opacity: 0.85;
-  }
-  .topnav :global(.nav-icon) {
-    flex: none;
-    opacity: 0.9;
-  }
   .band-in {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: stretch;
-    gap: 40px;
+    column-gap: 32px;
     height: 60px;
   }
   .mark {
     display: flex;
     align-items: baseline;
     align-self: center;
+    justify-self: start;
     gap: 10px;
-    flex: none;
+    min-width: 0;
     text-decoration: none;
     color: inherit;
+    border-radius: var(--radius-button);
+  }
+  .mark:focus-visible {
+    outline-color: var(--valio-band-fg);
   }
   /* The wordmark in a heavy brush script, white on the petrol band. */
   .wordmark {
@@ -436,19 +539,20 @@
     font-size: var(--fs-cap);
     line-height: 16px;
     color: var(--valio-band-muted);
+    white-space: nowrap;
   }
   .topnav {
     display: flex;
     align-items: stretch;
-    gap: 28px;
-    margin-left: 8px;
+    justify-content: center;
+    gap: 6px;
   }
-  .topnav a,
-  .kitchen {
+  .topnav a {
     position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 0 14px;
     font-size: var(--fs-head);
     line-height: var(--lh-head);
     color: var(--valio-band-muted);
@@ -457,13 +561,20 @@
     transition: color var(--duration-fast) ease;
   }
   @media (hover: hover) and (pointer: fine) {
-    .topnav a:hover,
-    .kitchen:hover {
+    .topnav a:hover {
       color: var(--valio-band-fg);
     }
+    .topnav a:hover :global(.nav-icon) {
+      transform: translateY(-1px);
+    }
   }
-  .topnav a:focus-visible,
-  .kitchen:focus-visible {
+  .topnav a:active .nav-word {
+    transform: scale(0.97);
+  }
+  .nav-word {
+    transition: transform var(--v-dur-press) var(--v-ease-out);
+  }
+  .topnav a:focus-visible {
     outline-color: var(--valio-band-fg);
     outline-offset: -2px;
     color: var(--valio-band-fg);
@@ -472,77 +583,110 @@
     color: var(--valio-band-fg);
     font-weight: 500;
   }
-  /* The selected mark is an element of its own, so it can travel between words (plans/015). */
-  .nav-ink,
-  .kitchen.on::after {
-    content: "";
+  .topnav :global(.nav-icon) {
+    flex: none;
+    opacity: 0.9;
+    transition: transform var(--v-dur-ui) var(--v-ease-out);
+  }
+  /* The icon carries the waiting count on its corner, so the words never move when it comes or goes. */
+  .nav-ic {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+  }
+  /* The waiting count sits in the item's top right corner, in its padding, so no word ever moves. */
+  .topnav a > :global(.nb) {
+    position: absolute;
+    top: 9px;
+    right: -6px;
+  }
+  /* The selected mark is an element of its own, so it can travel between words (plans/015);
+     inside it the current runs (plans/025). */
+  .nav-ink {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 0;
+    height: 2px;
+  }
+  .nav-sheen {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .nav-sheen > span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--v-current-band-sheen);
+    opacity: 0;
+  }
+  .nb {
+    display: inline-grid;
+    place-items: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--radius-chip);
+    background: var(--valio-band-fg);
+    color: var(--valio-band);
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: 700;
+  }
+  .nb-n {
+    display: inline-block;
+  }
+  .band-end {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    justify-self: end;
+    min-width: 0;
+  }
+  /* A slow page change: the current runs along the band's foot. */
+  .nav-prog {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
     height: 2px;
-    background: var(--valio-band-fg);
   }
-  .nb {
-    display: inline-grid;
-    place-items: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: var(--radius-chip);
-    background: var(--valio-band-fg);
-    color: var(--valio-band);
-    font-size: 11px;
-    line-height: 18px;
-    font-weight: 600;
+  /* The page is not live: one quiet line under the band. */
+  .stale {
+    background: var(--v-demo-bg);
+    color: var(--v-demo-fg);
+    border-bottom: 1px solid var(--v-line);
+    font-size: var(--fs-cap);
+    line-height: 16px;
   }
-  .band-end {
-    display: flex;
-    align-items: stretch;
-    gap: 20px;
-    margin-left: auto;
-    min-width: 0;
-  }
-  .kitchen {
-    justify-content: flex-end;
-    min-width: 0;
-    font-size: var(--fs-meta);
-  }
-  .k-wrap {
-    display: inline-grid;
-    min-width: 0;
-  }
-  .kitchen :global(.k-name) {
-    max-width: 240px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: var(--valio-band-fg);
-    font-weight: 500;
-  }
-  .nb-n {
-    display: inline-block;
+  .stale-in {
+    padding-block: 7px;
   }
   @media (max-width: 1100px) {
     .for {
       display: none;
     }
     .band-in {
-      gap: 28px;
+      column-gap: 16px;
     }
-    .topnav {
-      gap: 22px;
-      margin-left: 0;
+    .topnav a {
+      padding: 0 10px;
     }
-    .kitchen :global(.k-name) {
-      max-width: 140px;
+    .nav-ink {
+      left: 10px;
+      right: 10px;
     }
   }
 
   /* ---------- the phone ---------- */
   .band.phone .band-in {
+    grid-template-columns: auto minmax(0, 1fr);
     height: 52px;
-    gap: 16px;
+    column-gap: 16px;
   }
   .band.phone .col,
   .demobar .col {
@@ -551,13 +695,6 @@
   .band.phone .wordmark {
     font-size: 22px;
     line-height: 30px;
-  }
-  .band.phone .kitchen :global(.k-name) {
-    max-width: 180px;
-    font-size: var(--fs-meta);
-  }
-  .band.phone .kitchen {
-    min-height: 44px;
   }
   .dock {
     position: fixed;
@@ -605,17 +742,20 @@
     outline-offset: -2px;
   }
   .dock-ink {
-    content: "";
     position: absolute;
     top: -1px;
     left: 18%;
     right: 18%;
     height: 3px;
-    background: var(--valio);
   }
   .dock .nb {
     background: var(--valio);
     color: var(--v-on-valio);
+  }
+  .dock .nav-ic :global(.nb) {
+    top: -6px;
+    left: 13px;
+    box-shadow: 0 0 0 2px var(--v-surface);
   }
   @media (max-width: 760px) {
     .col,
@@ -625,12 +765,14 @@
     }
     .db-in {
       gap: 16px;
-      min-height: 44px;
+      min-height: 36px;
       font-size: 13px;
     }
-    .db-reset {
+    .db-reset,
+    .db-code {
       min-height: 44px;
       min-width: 44px;
+      margin-block: -4px;
     }
   }
 

@@ -8,20 +8,84 @@
   /// Motion (plans/005, 009, 019): rows the agent adds slide in and glow; figures roll when they
   /// change; the week bar fills; a step done while watching draws its check; finishing setup
   /// while watching brings the figures in as one wave. Nothing moves on a plain visit.
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount, tick } from "svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { agentApi } from "$lib/api/agent";
-  import { api } from "$lib/api/client";
+  import { api, ApiError } from "$lib/api/client";
   import type { ActivityItem, HomeOut } from "$lib/api/types";
-  import { blurSwap, fadeOut, rise } from "$lib/motion";
-  import { session } from "$lib/owner.svelte";
-  import { ActivityRow, ListSection, live, LiveRows, Loading, LoadError, money, nb, PageHead, Ticker, total } from "$lib/v2";
+  import { bump } from "$lib/chrome.svelte";
+  import { blurSwap, buzz, collapse, fadeOut, rise } from "$lib/motion";
+  import { net, tick as clock } from "$lib/net.svelte";
+  import { isCode, owner, session } from "$lib/owner.svelte";
+  import { toast } from "$lib/toast.svelte";
+  import VCode from "$lib/v/VCode.svelte";
+  import { ActivityRow, ago, Current, ListSection, live, LiveRows, Loading, LoadError, money, nb, PageHead, Ticker, total } from "$lib/v2";
 
   const home = live(() => api.home(), 2000, () => "home");
 
   // The most the agent orders alone, for the figures; only once the rules were saved.
   const rules = live(() => agentApi.rules().catch(() => null), 2000, () => "rules-raw");
   const alone = $derived(rules.data?.saved ? rules.data.aloneUpToCents : null);
+
+
+  // The agent's heartbeat (plans/025, H1): its last call in words, and a beat each time a new call
+  // comes in while Home is open.
+  onMount(() => clock(15000));
+  let beat = $state(0);
+  let lastCall: string | null | undefined;
+  $effect(() => {
+    const at = home.data?.agent.lastUsedAt;
+    if (at === undefined) return;
+    if (lastCall !== undefined && at && at !== lastCall) beat += 1;
+    lastCall = at;
+  });
+
+  // Approve from Home (plans/025, H3): the code opens in the row; Reject stays on the item's page.
+  let approving = $state<string | null>(null);
+  let code = $state("");
+  let problem = $state("");
+  let busy = $state(false);
+  function openApprove(id: string) {
+    approving = id;
+    code = "";
+    problem = "";
+  }
+  function closeApprove() {
+    const id = approving;
+    approving = null;
+    code = "";
+    problem = "";
+    if (id) tick().then(() => document.getElementById(`approve-${id}`)?.focus());
+  }
+  async function approve(i: ActivityItem) {
+    if (busy || !i.orderId) return;
+    if (!isCode(code.trim())) {
+      problem = "The code has 6 digits";
+      return;
+    }
+    busy = true;
+    problem = "";
+    owner.code = code.trim();
+    try {
+      await api.approve(i.orderId);
+      approving = null;
+      code = "";
+      buzz();
+      toast({ tone: "ok", title: "Approved", body: `${i.title}, ${money(i.totalCents ?? 0)}. Valio places the order.`, action: { href: `/activity/${encodeURIComponent(i.id)}`, label: "See it" } });
+      bump();
+    } catch (e) {
+      problem =
+        e instanceof ApiError && e.status === 403
+          ? "That code is not right"
+          : e instanceof ApiError && e.status === 409
+            ? "Someone already answered this"
+            : e instanceof Error
+              ? e.message
+              : String(e);
+    } finally {
+      busy = false;
+    }
+  }
 
   const AGENT_STATE: Record<HomeOut["agent"]["state"], string> = {
     active: "is active",
@@ -114,7 +178,15 @@
     <p class="lead" data-testid="home-lede">
       {#key WAITS(h.needsYou.length)}<span class="word" class:tone-wait-text={h.needsYou.length > 0} in:blurSwap>{WAITS(h.needsYou.length)}</span>{/key}
       <a class="hit" href="/agent" id="home-agent" data-testid="home-agent">
-        {#key h.agent.state}<span in:blurSwap>{#if h.agent.state === "none"}No agent connected yet.{:else}{h.agent.name ?? "Your agent"} {AGENT_STATE[h.agent.state]}.{/if}</span>{/key}
+        {#key h.agent.state}<span in:blurSwap
+            >{#if h.agent.state === "none"}No agent connected&nbsp;yet.{:else}{#if h.agent.state === "active"}{#key beat}<span
+                    class="beat"
+                    class:flash={beat > 0}
+                    aria-hidden="true"
+                  ></span>{/key}{/if}{h.agent.name ?? "Your agent"} {AGENT_STATE[h.agent.state]}{#if h.agent.state === "active"}{h.agent.lastUsedAt
+                  ? `, last call ${ago(h.agent.lastUsedAt, net.now)}`
+                  : ", no call yet"}{/if}.{/if}</span
+          >{/key}
       </a>
     </p>
   {/if}
@@ -133,6 +205,11 @@
         <ol class="steps">
           {#each list as s, n (s.id)}
             <li class="step" class:done={s.done} class:next={s.id === next} id="step-{s.id}">
+              {#if n < list.length - 1}
+                <span class="st-link" aria-hidden="true">
+                  <Current axis="v" mode={s.done ? (justDone.has(s.id) ? "run" : "lit") : "dim"} />
+                </span>
+              {/if}
               <span class="st-n num" aria-hidden="true">
                 {#if s.done}
                   <svg class="v-check st-check" class:just={justDone.has(s.id)} viewBox="0 0 24 24" width="22" height="22"><path d="M20 6 9 17l-5-5" pathLength="1" /></svg>
@@ -163,7 +240,7 @@
         </p>
       {/if}
       <div class="figs" data-testid="home-status">
-        <div class="fig" data-testid="home-week">
+        <div class="fig wk-fig" data-testid="home-week">
           <span class="f-num num"><Ticker text={nb(money(h.week.usedCents))} value={h.week.usedCents} /></span>
           <span class="f-cap" id="week-label">spent this week{#if h.week.capCents != null}, of <span class="num">{nb(money(h.week.capCents))}</span>{/if}</span>
           {#if weekPct != null}
@@ -172,16 +249,18 @@
             </div>
           {/if}
         </div>
-        <div class="fig">
-          <span class="f-num num" class:wait={h.needsYou.length > 0}><Ticker text={String(h.needsYou.length)} value={h.needsYou.length} /></span>
-          <span class="f-cap">waiting for you</span>
+        <div class="side">
+          <div class="fig">
+            <span class="f-num sm num" class:wait={h.needsYou.length > 0}><Ticker text={String(h.needsYou.length)} value={h.needsYou.length} /></span>
+            <span class="f-cap">waiting for you</span>
+          </div>
+          {#if alone != null}
+            <a class="fig" href="/rules" data-testid="home-alone">
+              <span class="f-num sm num">{nb(money(alone))}</span>
+              <span class="f-cap">ordered alone, at most</span>
+            </a>
+          {/if}
         </div>
-        {#if alone != null}
-          <a class="fig end" href="/rules" data-testid="home-alone">
-            <span class="f-num num">{nb(money(alone))}</span>
-            <span class="f-cap">ordered alone, at most</span>
-          </a>
-        {/if}
       </div>
     {/if}
 
@@ -189,17 +268,29 @@
       <ListSection id="needs" title="Needs you" count={h.needsYou.length}>
         <LiveRows items={h.needsYou}>
           {#snippet row(i)}
-          <div class="need" data-testid="need-{i.id}">
+          <div class="need" class:open={approving === i.id} data-testid="need-{i.id}">
             <div class="need-main">
               <span class="need-title">{nb(i.title)}</span>
               <span class="need-why">{nb(i.why)}</span>
             </div>
             <div class="need-end">
               <span class="num need-amt">{nb(total(i.totalCents))}</span>
-              <Button href="/activity/{encodeURIComponent(i.id)}" size="sm" id="review-{i.id}" data-testid="review-{i.id}"
-                >Review</Button
-              >
+              {#if approving !== i.id}
+                <span class="need-btns" in:fadeOut={{ duration: 120 }}>
+                  <Button href="/activity/{encodeURIComponent(i.id)}" size="sm" variant="outline" id="review-{i.id}" data-testid="review-{i.id}"
+                    >Review</Button
+                  >
+                  {#if i.orderId}
+                    <Button size="sm" id="approve-{i.id}" data-testid="approve-{i.id}" aria-expanded={false} onclick={() => openApprove(i.id)}>Approve</Button>
+                  {/if}
+                </span>
+              {/if}
             </div>
+            {#if approving === i.id}
+              <div class="need-code" transition:collapse={{ duration: 220 }}>
+                <VCode bind:value={code} error={problem} {busy} submitLabel="Approve" onsubmit={() => approve(i)} oncancel={closeApprove} />
+              </div>
+            {/if}
           </div>
           {/snippet}
         </LiveRows>
@@ -304,12 +395,57 @@
     color: var(--v-ok-text);
   }
 
-  /* The week in large figures, no boxes. */
+  /* The week: the large figure on the left, what waits and the alone limit on the right. */
   .figs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 24px 48px;
+  }
+  /* The figure keeps its own width, so the week bar under it stays as wide as the amount. */
+  .wk-fig {
+    justify-self: start;
+  }
+  .side {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 24px 64px;
+    align-items: flex-end;
+    gap: 40px;
+  }
+  .f-num.sm {
+    font-size: 24px;
+    line-height: 30px;
+  }
+
+  /* The agent's beat: a small green mark that swells once in petrol when a call comes in. */
+  .beat {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin: 0 8px 0 0;
+    border-radius: var(--radius-chip);
+    background: var(--v-ok);
+    vertical-align: 2px;
+  }
+  .beat.flash {
+    animation: beat var(--v-dur-glow) var(--v-ease-out);
+  }
+  @keyframes beat {
+    from {
+      transform: scale(1.7);
+      background: var(--valio);
+    }
+  }
+
+  /* Get started: the steps are joined by the current, lit as far as the kitchen got. */
+  .step {
+    position: relative;
+  }
+  .st-link {
+    position: absolute;
+    left: 6px;
+    top: calc(50% + 17px);
+    width: 2px;
+    height: calc(100% - 34px);
   }
   .fig {
     display: flex;
@@ -318,10 +454,6 @@
     min-width: 0;
     color: inherit;
     text-decoration: none;
-  }
-  .fig.end {
-    margin-left: auto;
-    text-align: right;
   }
   a.fig {
     margin: -6px -8px;
@@ -378,7 +510,7 @@
   .entering :global(.ls-head),
   .entering :global(.section-card),
   .entering :global(.lr) {
-    animation: v-home-in 800ms var(--v-ease-out) both;
+    animation: v-home-in var(--v-dur-wave) var(--v-ease-out) both;
     animation-delay: var(--d, 0ms);
   }
   .entering :global(.section-card) {
@@ -509,6 +641,13 @@
     align-items: center;
     gap: 20px;
   }
+  .need-btns {
+    display: flex;
+    gap: 8px;
+  }
+  .need-code {
+    grid-column: 1 / -1;
+  }
   .need-amt {
     font-size: var(--fs-body);
     line-height: var(--lh-body);
@@ -524,16 +663,17 @@
 
   @media (max-width: 760px) {
     .figs {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+    .side {
+      grid-column: auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px 16px;
+      gap: 16px;
     }
-    .fig:first-child {
-      grid-column: 1 / -1;
-    }
-    .fig.end {
-      margin-left: 0;
-      text-align: left;
+    .st-link {
+      display: none;
     }
     .need {
       grid-template-columns: minmax(0, 1fr);

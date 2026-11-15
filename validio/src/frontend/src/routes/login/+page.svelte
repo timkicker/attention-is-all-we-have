@@ -84,9 +84,14 @@
     <div class="p-mark" style:--delay="0ms"><h1 class="wordmark">Validio</h1><span class="for">for Valio Aimo customers</span></div>
     <div class="p-copy enter">
       <p class="statement" data-testid="login-what" style:--delay="0ms">Let your agent order from Valio Aimo, inside the rules you set.</p>
-      <p style:--delay="120ms" style:--door-y="8px">Before every order, Validio asks Valio for the price and the stock. Your agent orders alone only below your limit; above it, the order waits for you.</p>
-      <p style:--delay="160ms" style:--door-y="8px">Every decision is written to a sealed record you can read at any time.</p>
-      <div class="p-flow" style:--delay="200ms" style:--door-y="6px"><Flow /></div>
+      <ol class="points" style:--delay="120ms" style:--door-y="8px">
+        <li><span class="pt-n num">1</span><span><b>Your agent asks.</b> It orders what the kitchen needs, in its own words.</span></li>
+        <li><span class="pt-n num">2</span><span><b>Validio checks with Valio.</b> Price, stock and allergens, before every order.</span></li>
+        <li><span class="pt-n num">3</span><span><b>Your rules decide.</b> Below your limit it orders alone; above it, the order waits for you. Every decision is sealed in your ledger.</span></li>
+      </ol>
+      <div class="p-flow" style:--delay="200ms" style:--door-y="6px">
+        <Flow />
+      </div>
     </div>
     <p class="p-foot" style:--delay="260ms" style:--door-y="0px">A service for restaurant kitchens buying from Valio Aimo.</p>
   </section>
@@ -95,6 +100,7 @@
     <div class="form-in">
       <form class="v-form" onsubmit={submit} novalidate aria-labelledby="door-h">
         <h2 class="door-h" id="door-h">{#key mode}<span class="dh" in:blurSwap>{mode === "login" ? "Log in" : "Create account"}</span>{/key}</h2>
+        <p class="door-sub">{#key mode}<span class="dh" in:blurSwap>{mode === "login" ? "Welcome back. Your kitchen is where you left it." : "One kitchen, one login. Rules come next."}</span>{/key}</p>
         {#if mode === "signup"}
           <div class="more" in:collapse out:collapse={{ duration: 160 }}>
             <VField id="login-kitchen" label="Kitchen name" bind:value={f.kitchen} problem={bad.kitchen} autocomplete="organization" />
@@ -138,6 +144,7 @@
         </p>
       </form>
 
+      <div class="or" aria-hidden="true"><span>or</span></div>
       <div class="demo">
         <p class="d-head">Just looking?</p>
         <p class="d-text demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code: <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
@@ -155,12 +162,73 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     min-height: 100vh;
   }
+  /* The petrol panel on ledger paper: a 24 px grid of hairlines, the way an order book is ruled. */
   .panel {
+    position: relative;
     display: flex;
     flex-direction: column;
     padding: 48px 64px;
-    background: var(--valio-band);
+    background-color: var(--valio-band);
+    background-image:
+      linear-gradient(var(--v-grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--v-grid-line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
     color: var(--valio-band-fg);
+  }
+  .points {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .points li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: baseline;
+    font-size: 15px;
+    line-height: 23px;
+    color: var(--valio-band-muted);
+  }
+  .points b {
+    font-weight: 600;
+    color: var(--valio-band-fg);
+  }
+  .pt-n {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--valio-band-muted);
+    border-radius: var(--radius-chip);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--valio-band-fg);
+    transform: translateY(-1px);
+  }
+  .door-sub {
+    margin: -22px 0 6px;
+    font-size: var(--fs-head);
+    line-height: var(--lh-head);
+    color: var(--v-muted);
+  }
+  .or {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    font-size: var(--fs-cap);
+    color: var(--v-faint);
+  }
+  .or::before,
+  .or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--v-line);
   }
   .p-mark {
     display: flex;
@@ -181,7 +249,7 @@
   }
   .p-copy {
     margin: auto 0;
-    max-width: 480px;
+    max-width: 520px;
     padding: 48px 0;
   }
   .p-copy p {
@@ -189,9 +257,6 @@
     font-size: 16px;
     line-height: 25px;
     color: var(--valio-band-muted);
-  }
-  .p-copy p + p {
-    margin-top: 14px;
   }
   .p-copy .statement {
     margin-bottom: 28px;
@@ -209,9 +274,9 @@
   }
   .form-side {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 48px 32px;
+    padding: max(48px, 16vh) 32px 48px;
     background: var(--v-surface);
   }
   .form-in {
@@ -294,10 +359,18 @@
       animation: none;
     }
   }
+  /* The demo kitchen: the one framed thing on the page, because it is a different door. */
   .demo {
-    margin-top: 36px;
-    padding-top: 28px;
-    border-top: 1px solid var(--v-line);
+    margin-top: 20px;
+    padding: 20px 20px 22px;
+    border: 1px solid var(--v-line-strong);
+    border-radius: var(--radius-card);
+    transition: border-color var(--duration-fast) ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .demo:hover {
+      border-color: var(--valio);
+    }
   }
   .d-head {
     margin: 0;
@@ -353,6 +426,9 @@
     .form-side {
       padding: 32px 20px 48px;
       align-items: flex-start;
+    }
+    .points {
+      display: none;
     }
     .form-in .door-h {
       font-size: 24px;

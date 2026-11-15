@@ -13,7 +13,9 @@ import type {
   ActivityList,
   DemoState,
   HomeOut,
+  Ledger,
   LoginIn,
+  ProofEntry,
   Order,
   SignupIn,
   SupplyRequest,
@@ -91,6 +93,22 @@ export const api = {
     both(() => write(`/api/orders/${id(oid)}/approve`), () => mock.approve(oid, owner.code)),
   reject: (oid: string): Promise<Order> =>
     both(() => write(`/api/orders/${id(oid)}/reject`), () => mock.reject(oid)),
+  /** Proof's Verify (plans/025, P4): the server checks the whole chain (ChainStatus), and every entry of
+   *  this item is matched to the entry before it by its hash. The fixture has no ledger: it plays a sound one. */
+  verifyProof: async (proof: ProofEntry[]): Promise<{ ok: boolean; count: number; links: boolean[]; head: string | null }> => {
+    if (!LIVE) {
+      await new Promise((r) => setTimeout(r, 250));
+      return { ok: true, count: proof.length + 12, links: proof.map(() => true), head: proof.at(-1)?.at ?? null };
+    }
+    const l = await get<Ledger>("/api/ledger");
+    const at = new Map(l.entries.map((e, i) => [e.hash, i]));
+    const links = proof.map((p) => {
+      const i = at.get(p.hash);
+      if (i === undefined) return false;
+      return i === 0 || l.entries[i].prevHash === l.entries[i - 1].hash;
+    });
+    return { ok: l.chain.ok && links.every(Boolean), count: l.chain.count, links, head: l.entries.at(-1)?.at ?? null };
+  },
   /** Demo kitchens only: back to the sample data. */
   reset: (): Promise<DemoState> => both(() => demo("/api/demo/reset"), () => mock.reset()),
 };

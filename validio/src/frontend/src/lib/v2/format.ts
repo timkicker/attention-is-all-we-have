@@ -56,3 +56,14 @@ export const fold = (s: string): string =>
     .split("")
     .map((c) => c.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().slice(0, 1) || c)
     .join("");
+
+/** "just now", "4 min ago", "2 h ago", else the day and time: how long since `iso`, against `now` (ms). */
+export function ago(iso: string, now: number): string {
+  const s = Math.max(0, Math.round((now - Date.parse(iso)) / 1000));
+  if (s < 45) return "just now";
+  const m = Math.round(s / 60);
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  if (h < 12) return `${h} h ago`;
+  return dayTime(iso);
+}

@@ -1,6 +1,8 @@
 // The theme menu: Light is the default, System follows the device, Dark stays.
 // A change from the Settings control or the palette reveals the new theme in a circle growing
 // from where it was asked for (plans/016); the browser's status bar follows the band (plans/015).
+import { CSS_EASE, DUR } from "./motion";
+
 export type Mode = "system" | "light" | "dark";
 const KEY = "validio-theme";
 
@@ -49,7 +51,7 @@ export function setMode(m: Mode, origin?: { x: number; y: number }) {
     .then(() => {
       root.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-        { duration: 1100, easing: "cubic-bezier(0.77, 0, 0.175, 1)", pseudoElement: "::view-transition-new(root)" },
+        { duration: DUR.theme, easing: CSS_EASE.inOut, pseudoElement: "::view-transition-new(root)" },
       );
     })
     .catch(() => {});

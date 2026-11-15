@@ -42,7 +42,7 @@ test("Find narrows Activity, marks the words and Escape brings everything back",
   await page.locator("#activity-find").press("Escape");
   await expect(page.locator("a.ar")).toHaveCount(all);
   await page.locator("#activity-find").fill("zzzz");
-  await expect(page.getByText("Nothing matches")).toBeVisible();
+  await expect(page.getByTestId("no-match")).toContainText('No activity matches "zzzz"');
 });
 
 test("Replay walks a request and opens its proof; Escape stops it", async ({ page }) => {

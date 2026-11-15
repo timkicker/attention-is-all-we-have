@@ -711,7 +711,9 @@ export interface ActivityDetail {
   item: ActivityItem;
   asked: { text: string; agentName: string };
   checks: ActivityCheck[];
-  rule: { text: string; version: number };
+  /** limits: the money limits of that version, so the order shows against what it was decided under
+   *  even after the Rules changed (plans/025, P3). Null when that version is not on record. */
+  rule: { text: string; version: number; limits?: { aloneUpToCents: number; approvalUpToCents: number } | null };
   /** orderIds: every order placed (the Steady Order places one per renewed line); orderId is the first. */
   result: { orderId: string; orderIds: string[]; delivery: string | null } | null;
   /** Only while waiting. Approve and reject go to /api/orders/{orderId}/approve|reject. */

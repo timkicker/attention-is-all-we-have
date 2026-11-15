@@ -43,7 +43,29 @@ export const easeDrawer = bezier(0.32, 0.72, 0, 1);
 /** CSS `ease`, for the toast (Sonner's curve). */
 export const ease = bezier(0.25, 0.1, 0.25, 1);
 
-export const DUR = { press: 140, ui: 200, enter: 260, moment: 420, glow: 1200 } as const;
+export const DUR = {
+  press: 140,
+  ui: 200,
+  enter: 260,
+  moment: 420,
+  glow: 1200,
+  tab: 620,
+  wave: 800,
+  theme: 1100,
+  spark: 900,
+  listen: 3000,
+  chain: 140,
+} as const;
+
+/** The curves as CSS strings, for the Web Animations API (the same as the tokens). */
+export const CSS_EASE = {
+  out: "cubic-bezier(0.23, 1, 0.32, 1)",
+  inOut: "cubic-bezier(0.77, 0, 0.175, 1)",
+  drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
+} as const;
+
+/** True while the tab is hidden: loops pause, nothing runs off screen. */
+export const hidden = (): boolean => typeof document !== "undefined" && document.visibilityState === "hidden";
 
 export const reduced = (): boolean =>
   typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -84,3 +106,9 @@ export async function viewTransition(fn: () => Promise<void> | void): Promise<vo
 
 const sleepFor = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export { sleepFor as sleep };
+
+/** One short tap on a phone that has it, for a decision that landed. Never under reduced motion. */
+export function buzz(): void {
+  if (reduced()) return;
+  (navigator as Navigator & { vibrate?: (ms: number) => boolean }).vibrate?.(10);
+}

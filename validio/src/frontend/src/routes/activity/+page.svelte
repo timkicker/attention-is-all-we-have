@@ -12,8 +12,10 @@
   import { api } from "$lib/api/client";
   import type { ActivityFilter, ActivityItem } from "$lib/api/types";
   import { fold } from "$lib/v2/format";
-  import { easeOut, reduced } from "$lib/motion";
-  import { ActivityRow, byDay, Empty, FILTERS, isFilter, ListSection, live, LiveRows, Loading, LoadError, PageHead } from "$lib/v2";
+  import { untrack } from "svelte";
+  import { ArrowUp } from "@lucide/svelte";
+  import { easeOut, reduced, rise } from "$lib/motion";
+  import { ActivityRow, byDay, Empty, FILTERS, isFilter, ListSection, live, LiveRows, Loading, LoadError, PageHead, Ticker } from "$lib/v2";
 
   const status = $derived.by((): ActivityFilter => {
     const s = page.url.searchParams.get("status");
@@ -38,6 +40,14 @@
     blocked: "Nothing blocked",
     standing: "No standing orders",
   };
+  // The second line of an empty filter: what would show up here (plans/025, A3).
+  const EMPTY_DETAIL: Record<ActivityFilter, string> = {
+    all: "What your agent orders shows up here, with the rule that decided it.",
+    ordered: "Orders placed alone or with your approval show up here.",
+    waiting: "Orders above what your agent orders alone wait here for you.",
+    blocked: "Orders your Rules stop show up here, with the reason.",
+    standing: "Weekly orders your agent renews show up here.",
+  };
 
   const shown = $derived.by((): ActivityItem[] => {
     const items = list.data?.items ?? [];
@@ -59,6 +69,32 @@
   }
   function find(q: string) {
     void goto(url(status, q), { noScroll: true, keepFocus: true, replaceState: true });
+  }
+
+  // Rows that arrive while the list is scrolled down wait above it as "N new" instead of pushing
+  // the page (plans/025, A1). Near the top they come in as they always did.
+  let scrolledDown = $state(false);
+  let base = $state<Set<string> | null>(null);
+  function onScroll() {
+    const down = scrollY > 200;
+    if (down !== scrolledDown) {
+      scrolledDown = down;
+      base = null;
+    }
+  }
+  $effect(() => {
+    void status;
+    void query;
+    untrack(() => (base = null));
+  });
+  $effect(() => {
+    if (scrolledDown && fresh && base === null) base = new Set(shown.map((i) => i.id));
+  });
+  const newcomers = $derived(scrolledDown && base ? shown.filter((i) => !base!.has(i.id)) : []);
+  const visible = $derived(newcomers.length ? shown.filter((i) => base!.has(i.id)) : shown);
+  function release() {
+    base = null;
+    scrollTo({ top: 0, behavior: reduced() ? "auto" : "smooth" });
   }
 
   // The petrol bar under the chosen filter, moved with a transform (plans/015).
@@ -103,7 +139,7 @@
     <div class="filters" role="group" aria-label="Show" bind:this={bar}>
       {#each FILTERS as f (f.id)}
         <button type="button" id="filter-{f.id}" aria-pressed={status === f.id} onclick={() => pick(f.id)}>
-          {f.label}{#if list.data}<em>{list.data.counts[f.id]}</em>{/if}
+          {f.label}{#if list.data}<em><Ticker text={String(list.data.counts[f.id])} value={list.data.counts[f.id]} /></em>{/if}
         </button>
       {/each}
       <span class="f-ink" class:ready={inkReady} style:transform="translateX({ink.x}px) scaleX({ink.w})" aria-hidden="true"></span>
@@ -128,15 +164,29 @@
   </div>
 {/if}
 
+<svelte:window onscroll={onScroll} />
+
+{#if newcomers.length}
+  <div class="new-wrap" in:rise={{ y: -6 }}>
+    <button type="button" class="new-pill" data-testid="new-pill" onclick={release}>
+      <ArrowUp size={14} strokeWidth={2} aria-hidden="true" />
+      {newcomers.length} new
+    </button>
+  </div>
+{/if}
+
 <div class="days" class:stale={!fresh && !!list.data} class:v-arrive={list.arrive} aria-busy={!fresh}>
   {#if list.error && !list.data}
     <LoadError detail={list.error} />
   {:else if !list.data}
     <Loading />
   {:else if fresh && !list.data.items.length}
-    <Empty title={EMPTY[status]} detail={status === "all" ? "What your agent orders shows up here." : ""} />
+    <Empty title={EMPTY[status]} detail={EMPTY_DETAIL[status]} />
   {:else if query && !shown.length}
-    <Empty title="Nothing matches" detail="Try another word" />
+    <div class="no-match" data-testid="no-match">
+      <Empty title={`No activity matches "${query}"`} detail="Titles and reasons are searched." />
+      <button type="button" class="link clear" onclick={() => find("")}>Clear the search</button>
+    </div>
   {:else}
     <!-- A new filter is a new list: it comes in as one. A new word in Find is simply there. -->
     <!-- Keyed on the filter the shown rows belong to, so it plays when they arrive, not before. -->
@@ -144,7 +194,7 @@
      <div in:listIn>
     {#key query}
       <div>
-        {#each byDay(shown) as g (g.key)}
+        {#each byDay(visible) as g (g.key)}
           <section class="dg" aria-labelledby="day-{g.key}">
             <span class="sentinel" {@attach stick} aria-hidden="true"></span>
             <h2 class="v-h" id="day-{g.key}">{g.head}</h2>
@@ -161,6 +211,48 @@
 </div>
 
 <style>
+  /* "N new": waits under the band while the list is scrolled down. */
+  .new-wrap {
+    position: sticky;
+    top: 72px;
+    z-index: 6;
+    display: flex;
+    justify-content: center;
+    height: 0;
+  }
+  .new-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid var(--valio);
+    border-radius: var(--radius-button);
+    background: var(--v-surface);
+    font: inherit;
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    color: var(--valio);
+    transition:
+      background-color var(--duration-fast) ease,
+      transform var(--v-dur-press) var(--v-ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .new-pill:hover {
+      background: var(--valio-tint);
+    }
+  }
+  .new-pill:active {
+    transform: scale(0.97);
+  }
+  .no-match .clear {
+    margin-top: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--fs-meta);
+  }
   .bar-row {
     display: flex;
     align-items: flex-end;

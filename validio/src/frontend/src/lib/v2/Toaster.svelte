@@ -10,7 +10,7 @@
 
   const LIFE = 6000;
   const timers = new Map<number, { left: number; started: number; t?: ReturnType<typeof setTimeout> }>();
-  let held = false;
+  let held = $state(false);
 
   function start(id: number) {
     const tm = timers.get(id) ?? { left: LIFE, started: 0 };
@@ -99,8 +99,17 @@
         <div class="t-main">
           <p class="t-title">{t.title}</p>
           {#if t.body}<p class="t-body">{t.body}</p>{/if}
-          {#if t.action}<a class="t-act q-link" href={t.action.href} onclick={() => close(t.id)}>{t.action.label}</a>{/if}
+          {#if t.action || t.undo}
+            <div class="t-acts">
+              {#if t.action}<a class="t-act q-link" href={t.action.href} onclick={() => close(t.id)}>{t.action.label}</a>{/if}
+              {#if t.undo}
+                {@const u = t.undo}
+                <button type="button" class="t-act t-undo q-link" data-testid="toast-undo" onclick={() => (close(t.id), u())}>Undo</button>
+              {/if}
+            </div>
+          {/if}
         </div>
+        {#if t.undo}<span class="t-life" class:held aria-hidden="true" style:animation-duration="{LIFE}ms"></span>{/if}
         <button type="button" class="t-x" aria-label="Dismiss" onclick={() => close(t.id)}><X size={14} aria-hidden="true" /></button>
       </li>
     {/each}
@@ -125,6 +134,8 @@
     list-style: none;
   }
   .toast {
+    position: relative;
+    overflow: hidden;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px;
@@ -158,9 +169,39 @@
     color: var(--v-muted);
     overflow-wrap: anywhere;
   }
+  .t-acts {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+  }
+  .t-undo {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+  }
+  /* How long Undo still stands: a petrol hairline that drains, held while the pointer rests. */
+  .t-life {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--valio);
+    opacity: 0.5;
+    transform-origin: left center;
+    animation: t-life linear forwards;
+  }
+  .t-life.held {
+    animation-play-state: paused;
+  }
+  @keyframes t-life {
+    to {
+      transform: scaleX(0);
+    }
+  }
   .t-act {
     display: inline-block;
-    margin-top: 6px;
     font-size: var(--fs-meta);
     line-height: var(--lh-meta);
     font-weight: 500;

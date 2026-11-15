@@ -9,9 +9,10 @@
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { Notice } from "@arlen/ui-kit/components/ui/notice";
   import { agentApi } from "$lib/api/agent";
+  import { api } from "$lib/api/client";
   import { rise } from "$lib/motion";
   import { dayTime, Empty, Explain, LimitScale, ListRow, ListSection, live, Loading, LoadError, money, PageHead } from "$lib/v2";
-  import { allowedOf, extraText, list, upTo } from "./rules";
+  import { allowedOf, dotsOf, extraText, list, upTo, whatIf, zoneWords } from "./rules";
 
   const data = live(
     async () => {
@@ -24,6 +25,10 @@
     () => "rules",
   );
   const r = $derived(data.data?.rules);
+  // Where the kitchen's orders land on the scale (plans/025, R1).
+  const acts = live(() => api.activity("all"), 2000, () => "rules-dots");
+  const dots = $derived(r?.saved && acts.data ? dotsOf(acts.data.items, r.aloneUpToCents, r.approvalUpToCents) : []);
+  const counts = $derived(r?.saved && dots.length ? whatIf(dots, r.aloneUpToCents, r.approvalUpToCents) : null);
   const saved = $derived(page.url.searchParams.has("saved"));
   const changed = $derived(new Set((page.url.searchParams.get("saved") ?? "").split(",").filter(Boolean)));
 </script>
@@ -69,7 +74,12 @@
         <h2 class="v-h" id="h-money">Money, before VAT</h2>
         <Explain label="What before VAT means">Limits count Valio's catalog prices before VAT.</Explain>
       </div>
-      <div class="scale"><LimitScale mode="read" alone={r.aloneUpToCents} waiting={r.approvalUpToCents} id="rules-scale" /></div>
+      <div class="scale">
+        <LimitScale mode="read" alone={r.aloneUpToCents} waiting={r.approvalUpToCents} {dots} id="rules-scale" />
+        {#if counts}
+          <p class="dots-cap" data-testid="rules-dots-cap">Your agent's {dots.length} {dots.length === 1 ? "order" : "orders"} so far: {zoneWords(counts)}. Each mark is one; point at it to see which.</p>
+        {/if}
+      </div>
       <ListSection id="money">
         
         {@render glow("alone", a)}
@@ -119,7 +129,12 @@
     margin-bottom: 0;
   }
   .scale {
-    padding: 4px 0 20px;
-    max-width: 640px;
+    padding: 4px 0 24px;
+  }
+  .dots-cap {
+    margin: 10px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
   }
 </style>

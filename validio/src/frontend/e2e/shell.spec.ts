@@ -13,7 +13,10 @@ test("sidebar holds Home, Activity, Rules, Agent and the kitchen opens Settings"
     await expect(page.locator(`#${id}`)).toHaveAttribute("aria-current", "page");
   }
   await expect(page.locator("#nav-home")).toContainText("1");
+  // The kitchen in the band is the account menu; Settings is in it.
   await page.locator("#nav-settings").click();
+  await expect(page.getByTestId("account-menu")).toContainText("Hotel Espoo kitchen");
+  await page.getByTestId("menu-settings").click();
   await expect(page.locator("h1")).toHaveText("Settings");
   await expect(page.locator("#page-menu")).toHaveCount(0);
 });
@@ -70,5 +73,7 @@ test("phone: kitchen name on top, tab bar at the bottom", async ({ page }) => {
   await page.locator("#nav-activity-tab").click();
   await expect(page.locator("h1")).toHaveText("Activity");
   await page.locator("#phone-settings").click();
+  await expect(page.getByTestId("account-sheet")).toBeVisible();
+  await page.getByTestId("sheet-settings").click();
   await expect(page.locator("h1")).toHaveText("Settings");
 });

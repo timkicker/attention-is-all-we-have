@@ -8,6 +8,9 @@ const BACKEND = env.VALIDIO_BACKEND || "http://127.0.0.1:8410";
 
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
+  // The kit's app.css imports Inter; Validio sets everything in Figtree, so that import is empty here
+  // and no Inter @font-face or file ships (plans/025, F7).
+  resolve: { alias: [{ find: /^@fontsource-variable\/inter$/, replacement: new URL("./src/lib/no-font.css", import.meta.url).pathname }] },
   server: {
     fs: { allow: ["."] },
     warmup: { clientFiles: ["./src/**/*.svelte"] },

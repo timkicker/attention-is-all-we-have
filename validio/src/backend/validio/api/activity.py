@@ -71,9 +71,17 @@ class Check(Model):
     ok: bool | None
 
 
+class RuleLimits(Model):
+    alone_up_to_cents: int
+    approval_up_to_cents: int
+
+
 class RuleUsed(Model):
     text: str
     version: int
+    # The money limits of that version, so the page can show the order against the limits it was decided under
+    # even after the Rules changed. None when the version's claims are not on record.
+    limits: RuleLimits | None = None
 
 
 class Result(Model):
@@ -269,6 +277,31 @@ def version_at(ctx: Ctx, at: str, pass_id: str = seed.SPEND_PASS_ID) -> int:
     return max(signed, default=min((v["version"] for v in versions), default=1))
 
 
+def limits_at(ctx: Ctx, version: int, pass_id: str = seed.SPEND_PASS_ID) -> RuleLimits | None:
+    """The money limits of one signed version of the pass: from that version's own issuance when it was
+    re-signed, the seeded claims for version 1."""
+    import sqlite3
+
+    con = sqlite3.connect(ctx.db_path)
+    try:
+        con.execute(seed.VERSION_SCHEMA)
+        row = con.execute("select issuance from pass_version where pass_id = ? and ver = ?", (pass_id, version)).fetchone()
+    finally:
+        con.close()
+    if row and row[0]:
+        claims = seed.issued_claims(row[0])
+    elif version == seed.pass_version(ctx.db_path, pass_id):
+        claims = current_claims(ctx.db_path)
+    elif version == 1:
+        claims = dict(seed.DEMO_CLAIMS)
+    else:
+        return None
+    alone, most = claims.get("autoLimitCents"), claims.get("hardCapCents")
+    if not isinstance(alone, int) or not isinstance(most, int):
+        return None
+    return RuleLimits(alone_up_to_cents=alone, approval_up_to_cents=most)
+
+
 def _hold_until(ctx: Ctx, v: SupplyRequestView) -> str:
     """Until when an approval can still go through: the earliest order cut-off Valio gave for the chosen
     products, else the end of the pass. Approve asks Valio again either way."""
@@ -283,6 +316,10 @@ def _proof(ctx: Ctx, item_id: str) -> list[Proof]:
     return [Proof(at=e.at, actor=e.actor_text or display.actor(e.actor), text=e.display_text or e.sentence,
                   hash=e.hash)
             for e in ui.ledger(ctx).entries if e.request_id == item_id]
+
+
+def _rule_used(ctx: Ctx, text: str, version: int) -> RuleUsed:
+    return RuleUsed(text=text, version=version, limits=limits_at(ctx, version))
 
 
 def _request_detail(ctx: Ctx, rid: str) -> ActivityDetail:
@@ -301,7 +338,7 @@ def _request_detail(ctx: Ctx, rid: str) -> ActivityDetail:
             approval = Approval(order_id=o.id, hold_until=_hold_until(ctx, v))
     return ActivityDetail(
         item=item, asked=Asked(text=v.agent_text or v.text, agent_name=names.get(v.agent) or display.actor(v.agent)),
-        checks=_checks(v), rule=RuleUsed(text=_rule_text(ctx, v, item.why), version=version_at(ctx, v.created_at)),
+        checks=_checks(v), rule=_rule_used(ctx, _rule_text(ctx, v, item.why), version_at(ctx, v.created_at)),
         result=result, approval=approval, proof=_proof(ctx, rid))
 
 

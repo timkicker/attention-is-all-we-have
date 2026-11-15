@@ -5,7 +5,16 @@
   ///
   /// Everything is placed with transforms in percent of a full-width layer, so nothing is measured
   /// except the track's box on the first touch of a drag.
-  import { money } from "$lib/format";
+  import { money, nb } from "$lib/format";
+  import Tip from "./Tip.svelte";
+
+  type Zone = "alone" | "wait" | "blocked";
+  interface Dot {
+    id: string;
+    title: string;
+    cents: number;
+    fixed: Zone | null;
+  }
 
   type Which = "alone" | "waiting";
   let {
@@ -15,6 +24,7 @@
     mode = "read",
     onchange,
     id,
+    dots = [],
   }: {
     alone: number;
     waiting: number;
@@ -22,6 +32,9 @@
     mode?: "read" | "edit" | "order";
     onchange?: (v: { alone: number; waiting: number }) => void;
     id?: string;
+    /** The kitchen's orders over the zones (plans/025, R1): each a mark in the colour of where it
+     *  lands under the limits on screen, so a dragged grip repaints them as it goes. */
+    dots?: Dot[];
   } = $props();
 
   const MAX_CENTS = 10_000_000;
@@ -34,7 +47,7 @@
   // How far past the other grip the pointer went, shown at a fifth (friction, not a wall).
   let over = $state(0);
 
-  const span = $derived(frozen ?? Math.max(waiting * 1.25, (order ?? 0) * 1.06, 10000));
+  const span = $derived(frozen ?? Math.max(waiting * 1.25, (order ?? 0) * 1.06, ...dots.map((d) => d.cents * 1.06), 10000));
   const pct = (c: number) => Math.max(0, Math.min(100, (c / span) * 100));
   const a = $derived(pct(alone));
   const w = $derived(pct(waiting));
@@ -108,11 +121,48 @@
     `Ordered alone up to ${money(alone)}. Waiting for you up to ${money(waiting)}. Blocked above.` +
       (order != null ? ` This order ${money(order)}.` : ""),
   );
+  // The dots, stacked where two would touch: up to three rows, 10 px apart.
+  const placed = $derived.by(() => {
+    if (!dots.length || tw <= 0) return [];
+    const sorted = [...dots].sort((a, b) => a.cents - b.cents);
+    const lastX: number[] = [];
+    return sorted.map((d) => {
+      const x = (pct(d.cents) / 100) * tw;
+      let layer = lastX.findIndex((lx) => x - lx >= 11);
+      if (layer === -1) layer = Math.min(lastX.length, 2);
+      lastX[layer] = x;
+      const zone: Zone = d.fixed ?? (d.cents <= alone ? "alone" : d.cents <= waiting ? "wait" : "blocked");
+      return { ...d, x, layer, zone };
+    });
+  });
+  const layers = $derived(placed.reduce((m, p) => Math.max(m, p.layer + 1), 0));
+  const ZONE_WORD: Record<Zone, string> = { alone: "ordered alone", wait: "waits for you", blocked: "blocked" };
+
   const LABEL: Record<Which, string> = { alone: "Ordered alone", waiting: "Waiting for you" };
   const GRIPS: Which[] = ["alone", "waiting"];
 </script>
 
 <div class="lsc" class:dragging={!!dragging} class:instant class:ready {id} data-testid={id}>
+  {#if placed.length}
+    <div class="dots" style:height="{layers * 10 + 4}px" data-testid="{id}-dots">
+      {#each placed as p (p.id)}
+        <Tip text="{nb(p.title)}, {nb(money(p.cents))}: {ZONE_WORD[p.zone]}">
+          {#snippet children(props)}
+            <a
+              {...props}
+              class="dot z-{p.zone}"
+              class:fixed={!!p.fixed}
+              href="/activity/{encodeURIComponent(p.id)}"
+              style:transform="translate({p.x}px, {-p.layer * 10}px)"
+              aria-label="{p.title}, {money(p.cents)}, {ZONE_WORD[p.zone]}"
+              data-zone={p.zone}
+              data-testid="dot-{p.id}"
+            ></a>
+          {/snippet}
+        </Tip>
+      {/each}
+    </div>
+  {/if}
   <div
     class="track"
     bind:this={track}
@@ -175,6 +225,44 @@
     position: relative;
     height: 8px;
     margin: 12px 0 4px;
+  }
+  .dots {
+    position: relative;
+    margin: 6px 0 -10px;
+  }
+  .dot {
+    position: absolute;
+    left: -4px;
+    bottom: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-chip);
+    border: 1.5px solid var(--v-ok);
+    background: var(--v-ok);
+    transition:
+      background-color var(--v-dur-ui) var(--v-ease-out),
+      border-color var(--v-dur-ui) var(--v-ease-out),
+      transform var(--v-dur-ui) var(--v-ease-in-out);
+  }
+  .dragging .dot {
+    transition-property: background-color, border-color;
+  }
+  .dot.z-wait {
+    border-color: var(--valio);
+    background: var(--valio);
+  }
+  .dot.z-blocked {
+    border-color: var(--v-bad);
+    background: var(--v-ground);
+  }
+  .dot.fixed {
+    border-style: dashed;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .dot:hover {
+      outline: 2px solid var(--v-fg);
+      outline-offset: 1px;
+    }
   }
   .zone {
     position: absolute;

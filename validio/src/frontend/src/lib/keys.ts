@@ -4,6 +4,8 @@ export type KeyAction =
   | { go: string }
   | { rows: 1 | -1 }
   | { palette: "open" | "keys" }
+  | { find: true }
+  | { approve: string }
   | null;
 
 const GO: Record<string, string> = { h: "/", a: "/activity", r: "/rules", n: "/agent", s: "/settings" };
@@ -34,6 +36,12 @@ export function keyRouter(e: KeyboardEvent, ctx: { path: string }): KeyAction {
     return null;
   }
   if (k === "?") return { palette: "keys" };
+  if (k === "/" && ctx.path === "/activity") return { find: true };
+  // `a` on a focused row that waits: its page, with the approval code open (plans/025, A2).
+  if (k === "a") {
+    const row = (e.target as HTMLElement | null)?.closest?.<HTMLAnchorElement>('a.ar[data-status="waiting"]');
+    if (row) return { approve: `${row.getAttribute("href")}?approve=1` };
+  }
   const onList = ctx.path === "/" || ctx.path === "/activity";
   if (onList && (k === "j" || k === "k")) return { rows: k === "j" ? 1 : -1 };
   if (ctx.path === "/activity" && /^[1-5]$/.test(k)) return { go: FILTER[Number(k) - 1] };

@@ -10,7 +10,7 @@
   /// Motion (plans/003, 007, 010, 011, 021): the title arrives from the clicked row; Approve
   /// opens the code in place and the answer lands as one wave; Proof draws as a chain; the
   /// margin's scale shows where this order landed; Replay walks the whole story once.
-  import { tick } from "svelte";
+  import { tick, untrack } from "svelte";
   import { page } from "$app/state";
   import { ChevronRight, Play, Square } from "@lucide/svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
@@ -20,9 +20,10 @@
   import { bump } from "$lib/chrome.svelte";
   import { owner, isCode } from "$lib/owner.svelte";
   import VCode from "$lib/v/VCode.svelte";
-  import { blurSwap, collapse, fadeOut, reduced, rise } from "$lib/motion";
+  import { blurSwap, buzz, collapse, DUR, fadeOut, reduced, rise } from "$lib/motion";
   import { morph, peek } from "$lib/peek.svelte";
-  import { dayHead, dayTime, Empty, Explain, hm, LimitScale, live, Loading, LoadError, money, nb, PageHead, pillOf } from "$lib/v2";
+  import type { ActivityItem } from "$lib/api/types";
+  import { BusyLabel, Current, dayHead, dayTime, Empty, Explain, hm, LimitScale, live, Loading, LoadError, money, nb, PageHead, pillOf, Ticker } from "$lib/v2";
   import Options from "./Options.svelte";
 
   const id = $derived(page.params.id ?? "");
@@ -44,12 +45,161 @@
   let options = $state<Options>();
 
   const pill = $derived(d ? pillOf(d.item) : undefined);
-  // The order against the limits it was decided under; only while those are still today's rules.
-  const limits = $derived(
-    d && d.item.kind === "request" && d.item.totalCents != null && rules.data?.saved && !later
-      ? { total: d.item.totalCents, alone: rules.data.aloneUpToCents, most: rules.data.approvalUpToCents }
-      : null,
-  );
+  // The order against the limits it was decided under (plans/025, P3): the version's own limits from the
+  // server; without them, today's rules while they are still the ones it was decided under.
+  const limits = $derived.by(() => {
+    if (!d || d.item.kind !== "request" || d.item.totalCents == null) return null;
+    const l =
+      d.rule.limits ??
+      (rules.data?.saved && !later ? { aloneUpToCents: rules.data.aloneUpToCents, approvalUpToCents: rules.data.approvalUpToCents } : null);
+    return l ? { total: d.item.totalCents, alone: l.aloneUpToCents, most: l.approvalUpToCents } : null;
+  });
+  type Zone = "alone" | "wait" | "blocked";
+  const zone = (total: number, alone: number, most: number): Zone => (total <= alone ? "alone" : total <= most ? "wait" : "blocked");
+  const ZONE_WORDS: Record<Zone, string> = { alone: "be ordered alone", wait: "wait for you", blocked: "be blocked" };
+  // The Rules changed since: what today's would do with the same order, when that is different.
+  const today = $derived.by(() => {
+    if (!limits || !later || !rules.data?.saved) return null;
+    const then = zone(limits.total, limits.alone, limits.most);
+    const now = zone(limits.total, rules.data.aloneUpToCents, rules.data.approvalUpToCents);
+    return now === then ? null : `Under today's Rules (version ${later}) it would ${ZONE_WORDS[now]}.`;
+  });
+
+  // ---------- the decision's spine (plans/025, P1) ----------
+  // A petrol line down the left of the five parts with a node at each heading. It is lit as far as
+  // the decision went; a step reached while the page is open (an approval, here or elsewhere) runs
+  // the current on to it. Each item draws its spine once per visit; after that it stands.
+  type NodeId = "asked" | "checks" | "rule" | "result" | "proof";
+  let partsEl = $state<HTMLElement>();
+  let nodeY = $state<Partial<Record<NodeId, number>>>({});
+  function measure() {
+    if (!partsEl) return;
+    const top = partsEl.getBoundingClientRect().top;
+    const out: Partial<Record<NodeId, number>> = {};
+    for (const n of partsEl.querySelectorAll<HTMLElement>("[data-node]")) {
+      const r = n.getBoundingClientRect();
+      out[n.dataset.node as NodeId] = r.top + r.height / 2 - top;
+    }
+    nodeY = out;
+  }
+  $effect(() => {
+    if (!partsEl) return;
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(partsEl);
+    return () => ro.disconnect();
+  });
+  const ORDER: NodeId[] = ["asked", "checks", "rule", "result", "proof"];
+  const present = $derived(ORDER.filter((n) => nodeY[n] !== undefined));
+  /** How far the decision went: the last node the line reaches. */
+  const reach = $derived.by((): NodeId => {
+    if (!d) return "asked";
+    return d.result ? "proof" : "rule";
+  });
+  const first = $derived(present.length ? nodeY[present[0]]! : 0);
+  const span = $derived(present.length > 1 ? nodeY[present[present.length - 1]]! - first : 0);
+  const levelOf = (n: NodeId) => (span > 0 && nodeY[n] !== undefined ? (nodeY[n]! - first) / span : 0);
+  /** The node each part shows: reached in petrol, the outcome in its colour, what waits hollow. */
+  const nodeTone = (n: NodeId): "done" | "ok" | "bad" | "wait" | "off" => {
+    if (!d) return "off";
+    const at = ORDER.indexOf(n);
+    const upTo = ORDER.indexOf(reach);
+    if (n === "rule" && d.item.status === "blocked") return "bad";
+    if (n === "result") return d.result ? "ok" : d.item.status === "waiting" ? "wait" : "off";
+    return at <= upTo ? "done" : "off";
+  };
+  const seenSpines = ((globalThis as { __validioSpines?: Set<string> }).__validioSpines ??= new Set<string>());
+  let spine = $state({ mode: "lit" as "lit" | "run", from: 0, level: 0, key: 0 });
+  let lastReach: { id: string; at: number } | null = null;
+  // Nodes past this one wait for the current to arrive before they take their colour.
+  let litTo = $state<number>(99);
+  $effect(() => {
+    if (!d || span <= 0 || replaying) return;
+    const at = ORDER.indexOf(reach);
+    const level = levelOf(reach);
+    const cur = untrack(() => spine);
+    if (!lastReach || lastReach.id !== id) {
+      if (!seenSpines.has(id) && !reduced()) {
+        seenSpines.add(id);
+        litTo = 0;
+        spine = { mode: "run", from: 0, level, key: cur.key + 1 };
+      } else {
+        litTo = 99;
+        spine = { mode: "lit", from: 0, level, key: cur.key };
+      }
+    } else if (at > lastReach.at) {
+      litTo = lastReach.at;
+      spine = { mode: "run", from: levelOf(ORDER[lastReach.at]), level, key: cur.key + 1 };
+    } else if (cur.mode === "lit" && Math.abs(cur.level - level) > 0.001) spine = { ...cur, level };
+    lastReach = { id, at };
+  });
+  let replayAt: NodeId | null = null;
+  function arrived() {
+    litTo = replaying && replayAt ? ORDER.indexOf(replayAt) : 99;
+    spine = { ...spine, mode: "lit" };
+  }
+
+  // ---------- the answer's ending (plans/025, P2) ----------
+  // After Approve or Reject: the next thing that waits, or that nothing does.
+  let ending = $state<{ kind: "approved" | "rejected"; next: ActivityItem | null } | null>(null);
+  let endingEl = $state<HTMLElement>();
+  async function after(kind: "approved" | "rejected") {
+    let next: ActivityItem | null = null;
+    try {
+      next = (await api.home()).needsYou.find((i) => i.id !== id) ?? null;
+    } catch {
+      // the ending still stands, without a next item
+    }
+    ending = { kind, next };
+    await tick();
+    endingEl?.focus({ preventScroll: true });
+  }
+  // A new item: no ending from the last one.
+  $effect(() => {
+    void id;
+    ending = null;
+  });
+
+  // Opened from Home, a toast or the palette to approve: the code is open at once (plans/025, S4).
+  let askedByLink = "";
+  $effect(() => {
+    if (d?.approval && page.url.searchParams.get("approve") === "1" && askedByLink !== id) {
+      askedByLink = id;
+      asking = true;
+    }
+  });
+
+  // ---------- Verify the chain (plans/025, P4) ----------
+  let verify = $state<{ state: "idle" | "running" | "done" | "failed"; step: number; ok: boolean[]; text: string }>({
+    state: "idle",
+    step: -1,
+    ok: [],
+    text: "",
+  });
+  async function runVerify() {
+    if (!d || verify.state === "running") return;
+    const proof = d.proof;
+    verify = { state: "running", step: -1, ok: [], text: "" };
+    try {
+      const res = await api.verifyProof(proof);
+      const gap = reduced() ? 0 : Math.max(60, Math.min(DUR.chain, 1600 / Math.max(1, proof.length)));
+      for (let i = 0; i < proof.length; i++) {
+        verify.step = i;
+        verify.ok = [...verify.ok, res.links[i]];
+        if (gap) await new Promise((r) => setTimeout(r, gap));
+        if (!res.links[i]) break;
+      }
+      const broken = res.links.findIndex((x) => !x);
+      verify.state = res.ok ? "done" : "failed";
+      verify.text = res.ok
+        ? `Sealed. These ${proof.length} ${proof.length === 1 ? "entry links" : "entries link"} to the one before, and all ${res.count} entries of your ledger check out${res.head ? `, the newest at ${hm(res.head)}` : ""}.`
+        : broken >= 0
+          ? `Entry ${broken + 1} does not match the one before it. Something changed after it was written.`
+          : "Your ledger does not check out as a whole. Something changed after it was written.";
+    } catch (e) {
+      verify = { state: "failed", step: -1, ok: [], text: `Couldn't reach Validio to check: ${e instanceof Error ? e.message : String(e)}` };
+    }
+  }
   const longDay = (iso: string) =>
     new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Helsinki" }).format(new Date(iso)).replace(",", "");
 
@@ -131,16 +281,25 @@
     replaySaid = "Replaying the decision";
     try {
       await sleepFor(calm ? 0 : 300, sig);
-      const steps: [number, string][] = [
-        [1, "#h-asked"],
-        [2, "#h-checks"],
-        [3, "#h-rule"],
-        [4, "#h-result"],
-        [5, "#proof"],
+      const steps: [number, string, NodeId][] = [
+        [1, "#h-asked", "asked"],
+        [2, "#h-checks", "checks"],
+        [3, "#h-rule", "rule"],
+        [4, "#h-result", "result"],
+        [5, "#proof", "proof"],
       ];
-      for (const [n, sel] of steps) {
+      // The spine empties, then the current walks it part by part (plans/025, P5).
+      let lvl = 0;
+      litTo = -1;
+      spine = { mode: "lit", from: 0, level: 0, key: spine.key + 1 };
+      for (const [n, sel, node] of steps) {
         if (!document.querySelector(sel)) continue;
         step = n;
+        replayAt = node;
+        const to = levelOf(node);
+        litTo = ORDER.indexOf(node) - 1;
+        spine = { mode: "run", from: lvl, level: to, key: spine.key + 1 };
+        lvl = to;
         if (n === 3) mkBeat += 1;
         if (n === 4) beat += 1;
         if (n === 5) proofOpen = true;
@@ -152,8 +311,11 @@
       replaySaid = "Replay stopped";
     } finally {
       replaying = false;
+      replayAt = null;
       step = 0;
       ctl = null;
+      litTo = 99;
+      spine = { mode: "lit", from: 0, level: levelOf(reach), key: spine.key + 1 };
     }
   }
   function stopReplay() {
@@ -205,8 +367,10 @@
     owner.code = code.trim();
     try {
       await api.approve(d.approval.orderId);
-      said = "Approved, Valio places the order";
+      said = "Approved. Valio places the order";
+      buzz();
       bump();
+      void after("approved");
     } catch (e) {
       problem = why(e);
       // Answered elsewhere meanwhile: close the code and read the request again.
@@ -226,8 +390,9 @@
     problem = "";
     try {
       await api.reject(d.approval.orderId);
-      said = "Rejected, nothing is ordered";
+      said = "Rejected. Nothing is ordered";
       bump();
+      void after("rejected");
     } catch (e) {
       problem = why(e);
     } finally {
@@ -277,6 +442,11 @@
   {/snippet}
   {@render lede()}
 </PageHead>
+
+{#snippet node(n: NodeId)}
+  {@const tone = nodeTone(n)}
+  <span class="node {ORDER.indexOf(n) <= litTo || tone === 'off' ? tone : 'pending'}" data-node={n} aria-hidden="true"></span>
+{/snippet}
 
 {#snippet fact(testid: string, label: string, value: string, note: string | null = null, ok: boolean | null = null)}
   <div class="check" data-testid={testid} data-ok={ok}>
@@ -329,12 +499,29 @@
       {/if}
     </div>
   {/if}
+  {#if ending}
+    <div class="ending notice" tabindex="-1" bind:this={endingEl} data-testid="ending" in:rise={{ y: 8, duration: DUR.enter, delay: 700 }}>
+      {#if ending.next}
+        <span>{ending.kind === "approved" ? "Approved." : "Rejected."} Next waiting: <b>{nb(ending.next.title)}</b>{#if ending.next.totalCents != null}, <span class="num">{nb(money(ending.next.totalCents))}</span>{/if}.</span>
+        <a class="link" href="/activity/{encodeURIComponent(ending.next.id)}?approve=1" data-testid="ending-next">Review it</a>
+      {:else}
+        <span>{ending.kind === "approved" ? "Approved." : "Rejected."} Nothing else waits for you.</span>
+        <a class="link" href="/" data-testid="ending-home">Back to Home</a>
+      {/if}
+    </div>
+  {/if}
 
   <div class="doc" class:v-arrive={detail.arrive}>
-    <div class="parts" class:replaying>
-      {#if replaying}<span class="replay-line" style:--p={step / 5} aria-hidden="true"></span>{/if}
+    <div class="parts" class:replaying class:spined={span > 0} bind:this={partsEl}>
+      {#if span > 0}
+        <span class="spine" style:top="{first}px" style:height="{span}px" aria-hidden="true">
+          {#key spine.key}
+            <Current axis="v" mode={spine.mode} from={spine.from} level={spine.level} track="dashed" duration={replaying ? 520 : 760} onarrive={arrived} />
+          {/key}
+        </span>
+      {/if}
       <section class="part" class:lit={step >= 1} aria-labelledby="h-asked">
-        <h2 class="v-h" id="h-asked">What your agent asked</h2>
+        <h2 class="v-h" id="h-asked">{@render node("asked")}What your agent asked</h2>
         <figure class="asked" data-testid="asked">
           <blockquote>“{nb(d.asked.text)}”</blockquote>
           <figcaption>{d.asked.agentName}</figcaption>
@@ -344,7 +531,7 @@
       <!-- A request blocked before Valio was asked has nothing checked: no empty section for it. -->
       {#if d.checks.length || r}
         <section class="part" class:lit={step >= 2} aria-labelledby="h-checks">
-          <h2 class="v-h" id="h-checks">What Validio checked at Valio</h2>
+          <h2 class="v-h" id="h-checks">{@render node("checks")}What Validio checked at Valio</h2>
           {#if d.checks.length}
             <dl class="checks" class:stagger={replaying && step === 2}>
               {#each d.checks as c, n (n)}
@@ -352,13 +539,20 @@
               {/each}
             </dl>
           {/if}
+          {#if r?.simulated?.length}
+            <ul class="sim" data-testid="simulated">
+              {#each r.simulated as m (m.what)}
+                <li>{nb(m.sentence)} <Explain label="Why this is simulated">The demo shows this case on purpose. Valio's real answer was different.</Explain></li>
+              {/each}
+            </ul>
+          {/if}
           {#if r}<Options bind:this={options} req={r} proposed={d.item.status === "blocked"} />{/if}
         </section>
       {/if}
 
       <section class="part" class:lit={step >= 3} aria-labelledby="h-rule">
         <div class="h-row">
-          <h2 class="v-h" id="h-rule">Which rule decided</h2>
+          <h2 class="v-h" id="h-rule">{@render node("rule")}Which rule decided</h2>
           <Explain label="What a Rules version is">Every Rules save signs a new version. Orders show the version they were decided under.</Explain>
         </div>
         <a class="rule-row" href="/rules" id="rule-link" data-testid="rule">
@@ -368,7 +562,7 @@
       </section>
 
       <section class="part" class:lit={step >= 4} aria-labelledby="h-result">
-        <h2 class="v-h" id="h-result">Result</h2>
+        <h2 class="v-h" id="h-result">{@render node("result")}Result</h2>
         {#key beat}
           {#if d.result}
             {@const ids = d.result.orderIds.length ? d.result.orderIds : [d.result.orderId]}
@@ -390,13 +584,14 @@
 
       <details class="fold proof" class:lit={step >= 5} id="proof" data-testid="proof" bind:open={proofOpen}>
         <summary id="proof-toggle">
+          {@render node("proof")}
           <ChevronRight class="chev" aria-hidden="true" />
           <span class="proof-name">Proof</span>
-          <span class="proof-n">{d.proof.length} {d.proof.length === 1 ? "entry" : "entries"}, sealed</span>
+          <span class="proof-n"><Ticker text="{d.proof.length} {d.proof.length === 1 ? 'entry' : 'entries'}" value={d.proof.length} />, sealed</span>
         </summary>
-        <ol class="pes">
-          {#each d.proof as p (p.hash)}
-            <li class="pe" data-raw>
+        <ol class="pes" class:verifying={verify.step >= 0} style:--vp={d.proof.length ? (verify.step + 1) / d.proof.length : 0}>
+          {#each d.proof as p, i (p.hash)}
+            <li class="pe" class:vok={verify.ok[i] === true} class:vbad={verify.ok[i] === false} data-raw>
               <span class="pe-time num">{secs(p.at)}</span>
               <span class="pe-actor smallcaps">{p.actor}</span>
               <span class="pe-main">
@@ -408,6 +603,14 @@
             </li>
           {/each}
         </ol>
+        <div class="verify">
+          <Button variant="outline" size="sm" id="verify" data-testid="verify" disabled={verify.state === "running"} onclick={runVerify}>
+            <BusyLabel busy={verify.state === "running"} idle={verify.state === "idle" ? "Verify the chain" : "Verify again"} working="Checking the chain" />
+          </Button>
+          {#if verify.text}
+            {#key verify.text}<p class="v-res" class:bad={verify.state === "failed"} role="status" data-testid="verify-result" in:rise={{ y: 4 }}>{verify.text}</p>{/key}
+          {/if}
+        </div>
       </details>
     </div>
 
@@ -420,6 +623,8 @@
             <dt>{limits.total > limits.most ? "Over your limits" : over ? "Above what it orders alone" : "Within your limits"}</dt>
             <dd>
               {#key mkBeat}<LimitScale mode="order" alone={limits.alone} waiting={limits.most} order={limits.total} id="detail-scale" />{/key}
+              {#if later}<p class="ck-then">Rules version {d.rule.version}, when this was decided.</p>{/if}
+              {#if today}<p class="ck-today" data-testid="today-rules">{today}</p>{/if}
             </dd>
           </div>
         {/if}
@@ -781,17 +986,6 @@
   .parts.replaying ~ .checked .ck:not(.lit) {
     opacity: 0.32;
   }
-  .replay-line {
-    position: absolute;
-    left: -16px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--valio);
-    transform-origin: top;
-    transform: scaleY(var(--p));
-    transition: transform 300ms var(--v-ease-in-out);
-  }
   .checks.stagger > .check {
     animation: v-pe 220ms var(--v-ease-out) both;
   }
@@ -816,9 +1010,141 @@
       animation: v-fade-in 120ms linear both;
       animation-delay: 0ms;
     }
-    .replay-line {
-      transition: none;
-    }
+  }
+
+  /* ---------- the decision's spine (plans/025, P1) ---------- */
+  .parts.spined {
+    --sx: 36px;
+    padding-left: var(--sx);
+  }
+  .spine {
+    position: absolute;
+    left: 4px;
+    width: 2px;
+  }
+  .part > .v-h,
+  .h-row > .v-h,
+  .proof > summary {
+    position: relative;
+  }
+  .node {
+    position: absolute;
+    left: calc(-1 * var(--sx));
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    border: 2px solid var(--v-current-dim);
+    border-radius: var(--radius-chip);
+    background: var(--v-ground);
+    transition:
+      background-color var(--v-dur-ui) var(--v-ease-out),
+      border-color var(--v-dur-ui) var(--v-ease-out),
+      transform var(--v-dur-ui) var(--v-ease-out);
+  }
+  .parts:not(.spined) .node {
+    visibility: hidden;
+  }
+  .node.done {
+    border-color: var(--valio);
+    background: var(--valio);
+  }
+  .node.ok {
+    border-color: var(--v-ok);
+    background: var(--v-ok);
+  }
+  .node.bad {
+    border-color: var(--v-bad);
+    background: var(--v-bad);
+  }
+  /* What waits for the owner: a hollow petrol node, the one place the line asks for a hand. */
+  .node.wait {
+    border-color: var(--valio);
+  }
+  .node.pending {
+    transform: scale(0.8);
+  }
+
+  /* The answer's ending: what is next. */
+  .ending {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 16px;
+    margin-top: 28px;
+    padding-block: 6px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+  .ending b {
+    font-weight: 600;
+  }
+  .ending:focus-visible {
+    outline-offset: 4px;
+  }
+
+  /* A value the demo simulates on purpose. */
+  .sim {
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+
+  /* Verify (plans/025, P4): a green line follows the check down the chain, node by node. */
+  .verify {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin-top: 14px;
+  }
+  .v-res {
+    margin: 0;
+    max-width: 560px;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-ok-text);
+  }
+  .v-res.bad {
+    color: var(--v-bad-text);
+  }
+  .pes::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 20px;
+    bottom: 20px;
+    width: 1px;
+    background: var(--v-ok);
+    transform-origin: top;
+    transform: scaleY(var(--vp, 0));
+    transition: transform var(--v-dur-chain) linear;
+  }
+  .pe.vok::before {
+    border-color: var(--v-ok);
+    background: var(--v-ok);
+  }
+  .pe.vbad::before {
+    border-color: var(--v-bad);
+    background: var(--v-bad);
+  }
+  .pe::before {
+    transition:
+      background-color var(--v-dur-ui) var(--v-ease-out),
+      border-color var(--v-dur-ui) var(--v-ease-out);
+  }
+  .ck-then,
+  .ck-today {
+    margin: 8px 0 0;
+    font-size: var(--fs-cap);
+    line-height: 16px;
+  }
+  .ck-today {
+    margin-top: 4px;
+    color: var(--valio);
   }
 
   /* How this was checked: the margin column. */
@@ -886,8 +1212,8 @@
     .doc {
       margin-top: 28px;
     }
-    .replay-line {
-      left: -8px;
+    .parts.spined {
+      --sx: 22px;
     }
     .checked {
       top: 64px;

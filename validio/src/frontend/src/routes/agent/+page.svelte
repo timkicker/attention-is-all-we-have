@@ -8,10 +8,14 @@
   import { Row } from "@arlen/ui-kit/components/ui/row";
   import { Section } from "@arlen/ui-kit/components/ui/section";
   import { Check, ChevronRight, Copy } from "@lucide/svelte";
-  import { agentApi, type AgentState } from "$lib/api/agent";
+  import { onMount } from "svelte";
+  import { agentApi, mayWords, type AgentState } from "$lib/api/agent";
+  import { api } from "$lib/api/client";
   import { bump, chrome } from "$lib/chrome.svelte";
   import { blurSwap, rise } from "$lib/motion";
-  import { BusyLabel, Explain, ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
+  import { net, tick as clock } from "$lib/net.svelte";
+  import { toast } from "$lib/toast.svelte";
+  import { ActivityRow, AgentLink, ago, BusyLabel, Explain, ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
   import VPill from "$lib/v/VPill.svelte";
   import type { PillTone } from "$lib/v";
 
@@ -67,6 +71,47 @@
   }
 
   let confirmOff = $state(false);
+
+  // The connection as a picture, and a spark for every call the agent makes (plans/025, Agent).
+  onMount(() => clock(1000));
+  let pulse = $state(0);
+  let lastCall: string | null | undefined;
+  $effect(() => {
+    const at = a?.agent?.lastUsedAt;
+    if (a === undefined) return;
+    if (lastCall !== undefined && at && at !== lastCall) pulse += 1;
+    lastCall = at ?? null;
+  });
+  // What the agent will be allowed to do, from today's Rules, before it is connected.
+  const rules = live(() => agentApi.rules().catch(() => null), 4000, () => "rules-raw");
+  const may = $derived(rules.data ? mayWords(rules.data) : []);
+  // Its last moves, from Activity.
+  const recent = live(() => api.activity("all"), 2000, () => "agent-recent");
+  // How long the pairing code still stands.
+  const left = $derived.by(() => {
+    if (!a?.pairing) return "";
+    const s = Math.max(0, Math.round((Date.parse(a.pairing.expiresAt) - net.now) / 1000));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  });
+  const STEPS = [
+    { id: "connect", title: "Connect", text: "Add one address to your agent" },
+    { id: "code", title: "Check the code", text: "Your agent and this page show the same code" },
+    { id: "allow", title: "Allow", text: "It orders within your Rules from then on" },
+  ];
+  const stepAt = $derived(a?.state === "consent" ? 1 : a && (a.state === "active" || a.state === "paused") ? 3 : 0);
+
+  async function pauseOrResume() {
+    if (!a) return;
+    const pausing = a.state === "active";
+    await act(() => agentApi.pause(pausing), "pause");
+    if (problem) return;
+    toast({
+      tone: pausing ? "wait" : "ok",
+      title: pausing ? "Agent paused" : "Agent resumed",
+      body: pausing ? "Every call is refused and logged" : "It orders within your Rules again",
+      undo: () => act(() => agentApi.pause(!pausing)),
+    });
+  }
 </script>
 
 {#snippet copyButton(what: string, text: string, label: string)}
@@ -94,7 +139,7 @@
     {#if a?.state === "pairing"}
       <Button variant="ghost" id="pair-cancel" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
     {:else if connected}
-      <Button variant="outline" id="agent-pause" data-testid="agent-pause" disabled={busy} onclick={() => act(() => agentApi.pause(a?.state === "active"), "pause")}>
+      <Button variant={a?.state === "paused" ? "default" : "outline"} id="agent-pause" data-testid="agent-pause" disabled={busy} onclick={pauseOrResume}>
         <BusyLabel busy={doing === "pause"} idle={a?.state === "active" ? "Pause" : "Resume"} working={a?.state === "active" ? "Pausing" : "Resuming"} />
       </Button>
       <Button variant="outline" id="agent-disconnect" data-testid="agent-disconnect" disabled={busy} onclick={() => (confirmOff = true)}>Disconnect</Button>
@@ -103,6 +148,20 @@
 </PageHead>
 
 <div class="blocks" class:v-arrive={ag.arrive}>
+  {#if a}
+    <AgentLink phase={a.state} name={a.agent?.name ?? a.consent?.name ?? "Your agent"} {pulse} />
+    {#if a.state !== "active" && a.state !== "paused"}
+      <ol class="steps" aria-label="Connecting an agent" data-testid="agent-steps">
+        {#each STEPS as st, n (st.id)}
+          <li class:done={n < stepAt} class:now={n === stepAt} aria-current={n === stepAt ? "step" : undefined}>
+            <span class="st-n num">{n + 1}</span>
+            <span class="st-t">{st.title}</span>
+            <span class="st-x">{st.text}</span>
+          </li>
+        {/each}
+      </ol>
+    {/if}
+  {/if}
   {#if !a}
     {#if ag.error}<LoadError detail={ag.error} />{:else}<Loading rows={3} />{/if}
   {:else if a.state === "none"}
@@ -115,11 +174,21 @@
         <Button id="agent-connect" data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair, "pair")}><BusyLabel busy={doing === "pair"} idle="Connect agent" working="Connecting" /></Button>
       </div>
     </Section>
+    {#if may.length}
+      <div class="may" data-testid="agent-may">
+        <h3 class="may-h" id="may-none-h">What it will be allowed to do <Explain label="Where these come from">These come from your Rules. Change them there and the agent follows.</Explain></h3>
+        <ul aria-labelledby="may-none-h">
+          {#each may as m (m)}<li>{m}</li>{/each}
+        </ul>
+      </div>
+    {/if}
     </div>
   {:else if a.state === "pairing" && a.pairing}
     <section class="pair" aria-labelledby="pair-h" in:rise={{ y: 8, duration: 260 }}>
       <p class="pair-h" id="pair-h" data-testid="mcp-hint">Add this address to your agent as an MCP server, then ask it to order something.</p>
-      <p class="listen" role="status" data-testid="agent-listening"><span class="dot" aria-hidden="true"></span>Waiting for your agent's first call</p>
+      <p class="listen" role="status" data-testid="agent-listening">
+        <span class="dot" aria-hidden="true"></span>Waiting for your agent's first call{#if left}<span class="left num">The address stands for {left}</span>{/if}
+      </p>
       <Section class="v-card">
         <div class="url-line">
           <code class="url-big mono" id="mcp-text" data-testid="mcp-url" data-raw>{a.pairing.mcpUrl}</code>
@@ -171,12 +240,31 @@
     <ListSection id="agent">
       <ListRow id="agent-name" label="Name" value={a.agent.name} />
       <ListRow id="agent-connected" label="Connected" value={dayTime(a.agent.connectedAt)} />
-      <ListRow id="agent-used" label="Last used" value={a.agent.lastUsedAt ? dayTime(a.agent.lastUsedAt) : "Not yet"} />
+      <ListRow id="agent-used" label="Last used" value={a.agent.lastUsedAt ? `${ago(a.agent.lastUsedAt, net.now)}` : "Not yet"} />
       <a class="vr go-row" href="/activity" id="agent-activity" data-testid="agent-activity">
         <span>See its activity</span>
         <ChevronRight class="go" aria-hidden="true" />
       </a>
     </ListSection>
+    {#if a.state === "paused"}
+      <p class="paused notice quiet" data-testid="agent-paused">Paused. Every call your agent makes is refused and written to your activity. Resume to let it order again.</p>
+    {/if}
+    {#if recent.data?.items.length}
+      <div class="more"></div>
+      <ListSection id="agent-recent" title="Its last orders" link={{ href: "/activity", label: "All activity" }}>
+        {#each recent.data.items.slice(0, 5) as i (i.id)}<ActivityRow item={i} />{/each}
+      </ListSection>
+    {/if}
+    {#if a.versions.length}
+      <details class="fold versions" data-testid="agent-versions">
+        <summary><ChevronRight class="chev" aria-hidden="true" />Versions of your Rules it has followed</summary>
+        <ol class="fold-body vers">
+          {#each a.versions as v (v.version)}
+            <li><b class="num">Version {v.version}</b> <span>{v.why}</span> <span class="num">{dayTime(v.at)}</span></li>
+          {/each}
+        </ol>
+      </details>
+    {/if}
     </div>
   {/if}
   {#if problem}<p class="problem" role="alert" data-testid="agent-problem" in:rise={{ y: 4, duration: 200 }}>{problem}</p>{/if}
@@ -196,6 +284,91 @@
 />
 
 <style>
+  /* ---------- the connection steps (plans/025) ---------- */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 8px;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 8px;
+    padding-top: 10px;
+    border-top: 2px solid var(--v-line);
+    color: var(--v-muted);
+    transition:
+      border-color var(--v-dur-ui) var(--v-ease-out),
+      color var(--v-dur-ui) var(--v-ease-out);
+  }
+  .steps li.done {
+    border-top-color: var(--valio);
+  }
+  .steps li.now {
+    border-top-color: var(--valio);
+    color: var(--v-fg);
+  }
+  .st-n {
+    grid-row: span 2;
+    font-weight: 600;
+    font-size: var(--fs-head);
+    line-height: var(--lh-head);
+  }
+  .steps li.now .st-n,
+  .steps li.done .st-n {
+    color: var(--valio);
+  }
+  .st-t {
+    font-size: var(--fs-head);
+    line-height: var(--lh-head);
+    font-weight: 600;
+  }
+  .st-x {
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+  }
+  .left {
+    margin-left: auto;
+    color: var(--v-faint);
+  }
+  .paused {
+    margin-top: 20px;
+  }
+  .more {
+    height: 32px;
+  }
+  .versions {
+    margin-top: 28px;
+  }
+  .vers {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .vers li {
+    display: flex;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--v-line);
+  }
+  .vers b {
+    font-weight: 600;
+    color: var(--v-fg);
+  }
+  @media (max-width: 760px) {
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+    }
+    .left {
+      display: none;
+    }
+  }
+
   /* The page listens while the agent pairs: a still dot, a slow ring (plans/008). */
   .listen {
     display: flex;

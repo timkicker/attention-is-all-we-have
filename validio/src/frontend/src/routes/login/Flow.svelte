@@ -73,13 +73,13 @@
   .flow {
     display: block;
     width: 100%;
-    max-width: 440px;
+    max-width: 520px;
     height: auto;
     overflow: visible;
   }
   .path {
     stroke: var(--valio-band-muted);
-    stroke-width: 1;
+    stroke-width: 1.25;
     opacity: 0.6;
   }
   .node rect {
@@ -98,7 +98,7 @@
   text {
     fill: var(--valio-band-fg);
     font-family: var(--v-sans);
-    font-size: 12px;
+    font-size: 12.5px;
     text-anchor: middle;
   }
   .out {

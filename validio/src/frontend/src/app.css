@@ -5,6 +5,16 @@
 @import "./lib/tokens.css";
 @source "../vendor/arlen-ui-kit/src/lib/components/**/*.{svelte,ts}";
 
+/* Arial sized to Figtree's metrics, so the page does not shift when Figtree arrives (plans/025, F7). */
+@font-face {
+  font-family: "Figtree Fallback";
+  src: local("Arial"), local("Helvetica Neue"), local("Helvetica");
+  size-adjust: 98%;
+  ascent-override: 96%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+
 /* The kit's dark: utilities follow the theme the page chose, not only the system. */
 @custom-variant dark (&:where(:root[data-theme="dark"], :root[data-theme="dark"] *));
 
@@ -1137,14 +1147,14 @@ textarea {
   animation: none;
 }
 ::view-transition-group(v-page) {
-  animation-duration: 620ms;
+  animation-duration: var(--v-dur-tab);
   animation-timing-function: var(--v-ease-out);
 }
 ::view-transition-old(v-page) {
   animation: v-page-out 320ms var(--v-ease-out) both;
 }
 ::view-transition-new(v-page) {
-  animation: v-page-in 620ms var(--v-ease-out) 90ms both;
+  animation: v-page-in var(--v-dur-tab) var(--v-ease-out) 90ms both;
 }
 @keyframes v-page-out {
   to {

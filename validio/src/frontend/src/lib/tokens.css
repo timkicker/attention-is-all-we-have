@@ -19,7 +19,7 @@
   color-scheme: light;
 
   /* ---------- fonts ---------- */
-  --v-sans: "Figtree Variable", "Figtree", "Helvetica Neue", Arial, sans-serif;
+  --v-sans: "Figtree Variable", "Figtree", "Figtree Fallback", "Helvetica Neue", Arial, sans-serif;
   --v-script: "Pacifico", "Figtree Variable", cursive; /* the Validio wordmark only */
   --font-sans: var(--v-sans);
   --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -137,6 +137,23 @@
   --v-dur-moment: 420ms; /* rare moments: approval done, set up, theme reveal */
   --v-dur-glow: 1200ms; /* the petrol tint a new or changed thing fades from */
   --v-rise: 6px; /* how far an entering thing travels */
+  --v-dur-tab: 620ms; /* a page change between tabs */
+  --v-dur-wave: 800ms; /* Home's entrance, part by part */
+  --v-dur-theme: 1100ms; /* the theme reveal */
+
+  /* ---------- the current (plans/025) ----------
+     One thin petrol line that carries a decision, with a short lighter spark
+     running along it. Only where something really flows: the chosen nav item,
+     a decision's spine, the proof chain, the agent's connection, the door. */
+  --v-current: var(--valio);
+  --v-current-spark: #6fc3db; /* on paper */
+  --v-current-band: #ffffff; /* on the petrol band */
+  --v-current-band-sheen: color-mix(in srgb, #ffffff 9%, transparent);
+  --v-current-dim: var(--v-line-strong);
+  --v-dur-spark: 900ms; /* one pass of the spark */
+  --v-dur-listen: 3000ms; /* the pause between two listening sparks */
+  --v-dur-chain: 140ms; /* one proof link during Verify */
+  --v-grid-line: color-mix(in srgb, #ffffff 7%, transparent); /* the door's ledger grid */
 }
 
 :root[data-theme="dark"] {
@@ -166,6 +183,7 @@
   --v-demo-strong: #e6ecee;
   --valio-why: #8ed0e2;
   --primary-foreground: #0b161b;
+  --v-current-spark: #c8eef8;
 }
 
 @media (max-width: 760px) {
@@ -195,5 +213,10 @@
     --v-dur-enter: 120ms;
     --v-dur-moment: 120ms;
     --v-dur-glow: 600ms;
+    --v-dur-tab: 160ms;
+    --v-dur-wave: 200ms;
+    --v-dur-theme: 0ms;
+    --v-dur-spark: 0ms;
+    --v-dur-chain: 0ms;
   }
 }
