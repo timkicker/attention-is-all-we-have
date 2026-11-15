@@ -119,7 +119,8 @@ def test_align_cache_of_an_earlier_day_is_read_while_no_claim_changed(client):
     )  # the day after the last change of the topic
     sqllog.run("DELETE FROM align")
     sqllog.run(
-        "INSERT INTO align VALUES (%s, 'fi', 1256, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b', 0.2, 'exact'),"
+        "INSERT INTO align VALUES (%s, 'fi', 1256, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b', 0.2,"
+        " 'exact'),"
         " ('2006-01-01', 'fi', 1256, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b', 0.2, 'exact')",
         (last["d"],),
     )
