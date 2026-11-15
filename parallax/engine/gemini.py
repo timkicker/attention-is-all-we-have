@@ -15,8 +15,8 @@ from contract.db import load_env
 
 BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 MODEL = "gemini-3.8-flash"
-RPM = 60
-MAX_IN_FLIGHT = 4
+RPM = int(os.environ.get("GEMINI_RPM", "60"))  # our own cap; the key's project allows far more
+MAX_IN_FLIGHT = int(os.environ.get("GEMINI_MAX_IN_FLIGHT", "4"))
 MAX_ATTEMPTS = 5
 TIMEOUT = 60
 STATS = {"calls": 0, "r429": 0, "retries": 0, "bad_json": 0, "failed": 0, "seconds": 0.0}
