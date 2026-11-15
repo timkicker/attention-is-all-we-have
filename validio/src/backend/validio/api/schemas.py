@@ -201,6 +201,8 @@ class NeedView(Model):
     quantity: float
     unit: str
     diet: list[str]
+    asked_diet: list[str] | None = Field(None, description="the diet the request itself names; the kitchen-wide "
+                                                           "diet is in diet only. Absent on requests from before")
     deliver_by: str
     product_id: str | None = None
     qty_text: str | None = Field(None, description="in the product's sales unit for a product line: 200 bags")

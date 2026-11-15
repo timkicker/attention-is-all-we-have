@@ -44,6 +44,13 @@
   );
   const scale = $derived(limits ? Math.max(1, limits.most * 1.06, limits.total) : 1);
   const pct = (c: number) => `${Math.min(100, (c / scale) * 100)}%`;
+  /** "Lactose free: No data from Valio" heads its row by what Valio's data says, not always "confirmed". */
+  function dietRow(part: string): { head: string; said: string } {
+    const name = part.split(":")[0];
+    const said = (part.split(/:\s*/)[1] ?? "").replace(/\.$/, "");
+    const state = /confirms/i.test(said) ? "confirmed" : /otherwise|contradict/i.test(said) ? "contradicted" : "not confirmed";
+    return { head: `${name} ${state}`, said };
+  }
   /** "1,010 €": whole euros under the meter, cents only where they are not zero. */
   const short = (c: number) => (c % 100 ? money(c) : `${(c / 100).toLocaleString("en-GB")}\u00a0€`);
   const longDay = (iso: string) =>
@@ -310,13 +317,17 @@
         {#if r}
           <div class="ck">
             <dt>Valio asked for price and stock</dt>
-            <dd>{r.liveChecked.ids} products, prices and stock read before deciding.{#if r.valioText}{" "}{nb(r.valioText)}.{/if}</dd>
+            <dd>{r.liveChecked.ids} {r.liveChecked.ids === 1 ? "product" : "products"}, prices and stock read before deciding.{#if r.valioText}{" "}{nb(r.valioText)}.{/if}</dd>
           </div>
           {#if chosen?.dietText}
-            <div class="ck">
-              <dt>{chosen.dietText.split(":")[0]} confirmed</dt>
-              <dd>{nb(chosen.dietText.split(/:\s*/)[1] ?? "").replace(/^./, (c) => c.toUpperCase())}.</dd>
-            </div>
+            <!-- one row per diet, headed by what Valio's data says: confirmed, not confirmed, or contradicted -->
+            {#each chosen.dietText.split(/\.\s+(?=[A-Z][^:]*:)/) as part (part)}
+              {@const row = dietRow(part)}
+              <div class="ck">
+                <dt>{row.head}</dt>
+                <dd>{nb(row.said).replace(/^./, (c) => c.toUpperCase())}.</dd>
+              </div>
+            {/each}
           {/if}
           {#if planted?.supplierText}
             <div class="ck">
@@ -612,11 +623,15 @@
     margin-left: -1px;
     background: var(--v-fg);
   }
+  /* Three labels under the meter: they wrap inside the margin column instead of running out of it. */
   .legend {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 8px;
+    gap: 2px 12px;
     font-size: var(--fs-cap);
+  }
+  .legend > span {
     white-space: nowrap;
   }
 

@@ -1820,6 +1820,21 @@
       },
       "NeedView": {
         "properties": {
+          "askedDiet": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "the diet the request itself names; the kitchen-wide diet is in diet only. Absent on requests from before",
+            "title": "Askeddiet"
+          },
           "deliverBy": {
             "title": "Deliverby",
             "type": "string"
