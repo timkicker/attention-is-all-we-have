@@ -66,6 +66,12 @@ def test_loaded_topic_is_done(client):
     assert [e["lang"] for e in d["editions"]] == ["fi", "sv", "de", "en", "ru", "et", "uk"]
 
 
+def test_loaded_topic_by_topic_id(client):
+    # the Differences and Removed tabs of /t/winterwar watch the ingest under the route id
+    d = client.get("/api/ingest/winterwar").json()
+    assert d["state"] == "done" and d["qid"] == "Q134949"
+
+
 def test_no_finnish_422(offline):
     r = offline.post("/api/ingest", json={"qid": "Q90000002"})
     assert r.status_code == 422 and r.json()["error"]["code"] == "no_finnish"

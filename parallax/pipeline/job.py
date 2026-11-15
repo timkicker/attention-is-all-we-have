@@ -259,7 +259,8 @@ def status(cur, qid: str) -> dict | None:
     jobs = _q(cur, "SELECT * FROM ingest_job WHERE qid=%s", (qid,))
     if jobs:
         return job_view(jobs[0], _q(cur, "SELECT * FROM ingest_edition WHERE qid=%s", (qid,)))
-    topics = _q(cur, "SELECT * FROM topic WHERE wikidata_id=%s", (qid,))
+    # a topic page asks with its route id, which is the topic_id for seed topics (/t/winterwar)
+    topics = _q(cur, "SELECT * FROM topic WHERE wikidata_id=%s OR topic_id=%s", (qid, qid))
     if topics:
         return loaded_view(topics[0], _q(cur, "SELECT lang FROM page WHERE topic_id=%s", (topics[0]["topic_id"],)))
     return None
