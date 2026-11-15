@@ -38,7 +38,7 @@ from contract.db import connect
 from contract.engine import Candidate, get_engine, sketch_embed
 from pipeline import wapi, wikidata
 from pipeline.fetch import fetch_texts, meta_row, pick_snapshots
-from pipeline.lives import walk
+from pipeline.lives import TS_FMT, walk
 from pipeline.load import versioned
 from pipeline.parse import ParseCache
 
@@ -399,6 +399,26 @@ def parse_elsewhere(fetched: dict):
         return lives_of(fetched)
 
 
+def adopt_untopiced(cur, lang: str, pid: int, claims: list[dict]) -> None:
+    """The Finnish M sample holds the lives of some pages without a topic (Jatkosota, Mannerheim, ...). Their rows stay
+    as history; the current ones end now, so the topic's own lives can take their place. A life of the topic that
+    ends at the same instant as an M life of the same sentence ends a microsecond later (the key holds row_end)."""
+    cur.execute("DELETE FROM claim WHERE lang=%s AND page_id=%s AND topic_id IS NULL", (lang, pid))
+    cur.execute(
+        "SELECT h, row_end FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s AND topic_id IS NULL",
+        (lang, pid),
+    )
+    taken = {(h, end) for h, end in cur.fetchall()}
+    if not taken:
+        return
+    for c in claims:
+        if c["row_end"]:
+            end = dt.datetime.strptime(c["row_end"], TS_FMT)
+            while (c["h"], end) in taken:
+                end += dt.timedelta(microseconds=1)
+            c["row_end"] = end.strftime(TS_FMT)
+
+
 def load_edition(conn, topic_id: str, fetched: dict, w, vecs: dict) -> int:
     """Page, revisions, section versions and sentence lives of one edition in one transaction."""
     lang, pid = fetched["lang"], fetched["page_id"]
@@ -430,6 +450,7 @@ def load_edition(conn, topic_id: str, fetched: dict, w, vecs: dict) -> int:
              "emb": np.asarray(vecs[lv["h"]], dtype="<f4").tobytes()}
             for lv in w.lives
         ]  # fmt: skip
+        adopt_untopiced(cur, lang, pid, claims)
         cols = ["lang", "page_id", "h", "topic_id", "section", "text", "born_rev", "died_rev", "died_comment",
                 "time_precision", "has_ref", "had_ref", "emb"]  # fmt: skip
         n = versioned(cur, "claim", cols, claims)
@@ -654,8 +675,8 @@ class Job:
         self.ed(lang, page_id=fetched["page_id"], length=fetched["length"], revisions=len(fetched["meta"]),
                 snapshots=len(fetched["snaps"]), pct=36, error=None, retry_at=None)  # fmt: skip
         already = self.sql(
-            "SELECT COUNT(*) AS n FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s",
-            (lang, fetched["page_id"]),
+            "SELECT COUNT(*) AS n FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s AND topic_id=%s",
+            (lang, fetched["page_id"], topic_id),
         )[0]["n"]
         if already:  # loaded before a crash or a stop: keep the rows
             n = int(already)
