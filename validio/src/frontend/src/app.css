@@ -47,7 +47,7 @@
    fill and vanished, in both themes (kit a9f10d4, chip.svelte). The pressed
    label keeps the background colour while hovered. */
 .chip.on > button.chip-body:hover {
-  color: var(--background);
+  color: var(--valio); /* our pressed chip is petrol on its tint (below), so the label stays petrol */
 }
 [data-slot="button"].border-border:hover {
   border-color: var(--valio);
@@ -392,13 +392,14 @@ a.vr:hover .vr-value {
   background: var(--v-surface);
   box-shadow: inset 0 0 0 1px var(--valio);
 }
-.chip.chip.on,
-.chip.chip.on:has(> button.chip-body:hover) {
+/* .on twice: the kit's scoped `.chip.on` fill (dark ink) loads after this sheet and would win a tie. */
+.chip.chip.on.on,
+.chip.chip.on.on:has(> button.chip-body:hover) {
   background: var(--valio-tint);
   box-shadow: inset 0 0 0 1px var(--valio);
   color: var(--valio);
 }
-.chip.chip.on .chip-body {
+.chip.chip.on.on .chip-body {
   color: var(--valio);
   font-weight: 500;
 }
