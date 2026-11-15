@@ -70,3 +70,19 @@ test('the date control sets a date for the topic', async ({ page }) => {
   await expect(page).toHaveURL(new RegExp(`date=${PAST}`))
   await expect(page.getByTestId(TID.noticePast)).toBeVisible()
 })
+
+test('a date that is no past day shows the newest version and leaves the address', async ({ page }) => {
+  for (const bad of ['garbage', '2008-13-45', '2999-01-01']) {
+    await page.goto(path.differences() + `?date=${bad}`)
+    await expect(page.getByTestId(TID.asOf)).toContainText(new RegExp(`^(${copy.NEWEST_VERSION} |${copy.AS_OF_TODAY})`))
+    await expect(page).toHaveURL(new RegExp(`/t/${QID}$`))
+  }
+})
+
+test('on a phone the find field keeps its width beside the date button', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(path.differences())
+  const field = page.getByTestId(TID.findStatement)
+  await expect(field).toBeVisible()
+  expect((await field.boundingBox())!.width).toBeGreaterThan(200)
+})
