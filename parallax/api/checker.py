@@ -11,6 +11,7 @@ since). A live `partial` without any differing term or number is a rewording and
 Every judged candidate is stored with the run, so a replay at any as_of needs no engine call.
 """
 
+import contextvars
 import datetime as dt
 import hashlib
 import json
@@ -87,6 +88,21 @@ def nearest(
     if exact:
         out |= _nearest_per_lang("check_nearest_topic_exact", vec, exact, topic)
     return {lang: out.get(lang, []) for lang in langs}
+
+
+# The nearest search of one claim is about a second of SQL; one after the other, a 17-statement answer spent 24 s
+# there. The searches only read, so a few run at once (each in a copy of the request's context, for the SQL log).
+NEAREST_PARALLEL = int(os.environ.get("CHECK_NEAREST_PARALLEL", "4"))
+
+
+def _nearest_all(
+    vectors: list[list[float]], langs: list[str], topic: str | None, sizes: dict[str, int] | None
+) -> list[dict[str, list[dict]]]:
+    if len(vectors) < 2:
+        return [nearest(v, langs, topic, sizes) for v in vectors]
+    with ThreadPoolExecutor(max_workers=min(NEAREST_PARALLEL, len(vectors))) as pool:
+        futs = [pool.submit(contextvars.copy_context().run, nearest, v, langs, topic, sizes) for v in vectors]
+        return [f.result() for f in futs]
 
 
 def _evidence(r: dict, verdict, model: str, prompt_version: str) -> dict:
@@ -246,10 +262,8 @@ def run_check(
         claims = engine.split_claims(text)[:MAX_CLAIMS]
         vectors = embed_claims(engine, claims) if claims else []
         sizes = topic_sizes(topic) if topic and claims else None
-        judged_all = [
-            _judge_claim(engine, claim, nearest(vec, langs, topic, sizes))
-            for claim, vec in zip(claims, vectors, strict=True)
-        ]
+        near = _nearest_all(vectors, langs, topic, sizes)
+        judged_all = [_judge_claim(engine, claim, cands) for claim, cands in zip(claims, near, strict=True)]
     except GeminiError as e:
         raise ModelUnavailable(str(e)) from e
     run_id = run_id or new_run_id()
