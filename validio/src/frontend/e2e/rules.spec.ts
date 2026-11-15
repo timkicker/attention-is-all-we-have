@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { CODE, fresh, slop } from "./helpers";
 
-// Rules (builder B): Money, Diet and allergens, Substitutes, each value once;
+// Rules (builder B): Money, Diet and allergens, Product groups, Substitutes, each value once;
 // Edit is one form with one Save that asks the approval code once.
 
 const row = (page: Page, id: string) => page.locator(`#rule-${id}`);
@@ -38,6 +38,7 @@ test("the three blocks say each rule once, with no summary on top", async ({ pag
   await expect(row(page, "allowed")).toContainText("From Valio's list");
   await expect(row(page, "extra")).toContainText("Up to 5 %");
   await expect(row(page, "unlisted")).toContainText("Waiting for you");
+  await expect(row(page, "groups")).toContainText("All groups");
   // No sentence repeating them: the page holds 1,200.00 exactly once.
   expect((await page.locator("main").innerText()).match(/1,200\.00/g)).toHaveLength(1);
   expect(await slop(page)).toEqual([]);
@@ -132,6 +133,38 @@ test("a kitchen made here sets its first rules", async ({ page }) => {
   await expect(row(page, "waiting")).toContainText("Up to 3,000.00");
   await expect(row(page, "must")).toContainText("Vegan");
   await expect(row(page, "never")).toContainText("None");
+});
+
+test("product groups: all by default, narrowed to chosen groups by name, never none", async ({ page }) => {
+  await fresh(page);
+  await page.goto("/rules/edit");
+  await page.locator("#f-reach").getByRole("radio", { name: "Chosen groups" }).click();
+  await expect(page.locator("#group-174")).toHaveText("Fruit and vegetables");
+  await expect(page.getByTestId("rules-changes")).toHaveText("1 change, in Product groups");
+  // None chosen: said under the groups, nothing saved.
+  await page.getByTestId("code-input").fill(CODE);
+  await page.getByTestId("code-submit").click();
+  await expect(page.getByTestId("groups-problem")).toHaveText("Choose at least one group, or All groups.");
+  await expect(page).toHaveURL(/\/rules\/edit$/);
+
+  await page.locator("#group-174").click();
+  await page.locator("#group-106").click();
+  await expect(page.getByTestId("groups-problem")).toHaveCount(0);
+  await expect(page.locator("#row-reach")).toContainText("2 chosen");
+  await page.getByTestId("code-submit").click();
+  await expect(page).toHaveURL(/\/rules\?saved$/);
+  await expect(row(page, "groups")).toContainText("2 of 43 groups");
+  await expect(page.getByTestId("rule-group-names")).toHaveText(/Cheese\s*Fruit and vegetables/);
+  await expect(row(page, "other")).toContainText("Blocked");
+
+  // Back to all groups.
+  await page.goto("/rules/edit");
+  await expect(page.locator("#group-174")).toHaveAttribute("aria-pressed", "true");
+  await page.locator("#f-reach").getByRole("radio", { name: "All groups" }).click();
+  await page.getByTestId("code-input").fill(CODE);
+  await page.getByTestId("code-submit").click();
+  await expect(page).toHaveURL(/\/rules\?saved$/);
+  await expect(row(page, "groups")).toContainText("All groups");
 });
 
 test("phone: the fields sit under their labels and the page does not scroll sideways", async ({ page }) => {

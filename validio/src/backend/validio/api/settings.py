@@ -1,7 +1,8 @@
 """Rules and Settings for the web app (docs/ACCOUNTS-API.md, sections Rules and Settings).
 
 GET  /api/rules                  what the agent may do, read from Spend Pass M-1 as last signed, the diet included
-PUT  /api/rules                  money, substitutes and diet: one Save, one code, one new pass version, one entry
+PUT  /api/rules                  money, substitutes, diet and product groups: one Save, one code, one new pass
+                                 version, one entry
 GET  /api/settings               kitchen, diet, login
 PUT  /api/settings/kitchen       name and delivery address, no code; the customer number stays read only
 PUT  /api/settings/diet          like Rules: the code, then M-1 signed again (kept for the first web app)
@@ -23,9 +24,10 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request, Response
 from pydantic import Field, field_validator
 
+from ..catalog.groups import GROUPS, group_name, unknown
 from ..demo import seed
 from ..matching.need import CLAIM_NAMES
-from ..policy.mandate import NEVER_ALLERGENS, SUBSTITUTES_LISTED
+from ..policy.mandate import ALL_GROUPS, NEVER_ALLERGENS, SUBSTITUTES_LISTED
 from ..text.format import money
 from . import codes
 from .accounts import request_ctx
@@ -85,7 +87,16 @@ def _said(c: dict) -> list[tuple[str, str]]:
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none automatically"),
             ("Extra for a split", f"up to {pct:g} %" if pct else "none"),
             ("Per week", money(c["weekCapCents"]) if c.get("weekCapCents") is not None else "none"),
-            ("Never contains", " and ".join(sorted(c.get("neverContains") or ())) or "nothing ruled out")]
+            ("Never contains", " and ".join(sorted(c.get("neverContains") or ())) or "nothing ruled out"),
+            ("Product groups", groups_text(c.get("categories")))]
+
+
+def groups_text(categories) -> str:
+    """The signed product groups in words: "all groups", "Fruit and vegetables; Cheese", "none"."""
+    cats = list(categories or ())
+    if ALL_GROUPS in cats:
+        return "all groups"
+    return "; ".join(group_name(c) for c in sorted(cats)) or "none"
 
 
 def resign(ctx: Ctx, changes: dict, why: str) -> dict:
@@ -168,6 +179,21 @@ class DietOut(DietRules):
     options: DietOptions
 
 
+class GroupOption(Model):
+    code: str = Field(description="Valio's three-digit product group, the first digits of a product's category")
+    name: str
+
+
+class GroupRules(Model):
+    all: bool = Field(description="every product group; codes is then empty")
+    codes: list[str] = Field(default_factory=list, description="the groups the agent may buy from when all is "
+                             "false: three-digit codes from options")
+
+
+class GroupsOut(GroupRules):
+    options: list[GroupOption]
+
+
 class RulesOut(Model):
     alone_up_to_cents: int
     approval_up_to_cents: int
@@ -177,6 +203,7 @@ class RulesOut(Model):
     saved: bool
     pass_version: int
     diet: DietOut
+    groups: GroupsOut
 
 
 class RulesIn(Model):
@@ -188,6 +215,7 @@ class RulesIn(Model):
     per_week_cents: int | None = Field(None, ge=0, le=MAX_CENTS, description="all orders under the pass together; "
                                        "the two limits above always hold per order. null: no weekly limit")
     diet: DietRules | None = Field(None, description="left out: the diet stays as it is")
+    groups: GroupRules | None = Field(None, description="left out: the product groups stay as they are")
     code: str | None = Field(None, description="the 6 digit approval code, or the X-Approve-Code header")
 
 
@@ -207,6 +235,25 @@ def diet_claims(d: DietRules) -> dict:
     return {"diet": sorted({MUST_BE[w] for w in d.must_be}), "neverContains": sorted(set(d.never))}
 
 
+def groups_out(c: dict) -> GroupsOut:
+    cats = list(c.get("categories") or ())
+    every = ALL_GROUPS in cats
+    return GroupsOut(all=every, codes=[] if every else sorted(cats),
+                     options=[GroupOption(code=k, name=v) for k, v in GROUPS.items()])
+
+
+def group_claims(g: GroupRules) -> dict:
+    """The product groups as the pass's claim; 422 in plain words for a code Valio has no group for."""
+    if g.all:
+        return {"categories": [ALL_GROUPS]}
+    if bad := unknown(g.codes):
+        raise HTTPException(422, f"unknown product group {', '.join(repr(c) for c in bad)}: a group is a three-digit "
+                                 "code from the list, like 174 for fruit and vegetables")
+    if not g.codes:
+        raise HTTPException(422, "choose at least one product group, or all groups")
+    return {"categories": sorted(set(g.codes))}
+
+
 def _rules(ctx: Ctx) -> RulesOut:
     c = current_claims(ctx.db_path)
     split = c.get("split") or {}
@@ -214,7 +261,8 @@ def _rules(ctx: Ctx) -> RulesOut:
     subs = "off" if c.get("substitutes") != SUBSTITUTES_LISTED else "extra" if pct else "listed"
     return RulesOut(alone_up_to_cents=c["autoLimitCents"], approval_up_to_cents=c["hardCapCents"], substitutes=subs,
                     max_extra_pct=pct if subs == "extra" else 0, per_week_cents=c.get("weekCapCents"), saved=rules_saved(ctx.db_path),
-                    pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID), diet=diet_out(c))
+                    pass_version=seed.pass_version(ctx.db_path, seed.SPEND_PASS_ID), diet=diet_out(c),
+                    groups=groups_out(c))
 
 
 @router.get("/rules", response_model=RulesOut)
@@ -234,12 +282,13 @@ def put_rules(ctx: CtxDep, request: Request, body: RulesIn,
         raise HTTPException(422, f"per week {money(body.per_week_cents)} is below the approval limit "
                                  f"{money(body.approval_up_to_cents)}")
     diet = diet_claims(body.diet) if body.diet is not None else {}
+    groups = group_claims(body.groups) if body.groups is not None else {}
     check_code(ctx, request, "rules", x_approve_code, body)
     pct = body.max_extra_pct if body.substitutes == "extra" else 0
     resign(ctx, {"autoLimitCents": body.alone_up_to_cents, "hardCapCents": body.approval_up_to_cents,
                  "substitutes": "never" if body.substitutes == "off" else SUBSTITUTES_LISTED,
                  "split": {"maxExtraCostPct": pct, "allowListedSubstitutes": body.substitutes != "off"},
-                 "weekCapCents": body.per_week_cents, **diet},
+                 "weekCapCents": body.per_week_cents, **diet, **groups},
            "Rules changed")
     _put(ctx.db_path, {"rules_saved": "1"})
     return _rules(ctx)

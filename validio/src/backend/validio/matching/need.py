@@ -4,6 +4,7 @@ Nothing here makes a live call. Every product that drops out gets a reason a che
 """
 
 import re
+import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -34,6 +35,8 @@ class Need:
     # a product without the claim in Valio's data stays a candidate (its grade is unchecked, so Cedar sends it to
     # a person); only a product whose own data breaks it (kitchen_break) is screened out
     kitchen_claims: set[str] = field(default_factory=set)
+    # the pack a count of packs names, in kilos or litres: "10 packs of bananas 4.5 kg" is (4.5, "KG")
+    pack: tuple[float, str] | None = None
 
     @property
     def strict_claims(self) -> set[str]:
@@ -62,6 +65,8 @@ class Kind:
     net: tuple[str, ...]  # category prefixes searched, wider than categories so look-alikes show
     off: str | None = None  # names that match the word but are another product
     off_name: str | None = None  # what those are, when OFF_NAMES does not fit this kind
+    # a catalogue word: the name must hold it as a word of its own, maybe plural ("bananas", not "bananaleaves")
+    whole: bool = False
 
 
 # flavours: a plain drink asked for, these are another product
@@ -116,23 +121,87 @@ def kind_of(name: str, unit: str = "PCS") -> Kind:
     return KINDS.get(name) or GENERIC.get(name) or Kind((name,), unit, None, ("",))
 
 
+def fold(name: str) -> str:
+    """A name lowercased without accents, so "puree" finds "purée"."""
+    return "".join(c for c in unicodedata.normalize("NFKD", (name or "").lower()) if not unicodedata.combining(c))
+
+
+# a product word that only flavours or goes into another product: joined to another word ("strawberry-banana",
+# "peach & banana", "with butter"), or in the name of something processed ("banana yoghurt", "apple juice",
+# "tomato puree", baby food). Counting where a word is densest counts the products that are the thing itself.
+PROCESSED = re.compile(
+    r"g(?:h)?urt|\b(?:puree|juice|jam|marmalade|jelly|compote|smoothie|shake|drink|kefir|soup|sauce|salsa|syrup"
+    r"|porridge|gruel|baby ?food|months?|mth|flavou?r(?:ed)?|chips?|crisps?|bars?|bites?|biscuits?|cookies?"
+    r"|cakes?|pies?|muffins?|crackers?|concentrate|nectar|powder|tea|candy|dried|crushed|peeled|chopped|pickled"
+    r"|passata|paste|ice cream|sorbet|beverage|lemonade|soda|cider|in (?:oil|brine|syrup|water|sauce)"
+    r"|napkins?|soap|candles?|wipes?|towels?|bags?)\b")  # the last: a colour or a scent
+
+
+def _joined(word: str) -> re.Pattern:
+    w = re.escape(word)
+    return re.compile(rf"[-&+/]\s*{w}|\b{w}[a-z]*\s*[-&+/]|\b(?:and|with) {w}|\b{w}[a-z]* and\b")
+
+
+def as_itself(word: str, name: str) -> bool:
+    """The name is the product the word names, not a product it only flavours or goes into. The word's own
+    words do not count: "apple juice" is itself in "Apple juice 1 l"."""
+    name = fold(name)
+    return not PROCESSED.search(name.replace(word, " ")) and not _joined(word).search(name)
+
+
+# Valio's fruit and vegetables: fresh produce is named by the word itself ("BANANA 4.5KG", "APPLE GOLDEN 13KG")
+FRESH_PRODUCE = "174"
+
+
+def _heads(word: str, name: str) -> bool:
+    """The name starts with the word as a word of its own, maybe plural, after a count: "BANANA 4.5KG", not
+    "BANANALEAVES" or "EGGPLANT"."""
+    return re.match(rf"(?:\d+ ?x ?)?{re.escape(word)}(?:e?s)?\b", fold(name).strip()) is not None
+
+
 def _generic(word: str, cat: Catalog) -> Kind | None:
     """Products whose name holds the word at a word start, kept to the top level categories where the word is
     densest, at least half the densest share: "butter" stays with the fats (32 of 200) and leaves the frozen
-    bakery (44 of 1,000 and more, croissants with butter), "oat drink" stays a drink."""
+    bakery (44 of 1,000 and more, croissants with butter), "oat drink" stays a drink.
+
+    Only the products that are the thing itself count when there are any (as_itself): "banana" is the fresh
+    fruit (7 of 901 in fruit and vegetables), not the baby food purées that name it (7 of 54)."""
     rx = re.compile(rf"\b{re.escape(word)}")
-    hits = [p for p in cat.search(text=word, limit=5000) if rx.search((p.name_en or "").lower())]
+    hits = [p for p in cat.search(text=word, limit=5000) if rx.search(fold(p.name_en))]
     if not hits:
         return None
     if word in HINTS:
         return HINTS[word]
-    counts = Counter(p.category[:3] for p in hits)
     sizes = cat.group_sizes()
-    share = {c: n / max(sizes.get(c, n), 1) for c, n in counts.items() if n >= 2}
-    if not share:  # a word with one product per group: where most of them are
-        return Kind((word,), "PCS", None, (counts.most_common(1)[0][0],))
-    top = max(share.values())
-    return Kind((word,), "PCS", None, tuple(sorted(c for c, s in share.items() if 2 * s >= top)))
+
+    def densest(ps: list[Product]) -> tuple[str, ...] | None:
+        counts = Counter(p.category[:3] for p in ps)
+        share = {c: n / max(sizes.get(c, n), 1) for c, n in counts.items() if n >= 2}
+        if not share:
+            return None
+        top = max(share.values())
+        return tuple(sorted(c for c, s in share.items() if 2 * s >= top))
+
+    itself = [p for p in hits if as_itself(word, p.name_en)]
+    # a produce word: Valio names at least two fresh products by the word ("BANANA KG GT/CR", "APPLE GOLDEN 13KG"),
+    # and no other group names more of its products that way, so frozen, canned or flavoured ones stay out
+    heads = Counter(p.category[:3] for p in itself if _heads(word, p.name_en))
+    if heads[FRESH_PRODUCE] >= 2 and heads[FRESH_PRODUCE] >= max(
+            (n for c, n in heads.items() if c != FRESH_PRODUCE), default=0):
+        return Kind((word,), "PCS", None, (FRESH_PRODUCE,), whole=True)
+    net = densest(itself) or densest(hits)
+    if net is None:  # a word with one product per group: where most of them are
+        net = (Counter(p.category[:3] for p in hits).most_common(1)[0][0],)
+    return Kind((word,), "PCS", None, net, whole=True)
+
+
+def _singular(w: str) -> list[str]:
+    """"tomatoes" gives "tomato", "berries" "berry", "bananas" "banana"."""
+    if w.endswith("ies"):
+        return [w[:-3] + "y"]
+    if w.endswith("oes"):
+        return [w[:-2]]
+    return [w[:-1]] if w.endswith("s") else []
 
 
 def _product_word(t: str, cat: Catalog) -> str | None:
@@ -143,7 +212,7 @@ def _product_word(t: str, cat: Catalog) -> str | None:
     for i, w in enumerate(words):
         nxt = words[i + 1] if i + 1 < len(words) else None
         tries = [f"{w} {n}" for n in ((nxt[:-1], nxt) if nxt and nxt.endswith("s") else (nxt,)) if n]
-        tries += [w[:-1], w] if w.endswith("s") else [w]  # the singular finds both
+        tries += [*_singular(w), w]  # the singular finds both
         for form in tries:
             if form in GENERIC:
                 return form
@@ -193,6 +262,12 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
         raise ValueError(f"the quantity in {text!r} is not more than zero")
     if quantity.is_integer():
         quantity = int(quantity)
+    pack = None
+    if unit == "PCS":  # "10 packs of bananas 4.5 kg": ten packs of 4.5 kg each
+        rest = re.sub(r"budget.*$", "", t[m.end():])
+        if s := re.search(NUMBER + r"\s*(kg|g|l|dl|cl|ml)\b", rest):
+            size = number(s.group(1)) * {**_TO_KG, **_TO_L}[s.group(2)]
+            pack = (size, "KG" if s.group(2) in _TO_KG else "L") if size > 0 else None
     kind = next((k for k in KINDS if any(starts_word(w, t) for w in KINDS[k].words)), None)
     if kind is None and cat is not None:
         kind = _product_word(t, cat)
@@ -214,7 +289,7 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
     budget = None
     if b := re.search(r"budget\s*(?:of\s*)?" + NUMBER + r"\s*(?:€|eur|euro)", t):
         budget = round(number(b.group(1)) * 100)
-    return Need(kind, quantity, unit, required, excluded, deliver_by, budget, text=text)
+    return Need(kind, quantity, unit, required, excluded, deliver_by, budget, text=text, pack=pack)
 
 
 def _per_sales_unit(p: Product) -> float | None:
@@ -275,8 +350,10 @@ def amount_per_sales_unit(need: Need, p: Product, q: Quote | None = None) -> tup
 def _in_net(need: Need, p: Product) -> bool:
     kind = kind_of(need.kind, need.unit)
     name = (p.name_en or "").lower()
-    if not any(w in name for w in kind.words):
+    if not any(w in name for w in kind.words) and not (kind.whole and any(w in fold(name) for w in kind.words)):
         return False
+    if kind.whole and not any(re.search(rf"\b{re.escape(w)}(?:e?s)?\b", fold(name)) for w in kind.words):
+        return False  # "banana" is not in "bananaleaves"
     if not any(p.category.startswith(c) for c in kind.net):
         return False
     for claim in need.strict_claims:
@@ -329,6 +406,12 @@ def static_reasons(need: Need, p: Product) -> list[str]:
     return reasons
 
 
+def _pack_fits(pack: tuple[float, str], p: Product) -> bool:
+    size, unit = pack
+    per = (kg_per_sales_unit if unit == "KG" else litres_per_sales_unit)(p)[0]
+    return per is not None and abs(per - size) <= AGREE * size
+
+
 def diet_open_count(need: Need, p: Product) -> int:
     """How many of the kitchen-wide diets Valio's data has no claim for."""
     return sum(claim_check(p, c)[0] == TrustLevel.MISSING for c in need.kitchen_claims)
@@ -360,6 +443,11 @@ def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tupl
             dropped.append(Ranked(p, None, None, False, reasons))
         else:
             kept.append(p)
+    if need.pack and (fits := [p for p in kept if _pack_fits(need.pack, p)]):
+        # the request names its pack and Valio has it: the other packs drop out, said why
+        size = qty_text(need.pack[0], need.pack[1])
+        dropped += [Ranked(p, None, None, False, [f"Not the {size} pack asked for"]) for p in kept if p not in fits]
+        kept = fits
     # products Valio's data does not confirm the kitchen's diet for come after those it does
     kept.sort(key=lambda p: (diet_open_count(need, p), p.reliability is None, -(p.reliability or 0),
                              -(amount_per_sales_unit(need, p)[0] or 0), p.id))

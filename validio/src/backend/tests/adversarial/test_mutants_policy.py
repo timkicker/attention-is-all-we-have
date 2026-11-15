@@ -25,7 +25,7 @@ from .test_mutants_matching import prod
 
 NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")
 LF = "FREE_FROM_LACTOSE"
-M1 = _mandate(dict(DEMO_CLAIMS))
+M1 = _mandate({**DEMO_CLAIMS, "categories": ["104", "106", "418"]})  # narrowed, so "999" is outside
 OK = {LF: TrustLevel.CONSISTENT}
 
 

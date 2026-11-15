@@ -4,9 +4,9 @@
 
 import { ApiError } from "./error";
 import { session } from "../owner.svelte";
-import type { AgentState, Rules, RulesDiet, RulesIn } from "./types";
+import type { AgentState, Rules, RulesDiet, RulesGroups, RulesIn } from "./types";
 
-export type { AgentState, Rules, RulesDiet, RulesIn };
+export type { AgentState, Rules, RulesDiet, RulesGroups, RulesIn };
 export type Substitutes = Rules["substitutes"];
 
 const LIVE = import.meta.env.VITE_API === "live";
@@ -66,13 +66,61 @@ const DIET_OPTIONS: RulesDiet["options"] = {
   never: ["milk", "eggs", "gluten", "nuts", "peanuts", "soy", "fish", "crustaceans", "molluscs", "sesame", "celery", "mustard", "lupin", "sulphites"],
 };
 
+// As the server lists them (catalog/groups.py): Valio's 43 product groups, named from their products.
+const GROUP_OPTIONS: RulesGroups["options"] = [
+  { code: "104", name: "Milk and dairy drinks" },
+  { code: "105", name: "Butter, oils and eggs" },
+  { code: "106", name: "Cheese" },
+  { code: "109", name: "Bread" },
+  { code: "110", name: "Sweet pastries and cakes" },
+  { code: "172", name: "Cold cuts and sausages" },
+  { code: "173", name: "Ready meals and salads" },
+  { code: "174", name: "Fruit and vegetables" },
+  { code: "187", name: "Meat and fish" },
+  { code: "200", name: "Kitchenware and tableware" },
+  { code: "211", name: "Biscuits and snack bars" },
+  { code: "212", name: "Crispbread" },
+  { code: "213", name: "Flour, rice and pasta" },
+  { code: "214", name: "Jams, juices and nuts" },
+  { code: "215", name: "Tinned and pickled food" },
+  { code: "216", name: "Baby food" },
+  { code: "219", name: "Sauces, dressings and stock" },
+  { code: "221", name: "Sugar, honey and syrups" },
+  { code: "223", name: "Ground coffee" },
+  { code: "224", name: "Coffee beans and coffee drinks" },
+  { code: "225", name: "Tea and cocoa" },
+  { code: "226", name: "Spices and baking" },
+  { code: "227", name: "Soft drinks and water" },
+  { code: "300", name: "Garden and pest control" },
+  { code: "329", name: "Matches and lighters" },
+  { code: "417", name: "Frozen food" },
+  { code: "418", name: "Ice cream and frozen desserts" },
+  { code: "522", name: "Sweets and chocolate" },
+  { code: "630", name: "Hygiene and first aid" },
+  { code: "631", name: "Cleaning and laundry" },
+  { code: "632", name: "Napkins and paper towels" },
+  { code: "633", name: "Workwear" },
+  { code: "639", name: "Kitchen appliances" },
+  { code: "640", name: "Take-away packaging" },
+  { code: "641", name: "Charcoal and outdoor" },
+  { code: "643", name: "Household and batteries" },
+  { code: "645", name: "Gift boxes and wrapping" },
+  { code: "677", name: "Newspapers" },
+  { code: "678", name: "Party decorations" },
+  { code: "777", name: "Drink gases" },
+  { code: "849", name: "Alcohol-free beer and cider" },
+  { code: "850", name: "Alcohol-free beer and wine" },
+  { code: "900", name: "Office supplies" },
+];
+const ALL_GROUPS: RulesGroups = { all: true, codes: [], options: GROUP_OPTIONS };
+
 // A fresh demo copy as the server makes it: rules saved (api/settings.DEMO_RULES), no
 // agent yet; an MCP agent connects itself. A kitchen made here: nothing saved, no agent.
 function start(): Mock {
   if (!session.account?.isDemo)
     return {
       agent: { state: "none", versions: [] },
-      rules: { aloneUpToCents: 0, approvalUpToCents: 0, perWeekCents: null, substitutes: "off", maxExtraPct: 0, saved: false, passVersion: 0, diet: { mustBe: [], never: [], options: DIET_OPTIONS } },
+      rules: { aloneUpToCents: 0, approvalUpToCents: 0, perWeekCents: null, substitutes: "off", maxExtraPct: 0, saved: false, passVersion: 0, diet: { mustBe: [], never: [], options: DIET_OPTIONS }, groups: ALL_GROUPS },
       wrong: 0,
     };
   return {
@@ -92,6 +140,7 @@ function start(): Mock {
       saved: true,
       passVersion: 2,
       diet: { mustBe: ["lactose-free"], never: [], options: DIET_OPTIONS },
+      groups: ALL_GROUPS,
     },
     wrong: 0,
   };
@@ -102,7 +151,11 @@ const memory: Record<string, Mock> = {};
 function load(): Mock {
   try {
     const raw = localStorage.getItem(key());
-    if (raw) return JSON.parse(raw) as Mock;
+    if (raw) {
+      const m = JSON.parse(raw) as Mock;
+      m.rules.groups ??= ALL_GROUPS; // kept before product groups were in the Rules
+      return m;
+    }
   } catch {
     // no storage: keep it in memory
   }
@@ -238,9 +291,17 @@ const mock = {
       const bad = [...body.diet.mustBe.filter((w) => !DIET_OPTIONS.mustBe.includes(w)), ...body.diet.never.filter((w) => !DIET_OPTIONS.never.includes(w))];
       if (bad.length) throw new ApiError(422, `unknown diet word ${bad.map((w) => `'${w}'`).join(", ")}`);
     }
+    if (body.groups && !body.groups.all) {
+      const bad = body.groups.codes.filter((c) => !GROUP_OPTIONS.some((o) => o.code === c));
+      if (bad.length) throw new ApiError(422, `unknown product group ${bad.map((c) => `'${c}'`).join(", ")}: a group is a three-digit code from the list, like 174 for fruit and vegetables`);
+      if (!body.groups.codes.length) throw new ApiError(422, "choose at least one product group, or all groups");
+    }
     m.wrong = 0;
     const diet = body.diet ? { ...body.diet, options: m.rules.diet?.options ?? DIET_OPTIONS } : m.rules.diet;
-    m.rules = { ...m.rules, ...body, diet, saved: true };
+    const groups = body.groups
+      ? { all: body.groups.all, codes: body.groups.all ? [] : [...new Set(body.groups.codes)].sort(), options: GROUP_OPTIONS }
+      : (m.rules.groups ?? ALL_GROUPS);
+    m.rules = { ...m.rules, ...body, diet, groups, saved: true };
     delete (m.rules as Partial<RulesIn>).code;
     bumpVersion(m, "Rules changed");
     store(m);

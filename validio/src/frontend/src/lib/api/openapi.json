@@ -1078,6 +1078,77 @@
         "title": "FactView",
         "type": "object"
       },
+      "GroupOption": {
+        "properties": {
+          "code": {
+            "description": "Valio's three-digit product group, the first digits of a product's category",
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ],
+        "title": "GroupOption",
+        "type": "object"
+      },
+      "GroupRules": {
+        "properties": {
+          "all": {
+            "description": "every product group; codes is then empty",
+            "title": "All",
+            "type": "boolean"
+          },
+          "codes": {
+            "description": "the groups the agent may buy from when all is false: three-digit codes from options",
+            "items": {
+              "type": "string"
+            },
+            "title": "Codes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "all"
+        ],
+        "title": "GroupRules",
+        "type": "object"
+      },
+      "GroupsOut": {
+        "properties": {
+          "all": {
+            "description": "every product group; codes is then empty",
+            "title": "All",
+            "type": "boolean"
+          },
+          "codes": {
+            "description": "the groups the agent may buy from when all is false: three-digit codes from options",
+            "items": {
+              "type": "string"
+            },
+            "title": "Codes",
+            "type": "array"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/GroupOption"
+            },
+            "title": "Options",
+            "type": "array"
+          }
+        },
+        "required": [
+          "all",
+          "options"
+        ],
+        "title": "GroupsOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -3020,6 +3091,17 @@
             ],
             "description": "left out: the diet stays as it is"
           },
+          "groups": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GroupRules"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "left out: the product groups stay as they are"
+          },
           "maxExtraPct": {
             "default": 0,
             "description": "only with substitutes 'extra'",
@@ -3074,6 +3156,9 @@
           "diet": {
             "$ref": "#/components/schemas/DietOut"
           },
+          "groups": {
+            "$ref": "#/components/schemas/GroupsOut"
+          },
           "maxExtraPct": {
             "title": "Maxextrapct",
             "type": "integer"
@@ -3115,7 +3200,8 @@
           "perWeekCents",
           "saved",
           "passVersion",
-          "diet"
+          "diet",
+          "groups"
         ],
         "title": "RulesOut",
         "type": "object"

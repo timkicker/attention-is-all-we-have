@@ -58,7 +58,7 @@ class Invented:
 
 @pytest.fixture(scope="module")
 def mandate():
-    """M-1 with fresh produce, baby food and cheese among its product groups, so only the diet decides."""
+    """M-1 as seeded: every product group, so only the diet decides."""
     from jwcrypto.jwk import JWK
 
     from validio.policy.mandate import (
@@ -71,7 +71,7 @@ def mandate():
         verify_presentation,
     )
 
-    claims = {**DEMO_CLAIMS, "categories": [*DEMO_CLAIMS["categories"], "174", "216"]}
+    claims = dict(DEMO_CLAIMS)
     kitchen, agent = JWK.generate(kty="EC", crv="P-256"), JWK.generate(kty="EC", crv="P-256")
     nonces = NonceStore()
     token = present(issue_mandate(claims, DEMO_SD_FIELDS, kitchen, agent), {"autoLimitCents", "hardCapCents", "diet"},

@@ -56,7 +56,7 @@ A wrong or expired code gets a 404, and five wrong codes end the pairing. `statu
 
 ## Spend Pass
 
-The Spend Pass is the kitchen's signed permission to spend. It is an SD-JWT issued by `kitchen:hotel-espoo` and bound to the agent's own P-256 key through its `cnf` claim, so a stolen pass is useless without that key. Pass M-1 of the demo allows 1200.00 EUR per order without a person, never more than 2000.00 EUR, only lactose-free products from three product groups and delivery by 16 November. It is valid from 14 November 10:00 to 17 November 00:00 Helsinki time.
+The Spend Pass is the kitchen's signed permission to spend. It is an SD-JWT issued by `kitchen:hotel-espoo` and bound to the agent's own P-256 key through its `cnf` claim, so a stolen pass is useless without that key. Pass M-1 of the demo allows 1200.00 EUR per order without a person, never more than 2000.00 EUR, lactose-free products from every product group (the owner can narrow the groups on Rules; a product outside them is blocked) and delivery by 16 November. It is valid from 14 November 10:00 to 17 November 00:00 Helsinki time.
 
 On this demo `make seed` plays the kitchen. It issues M-1 to the public key in `data/keys/agent-es256.json` and creates that key when there is none. To bind the pass to your own agent, put your private P-256 key there as a JWK before `make seed`. Then print the pass from `src/backend`:
 

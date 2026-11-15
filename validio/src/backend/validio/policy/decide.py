@@ -19,7 +19,7 @@ from typing import Any
 import cedarpy
 
 from validio.audit.sentences import eur
-from validio.policy.mandate import NEVER_ALLERGENS, SUBSTITUTES_LISTED, Mandate, effective_deadline
+from validio.policy.mandate import NEVER_ALLERGENS, SUBSTITUTES_LISTED, Mandate, effective_deadline, in_groups
 from validio.text.format import and_list
 
 HERE = Path(__file__).resolve().parent
@@ -130,7 +130,7 @@ def build_context(
         is_split=split_base_cents is not None,
         split_extra_bp=split_extra_bp,
         split_max_extra_bp=mandate.split_max_extra_bp,
-        category_allowed=any(category.startswith(c) for c in mandate.categories),
+        category_allowed=in_groups(mandate.categories, category),
         sales_block=sales_block,
         is_renewal=is_renewal,
         drift_flag=drift_flag,

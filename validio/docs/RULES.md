@@ -42,7 +42,7 @@ Money is in whole cents. Percentages are in basis points, so 5 % is 500.
 | `isSplit` | the line is filled from more than one product | Split Fill |
 | `splitExtraBp` | how much more the split costs than the product asked for | Split Fill, rounded up |
 | `splitMaxExtraBp` | the extra cost the Spend Pass allows for a split | Spend Pass |
-| `categoryAllowed` | the product group is one the Spend Pass lists | product file and Spend Pass |
+| `categoryAllowed` | the product group is one the Spend Pass lists, or the pass lists all groups (`"categories": ["*"]`, the default); an empty or missing list allows none. The owner narrows the groups on Rules | product file and Spend Pass |
 | `salesBlock` | Valio blocks the product from sale | availability answer |
 | `isRenewal` | the line comes from a Steady Order | Steady Orders |
 | `driftFlag` | Drift Watch flagged the line before renewal | Drift Watch |
