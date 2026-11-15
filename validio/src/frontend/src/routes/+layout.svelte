@@ -58,13 +58,25 @@
   // direction of travel; band, dock and demo strip stand still; a clicked row's title travels
   // into the next heading. A filter (same path) is not a page move.
   const depth = (p: string) => p.split("/").filter(Boolean).length;
+  // The tabs in their order on screen: moving right, the new page comes in from the right.
+  const TAB_ORDER = ["/", "/activity", "/rules", "/agent", "/settings"];
+  const tabOf = (p: string) => {
+    const top = "/" + (p.split("/").filter(Boolean)[0] ?? "");
+    return TAB_ORDER.indexOf(top);
+  };
   onNavigate((nav) => {
     const doc = document as Document & { startViewTransition?: (cb: () => Promise<void>) => { finished: Promise<void> } };
     if (!doc.startViewTransition || reduced() || !nav.to || !nav.from) return;
     if (nav.from.url.pathname === nav.to.url.pathname) return;
     const a = depth(nav.from.url.pathname);
     const b = depth(nav.to.url.pathname);
-    document.documentElement.dataset.navDir = b > a ? "deeper" : b < a ? "up" : "across";
+    const ta = tabOf(nav.from.url.pathname);
+    const tb = tabOf(nav.to.url.pathname);
+    // Between tabs the content slides the way the tab bar moved; inside a tab, deeper or up.
+    document.documentElement.dataset.navDir =
+      ta !== tb && ta !== -1 && tb !== -1 ? (tb > ta ? "next" : "prev") : b > a ? "deeper" : b < a ? "up" : "across";
+    // Home brings its own slow entrance: the page change under it is only a fade.
+    if (nav.to.url.pathname === "/") document.documentElement.dataset.navTo = "home";
     return new Promise<void>((resolve) => {
       const t = doc.startViewTransition!(async () => {
         resolve();
@@ -73,6 +85,7 @@
       t.finished.finally(() => {
         morph.id = "";
         delete document.documentElement.dataset.navDir;
+        delete document.documentElement.dataset.navTo;
       });
     });
   });

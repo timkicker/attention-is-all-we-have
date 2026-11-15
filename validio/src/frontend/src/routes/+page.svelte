@@ -8,6 +8,7 @@
   /// Motion (plans/005, 009, 019): rows the agent adds slide in and glow; figures roll when they
   /// change; the week bar fills; a step done while watching draws its check; finishing setup
   /// while watching brings the figures in as one wave. Nothing moves on a plain visit.
+  import { onDestroy } from "svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { agentApi } from "$lib/api/agent";
   import { api } from "$lib/api/client";
@@ -87,13 +88,26 @@
     if (doneBefore) for (const id of now) if (!doneBefore.has(id)) justDone.add(id);
     doneBefore = now;
   });
-  const wave = (delay: number, y: number, duration: number) => (celebrate ? { y, duration, delay } : { y: 0, duration: 0 });
+
+  // Every time Home appears, its parts come in slowly, top to bottom, as one wave (the CSS
+  // below). The class stays only for that first wave: rows the agent adds later keep their own
+  // arrival (LiveRows), and a poll never replays it.
+  let entering = $state(true);
+  let waveStarted = false;
+  let waveTimer: ReturnType<typeof setTimeout> | undefined;
+  $effect(() => {
+    if (!home.data || waveStarted) return;
+    waveStarted = true;
+    waveTimer = setTimeout(() => (entering = false), 1900);
+  });
+  onDestroy(() => clearTimeout(waveTimer));
 </script>
 
 {#snippet lead()}
   <span data-testid="home-lead">Three steps until your agent orders for {session.account?.name}</span>
 {/snippet}
 
+<div class="home" class:entering>
 <PageHead title="Home" facts={first && session.account ? lead : undefined}>
   {#if home.data && !first}
     {@const h = home.data}
@@ -106,7 +120,7 @@
   {/if}
 </PageHead>
 
-<div class="blocks" class:v-arrive={home.arrive && !celebrate}>
+<div class="blocks">
   {#if home.error && !home.data}
     <LoadError detail={home.error} />
   {:else if !home.data}
@@ -149,7 +163,7 @@
         </p>
       {/if}
       <div class="figs" data-testid="home-status">
-        <div class="fig" data-testid="home-week" in:rise={wave(60, 10, 420)}>
+        <div class="fig" data-testid="home-week">
           <span class="f-num num"><Ticker text={nb(money(h.week.usedCents))} value={h.week.usedCents} /></span>
           <span class="f-cap" id="week-label">spent this week{#if h.week.capCents != null}, of <span class="num">{nb(money(h.week.capCents))}</span>{/if}</span>
           {#if weekPct != null}
@@ -158,12 +172,12 @@
             </div>
           {/if}
         </div>
-        <div class="fig" in:rise={wave(130, 6, 360)}>
+        <div class="fig">
           <span class="f-num num" class:wait={h.needsYou.length > 0}><Ticker text={String(h.needsYou.length)} value={h.needsYou.length} /></span>
           <span class="f-cap">waiting for you</span>
         </div>
         {#if alone != null}
-          <a class="fig end" href="/rules" data-testid="home-alone" in:rise={wave(180, 0, 300)}>
+          <a class="fig end" href="/rules" data-testid="home-alone">
             <span class="f-num num">{nb(money(alone))}</span>
             <span class="f-cap">ordered alone, at most</span>
           </a>
@@ -201,6 +215,7 @@
       </ListSection>
     {/if}
   {/if}
+</div>
 </div>
 
 <style>
@@ -349,9 +364,116 @@
     transform-origin: left center;
     transition: transform var(--v-dur-moment) var(--v-ease-out);
   }
-  @starting-style {
-    .wk-fill {
+
+  /* ---------- Home's entrance: slow, top to bottom, one wave ----------
+     Each part fades in while it rises 16 px, over 800 ms on the strong ease-out. The gaps
+     shrink as the page goes down (110, 90, 70, 60 ... ms), so it reads as a wave, not a
+     metronome. Nothing waits for it: every part is clickable from the first frame. */
+  .entering :global(.head h1),
+  .entering :global(.head .facts),
+  .entering .lead,
+  .entering .v-set,
+  .entering .fig,
+  .entering .step,
+  .entering :global(.ls-head),
+  .entering :global(.section-card),
+  .entering :global(.lr) {
+    animation: v-home-in 800ms var(--v-ease-out) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .entering :global(.section-card) {
+    --d: 0ms;
+    animation-name: v-home-line;
+  }
+  .entering :global(.head h1) {
+    --d: 0ms;
+  }
+  .entering :global(.head .facts),
+  .entering .lead {
+    --d: 110ms;
+  }
+  .entering .v-set {
+    --d: 160ms;
+  }
+  .entering .step:nth-child(1),
+  .entering .fig:nth-child(1) {
+    --d: 200ms;
+  }
+  .entering .step:nth-child(2),
+  .entering .fig:nth-child(2) {
+    --d: 290ms;
+  }
+  .entering .step:nth-child(3),
+  .entering .fig:nth-child(3) {
+    --d: 360ms;
+  }
+  .entering :global([data-testid="section-needs"] .ls-head) {
+    --d: 420ms;
+  }
+  .entering :global([data-testid="section-needs"] .lr:nth-child(1)) {
+    --d: 480ms;
+  }
+  .entering :global([data-testid="section-needs"] .lr:nth-child(n + 2)) {
+    --d: 530ms;
+  }
+  .entering :global([data-testid="section-latest"] .ls-head) {
+    --d: 560ms;
+  }
+  .entering :global([data-testid="section-latest"] .lr:nth-child(1)) {
+    --d: 620ms;
+  }
+  .entering :global([data-testid="section-latest"] .lr:nth-child(2)) {
+    --d: 670ms;
+  }
+  .entering :global([data-testid="section-latest"] .lr:nth-child(3)) {
+    --d: 710ms;
+  }
+  .entering :global([data-testid="section-latest"] .lr:nth-child(4)) {
+    --d: 740ms;
+  }
+  .entering :global([data-testid="section-latest"] .lr:nth-child(n + 5)) {
+    --d: 760ms;
+  }
+  /* The rule over a list draws from the left instead of rising. */
+  .entering :global([data-testid="section-needs"] .section-card) {
+    --d: 420ms;
+  }
+  .entering :global([data-testid="section-latest"] .section-card) {
+    --d: 560ms;
+  }
+  /* The week bar fills from empty once the figure above it has landed. */
+  .entering .wk-fill {
+    animation: v-wk 1000ms var(--v-ease-out) 450ms backwards;
+  }
+  @keyframes v-home-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  @keyframes v-home-line {
+    from {
+      border-top-color: transparent;
+    }
+  }
+  @keyframes v-wk {
+    from {
       transform: scaleX(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .entering :global(.head h1),
+    .entering :global(.head .facts),
+    .entering .lead,
+    .entering .v-set,
+    .entering .fig,
+    .entering .step,
+    .entering :global(.ls-head),
+    .entering :global(.section-card),
+    .entering :global(.lr),
+    .entering .wk-fill {
+      animation: v-fade-in 200ms linear both;
+      animation-delay: 0ms;
     }
   }
 

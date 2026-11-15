@@ -1098,15 +1098,24 @@ textarea {
   caret-color: var(--valio);
 }
 
-/* ---------- page transitions (plans/003) ---------- */
+/* ---------- page transitions (plans/003) ----------
+   Slow and soft: the old page drifts half the distance away and fades under a 4 px blur;
+   the new one starts a beat later, slides the full distance in and sharpens. The blur hides
+   the moment both are on screen. Between tabs the slide follows the tab order. */
 .v-main .wrap {
   view-transition-name: v-page;
 }
 :root[data-nav-dir="deeper"] {
-  --v-page-dx: 12px;
+  --v-page-dx: 24px;
 }
 :root[data-nav-dir="up"] {
-  --v-page-dx: -12px;
+  --v-page-dx: -24px;
+}
+:root[data-nav-dir="next"] {
+  --v-page-dx: 40px;
+}
+:root[data-nav-dir="prev"] {
+  --v-page-dx: -40px;
 }
 :root[data-nav-dir="across"] {
   --v-page-dx: 0px;
@@ -1128,25 +1137,32 @@ textarea {
   animation: none;
 }
 ::view-transition-group(v-page) {
-  animation-duration: 200ms;
+  animation-duration: 620ms;
   animation-timing-function: var(--v-ease-out);
 }
 ::view-transition-old(v-page) {
-  animation: v-page-out 140ms var(--v-ease-out) both;
+  animation: v-page-out 320ms var(--v-ease-out) both;
 }
 ::view-transition-new(v-page) {
-  animation: v-page-in 200ms var(--v-ease-out) both;
+  animation: v-page-in 620ms var(--v-ease-out) 90ms both;
 }
 @keyframes v-page-out {
   to {
     opacity: 0;
+    transform: translateX(calc(var(--v-page-dx, 0px) * -0.5));
+    filter: blur(4px);
   }
 }
 @keyframes v-page-in {
   from {
     opacity: 0;
     transform: translateX(var(--v-page-dx, 0px));
+    filter: blur(4px);
   }
+}
+/* To Home: Home rises in part by part on its own, so the page itself only fades. */
+:root[data-nav-to="home"]::view-transition-new(v-page) {
+  animation: v-fade-in 240ms var(--v-ease-out) both;
 }
 /* The clicked row's title travels into the detail's heading: movement on screen. */
 ::view-transition-group(v-title) {

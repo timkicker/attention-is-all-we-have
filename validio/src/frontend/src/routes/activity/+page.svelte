@@ -12,6 +12,7 @@
   import { api } from "$lib/api/client";
   import type { ActivityFilter, ActivityItem } from "$lib/api/types";
   import { fold } from "$lib/v2/format";
+  import { easeOut, reduced } from "$lib/motion";
   import { ActivityRow, byDay, Empty, FILTERS, isFilter, ListSection, live, LiveRows, Loading, LoadError, PageHead } from "$lib/v2";
 
   const status = $derived.by((): ActivityFilter => {
@@ -73,6 +74,13 @@
     if (!inkReady) requestAnimationFrame(() => requestAnimationFrame(() => (inkReady = true)));
   });
 
+  // A new filter's list comes in slowly: it sharpens out of a 3 px blur while it rises 12 px.
+  // Typing in Find changes the list too, but never animates (a keyboard action).
+  const listIn = (_n: Element) =>
+    reduced()
+      ? { duration: 160, css: (t: number) => `opacity:${t}` }
+      : { duration: 520, easing: easeOut, css: (t: number, u: number) => `opacity:${t};transform:translateY(${u * 12}px);filter:blur(${u * 3}px)` };
+
   // A day head is "stuck" under the band: it gains its hairline (plans/022).
   function stick(node: HTMLElement) {
     const head = node.nextElementSibling as HTMLElement | null;
@@ -130,8 +138,11 @@
   {:else if query && !shown.length}
     <Empty title="Nothing matches" detail="Try another word" />
   {:else}
-    <!-- A new filter or a new word is a new list: it is simply there, nothing folds per row. -->
-    {#key `${status}|${query}`}
+    <!-- A new filter is a new list: it comes in as one. A new word in Find is simply there. -->
+    <!-- Keyed on the filter the shown rows belong to, so it plays when they arrive, not before. -->
+    {#key list.data.status}
+     <div in:listIn>
+    {#key query}
       <div>
         {#each byDay(shown) as g (g.key)}
           <section class="dg" aria-labelledby="day-{g.key}">
@@ -143,6 +154,8 @@
           </section>
         {/each}
       </div>
+    {/key}
+     </div>
     {/key}
   {/if}
 </div>
