@@ -26,6 +26,15 @@ log = logging.getLogger("parallax.api")
 
 
 _LOOP = None  # the server's event loop, for warming the cache again after an ingest (worker thread)
+# A Differences page of a date the cache does not hold is seconds of exact vector search. A room picking dates at once
+# held every thread of the pool and every CPU of the database, and even the page shell waited 20 s. At most HEAVY_MAX
+# run at a time; the others wait here without a thread, in order.
+_HEAVY = asyncio.Semaphore(int(os.environ.get("HEAVY_MAX", "3")))
+
+
+def _heavy(request: Request) -> bool:
+    path = request.url.path
+    return (path == "/api/compare" and "h" not in request.query_params) or path == "/api/sql/vector"
 
 
 def data_changed(topic: str | None = None) -> None:
@@ -92,6 +101,9 @@ async def _with_sql(request: Request, call_next) -> tuple[Response, str | None, 
 @app.middleware("http")
 async def attach_sql(request: Request, call_next):
     if not request.url.path.startswith("/api/") or request.url.path.startswith("/api/sql/"):
+        if _heavy(request):
+            async with _HEAVY:
+                return await call_next(request)
         return await call_next(request)
     key = cache.key(request)
     if key is None:
@@ -103,7 +115,11 @@ async def attach_sql(request: Request, call_next):
         hit = cache.get(key)
         if hit is None:
             gen = cache.generation()
-            response, panel, statements, body = await _with_sql(request, call_next)
+            if _heavy(request):
+                async with _HEAVY:
+                    response, panel, statements, body = await _with_sql(request, call_next)
+            else:
+                response, panel, statements, body = await _with_sql(request, call_next)
             if response.status_code != 200 or body is None:
                 return response
             headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
@@ -158,8 +174,8 @@ DIST = Path(__file__).resolve().parent.parent / "web" / "dist"
 if DIST.is_dir():
     # The built web app (make web-build) is served from the same origin, so the demo is one process.
 
-    @app.get("/{path:path}", include_in_schema=False)
-    def web(path: str):
+    @app.api_route("/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)  # HEAD: link previews, checks
+    async def web(path: str):  # async: the page shell must not wait for a thread behind slow API requests
         if path.startswith("api/"):
             return JSONResponse({"error": {"code": "not_found", "message": f"No route /{path}."}}, 404)
         file = (DIST / path).resolve()
@@ -168,4 +184,5 @@ if DIST.is_dir():
                 return FileResponse(file, headers={"Cache-Control": "public, max-age=31536000, immutable"})
             return FileResponse(file)
         # the page names the hashed assets of the current build, so it is asked for again after every deploy
-        return FileResponse(DIST / "index.html", headers={"Cache-Control": "no-cache"})
+        index = (DIST / "index.html").read_bytes()  # small and in the page cache; FileResponse reads in a thread
+        return Response(index, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-cache"})
