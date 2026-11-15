@@ -1,5 +1,5 @@
 <script lang="ts">
-  /// Edit rules: one form for Money, Diet and allergens and Substitutes, then
+  /// Edit rules: one form for Money, Diet and allergens, Product groups and Substitutes, then
   /// one Save that asks the approval code once. A save is one new pass
   /// version; the Rules page then says the agent follows it.
   import { onMount, tick, type Snippet } from "svelte";
@@ -12,16 +12,18 @@
   import { ListRow, ListSection, Loading, LoadError, money, PageHead } from "$lib/v2";
   import VCode from "$lib/v/VCode.svelte";
   import UnitField from "../UnitField.svelte";
-  import { ALLOWED, type Allowed, allowedOf, amountText, extraText, parseAmount, parsePct, word } from "../rules";
+  import { ALLOWED, type Allowed, allowedOf, amountText, extraText, parseAmount, parsePct, REACH, type Reach, reachOf, word } from "../rules";
 
   let r = $state<Rules | undefined>();
   let loadError = $state("");
   const options = $derived(r?.diet?.options ?? { mustBe: [], never: [] });
+  const groupOptions = $derived(r?.groups?.options ?? []);
   // The form, as typed.
-  const f = $state({ alone: "", waiting: "", week: "", allowed: "listed" as Allowed, extra: "0", mustBe: [] as string[], never: [] as string[] });
+  const f = $state({ alone: "", waiting: "", week: "", allowed: "listed" as Allowed, extra: "0", mustBe: [] as string[], never: [] as string[], reach: "all" as Reach, groups: [] as string[] });
   type Key = "alone" | "waiting" | "week" | "extra";
   let bad = $state<Partial<Record<Key, string>>>({});
   let formProblem = $state("");
+  let groupsProblem = $state("");
   let code = $state("");
   let codeError = $state("");
   let busy = $state(false);
@@ -35,6 +37,8 @@
     f.extra = String(v.maxExtraPct);
     f.mustBe = [...(v.diet?.mustBe ?? [])];
     f.never = [...(v.diet?.never ?? [])];
+    f.reach = reachOf(v);
+    f.groups = v.groups && !v.groups.all ? [...v.groups.codes] : [];
   }
   const load = () =>
     agentApi.rules().then(
@@ -64,6 +68,8 @@
       (f.week.trim() ? cents(f.week) : null) !== (was.saved ? was.perWeekCents : null),
     ].filter(Boolean).length;
     const diet = [!sameSet(f.mustBe, was.diet?.mustBe ?? []), !sameSet(f.never, was.diet?.never ?? [])].filter(Boolean).length;
+    const wasSome = reachOf(was) === "some";
+    const groups = f.reach !== reachOf(was) || (f.reach === "some" && wasSome && !sameSet(f.groups, was.groups?.codes ?? [])) ? 1 : 0;
     const subs = [
       !was.saved || f.allowed !== allowedOf(was),
       f.allowed === "listed" && pct !== (was.substitutes === "extra" ? was.maxExtraPct : 0),
@@ -71,6 +77,7 @@
     return [
       { block: "Money", n: money },
       { block: "Diet", n: diet },
+      { block: "Product groups", n: groups },
       { block: "Substitutes", n: subs },
     ].filter((x) => x.n > 0);
   });
@@ -102,7 +109,7 @@
     if (c !== null) f[key] = amountText(c);
   }
 
-  function toggle(listKey: "mustBe" | "never", w: string) {
+  function toggle(listKey: "mustBe" | "never" | "groups", w: string) {
     const l = f[listKey];
     f[listKey] = l.includes(w) ? l.filter((x) => x !== w) : [...l, w];
   }
@@ -144,6 +151,11 @@
       document.getElementById(`f-${first}`)?.focus();
       return;
     }
+    if (f.reach === "some" && !f.groups.length) {
+      groupsProblem = "Choose at least one group, or All groups.";
+      document.getElementById("row-reach")?.scrollIntoView({ block: "center" });
+      return;
+    }
     if (!changed.length) {
       formProblem = "Nothing changed yet.";
       return;
@@ -162,6 +174,7 @@
         substitutes: f.allowed === "off" ? "off" : extra > 0 ? "extra" : "listed",
         maxExtraPct: extra,
         diet: { mustBe: [...f.mustBe], never: [...f.never] },
+        groups: { all: f.reach === "all", codes: f.reach === "all" ? [] : [...f.groups] },
         code,
       });
       bump();
@@ -173,6 +186,7 @@
       else if (status === 429) codeError = "Too many wrong codes. Try again in 15 minutes.";
       else if (status === 422 && /automatic/i.test(msg)) bad = { alone: "Must not be above Waiting for you." };
       else if (status === 422 && /per week/i.test(msg)) bad = { week: "At least the Waiting for you limit." };
+      else if (status === 422 && /product group/i.test(msg)) groupsProblem = msg.charAt(0).toUpperCase() + msg.slice(1) + ".";
       else formProblem = msg;
     } finally {
       busy = false;
@@ -196,6 +210,7 @@
     {#snippet waitingF()}<UnitField id="f-waiting" label="Waiting for you up to" unit="€" placeholder="5,000.00" start={chrome.phone} bind:value={f.waiting} problem={bad.waiting} onblur={() => tidy("waiting")} />{/snippet}
     {#snippet weekF()}<UnitField id="f-week" label="Per week" unit="€" placeholder="No limit" start={chrome.phone} bind:value={f.week} problem={bad.week} onblur={() => tidy("week")} />{/snippet}
     {#snippet allowedF()}<SegmentedControl id="f-allowed" ariaLabel="Substitutes allowed" options={ALLOWED} bind:value={f.allowed} />{/snippet}
+    {#snippet reachF()}<SegmentedControl id="f-reach" ariaLabel="Product groups" options={REACH} bind:value={f.reach} />{/snippet}
     {#snippet extraF()}<UnitField id="f-extra" label="Extra cost up to" unit="%" narrow start={chrome.phone} bind:value={f.extra} problem={bad.extra} />{/snippet}
 
     <!-- On the desk a field sits on the right of its row; on the phone under its label. -->
@@ -224,6 +239,27 @@
           </div>
         {/snippet}
       </ListRow>
+    </ListSection>
+
+    <ListSection id="groups" title="Product groups">
+      <ListRow
+        id="row-reach"
+        label="Buys from"
+        description={f.reach === "all" ? "Every product group at Valio" : `${f.groups.length} chosen, any other group is blocked`}
+        {...place(reachF)}
+      />
+      {#if f.reach === "some"}
+        <ListRow id="row-groups" label="Groups">
+          {#snippet below()}
+            <div class="chips" role="group" aria-label="Product groups" aria-describedby={groupsProblem ? "groups-problem" : undefined}>
+              {#each groupOptions as g (g.code)}
+                <Chip id="group-{g.code}" label={g.name} pressed={f.groups.includes(g.code)} onclick={() => ((groupsProblem = ""), toggle("groups", g.code))} />
+              {/each}
+            </div>
+            {#if groupsProblem}<p class="problem" id="groups-problem" data-testid="groups-problem" role="alert">{groupsProblem}</p>{/if}
+          {/snippet}
+        </ListRow>
+      {/if}
     </ListSection>
 
     <ListSection id="substitutes" title="Substitutes">
@@ -285,6 +321,12 @@
     color: var(--v-muted);
   }
   .change.bad {
+    color: var(--v-bad-text);
+  }
+  .problem {
+    margin: 8px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
     color: var(--v-bad-text);
   }
 </style>

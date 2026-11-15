@@ -620,6 +620,17 @@ export interface Rules {
   passVersion: number;
   /** v2: diet and allergens live in the Rules (one save, one code, one pass version). */
   diet?: RulesDiet;
+  /** Valio's product groups the agent may buy from: all, or a list of three-digit group codes. */
+  groups?: RulesGroups;
+}
+
+export interface RulesGroups {
+  /** Every product group; codes is then empty. */
+  all: boolean;
+  /** e.g. ["104", "174"] when all is false. */
+  codes: string[];
+  /** Every group the kitchen can pick, with its plain name, in code order. */
+  options: { code: string; name: string }[];
 }
 
 export interface RulesDiet {
@@ -631,7 +642,11 @@ export interface RulesDiet {
   options: { mustBe: string[]; never: string[] };
 }
 
-export type RulesIn = Omit<Rules, "saved" | "passVersion" | "diet"> & { code: string; diet?: Pick<RulesDiet, "mustBe" | "never"> };
+export type RulesIn = Omit<Rules, "saved" | "passVersion" | "diet" | "groups"> & {
+  code: string;
+  diet?: Pick<RulesDiet, "mustBe" | "never">;
+  groups?: Pick<RulesGroups, "all" | "codes">;
+};
 
 export type Diet = "FREE_FROM_LACTOSE" | "FREE_FROM_GLUTEN" | "VEGAN";
 

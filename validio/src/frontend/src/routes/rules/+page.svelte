@@ -1,5 +1,5 @@
 <script lang="ts">
-  /// Rules: Money, Diet and allergens, Substitutes, each value once, and Edit.
+  /// Rules: Money, Diet and allergens, Product groups, Substitutes, each value once, and Edit.
   /// No summary sentence on top: it said every value a second time. After a
   /// save (/rules?saved) a quiet line says the agent follows them now.
   import { page } from "$app/state";
@@ -7,7 +7,7 @@
   import { Notice } from "@arlen/ui-kit/components/ui/notice";
   import { agentApi } from "$lib/api/agent";
   import { dayTime, Empty, ListRow, ListSection, live, Loading, LoadError, money, PageHead } from "$lib/v2";
-  import { allowedOf, extraText, list, upTo } from "./rules";
+  import { allowedOf, extraText, groupNames, list, reachOf, upTo } from "./rules";
 
   const data = live(async () => {
     const [rules, agent] = await Promise.all([agentApi.rules(), agentApi.agent().catch(() => null)]);
@@ -53,6 +53,21 @@
       <ListRow id="rule-must" label="Must be" value={r.diet?.mustBe.length ? list(r.diet.mustBe) : "Anything"} />
       <ListRow id="rule-never" label="Never" value={r.diet?.never.length ? list(r.diet.never) : "None"} />
     </ListSection>
+    <ListSection id="groups" title="Product groups">
+      {#if reachOf(r) === "all"}
+        <ListRow id="rule-groups" label="Buys from" value="All groups" />
+      {:else}
+        {@const names = groupNames(r)}
+        <ListRow id="rule-groups" label="Buys from" value="{names.length} of {r.groups?.options.length ?? 0} groups">
+          {#snippet below()}
+            <ul class="names" data-testid="rule-group-names">
+              {#each names as n (n)}<li>{n}</li>{/each}
+            </ul>
+          {/snippet}
+        </ListRow>
+        <ListRow id="rule-other" label="Any other group" value="Blocked" />
+      {/if}
+    </ListSection>
     <ListSection id="substitutes" title="Substitutes">
       {#if allowedOf(r) === "off"}
         <ListRow id="rule-allowed" label="Allowed" value="Never" />
@@ -74,5 +89,16 @@
   }
   .blocks > :global(*) {
     margin: 0;
+  }
+  .names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 0;
+    padding: 0 0 4px;
+    list-style: none;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-fg);
   }
 </style>

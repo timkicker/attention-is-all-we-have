@@ -83,7 +83,7 @@ def test_presented_pass_shows_only_disclosed(issuance, keys):
     assert m.auto_limit_cents == 120000
     assert m.hard_cap_cents == 200000
     assert m.diet == ("FREE_FROM_LACTOSE",)
-    assert m.categories == ("104", "106", "418")
+    assert m.categories == ("*",)  # every product group
     assert m.deliver_by == "2026-11-16"
     assert m.split_max_extra_bp == 500
     assert m.disclosed == {"autoLimitCents": 120000, "hardCapCents": 200000, "diet": ["FREE_FROM_LACTOSE"]}

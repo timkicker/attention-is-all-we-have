@@ -48,3 +48,19 @@ export function parsePct(raw: string): { pct: number } | { problem: string } {
   if (!/^\d{1,2}$/.test(s) || Number(s) > MAX_EXTRA_PCT) return { problem: `A whole number from 0 to ${MAX_EXTRA_PCT}.` };
   return { pct: Number(s) };
 }
+
+export type Reach = "all" | "some";
+export const REACH: { value: Reach; label: string }[] = [
+  { value: "all", label: "All groups" },
+  { value: "some", label: "Chosen groups" },
+];
+
+/** The product groups as saved: all of them unless the pass names some. */
+export const reachOf = (r: Pick<Rules, "groups">): Reach => (r.groups && !r.groups.all ? "some" : "all");
+
+/** The chosen groups' names, in code order. */
+export function groupNames(r: Pick<Rules, "groups">): string[] {
+  const g = r.groups;
+  if (!g || g.all) return [];
+  return g.codes.map((c) => g.options.find((o) => o.code === c)?.name ?? `Group ${c}`);
+}

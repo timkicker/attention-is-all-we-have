@@ -36,7 +36,7 @@ DEMO_CLAIMS: dict[str, Any] = {
     "exp": 1794866400,
     "autoLimitCents": 120000,
     "hardCapCents": 200000,
-    "categories": ["104", "106", "418"],
+    "categories": ["*"],  # every product group (ALL_GROUPS); the Rules can narrow it to a list of groups
     "diet": ["FREE_FROM_LACTOSE"],
     "deliverBy": "2026-11-16",
     "substitutes": "listed_and_rules_kept",
@@ -93,6 +93,19 @@ NEVER_ALLERGENS: dict[str, frozenset[str]] = {
     "molluscs": frozenset({"UM"}), "sesame": frozenset({"AS"}), "celery": frozenset({"BC"}),
     "mustard": frozenset({"BM"}), "lupin": frozenset({"NL"}), "sulphites": frozenset({"AU"}),
 }
+
+# `categories: ["*"]` signs every product group. A list of codes signs those groups; a missing or empty list signs
+# none, so nothing can be ordered (fail closed).
+ALL_GROUPS = "*"
+
+
+def in_groups(categories: tuple[str, ...] | list[str], category: str) -> bool:
+    """A product's Valio category is inside the signed product groups: all of them, or one it starts with.
+    A product without a category is in none."""
+    if not category:
+        return False
+    return any(c == ALL_GROUPS or (c and category.startswith(c)) for c in categories)
+
 
 # The only `substitutes` value that lets a listed substitute order automatically. Anything else fails closed.
 SUBSTITUTES_LISTED = "listed_and_rules_kept"

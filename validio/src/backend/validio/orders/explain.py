@@ -76,6 +76,11 @@ def reason(decision: dict, diet: list[str] | tuple[str, ...] = (), deliver_by: s
     if "sales block" in s:
         return "sales_block", "Valio has a sales block on it"
     if "outside the Spend Pass's product groups" in s:
+        if m := re.search(r"outside the Spend Pass's product groups \(([^)]+)\)", s):
+            names = m.group(1).split("; ")  # the groups the options sit in (supply._why_none)
+            names = [names[0], *(n[:1].lower() + n[1:] for n in names[1:])]
+            said = names[0] if len(names) == 1 else f"{', '.join(names[:-1])} and {names[-1]}"
+            return "outside_groups", f"{said} {'is' if len(names) == 1 else 'are'}n't in your product groups"
         return "outside_groups", "it is outside the product groups your limits allow"
     if s.startswith(("No plain ", "Valio's data doesn't show ")) and diet:  # every option broke the diet
         return "diet", f"Valio's own data doesn't show it is {_diet(diet)}"

@@ -18,6 +18,7 @@ from pydantic import Field
 
 from ..demo import seed
 from ..matching.need import CLAIM_NAMES
+from ..orders.explain import reason
 from ..text.format import cap, display_name, money, unit_word
 from . import connect, display, ui
 from .schemas import Model, RankedOptionView, SupplyRequestView
@@ -160,6 +161,9 @@ def _blocked(sentence: str) -> str:
         return f"Above your {over.group(1) or over.group(2)} limit, blocked"
     if "diet rule" in sentence and "contradicted" in sentence:
         return "Breaks your diet and allergen rules, blocked"
+    if re.search(r"outside the Spend Pass's product groups \(", sentence):  # names the groups: in the Rules' words
+        why = reason({"sentence": sentence, "outcome": "blocked"})[1]
+        return why[:1].upper() + why[1:]
     head = re.search(r"Blocked: ([^.]+)", sentence)
     if head:
         first = re.split(r", (?!\d)| and ", head.group(1), maxsplit=1)[0]

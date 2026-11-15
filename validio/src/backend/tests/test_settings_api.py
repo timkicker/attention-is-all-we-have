@@ -1,6 +1,7 @@
 """Rules, Diet and Kitchen settings (docs/ACCOUNTS-API.md). Rules and Diet sign Spend Pass M-1 again through
 the same path as POST /api/spend-pass: one Save, one code, one new pass version, one ledger entry."""
 
+import pytest
 from conftest import CODE
 from test_api import auth, client, holder  # noqa: F401
 
@@ -25,6 +26,9 @@ def fresh(client, ctx):  # noqa: F811
 def test_rules_read_the_seeded_pass(client):  # noqa: F811
     r = client.get("/api/rules").json()
     assert r.pop("diet")["mustBe"] == ["lactose-free"]
+    groups = r.pop("groups")
+    assert (groups["all"], groups["codes"], len(groups["options"])) == (True, [], 43)
+    assert {"code": "174", "name": "Fruit and vegetables"} in groups["options"]
     assert r == {"aloneUpToCents": 120000, "approvalUpToCents": 200000, "substitutes": "extra", "maxExtraPct": 5,
                  "perWeekCents": None, "saved": True, "passVersion": 1}
 
@@ -34,7 +38,7 @@ def test_rules_save_signs_a_new_version_that_decides(client, holder, ctx):  # no
         == "ask_human"
     r = put_rules(client)
     assert r.status_code == 200, r.text
-    assert {k: v for k, v in r.json().items() if k != "diet"} == {**RULES, "perWeekCents": None, "saved": True,
+    assert {k: v for k, v in r.json().items() if k not in ("diet", "groups")} == {**RULES, "perWeekCents": None, "saved": True,
                                                                   "passVersion": 2}
     assert client.get("/api/rules").json()["passVersion"] == 2
     after = ask(client, fresh(client, ctx), "1500 litres of lactose-free milk by Monday", "b").json()
@@ -301,3 +305,40 @@ def test_without_a_weekly_limit_each_order_is_judged_alone_too(client, ctx):  # 
     assert o1["state"] == "placed"
     second = ask(client, fresh(client, ctx), "1000 litres of lactose-free milk by Monday", "x2").json()
     assert second["decision"]["outcome"] == "auto_order", second["decision"]  # the Rules' limits are per order
+
+
+def test_product_groups_narrow_and_widen_with_one_signed_version(client, holder, ctx):  # noqa: F811
+    r = put_rules(client, {**RULES, "groups": {"all": False, "codes": ["106", "104", "104"]}})
+    assert r.status_code == 200, r.text
+    assert (r.json()["groups"]["all"], r.json()["groups"]["codes"]) == (False, ["104", "106"])
+    from validio.api.settings import current_claims
+
+    assert current_claims(ctx.db_path)["categories"] == ["104", "106"]  # signed into the pass
+    entry = [e for e in client.get("/api/ledger").json()["entries"] if e["kind"] == "spend_pass"][-1]
+    assert "Product groups all groups → Milk and dairy drinks; Cheese." in entry["sentence"]
+    # a Save without groups keeps them
+    assert put_rules(client).json()["groups"]["codes"] == ["104", "106"]
+    r = put_rules(client, {**RULES, "groups": {"all": True, "codes": []}})
+    assert (r.json()["groups"]["all"], current_claims(ctx.db_path)["categories"]) == (True, ["*"])
+
+
+@pytest.mark.parametrize("groups,said", [
+    ({"all": False, "codes": ["999"]}, "unknown product group '999'"),
+    ({"all": False, "codes": ["17413"]}, "unknown product group '17413'"),
+    ({"all": False, "codes": []}, "choose at least one product group, or all groups"),
+])
+def test_product_groups_refuse_what_valio_has_no_group_for(client, groups, said):  # noqa: F811
+    before = client.get("/api/rules").json()["passVersion"]
+    r = put_rules(client, {**RULES, "groups": groups})
+    assert r.status_code == 422 and said in r.json()["detail"], r.text
+    assert client.get("/api/rules").json()["passVersion"] == before
+
+
+def test_a_product_outside_the_groups_names_its_group(client, holder, ctx):  # noqa: F811
+    assert put_rules(client, {**RULES, "groups": {"all": False, "codes": ["106"]}}).status_code == 200
+    req = ask(client, fresh(client, ctx), "500 litres of lactose-free milk by Monday", "milk").json()
+    assert req.get("status") == "blocked", req
+    assert req["decision"]["reasonCode"] == "outside_groups", req["decision"]
+    assert req["decision"]["ownerText"] == "Not ordered: Milk and dairy drinks isn't in your product groups."
+    detail = client.get(f"/api/activity/{req['id']}").json()
+    assert detail["rule"]["text"] == "Milk and dairy drinks isn't in your product groups."

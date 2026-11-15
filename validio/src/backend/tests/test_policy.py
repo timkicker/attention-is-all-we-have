@@ -34,7 +34,8 @@ NOW = datetime.fromisoformat("2026-11-14T10:00:00+02:00")
 @pytest.fixture(scope="module")
 def mandate():
     kitchen, agent = JWK.generate(kty="EC", crv="P-256"), JWK.generate(kty="EC", crv="P-256")
-    issuance = issue_mandate(DEMO_CLAIMS, DEMO_SD_FIELDS, kitchen, agent)
+    # a pass narrowed to three product groups, so a product outside them is blocked
+    issuance = issue_mandate({**DEMO_CLAIMS, "categories": ["104", "106", "418"]}, DEMO_SD_FIELDS, kitchen, agent)
     nonces = NonceStore()
     token = present(issuance, {"autoLimitCents", "hardCapCents", "diet"}, agent, AUDIENCE, nonces.issue(NOW), iat=int(NOW.timestamp()))
     return verify_presentation(
@@ -137,6 +138,16 @@ def test_drift_flag_escalates(mandate):
 
 def test_category_outside_pass_denied(mandate):
     assert decide(scene2(mandate, category="20100"), "x").outcome is Outcome.DENY
+
+
+def test_all_groups_allow_every_category_and_none_allow_nothing():
+    from validio.policy.mandate import ALL_GROUPS, in_groups
+
+    assert DEMO_CLAIMS["categories"] == [ALL_GROUPS]
+    assert in_groups(("*",), "17413") and in_groups(("*",), "20100")
+    assert not in_groups(("*",), "")  # a product without a category is in no group
+    assert not in_groups((), "17413") and not in_groups(("",), "17413")  # fail closed
+    assert in_groups(("174",), "17413") and not in_groups(("174",), "21600")
 
 
 def test_undisclosed_budget_escalates(mandate):

@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import Any
 
+from ..catalog.groups import group_name
 from ..catalog.model import Product
 from ..matching import compare
 from ..matching.need import CLAIM_NAMES, KINDS, Need, Ranked, parse_need, screen, starts_word
@@ -52,7 +53,7 @@ ACCEPTED = ("chosen", "ranked")  # the only verdicts an agent may confirm
 NEAR = {"FREE_FROM_LACTOSE": "LOW_LACTOSE"}
 
 
-def _why_none(b: dict) -> str:
+def _why_none(b: dict, catalog=None) -> str:
     """Why a line has no option, in one sentence: what Valio does not have, or the reason most of its options
     were turned down, the Spend Pass rules first since those options were otherwise fine."""
     from ..api.display import group, reasons
@@ -71,7 +72,10 @@ def _why_none(b: dict) -> str:
             _, total, cap = min(caps)
             return f"Blocked: {total} € is over the {cap} never-above limit."
     if head == "Outside the pass's product groups":
-        return f"Blocked: {what} is outside the Spend Pass's product groups."
+        names = sorted({group_name(p.category) for o in blocked if catalog is not None
+                        and (p := catalog.get(o["productId"])) is not None and p.category})
+        named = f" ({'; '.join(names)})" if names else ""
+        return f"Blocked: {what} is outside the Spend Pass's product groups{named}."
     if head.startswith("Not ") and head[4:] in {v for v in CLAIM_NAMES.values()}:
         if need.product_id and (named := next((o["name"] for o in options if o["productId"] == need.product_id),
                                               None)):
@@ -453,7 +457,7 @@ class SupplyService:
         if missing and not proposals:
             # a line with no product at all says what Valio does not have, not that rules were broken;
             # each line says its leading reason
-            sentence = " ".join(_why_none(b) for b in built if b["proposal"] is None) + " Nothing was ordered."
+            sentence = " ".join(_why_none(b, self.catalog) for b in built if b["proposal"] is None) + " Nothing was ordered."
             req["decision"] = {"outcome": "block", "ruleIds": [], "sentence": sentence}
             req["status"] = "blocked"
             self._log(req, mandate, "validio", "decision", req["decision"]["sentence"], [], None)

@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 
 import pytest
@@ -214,3 +215,45 @@ def test_the_word_means_the_plain_product(catalog, text, word, bad):
     assert kept
     assert all(word in p.name_en.lower() and not re.search(bad, p.name_en.lower()) for p in kept), \
         [p.name_en for p in kept]
+
+
+# a plain product word means the product itself, not what it only flavours or goes into
+
+
+def test_bananas_are_fresh_bananas_in_the_pack_the_request_names(catalog):
+    n = parse_need("10 packs of bananas 4.5 kg", TODAY, catalog)
+    assert (n.kind, n.quantity, n.unit, n.pack) == ("banana", 10, "PCS", (4.5, "KG"))
+    kept, dropped = screen(n, catalog)
+    assert [p.id for p in kept] == ["461010"]  # BANANA 4.5KG GT/CR, not a baby food puree
+    assert all(p.category.startswith("174") for p in kept)
+    other = {r.product.id: r.reasons for r in dropped}
+    assert other["460947"] == ["Not the 4.5 kg pack asked for"]  # loose bananas by the kilo
+    assert not any("leave" in r.product.name_en.lower() for r in dropped)  # "bananaleaves" is not bananas
+
+
+def test_without_a_pack_size_every_fresh_banana_is_a_candidate(catalog):
+    kept, _ = screen(parse_need("10 boxes of bananas", TODAY, catalog), catalog)
+    assert "461010" in {p.id for p in kept} and all(p.category.startswith("174") for p in kept)
+    assert all("banana" in p.name_en.lower() and "puree" not in p.name_en.lower() for p in kept)
+
+
+def test_banana_puree_is_puree(catalog):
+    n = parse_need("20 litres of banana puree", TODAY, catalog)
+    kept, _ = screen(n, catalog)
+    assert n.kind == "banana puree" and kept
+    assert all("pur" in p.name_en.lower() for p in kept), [p.name_en for p in kept]
+
+
+@pytest.mark.parametrize("text,word", [
+    ("20 kg of apples", "apple"),
+    ("20 kg of tomatoes", "tomato"),
+    ("20 kg of carrots", "carrot"),
+])
+def test_produce_words_go_to_fresh_produce(catalog, text, word):
+    from validio.matching.need import kind_of
+
+    n = parse_need(text, TODAY, catalog)
+    assert n.kind == word and kind_of(n.kind).net == ("174",)
+    kept, _ = screen(n, catalog)
+    assert kept and all(p.category.startswith("174") for p in kept)
+    assert not any(re.search(r"juice|jam|puree|pur.e|sauce|crushed", p.name_en.lower()) for p in kept)
