@@ -30,11 +30,12 @@ _LOOP = None  # the server's event loop, for warming the cache again after an in
 # held every thread of the pool and every CPU of the database, and even the page shell waited 20 s. At most HEAVY_MAX
 # run at a time; the others wait here without a thread, in order.
 _HEAVY = asyncio.Semaphore(int(os.environ.get("HEAVY_MAX", "3")))
+# Under the hood runs its vector query live (about a second). Behind the cold pages it waited 95 s, so it has its own.
+_HOOD = asyncio.Semaphore(2)
 
 
 def _heavy(request: Request) -> bool:
-    path = request.url.path
-    return (path == "/api/compare" and "h" not in request.query_params) or path == "/api/sql/vector"
+    return request.url.path == "/api/compare" and "h" not in request.query_params
 
 
 def data_changed(topic: str | None = None) -> None:
@@ -101,8 +102,8 @@ async def _with_sql(request: Request, call_next) -> tuple[Response, str | None, 
 @app.middleware("http")
 async def attach_sql(request: Request, call_next):
     if not request.url.path.startswith("/api/") or request.url.path.startswith("/api/sql/"):
-        if _heavy(request):
-            async with _HEAVY:
+        if request.url.path == "/api/sql/vector":
+            async with _HOOD:
                 return await call_next(request)
         return await call_next(request)
     key = cache.key(request)
