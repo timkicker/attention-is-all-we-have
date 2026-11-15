@@ -14,7 +14,8 @@ import time
 from collections import OrderedDict
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from urllib.parse import parse_qs
 
 from starlette.requests import Request
 
@@ -87,11 +88,27 @@ def make_entry(gen: int, body: bytes, headers: dict[str, str], panel: str | None
     return Entry(time.monotonic(), gen, body, headers, panel, statements, gz, etag)
 
 
-def clear() -> None:
+def _topic(k: str) -> str | None:
+    found = parse_qs(k.partition("?")[2]).get("topic")
+    return found[0].lower() if found else None
+
+
+def clear(topic: str | None = None) -> None:
+    """Drop every cached answer. With a topic (an ingest stored data of that topic only) the answers of the other
+    topics stay, so loading one article does not make every other article slow again; answers without a topic
+    (lists, stats, search, statement histories) go either way."""
     global _gen
     with _mutex:
         _gen += 1
-        _store.clear()
+        if topic is None:
+            _store.clear()
+            return
+        for k, e in list(_store.items()):
+            other = _topic(k)
+            if other is not None and other != topic.lower():
+                _store[k] = replace(e, gen=_gen)
+            else:
+                del _store[k]
 
 
 @asynccontextmanager

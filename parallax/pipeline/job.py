@@ -604,7 +604,7 @@ class Stopped(Exception):
 
 class Job:
     def __init__(
-        self, qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+        self, qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[str], None] | None = None
     ) -> None:
         self.qid = qid
         self.stop = stop or threading.Event()
@@ -688,7 +688,7 @@ class Job:
         if self.on_change:
             # Before the edition reads done: a page that sees "done" and asks again must not get a cached answer.
             try:
-                self.on_change()
+                self.on_change(topic_id)
             except Exception:
                 log.warning("ingest %s: on_change failed:\n%s", self.qid, traceback.format_exc())
         self.ed(lang, state="done", pct=100, error=None, retry_at=None, seconds=round(time.time() - t, 1))
@@ -805,7 +805,7 @@ class Job:
 
 
 def run_job(
-    qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+    qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[str], None] | None = None
 ) -> str:
     return Job(qid, stop, echo, on_change).run()
 
@@ -817,8 +817,8 @@ class Worker:
     """One job at a time, oldest first. Jobs left running by a stopped process are picked up again (resumable:
     finished editions are kept)."""
 
-    def __init__(self, after_job: Callable[[], None] | None = None) -> None:
-        self.after_job = after_job  # e.g. the API clears its response cache, the job changed what it serves
+    def __init__(self, after_job: Callable[[str], None] | None = None) -> None:
+        self.after_job = after_job  # e.g. the API clears its response cache for the topic, the job changed it
         self.stop = threading.Event()
         self.wake = threading.Event()
         self.thread: threading.Thread | None = None
@@ -890,7 +890,7 @@ class Worker:
                         self.failures.pop(qid, None)
                     finally:
                         if self.after_job:
-                            self.after_job()
+                            self.after_job(topic_slug(qid))
                     continue
             except Exception:
                 if qid:
