@@ -14,8 +14,9 @@ def candidates(anchor: str, hs: list[str], langs: list[str], as_of: dt.datetime,
     """{src_h: {lang: [candidate rows by distance]}}: the nearest 5 per edition and every row the judge paired.
 
     The nearest come from table align when it holds that date (or an earlier one with the same claims), else from
-    one exact query. A judged pair can rank below 5 (fi Mainila and the en "border incident was reported" sentence of 2009 to 2015), so the rows alive at
-    the instant that the judge paired with the claim are added at their distance.
+    one exact query. A judged pair can rank below 5 (fi Mainila and the en "border incident was reported" sentence
+    of 2009 to 2015), so the rows alive at the instant that the judge paired with the claim are added at their
+    distance.
     """
     out: dict[str, dict[str, list[dict]]] = {}
     if not hs or not langs:
