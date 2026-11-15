@@ -1,5 +1,6 @@
 """Parallax API: `uvicorn api.main:app`. Every JSON response carries `sql`, the statements behind it."""
 
+import asyncio
 import json
 import logging
 import os
@@ -11,7 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from api import cache, sqllog
+from api import cache, sqllog, warm
 from api.db import close_all
 from api.routes import ask, atlas, check, compare, dropped, health, ingest, search, sources, timeline, topics
 from contract.db import load_env
@@ -24,10 +25,19 @@ logging.basicConfig(
 log = logging.getLogger("parallax.api")
 
 
+_LOOP = None  # the server's event loop, for warming the cache again after an ingest (worker thread)
+
+
 def data_changed() -> None:
     """An ingest stored another edition or finished: drop every cached answer computed from the old data."""
     cache.clear()
     dropped.clear_cache()
+
+
+def job_done() -> None:
+    data_changed()
+    if _LOOP is not None:
+        warm.start(app, _LOOP)
 
 
 @asynccontextmanager
@@ -39,9 +49,13 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logging.getLogger("parallax").warning("ingest tables not ensured: %s", e)
     if os.environ.get("INGEST_WORKER", "1") != "0":
-        ingest.WORKER = job.Worker(after_job=data_changed)
+        ingest.WORKER = job.Worker(after_job=job_done)
         ingest.WORKER.start()
+    global _LOOP
+    _LOOP = asyncio.get_running_loop()
+    warm.start(app)
     yield
+    _LOOP = None
     if ingest.WORKER:
         ingest.WORKER.close()
         ingest.WORKER = None
@@ -82,20 +96,40 @@ async def attach_sql(request: Request, call_next):
     key = cache.key(request)
     if key is None:
         response, *_ = await _with_sql(request, call_next)
-        if request.method not in ("GET", "HEAD", "OPTIONS") and response.status_code < 400:
-            cache.clear()  # a write (check, ingest) can change what the read routes return
+        if request.method not in ("GET", "HEAD", "OPTIONS") and response.status_code < 400 and _changes_data(request):
+            cache.clear()  # an ingest can change what the read routes return
         return response
     async with cache.single_flight(key):
         hit = cache.get(key)
         if hit is None:
             gen = cache.generation()
             response, panel, statements, body = await _with_sql(request, call_next)
-            if response.status_code == 200 and body is not None:
-                headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
-                cache.put(key, gen, body, headers, panel, statements)
-            return response
+            if response.status_code != 200 or body is None:
+                return response
+            headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+            return _cached_response(request, cache.put(key, gen, body, headers, panel, statements))
     sqllog.remember(hit.panel, hit.statements)  # "Under the hood" shows the statements behind what was served
-    return Response(hit.body, status_code=200, headers=hit.headers, media_type="application/json")
+    return _cached_response(request, hit)
+
+
+def _changes_data(request: Request) -> bool:
+    """POST /api/check only adds its own run (check_run, check_claim), which no cached GET answer reads: a check
+    must not throw away the warm Differences pages of every other visitor."""
+    return request.url.path != "/api/check"
+
+
+def _cached_response(request: Request, entry: cache.Entry) -> Response:
+    """A cached answer: 304 when the browser holds this version, else gzip when accepted (compressed once)."""
+    headers = dict(entry.headers)
+    headers["ETag"] = entry.etag
+    headers["Cache-Control"] = "no-cache"  # the browser may keep it but asks each time; the answer is then a 304
+    headers["Vary"] = "Accept-Encoding"
+    if entry.etag in request.headers.get("if-none-match", ""):
+        return Response(status_code=304, headers=headers)
+    if "gzip" in request.headers.get("accept-encoding", ""):
+        headers["Content-Encoding"] = "gzip"
+        return Response(entry.gz, status_code=200, headers=headers, media_type="application/json")
+    return Response(entry.body, status_code=200, headers=headers, media_type="application/json")
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -130,5 +164,8 @@ if DIST.is_dir():
             return JSONResponse({"error": {"code": "not_found", "message": f"No route /{path}."}}, 404)
         file = (DIST / path).resolve()
         if path and file.is_file() and file.is_relative_to(DIST):
+            if path.startswith("assets/"):  # vite puts a content hash in every name under assets/
+                return FileResponse(file, headers={"Cache-Control": "public, max-age=31536000, immutable"})
             return FileResponse(file)
-        return FileResponse(DIST / "index.html")
+        # the page names the hashed assets of the current build, so it is asked for again after every deploy
+        return FileResponse(DIST / "index.html", headers={"Cache-Control": "no-cache"})

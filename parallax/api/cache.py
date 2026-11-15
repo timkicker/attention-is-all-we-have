@@ -7,6 +7,8 @@ so fifty visitors opening the same page cost the database one query set, not fif
 """
 
 import asyncio
+import gzip
+import hashlib
 import threading
 import time
 from collections import OrderedDict
@@ -16,7 +18,9 @@ from dataclasses import dataclass
 
 from starlette.requests import Request
 
-TTL_S = 60.0
+# An ingest clears the cache whenever it stores an edition and when it finishes, so the TTL only bounds what
+# nothing clears; a cold Differences page is seconds of vector search, so entries are kept for a while.
+TTL_S = 900.0
 MAX_ENTRIES = 512
 # Never cached: progress that changes by the second, the SQL panels (they show the last run) and the health probe.
 SKIP_PREFIXES = ("/api/ingest", "/api/sql/", "/api/health")
@@ -30,6 +34,8 @@ class Entry:
     headers: dict[str, str]
     panel: str | None
     statements: list[dict]
+    gz: bytes = b""  # body compressed once, served as is to clients that accept gzip (Caddy passes it through)
+    etag: str = ""
 
 
 _store: "OrderedDict[str, Entry]" = OrderedDict()
@@ -62,15 +68,23 @@ def get(k: str) -> Entry | None:
         return e
 
 
-def put(k: str, gen: int, body: bytes, headers: dict[str, str], panel: str | None, statements: list[dict]) -> None:
-    """Store a response computed while generation `gen` was current; dropped if a clear() came in between."""
+def put(k: str, gen: int, body: bytes, headers: dict[str, str], panel: str | None, statements: list[dict]) -> Entry:
+    """Store a response computed while generation `gen` was current; not stored if a clear() came in between."""
+    entry = make_entry(gen, body, headers, panel, statements)
     with _mutex:
         if gen != _gen:
-            return
-        _store[k] = Entry(time.monotonic(), gen, body, headers, panel, statements)
+            return entry
+        _store[k] = entry
         _store.move_to_end(k)
         while len(_store) > MAX_ENTRIES:
             _store.popitem(last=False)
+    return entry
+
+
+def make_entry(gen: int, body: bytes, headers: dict[str, str], panel: str | None, statements: list[dict]) -> Entry:
+    etag = '"' + hashlib.blake2b(body, digest_size=12).hexdigest() + '"'
+    gz = gzip.compress(body, compresslevel=6, mtime=0)
+    return Entry(time.monotonic(), gen, body, headers, panel, statements, gz, etag)
 
 
 def clear() -> None:
