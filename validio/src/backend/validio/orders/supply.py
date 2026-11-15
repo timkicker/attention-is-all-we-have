@@ -311,7 +311,11 @@ class SupplyService:
             extra = {"unitPriceText": unit[id(r)], "deliveryText": compare.delivery_text(a, need.deliver_by),
                      "deliveryDate": a.delivery_on(need.deliver_by).isoformat() if a is not None and a.lines else None,
                      "cutoffText": compare.cutoff_text(a, now),
-                     "dietText": compare.diet_text(r.product, need.required_claims)}
+                     "dietText": compare.diet_text(r.product, need.required_claims),
+                     # Valio's carbon file: one value per product group, so options often share it
+                     "carbonKg": r.product.carbon_kg_per_kg,
+                     "carbonText": (f"{r.product.carbon_kg_per_kg:g} kg CO2e per kg"
+                                    if r.product.carbon_kg_per_kg is not None else None)}
             o.update({k: v for k, v in extra.items() if v is not None})
         if chosen is None:
             return None

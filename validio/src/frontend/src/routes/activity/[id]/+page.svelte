@@ -329,6 +329,12 @@
               </div>
             {/each}
           {/if}
+          {#if chosen?.carbonText}
+            <div class="ck" data-testid="checked-carbon">
+              <dt>Carbon footprint</dt>
+              <dd>{nb(chosen.carbonText)}, Valio's average for the product group.{#if r.lines[0]?.decidedBy === "footprint"} It decided between options equal on price and delivery.{/if}</dd>
+            </div>
+          {/if}
           {#if planted?.supplierText}
             <div class="ck">
               <dt>One supplier text ignored</dt>

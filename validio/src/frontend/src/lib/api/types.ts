@@ -124,6 +124,10 @@ export interface RankedOption {
   cutoffText?: string;
   /** "Delivered in full 99 of 100 times", "No record yet: treated as least reliable". */
   reliabilityText?: string;
+  /** kg CO2e per kg from Valio's carbon file: a product-group average, so options often share it. */
+  carbonKg?: number;
+  /** "1.2 kg CO2e per kg". */
+  carbonText?: string;
   /** The diet the request needs with how sure: "Lactose free: Valio confirms, ingredients agree". */
   dietText?: string;
   /** Chosen option only: why it won, two short sentences. */

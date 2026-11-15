@@ -170,6 +170,8 @@ class RankedOptionView(Model):
     delivery_text: str | None = Field(None, description="\"Arrives Mon 16 Nov\"")
     cutoff_text: str | None = Field(None, description="\"Order by Sun 15 Nov 12:00\", Valio's order cut-off")
     reliability_text: str | None = Field(None, description="\"Delivered in full 99 of 100 times\"")
+    carbon_kg: float | None = Field(None, description="kg CO2e per kg from Valio's carbon file, a product group average")
+    carbon_text: str | None = Field(None, description="\"1.2 kg CO2e per kg\", the same value as carbon_kg in words")
     diet_text: str | None = Field(None, description="the diet the request needs, with how sure: "
                                                     "\"Lactose free: Valio confirms\"")
     why_text: str | None = Field(None, description="the chosen option: why it won, two short sentences")

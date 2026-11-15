@@ -2475,6 +2475,30 @@
       },
       "RankedOptionView": {
         "properties": {
+          "carbonKg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "kg CO2e per kg from Valio's carbon file, a product group average",
+            "title": "Carbonkg"
+          },
+          "carbonText": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"1.2 kg CO2e per kg\", the same value as carbon_kg in words",
+            "title": "Carbontext"
+          },
           "checks": {
             "anyOf": [
               {
