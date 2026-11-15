@@ -8,9 +8,11 @@ Live: https://135.181.63.238.sslip.io, with the Winter War preloaded. Good place
 
 - https://135.181.63.238.sslip.io/t/Q134949 lists the statements the editions tell differently.
 - https://135.181.63.238.sslip.io/t/Q134949?date=2008-06-01 shows the same list as of 1 June 2008.
-- https://135.181.63.238.sslip.io/t/Q134949/check checks a chatbot answer. Pick one of the recorded Gemini answers below the text box.
+- https://135.181.63.238.sslip.io/t/Q134949/check checks a chatbot answer. Paste one or pick a recorded Gemini answer below the text box.
 
-The live server runs on a Verda instance with Docker Compose (see [deploy/README.md](deploy/README.md)) and without a model (`ENGINE=fake`).
+Demo video (2 minutes): https://youtu.be/eeRs_a-xHF0
+
+The live server runs on a Verda instance with Docker Compose (see [deploy/README.md](deploy/README.md)) without a language model (`ENGINE=fake`) and with bge-m3 embeddings through Ollama (`EMBED_BACKEND=ollama`).
 
 ![The Winter War: statements other editions tell differently](../docs/img/parallax-differences.png)
 
@@ -59,6 +61,8 @@ make prepare QIDS="Q1292442 Q155093"  # several
 
 ![Check an AI answer, before anything is pasted](../docs/img/parallax-check.png)
 
+![A pasted Gemini answer checked against the editions](../docs/img/parallax-check-result.png)
+
 ## API
 
 The full contract is in [contract/openapi.yaml](contract/openapi.yaml). New with this UI:
@@ -87,7 +91,7 @@ make demo-check               # walks the demo on the running `make demo` (API_P
 ## What is real and what is recorded
 
 - Differences, Removed, past days, statements and their history are computed from the stored Wikipedia versions.
-- Model calls (statement matching, translations, checking an answer) go through `ENGINE`. With `ENGINE=real` they use Gemini and need `GEMINI_API_KEY`. With `ENGINE=fake` no model is called. Matching and translations then come only from what the seed already holds and a pasted answer gets a fixed example answer.
+- Model calls (statement matching, translations, checking an answer) go through `ENGINE`. With `ENGINE=real` they use Gemini and need `GEMINI_API_KEY`. With `ENGINE=fake` no language model is called and matching and translations come from what the seed already holds. If `EMBED_BACKEND` names a bge-m3 backend (the live server uses `ollama`), a pasted answer and a newly loaded article are matched by vector similarity. Without it a pasted answer gets a fixed example answer.
 - The chatbot answers listed under "Check an AI answer" were recorded once with the real engine (`make record-checks`) and each is labelled with the model that gave it. They are checked again against the editions every time they are opened.
 
 ## Limits

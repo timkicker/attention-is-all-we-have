@@ -5,7 +5,7 @@ This repository holds the two projects our team built at Junction 2026 in Espoo 
 | Project | Challenge | What it does | Live | Folder |
 |:---|:---|:---|:---|:---|
 | Validio | Valio Aimo, "Trusted Trade Agents" | A kitchen's purchasing agent orders from Valio Aimo within rules the kitchen sets | [timkicker--validio.us-east.modal.run](https://timkicker--validio.us-east.modal.run) | [validio/](validio/README.md) |
-| Parallax | MariaDB, "Wikipedia Through Time" | See where seven Wikipedias disagree and since when | [135.181.63.238.sslip.io](https://135.181.63.238.sslip.io) | [parallax/](parallax/README.md) |
+| Parallax | MariaDB, "Wikipedia Through Time" | See where seven Wikipedias disagree and since when | [135.181.63.238.sslip.io](https://135.181.63.238.sslip.io), [video](https://youtu.be/eeRs_a-xHF0) | [parallax/](parallax/README.md) |
 
 ## Validio
 
@@ -45,19 +45,23 @@ Parallax lines up seven language editions of Wikipedia (Finnish, Swedish, German
 1. Open the Winter War, which is preloaded: https://135.181.63.238.sslip.io/t/Q134949. Each row is a Finnish statement that other editions tell differently, with the differing part marked.
 2. Click the first row (the shelling of Mainila) to see that statement in all seven editions and when each one changed.
 3. Go back in time: https://135.181.63.238.sslip.io/t/Q134949?date=2008-06-01 shows the same comparison as of 1 June 2008.
-4. Open **Check an AI answer** and pick one of the recorded Gemini answers to see which editions back it up.
+4. Open **Check an AI answer**, paste what a chatbot told you about the Winter War and click **Check answer**. After about 20 seconds you see for each statement which editions back it, which one removed it and which statements are in no edition. The recorded Gemini answers below the text box work too.
+
+The two-minute demo video is at https://youtu.be/eeRs_a-xHF0.
 
 | The Winter War, differences today | One statement in seven editions | The same article on 1 June 2008 |
 |:---:|:---:|:---:|
 | ![Differences list for the Winter War](docs/img/parallax-differences.png) | ![The Mainila statement in seven editions](docs/img/parallax-statement.png) | ![The Winter War differences as of 1 June 2008](docs/img/parallax-date-2008.png) |
 
+![A Gemini answer about the Winter War checked against the editions: 17 statements, 11 backed, 5 in no edition, the Hanko lease disputed because Estonian removed it in 2009](docs/img/parallax-check-result.png)
+
 ### What is real and what is recorded
 
-Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. The English lines are machine translations, so some wording differences come from the translation. The live server runs without a model (`ENGINE=fake`), which means matching and translations come from what the seed already holds. The chatbot answers under "Check an AI answer" were recorded once with Gemini and are checked again against the editions each time they are opened. Any article with a Finnish version can be loaded from the start page and the comparison opens after one to two minutes. Because the live server runs without a model, statements in a newly loaded article stay untranslated.
+Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. The English lines are machine translations, so some wording differences come from the translation. For the Winter War, Gemini matched the statements across editions and translated them before the event and the seed stores those results. The live server calls no language model (`ENGINE=fake`) but embeds new text with bge-m3 through Ollama. A pasted chatbot answer and a newly loaded article are therefore matched by vector similarity alone, which misses more than Gemini does. Statements in a newly loaded article also stay untranslated. Any article with a Finnish version can be loaded from the start page and the comparison opens after one to two minutes. The recorded Gemini answers under "Check an AI answer" are checked again against the editions each time they are opened.
 
 ### Built with
 
-MariaDB 12.3 (system-versioned tables, `VECTOR` columns and `VEC_DISTANCE_COSINE`), bge-m3 embeddings, Python with FastAPI, a Svelte web app built with Vite and Gemini for matching and translation. Hosted on a Verda server with Docker Compose and Caddy.
+MariaDB 12.3 (system-versioned tables, `VECTOR` columns and `VEC_DISTANCE_COSINE`), bge-m3 embeddings through Ollama, Python with FastAPI, a Svelte web app built with Vite and Gemini for matching and translation of the seed. Hosted on a Verda server with Docker Compose and Caddy.
 
 Everything else (pages, API, seeds, tests, limits) is in [parallax/README.md](parallax/README.md), deployment in [parallax/deploy/README.md](parallax/deploy/README.md) and the product notes in [parallax/docs/PRODUCT.md](parallax/docs/PRODUCT.md).
 
