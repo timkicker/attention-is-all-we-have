@@ -173,7 +173,9 @@ def label(judged: list[dict], as_of: dt.datetime, rewritten: set[tuple] = frozen
     return {"label": "not_found", "evidence": []}
 
 
-EMBED_TIMEOUT = 20  # seconds per embed request while a reader waits for a check
+# seconds per embed request while a reader waits for a check: while an article loads, ollama embeds its batches
+# first, and a 17-statement answer then took more than 20 s and failed
+EMBED_TIMEOUT = 90
 
 
 def _bge_backend(engine) -> bool:
