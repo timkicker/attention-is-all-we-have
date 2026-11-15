@@ -3,6 +3,8 @@
   /// to no one field, then Save and Cancel.
   import type { Snippet } from "svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
+  import { collapse } from "$lib/motion";
+  import BusyLabel from "$lib/v2/BusyLabel.svelte";
 
   let {
     id,
@@ -14,7 +16,10 @@
   }: { id: string; problem?: string; busy?: boolean; onsave: () => void; oncancel: () => void; children: Snippet } = $props();
 </script>
 
+<!-- It opens under its row (plans/016). It leaves at once: another row's form may open in the
+     same moment, and two forms must never hold the same field ids. -->
 <form
+  in:collapse
   class="sf"
   data-testid="{id}-form"
   novalidate
@@ -24,10 +29,10 @@
   }}
 >
   {@render children()}
-  {#if problem}<p class="sf-problem" role="alert" data-testid="{id}-problem">{problem}</p>{/if}
+  {#if problem}<p class="sf-problem" role="alert" data-testid="{id}-problem" in:collapse={{ duration: 200 }} out:collapse={{ duration: 140 }}>{problem}</p>{/if}
   <div class="sf-acts">
     <Button variant="ghost" id="{id}-cancel" onclick={oncancel}>Cancel</Button>
-    <Button type="submit" id="{id}-save" data-testid="{id}-save" disabled={busy}>Save</Button>
+    <Button type="submit" id="{id}-save" data-testid="{id}-save" disabled={busy}><BusyLabel {busy} idle="Save" working="Saving" /></Button>
   </div>
 </form>
 

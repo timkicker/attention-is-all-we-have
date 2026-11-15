@@ -8,6 +8,8 @@
   import { ChevronRight } from "@lucide/svelte";
   import type { RankedOption, SupplyRequest } from "$lib/api/types";
   import { money, nb } from "$lib/format";
+  import { reduced } from "$lib/motion";
+  import Explain from "$lib/v2/Explain.svelte";
 
   let { req, proposed = false }: { req: SupplyRequest; /** Nothing was ordered: the chosen row is only proposed. */ proposed?: boolean } = $props();
 
@@ -64,15 +66,18 @@
   const phoneMeta = (o: RankedOption) =>
     [o.unitPriceText, arrives(o) && `arrives ${arrives(o)}`, reliability(o) && `in full ${reliability(o).toLowerCase()}`].filter(Boolean).join(", ");
 
+  // The price ladder (plans/022): every total as a bar against the dearest suitable one.
+  const maxTotal = $derived(Math.max(1, ...suitable.map((o) => o.totalCents ?? 0)));
+
   let openDown = $state(false);
   /** The supplier text Validio ignored: open the fold and show its row. */
   export async function show(productId: string) {
     openDown = true;
     await tick();
     const row = document.getElementById(`option-${productId}`);
-    row?.scrollIntoView({ block: "center" });
-    row?.classList.add("flash");
-    setTimeout(() => row?.classList.remove("flash"), 1600);
+    row?.scrollIntoView({ block: "center", behavior: reduced() ? "auto" : "smooth" });
+    row?.classList.add("v-glow");
+    setTimeout(() => row?.classList.remove("v-glow"), 1600);
   }
 </script>
 
@@ -86,7 +91,10 @@
       <span class="p-meta">{nb(phoneMeta(o))}</span>
     </td>
     {#if hasUnit}<td class="r num">{nb(unitPrice(o))}</td>{/if}
-    <td class="r num total">{o.moneyText ?? money(o.totalCents)}</td>
+    <td class="r num total">
+      {o.moneyText ?? money(o.totalCents)}
+      {#if o.totalCents != null}<span class="ladder" class:mine={isChosen} style:transform="scaleX({o.totalCents / maxTotal})" aria-hidden="true"></span>{/if}
+    </td>
     {#if hasArrive}<td class="num">{nb(arrives(o))}</td>{/if}
     {#if hasRecord}<td>{reliability(o)}</td>{/if}
   </tr>
@@ -117,7 +125,7 @@
           {#if hasUnit}<th class="v-th r">{unitHead}</th>{/if}
           <th class="v-th r">Total</th>
           {#if hasArrive}<th class="v-th">Arrives</th>{/if}
-          {#if hasRecord}<th class="v-th">Delivered in full</th>{/if}
+          {#if hasRecord}<th class="v-th">Delivered in full <Explain label="What delivered in full means">How often Valio delivered this product in full lately.</Explain></th>{/if}
         </tr>
       </thead>
       <tbody>
@@ -243,15 +251,28 @@
   .why-facts li + li {
     margin-top: 2px;
   }
-  .opts tbody tr:not(.chosen):hover td {
-    background: var(--v-tint-hover);
+  @media (hover: hover) and (pointer: fine) {
+    .opts tbody tr:not(.chosen):hover td {
+      background: var(--v-tint-hover);
+    }
   }
-  :global(.flash) {
-    animation: flash var(--duration-slow) ease;
+  .opts tbody td {
+    transition: background-color var(--duration-fast) ease;
   }
-  @keyframes flash {
-    from {
-      background: var(--valio-tint-strong);
+  /* The price ladder: data being compared, so it does not move. */
+  .ladder {
+    display: block;
+    height: 3px;
+    margin-top: 4px;
+    background: var(--v-line-strong);
+    transform-origin: right center;
+  }
+  .ladder.mine {
+    background: var(--valio);
+  }
+  @media (max-width: 760px) {
+    .ladder {
+      display: none;
     }
   }
   .unsuitable {

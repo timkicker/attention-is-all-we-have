@@ -9,6 +9,10 @@
   import { setTitle } from "$lib/chrome.svelte";
   import { isCode, session } from "$lib/owner.svelte";
   import VField from "$lib/v/VField.svelte";
+  import { forgetLive } from "$lib/live-cache";
+  import { blurSwap, collapse } from "$lib/motion";
+  import BusyLabel from "$lib/v2/BusyLabel.svelte";
+  import Flow from "./Flow.svelte";
 
   /** The demo kitchen's approval code, the same live and in the fixture. */
   const DEMO_CODE = "246810";
@@ -19,15 +23,19 @@
   const f = $state({ kitchen: "", email: "", password: "", customer: "", code: "" });
   let bad = $state<Record<string, string>>({});
   let busy = $state(false);
+  /** Which button's work is running: the form's or the demo's. */
+  let doing = $state<"form" | "demo" | "">("");
 
   function done(a: Account) {
+    forgetLive();
     session.account = a;
     session.checked = true;
     void goto("/", { replaceState: true });
   }
 
-  async function run(fn: () => Promise<Account>) {
+  async function run(fn: () => Promise<Account>, what: "form" | "demo" = "form") {
     busy = true;
+    doing = what;
     try {
       done(await fn());
     } catch (e) {
@@ -38,6 +46,7 @@
       else bad = { form: msg.charAt(0).toUpperCase() + msg.slice(1) };
     } finally {
       busy = false;
+      doing = "";
     }
   }
 
@@ -68,23 +77,28 @@
   }
 </script>
 
+<!-- The door's entrance (plans/014): wordmark and statement rise together, the rest follows as
+     a wave; the form side only fades, so it can be used from the first frame. -->
 <div class="door">
-  <section class="panel" aria-label="About Validio">
-    <div class="p-mark"><h1 class="wordmark">Validio</h1><span class="for">for Valio Aimo customers</span></div>
-    <div class="p-copy">
-      <p class="statement" data-testid="login-what">Let your agent order from Valio Aimo, inside the rules you set.</p>
-      <p>Before every order, Validio asks Valio for the price and the stock. Your agent orders alone only below your limit; above it, the order waits for you.</p>
-      <p>Every decision is written to a sealed record you can read at any time.</p>
+  <section class="panel enter" aria-label="About Validio">
+    <div class="p-mark" style:--delay="0ms"><h1 class="wordmark">Validio</h1><span class="for">for Valio Aimo customers</span></div>
+    <div class="p-copy enter">
+      <p class="statement" data-testid="login-what" style:--delay="0ms">Let your agent order from Valio Aimo, inside the rules you set.</p>
+      <p style:--delay="120ms" style:--door-y="8px">Before every order, Validio asks Valio for the price and the stock. Your agent orders alone only below your limit; above it, the order waits for you.</p>
+      <p style:--delay="160ms" style:--door-y="8px">Every decision is written to a sealed record you can read at any time.</p>
+      <div class="p-flow" style:--delay="200ms" style:--door-y="6px"><Flow /></div>
     </div>
-    <p class="p-foot">A service for restaurant kitchens buying from Valio Aimo.</p>
+    <p class="p-foot" style:--delay="260ms" style:--door-y="0px">A service for restaurant kitchens buying from Valio Aimo.</p>
   </section>
 
-  <section class="form-side">
+  <section class="form-side fade-in">
     <div class="form-in">
       <form class="v-form" onsubmit={submit} novalidate aria-labelledby="door-h">
-        <h2 class="door-h" id="door-h">{mode === "login" ? "Log in" : "Create account"}</h2>
+        <h2 class="door-h" id="door-h">{#key mode}<span class="dh" in:blurSwap>{mode === "login" ? "Log in" : "Create account"}</span>{/key}</h2>
         {#if mode === "signup"}
-          <VField id="login-kitchen" label="Kitchen name" bind:value={f.kitchen} problem={bad.kitchen} autocomplete="organization" />
+          <div class="more" in:collapse out:collapse={{ duration: 160 }}>
+            <VField id="login-kitchen" label="Kitchen name" bind:value={f.kitchen} problem={bad.kitchen} autocomplete="organization" />
+          </div>
         {/if}
         <VField id="login-email" label="Email" type="email" bind:value={f.email} problem={bad.email} autocomplete="email" />
         <VField
@@ -97,6 +111,7 @@
           autocomplete={mode === "login" ? "current-password" : "new-password"}
         />
         {#if mode === "signup"}
+          <div class="more" in:collapse out:collapse={{ duration: 160 }}>
           <VField id="login-customer" label="Valio customer number" inputmode="numeric" bind:value={f.customer} problem={bad.customer} hint="As on Valio's invoice" autocomplete="off" />
           <VField
             id="login-code"
@@ -109,9 +124,12 @@
             hint="6 digits you choose, asked for every approval"
             autocomplete="off"
           />
+          </div>
         {/if}
-        {#if bad.form}<p class="problem" role="alert" data-testid="login-problem">{bad.form}</p>{/if}
-        <Button type="submit" class="wide" id="login-submit" data-testid="login-submit" disabled={busy}>{mode === "login" ? "Log in" : "Create account"}</Button>
+        {#if bad.form}<p class="problem" role="alert" data-testid="login-problem" in:collapse={{ duration: 200 }} out:collapse={{ duration: 140 }}>{bad.form}</p>{/if}
+        <Button type="submit" class="wide" id="login-submit" data-testid="login-submit" disabled={busy}>
+          <BusyLabel busy={doing === "form"} idle={mode === "login" ? "Log in" : "Create account"} working={mode === "login" ? "Logging in" : "Creating account"} />
+        </Button>
         <p class="swap">
           {mode === "login" ? "New kitchen?" : "Have an account?"}
           <button type="button" class="link-btn" id="login-swap" data-testid="login-swap" onclick={() => swap(mode === "login" ? "signup" : "login")}>
@@ -123,8 +141,8 @@
       <div class="demo">
         <p class="d-head">Just looking?</p>
         <p class="d-text demo-what" id="demo-what">A real kitchen with sample orders. <span class="nowrap">Approval code: <span class="mono" data-testid="demo-code">{DEMO_CODE}</span></span></p>
-        <Button variant="outline" class="wide" id="try-demo" data-testid="try-demo" disabled={busy} aria-describedby="demo-what" onclick={() => run(() => api.demoLogin())}>
-          Try the demo kitchen
+        <Button variant="outline" class="wide" id="try-demo" data-testid="try-demo" disabled={busy} aria-describedby="demo-what" onclick={() => run(() => api.demoLogin(), "demo")}>
+          <BusyLabel busy={doing === "demo"} idle="Try the demo kitchen" working="Opening the kitchen" />
         </Button>
       </div>
     </div>
@@ -227,6 +245,54 @@
     text-decoration-color: var(--valio-underline);
     text-underline-offset: 3px;
     cursor: pointer;
+    transition:
+      text-decoration-color var(--duration-fast) ease,
+      transform var(--v-dur-press) var(--v-ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .link-btn:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+  .link-btn:active {
+    transform: scale(0.97);
+  }
+  .more {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .dh {
+    display: inline-block;
+  }
+  .p-flow {
+    margin-top: 36px;
+  }
+  /* The entrance: once per load, the delays set per element in the markup. */
+  .enter > :global(*) {
+    animation: v-door 0.6s ease both;
+    animation-delay: var(--delay, 0ms);
+  }
+  .p-copy.enter {
+    animation: none;
+  }
+  @keyframes v-door {
+    from {
+      opacity: 0;
+      transform: translateY(var(--door-y, 10px));
+    }
+  }
+  .fade-in .form-in {
+    animation: v-fade-in 400ms ease 80ms both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .enter > :global(*) {
+      animation-name: v-fade-in;
+      animation-delay: 0ms;
+    }
+    .p-copy.enter {
+      animation: none;
+    }
   }
   .demo {
     margin-top: 36px;
@@ -261,6 +327,10 @@
   @media (max-width: 900px) {
     .door {
       grid-template-columns: minmax(0, 1fr);
+    }
+    /* On a narrow screen the form comes first in reach; the diagram waits for a wider one. */
+    .p-flow {
+      display: none;
     }
     .panel {
       padding: 24px 20px 28px;

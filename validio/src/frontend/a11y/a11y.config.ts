@@ -43,7 +43,7 @@ export default defineConfig({
   fullyParallel: false,
   timeout: 120_000,
   reporter: [["list"]],
-  use: { baseURL: BASE, storageState: process.env.A11Y_STATE },
+  use: { reducedMotion: "reduce", baseURL: BASE, storageState: process.env.A11Y_STATE },
   webServer: {
     command:
       `rm -rf ${STORE} ${STORE}-accounts && mkdir -p ${STORE} && cd ../../backend && uv run python ../../scripts/seed_demo.py && ` +

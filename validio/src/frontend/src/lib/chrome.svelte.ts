@@ -1,5 +1,7 @@
 // What the shell knows across pages: phone or not, and a counter that goes up
 // after a demo reset (so every page fetches again).
+import { forgetLive } from "./live-cache";
+
 const phoneQuery = typeof window !== "undefined" ? window.matchMedia("(max-width: 760px)") : null;
 
 export const chrome = $state({
@@ -17,6 +19,8 @@ export function setTitle(title: string) {
   chrome.title = title;
 }
 
+/** Everything is stale: forget the kept answers and fetch again. */
 export function bump() {
+  forgetLive();
   chrome.version += 1;
 }

@@ -19,11 +19,20 @@
           document.documentElement.dataset.theme = light ? "light" : "dark";
         }
         set();
+        // The browser's bar takes the band's colour once the tokens are in (plans/015).
+        function bar() {
+          var c = getComputedStyle(document.documentElement).getPropertyValue("--valio-band").trim();
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (c && m) m.setAttribute("content", c);
+        }
+        addEventListener("DOMContentLoaded", bar);
+        addEventListener("load", bar);
         mq.addEventListener("change", function () {
           try {
             mode = localStorage.getItem(KEY) || "light";
           } catch (e) {}
           set();
+          bar();
         });
       })();
     </script>

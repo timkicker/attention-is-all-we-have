@@ -44,7 +44,7 @@ export default defineConfig({
   timeout: 120_000,
   reporter: [["list"]],
   outputDir: `${STORE}-results`,
-  use: { baseURL: BASE, viewport: { width: 1280, height: 900 }, trace: "retain-on-failure" },
+  use: { reducedMotion: "reduce", baseURL: BASE, viewport: { width: 1280, height: 900 }, trace: "retain-on-failure" },
   webServer: REMOTE
     ? undefined
     : {

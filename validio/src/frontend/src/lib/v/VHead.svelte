@@ -16,6 +16,7 @@
     back,
     titleId,
     titleTestid,
+    morphName,
     facts,
     actions,
     children,
@@ -27,6 +28,8 @@
     back?: { href: string; label: string };
     titleId?: string;
     titleTestid?: string;
+    /** view-transition-name for the title: the clicked row's title travels into it (plans/003). */
+    morphName?: string;
     facts?: Snippet;
     actions?: Snippet;
     children?: Snippet;
@@ -63,7 +66,7 @@
         <span aria-current="page">{here}</span>
       </nav>
     {/if}
-    <h1 class="v-title" id={titleId} data-testid={titleTestid}>{nb(title)}</h1>
+    <h1 class="v-title" id={titleId} data-testid={titleTestid} tabindex="-1" style:view-transition-name={morphName}>{nb(title)}</h1>
     {#if facts}<div class="facts">{@render facts()}</div>{/if}
     {@render children?.()}
   </div>

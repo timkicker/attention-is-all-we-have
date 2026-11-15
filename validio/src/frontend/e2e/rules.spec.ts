@@ -63,7 +63,7 @@ test("one save asks the code once, a wrong code stays inline, the right one make
 
   await page.getByTestId("code-input").fill(CODE);
   await page.getByTestId("code-submit").click();
-  await expect(page).toHaveURL(/\/rules\?saved$/);
+  await expect(page).toHaveURL(/\/rules\?saved(=[a-z,]*)?$/);
   await expect(page.locator("#rules-saved")).toContainText("Saved");
   await expect(page.getByTestId("rules-version")).toContainText("Version 3");
   await expect(row(page, "alone")).toContainText("Up to 1,500.00");
@@ -109,7 +109,7 @@ test("saving nothing says so, Never hides the extra cost, an empty week is no li
   await expect(page.locator("#f-extra")).toHaveCount(0);
   await page.locator("#f-week").fill("");
   await page.getByTestId("code-submit").click();
-  await expect(page).toHaveURL(/\/rules\?saved$/);
+  await expect(page).toHaveURL(/\/rules\?saved(=[a-z,]*)?$/);
   await expect(row(page, "allowed")).toContainText("Never");
   await expect(row(page, "any")).toContainText("Waiting for you");
   await expect(row(page, "extra")).toHaveCount(0);
@@ -127,7 +127,7 @@ test("a kitchen made here sets its first rules", async ({ page }) => {
   await page.locator("#must-vegan").click();
   await page.getByTestId("code-input").fill("135790");
   await page.getByTestId("code-submit").click();
-  await expect(page).toHaveURL(/\/rules\?saved$/);
+  await expect(page).toHaveURL(/\/rules\?saved(=[a-z,]*)?$/);
   await expect(row(page, "alone")).toContainText("Up to 800.00");
   await expect(row(page, "waiting")).toContainText("Up to 3,000.00");
   await expect(row(page, "must")).toContainText("Vegan");

@@ -4,18 +4,22 @@
   /// sentence (what waits, how the agent is), the week's figures, Needs you,
   /// and the newest rows. Live: the page asks again every two seconds, so an
   /// order the agent places shows up without a reload.
+  ///
+  /// Motion (plans/005, 009, 019): rows the agent adds slide in and glow; figures roll when they
+  /// change; the week bar fills; a step done while watching draws its check; finishing setup
+  /// while watching brings the figures in as one wave. Nothing moves on a plain visit.
   import { Button } from "@arlen/ui-kit/components/ui/button";
-  import { Progress } from "@arlen/ui-kit/components/ui/progress";
   import { agentApi } from "$lib/api/agent";
   import { api } from "$lib/api/client";
   import type { ActivityItem, HomeOut } from "$lib/api/types";
+  import { blurSwap, fadeOut, rise } from "$lib/motion";
   import { session } from "$lib/owner.svelte";
-  import { ActivityRow, ListSection, live, Loading, LoadError, money, nb, PageHead, total } from "$lib/v2";
+  import { ActivityRow, ListSection, live, LiveRows, Loading, LoadError, money, nb, PageHead, Ticker, total } from "$lib/v2";
 
-  const home = live(() => api.home());
+  const home = live(() => api.home(), 2000, () => "home");
 
   // The most the agent orders alone, for the figures; only once the rules were saved.
-  const rules = live(() => agentApi.rules().catch(() => null));
+  const rules = live(() => agentApi.rules().catch(() => null), 2000, () => "rules-raw");
   const alone = $derived(rules.data?.saved ? rules.data.aloneUpToCents : null);
 
   const AGENT_STATE: Record<HomeOut["agent"]["state"], string> = {
@@ -68,6 +72,22 @@
   const weekPct = $derived(
     home.data?.week.capCents ? Math.round((home.data.week.usedCents / home.data.week.capCents) * 100) : null,
   );
+
+  // Setup finished while the page was open: the one moment Home celebrates (rare, first time).
+  let wasFirst: boolean | null = null;
+  let celebrate = $state(false);
+  // A step that turned done while watching draws its check; one already done just stands.
+  const justDone = $state(new Set<string>());
+  let doneBefore: Set<string> | null = null;
+  $effect(() => {
+    if (!home.data) return;
+    if (wasFirst === true && !first) celebrate = true;
+    wasFirst = first;
+    const now = new Set(list.filter((s) => s.done).map((s) => s.id));
+    if (doneBefore) for (const id of now) if (!doneBefore.has(id)) justDone.add(id);
+    doneBefore = now;
+  });
+  const wave = (delay: number, y: number, duration: number) => (celebrate ? { y, duration, delay } : { y: 0, duration: 0 });
 </script>
 
 {#snippet lead()}
@@ -78,15 +98,15 @@
   {#if home.data && !first}
     {@const h = home.data}
     <p class="lead" data-testid="home-lede">
-      <span class="word" class:tone-wait-text={h.needsYou.length > 0}>{WAITS(h.needsYou.length)}</span>
+      {#key WAITS(h.needsYou.length)}<span class="word" class:tone-wait-text={h.needsYou.length > 0} in:blurSwap>{WAITS(h.needsYou.length)}</span>{/key}
       <a class="hit" href="/agent" id="home-agent" data-testid="home-agent">
-        {#if h.agent.state === "none"}No agent connected yet.{:else}{h.agent.name ?? "Your agent"} {AGENT_STATE[h.agent.state]}.{/if}
+        {#key h.agent.state}<span in:blurSwap>{#if h.agent.state === "none"}No agent connected yet.{:else}{h.agent.name ?? "Your agent"} {AGENT_STATE[h.agent.state]}.{/if}</span>{/key}
       </a>
     </p>
   {/if}
 </PageHead>
 
-<div class="blocks">
+<div class="blocks" class:v-arrive={home.arrive && !celebrate}>
   {#if home.error && !home.data}
     <LoadError detail={home.error} />
   {:else if !home.data}
@@ -95,14 +115,20 @@
     {@const h = home.data}
     {#if first}
       <section class="ls" aria-labelledby="h-setup" data-testid="section-setup">
-        <h2 class="v-h" id="h-setup">Get started <em data-testid="setup-count">{doneCount} of 3</em></h2>
+        <h2 class="v-h" id="h-setup">Get started <em data-testid="setup-count"><Ticker text="{doneCount} of 3" value={doneCount} /></em></h2>
         <ol class="steps">
           {#each list as s, n (s.id)}
             <li class="step" class:done={s.done} class:next={s.id === next} id="step-{s.id}">
-              <span class="st-n num" aria-hidden="true">{n + 1}</span>
+              <span class="st-n num" aria-hidden="true">
+                {#if s.done}
+                  <svg class="v-check st-check" class:just={justDone.has(s.id)} viewBox="0 0 24 24" width="22" height="22"><path d="M20 6 9 17l-5-5" pathLength="1" /></svg>
+                {:else}
+                  <span out:fadeOut={{ duration: 120 }}>{n + 1}</span>
+                {/if}
+              </span>
               <span class="st-main">
                 <span class="st-title">{#if s.done}<span class="sr-only">Done: </span>{/if}{s.title}</span>
-                <span class="st-detail">{s.done ? "Done" : s.detail}</span>
+                {#key s.done}<span class="st-detail" in:blurSwap>{s.done ? "Done" : s.detail}</span>{/key}
               </span>
               <Button
                 href={s.href}
@@ -116,18 +142,28 @@
         </ol>
       </section>
     {:else}
+      {#if celebrate}
+        <p class="v-set" data-testid="home-set" in:rise={{ y: 10, duration: 420 }}>
+          <svg class="v-check just" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 6 9 17l-5-5" pathLength="1" /></svg>
+          Your kitchen is set up
+        </p>
+      {/if}
       <div class="figs" data-testid="home-status">
-        <div class="fig" data-testid="home-week">
-          <span class="f-num num">{nb(money(h.week.usedCents))}</span>
+        <div class="fig" data-testid="home-week" in:rise={wave(60, 10, 420)}>
+          <span class="f-num num"><Ticker text={nb(money(h.week.usedCents))} value={h.week.usedCents} /></span>
           <span class="f-cap" id="week-label">spent this week{#if h.week.capCents != null}, of <span class="num">{nb(money(h.week.capCents))}</span>{/if}</span>
-          {#if weekPct != null}<Progress value={weekPct} labelledby="week-label" />{/if}
+          {#if weekPct != null}
+            <div class="wk" role="progressbar" aria-labelledby="week-label" aria-valuenow={weekPct} aria-valuemin={0} aria-valuemax={100}>
+              <span class="wk-fill" style:transform="scaleX({Math.min(100, weekPct) / 100})"></span>
+            </div>
+          {/if}
         </div>
-        <div class="fig">
-          <span class="f-num num" class:wait={h.needsYou.length > 0}>{h.needsYou.length}</span>
+        <div class="fig" in:rise={wave(130, 6, 360)}>
+          <span class="f-num num" class:wait={h.needsYou.length > 0}><Ticker text={String(h.needsYou.length)} value={h.needsYou.length} /></span>
           <span class="f-cap">waiting for you</span>
         </div>
         {#if alone != null}
-          <a class="fig end" href="/rules" data-testid="home-alone">
+          <a class="fig end" href="/rules" data-testid="home-alone" in:rise={wave(180, 0, 300)}>
             <span class="f-num num">{nb(money(alone))}</span>
             <span class="f-cap">ordered alone, at most</span>
           </a>
@@ -137,7 +173,8 @@
 
     {#if !first || h.needsYou.length}
       <ListSection id="needs" title="Needs you" count={h.needsYou.length}>
-        {#each h.needsYou as i (i.id)}
+        <LiveRows items={h.needsYou}>
+          {#snippet row(i)}
           <div class="need" data-testid="need-{i.id}">
             <div class="need-main">
               <span class="need-title">{nb(i.title)}</span>
@@ -150,15 +187,17 @@
               >
             </div>
           </div>
-        {:else}
-          <p class="none" data-testid="needs-none">Nothing waits for you</p>
-        {/each}
+          {/snippet}
+        </LiveRows>
+        {#if !h.needsYou.length}
+          <p class="none" data-testid="needs-none" in:blurSwap>Nothing waits for you</p>
+        {/if}
       </ListSection>
     {/if}
 
     {#if latest.length}
       <ListSection id="latest" title="Latest" link={{ href: "/activity", label: "All activity" }}>
-        {#each latest as i (i.id)}<ActivityRow item={i} />{/each}
+        <LiveRows items={latest}>{#snippet row(i)}<ActivityRow item={i} />{/snippet}</LiveRows>
       </ListSection>
     {/if}
   {/if}
@@ -169,8 +208,30 @@
     color: var(--v-muted);
     text-decoration-color: var(--v-line-strong);
   }
-  .lead a:hover {
-    color: var(--valio);
+  @media (hover: hover) and (pointer: fine) {
+    .lead a:hover {
+      color: var(--valio);
+    }
+    a.fig:hover .f-cap {
+      color: var(--valio);
+    }
+  }
+  .v-set {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 -16px;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: 500;
+    color: var(--v-ok-text);
+  }
+  .st-n {
+    display: inline-grid;
+    place-items: center start;
+  }
+  .st-n > :global(*) {
+    grid-area: 1 / 1;
   }
   .ls {
     display: flex;
@@ -247,8 +308,14 @@
     margin-left: auto;
     text-align: right;
   }
-  a.fig:hover .f-cap {
-    color: var(--valio);
+  a.fig {
+    margin: -6px -8px;
+    padding: 6px 8px;
+    border-radius: var(--radius-button);
+    transition: background-color var(--duration-fast) ease;
+  }
+  a.fig:active {
+    background: var(--v-tint-fill);
   }
   .f-num {
     font-family: var(--v-sans);
@@ -265,17 +332,27 @@
     line-height: var(--lh-meta);
     color: var(--v-muted);
   }
-  .fig :global(.progress) {
+  /* The week bar: a transform, so it fills on the compositor; it grows in once (plans/009). */
+  .wk {
+    position: relative;
     width: 100%;
     min-width: 200px;
     height: 4px;
     margin-top: 8px;
-    border-radius: 0;
     background: var(--v-line);
+    overflow: hidden;
   }
-  .fig :global(.progress-fill) {
-    border-radius: 0;
+  .wk-fill {
+    position: absolute;
+    inset: 0;
     background: var(--valio);
+    transform-origin: left center;
+    transition: transform var(--v-dur-moment) var(--v-ease-out);
+  }
+  @starting-style {
+    .wk-fill {
+      transform: scaleX(0);
+    }
   }
 
   .need {

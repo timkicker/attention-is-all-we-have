@@ -124,6 +124,19 @@
   --height-control-prominent: 36px;
   --v-dialog-pad: 24px;
   --v-col: 1120px;
+
+  /* ---------- motion (plans/001) ----------
+     Curves: ease-out for anything entering or leaving, ease-in-out for
+     something moving on screen, the drawer curve for sheets. Never ease-in. */
+  --v-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --v-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --v-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --v-dur-press: 140ms; /* press feedback */
+  --v-dur-ui: 200ms; /* folds, swaps, indicators */
+  --v-dur-enter: 260ms; /* something arriving: a row, a view, a field */
+  --v-dur-moment: 420ms; /* rare moments: approval done, set up, theme reveal */
+  --v-dur-glow: 1200ms; /* the petrol tint a new or changed thing fades from */
+  --v-rise: 6px; /* how far an entering thing travels */
 }
 
 :root[data-theme="dark"] {
@@ -169,5 +182,18 @@
     --lh-title: 30px;
     --height-control: 44px;
     --height-control-prominent: 44px;
+  }
+}
+
+/* Reduced motion: nothing travels, fades stay short. The kit already zeroes its own durations. */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  :root[data-theme] {
+    --v-rise: 0px;
+    --v-dur-press: 0ms;
+    --v-dur-ui: 120ms;
+    --v-dur-enter: 120ms;
+    --v-dur-moment: 120ms;
+    --v-dur-glow: 600ms;
   }
 }

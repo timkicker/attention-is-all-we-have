@@ -55,13 +55,13 @@
   {#if demo}
     <EditRow id="login-demo" label="Login" value="None, this is a demo kitchen" />
   {:else}
-    <EditRow id="login-email" label="Email" value={s.login.email ?? "Not set"} description={done === "email" ? "Saved" : undefined} open={open === "email"} onchange={() => change("email")}>
+    <EditRow id="login-email" label="Email" value={s.login.email ?? "Not set"} description={done === "email" ? "Saved" : undefined} saved={done === "email"} open={open === "email"} onchange={() => change("email")}>
       <Form id="login-email" problem={bad.form} {busy} onsave={save} oncancel={() => (open = null)}>
         <VField id="f-email" label="New email" type="email" bind:value={f.next} problem={bad.next} autocomplete="email" />
         <VField id="f-current-password" label="Current password" type="password" bind:value={f.current} problem={bad.current} autocomplete="current-password" />
       </Form>
     </EditRow>
-    <EditRow id="login-password" label="Password" value="Set" description={done === "password" ? "Saved" : undefined} open={open === "password"} onchange={() => change("password")}>
+    <EditRow id="login-password" label="Password" value="Set" description={done === "password" ? "Saved" : undefined} saved={done === "password"} open={open === "password"} onchange={() => change("password")}>
       <Form id="login-password" problem={bad.form} {busy} onsave={save} oncancel={() => (open = null)}>
         <VField id="f-password" label="New password" type="password" bind:value={f.next} problem={bad.next} autocomplete="new-password" />
         <VField id="f-current-password" label="Current password" type="password" bind:value={f.current} problem={bad.current} autocomplete="current-password" />

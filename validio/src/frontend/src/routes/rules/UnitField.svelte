@@ -1,6 +1,7 @@
 <script lang="ts">
   /// A number field for a Rules row: the kit Input, its unit beside it (€ or
   /// %), and the problem under it. The row's label names the field.
+  import { collapse } from "$lib/motion";
   import { Input } from "@arlen/ui-kit/components/ui/input";
 
   let {
@@ -46,7 +47,7 @@
     />
     <span class="uf-unit" aria-hidden="true">{unit}</span>
   </div>
-  {#if problem}<p class="uf-problem" id="{id}-problem" data-testid="{id}-problem">{problem}</p>{/if}
+  {#if problem}<p class="uf-problem" id="{id}-problem" data-testid="{id}-problem" in:collapse={{ duration: 200 }} out:collapse={{ duration: 140 }}>{problem}</p>{/if}
 </div>
 
 <style>

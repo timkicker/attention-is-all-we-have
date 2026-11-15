@@ -9,7 +9,8 @@
   import { agentApi, type Rules } from "$lib/api/agent";
   import { ApiError } from "$lib/api/error";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { ListRow, ListSection, Loading, LoadError, money, PageHead } from "$lib/v2";
+  import { LimitScale, ListRow, ListSection, Loading, LoadError, money, PageHead } from "$lib/v2";
+  import { blurSwap, collapse } from "$lib/motion";
   import VCode from "$lib/v/VCode.svelte";
   import UnitField from "../UnitField.svelte";
   import { ALLOWED, type Allowed, allowedOf, amountText, extraText, parseAmount, parsePct, word } from "../rules";
@@ -80,6 +81,20 @@
     const blocks = changed.map((x) => x.block);
     const where = blocks.length < 2 ? blocks[0] : `${blocks.slice(0, -1).join(", ")} and ${blocks[blocks.length - 1]}`;
     return `${n} ${n === 1 ? "change" : "changes"}, in ${where}`;
+  });
+
+  // The scale keeps the last amounts that parsed while a field is mid-typing.
+  let lastAlone = 0;
+  let lastWaiting = 0;
+  const scaleAlone = $derived.by(() => {
+    const c = cents(f.alone);
+    if (c !== null) lastAlone = c;
+    return lastAlone;
+  });
+  const scaleWaiting = $derived.by(() => {
+    const c = cents(f.waiting);
+    if (c !== null) lastWaiting = c;
+    return lastWaiting;
   });
 
   /** A field's place in its row: right of the label on the desk, under it on the phone. */
@@ -164,8 +179,19 @@
         diet: { mustBe: [...f.mustBe], never: [...f.never] },
         code,
       });
+      // The Rules page glows the rows that changed (plans/019).
+      const was = r;
+      const moved = [
+        !was.saved || cents(f.alone) !== was.aloneUpToCents ? "alone" : "",
+        !was.saved || cents(f.waiting) !== was.approvalUpToCents ? "waiting" : "",
+        (f.week.trim() ? cents(f.week) : null) !== (was.saved ? was.perWeekCents : null) ? "week" : "",
+        !sameSet(f.mustBe, was.diet?.mustBe ?? []) ? "must" : "",
+        !sameSet(f.never, was.diet?.never ?? []) ? "never" : "",
+        !was.saved || f.allowed !== allowedOf(was) ? "allowed" : "",
+        f.allowed === "listed" && pct !== (was.substitutes === "extra" ? was.maxExtraPct : 0) ? "extra" : "",
+      ].filter(Boolean);
       bump();
-      await goto("/rules?saved", { replaceState: true });
+      await goto(`/rules?saved=${moved.join(",")}`, { replaceState: true });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       const status = e instanceof ApiError ? e.status : 0;
@@ -186,7 +212,7 @@
   {/snippet}
 </PageHead>
 
-<div class="blocks">
+<div class="blocks" class:v-arrive={!!r}>
   {#if loadError && !r}
     <LoadError detail={loadError} onretry={load} />
   {:else if !r}
@@ -200,6 +226,19 @@
 
     <!-- On the desk a field sits on the right of its row; on the phone under its label. -->
     <ListSection id="money" title="Money, before VAT">
+      <!-- The limits as zones: drag a grip or use the arrow keys; the fields follow (plans/010). -->
+      <div class="scale">
+        <LimitScale
+          mode="edit"
+          alone={scaleAlone}
+          waiting={scaleWaiting}
+          onchange={(v) => {
+            f.alone = amountText(v.alone);
+            f.waiting = amountText(v.waiting);
+          }}
+          id="edit-scale"
+        />
+      </div>
       <ListRow id="row-alone" label="Ordered alone up to" description={was("alone")} {...place(aloneF)} />
       <ListRow id="row-waiting" label="Waiting for you up to" description={was("waiting") ?? "Above it, blocked"} {...place(waitingF)} />
       <ListRow id="row-week" label="Per week" description={was("week") ?? (f.week.trim() ? undefined : "Empty: no weekly limit")} {...place(weekF)} />
@@ -229,18 +268,20 @@
     <ListSection id="substitutes" title="Substitutes">
       <ListRow id="row-allowed" label="Allowed" description={f.allowed === "off" ? "Each substitute waits for you" : "Not on the list: waits for you"} {...place(allowedF)} />
       {#if f.allowed === "listed"}
+        <div in:collapse out:collapse={{ duration: 180 }}>
         <ListRow
           id="row-extra"
           label="Extra cost up to"
           description={r.saved && pct !== null && pct !== (r.substitutes === "extra" ? r.maxExtraPct : 0) ? `Was ${extraText(r.maxExtraPct).toLowerCase()}` : "Above it, waits for you"}
           {...place(extraF)}
         />
+        </div>
       {/if}
     </ListSection>
 
     <ListSection id="save">
       <div class="save">
-        <p class="change" class:bad={!!formProblem} data-testid="rules-changes" role={formProblem ? "alert" : undefined}>{formProblem || changeLine}</p>
+        <p class="change" class:bad={!!formProblem} data-testid="rules-changes" role={formProblem ? "alert" : undefined}>{#key formProblem || changeLine}<span class="ch" in:blurSwap={{ duration: 160 }}>{formProblem || changeLine}</span>{/key}</p>
         <VCode bind:value={code} error={codeError} onsubmit={save} submitLabel="Save rules" oncancel={chrome.phone ? undefined : () => goto("/rules")} focus={false} {busy} />
       </div>
     </ListSection>
@@ -248,6 +289,13 @@
 </div>
 
 <style>
+  .scale {
+    padding: 8px 0 20px;
+    max-width: 640px;
+  }
+  .ch {
+    display: inline-block;
+  }
   .blocks {
     display: flex;
     flex-direction: column;

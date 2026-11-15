@@ -54,7 +54,7 @@
   {#if demo}
     <EditRow id="code" label="Code" value={session.account?.demoCode ?? ""} description="The demo code, asked when you approve or save rules" />
   {:else}
-    <EditRow id="code" label="Code" value="Set" description={done ? "Saved" : "Asked when you approve or save rules"} {open} onchange={change}>
+    <EditRow id="code" label="Code" value="Set" description={done ? "Saved" : "Asked when you approve or save rules"} saved={done} {open} onchange={change}>
       <Form id="code" problem={bad.form} {busy} onsave={save} oncancel={() => (open = false)}>
         <VField id="f-code-current" label="Current code" bind:value={f.current} problem={bad.current} inputmode="numeric" maxlength={6} autocomplete="one-time-code" class="code-in num" />
         <VField id="f-code-next" label="New code" bind:value={f.next} problem={bad.next} inputmode="numeric" maxlength={6} autocomplete="off" class="code-in num" />

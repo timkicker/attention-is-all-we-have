@@ -7,14 +7,15 @@
   import { ConfirmDialog } from "@arlen/ui-kit/components/ui/confirm-dialog";
   import { Row } from "@arlen/ui-kit/components/ui/row";
   import { Section } from "@arlen/ui-kit/components/ui/section";
-  import { ChevronRight } from "@lucide/svelte";
+  import { Check, ChevronRight, Copy } from "@lucide/svelte";
   import { agentApi, type AgentState } from "$lib/api/agent";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
+  import { blurSwap, rise } from "$lib/motion";
+  import { BusyLabel, Explain, ListRow, ListSection, LoadError, Loading, PageHead, dayTime, hm, live } from "$lib/v2";
   import VPill from "$lib/v/VPill.svelte";
   import type { PillTone } from "$lib/v";
 
-  const ag = live(() => agentApi.agent());
+  const ag = live(() => agentApi.agent(), 2000, () => "agent");
   const a = $derived(ag.data);
   const connected = $derived(a?.state === "active" || a?.state === "paused");
 
@@ -28,9 +29,11 @@
   const pill = $derived(a ? PILL[a.state] : null);
 
   let busy = $state(false);
+  let doing = $state("");
   let problem = $state("");
-  async function act(run: () => Promise<AgentState>) {
+  async function act(run: () => Promise<AgentState>, what = "") {
     busy = true;
+    doing = what;
     problem = "";
     try {
       ag.data = await run();
@@ -41,8 +44,11 @@
       problem = msg.charAt(0).toUpperCase() + msg.slice(1);
     } finally {
       busy = false;
+      doing = "";
     }
   }
+  // The code assembles left to right, the gaps shrinking: a wave, not a metronome (plans/008).
+  const DELAYS = [0, 40, 75, 105, 130, 150, 165];
 
   let copied = $state("");
   let copyTimer: ReturnType<typeof setTimeout> | undefined;
@@ -64,8 +70,12 @@
 </script>
 
 {#snippet copyButton(what: string, text: string, label: string)}
-  <Button variant="outline" id="copy-{what}" data-testid="copy-{what}" aria-label={copied === what ? "Copied" : label} onclick={() => copy(what, text)}>
-    {copied === what ? "Copied" : "Copy"}
+  <Button variant="outline" class="copy-btn" id="copy-{what}" data-testid="copy-{what}" aria-label={copied === what ? "Copied" : label} onclick={() => copy(what, text)}>
+    {#key copied === what}
+      <span class="cb" in:blurSwap={{ duration: 150 }}>
+        {#if copied === what}<Check size={14} aria-hidden="true" />Copied{:else}<Copy size={14} aria-hidden="true" />Copy{/if}
+      </span>
+    {/key}
   </Button>
 {/snippet}
 
@@ -73,7 +83,7 @@
 {#snippet apiCopy()}{@render copyButton("api", a?.pairing?.apiUrl ?? "", "Copy API address")}{/snippet}
 
 {#snippet facts()}
-  {#if pill}<VPill label={pill.label} tone={pill.tone} testid="agent-state" id="agent-state" />{/if}
+  {#if pill}{#key pill.label}<span class="pill-w" in:blurSwap><VPill label={pill.label} tone={pill.tone} testid="agent-state" id="agent-state" /></span>{/key}{/if}
   {#if a?.state === "consent" && a.consent}
     <span data-testid="consent-who">{a.consent.at ? `${a.consent.name} called at ${hm(a.consent.at)}` : a.consent.name}</span>
   {/if}
@@ -84,29 +94,32 @@
     {#if a?.state === "pairing"}
       <Button variant="ghost" id="pair-cancel" data-testid="pair-cancel" disabled={busy} onclick={() => act(agentApi.deny)}>Cancel</Button>
     {:else if connected}
-      <Button variant="outline" id="agent-pause" data-testid="agent-pause" disabled={busy} onclick={() => act(() => agentApi.pause(a?.state === "active"))}>
-        {a?.state === "active" ? "Pause" : "Resume"}
+      <Button variant="outline" id="agent-pause" data-testid="agent-pause" disabled={busy} onclick={() => act(() => agentApi.pause(a?.state === "active"), "pause")}>
+        <BusyLabel busy={doing === "pause"} idle={a?.state === "active" ? "Pause" : "Resume"} working={a?.state === "active" ? "Pausing" : "Resuming"} />
       </Button>
       <Button variant="outline" id="agent-disconnect" data-testid="agent-disconnect" disabled={busy} onclick={() => (confirmOff = true)}>Disconnect</Button>
     {/if}
   {/snippet}
 </PageHead>
 
-<div class="blocks">
+<div class="blocks" class:v-arrive={ag.arrive}>
   {#if !a}
     {#if ag.error}<LoadError detail={ag.error} />{:else}<Loading rows={3} />{/if}
   {:else if a.state === "none"}
+    <div in:rise={{ y: 8, duration: 260 }}>
     <Section class="v-card">
       <div class="none" data-testid="agent-none">
         <p class="none-title">No agent connected</p>
         <p class="none-text">Your purchasing agent orders from Valio through Validio.</p>
         <p class="none-text none-rules" data-testid="agent-none-rules">Check your <a class="v-link" href="/rules" id="agent-rules-link">Rules</a> first. Your agent orders within them.</p>
-        <Button id="agent-connect" data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair)}>Connect agent</Button>
+        <Button id="agent-connect" data-testid="agent-connect" disabled={busy} onclick={() => act(agentApi.pair, "pair")}><BusyLabel busy={doing === "pair"} idle="Connect agent" working="Connecting" /></Button>
       </div>
     </Section>
+    </div>
   {:else if a.state === "pairing" && a.pairing}
-    <section class="pair" aria-labelledby="pair-h">
+    <section class="pair" aria-labelledby="pair-h" in:rise={{ y: 8, duration: 260 }}>
       <p class="pair-h" id="pair-h" data-testid="mcp-hint">Add this address to your agent as an MCP server, then ask it to order something.</p>
+      <p class="listen" role="status" data-testid="agent-listening"><span class="dot" aria-hidden="true"></span>Waiting for your agent's first call</p>
       <Section class="v-card">
         <div class="url-line">
           <code class="url-big mono" id="mcp-text" data-testid="mcp-url" data-raw>{a.pairing.mcpUrl}</code>
@@ -132,28 +145,29 @@
       </details>
     </section>
   {:else if a.state === "consent" && a.consent}
-    <section class="consent" aria-labelledby="consent-h" data-testid="consent">
+    <section class="consent" aria-labelledby="consent-h" data-testid="consent" in:rise={{ y: 8, duration: 260 }}>
       <Section class="v-card">
         <div class="verify">
           <h2 class="sr-only" id="consent-h">Check the code</h2>
           <p class="verify-code mono" id="verify-code" data-testid="verify-code" data-raw aria-label="Code {a.consent.verifyCode?.split('').join(' ')}">
-            {a.consent.verifyCode ?? ""}
+            {#each (a.consent.verifyCode ?? "").split("") as ch, i (i)}<span class="vc" style:--d="{DELAYS[i] ?? 165}ms" aria-hidden="true">{ch}</span>{/each}
           </p>
           <p class="verify-text">Your agent shows this code too. Allow only if it matches.</p>
           <div class="verify-buttons">
-            <Button id="consent-allow" data-testid="consent-allow" disabled={busy} onclick={() => act(agentApi.allow)}>Allow</Button>
+            <Button id="consent-allow" data-testid="consent-allow" disabled={busy} onclick={() => act(agentApi.allow, "allow")}><BusyLabel busy={doing === "allow"} idle="Allow" working="Allowing" /></Button>
             <Button variant="outline" id="consent-deny" data-testid="consent-deny" disabled={busy} onclick={() => act(agentApi.deny)}>Deny</Button>
           </div>
         </div>
       </Section>
       <div class="may">
-        <h3 class="may-h" id="may-h">What it may do</h3>
+        <h3 class="may-h" id="may-h">What it may do <Explain label="Where these come from">These come from your Rules. Change them there and the agent follows.</Explain></h3>
         <ul aria-labelledby="may-h" data-testid="consent-may">
           {#each a.consent.may as m (m)}<li>{m}</li>{/each}
         </ul>
       </div>
     </section>
   {:else if connected && a.agent}
+    <div in:rise={{ y: 8, duration: 260 }}>
     <ListSection id="agent">
       <ListRow id="agent-name" label="Name" value={a.agent.name} />
       <ListRow id="agent-connected" label="Connected" value={dayTime(a.agent.connectedAt)} />
@@ -163,8 +177,9 @@
         <ChevronRight class="go" aria-hidden="true" />
       </a>
     </ListSection>
+    </div>
   {/if}
-  {#if problem}<p class="problem" role="alert" data-testid="agent-problem">{problem}</p>{/if}
+  {#if problem}<p class="problem" role="alert" data-testid="agent-problem" in:rise={{ y: 4, duration: 200 }}>{problem}</p>{/if}
 </div>
 
 <ConfirmDialog
@@ -181,6 +196,73 @@
 />
 
 <style>
+  /* The page listens while the agent pairs: a still dot, a slow ring (plans/008). */
+  .listen {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
+  }
+  .dot {
+    position: relative;
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-chip);
+    background: var(--valio);
+  }
+  .dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--valio);
+    border-radius: var(--radius-chip);
+    animation: v-listen 2000ms var(--v-ease-out) infinite;
+  }
+  @keyframes v-listen {
+    from {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+  .vc {
+    display: inline-block;
+    animation: v-char 300ms var(--v-ease-out) var(--d) both;
+  }
+  @keyframes v-char {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+    }
+  }
+  :global(.copy-btn) {
+    min-width: 92px;
+  }
+  .cb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pill-w {
+    display: inline-flex;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dot::after {
+      animation: none;
+      opacity: 0;
+    }
+    .vc {
+      animation: v-fade-in 120ms linear both;
+    }
+  }
   /* ---------- none ---------- */
   .none {
     display: flex;
@@ -314,6 +396,16 @@
     width: 16px;
     height: 16px;
     color: var(--v-faint);
+    transition:
+      transform var(--duration-fast) var(--v-ease-out),
+      color var(--duration-fast) ease;
+  }
+  /* The chevron leans the way the row goes (plans/018). */
+  @media (hover: hover) and (pointer: fine) {
+    .go-row:hover :global(.go) {
+      transform: translateX(2px);
+      color: var(--valio);
+    }
   }
   .problem {
     margin: 12px 0 0;

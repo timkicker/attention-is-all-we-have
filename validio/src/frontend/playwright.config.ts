@@ -11,7 +11,7 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   reporter: [["list"]],
-  use: { baseURL: `http://127.0.0.1:${PORT}`, viewport: { width: 1280, height: 900 }, colorScheme: "dark" },
+  use: { reducedMotion: "reduce", baseURL: `http://127.0.0.1:${PORT}`, viewport: { width: 1280, height: 900 }, colorScheme: "dark" },
   // accounts-demo walks the real backend: playwright.accounts.config.ts, `make accounts-e2e`
   testIgnore: ["accounts-demo.spec.ts"],
   webServer: {

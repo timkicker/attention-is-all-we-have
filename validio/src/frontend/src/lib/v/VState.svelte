@@ -5,6 +5,7 @@
   import { Skeleton } from "@arlen/ui-kit/components/ui/skeleton";
   import { Button } from "@arlen/ui-kit/components/ui/button";
   import { CircleAlert, Inbox, LoaderCircle } from "@lucide/svelte";
+  import { rise } from "$lib/motion";
 
   let {
     kind,
@@ -25,7 +26,7 @@
     <Skeleton class="sk-facts" />
     {#each Array(rows) as _, i (i)}<Skeleton class="sk-row" />{/each}
     {#if secs >= 10}
-      <p class="vs" class:long={secs >= 30} role="status">
+      <p class="vs" class:long={secs >= 30} role="status" in:rise={{ y: 4, duration: 200 }}>
         <LoaderCircle size={16} strokeWidth={1.75} aria-hidden="true" />
         <span>{secs >= 30 ? "Taking longer than usual" : "Still loading"} {secs} s</span>
       </p>
@@ -43,6 +44,15 @@
 {/if}
 
 <style>
+  /* The skeleton waits 150 ms before it fades in: a fast answer never shows it (plans/004). */
+  .sk {
+    animation: v-sk-in var(--v-dur-ui) var(--v-ease-out) 150ms both;
+  }
+  @keyframes v-sk-in {
+    from {
+      opacity: 0;
+    }
+  }
   .sk {
     display: flex;
     flex-direction: column;

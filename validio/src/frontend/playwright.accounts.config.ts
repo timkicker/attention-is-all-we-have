@@ -40,7 +40,7 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [["list"]],
   outputDir: "../../artifacts/accounts-e2e/results",
-  use: { baseURL: BASE, viewport: { width: 1280, height: 900 }, trace: "retain-on-failure" },
+  use: { reducedMotion: "reduce", baseURL: BASE, viewport: { width: 1280, height: 900 }, trace: "retain-on-failure" },
   webServer: {
     command:
       `rm -rf ${STORE} && mkdir -p ${STORE}/local && VITE_API=live npx vite build && cd ../backend && ` +

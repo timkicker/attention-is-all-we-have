@@ -27,7 +27,7 @@
 
 <PageHead title="Settings" />
 
-<div class="blocks">
+<div class="blocks" class:v-arrive={!!s}>
   {#if !s}
     {#if error}
       <LoadError detail={error} onretry={load} />

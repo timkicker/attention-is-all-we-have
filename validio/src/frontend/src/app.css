@@ -41,13 +41,10 @@
   border-color: var(--v-line-strong);
   color: var(--v-fg);
 }
-/* A pressed kit Chip fills with the foreground and inherits the background as
-   its text, but the kit's `button.chip-body:hover` sets the text back to the
-   foreground: under the pointer the label was drawn in the colour of its own
-   fill and vanished, in both themes (kit a9f10d4, chip.svelte). The pressed
-   label keeps the background colour while hovered. */
+/* A pressed kit Chip: the kit paints its label in the foreground under the pointer; here the
+   pressed chip is petrol on its tint (below), so the label keeps the chip's own colour. */
 .chip.on > button.chip-body:hover {
-  color: var(--background);
+  color: inherit;
 }
 [data-slot="button"].border-border:hover {
   border-color: var(--valio);
@@ -58,6 +55,24 @@
   font-family: var(--v-sans);
   background: var(--v-surface);
   border-color: var(--v-line-strong);
+  caret-color: var(--valio);
+  transition: border-color var(--duration-fast) ease;
+}
+/* A field in focus: its border and the ring are one petrol edge (plans/018). */
+[data-slot="input"]:focus-visible {
+  border-color: var(--valio);
+  outline-offset: 0;
+}
+[data-slot="input"][aria-invalid="true"] {
+  border-color: var(--v-bad);
+}
+[data-slot="input"][aria-invalid="true"]:focus-visible {
+  outline-color: var(--v-bad);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-slot="input"]:hover:not(:focus-visible):not([aria-invalid="true"]):not(:disabled) {
+    border-color: var(--v-fg);
+  }
 }
 
 /* ---------- base ---------- */
@@ -81,6 +96,8 @@ input[type="radio"],
 input[type="submit"],
 input[type="button"] {
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 button:disabled,
 [aria-disabled="true"],
@@ -137,13 +154,36 @@ a {
   color: var(--valio);
   text-decoration: underline;
   text-decoration-color: var(--valio-underline);
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+  transition:
+    color var(--duration-fast) ease,
+    text-decoration-color var(--duration-fast) ease,
+    text-decoration-thickness var(--duration-fast) ease;
 }
-.link:hover,
-.facts a:hover,
-.lead a:hover,
-.prose a:hover {
-  text-decoration-color: currentColor;
+@media (hover: hover) and (pointer: fine) {
+  .link:hover,
+  .facts a:hover,
+  .lead a:hover,
+  .prose a:hover,
+  a.v-link:hover {
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
+  }
+}
+.link:active,
+.facts a:active,
+.lead a:active,
+.prose a:active {
+  color: var(--valio-deep);
+}
+.link:focus-visible,
+.facts a:focus-visible,
+.lead a:focus-visible,
+.prose a:focus-visible,
+a.v-link:focus-visible,
+.crumbs a:focus-visible {
+  border-radius: var(--radius-chip);
 }
 
 /* ---------- the page column ---------- */
@@ -164,11 +204,22 @@ a {
 }
 .crumbs a {
   color: var(--valio);
-  text-decoration: none;
 }
-.crumbs a:hover {
+/* Quiet links: the underline is always there, transparent, and fades in under a pointer (plans/018). */
+.crumbs a,
+.q-link {
   text-decoration: underline;
+  text-decoration-color: transparent;
   text-underline-offset: 3px;
+  transition:
+    text-decoration-color var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .crumbs a:hover,
+  .q-link:hover {
+    text-decoration-color: currentColor;
+  }
 }
 .head {
   display: grid;
@@ -184,6 +235,7 @@ a {
 }
 h1.v-title {
   margin: 0;
+  scroll-margin-top: 96px;
   font-family: var(--v-sans);
   font-size: var(--fs-title);
   line-height: var(--lh-title);
@@ -211,10 +263,11 @@ a.v-link {
   color: var(--v-fg);
   text-decoration: underline;
   text-decoration-color: var(--v-faint);
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-}
-a.v-link:hover {
-  text-decoration-color: currentColor;
+  transition:
+    text-decoration-color var(--duration-fast) ease,
+    text-decoration-thickness var(--duration-fast) ease;
 }
 /* The sentence that carries the decision, under the title; its outcome word in colour. */
 .lead {
@@ -339,8 +392,25 @@ a.v-row,
 a.vr {
   transition: background-color var(--duration-fast) ease;
 }
-a.v-row:hover .v-row-title,
-a.vr:hover .vr-value {
+@media (hover: hover) and (pointer: fine) {
+  a.v-row:hover .v-row-title,
+  a.vr:hover .vr-value {
+    color: var(--valio);
+  }
+}
+/* Press: a darker wash at once (plans/002). Focus: the ring inside the row, with the hover look (plans/018). */
+a.v-row:active,
+a.vr:active {
+  background-color: var(--v-tint-fill);
+  transition-duration: 0ms;
+}
+a.v-row:focus-visible,
+a.vr:focus-visible {
+  outline-offset: -2px;
+  background-color: var(--v-tint-hover);
+}
+a.v-row:focus-visible .v-row-title,
+a.vr:focus-visible .vr-value {
   color: var(--valio);
 }
 .v-row-lead {
@@ -383,24 +453,38 @@ a.vr:hover .vr-value {
 
 /* The kit's chips and segments in the petrol hand: hairline outlines, the
    chosen one petrol on its tint, no grey fills. */
-.chip.chip {
+/* One class more than the kit's scoped `.chip.on` (which loads after this file), so these win. */
+.chip.chip.chip {
   background: var(--v-surface);
   box-shadow: inset 0 0 0 1px var(--v-line-strong);
   color: var(--v-fg);
+  transition:
+    background-color var(--duration-fast) ease,
+    box-shadow var(--duration-fast) ease,
+    color var(--duration-fast) ease;
 }
-.chip.chip:has(> button.chip-body:hover) {
-  background: var(--v-surface);
-  box-shadow: inset 0 0 0 1px var(--valio);
+@media (hover: hover) and (pointer: fine) {
+  .chip.chip.chip:has(> button.chip-body:hover) {
+    background: var(--v-surface);
+    box-shadow: inset 0 0 0 1px var(--valio);
+  }
 }
-.chip.chip.on,
-.chip.chip.on:has(> button.chip-body:hover) {
+.chip.chip.chip.on,
+.chip.chip.chip.on:has(> button.chip-body:hover) {
   background: var(--valio-tint);
   box-shadow: inset 0 0 0 1px var(--valio);
   color: var(--valio);
 }
-.chip.chip.on .chip-body {
+.chip.chip.chip.on .chip-body {
   color: var(--valio);
   font-weight: 500;
+}
+.chip.chip.chip:has(> button.chip-body:active) {
+  transform: scale(0.97);
+}
+.chip.chip.chip {
+  transition-property: background-color, box-shadow, color, transform;
+  transition-duration: var(--duration-fast), var(--duration-fast), var(--duration-fast), var(--v-dur-press);
 }
 .seg.seg {
   background: var(--v-surface);
@@ -491,15 +575,27 @@ a.vr:hover .vr-value {
   color: var(--v-muted);
   white-space: nowrap;
   cursor: pointer;
+  transition:
+    color var(--duration-fast) ease,
+    transform var(--v-dur-press) var(--v-ease-out);
 }
-.tabs [role="tab"]:hover,
-.filters button:hover {
-  color: var(--v-fg);
+@media (hover: hover) and (pointer: fine) {
+  .tabs [role="tab"]:hover,
+  .filters button:hover {
+    color: var(--v-fg);
+  }
+}
+.tabs [role="tab"]:active,
+.filters button:active {
+  transform: scale(0.97);
 }
 .tabs [role="tab"][aria-selected="true"],
 .filters button[aria-pressed="true"] {
   color: var(--v-fg);
   font-weight: 500;
+}
+/* Tabs carry their own underline; the filters' one travels as a separate bar (plans/015). */
+.tabs [role="tab"][aria-selected="true"] {
   border-bottom-color: var(--valio);
 }
 .tabs em,
@@ -534,11 +630,13 @@ a.vr:hover .vr-value {
   padding: 0 0 10px;
   border-bottom-color: var(--v-fg);
 }
-.grid-table a.gt-row:hover {
-  background: var(--v-tint-hover);
-}
-.grid-table a.gt-row:hover .gt-main {
-  color: var(--valio);
+@media (hover: hover) and (pointer: fine) {
+  .grid-table a.gt-row:hover {
+    background: var(--v-tint-hover);
+  }
+  .grid-table a.gt-row:hover .gt-main {
+    color: var(--valio);
+  }
 }
 .grid-table .gt-row > :first-child {
   padding-left: 10px;
@@ -687,18 +785,32 @@ details.fold > summary {
   font-size: var(--fs-meta);
   line-height: var(--lh-meta);
   color: var(--valio);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transform-origin: left center;
+  transition:
+    text-decoration-color var(--duration-fast) ease,
+    transform var(--v-dur-press) var(--v-ease-out);
 }
 details.fold > summary::-webkit-details-marker {
   display: none;
 }
-details.fold > summary:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+@media (hover: hover) and (pointer: fine) {
+  details.fold > summary:hover {
+    text-decoration-color: currentColor;
+  }
+}
+details.fold > summary:active {
+  transform: scale(0.97);
+}
+details.fold > summary:focus-visible {
+  border-radius: var(--radius-chip);
 }
 details.fold > summary .chev {
   width: 14px;
   height: 14px;
-  transition: transform var(--duration-fast) ease;
+  transition: transform var(--v-dur-ui) var(--v-ease-out);
 }
 details.fold[open] > summary .chev {
   transform: rotate(90deg);
@@ -714,6 +826,29 @@ details.fold .fold-body p {
 }
 details.fold .fold-body p + p {
   margin-top: 4px;
+}
+/* Folds open and close (plans/006): Chromium with ::details-content; elsewhere they snap as before. */
+@supports (interpolate-size: allow-keywords) {
+  details.fold {
+    interpolate-size: allow-keywords;
+  }
+  details.fold::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition:
+      block-size var(--v-dur-ui) var(--v-ease-out),
+      opacity var(--v-dur-ui) var(--v-ease-out),
+      content-visibility var(--v-dur-ui) allow-discrete;
+  }
+  details.fold[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+  /* Proof's chain build is its entrance (plans/011): one entrance per container. */
+  details.fold.proof::details-content {
+    transition: none;
+  }
 }
 
 /* ---------- a calm notice: a rule on the left, no box ---------- */
@@ -823,12 +958,25 @@ p.notice.notice > svg {
   .ev-more {
     grid-column: 1 / -1;
   }
+  html {
+    scroll-padding-top: 64px;
+  }
   .tabs,
   .filters {
     gap: 20px;
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+  }
+  .tabs::-webkit-scrollbar,
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .tabs [role="tab"],
+  .filters button {
+    scroll-snap-align: start;
   }
   .tabs [role="tab"],
   .filters button {
@@ -882,4 +1030,251 @@ body:has(.dialog-backdrop) [data-bar] {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+/* ======================================================================
+   Motion and states shared by every page (plans/001 to 023).
+   Curves and durations are the --v-ease-* and --v-dur-* tokens.
+   ====================================================================== */
+
+/* The tint a new or changed thing fades from: a row the agent just added, a rule just saved. */
+.v-glow {
+  animation: v-glow var(--v-dur-glow) var(--v-ease-out) 160ms backwards;
+}
+@keyframes v-glow {
+  from {
+    background-color: var(--valio-tint);
+  }
+}
+/* Content that arrived after a skeleton: one entrance per container. */
+.v-arrive {
+  animation: v-arrive var(--v-dur-enter) var(--v-ease-out) both;
+}
+@keyframes v-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(var(--v-rise));
+  }
+}
+@keyframes v-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes v-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes v-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+/* A check that draws itself (approval landed, a setup step done). */
+.v-check path {
+  fill: none;
+  stroke: var(--v-ok);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.v-check.just path {
+  animation: v-draw 300ms var(--v-ease-out) 160ms both;
+}
+
+/* Selection and native controls in the app's colour (plans/018). */
+::selection {
+  background: var(--valio-tint-strong);
+  color: var(--v-fg);
+}
+:root {
+  accent-color: var(--valio);
+}
+input,
+textarea {
+  caret-color: var(--valio);
+}
+
+/* ---------- page transitions (plans/003) ---------- */
+.v-main .wrap {
+  view-transition-name: v-page;
+}
+:root[data-nav-dir="deeper"] {
+  --v-page-dx: 12px;
+}
+:root[data-nav-dir="up"] {
+  --v-page-dx: -12px;
+}
+:root[data-nav-dir="across"] {
+  --v-page-dx: 0px;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 160ms;
+  animation-timing-function: var(--v-ease-out);
+}
+::view-transition-group(v-band),
+::view-transition-group(v-dock),
+::view-transition-group(v-demo),
+::view-transition-old(v-band),
+::view-transition-new(v-band),
+::view-transition-old(v-dock),
+::view-transition-new(v-dock),
+::view-transition-old(v-demo),
+::view-transition-new(v-demo) {
+  animation: none;
+}
+::view-transition-group(v-page) {
+  animation-duration: 200ms;
+  animation-timing-function: var(--v-ease-out);
+}
+::view-transition-old(v-page) {
+  animation: v-page-out 140ms var(--v-ease-out) both;
+}
+::view-transition-new(v-page) {
+  animation: v-page-in 200ms var(--v-ease-out) both;
+}
+@keyframes v-page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes v-page-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--v-page-dx, 0px));
+  }
+}
+/* The clicked row's title travels into the detail's heading: movement on screen. */
+::view-transition-group(v-title) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--v-ease-in-out);
+}
+::view-transition-old(v-title),
+::view-transition-new(v-title) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--v-ease-in-out);
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+/* The band arrives once, after login: there is no old band to come from (plans/014). */
+::view-transition-new(v-band):only-child {
+  animation: v-band-in 400ms var(--v-ease-drawer) both;
+}
+@keyframes v-band-in {
+  from {
+    transform: translateY(-100%);
+  }
+}
+/* The selected marks travel between their places (plans/015). */
+::view-transition-group(v-nav-ink),
+::view-transition-group(v-dock-ink) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--v-ease-in-out);
+}
+/* The theme reveal (plans/016): only the root's clip moves, every named group stands still. */
+:root[data-vt="theme"]::view-transition-group(*),
+:root[data-vt="theme"]::view-transition-old(*),
+:root[data-vt="theme"]::view-transition-new(*) {
+  animation: none;
+}
+:root[data-vt="theme"]::view-transition-old(root),
+:root[data-vt="theme"]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ---------- popovers and tooltips (plans/023) ---------- */
+/* The info button of Explain.svelte. */
+.xp {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin: 0 0 0 2px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-chip);
+  background: none;
+  color: var(--v-faint);
+  vertical-align: middle;
+  transition: color var(--duration-fast) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .xp:hover {
+    color: var(--valio);
+  }
+}
+.xp:focus-visible,
+.xp[data-state="open"] {
+  color: var(--valio);
+}
+.xp-body {
+  max-width: 280px;
+  padding: 12px 14px;
+  font-size: var(--fs-meta);
+  line-height: var(--lh-meta);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  font-variant-caps: normal;
+}
+@media (max-width: 760px) {
+  .xp::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+  }
+}
+[data-slot="popover-content"] {
+  transform-origin: var(--bits-popover-content-transform-origin);
+  box-shadow: none;
+  border: 1px solid var(--v-line-strong);
+  background: var(--v-surface);
+  color: var(--v-fg);
+  animation-duration: 160ms;
+  animation-timing-function: var(--v-ease-out);
+}
+[data-slot="popover-content"][data-state="closed"] {
+  animation-duration: 120ms;
+}
+[data-slot="tooltip-content"] {
+  transform-origin: var(--bits-tooltip-content-transform-origin);
+  box-shadow: none;
+  border-color: var(--v-line-strong);
+  background: var(--v-fg);
+  color: var(--v-ground);
+  font-size: var(--fs-cap);
+  line-height: 16px;
+  max-width: 320px;
+  animation: v-tip 125ms var(--v-ease-out);
+}
+[data-slot="tooltip-content"][data-state="instant-open"] {
+  animation: none;
+}
+@keyframes v-tip {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="tooltip-content"] {
+    animation: v-fade-in 120ms linear;
+  }
+  .v-check.just path {
+    animation: none;
+  }
 }

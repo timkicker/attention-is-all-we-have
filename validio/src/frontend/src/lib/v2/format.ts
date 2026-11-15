@@ -33,3 +33,26 @@ export const total = (cents: number | null | undefined): string => (cents == nul
 
 /** "1,190.10 € of 8,000.00 €" or "1,190.10 €" without a weekly cap. */
 export const weekText = (used: number, cap: number | null): string => (cap == null ? money(used) : `${money(used)} of ${money(cap)}`);
+
+/** Text split into parts where `q` matches, accent- and case-insensitive (Activity's Find, plans/022). */
+export function highlight(text: string, q: string): { text: string; hit: boolean }[] {
+  const needle = fold(q.trim());
+  if (!needle) return [{ text, hit: false }];
+  const hay = fold(text);
+  const out: { text: string; hit: boolean }[] = [];
+  let at = 0;
+  for (let i = hay.indexOf(needle); i !== -1; i = hay.indexOf(needle, i + needle.length)) {
+    if (i > at) out.push({ text: text.slice(at, i), hit: false });
+    out.push({ text: text.slice(i, i + needle.length), hit: true });
+    at = i + needle.length;
+  }
+  if (at < text.length) out.push({ text: text.slice(at), hit: false });
+  return out.length ? out : [{ text, hit: false }];
+}
+
+/** Lower case without accents, keeping one character per character so indexes line up. */
+export const fold = (s: string): string =>
+  s
+    .split("")
+    .map((c) => c.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().slice(0, 1) || c)
+    .join("");

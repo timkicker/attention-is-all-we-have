@@ -3,7 +3,9 @@
   /// own small form under it; a row without `onchange` is read only.
   import type { Snippet } from "svelte";
   import { Button } from "@arlen/ui-kit/components/ui/button";
+  import { Check } from "@lucide/svelte";
   import { ListRow } from "$lib/v2";
+  import { blurSwap } from "$lib/motion";
 
   let {
     id,
@@ -11,6 +13,7 @@
     value,
     description,
     open = false,
+    saved = false,
     onchange,
     children,
   }: {
@@ -19,6 +22,8 @@
     value: string;
     description?: string;
     open?: boolean;
+    /** Just saved: the value glows once and a check stands beside it (plans/016). */
+    saved?: boolean;
     onchange?: () => void;
     /** The form, shown while `open`. */
     children?: Snippet;
@@ -28,15 +33,29 @@
 <ListRow id="row-{id}" {label} {description} below={open ? children : undefined}>
   {#snippet control()}
     <span class="er">
-      <span class="er-value" data-testid="{id}-value">{value}</span>
+      {#if saved}<span class="er-ok" in:blurSwap aria-hidden="true"><Check size={14} strokeWidth={2.25} /></span>{/if}
+      {#key value}<span class="er-value" class:v-glow={saved} data-testid="{id}-value">{value}</span>{/key}
       {#if onchange && !open}
-        <Button variant="outline" size="sm" id="{id}-change" data-testid="{id}-change" aria-label="Change {label.toLowerCase()}" onclick={onchange}>Change</Button>
+        <span class="er-btn" in:blurSwap={{ duration: 160 }}>
+          <Button variant="outline" size="sm" id="{id}-change" data-testid="{id}-change" aria-label="Change {label.toLowerCase()}" onclick={onchange}>Change</Button>
+        </span>
       {/if}
     </span>
   {/snippet}
 </ListRow>
 
 <style>
+  .er-ok {
+    display: inline-flex;
+    color: var(--v-ok-text);
+  }
+  .er-btn {
+    display: inline-flex;
+  }
+  .er-value {
+    padding: 0 2px;
+    border-radius: var(--radius-chip);
+  }
   .er {
     display: inline-flex;
     align-items: center;

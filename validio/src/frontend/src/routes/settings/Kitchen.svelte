@@ -58,7 +58,7 @@
 </script>
 
 <ListSection id="kitchen" title="Kitchen">
-  <EditRow id="kitchen-name" label="Name" value={s.kitchen.name} description={done === "name" ? "Saved" : undefined} open={open === "name"} onchange={() => change("name")}>
+  <EditRow id="kitchen-name" label="Name" value={s.kitchen.name} description={done === "name" ? "Saved" : undefined} saved={done === "name"} open={open === "name"} onchange={() => change("name")}>
     <Form id="kitchen-name" problem={formProblem} {busy} onsave={save} oncancel={() => (open = null)}>
       <VField id="f-kitchen-name" label="Kitchen name" bind:value={text} {problem} autocomplete="organization" />
     </Form>
@@ -69,6 +69,7 @@
     label="Delivery address"
     value={s.kitchen.deliveryAddress || "Not set"}
     description={done === "address" ? "Saved" : undefined}
+    saved={done === "address"}
     open={open === "address"}
     onchange={() => change("address")}
   >
