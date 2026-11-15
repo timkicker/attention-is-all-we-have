@@ -111,6 +111,33 @@ def test_align_cache_is_read_for_its_date(client):
         sqllog.run("DELETE FROM align")
 
 
+def test_align_cache_of_an_earlier_day_is_read_while_no_claim_changed(client):
+    # After midnight today has no align rows; every cold Differences page ran the exact search (seconds each).
+    (last,) = sqllog.run(
+        "SELECT DATE(MAX(GREATEST(row_start, IF(row_end > NOW(6), row_start, row_end)))) + INTERVAL 1 DAY AS d"
+        " FROM claim FOR SYSTEM_TIME ALL WHERE topic_id = 'winterwar'"
+    )  # the day after the last change of the topic
+    sqllog.run("DELETE FROM align")
+    sqllog.run(
+        "INSERT INTO align VALUES (%s, 'fi', 1256, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b', 0.2,"
+        " 'exact'),"
+        " ('2006-01-01', 'fi', 1256, '8519fbaf22d33984', 'en', 1, 33924, 'a3b291dafd10d41b', 0.2, 'exact')",
+        (last["d"],),
+    )
+    try:
+        later = client.get("/api/compare", params={"topic": "winterwar", "section": MAINILA_SECTION}).json()
+        assert any("FROM align al" in s["text"] for s in later["sql"])
+        assert row(later, MAINILA)["cells"]["en"]["h"] == "a3b291dafd10d41b"
+        # claims changed between 2006 and 2015, so the 2006 rows are not the nearest of 2015
+        past = client.get(
+            "/api/compare", params={"topic": "winterwar", "as_of": "2015-01-01", "section": MAINILA_SECTION}
+        ).json()
+        assert not any("FROM align al" in s["text"] for s in past["sql"])
+    finally:
+        sqllog.run("DELETE FROM align")
+        cache.clear()
+
+
 def test_judged_pair_below_the_nearest_five_is_matched(client):
     # v4: fi Mainila and the en "border incident was reported" sentence of 2009 to 2015 were judged partial,
     # but the en sentence ranked below 5 by distance, so the cell read not_found. Here: an fi claim the judge
@@ -167,8 +194,8 @@ def test_align_cache_of_another_topic_is_not_used(client):
         " 0.1, 'exact')"
     )
     try:
-        (n,) = sqllog.run_file("compare_align_dates", {"day": "2026-11-14", "anchor": "fi", "topic": "winterwar"})
-        assert n["n"] == 0
+        params = {"day": "2026-11-14", "as_of": "2026-11-14 00:00:00", "anchor": "fi", "topic": "winterwar"}
+        assert [r["day"] for r in sqllog.run_file("compare_align_dates", params)] in ([], [None])
         r = client.get("/api/compare", params={"topic": "winterwar", "as_of": "2026-11-14", "limit": 200})
         assert r.status_code == 200
         assert r.json()["total_rows"] == 49
