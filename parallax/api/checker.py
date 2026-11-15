@@ -22,9 +22,17 @@ from concurrent.futures import ThreadPoolExecutor
 
 import requests
 
-from api import sqllog
+from api import gemini_guard, sqllog
 from api.util import MAX_TS, ApiError, iso, lang_order, oldid_url, sql_ts
-from contract.engine import Candidate, _fixture, claim_hash, get_engine
+from contract.engine import (
+    FAKE_GUESS_MODEL,
+    Candidate,
+    _fixture,
+    claim_hash,
+    get_engine,
+    guess_verdicts,
+    split_sentences,
+)
 from engine.gemini import GeminiError
 
 MATCH = ("same", "partial")
@@ -222,7 +230,7 @@ def embed_claims(engine, claims: list[str]) -> list[list[float]]:
     return [[float(x) for x in by_text[c]] if c in by_text else engine.embed([c])[0] for c in claims]
 
 
-def _judge_claim(engine, claim: str, cands: dict[str, list[dict]]) -> dict[str, list[dict]]:
+def _judge_claim(engine, claim: str, cands: dict[str, list[dict]], budget=None) -> dict[str, list[dict]]:
     def one(lang: str) -> tuple[str, list[dict]]:
         rows = cands[lang]
         if not rows:
@@ -231,6 +239,13 @@ def _judge_claim(engine, claim: str, cands: dict[str, list[dict]]) -> dict[str, 
         if _bge_backend(engine) and claim_hash(claim) not in _fixture("embed"):
             # a pasted claim the fixtures never saw: the similarity guess, stored under its own model name
             pairs = engine.judge_or_guess(claim, "en", cs, strict=True)
+        elif budget is not None:
+            # live check with Gemini: within the check's budget, else the similarity guess for this edition
+            got = budget.call(engine.judge, claim, "en", cs)
+            if got is not None:
+                pairs = [(v, engine.model_id) for v in got]
+            else:
+                pairs = [(v, FAKE_GUESS_MODEL) for v in guess_verdicts(claim, cs, strict=True)]
         else:
             pairs = [(v, engine.model_id) for v in engine.judge(claim, "en", cs)]
         by_h = {v.h: (v, model) for v, model in pairs}
@@ -260,13 +275,15 @@ def run_check(
     engine = get_engine()
     langs = sorted(langs or default_langs(topic), key=lang_order)
     try:
-        claims = engine.split_claims(text)[:MAX_CLAIMS]
+        budget = gemini_guard.Budget() if engine.name == "real" and source == "live" else None
+        split = budget.call(engine.split_claims, text) if budget is not None else engine.split_claims(text)
+        claims = (split if split is not None else split_sentences(text))[:MAX_CLAIMS]
         vectors = embed_claims(engine, claims) if claims else []
         sizes = topic_sizes(topic) if topic and claims else None
         near = _nearest_all(vectors, langs, topic, sizes)
         with ThreadPoolExecutor(max_workers=CLAIM_WORKERS) as pool:  # each claim already fans out per edition
             futs = [
-                pool.submit(contextvars.copy_context().run, _judge_claim, engine, c, n)
+                pool.submit(contextvars.copy_context().run, _judge_claim, engine, c, n, budget)
                 for c, n in zip(claims, near, strict=True)
             ]
             judged_all = [f.result() for f in futs]
