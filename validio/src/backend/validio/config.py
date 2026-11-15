@@ -98,3 +98,25 @@ def strict_placeholder_stock() -> bool:
     if v is None:
         v = _env_file_value(DEFAULT_ENV, "STRICT_PLACEHOLDER_STOCK")
     return v == "1"
+
+
+def _flag(key: str) -> str | None:
+    v = os.environ.get(key)
+    return _env_file_value(DEFAULT_ENV, key) if v is None else v
+
+
+def semantic_on() -> bool:
+    """VALIDIO_SEMANTIC=1: the local semantic search adds candidates to the keyword matching
+    (matching/semantic.py). Off by default; `make demo` and `make demo-web` turn it on. With the model or the
+    embeddings file missing it stays off with one log line."""
+    return _flag("VALIDIO_SEMANTIC") == "1"
+
+
+def embeddings_path() -> Path:
+    """The product vectors `make embed` writes (gitignored, like the catalogue)."""
+    return Path(_flag("VALIDIO_EMBEDDINGS") or DATA / "embeddings.npz")
+
+
+def models_dir() -> Path:
+    """Where the local embedding model's files are kept, fetched once by `make embed`."""
+    return Path(_flag("VALIDIO_MODELS") or DATA / "models")

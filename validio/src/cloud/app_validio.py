@@ -9,7 +9,8 @@ VALIDIO_KITCHEN_TOKEN, VALIDIO_MCP_HOSTS, VALIDIO_PUBLIC_READ), never in git.
 VALIDIO_PUBLIC_READ=1 lets a visitor read without the kitchen token; every write stays behind the gates.
 
 Run from validio/:
-  make modal-data      upload data/catalog.db and data/cache/valio to the volume (once, or after make record)
+  make modal-data      upload data/catalog.db and data/cache/valio to the volume (once, or after make record), and
+                       data/embeddings.npz and data/models when make embed made them (the local semantic search)
   make modal-secret    create the secret from MODAL_SECRETS (a 600 file, written with fresh values if missing)
   make modal-deploy    build the web app, deploy, then reset the demo state in the volume
   make modal-seed      reset the demo state in the volume again
@@ -34,10 +35,11 @@ ROOT = Path(__file__).resolve().parents[2] if LOCAL else None  # validio/
 
 
 def _deps() -> list[str]:
-    # the pinned runtime dependencies of src/backend/pyproject.toml
+    # the pinned runtime dependencies of src/backend/pyproject.toml, with the local semantic search's extra
     if ROOT is None:
         return []
-    return tomllib.loads((ROOT / "src" / "backend" / "pyproject.toml").read_text())["project"]["dependencies"]
+    project = tomllib.loads((ROOT / "src" / "backend" / "pyproject.toml").read_text())["project"]
+    return project["dependencies"] + project["optional-dependencies"]["semantic"]
 
 
 image = (
@@ -53,6 +55,11 @@ image = (
         "VALIDIO_KEYS": f"{DATA}/keys",
         "VALIDIO_CATALOG_DB": f"{DATA}/catalog.db",
         "VALIDIO_VALIO_CACHE": f"{DATA}/cache/valio",
+        # the local semantic search: model and product vectors from `make embed`, put in the volume by
+        # `make modal-data`; without them the app logs one line and matches by keyword only
+        "VALIDIO_SEMANTIC": "1",
+        "VALIDIO_EMBEDDINGS": f"{DATA}/embeddings.npz",
+        "VALIDIO_MODELS": f"{DATA}/models",
     })
 )
 if LOCAL:  # the files ride along at deploy time; in the container they are already in place

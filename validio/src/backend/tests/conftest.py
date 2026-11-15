@@ -29,6 +29,20 @@ def _no_live_fallback(monkeypatch):
     monkeypatch.setenv("VALIO_LIVE_FALLBACK", "0")
 
 
+@pytest.fixture(autouse=True, scope="session")
+def _keyword_matching():
+    """VALIDIO_SEMANTIC=1 in validio/.env would load the local embedding model: tests match by keyword, fast and
+    the same on every machine. Session wide, so module fixtures that match are keyword only too. A test of the
+    semantic layer passes its own index (a fake embedder) or turns it on with monkeypatch."""
+    before = os.environ.get("VALIDIO_SEMANTIC")
+    os.environ["VALIDIO_SEMANTIC"] = "0"
+    yield
+    if before is None:
+        os.environ.pop("VALIDIO_SEMANTIC", None)
+    else:
+        os.environ["VALIDIO_SEMANTIC"] = before
+
+
 @pytest.fixture(autouse=True)
 def _fresh_rate_limits():
     """Rate limits are per process: every test starts with empty windows, so one test's calls never 429 the next."""

@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import threading
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, Request
@@ -9,6 +10,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 
 from validio.api.steady import router as steady_router
 from validio.config import ROOT
+from validio.matching import semantic
 from validio.orders.service import (
     ApproveRefused,
     IdempotencyConflict,
@@ -163,6 +165,8 @@ async def lifespan(_app: FastAPI):
     ctx = get_ctx()
     if missing := ctx.startup_problems():
         raise RuntimeError(f"VALIDIO_PUBLIC=1 needs {', '.join(missing)}; refusing to start open")
+    # the local semantic search loads its model and vectors aside (about a second), when VALIDIO_SEMANTIC=1
+    threading.Thread(target=semantic.warm, name="semantic-warm", daemon=True).start()
     security = mcp_security(ctx.mcp_hosts)
     mcp_app.app = mcp_server.streamable_http_app(streamable_http_path="/", host="127.0.0.1",
                                                  transport_security=security)

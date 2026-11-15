@@ -17,6 +17,7 @@ File paths are relative to `src/backend/validio/` unless they start with `script
 | Valio client | `valio/client.py`, `valio/budget.py` | Price and availability from Valio's test API, live, recorded or replayed, at most 40 ids per request |
 | Fact Grades | `trust/levels.py`, `trust/claims.py` | How far each fact can be trusted. A diet claim is checked against the product's other fields |
 | Matching | `matching/need.py`, `matching/rank.py`, `matching/substitute.py`, `matching/split.py` | The typed need, Best Pick, Safe Swap and Split Fill |
+| Semantic search | `matching/semantic.py`, `scripts/embed_catalog.py` | Optional. A small local model proposes more candidates by meaning. It never decides |
 | Hard Lines | `policy/decide.py`, `policy/policies.cedar` | Cedar decides: order automatically, ask a person or block |
 | Order service | `orders/supply.py`, `orders/service.py`, `orders/store.py` | One request from text to decision, then orders that ask Valio again at every step |
 | Open Ledger | `audit/log.py`, `audit/sentences.py` | One sentence per decision, chained by SHA-256 |
@@ -33,7 +34,7 @@ Scene 2 of the demo: "1000 litres of lactose-free milk by Monday, budget 1200 eu
 1. **Agent.** The model picks `request_supply`. `agent/holder.py` fetches a fresh nonce from `GET /agent/v1/nonce` and presents the Spend Pass with it. `agent/port.py` adds that presentation to the call. Only budget, hard cap and diet are shown. Whatever Validio answers goes back to the model through `redact` in `agent/tools.py`, so supplier text never reaches it.
 2. **MCP or OpenAPI.** The call arrives at `/mcp` or at `POST /agent/v1/requests`. Both land in `request_supply` in `api/tools.py`. `test_mcp.py::test_mcp_and_http_give_the_same_result` holds them equal.
 3. **Spend Pass check.** `verify_presentation` in `policy/mandate.py` checks signature, ES256, issuer, key binding, audience, the single-use nonce and the validity window. A failure is HTTP 401 and nothing else happens.
-4. **Catalog.** `parse_need` in `matching/need.py` turns the text into a typed need: 1000 litres, lactose free, by 16 Nov. `screen` narrows the catalog to at most 12 candidates and writes a reason for every product that drops out. None of this makes a live call.
+4. **Catalog.** `parse_need` in `matching/need.py` turns the text into a typed need: 1000 litres, lactose free, by 16 Nov. `screen` narrows the catalog to at most 12 candidates and writes a reason for every product that drops out. None of this makes a live call. How a product phrase is read is in "Reading the product" below.
 5. **Valio.** `valio/client.py` asks Valio's test API for price and availability of those candidates only. `valio/budget.py` counts the ids. The default mode is replay, which answers from recorded files and opens no connection. With `VALIO_LIVE_FALLBACK=1` and a key, replay asks the test API for the ids or the day it has no recording for and stores the answer next to the recordings. In scene 2 that is 12 products in 4 calls.
 6. **Fact Grades.** `trust/levels.py` grades price, stock, delivery and every diet claim: attested, consistent, unchecked, contradicted, missing or unknown. `trust/claims.py` checks the lactose claim against ingredients and allergens. 463047 is low lactose and fails here. Its planted description is graded untrusted.
 7. **Best Pick, Safe Swap, Split Fill.** `best_pick` in `matching/rank.py` sorts on five keys: every hard rule passes, total cost (within 5 % of the cheapest counts as equal), delivery reliability, labels the Spend Pass asks for, carbon. 464306 wins at 1,010.00 €. When the asked product cannot be delivered, `safe_swap` in `matching/substitute.py` takes over (scene 3, below). Split Fill in `matching/split.py` runs today only when a Steady Order renews (`standing/renew.py`), not for a single request.
@@ -41,6 +42,28 @@ Scene 2 of the demo: "1000 litres of lactose-free milk by Monday, budget 1200 eu
 9. **Order service.** The agent calls `confirm_order`. `submit` in `orders/service.py` asks Valio again for every price and amount, asks Cedar again and lands in placed, waiting or blocked. A price the agent sends is never read. The idempotency key turns a retry into the same order. Valio's test API has no order call, so "placed" means placed in Validio.
 10. **Ledger.** Every step above writes one sentence with its facts into `audit/log.py`. Each entry carries the SHA-256 of the one before. For scene 2 the order's entry starts with "Ordered 1000 ST of 464306" (`test_orders.py::test_scene2_ledger_sentence`).
 11. **Web app approve.** Home and Activity read `/api/home`, `/api/activity` and `/api/activity/{id}`. When Cedar says ask a person, the order waits under Needs you. The owner opens it in Activity, types the approval code, and `POST /api/orders/{id}/approve` asks Valio again. It refuses a price rise of more than 2 % and asks Cedar again, so a person can lift "ask" but never a block.
+
+## Reading the product
+
+A request names its product in a short English noun phrase, and English puts the head noun last. `_product_word` in `matching/need.py` reads the phrase from its last word. "10 kg of yellow onions" is onions and "20 litres of vegetable stock" is stock.
+
+1. **The phrase.** `product_phrase` takes the words after the quantity, up to a day, a budget or a pack size. The head noun ends before "for", "with" or "to", so "onions for the soup" is onions.
+2. **Longest first.** Three or two words that end at the head noun are tried first ("whipping cream", "banana puree", "red onion"), then the head noun alone. Each form is tried in Valio's words first, then as written, and singular before plural.
+3. **Kitchen words.** `SYNONYMS` is a short list of kitchen words that Valio names another way. Each was checked against the catalog: stock and broth are bouillon or fond, scallion is spring onion, heavy cream is whipping cream, parm is parmesan. `SAME` lists two names for one thing that both occur in Valio's names, such as courgette and zucchini. A kind with two names searches both.
+4. **Modifiers.** The other words, such as "yellow", "peeled" or "fresh", never pick the kind. They only order the candidates: products whose names hold them go first. Products with a colour the request did not ask for go after the plain ones, so "onions" checks the plain onions before the red ones.
+
+The fixed kinds milk, mozzarella and oat drink keep their own screening, and the semantic search below leaves them alone. Fresh produce still wins for a plain fruit or vegetable word, so "bananas" stays the fresh 4.5 kg pack and "banana puree" stays the purées.
+
+## Semantic search, local and optional
+
+With `VALIDIO_SEMANTIC=1`, a small embedding model adds candidates by meaning. `make demo` and `make demo-web` turn it on. Tests and `make demo-check` run without it unless it is set.
+
+- **What runs where.** The model is BAAI/bge-small-en-v1.5, quantised to ONNX, about 67 MB, run on the CPU by fastembed. `make embed` (`scripts/embed_catalog.py`) fetches it once from Hugging Face into `data/models`. Then it embeds every product's English name with its group name, such as "knorr vegetable bouillon 5kg/333l (in sauces, dressings and stock)". This takes about 3 minutes and writes `data/embeddings.npz` (14 MB, gitignored). At request time the product phrase is embedded on the same machine in a few milliseconds and compared with every product by cosine. No product data and no request text leave the machine.
+- **What it may do.** It only proposes. In `screen`, a keyword candidate that also scores near the best is checked live first when the cap of 12 cuts. Products found only by meaning are added when the keyword path finds fewer than 2 candidates, or when its best is far below the best match. Every one of them goes through the same screening as a keyword candidate: the request's diet, the kitchen's diet, look-alikes, pack size, Valio's price and stock and Cedar. One that fails is not shown at all, because the request never named it. The thresholds sit in `matching/semantic.py`.
+- **It never orders alone.** A product found only by meaning goes to Cedar as a substitute outside Valio's list, so `auto-order` cannot match and the order waits for a person. Its sentence says "Found by meaning, not by its name" (`test_semantic.py::test_a_candidate_by_meaning_waits_for_a_person_where_the_same_by_name_orders`).
+- **Product search.** `search_products` uses the same rules through `search_catalog` in `matching/need.py`. Kitchen words work without the model too, so "vegetable stock" finds the vegetable bouillons.
+- **When it is missing.** Without fastembed, the model or the embeddings file, Validio logs one line and matches by keyword only. Install the extra with `uv sync --extra semantic`; `make embed` does it for you.
+- **Limits.** The model is small. It finds "beef mince" products that the keyword path misses and puts the bouillon cubes first for "stock cubes". It does not reason: "something to make risotto creamy" finds cream and starch products, not parmesan or butter. The agent should ask for the product itself.
 
 ## Scene 3 in sequence
 
@@ -53,6 +76,8 @@ The template build (`scripts/demo_check.py`, no HTTP route) first switches on th
 **The agent's model.** `make_llm` in `agent/llm.py` picks Gemini when `GEMINI_API_KEY` is set (`GEMINI_MODEL`, default gemini-3.8-flash) and a deterministic twin otherwise. Both make the same tool calls (`test_agent.py::test_gemini_buyer_scene2_three_runs_same_order`). Any MCP client works, because Validio never trusts what the model says. Swapping the model changes how a request is worded, not what gets ordered.
 
 **The reader.** The fake reader in `reader/fake.py` is the default. With `READER_MODE=modal`, `reader/remote.py` calls Gemma 4 26B served by vLLM on Modal (`src/cloud/gemma_app.py`). It is not deployed tonight, because Modal's GPUs need a payment method on the workspace. Any reader that answers the fixed shape in `reader/schema.py` fits. A reader that fails falls back to the fake one with a note in the ledger. No deciding module imports the reader (`test_reader.py::test_deciding_code_never_imports_reader`).
+
+**The semantic model.** `FastEmbedder` in `matching/semantic.py` is the only class that knows fastembed. Any model that turns a phrase into a normalised vector fits, as long as `make embed` uses the same one. The file records the model's name, and a file from another model is ignored.
 
 **Storage.** Everything lives in two SQLite files under the ignored data folder. The catalog file is read only. The second file holds requests, orders and idempotency keys (`orders/store.py`), the Open Ledger (`audit/log.py`) and the demo seed (`demo/seed.py`). Postgres is the plan for later. The change sits in `orders/store.py` and `audit/log.py`, plus a shared nonce store in place of the one in memory in `policy/mandate.py`.
 

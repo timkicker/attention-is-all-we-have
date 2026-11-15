@@ -15,6 +15,7 @@ from ..text.format import and_list, qty_text
 from ..trust.claims import claim_check
 from ..trust.levels import TrustLevel
 from ..valio.models import Quote
+from . import semantic
 
 MAX_CANDIDATES = 12
 AGREE = 0.05  # two pack size sources must agree within 5 %
@@ -37,6 +38,13 @@ class Need:
     kitchen_claims: set[str] = field(default_factory=set)
     # the pack a count of packs names, in kilos or litres: "10 packs of bananas 4.5 kg" is (4.5, "KG")
     pack: tuple[float, str] | None = None
+    # the request's other words around the kind ("yellow" in "yellow onions"): products that hold them go first,
+    # they never pick the kind and never screen a product out
+    modifiers: tuple[str, ...] = ()
+    phrase: str = ""  # the product as the request words it, "yellow onions": what the local semantic search reads
+    # candidates only the local semantic search proposed (screen sets it): never ordered without a person, they
+    # go to Cedar as a substitute outside Valio's list
+    by_meaning: frozenset[str] = frozenset()
 
     @property
     def strict_claims(self) -> set[str]:
@@ -103,7 +111,52 @@ UNITS = {"l": "L", "litre": "L", "litres": "L", "liter": "L", "liters": "L", "kg
 # words around the product word in a request that are never the product
 FILLER = frozenset(["of", "a", "an", "the", "some", "please", "for", "by", "and", "with", "in", "on", "to", "from", "order", "need", "we", "need", "i", "want"]
                    + WEEKDAYS + ["budget", "euro", "eur", "free", "lactose", "gluten", "vegan", "next", "this",
-                                 "week", "monday's", "fresh", "bulk"])
+                                 "week", "monday's"])
+# words that say which or how, never what: they rank the products of the kind ("yellow onions", "garlic peeled")
+# and are never read as the kind themselves
+MODIFIER_ONLY = frozenset(re.findall(r"\w+",
+    "red yellow green white black brown purple pink golden fresh organic frozen chilled local finnish domestic "
+    "imported plain natural whole small large big medium mini extra premium bulk sliced diced chopped peeled "
+    "grated shredded cubed halved cut washed trimmed smoked salted unsalted raw cooked roasted dried "
+    "boneless skinless young baby ripe"))
+# a request ends its product where a day, a budget or a pack size begins; the head noun comes before a purpose
+# or an extra ("onions for the soup", "tuna in oil")
+PHRASE_END = re.compile(r"\b(?:by|before|until|budget|deliver\w*|next|this|please|per|each|asap)\b|[,;:!?()]|\d")
+HEAD_END = re.compile(r"\b(?:for|with|in|to|from|at|so|that)\b")
+# kitchen words Valio names another way, tried before the word itself: each was checked against the catalogue
+# (no "stock" kind in Valio's names means broth, "scallion" is not in the catalogue at all)
+SYNONYMS: dict[str, tuple[str, ...]] = {
+    "stock": ("bouillon", "fond"),
+    "broth": ("bouillon", "fond"),
+    "stock cube": ("bouillon",),
+    "bouillon cube": ("bouillon",),
+    "scallion": ("spring onion",),
+    "green onion": ("spring onion",),
+    "heavy cream": ("whipping cream",),
+    "double cream": ("whipping cream",),
+    "single cream": ("cooking cream",),
+    "powdered sugar": ("icing sugar",),
+    "confectioners sugar": ("icing sugar",),
+    "bell pepper": ("capsicum",),
+    "sweet pepper": ("capsicum",),
+    "parm": ("parmesan",),
+    "parmigiano": ("parmesan",),
+    "plain flour": ("wheat flour",),
+    "all purpose flour": ("wheat flour",),
+    "ground beef": ("minced beef",),
+    "canola oil": ("rapeseed oil",),
+    "cos lettuce": ("romaine",),
+    "string bean": ("green bean",),
+    "french bean": ("green bean",),
+    "rutabaga": ("swede",),
+    "garbanzo": ("chickpea",),
+    "salad leaf": ("lettuce",),
+}
+COLOURS = frozenset(["red", "yellow", "green", "white", "black", "brown", "purple", "pink", "golden"])
+# two names for one thing, both in Valio's names: a kind of either searches both ("5 kg of zucchini" finds the
+# fresh courgettes and the cut zucchini)
+SAME = (("courgette", "zucchini"), ("eggplant", "aubergine"), ("coriander", "cilantro"), ("rocket", "arugula"),
+        ("chickpea", "garbanzo"), ("yoghurt", "yogurt"), ("prawn", "shrimp"))
 
 
 # kinds the parser found in the catalogue, by word: the categories most of the products with that word sit in
@@ -196,31 +249,100 @@ def _generic(word: str, cat: Catalog) -> Kind | None:
 
 
 def _singular(w: str) -> list[str]:
-    """"tomatoes" gives "tomato", "berries" "berry", "bananas" "banana"."""
+    """"tomatoes" gives "tomato", "berries" "berry", "bananas" "banana", "leaves" "leaf" or "leave" (the
+    catalogue decides which it knows)."""
     if w.endswith("ies"):
         return [w[:-3] + "y"]
+    if w.endswith("ves"):
+        return [w[:-3] + "f", w[:-1]]
     if w.endswith("oes"):
         return [w[:-2]]
     return [w[:-1]] if w.endswith("s") else []
 
 
-def _product_word(t: str, cat: Catalog) -> str | None:
-    """The first product the catalogue knows in the request, two words before one ("whipping cream", "ice
-    cream"), singular first since it finds both: "30 cartons of vegan pancakes" gives "pancake"."""
-    t = re.sub(r"budget.*$|\b20\d\d-\d\d-\d\d\b|lactose[- ]free|gluten[- ]free", " ", t)
-    words = [w for w in re.findall(r"[a-zäöå]{3,}", t) if w not in FILLER and w not in UNITS]
+def _variants(phrase: str) -> list[str]:
+    """The phrase in Valio's words first, then as written: "vegetable stock" gives "vegetable bouillon",
+    "vegetable fond", "vegetable stock"."""
+    out = list(SYNONYMS.get(phrase, ()))
+    words = phrase.split()
     for i, w in enumerate(words):
+        out += [" ".join([*words[:i], syn, *words[i + 1:]]) for syn in SYNONYMS.get(w, ())]
+    return list(dict.fromkeys([*out, phrase]))
+
+
+def _same(form: str) -> list[str]:
+    """The form with a word in its other name: "zucchini" gives "courgette"."""
+    words = form.split()
+    return [" ".join([*words[:i], o, *words[i + 1:]]) for i, w in enumerate(words)
+            for group in SAME if w in group for o in group if o != w]
+
+
+def _known(form: str, cat: Catalog) -> bool:
+    """The catalogue has products of this kind; remembered in GENERIC. A kind with two names (SAME) searches
+    both, in the categories of each."""
+    if form in GENERIC:
+        return True
+    if kind := _generic(form, cat):
+        others = [k for o in _same(form) if (k := _generic(o, cat)) is not None]
+        if others:
+            words = tuple(dict.fromkeys(w for k in (kind, *others) for w in k.words))
+            net = tuple(sorted({c for k in (kind, *others) for c in k.net}))
+            kind = Kind(words, kind.unit, None, net, whole=True)
+        if len(GENERIC) >= MAX_GENERIC:
+            GENERIC.pop(next(iter(GENERIC)))  # the oldest word goes: never grows without bound
+        GENERIC[form] = kind
+        return True
+    return False
+
+
+def _content(t: str) -> list[str]:
+    return [w for w in re.findall(r"[a-zäöå]{3,}", t) if w not in FILLER and w not in UNITS]
+
+
+def _clean(t: str) -> str:
+    return re.sub(r"budget.*$|\b20\d\d-\d\d-\d\d\b|lactose[- ]free|gluten[- ]free", " ", t)
+
+
+def product_phrase(t: str) -> str:
+    """The words that name the product: after the quantity ("10 kg of yellow onions by Monday" gives "yellow
+    onions"), else before it ("yellow onions, 10 kg"), up to where a day, a budget or a pack size begins."""
+    t = t.lower()
+    m = re.search(NUMBER + r"\s*(" + "|".join(sorted(UNITS, key=len, reverse=True)) + r")\b", t)
+    if m is None:
+        return " ".join(PHRASE_END.split(t, maxsplit=1)[0].split())
+    seg = PHRASE_END.split(re.sub(r"^\s*of\b", "", t[m.end():]), maxsplit=1)[0]
+    if not _content(_clean(seg)):
+        seg = next((x for x in reversed(PHRASE_END.split(t[:m.start()])) if _content(_clean(x))), "")
+    return " ".join(seg.split()).strip(" .-")
+
+
+def _product_word(t: str, cat: Catalog) -> tuple[str, tuple[str, ...]] | None:
+    """The kind of product the request names and the words that only say which.
+
+    English puts the head noun last: "yellow onions" are onions, "vegetable stock" is stock. So the phrase is read
+    from its last word: two or three words ending there first ("whipping cream", "banana puree"), then the last
+    word, each in Valio's words first (SYNONYMS) and singular first since it finds both ("pancakes" gives
+    "pancake"). The words before it rank the products ("yellow"); they never pick the kind. When the last word
+    names no product the word before it is tried, and last every word of the request left to right."""
+    words = _content(_clean(HEAD_END.split(product_phrase(t), maxsplit=1)[0]))
+    for h in range(len(words) - 1, -1, -1):
+        if words[h] in MODIFIER_ONLY:
+            continue
+        for start in range(max(0, h - 2), h + 1):
+            for head in [*_singular(words[h]), words[h]]:
+                for form in _variants(" ".join([*words[start:h], head])):
+                    if _known(form, cat):
+                        rest = tuple(w for w in words[:start] + words[h + 1:] if w not in form.split())
+                        return form, rest
+    words = [w for w in _content(_clean(t)) if w not in MODIFIER_ONLY]
+    for i, w in enumerate(words):  # the request's words in order, as before: "onions, 10 kg" or a loose phrasing
         nxt = words[i + 1] if i + 1 < len(words) else None
         tries = [f"{w} {n}" for n in ((nxt[:-1], nxt) if nxt and nxt.endswith("s") else (nxt,)) if n]
         tries += [*_singular(w), w]  # the singular finds both
         for form in tries:
-            if form in GENERIC:
-                return form
-            if kind := _generic(form, cat):
-                if len(GENERIC) >= MAX_GENERIC:
-                    GENERIC.pop(next(iter(GENERIC)))  # the oldest word goes: never grows without bound
-                GENERIC[form] = kind
-                return form
+            for v in _variants(form):
+                if _known(v, cat):
+                    return v, ()
     return None
 
 
@@ -269,8 +391,12 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
             size = number(s.group(1)) * {**_TO_KG, **_TO_L}[s.group(2)]
             pack = (size, "KG" if s.group(2) in _TO_KG else "L") if size > 0 else None
     kind = next((k for k in KINDS if any(starts_word(w, t) for w in KINDS[k].words)), None)
-    if kind is None and cat is not None:
-        kind = _product_word(t, cat)
+    modifiers: tuple[str, ...] = ()
+    phrase = product_phrase(t)
+    if kind is None and cat is not None and (found := _product_word(t, cat)):
+        kind, modifiers = found
+    if kind is None and cat is not None and phrase and semantic.for_catalog(cat) is not None:
+        kind = phrase  # no catalogue word for it: the local semantic search proposes the candidates (screen)
     if kind is None:
         raise ValueError(f"no known product kind in {text!r}")
     required, excluded = set(), set()
@@ -289,7 +415,8 @@ def parse_need(text: str, today: date, cat: Catalog | None = None) -> Need:
     budget = None
     if b := re.search(r"budget\s*(?:of\s*)?" + NUMBER + r"\s*(?:€|eur|euro)", t):
         budget = round(number(b.group(1)) * 100)
-    return Need(kind, quantity, unit, required, excluded, deliver_by, budget, text=text, pack=pack)
+    return Need(kind, quantity, unit, required, excluded, deliver_by, budget, text=text, pack=pack,
+                modifiers=modifiers, phrase=phrase)
 
 
 def _per_sales_unit(p: Product) -> float | None:
@@ -356,6 +483,11 @@ def _in_net(need: Need, p: Product) -> bool:
         return False  # "banana" is not in "bananaleaves"
     if not any(p.category.startswith(c) for c in kind.net):
         return False
+    return _diet_fits(need, p)
+
+
+def _diet_fits(need: Need, p: Product) -> bool:
+    name = (p.name_en or "").lower()
     for claim in need.strict_claims:
         _, near, word = CLAIM_WORDS.get(claim, (None, None, None))
         if not (claim in p.claims or (near and near in p.claims) or (word and word in name)):
@@ -417,11 +549,33 @@ def diet_open_count(need: Need, p: Product) -> int:
     return sum(claim_check(p, c)[0] == TrustLevel.MISSING for c in need.kitchen_claims)
 
 
-def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tuple[list[Product], list[Ranked]]:
+def _modifier_misses(need: Need, p: Product) -> int:
+    """How many of the request's other words ("yellow", "peeled") the product's name does not hold, and for a
+    kind the parser read from the catalogue, how many colours it names that the request did not ask for: "yellow
+    onions" and "onions" put the plain onions before the red ones."""
+    name = fold(p.name_en)
+    misses = sum(not re.search(rf"\b{re.escape(m[:-1] if len(m) > 4 and m.endswith('s') else m)}", name)
+                 for m in need.modifiers)
+    if need.kind in KINDS:
+        return misses
+    asked = set(need.modifiers) | set(need.kind.split())
+    return misses + sum(c not in asked and re.search(rf"\b{c}\b", name) is not None for c in COLOURS)
+
+
+_AUTO = object()
+
+
+def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES,
+           sem=_AUTO) -> tuple[list[Product], list[Ranked]]:
     """Candidates for the live check and the products that dropped out, each with its reasons.
 
-    When more than `limit` products pass, those with a delivery record in Valio's file go first,
-    then the biggest packs, so a bulk order needs few cartons.
+    When more than `limit` products pass, those whose names hold the request's other words go first ("yellow"
+    in "yellow onions"), then those with a delivery record in Valio's file, then the biggest packs, so a bulk
+    order needs few cartons.
+
+    With the local semantic search on (semantic.py, `sem` overrides it in tests), keyword candidates that also
+    score high go first, and when the keyword path finds few or looks off, the nearest products by meaning are
+    added. Each of them passes the same static screening; a product it leaves out is just not proposed.
     """
     if need.product_id:
         p = cat.get(need.product_id)
@@ -448,11 +602,91 @@ def screen(need: Need, cat: Catalog, limit: int | None = MAX_CANDIDATES) -> tupl
         size = qty_text(need.pack[0], need.pack[1])
         dropped += [Ranked(p, None, None, False, [f"Not the {size} pack asked for"]) for p in kept if p not in fits]
         kept = fits
+    index = semantic.for_catalog(cat) if sem is _AUTO else sem
+    mix = semantic.Blend(frozenset(), (), False)
+    # the fixed kinds (milk, mozzarella, oat drink) keep their hand-set screening and order: the demo's scenes
+    if index is not None and need.kind not in KINDS and (need.phrase or need.kind):
+        # a keyword candidate scores by the request's words or by the kind they were read as, whichever is
+        # higher: "cilantro" was read as coriander on purpose (SYNONYMS), so coriander is not off
+        phrase, asked = need.phrase or need.kind.replace("_", " "), " ".join([*need.modifiers, need.kind.replace("_", " ")])
+        ids = [p.id for p in kept]
+        scores = index.scores(phrase, ids)
+        if asked != phrase:
+            other = index.scores(asked, ids)
+            scores = {i: max(s, other[i]) for i, s in scores.items()}
+        mix = semantic.blend(scores, index.search(phrase))
     # products Valio's data does not confirm the kitchen's diet for come after those it does
-    kept.sort(key=lambda p: (diet_open_count(need, p), p.reliability is None, -(p.reliability or 0),
+    kept.sort(key=lambda p: (_modifier_misses(need, p), diet_open_count(need, p), p.id not in mix.high,
+                             p.reliability is None, -(p.reliability or 0),
                              -(amount_per_sales_unit(need, p)[0] or 0), p.id))
+    extra = _semantic_extra(need, kind, cat, mix.extra, {p.id for p in kept} | {r.product.id for r in dropped})
+    need.by_meaning = frozenset(p.id for p in extra)
+    kept = extra + kept if mix.first else kept + extra
     return (kept if limit is None else kept[:limit]), dropped
+
+
+def _semantic_extra(need: Need, kind: Kind, cat: Catalog, ids, known: set[str]) -> list[Product]:
+    """The semantic-only products that pass what a keyword candidate must pass: the request's diet, the
+    kitchen's, the kind's look-alikes and the pack size. One that fails is left out, not listed as refused:
+    the request never named it."""
+    out = []
+    for pid in ids:
+        p = cat.get(pid)
+        if p is None or p.deleted or pid in known or not _diet_fits(need, p):
+            continue
+        if kind.off and re.search(kind.off, (p.name_en or "").lower()):
+            continue
+        if static_reasons(need, p) or (need.pack and not _pack_fits(need.pack, p)):
+            continue
+        out.append(p)
+    return out
 
 
 def candidates(need: Need, cat: Catalog) -> list[Product]:
     return screen(need, cat)[0]
+
+
+def _search_tiers(words: str) -> list[list[str]]:
+    """What the product search tries, a tier at a time until one finds something: the words in Valio's terms
+    and as written, singular too ("stock cubes", "bouillon"); then the head noun alone ("yellow onions",
+    "onion")."""
+    sing = " ".join((_singular(w) or [w])[0] for w in words.split())
+    tiers = [list(dict.fromkeys(_variants(words) + _variants(sing)))]
+    ws = _content(HEAD_END.split(words, maxsplit=1)[0])  # the head ends before "for", "with", "to"
+    if ws and ws[-1] not in MODIFIER_ONLY and ws != words.split():
+        tiers.append(_variants((_singular(ws[-1]) or [ws[-1]])[0]))
+    return tiers
+
+
+def search_catalog(cat: Catalog, text: str | None = None, category: str | None = None,
+                   claims: set[str] | None = None, limit: int = 10, sem=_AUTO) -> list[Product]:
+    """The agents' product search over the static catalogue, never a live call. The words in Valio's terms come
+    first, then as written ("stock" finds the bouillons, then what Valio names stock); when they find nothing,
+    singular, then the head noun alone. With the local semantic search on, the word hits that also score high
+    come first and, when the words find few or look off, the nearest products by meaning join them, inside the
+    same category and claims."""
+    claims = set(claims or ())
+    words = " ".join(re.findall(r"[\w-]+", fold(text or ""))) or None
+    index = semantic.for_catalog(cat) if sem is _AUTO else sem
+    wide = limit if index is None or not words else max(limit, 200)
+    found: dict[str, Product] = {}
+    for tier in _search_tiers(words) if words else [[None]]:
+        for form in tier:
+            for p in cat.search(text=form, category_prefix=category, claims=claims, limit=wide):
+                found.setdefault(p.id, p)
+        if found:
+            break
+    if index is None or not words:
+        return list(found.values())[:limit]
+    scores = index.scores(words, list(found))
+    hits = []
+    for pid, score in index.search(words):
+        p = found.get(pid) or cat.get(pid)
+        if p is None or p.deleted or (category and not p.category.startswith(category)) or not claims <= p.claims:
+            continue
+        hits.append((pid, score))
+        found.setdefault(pid, p)
+    mix = semantic.blend(scores, hits)
+    ranked = sorted(scores, key=lambda i: (i not in mix.high, -scores[i]))
+    order = [*mix.extra, *ranked] if mix.first else [*ranked, *mix.extra]
+    return [found[i] for i in order[:limit]]
