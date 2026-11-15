@@ -108,7 +108,7 @@ class DecisionView(Model):
                           "outside_groups, none_available, blocked_other, valio_down, too_many, unreadable")
     owner_text: str | None = Field(
         None, description="one plain sentence in the words of the kitchen's own limits: "
-                          "\"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders.\"")
+                          "\"Bought without asking: 1,010.00 € is under your 1,200.00 € auto-order limit.\"")
 
     @model_validator(mode="after")
     def _text(self):

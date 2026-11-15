@@ -184,7 +184,7 @@
       const status = e instanceof ApiError ? e.status : 0;
       if (status === 403) codeError = "That code is not right.";
       else if (status === 429) codeError = "Too many wrong codes. Try again in 15 minutes.";
-      else if (status === 422 && /automatic/i.test(msg)) bad = { alone: "Must not be above Waiting for you." };
+      else if (status === 422 && /auto-order/i.test(msg)) bad = { alone: "Must not be above Waiting for you." };
       else if (status === 422 && /per week/i.test(msg)) bad = { week: "At least the Waiting for you limit." };
       else if (status === 422 && /product group/i.test(msg)) groupsProblem = msg.charAt(0).toUpperCase() + msg.slice(1) + ".";
       else formProblem = msg;
@@ -206,7 +206,7 @@
   {:else if !r}
     <Loading rows={4} />
   {:else}
-    {#snippet aloneF()}<UnitField id="f-alone" label="Ordered automatically up to" unit="€" placeholder="1,200.00" start={chrome.phone} bind:value={f.alone} problem={bad.alone} onblur={() => tidy("alone")} />{/snippet}
+    {#snippet aloneF()}<UnitField id="f-alone" label="Auto-order up to" unit="€" placeholder="1,200.00" start={chrome.phone} bind:value={f.alone} problem={bad.alone} onblur={() => tidy("alone")} />{/snippet}
     {#snippet waitingF()}<UnitField id="f-waiting" label="Waiting for you up to" unit="€" placeholder="5,000.00" start={chrome.phone} bind:value={f.waiting} problem={bad.waiting} onblur={() => tidy("waiting")} />{/snippet}
     {#snippet weekF()}<UnitField id="f-week" label="Per week" unit="€" placeholder="No limit" start={chrome.phone} bind:value={f.week} problem={bad.week} onblur={() => tidy("week")} />{/snippet}
     {#snippet allowedF()}<SegmentedControl id="f-allowed" ariaLabel="Substitutes allowed" options={ALLOWED} bind:value={f.allowed} />{/snippet}
@@ -215,7 +215,7 @@
 
     <!-- On the desk a field sits on the right of its row; on the phone under its label. -->
     <ListSection id="money" title="Money, before VAT">
-      <ListRow id="row-alone" label="Ordered automatically up to" description={was("alone")} {...place(aloneF)} />
+      <ListRow id="row-alone" label="Auto-order up to" description={was("alone")} {...place(aloneF)} />
       <ListRow id="row-waiting" label="Waiting for you up to" description={was("waiting") ?? "Above it, blocked"} {...place(waitingF)} />
       <ListRow id="row-week" label="Per week" description={was("week") ?? (f.week.trim() ? undefined : "Empty: no weekly limit")} {...place(weekF)} />
     </ListSection>

@@ -50,7 +50,7 @@ const euro = (c: number) => `${(c / 100).toLocaleString("en-US", { minimumFracti
 export function mayWords(r: Rules): string[] {
   if (!r.saved) return ["Every order needs approval"];
   return [
-    `Orders automatically up to ${euro(r.aloneUpToCents)}`,
+    `Auto-orders up to ${euro(r.aloneUpToCents)}`,
     `Waiting for you up to ${euro(r.approvalUpToCents)}`,
     `Blocked above ${euro(r.approvalUpToCents)}`,
     ...(r.perWeekCents == null ? [] : [`Per week up to ${euro(r.perWeekCents)}`]),

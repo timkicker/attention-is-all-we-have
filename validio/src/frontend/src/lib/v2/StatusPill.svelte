@@ -1,5 +1,5 @@
 <script lang="ts">
-  /// The status of a request or standing order: Ordered automatically, Approved by you,
+  /// The status of a request or standing order: Auto-ordered, Approved by you,
   /// Waiting for you, Blocked or Standing. The app's VPill (kit Badge) in the status's tone.
   import type { ActivityItem } from "$lib/api/types";
   import VPill from "$lib/v/VPill.svelte";

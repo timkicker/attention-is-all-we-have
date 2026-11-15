@@ -17,7 +17,7 @@ Proof:
 - `adversarial/test_policy_props.py::test_worse_facts_never_give_a_better_outcome` and `adversarial/test_policy_props.py::test_full_path_invariants`, property tests over random facts
 - `test_agent.py::test_gemini_buyer_scene2_three_runs_same_order`
 
-Not covered: the agent can still ask in plain words for far too much. Only the Spend Pass limits stop that, the auto limit for automatic orders and the hard cap for everything. Validio does not judge whether a kitchen really needs 10,000 litres. Drift Watch looks at amounts only for Steady Orders.
+Not covered: the agent can still ask in plain words for far too much. Only the Spend Pass limits stop that, the auto auto-order limit and the hard cap for everything. Validio does not judge whether a kitchen really needs 10,000 litres. Drift Watch looks at amounts only for Steady Orders.
 
 ## Supplier text injects
 

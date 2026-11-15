@@ -41,7 +41,7 @@ test("demo bar resets and the activity rows come from the fixture", async ({ pag
   await expect(page.getByTestId("activity-R-4")).toContainText("Waiting for you");
   await expect(page.getByTestId("activity-R-4")).toContainText("1,515.00");
   await expect(page.getByTestId("activity-R-3")).toContainText("Blocked");
-  await expect(page.getByTestId("activity-R-1")).toContainText("Ordered automatically");
+  await expect(page.getByTestId("activity-R-1")).toContainText("Auto-ordered");
   await expect(page.getByTestId("activity-S-1")).toContainText("Standing");
   await reset(page);
   await expect(page.locator("h1")).toHaveText("Home");

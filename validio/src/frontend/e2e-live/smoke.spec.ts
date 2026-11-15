@@ -36,9 +36,9 @@ test("the connected agent orders automatically, the row opens from Activity", as
   await page.getByTestId("nav-activity").click();
   await page.getByTestId(`activity-${id}`).click();
   await expect(page).toHaveURL(new RegExp(`/activity/${id}$`));
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
+  await expect(page.getByTestId("detail-status")).toHaveText("Auto-ordered");
   await page.reload(); // served by FastAPI's fallback
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
+  await expect(page.getByTestId("detail-status")).toHaveText("Auto-ordered");
 });
 
 test("Reset in the demo bar starts the copy again", async ({ page }) => {

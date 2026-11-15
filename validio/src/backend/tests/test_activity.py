@@ -41,9 +41,9 @@ def test_activity_lists_requests_and_the_steady_order_newest_first(kitchen):
     assert all(set(it) == ITEM_KEYS for it in items), items[0]
     by_id = {it["id"]: it for it in items}
     assert by_id[r1]["status"] == "ordered" and by_id[r1]["orderId"] and by_id[r1]["kind"] == "request"
-    assert by_id[r1]["why"] == "Under your 1,200.00 € limit, ordered automatically"
+    assert by_id[r1]["why"] == "Under your 1,200.00 € limit, auto-ordered"
     assert by_id[r1]["title"] == "1,000 litres of lactose-free milk" and by_id[r1]["totalCents"] == 101000
-    assert by_id[r2]["status"] == "waiting" and by_id[r2]["why"] == "Over your 800.00 € limit for automatic orders"
+    assert by_id[r2]["status"] == "waiting" and by_id[r2]["why"] == "Over your 800.00 € auto-order limit"
     assert by_id["S-1"]["kind"] == "standing" and by_id["S-1"]["status"] == "standing"
     assert by_id["S-1"]["orderId"] is None and by_id["S-1"]["why"].startswith("Every Monday")
     ids = [it["id"] for it in items]
@@ -87,7 +87,7 @@ def test_detail_of_an_order_placed_alone(kitchen):
     assert price["value"].startswith("1.01 € per") and price["ok"] is True and price["note"].startswith("Valio price")
     allergens = next(x for x in d["checks"] if x["label"] == "Allergens")
     assert allergens["value"] == "Free from lactose" and allergens["ok"] is True
-    assert d["rule"] == {"text": "Under your 1,200.00 € limit, ordered automatically.", "version": 2}
+    assert d["rule"] == {"text": "Under your 1,200.00 € limit, auto-ordered.", "version": 2}
     assert d["result"]["orderId"] == d["item"]["orderId"] and d["result"]["delivery"] == "2026-11-16"
     assert d["approval"] is None
     assert next(p["actor"] for p in d["proof"]) == DEMO_AGENT
@@ -109,7 +109,7 @@ def test_detail_while_waiting_then_approved(kitchen):
     oid = d["item"]["orderId"]
     assert d["result"] is None and d["approval"]["orderId"] == oid
     assert d["approval"]["holdUntil"] == "2026-11-15T17:00:00+02:00"  # Valio's order cut-off
-    assert d["rule"] == {"text": "Over your 800.00 € limit for automatic orders.", "version": 3}
+    assert d["rule"] == {"text": "Over your 800.00 € auto-order limit.", "version": 3}
     assert d["item"]["approvedByYou"] is False
     home = c.get("/api/home").json()
     assert [it["id"] for it in home["needsYou"]] == [r2]
@@ -119,7 +119,7 @@ def test_detail_while_waiting_then_approved(kitchen):
     assert d["item"]["status"] == "ordered" and d["item"]["why"] == "You approved it"
     assert d["item"]["approvedByYou"] is True
     assert next(i for i in c.get("/api/activity").json()["items"] if i["id"] == r2)["approvedByYou"] is True
-    assert d["rule"]["text"] == "Over your 800.00 € limit for automatic orders. You approved it."
+    assert d["rule"]["text"] == "Over your 800.00 € auto-order limit. You approved it."
     assert d["approval"] is None and d["result"]["orderId"] == oid
     assert c.get("/api/home").json()["needsYou"] == []
 

@@ -91,7 +91,7 @@ def test_a_fresh_demo_copy_has_its_activity(juror):
     out = juror.get("/api/activity").json()
     by_id = {it["id"]: it for it in out["items"]}
     assert by_id["R-1"]["status"] == "ordered" and by_id["R-1"]["orderId"], by_id.get("R-1")
-    assert by_id["R-1"]["why"] == "Under your 1,200.00 € limit, ordered automatically"
+    assert by_id["R-1"]["why"] == "Under your 1,200.00 € limit, auto-ordered"
     assert (by_id["R-2"]["status"], by_id["R-2"]["why"]) == ("ordered", "You approved it"), by_id.get("R-2")
     assert out["counts"] == {"all": 3, "ordered": 2, "waiting": 0, "blocked": 0, "standing": 1}
     for rid in ("R-1", "R-2"):

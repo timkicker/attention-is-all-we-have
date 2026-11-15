@@ -22,7 +22,7 @@ The kitchen connects its purchasing agent to its account.
 * **Orders:** requests and steady orders in one list.
 * **Agent:**
   * Connect with a pairing code, then a consent screen (Allow / Deny). The consent screen shows a verification code the agent shows too.
-  * **Rules**, the one place for what the agent may do: orders automatically up to X €, needs approval up to Y €, blocked above; per week; substitutes. One save, one approval code, a new signed pass version.
+  * **Rules**, the one place for what the agent may do: auto-orders up to X €, needs approval up to Y €, blocked above; per week; substitutes. One save, one approval code, a new signed pass version.
   * Pause, Disconnect, link to its ledger entries, technical details folded away.
 * **Ledger:** as today, plus pass replaced, connected, paused, disconnected.
 * **Settings**, one page: Kitchen, Diet and allergens, Login and approval code, Theme, Log out.
