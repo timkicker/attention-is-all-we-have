@@ -196,8 +196,9 @@
   .past :global(.notice) { margin-top: 24px; }
   .none { padding: 40px 0 48px; }
   @media (max-width: 600px) {
-    .ctl { gap: 8px; }
-    .ctl :global(.field) { min-width: 0; }
+    /* the date button names a whole day ("Newest version 12 Nov 2026"); beside it the field was 40px wide */
+    .ctl { gap: 8px; flex-wrap: wrap; }
+    .ctl :global(.field) { min-width: 0; flex: 1 1 100%; }
   }
   .clamp3 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 </style>

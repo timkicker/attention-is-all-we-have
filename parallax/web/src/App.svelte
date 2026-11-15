@@ -2,6 +2,7 @@
   // Route table: one page component per route. Owned by the shell; pages own their files.
   import { onMount } from 'svelte'
   import * as copy from './lib/copy'
+  import { dateState } from './lib/date.svelte'
   import { installLinkHandler, router } from './lib/router.svelte'
   import Bar from './lib/ui/Bar.svelte'
   import Footer from './lib/ui/Footer.svelte'
@@ -16,6 +17,12 @@
   import Statement from './routes/Statement.svelte'
 
   onMount(installLinkHandler)
+
+  // A ?date= that is no past day (a typo, a future day) shows the newest version; the address then says so too,
+  // instead of keeping a date the page does not show.
+  $effect(() => {
+    if (router.query.has('date') && dateState.value === null) router.setQuery({ date: null }, { replace: true })
+  })
 
   const PAGES = { start: Start, ingest: Ingest, differences: Differences, statement: Statement, removed: Removed, check: Check, checkRun: CheckResult, hood: Hood, devStates: DevStates }
   const m = $derived(router.current)
