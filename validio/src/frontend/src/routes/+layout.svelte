@@ -13,7 +13,7 @@
   import { owner, session } from "$lib/owner.svelte";
   import { poll } from "$lib/poll";
   import { bump, chrome } from "$lib/chrome.svelte";
-  import { Activity, Bot, ChevronDown, House, Search, ShieldCheck } from "@lucide/svelte";
+  import { Activity, Bot, ChevronDown, House, ShieldCheck } from "@lucide/svelte";
   import { Tooltip } from "bits-ui";
   import { blurSwap, collapse, easeOut, fadeOut, reduced, viewTransition } from "$lib/motion";
   import { net, reportFail, reportOk } from "$lib/net.svelte";
@@ -21,7 +21,7 @@
   import { toast } from "$lib/toast.svelte";
   import { keyRouter, stepRows } from "$lib/keys";
   import { syncThemeColor } from "$lib/theme.svelte";
-  import { BusyLabel, LiveMark, money, Toaster, Truncate } from "$lib/v2";
+  import { BusyLabel, money, Toaster, Truncate } from "$lib/v2";
   import Palette from "$lib/v2/Palette.svelte";
 
   let { children } = $props();
@@ -267,10 +267,6 @@
           {/each}
         </nav>
         <div class="band-end">
-          <LiveMark />
-          <button type="button" class="find" id="nav-search" data-testid="nav-search" onclick={() => palette?.open()} aria-label="Search and commands">
-            <Search size={15} strokeWidth={1.9} aria-hidden="true" /><kbd>⌘K</kbd>
-          </button>
           <a class="kitchen" href="/settings" id="nav-settings" data-testid="nav-settings" class:on={path.startsWith("/settings")} aria-current={path.startsWith("/settings") ? "page" : undefined}>
             <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
             {#key session.account.name}<span class="k-wrap" in:blurSwap><Truncate class="k-name" text={session.account.name} /></span>{/key}
@@ -279,7 +275,6 @@
         </div>
       {:else}
         <div class="band-end">
-          <LiveMark compact />
           <a class="kitchen" href="/settings" id="phone-settings" data-testid="phone-settings" aria-current={path.startsWith("/settings") ? "page" : undefined}>
             <ChevronDown class="k-chev" size={14} strokeWidth={2} aria-hidden="true" />
             {#key session.account.name}<span class="k-wrap" in:blurSwap><span class="k-name">{session.account.name}</span></span>{/key}
@@ -508,40 +503,6 @@
     margin-left: auto;
     min-width: 0;
   }
-  .find {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    align-self: center;
-    height: 30px;
-    padding: 0 8px;
-    border: 1px solid var(--valio-band-muted);
-    border-radius: var(--radius-button);
-    background: none;
-    color: var(--valio-band-muted);
-    font: inherit;
-    transition:
-      color var(--duration-fast) ease,
-      border-color var(--duration-fast) ease,
-      transform var(--v-dur-press) var(--v-ease-out);
-  }
-  .find kbd {
-    font-family: var(--v-sans);
-    font-size: var(--fs-cap);
-    line-height: 16px;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .find:hover {
-      color: var(--valio-band-fg);
-      border-color: var(--valio-band-fg);
-    }
-  }
-  .find:active {
-    transform: scale(0.97);
-  }
-  .find:focus-visible {
-    outline-color: var(--valio-band-fg);
-  }
   .kitchen {
     justify-content: flex-end;
     min-width: 0;
@@ -575,9 +536,6 @@
     }
     .kitchen :global(.k-name) {
       max-width: 140px;
-    }
-    .find kbd {
-      display: none;
     }
   }
 

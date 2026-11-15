@@ -49,7 +49,7 @@ export function setMode(m: Mode, origin?: { x: number; y: number }) {
     .then(() => {
       root.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-        { duration: 420, easing: "cubic-bezier(0.77, 0, 0.175, 1)", pseudoElement: "::view-transition-new(root)" },
+        { duration: 1100, easing: "cubic-bezier(0.77, 0, 0.175, 1)", pseudoElement: "::view-transition-new(root)" },
       );
     })
     .catch(() => {});

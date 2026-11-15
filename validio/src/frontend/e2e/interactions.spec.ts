@@ -81,8 +81,3 @@ test("an approval made here raises no notification; the tab title counts what wa
   await page.waitForTimeout(2500);
   await expect(page.getByTestId("toast")).toHaveCount(0);
 });
-
-test("the band says the page is live", async ({ page }) => {
-  await fresh(page);
-  await expect(page.getByTestId("live-mark")).toContainText("Live");
-});

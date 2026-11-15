@@ -10,7 +10,6 @@ export { default as LimitScale } from "./LimitScale.svelte";
 export { default as Explain } from "./Explain.svelte";
 export { default as Truncate } from "./Truncate.svelte";
 export { default as Tip } from "./Tip.svelte";
-export { default as LiveMark } from "./LiveMark.svelte";
 export { default as Toaster } from "./Toaster.svelte";
 export { default as Empty } from "./Empty.svelte";
 export { default as Loading } from "./Loading.svelte";
