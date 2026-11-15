@@ -96,3 +96,23 @@ def test_parse_process_gives_the_same_lives_as_the_thread(monkeypatch):
     monkeypatch.setenv("INGEST_PARSE_PROCESS", "1")
     there = job.parse_elsewhere(fetched)
     assert there.lives and there.lives == here.lives and there.sections == here.sections
+
+
+def test_ingest_embeds_in_small_batches(monkeypatch):
+    # one ollama request at a time: a batch of 32 long sentences held a reader's check for up to 2 min
+    import engine.embed as E
+
+    sizes = []
+
+    class Fake:
+        batch = 32
+
+        def __call__(self, texts):
+            sizes.append(len(texts))
+            return [np.ones(4, dtype=np.float32) for _ in texts]
+
+    monkeypatch.setenv("EMBED_BACKEND", "ollama")
+    monkeypatch.setattr(E, "backend", lambda timeout=600: Fake())
+    monkeypatch.setattr(job, "_STORE", E.Overlay({}))
+    vs = job.embed([f"Lause numero {i}." for i in range(20)], lambda done, total: None)
+    assert len(vs) == 20 and max(sizes) == job.INGEST_EMBED_BATCH == 8
