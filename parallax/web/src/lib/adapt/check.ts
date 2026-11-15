@@ -14,6 +14,7 @@ import { LANGS, type CheckResultVM, type CheckRow, type CheckVerdict, type Check
 import { paths } from '../router.svelte'
 import * as checkCopy from '../copy/check'
 import type { TopicCtx, WithoutCounts } from './shared'
+import { EXAMPLE_QID } from './start'
 
 type Client = typeof Api
 type Claim = CheckRes['claims'][number]
@@ -138,8 +139,10 @@ export function toCheckRow(qid: string, c: Claim): CheckRow {
   return { id: String(c.idx), verdict, head, say: c.text, href: verdict === 'none' ? null : evidenceHref(qid, ev) }
 }
 
-/** /api/check/recorded -> recorded answers (labels come from the data). */
+/** /api/check/recorded -> recorded answers (labels come from the data). They answer Winter War questions, so only
+ *  the Winter War offers them: on another article "Gemini on Mainila" would open a Winter War answer under its title. */
 export async function loadCheck(api: Client, ctx: TopicCtx): Promise<Result<WithoutCounts<CheckVM>>> {
+  if (ctx.topic.qid !== EXAMPLE_QID) return { ok: true, data: { topic: ctx.topic, date: ctx.date, recorded: [] } }
   const r = await api.checkRecorded()
   if (!r.ok) return r
   const recorded = pickRecorded(r.data.runs).flatMap((run) => {
