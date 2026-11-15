@@ -36,7 +36,7 @@ The connector offers seven tools: `search_products`, `request_supply`, `confirm_
 
 ## Rules
 
-- **Per order.** "Ordered automatically up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
+- **Per order.** "Auto-order up to" and "Waiting for you up to" apply to each order. Above the second limit an order is blocked, even with approval. In the demo kitchen these are 1,200.00 € and 2,000.00 €.
 - **Per week.** An optional cap on everything the Spend Pass has placed this week. An order that would go over it is blocked. Validio checks this limit before it asks Cedar, so it is not one of the Cedar rules. The demo kitchen has 8,000.00 €.
 - **Diet and allergens.** "Must be" takes lactose-free, gluten-free and vegan. "Never" takes the 14 EU allergens. A product is blocked when its own Valio data contradicts the diet or when it lists a "never" allergen. It waits for you when the diet cannot be confirmed, when it may contain a "never" allergen or when it has no allergen data. A diet the request itself names ("lactose-free milk") leaves out every product without that claim. The diet in Rules does not: a product Valio's data says nothing about, such as bananas, stays an option and waits for you.
 - **Substitutes.** Off: every substitute waits for you. From Valio's list: a substitute on Valio's own substitute list may be ordered automatically. With extra cost: as from Valio's list, plus a line may be split across products that together cost up to the set percentage more. A substitute that is not on Valio's list always waits for you.

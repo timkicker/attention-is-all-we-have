@@ -178,7 +178,7 @@ export interface Decision {
   summary?: string;
   /** Why it ended here, for every status. */
   reasonCode?: ReasonCode;
-  /** One plain sentence in the kitchen's own limits: "Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders." */
+  /** One plain sentence in the kitchen's own limits: "Bought without asking: 1,010.00 € is under your 1,200.00 € auto-order limit." */
   ownerText?: string;
 }
 

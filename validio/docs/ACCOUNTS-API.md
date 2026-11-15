@@ -80,7 +80,7 @@ AgentState = {
 * `mcpUrl`: `https://<host>/mcp/c/<token>/`, the connector for any MCP agent (see below);
   `apiUrl`: `https://<host>/agent/v1/k/<accountId>`. Signing agents (the CLI) keep using the code and
   `/mcp/k/<accountId>/`.
-* `may`: the Rules in words, e.g. `["Orders automatically up to 1,200.00 €", "Ask you up to 2,000.00 €",
+* `may`: the Rules in words, e.g. `["Auto-orders up to 1,200.00 €", "Ask you up to 2,000.00 €",
   "Never above 2,000.00 €", "Substitutes from Valio's list"]`.
 * `keyId`: the JWK thumbprint of the agent's key, first 8 characters, for the Technical fold.
 * `verifyCode`: `XXX-XXX` from `A-Z` and `2-9` without `0 O 1 I L`, new for every connection, made when
@@ -180,7 +180,7 @@ ordered automatically, lowering the automatic limit to 800.00 € makes the same
 
 ```
 Rules = {
-  aloneUpToCents: number,        // orders automatically up to this
+  aloneUpToCents: number,        // auto-orders up to this
   approvalUpToCents: number,     // needs approval up to this, blocked above
   substitutes: "off" | "listed" | "extra",
   maxExtraPct: number,           // only with "extra": a swap may cost up to this % more (0 to 20)
@@ -254,7 +254,7 @@ ActivityItem = {
 
 * Status: ordered automatically and approved are `ordered` (`approvedByYou` tells them apart); waiting is `waiting`; blocked and rejected are
   `blocked`. A request cleared to order automatically that the agent has not confirmed yet is no item until it is.
-* `why`: "Under your 1,200.00 € limit, ordered automatically", "Over your 1,200.00 € limit for automatic orders",
+* `why`: "Under your 1,200.00 € limit, auto-ordered", "Over your 1,200.00 € auto-order limit",
   "Above your 5,000.00 € limit, blocked", "You approved it", "You said no"; the Steady Order "Every Monday,
   4 lines" (", 1 waiting for you" for lines that wait for the owner after a renewal, ", 1 blocked" for lines
   blocked this week); its `totalCents` is what the ordered lines cost, null before a renewal.

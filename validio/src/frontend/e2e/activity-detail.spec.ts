@@ -7,7 +7,7 @@ test("an ordered request reads asked, checked, rule, result, proof", async ({ pa
   await fresh(page);
   await page.goto("/activity/R-2");
   await expect(page.getByTestId("detail-title")).toHaveText(/mozzarella-fontal/);
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
+  await expect(page.getByTestId("detail-status")).toHaveText("Auto-ordered");
   await expect(page.getByTestId("asked")).toContainText("Kitchen agent");
   await expect(page.getByTestId("check-stock")).toHaveAttribute("data-ok", "false");
   await expect(page.getByTestId("check-substitute")).toHaveAttribute("data-ok", "true");

@@ -128,7 +128,7 @@ class Run:
               f"scene 1: Spend Pass card {sp}")
         check("approvers" in sp["hidden"] and "approvers" not in sp["disclosed"], "scene 1: approvers shown")
         live = self.ids_ok(req, 1)
-        return f"request {req['id']} arrived, Spend Pass card 1,200.00 € automatic, 2,000.00 € cap, lactose free, " \
+        return f"request {req['id']} arrived, Spend Pass card 1,200.00 € auto-order, 2,000.00 € cap, lactose free, " \
                f"checked {live['ids']} products live"
 
     async def scene2(self):

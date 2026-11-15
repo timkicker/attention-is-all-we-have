@@ -27,7 +27,7 @@ SCENES = {
     1: Scene("Request", "1000 litres of lactose-free milk by Monday, budget 1200 euro",
              [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}],
              search="lactose free milk", claims=("FREE_FROM_LACTOSE",)),
-    2: Scene("Ordered automatically", "1000 litres of lactose-free milk by Monday, budget 1200 euro",
+    2: Scene("Auto-ordered", "1000 litres of lactose-free milk by Monday, budget 1200 euro",
              [{"text": "1000 litres of lactose-free milk by Monday, budget 1200 euro"}]),
     3: Scene("Owner approves a swap", "200 bags of Gran Castelli lactose-free mozzarella 466375 by Monday",
              [{"productId": "466375", "quantity": 200, "unit": "BAG"}]),

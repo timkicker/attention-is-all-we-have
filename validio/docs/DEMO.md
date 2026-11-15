@@ -18,11 +18,11 @@ The agent's first call turns the Agent page into a check. It shows a verificatio
 
 ## 3 Order automatically
 
-Ask the agent: "1000 litres of lactose-free milk by Monday, budget 1200 euro". It calls `request_supply`, gets `auto_order` and confirms. **Home** shows the order under Latest as "Ordered automatically". Open it in **Activity** to see what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. **Proof** at the bottom shows the order's ledger entries with their hashes.
+Ask the agent: "1000 litres of lactose-free milk by Monday, budget 1200 euro". It calls `request_supply`, gets `auto_order` and confirms. **Home** shows the order under Latest as "Auto-ordered". Open it in **Activity** to see what the agent asked for, what Validio checked at Valio, the rule that decided, and the result. **Proof** at the bottom shows the order's ledger entries with their hashes.
 
 ## 4 Lower the limit, then approve
 
-Go to **Rules**, then **Edit**. Set "Ordered automatically up to" to 500 and save with the code 246810. Rules now shows the next version.
+Go to **Rules**, then **Edit**. Set "Auto-order up to" to 500 and save with the code 246810. Rules now shows the next version.
 
 Ask the agent for the same milk again. This time the answer is `ask_human`, and Home lists the order under **Needs you**. Open it. It says "Waiting for you" and "Not ordered yet". Click **Approve**, type 246810 and confirm. Validio asks Valio again for price and stock before placing the order, and the item disappears from Needs you. This works the same way in the 390 px window.
 

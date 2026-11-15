@@ -34,16 +34,16 @@ test("the client orders 1,000 l lactose-free milk automatically: Home Latest and
   await page.goto("/");
   const row = page.getByTestId("section-latest").getByTestId(`activity-${r.id}`);
   await expect(row).toHaveAttribute("data-status", "ordered");
-  await expect(row).toContainText("Ordered automatically");
+  await expect(row).toContainText("Auto-ordered");
   await expect(row).toContainText(/milk/i);
 
   await page.getByTestId("nav-activity").click();
   await expect(page).toHaveURL(/\/activity$/);
   const a = page.getByTestId(`activity-${r.id}`);
-  await expect(a).toContainText("Ordered automatically");
+  await expect(a).toContainText("Auto-ordered");
   await a.click();
   await expect(page).toHaveURL(new RegExp(`/activity/${r.id}$`));
-  await expect(page.getByTestId("detail-status")).toHaveText("Ordered automatically");
+  await expect(page.getByTestId("detail-status")).toHaveText("Auto-ordered");
   await expect(page.getByTestId("asked")).toContainText(/lactose-free milk/i);
   await expect(page.getByTestId("approval")).toHaveCount(0);
 });

@@ -145,7 +145,7 @@ def _why(ctx: Ctx, v: SupplyRequestView) -> str:
     decided = _decided(ctx, v.id)
     if v.status == "ordered_alone":
         alone = re.search(r"inside the auto limit of ([\d,.]+ €)", decided)
-        return f"Under your {alone.group(1)} limit, ordered automatically" if alone else "Ordered automatically"
+        return f"Under your {alone.group(1)} limit, auto-ordered" if alone else "Auto-ordered"
     if v.status in ("approved", "ordered"):
         return "You approved it"
     if v.status == "rejected":
@@ -368,7 +368,7 @@ def _standing_detail(ctx: Ctx, request: Request, sid: str) -> ActivityDetail:
     checks = [Check(label="Product", value=(v := display_name(ln.name)), note=_note(v, _line_note(ln)),
                     ok=LINE_OK.get(ln.result)) for ln in full.lines]
     sp = full.steady_pass
-    limits = (f"Under the Steady Order's own pass: orders automatically up to {money(sp.auto_limit_cents)}, blocked above "
+    limits = (f"Under the Steady Order's own pass: auto-orders up to {money(sp.auto_limit_cents)}, blocked above "
               f"{money(sp.hard_cap_cents)}." if sp and sp.auto_limit_cents is not None and sp.hard_cap_cents is not None
               else "Under the Steady Order's own pass.")
     weeks = f", learned from {full.weeks_learned} weeks" if full.weeks_learned else ""

@@ -271,7 +271,7 @@ def may(ctx: Ctx) -> list[str]:
     if not rules_saved(ctx.db_path):
         return ["Every order needs approval"]
     c = current_claims(ctx.db_path)
-    out = [f"Orders automatically up to {money(c['autoLimitCents'])}", f"Waiting for you up to {money(c['hardCapCents'])}",
+    out = [f"Auto-orders up to {money(c['autoLimitCents'])}", f"Waiting for you up to {money(c['hardCapCents'])}",
            f"Blocked above {money(c['hardCapCents'])}"]
     if c.get("weekCapCents") is not None:
         out.append(f"Per week up to {money(c['weekCapCents'])}")

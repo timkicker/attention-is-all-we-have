@@ -728,7 +728,7 @@
                 "type": "null"
               }
             ],
-            "description": "one plain sentence in the words of the kitchen's own limits: \"Bought without asking: 1,010.00 € is under your 1,200.00 € limit for automatic orders.\"",
+            "description": "one plain sentence in the words of the kitchen's own limits: \"Bought without asking: 1,010.00 € is under your 1,200.00 € auto-order limit.\"",
             "title": "Ownertext"
           },
           "reasonCode": {
@@ -3055,7 +3055,7 @@
       "RulesIn": {
         "properties": {
           "aloneUpToCents": {
-            "description": "the agent orders automatically up to this",
+            "description": "the agent auto-orders up to this",
             "maximum": 10000000.0,
             "minimum": 0.0,
             "title": "Aloneuptocents",

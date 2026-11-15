@@ -49,7 +49,7 @@ export type Tone = "ok" | "bad" | "act" | "quiet";
 
 export const STATUS: Record<RequestStatus, { label: string; tone: Tone }> = {
   working: { label: "Working", tone: "quiet" },
-  ordered_alone: { label: "Ordered automatically", tone: "ok" },
+  ordered_alone: { label: "Auto-ordered", tone: "ok" },
   waiting: { label: "Waiting for you", tone: "act" },
   approved: { label: "Approved", tone: "ok" },
   ordered: { label: "Ordered after approval", tone: "ok" },
@@ -79,8 +79,8 @@ export const VERDICT: Record<OptionVerdict, { label: string; tone: Tone }> = {
 
 export const LINE_RESULT: Record<SteadyLineResult, { label: string; tone: Tone }> = {
   pending: { label: "Not renewed yet", tone: "quiet" },
-  renewed: { label: "Renewed automatically", tone: "ok" },
-  split_renewed: { label: "Split, renewed automatically", tone: "ok" },
+  renewed: { label: "Auto-renewed", tone: "ok" },
+  split_renewed: { label: "Split, auto-renewed", tone: "ok" },
   waiting: { label: "Waiting for you", tone: "act" },
   flagged: { label: "Drift flag", tone: "act" },
   accepted: { label: "Accepted", tone: "ok" },

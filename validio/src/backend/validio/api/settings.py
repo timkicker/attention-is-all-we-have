@@ -81,7 +81,7 @@ def _said(c: dict) -> list[tuple[str, str]]:
     d = date.fromisoformat(str(c["deliverBy"])) if c.get("deliverBy") else None
     split = c.get("split") or {}
     pct = float(split.get("maxExtraCostPct", 0))
-    return [("Orders automatically up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
+    return [("Auto-orders up to", money(c["autoLimitCents"])), ("Blocked above", money(c["hardCapCents"])),
             ("Diet", " and ".join(CLAIM_NAMES.get(x, x) for x in sorted(c.get("diet") or ())) or "none"),
             ("Delivered by", f"{d.day} {d:%b}" if d else "the day each request names"),
             ("Substitutes", "from Valio's list" if c.get("substitutes") == SUBSTITUTES_LISTED else "none automatically"),
@@ -207,7 +207,7 @@ class RulesOut(Model):
 
 
 class RulesIn(Model):
-    alone_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="the agent orders automatically up to this")
+    alone_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="the agent auto-orders up to this")
     approval_up_to_cents: int = Field(ge=0, le=MAX_CENTS, description="needs approval up to this, blocked above")
     substitutes: Literal["off", "listed", "extra"] = Field(description="off, Valio's list, or Valio's list "
                                                            "with a split that may cost up to maxExtraPct more")
@@ -276,7 +276,7 @@ def put_rules(ctx: CtxDep, request: Request, body: RulesIn,
     from .ui import check_code
 
     if body.alone_up_to_cents > body.approval_up_to_cents:
-        raise HTTPException(422, f"orders automatically up to {money(body.alone_up_to_cents)} is above the approval limit "
+        raise HTTPException(422, f"auto-orders up to {money(body.alone_up_to_cents)} is above the approval limit "
                                  f"{money(body.approval_up_to_cents)}")
     if body.per_week_cents is not None and body.per_week_cents < body.approval_up_to_cents:
         raise HTTPException(422, f"per week {money(body.per_week_cents)} is below the approval limit "

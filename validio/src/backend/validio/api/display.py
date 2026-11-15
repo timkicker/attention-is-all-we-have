@@ -20,7 +20,7 @@ from ..text.format import (
 
 # the Spend Pass fields under the names a person reads
 PASS_FIELDS = {
-    "autoLimitCents": "orders automatically up to", "auto_limit_cents": "orders automatically up to", "hardCapCents": "blocked above",
+    "autoLimitCents": "auto-orders up to", "auto_limit_cents": "auto-orders up to", "hardCapCents": "blocked above",
     "hard_cap_cents": "blocked above", "diet": "diet", "categories": "product groups", "deliverBy": "deliver by",
     "deliver_by": "deliver by", "substitutes": "substitutes", "split": "split limit",
     "preferLabels": "preferred labels", "prefer_labels": "preferred labels",
@@ -284,7 +284,7 @@ def valio_mode_text(mode: str | None) -> str | None:
 
 
 def reason_text(sentence: str | None) -> str | None:
-    """Why a waiting order waits, as one line: "Over your 800.00 € limit for automatic orders."."""
+    """Why a waiting order waits, as one line: "Over your 800.00 € auto-order limit."."""
     said = asks_text(sentence)
     if not said:
         return None
@@ -295,7 +295,7 @@ def reason_text(sentence: str | None) -> str | None:
 def _over_alone(why: str) -> str | None:
     """"1,010.00 € is over the auto limit of 800.00 €" in the Rules' words."""
     m = re.match(r"[\d,.]+ € is over the auto limit of ([\d,.]+ €)", why)
-    return f"over your {m.group(1)} limit for automatic orders" if m else None
+    return f"over your {m.group(1)} auto-order limit" if m else None
 
 
 def asks_text(sentence: str | None) -> str | None:
@@ -348,7 +348,7 @@ def ledger_text(kind: str, actor_text: str | None, sentence: str, title: str | N
             return "Signed again, nothing changed."
         s = re.sub(r"^Owner changed Spend Pass \S+\. ", "", s)  # only what changed, field by field
         # the Rules' words, also for entries written before they had them
-        s = re.sub(r"^(?:Orders )?[Aa]lone up to\b|(?<=\. )(?:Orders )?[Aa]lone up to\b", "Orders automatically up to", s)
+        s = re.sub(r"^(?:(?:Orders )?[Aa]lone|Orders automatically) up to\b|(?<=\. )(?:(?:Orders )?[Aa]lone|Orders automatically) up to\b", "Auto-orders up to", s)
         s = re.sub(r"\bnone alone\b", "none automatically", s)
         return re.sub(r"\bNever above\b", "Blocked above", s)
     steady = re.match(r"Steady Order S-\d+, (.+?): (.+)$", s)

@@ -129,7 +129,7 @@
         {#if alone != null}
           <a class="fig end" href="/rules" data-testid="home-alone">
             <span class="f-num num">{nb(money(alone))}</span>
-            <span class="f-cap">ordered automatically, at most</span>
+            <span class="f-cap">auto-order limit</span>
           </a>
         {/if}
       </div>
