@@ -113,6 +113,19 @@ def test_bananas_by_text_wait_for_the_owner(supply, mandate):
     assert req["status"] == "waiting", req["decision"]
     assert req["decision"]["reasonCode"] == "diet_unchecked"
     assert "banana" in req["lines"][0]["options"][0]["name"].lower()
+    # the kitchen's rule is a check, not part of what was asked: no "lactose-free banana" in the title
+    need = req["lines"][0]["need"]
+    assert need["diet"] == ["lactose free"] and need["askedDiet"] == []
+    assert "lactose" not in _title(req["lines"]).lower() and "banana" in _title(req["lines"]).lower()
+
+
+def _title(lines) -> str:
+    from types import SimpleNamespace
+
+    from validio.api.display import title
+    from validio.api.schemas import NeedView
+
+    return title([SimpleNamespace(need=NeedView.model_validate(ln["need"]), options=[]) for ln in lines], None)
 
 
 def test_a_product_that_lists_milk_is_blocked(supply, mandate):
@@ -141,6 +154,8 @@ def test_lactose_free_in_the_text_still_screens_out_claimless_milk(supply, manda
     assert shown and all("FREE_FROM_LACTOSE" in p.claims or "LOW_LACTOSE" in p.claims
                          or "lactose" in p.name_en.lower() for p in shown)
     assert all("FREE_FROM_LACTOSE" in catalog.get(i).claims for i in valio.asked)
+    assert req["lines"][0]["need"]["askedDiet"] == ["lactose free"]
+    assert _title(req["lines"]).lower().startswith("100 litres of lactose-free milk")
     # the same words without "lactose-free": the kitchen's rule keeps a claimless milk a candidate
     need = parse_need("100 litres of milk by Monday", MON, catalog)
     need.kitchen_claims = {"FREE_FROM_LACTOSE"}

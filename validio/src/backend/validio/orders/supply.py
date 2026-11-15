@@ -263,6 +263,8 @@ class SupplyService:
             "lineId": f"L-{n}", "text": need.text,
             "need": {"what": need.kind.replace("_", " ") or "product", "quantity": need.quantity, "unit": need.unit,
                      "diet": [CLAIM_NAMES.get(c, c) for c in sorted(need.required_claims)],
+                     # only what the agent asked for ("lactose-free milk"): the kitchen-wide diet is a check, not the ask
+                     "askedDiet": [CLAIM_NAMES.get(c, c) for c in sorted(need.strict_claims)],
                      "deliverBy": need.deliver_by.isoformat(), "productId": need.product_id},
             "options": options,
         }

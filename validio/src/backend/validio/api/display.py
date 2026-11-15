@@ -117,7 +117,8 @@ def title(lines: list, deliver_by: str | None) -> str | None:
             q = need.qty_text or ""
             parts.append(f"{q} of {short_ref(name_of(ln, need.product_id), with_size='×' not in q)}")
         else:
-            what = " ".join([*(d.replace(" free", "-free") for d in need.diet), need.what])
+            asked = need.asked_diet if need.asked_diet is not None else need.diet  # older requests: as before
+            what = " ".join([*(d.replace(" free", "-free") for d in asked), need.what])
             parts.append(f"{need.qty_text} of {what}")
     if not parts:
         return None
