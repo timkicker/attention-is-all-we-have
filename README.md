@@ -38,6 +38,8 @@ Everything else (rules, architecture, tests, deploy, limits) is in [validio/READ
 
 ![Parallax start page: search any Wikipedia article or open a prepared one](docs/img/parallax-start.png)
 
+**See where seven Wikipedias disagree, and since when.**
+
 Parallax lines up seven language editions of Wikipedia (Finnish, Swedish, German, English, Russian, Estonian and Ukrainian) statement by statement. It shows where an edition tells the same thing differently, which statements one edition removed while others kept them and how all of that looked on any past day. It also checks a chatbot answer against the editions. Every revision is stored in MariaDB 12.3 system-versioned tables and one query combines `FOR SYSTEM_TIME AS OF` with vector search to match statements across languages at a given date. Parallax reads Wikipedia and never edits it.
 
 ### Try it in a minute
@@ -55,15 +57,24 @@ The demo video is at https://youtu.be/eeRs_a-xHF0.
 
 ![A Gemini answer about the Winter War checked against the editions: 17 statements, 11 backed, 5 in no edition, the Hanko lease disputed because Estonian removed it in 2009](docs/img/parallax-check-result.png)
 
-### What is real and what is recorded
+### How it works
 
-Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. The English lines are machine translations, so some wording differences come from the translation. For the Winter War, Gemini matched the statements across editions and translated them before the event and the seed stores those results. The live server calls no language model (`ENGINE=fake`) but embeds new text with bge-m3 through Ollama. A pasted chatbot answer and a newly loaded article are therefore matched by vector similarity alone. Statements in a newly loaded article also stay untranslated. Any article with a Finnish version can be loaded from the start page and the comparison opens after one to two minutes. The recorded Gemini answers under "Check an AI answer" are checked again against the editions each time they are opened.
+Differences, removed statements, past days and the history of each statement are computed from the stored Wikipedia revisions. Each sentence gets a bge-m3 vector, vector search finds the closest sentences in the other editions on the chosen day and Gemini 3.8 Flash decides for each pair whether it is the same statement, marks the numbers and terms that differ and translates it into English. A pasted chatbot answer is split into statements and checked the same way; if Gemini is slow, vector similarity decides and the statement says so. Any article with a Finnish version can be loaded from the start page and its comparison opens after one to two minutes.
+
+| | |
+|:---|:---|
+| Revisions stored | 875,572 |
+| Sentence vectors | 90,070 |
+| Finnish sentence lives (all revisions of 19,742 articles) | 1,118,463 |
+| `AS OF` over 1.1 million rows, median | 0.86 ms |
+| `AS OF` together with vector search in one article, median | 5 ms |
+| Embedding on a Verda A100 | 4,555 sentences/s |
 
 ### Built with
 
-MariaDB 12.3 (system-versioned tables, `VECTOR` columns and `VEC_DISTANCE_COSINE`), bge-m3 embeddings through Ollama, Python with FastAPI, a Svelte web app built with Vite and Gemini for matching and translation of the seed. Hosted on a Verda server with Docker Compose and Caddy.
+MariaDB 12.3 (system-versioned tables, `VECTOR` columns with an HNSW index and `VEC_DISTANCE_COSINE`), bge-m3 embeddings (Ollama, sentence-transformers on a Verda A100), Gemini 3.8 Flash for matching, translation and answer checks, Python with FastAPI, a Svelte web app built with Vite and Wikimedia Codex tokens. Hosted on a Verda server with Docker Compose and Caddy.
 
-Everything else (pages, API, seeds, tests, limits) is in [parallax/README.md](parallax/README.md), deployment in [parallax/deploy/README.md](parallax/deploy/README.md) and the product notes in [parallax/docs/PRODUCT.md](parallax/docs/PRODUCT.md).
+Everything else (how it works in detail, pages, API, seeds, tests) is in [parallax/README.md](parallax/README.md), deployment in [parallax/deploy/README.md](parallax/deploy/README.md) and the product notes in [parallax/docs/PRODUCT.md](parallax/docs/PRODUCT.md).
 
 ## Repository layout
 
