@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CheckRes } from '../api/types'
 import * as copy from '../copy'
-import { modelName, pickRecorded, recordedLabel, toCheckRow, toResult } from './check'
+import { loadCheck, modelName, pickRecorded, recordedLabel, toCheckRow, toResult } from './check'
 import type { TopicCtx } from './shared'
 
 const ctx: TopicCtx = { topic: { qid: 'Q134949', topicId: 'winterwar', title: 'Winter War' }, date: null, asOf: '2026-11-14' }
@@ -53,6 +53,17 @@ describe('recorded labels come from the data', () => {
     expect(pickRecorded(qs.map((q, i) => r(String(i), q))).map((x) => x.question)).toEqual([qs[2], qs[1], qs[0]])
     const fx = { run_id: 'fx', question: 'What happened at Mainila?', answer_model: 'example answer (test fixture)', answer_date: null }
     expect(pickRecorded([fx, r('9', qs[2])]).map((x) => x.run_id)).toEqual(['9', 'fx'])
+  })
+})
+
+describe('recorded answers', () => {
+  it('are offered on the Winter War only, the article they answer', async () => {
+    const runs = [{ run_id: 'r1', question: 'Who fired the shots at Mainila?', answer_model: 'gemini-3-pro', answer_date: '2026-11-14' }]
+    const api = { checkRecorded: async () => ({ ok: true, data: { runs } }) } as unknown as Parameters<typeof loadCheck>[0]
+    const ww = await loadCheck(api, ctx)
+    expect(ww.ok && ww.data.recorded.map((x) => x.runId)).toEqual(['r1'])
+    const laptop = await loadCheck(api, { ...ctx, topic: { qid: 'Q3962', topicId: 'q3962', title: 'Laptop' } })
+    expect(laptop.ok && laptop.data.recorded).toEqual([])
   })
 })
 
