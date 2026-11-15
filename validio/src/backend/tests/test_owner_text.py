@@ -51,6 +51,9 @@ def test_auto_order_request_explains_itself_and_compares(client, holder):  # noq
     assert chosen["deliveryText"] == "Arrives Mon 16 Nov" and chosen["deliveryDate"] == "2026-11-16"
     assert chosen["reliabilityText"] and chosen["whyText"] and "whyNotText" not in chosen
     assert chosen["dietText"].startswith("Lactose free: Valio confirms")
+    # Valio's carbon file reaches every option: a product-group average, in kg CO2e per kg
+    assert isinstance(chosen["carbonKg"], float) and chosen["carbonText"] == f"{chosen['carbonKg']:g} kg CO2e per kg"
+    assert all("carbonKg" in o for o in line["options"] if o["verdict"] in ("chosen", "ranked"))
     for o in line["options"]:
         if o["verdict"] != "chosen":
             assert o.get("whyNotText"), o

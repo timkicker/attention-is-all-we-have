@@ -59,10 +59,21 @@
   const hasUnit = $derived(suitable.some((o) => o.unitPriceText));
   const hasArrive = $derived(suitable.some((o) => o.deliveryText));
   const hasRecord = $derived(suitable.some((o) => o.reliabilityText));
-  const cols = $derived(2 + (hasUnit ? 1 : 0) + (hasArrive ? 1 : 0) + (hasRecord ? 1 : 0));
+  // Valio's footprint is a product-group average: a column only when the options differ, else one line under the table.
+  const footprints = $derived(new Set(suitable.map((o) => o.carbonKg).filter((v) => v != null)));
+  const hasCarbon = $derived(footprints.size > 1);
+  const carbonNote = $derived(
+    hasCarbon
+      ? "Footprint is Valio's average for each product group, in kg CO\u2082e per kg."
+      : footprints.size === 1
+        ? `Same footprint for every option: ${[...footprints][0]} kg CO\u2082e per kg, Valio's average for the product group.`
+        : "",
+  );
+  const carbon = (o: RankedOption) => (o.carbonKg != null ? `${o.carbonKg} kg` : "No value");
+  const cols = $derived(2 + (hasUnit ? 1 : 0) + (hasArrive ? 1 : 0) + (hasRecord ? 1 : 0) + (hasCarbon ? 1 : 0));
   /** On the phone the columns fold into one line under the name. */
   const phoneMeta = (o: RankedOption) =>
-    [o.unitPriceText, arrives(o) && `arrives ${arrives(o)}`, reliability(o) && `in full ${reliability(o).toLowerCase()}`].filter(Boolean).join(", ");
+    [o.unitPriceText, arrives(o) && `arrives ${arrives(o)}`, reliability(o) && `in full ${reliability(o).toLowerCase()}`, hasCarbon && o.carbonKg != null && `${o.carbonKg} kg CO\u2082e per kg`].filter(Boolean).join(", ");
 
   let openDown = $state(false);
   /** The supplier text Validio ignored: open the fold and show its row. */
@@ -89,6 +100,7 @@
     <td class="r num total">{o.moneyText ?? money(o.totalCents)}</td>
     {#if hasArrive}<td class="num">{nb(arrives(o))}</td>{/if}
     {#if hasRecord}<td>{reliability(o)}</td>{/if}
+    {#if hasCarbon}<td class="r num">{carbon(o)}</td>{/if}
   </tr>
   {#if isChosen && (o.whyText || o.checks?.length)}
     <tr class="chosen why-row">
@@ -118,12 +130,14 @@
           <th class="v-th r">Total</th>
           {#if hasArrive}<th class="v-th">Arrives</th>{/if}
           {#if hasRecord}<th class="v-th">Delivered in full</th>{/if}
+          {#if hasCarbon}<th class="v-th r">CO&#8322;e per kg</th>{/if}
         </tr>
       </thead>
       <tbody>
         {#each suitable as o (o.productId)}{@render optionRow(o)}{/each}
       </tbody>
     </table>
+    {#if carbonNote}<p class="carbon-note" data-testid="carbon-note">{carbonNote}</p>{/if}
   {:else}
     <p class="notice quiet">No product fitted every rule.</p>
   {/if}
@@ -322,5 +336,11 @@
       display: block;
       border-bottom: 1px solid var(--v-line);
     }
+  }
+  .carbon-note {
+    margin: 10px 0 0;
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+    color: var(--v-muted);
   }
 </style>
