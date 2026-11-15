@@ -36,9 +36,24 @@ def test_a_check_keeps_the_cache_an_ingest_write_clears_it(client):
     r = client.post("/api/check", json={"text": "Talvisota alkoi 30. marraskuuta 1939.", "topic": "winterwar"})
     assert r.status_code == 200
     assert cache._store  # a check only adds its own run, the warm pages of other visitors stay
-    from api.main import _changes_data
 
-    assert _changes_data(type("R", (), {"url": type("U", (), {"path": "/api/ingest"})})())
+
+def test_an_ingest_clears_its_own_topic_only(client):
+    from api.main import data_changed
+    from api.routes import dropped
+
+    for url in ("/api/topics", "/api/compare?topic=winterwar", "/api/dropped?topic=winterwar"):
+        assert client.get(url).status_code == 200
+    gen = cache.generation()
+    data_changed("q122100")  # another article stored an edition
+    assert cache.get("/api/compare?topic=winterwar") is not None  # the demo article stays warm
+    assert cache.get("/api/dropped?topic=winterwar") is not None
+    assert cache.get("/api/topics?") is None  # the article list shows the new one
+    assert any(k[0] == "winterwar" for k in dropped._CACHE)
+    cache.put("/api/compare?topic=q122100", gen, b"{}", {}, None, [])  # computed before the ingest stored data
+    assert cache.get("/api/compare?topic=q122100") is None
+    data_changed("WinterWar")
+    assert cache.get("/api/compare?topic=winterwar") is None
 
 
 def test_a_cached_answer_is_gzip_once_with_an_etag_and_a_304(client):

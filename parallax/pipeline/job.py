@@ -38,7 +38,7 @@ from contract.db import connect
 from contract.engine import Candidate, get_engine, sketch_embed
 from pipeline import wapi, wikidata
 from pipeline.fetch import fetch_texts, meta_row, pick_snapshots
-from pipeline.lives import walk
+from pipeline.lives import TS_FMT, walk
 from pipeline.load import versioned
 from pipeline.parse import ParseCache
 
@@ -259,7 +259,8 @@ def status(cur, qid: str) -> dict | None:
     jobs = _q(cur, "SELECT * FROM ingest_job WHERE qid=%s", (qid,))
     if jobs:
         return job_view(jobs[0], _q(cur, "SELECT * FROM ingest_edition WHERE qid=%s", (qid,)))
-    topics = _q(cur, "SELECT * FROM topic WHERE wikidata_id=%s", (qid,))
+    # a topic page asks with its route id, which is the topic_id for seed topics (/t/winterwar)
+    topics = _q(cur, "SELECT * FROM topic WHERE wikidata_id=%s OR topic_id=%s", (qid, qid))
     if topics:
         return loaded_view(topics[0], _q(cur, "SELECT lang FROM page WHERE topic_id=%s", (topics[0]["topic_id"],)))
     return None
@@ -398,6 +399,26 @@ def parse_elsewhere(fetched: dict):
         return lives_of(fetched)
 
 
+def adopt_untopiced(cur, lang: str, pid: int, claims: list[dict]) -> None:
+    """The Finnish M sample holds the lives of some pages without a topic (Jatkosota, Mannerheim, ...). Their rows stay
+    as history; the current ones end now, so the topic's own lives can take their place. A life of the topic that
+    ends at the same instant as an M life of the same sentence ends a microsecond later (the key holds row_end)."""
+    cur.execute("DELETE FROM claim WHERE lang=%s AND page_id=%s AND topic_id IS NULL", (lang, pid))
+    cur.execute(
+        "SELECT h, row_end FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s AND topic_id IS NULL",
+        (lang, pid),
+    )
+    taken = {(h, end) for h, end in cur.fetchall()}
+    if not taken:
+        return
+    for c in claims:
+        if c["row_end"]:
+            end = dt.datetime.strptime(c["row_end"], TS_FMT)
+            while (c["h"], end) in taken:
+                end += dt.timedelta(microseconds=1)
+            c["row_end"] = end.strftime(TS_FMT)
+
+
 def load_edition(conn, topic_id: str, fetched: dict, w, vecs: dict) -> int:
     """Page, revisions, section versions and sentence lives of one edition in one transaction."""
     lang, pid = fetched["lang"], fetched["page_id"]
@@ -429,6 +450,7 @@ def load_edition(conn, topic_id: str, fetched: dict, w, vecs: dict) -> int:
              "emb": np.asarray(vecs[lv["h"]], dtype="<f4").tobytes()}
             for lv in w.lives
         ]  # fmt: skip
+        adopt_untopiced(cur, lang, pid, claims)
         cols = ["lang", "page_id", "h", "topic_id", "section", "text", "born_rev", "died_rev", "died_comment",
                 "time_precision", "has_ref", "had_ref", "emb"]  # fmt: skip
         n = versioned(cur, "claim", cols, claims)
@@ -603,7 +625,7 @@ class Stopped(Exception):
 
 class Job:
     def __init__(
-        self, qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+        self, qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[str], None] | None = None
     ) -> None:
         self.qid = qid
         self.stop = stop or threading.Event()
@@ -653,8 +675,8 @@ class Job:
         self.ed(lang, page_id=fetched["page_id"], length=fetched["length"], revisions=len(fetched["meta"]),
                 snapshots=len(fetched["snaps"]), pct=36, error=None, retry_at=None)  # fmt: skip
         already = self.sql(
-            "SELECT COUNT(*) AS n FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s",
-            (lang, fetched["page_id"]),
+            "SELECT COUNT(*) AS n FROM claim FOR SYSTEM_TIME ALL WHERE lang=%s AND page_id=%s AND topic_id=%s",
+            (lang, fetched["page_id"], topic_id),
         )[0]["n"]
         if already:  # loaded before a crash or a stop: keep the rows
             n = int(already)
@@ -687,7 +709,7 @@ class Job:
         if self.on_change:
             # Before the edition reads done: a page that sees "done" and asks again must not get a cached answer.
             try:
-                self.on_change()
+                self.on_change(topic_id)
             except Exception:
                 log.warning("ingest %s: on_change failed:\n%s", self.qid, traceback.format_exc())
         self.ed(lang, state="done", pct=100, error=None, retry_at=None, seconds=round(time.time() - t, 1))
@@ -804,7 +826,7 @@ class Job:
 
 
 def run_job(
-    qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[], None] | None = None
+    qid: str, stop: threading.Event | None = None, echo=None, on_change: Callable[[str], None] | None = None
 ) -> str:
     return Job(qid, stop, echo, on_change).run()
 
@@ -816,8 +838,8 @@ class Worker:
     """One job at a time, oldest first. Jobs left running by a stopped process are picked up again (resumable:
     finished editions are kept)."""
 
-    def __init__(self, after_job: Callable[[], None] | None = None) -> None:
-        self.after_job = after_job  # e.g. the API clears its response cache, the job changed what it serves
+    def __init__(self, after_job: Callable[[str], None] | None = None) -> None:
+        self.after_job = after_job  # e.g. the API clears its response cache for the topic, the job changed it
         self.stop = threading.Event()
         self.wake = threading.Event()
         self.thread: threading.Thread | None = None
@@ -889,7 +911,7 @@ class Worker:
                         self.failures.pop(qid, None)
                     finally:
                         if self.after_job:
-                            self.after_job()
+                            self.after_job(topic_slug(qid))
                     continue
             except Exception:
                 if qid:
