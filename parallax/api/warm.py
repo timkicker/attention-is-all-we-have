@@ -13,6 +13,9 @@ import httpx
 
 log = logging.getLogger("parallax.warm")
 PAGE = 200  # FETCH of web/src/lib/adapt/topic.ts and API_LIMIT of removed.ts: the cache key is the exact query
+# The quick picks of the date button (web/src/lib/ui/AsOf.svelte). Most have no align rows, so a cold one is seconds
+# of exact search per page; warmed last, after the pages of today.
+PICK_DATES = ("2020-01-01", "2015-01-01", "2010-01-01", "2008-01-01")
 
 
 _state = {"running": False, "again": False}  # touched on the event loop only
@@ -31,7 +34,8 @@ def first_urls(topics: list[dict]) -> list[str]:
 
 
 async def warm(app) -> int:
-    """Ask for the first pages of every topic, then the further Differences pages. Returns the requests made."""
+    """Ask for the first pages of every topic, then the further Differences pages, then the same for the quick picks
+    of the date button. Returns the requests made."""
     n = 0
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://warm", timeout=300) as client:
@@ -40,17 +44,21 @@ async def warm(app) -> int:
         if r.status_code != 200:
             return n
         topics = r.json().get("topics", [])
-        later: list[str] = []
-        for url in first_urls(topics):
-            r = await client.get(url)
-            n += 1
-            if r.status_code == 200 and url.startswith("/api/compare"):
-                total = int(r.json().get("total_rows") or 0)
-                base = url.rsplit("&offset=", 1)[0]
-                later += [f"{base}&offset={o}" for o in range(PAGE, total, PAGE)]
-        for url in later:
-            await client.get(url)
-            n += 1
+        past = [
+            f"/api/compare?topic={t['topic_id']}&as_of={d}&limit={PAGE}&offset=0" for d in PICK_DATES for t in topics
+        ]
+        for urls in (first_urls(topics), past):
+            later: list[str] = []
+            for url in urls:
+                r = await client.get(url)
+                n += 1
+                if r.status_code == 200 and url.startswith("/api/compare"):
+                    total = int(r.json().get("total_rows") or 0)
+                    base = url.rsplit("&offset=", 1)[0]
+                    later += [f"{base}&offset={o}" for o in range(PAGE, total, PAGE)]
+            for url in later:
+                await client.get(url)
+                n += 1
     return n
 
 

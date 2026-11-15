@@ -1,4 +1,7 @@
 import asyncio
+import re
+
+import pytest
 
 from api import cache, sqllog
 
@@ -78,6 +81,18 @@ def test_warm_up_fills_the_cache_with_the_first_pages(client):
     assert n > 3
     assert "/api/compare?topic=winterwar&limit=200&offset=0" in cache._store
     assert "/api/dropped?topic=winterwar&limit=200&offset=0" in cache._store
+    # the quick picks of the date button, with the query the web app sends (src/lib/adapt/topic.ts)
+    assert "/api/compare?topic=winterwar&as_of=2015-01-01&limit=200&offset=0" in cache._store
+
+
+def test_warmed_dates_are_the_quick_picks_of_the_date_button():
+    from pathlib import Path
+
+    from api import warm
+
+    svelte = (Path(__file__).resolve().parents[2] / "web" / "src" / "lib" / "ui" / "AsOf.svelte").read_text()
+    (picks,) = re.findall(r"picks = \[null, ([^\]]*)\]", svelte)
+    assert tuple(re.findall(r"'([0-9-]+)'", picks)) == warm.PICK_DATES
 
 
 def test_a_result_computed_across_a_clear_is_not_stored():
@@ -103,3 +118,46 @@ def test_concurrent_misses_compute_once():
     asyncio.run(main())
     assert len(runs) == 1
     assert not cache._locks
+
+
+def test_cold_differences_pages_run_a_few_at_a_time(monkeypatch):
+    # A room picking dates at once: each cold page is seconds of exact search. The others wait without a thread.
+    import httpx
+
+    from api import main
+
+    running, most = [0], [0]
+
+    async def slow(request, call_next):
+        running[0] += 1
+        most[0] = max(most[0], running[0])
+        await asyncio.sleep(0.05)
+        running[0] -= 1
+        return main.Response(b"{}", media_type="application/json"), None, [], b"{}"
+
+    monkeypatch.setattr(main, "_with_sql", slow)
+    monkeypatch.setattr(main, "_HEAVY", asyncio.Semaphore(2))
+
+    async def go():
+        transport = httpx.ASGITransport(app=main.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://t") as c:
+            dates = [f"20{y:02d}-01-01" for y in range(10, 16)]
+            await asyncio.gather(*(c.get(f"/api/compare?topic=heavy&as_of={d}") for d in dates))
+            assert most[0] == 2
+            most[0] = 0
+            await asyncio.gather(*(c.get(f"/api/compare?topic=heavy&h=h{i}") for i in range(6)))  # one statement
+            assert most[0] == 6
+
+    cache.clear()
+    asyncio.run(go())
+    cache.clear()
+
+
+def test_the_page_shell_answers_head_and_get(client):
+    from api import main
+
+    if not main.DIST.is_dir():
+        pytest.skip("no web build (make web-build)")
+    assert client.head("/t/winterwar").status_code == 200
+    r = client.get("/t/winterwar")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html") and b"<div" in r.content
