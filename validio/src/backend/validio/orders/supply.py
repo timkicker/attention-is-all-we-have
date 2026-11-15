@@ -124,6 +124,9 @@ def _kind_of(p: Product) -> str | None:
     return next((k for k, v in KINDS.items() if any(starts_word(w, name) for w in v.words)), None)
 
 
+BY_MEANING = "Found by meaning, not by its name, so a person checks it."
+
+
 class SupplyService:
     def __init__(self, orders: OrderService, reader=None):
         self.orders = orders
@@ -243,19 +246,23 @@ class SupplyService:
         same = carbon_sentence(next(p for p in cands if p.carbon_kg_per_kg is not None)) if len(cands) > 1 and len(carbon) == 1 else None
         options, chosen = [], None
         for r in ranked:
-            d = self._judge(mandate, r, avail.get(r.product.id))
+            # a product only the local semantic search proposed goes to Cedar as a substitute outside Valio's
+            # list, so it never orders without a person (matching/semantic.py)
+            meant = r.product.id in need.by_meaning
+            d = self._judge(mandate, r, avail.get(r.product.id), is_substitute=meant)
             denied = d is not None and d.outcome is Outcome.DENY
+            said = f"{BY_MEANING} {_sentence(r, same)}" if meant else _sentence(r, same)
+            flags = {"on_list": False, "substitute": True} if meant else {}
             if r.accepted and not denied and chosen is None:
                 chosen = r
-                options.append(self._option(r, "chosen", _sentence(r, same), 1))
+                options.append(self._option(r, "chosen", said, 1, **flags))
             elif r.accepted and not denied:
-                options.append(self._option(r, "ranked", _sentence(r, same),
-                                            len([o for o in options if "rank" in o]) + 1))
+                options.append(self._option(r, "ranked", said, len([o for o in options if "rank" in o]) + 1, **flags))
             elif denied:
-                options.append(self._option(r, "blocked", f"{_sentence(r, same)} {d.sentence}"))
+                options.append(self._option(r, "blocked", f"{said} {d.sentence}", **flags))
             else:
                 verdict = "not_deliverable" if "Valio gives no delivery date for it" in r.reasons else "rejected"
-                options.append(self._option(r, verdict, _sentence(r, same)))
+                options.append(self._option(r, verdict, said, **flags))
         options += [self._option(r, "rejected", _sentence(r)) for r in dropped]
         decided = self._compare(need, ranked, options, chosen, quotes, avail, mandate)
 
@@ -270,7 +277,8 @@ class SupplyService:
         }
         proposal = None
         if chosen is not None:
-            proposal = LineIn(chosen.product.id, chosen.sales_qty)
+            meant = chosen.product.id in need.by_meaning
+            proposal = LineIn(chosen.product.id, chosen.sales_qty, is_substitute=meant, on_valio_list=False)
         elif need.product_id:
             original = self.catalog.get(need.product_id)
             sw = safe_swap(original, need, self.catalog, self.valio, need.deliver_by, budget, self.now(),

@@ -66,6 +66,7 @@ Three things are simulated: the stock-out of mozzarella 466375 (Valio really has
 - **Spend Pass** (`policy/mandate.py`): the kitchen's signed permission, an SD-JWT bound to the agent's P-256 key and checked with a single-use nonce. The Rules are claims inside it, so every Rules change signs a new version.
 - **Cedar** (`policy/policies.cedar`): four rules decide whether to order automatically, ask a person or block. The rules read only numbers and yes/no values that Validio fills from Valio's data and the pass. Model output and supplier text never reach a decision.
 - **Matching and Fact Grades** (`matching/`, `trust/`): the request turns into a typed need, the local catalog narrows it down and at most 40 ids per call go to Valio. Every fact is graded and a missing value never counts as a yes.
+- **Semantic search** (`matching/semantic.py`, optional): a small embedding model (BAAI/bge-small-en-v1.5, about 67 MB, CPU) runs on the same machine and proposes more candidates by meaning. No product data or request text leaves the machine. It never decides: what it finds goes through the same checks and Cedar, and a product found only by meaning always waits for a person.
 - **MCP** (`api/mcp_server.py`): the connector server at `/mcp/c/<token>/` for any client and `/mcp/k/<account>/` for agents that sign.
 - **SvelteKit** (`src/frontend/`): the web app, built to static files and served by the same FastAPI process.
 - **Modal** (`src/cloud/app_validio.py`): one container that scales to zero, with SQLite, the catalog index and the recorded answers on the Modal volume `validio-data`. Nothing from Valio is in the image or in git.
@@ -81,6 +82,7 @@ make setup RAW=/path/to/folder   # .env from .env.example, uv sync, web app pack
 # put the key after VALIO_API_KEY= in .env
 make record                      # the only network step: Valio's test API, Mon 16 to Fri 20 Nov, into data/cache/valio/
 make template                    # optional: plays the five demo scenes into data/template/, the filled demo kitchen
+make embed                       # optional: the local semantic search's model and product vectors, about 3 minutes
 make demo                        # builds the web app, seeds and serves everything on http://127.0.0.1:8410
 ```
 
@@ -111,12 +113,12 @@ make mutate                      # mutation testing on the deciding modules (slo
 ## Deploy
 
 ```sh
-make modal-data                  # upload data/catalog.db and data/cache/valio to the volume (once and again after make record)
+make modal-data                  # upload data/catalog.db, data/cache/valio and, after make embed, the model and vectors
 make modal-secret                # the secret validio-web from a gitignored env file
 make modal-deploy                # build the web app, deploy, then fill the demo kitchen template in the volume
 ```
 
-With `VALIDIO_PUBLIC=1` the app refuses to start without its approval code and kitchen token. Stop it with `modal app stop validio-web`.
+The image installs the semantic extra and sets `VALIDIO_SEMANTIC=1`. The model and the vectors are read from the volume (`data/models`, `data/embeddings.npz`). Without them the app matches by keyword only. With `VALIDIO_PUBLIC=1` the app refuses to start without its approval code and kitchen token. Stop it with `modal app stop validio-web`.
 
 ## Folders
 
@@ -146,4 +148,5 @@ With `VALIDIO_PUBLIC=1` the app refuses to start without its approval code and k
 - Steady Orders renew only through the agent's `renew_steady_order`. The web app has no button for it. Split Fill only runs during a renewal.
 - SQLite on one Modal container. Production needs Postgres and a shared nonce store ([docs/PRODUCTION.md](docs/PRODUCTION.md)).
 - The supplier text reader is a pattern matcher without a model. The model-based reader is not deployed.
+- The semantic search model is small and does not reason. A vague request such as "something to make risotto creamy" gets loose matches, and they wait for a person.
 - Valio's data and the recordings never go into git, because Valio allows their use for this challenge only.

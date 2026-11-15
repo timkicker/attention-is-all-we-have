@@ -257,3 +257,107 @@ def test_produce_words_go_to_fresh_produce(catalog, text, word):
     kept, _ = screen(n, catalog)
     assert kept and all(p.category.startswith("174") for p in kept)
     assert not any(re.search(r"juice|jam|puree|pur.e|sauce|crushed", p.name_en.lower()) for p in kept)
+
+
+# the head noun is last: earlier words say which, they never pick the kind (a real MCP session: "yellow onions"
+# matched yellow carrots, "vegetable stock" a vegetable oil)
+
+
+def test_yellow_onions_are_onions_with_the_yellow_ones_first(catalog):
+    n = parse_need("10 kg of yellow onions", TODAY, catalog)
+    assert (n.kind, n.modifiers, n.phrase) == ("onion", ("yellow",), "yellow onions")
+    kept, dropped = screen(n, catalog, limit=None)
+    assert kept and all("onion" in p.name_en.lower() for p in kept), [p.name_en for p in kept]
+    assert not any(re.search(r"carrot|tomato", p.name_en.lower()) for p in kept + [r.product for r in dropped])
+    yellow = [i for i, p in enumerate(kept) if "yellow" in p.name_en.lower()]
+    assert yellow == list(range(len(yellow)))  # any yellow one Valio names comes before the others
+
+
+def test_vegetable_stock_is_vegetable_bouillon(catalog):
+    n = parse_need("20 litres of vegetable stock", TODAY, catalog)
+    assert n.kind == "vegetable bouillon"
+    kept, _ = screen(n, catalog)
+    assert kept and all("vegetable bouillon" in p.name_en.lower() for p in kept), [p.name_en for p in kept]
+
+
+def test_red_onions_stay_red_onions(catalog):
+    n = parse_need("5 kg of red onions by Monday", TODAY, catalog)
+    assert n.kind == "red onion" and n.modifiers == ()
+    kept, _ = screen(n, catalog)
+    assert kept and all("red onion" in p.name_en.lower() for p in kept)
+
+
+@pytest.mark.parametrize("text,kind,word", [
+    ("1 kg of scallions", "spring onion", "spring onion"),
+    ("10 litres of heavy cream", "whipping cream", "whipping cream"),
+    ("10 litres of chicken broth", "chicken bouillon", "chicken bouillon"),
+    ("2 kg of stock cubes", "bouillon", "bouillon"),
+    ("1 kg of parm", "parmesan", "parmesan"),
+])
+def test_kitchen_words_read_in_valios_words(catalog, text, kind, word):
+    n = parse_need(text, TODAY, catalog)
+    assert n.kind == kind
+    kept, _ = screen(n, catalog)
+    assert kept and all(word in p.name_en.lower() for p in kept), [p.name_en for p in kept]
+
+
+@pytest.mark.parametrize("text,kind,modifiers", [
+    ("2 kg of onions", "onion", ()),
+    ("1 kg of vegetable bouillon", "vegetable bouillon", ()),
+    ("2 kg of garlic peeled", "garlic", ("peeled",)),
+    ("10 kg of onions for the soup by Friday", "onion", ()),
+    ("onions, 10 kg", "onion", ()),
+    ("5 kg of salad leaves", "lettuce", ()),
+    ("1 kg of bay leaves", "bay leaf", ()),
+    ("5 kg of fresh butternut squash", "butternut squash", ("fresh",)),
+    ("10 kg of arborio rice", "arborio rice", ()),
+    ("2 kg of pumpkin seeds", "pumpkin seed", ()),
+    ("5 kg of lactose-free butter", "butter", ()),
+])
+def test_the_head_noun_names_the_kind(catalog, text, kind, modifiers):
+    n = parse_need(text, TODAY, catalog)
+    assert (n.kind, n.modifiers) == (kind, modifiers)
+
+
+@pytest.mark.parametrize("text,words", [
+    ("5 kg of zucchini", ("zucchini", "courgette")),
+    ("1 kg of cilantro", ("cilantro", "coriander")),
+    ("2 kg of aubergines", ("aubergine", "eggplant")),
+])
+def test_two_names_for_one_thing_search_both(catalog, text, words):
+    from validio.matching.need import kind_of
+
+    n = parse_need(text, TODAY, catalog)
+    assert kind_of(n.kind).words == words
+    kept, dropped = screen(n, catalog, limit=None)
+    names = " ".join(p.name_en.lower() for p in kept + [r.product for r in dropped])
+    assert all(w in names for w in words)
+
+
+def test_garlic_peeled_puts_peeled_garlic_first(catalog):
+    kept, _ = screen(parse_need("2 kg of garlic peeled", TODAY, catalog), catalog)
+    assert "peeled" in kept[0].name_en.lower()
+
+
+def test_the_fixed_kinds_are_unchanged(catalog):
+    for text, kind in [(DEMO, "milk"), ("5 kg of mozzarella", "mozzarella"), ("100 litres of oat drink", "oat_drink"),
+                       ("20 kg of parmesan by Monday", "parmesan"), ("30 cartons of vegan pancakes by Monday", "pancake"),
+                       ("50 kg of butter by Monday", "butter"), ("200 litres of cream by Monday", "cream")]:
+        assert parse_need(text, TODAY, catalog).kind == kind, text
+
+
+def test_search_reads_kitchen_words_too(catalog):
+    from validio.matching.need import search_catalog
+
+    found = search_catalog(catalog, "vegetable stock", limit=5)
+    assert found and all("bouillon" in p.name_en.lower() for p in found), [p.name_en for p in found]
+    cubes = search_catalog(catalog, "stock cubes", limit=20)
+    assert cubes and all("bouillon" in p.name_en.lower() for p in cubes)
+    assert search_catalog(catalog, "milk", limit=3) == catalog.search(text="milk", limit=3)  # plain words as before
+
+
+def test_plain_onions_come_before_coloured_ones(catalog):
+    for text in ("2 kg of onions", "10 kg of yellow onions"):
+        kept, _ = screen(parse_need(text, TODAY, catalog), catalog, limit=None)
+        red = [i for i, p in enumerate(kept) if re.search(r"\bred\b", p.name_en.lower())]
+        assert red and min(red) > 0 and "red" not in kept[0].name_en.lower(), [p.name_en for p in kept]

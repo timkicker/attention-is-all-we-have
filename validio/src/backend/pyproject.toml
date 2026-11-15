@@ -23,9 +23,11 @@ validio-agent = "validio.agent.cli:main"
 
 [project.optional-dependencies]
 cloud = ["modal==1.6.4", "openai==3.50.0"]
+# make embed: a small local embedding model (ONNX, CPU) for candidate search, see docs/ARCHITECTURE.md
+semantic = ["fastembed==0.9.1"]
 
 [dependency-groups]
-dev = ["hypothesis==6.170.15", "jsonschema==4.26.0", "mutmut==3.8.1", "pytest==9.2.0", "pytest-asyncio==1.5.0", "respx==0.23.1", "ruff==0.17.5"]
+dev = ["hypothesis==6.170.15", "jsonschema==4.26.0", "mutmut==3.8.1", "numpy==2.5.4", "pytest==9.2.0", "pytest-asyncio==1.5.0", "respx==0.23.1", "ruff==0.17.5"]
 
 [build-system]
 requires = ["hatchling"]

@@ -58,6 +58,10 @@ class Invented:
 
 @pytest.fixture(scope="module")
 def mandate():
+    return demo_mandate()
+
+
+def demo_mandate():
     """M-1 as seeded: every product group, so only the diet decides."""
     from jwcrypto.jwk import JWK
 

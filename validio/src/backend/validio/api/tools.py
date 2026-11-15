@@ -6,6 +6,7 @@ import threading
 from ..catalog.labels import LABELS
 from ..catalog.model import Product
 from ..demo.seed import STOCKOUT_ID, stockout_note
+from ..matching.need import search_catalog
 from ..orders.supply import LineRequest
 from ..policy.mandate import AUDIENCE, MandateError
 from ..text.format import short_ref
@@ -48,10 +49,10 @@ def product_summary(p: Product) -> ProductSummary:
 
 def search_products(ctx: Ctx, text: str | None = None, category: str | None = None,
                     claims: list[str] | None = None, limit: int = 10) -> list[ProductSummary]:
-    """Static catalog only, never a live call."""
+    """Static catalog only, never a live call. Words in a kitchen's terms find Valio's ("stock" finds bouillon);
+    with VALIDIO_SEMANTIC=1 the local semantic search adds products by meaning (matching/semantic.py)."""
     limit = max(1, min(int(limit), MAX_SEARCH))
-    return [product_summary(p) for p in ctx.catalog.search(text=text, category_prefix=category,
-                                                           claims=set(claims or ()), limit=limit)]
+    return [product_summary(p) for p in search_catalog(ctx.catalog, text, category, set(claims or ()), limit)]
 
 
 def nonce(ctx: Ctx) -> NonceView:

@@ -45,3 +45,17 @@ def test_a_kind_word_counts_only_at_a_word_start(text, kind):
             parse_need(text, SAT)
     else:
         assert parse_need(text, SAT).kind == kind
+
+
+@pytest.mark.parametrize("text, phrase", [
+    ("10 kg of yellow onions", "yellow onions"),
+    ("20 litres of vegetable stock by Monday, budget 100 euro", "vegetable stock"),
+    ("10 packs of bananas 4.5 kg", "bananas"),
+    ("1000 litres of lactose-free milk by Monday", "lactose-free milk"),
+    ("onions, 10 kg", "onions"),
+    ("2 kg of something to make risotto creamy", "something to make risotto creamy"),
+])
+def test_the_product_phrase(text, phrase):
+    from validio.matching.need import product_phrase
+
+    assert product_phrase(text) == phrase

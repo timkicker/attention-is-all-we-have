@@ -4,7 +4,7 @@ UV := cd $(BACKEND) && uv run
 # the raw Valio export (fetch_data.py --from-dir); set RAW=... to point elsewhere
 RAW ?= data/raw
 
-.PHONY: setup data index seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check template demo-web demo-smoke e2e-live accounts-e2e a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed modal-fill
+.PHONY: setup data index embed seed test test-backend test-web test-live record guards dev ci agent types demo demo-mock demo-check template demo-web demo-smoke e2e-live accounts-e2e a11y snapshots video revoke mutate modal-data modal-secret modal-deploy modal-seed modal-fill
 
 setup:
 	[ -f .env ] || cp .env.example .env
@@ -17,6 +17,11 @@ data:
 
 index:
 	$(UV) python ../../scripts/index_catalog.py
+
+# The local semantic search's product vectors (data/embeddings.npz) and model (data/models, about 67 MB, fetched
+# once). Runs on this machine, nothing is sent anywhere; VALIDIO_SEMANTIC=1 uses them (make demo turns it on).
+embed:
+	cd $(BACKEND) && uv run --extra semantic python ../../scripts/embed_catalog.py
 
 seed:
 	$(UV) python ../../scripts/seed_demo.py
@@ -61,7 +66,7 @@ agent:
 demo:
 	cd src/frontend && VITE_API=live npm run build
 	$(MAKE) seed
-	cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
+	cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 VALIDIO_SEMANTIC=1 uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410
 
 # The web app alone on its fixture (src/lib/api/mock.ts), no backend. Never for the 10:00 run, which is `make demo`.
 demo-mock:
@@ -87,7 +92,7 @@ template:
 demo-web:
 	$(MAKE) seed
 	trap 'kill 0' INT TERM EXIT; \
-	(cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 VALIDIO_APPROVE_CODE= \
+	(cd $(BACKEND) && VALIO_MODE=replay VALIO_LIVE_FALLBACK=1 VALIDIO_DEMO=1 VALIDIO_SEMANTIC=1 VALIDIO_APPROVE_CODE= \
 	  uv run uvicorn validio.api.app:app --host 127.0.0.1 --port 8410) & \
 	(cd src/frontend && VITE_API=live npm run dev)
 
@@ -138,6 +143,8 @@ modal-data:
 	$(MODAL) volume create validio-data 2>/dev/null || true
 	$(MODAL) volume put --force validio-data ../../data/catalog.db /catalog.db
 	$(MODAL) volume put --force validio-data ../../data/cache/valio /cache/valio
+	[ ! -f data/embeddings.npz ] || $(MODAL) volume put --force validio-data ../../data/embeddings.npz /embeddings.npz
+	[ ! -d data/models ] || $(MODAL) volume put --force validio-data ../../data/models /models
 
 # the env file behind the secret: gitignored, mode 600
 MODAL_SECRETS ?= .modal-secrets.env
