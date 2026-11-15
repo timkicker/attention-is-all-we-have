@@ -281,6 +281,8 @@ def run_check(
         vectors = embed_claims(engine, claims) if claims else []
         sizes = topic_sizes(topic) if topic and claims else None
         near = _nearest_all(vectors, langs, topic, sizes)
+        if budget is not None:  # the search can be slow under load; the judging gets its own full budget
+            budget = gemini_guard.Budget()
         with ThreadPoolExecutor(max_workers=CLAIM_WORKERS) as pool:  # each claim already fans out per edition
             futs = [
                 pool.submit(contextvars.copy_context().run, _judge_claim, engine, c, n, budget)
