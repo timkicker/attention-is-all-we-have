@@ -337,17 +337,24 @@ _STORE = None
 _STORE_LOCK = threading.Lock()
 
 
+# ollama embeds one request at a time. A batch of 32 sentences took 13 s, and up to 2 min with long ones; a reader's
+# check waited behind it and gave up after 90 s (embed_unavailable). Small batches let a check in between.
+INGEST_EMBED_BATCH = int(os.environ.get("INGEST_EMBED_BATCH", "8"))
+
+
 def embed(texts: list[str], progress) -> list[np.ndarray]:
     """bge-m3 through engine.embed (vectors kept under data/emb/), or sketch_embed with EMBED_BACKEND=fake."""
     if os.environ.get("EMBED_BACKEND") == "fake":
         return [np.asarray(v, dtype=np.float32) for v in sketch_embed(texts)]
-    from engine.embed import embed_texts, writer
+    from engine.embed import backend, embed_texts, writer
 
+    be = backend()
+    be.batch = min(be.batch, INGEST_EMBED_BATCH)
     global _STORE
     with _STORE_LOCK:
         if _STORE is None:
             _STORE = writer()  # shares the API's vectors in memory instead of loading data/emb/ a second time
-        return embed_texts(texts, _STORE, progress=progress)
+        return embed_texts(texts, _STORE, be=be, progress=progress)
 
 
 def lives_of(fetched: dict):
