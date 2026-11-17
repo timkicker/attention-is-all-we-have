@@ -461,3 +461,13 @@ def test_real_time_stamps_what_happens_and_decides_on_the_demo_clock(kitchens, m
     assert datetime.fromisoformat(entry["at"]) >= before - timedelta(seconds=1), entry
     ctx = get_accounts().ctx(a)
     assert ctx.now() < ctx.stamp() and ctx.now().date().isoformat() == "2026-11-14"
+
+
+def test_connector_url_without_its_last_slash_answers(kitchens):
+    """claude.ai's connector check calls the address without the trailing slash and does not follow a 307."""
+    demo, _new, agent, _a, _b = kitchens
+    token = start_pairing(demo)
+    r = agent.post(f"/mcp/c/{token}", headers=MCP_HEADERS, json=_init(1, AGENT), follow_redirects=False)
+    assert r.status_code == 200, r.status_code
+    assert agent.post("/mcp/c/nosuchtoken", headers=MCP_HEADERS, json=_init(2, AGENT),
+                      follow_redirects=False).status_code == 404

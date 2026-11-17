@@ -51,6 +51,10 @@ class McpMount:
             scope.pop(ACCOUNT, None)
             scope.pop(CONNECTOR, None)
             path = scope["path"][len(scope.get("root_path", "")):]
+            if re.fullmatch(r"/[ck]/[^/]*", path):  # the address without its last slash: answer it, no 307
+                path += "/"  # (claude.ai's connector check calls it like that and does not follow a redirect)
+                scope["path"] += "/"
+                scope["raw_path"] = scope.get("raw_path", scope["path"].encode()).split(b"?")[0] + b"/"
             c = re.match(r"/c/([^/]*)(?=/|$)", path)
             if c:  # /mcp/c/{token}/: only while the kitchen keeps that connection, else 404 like an unknown kitchen
                 from .connect import connector_ctx
